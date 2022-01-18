@@ -40,7 +40,7 @@ def build_list_by_lab_request(
     api_version = "2021-11-15-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/schedules')
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
@@ -72,18 +72,18 @@ def build_get_request(
     subscription_id: str,
     resource_group_name: str,
     lab_name: str,
-    user_name: str,
+    schedule_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = "2021-11-15-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/schedules/{scheduleName}')
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "labName": _SERIALIZER.url("lab_name", lab_name, 'str', max_length=100, min_length=1),
-        "userName": _SERIALIZER.url("user_name", user_name, 'str', max_length=100, min_length=1, pattern=r'^[-\w\\._\\(\\)]+$'),
+        "scheduleName": _SERIALIZER.url("schedule_name", schedule_name, 'str', max_length=100, min_length=1, pattern=r'^[-\w\\._\\(\\)]+$'),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -105,11 +105,11 @@ def build_get_request(
     )
 
 
-def build_create_or_update_request_initial(
+def build_create_or_update_request(
     subscription_id: str,
     resource_group_name: str,
     lab_name: str,
-    user_name: str,
+    schedule_name: str,
     *,
     json: JSONType = None,
     content: Any = None,
@@ -120,12 +120,12 @@ def build_create_or_update_request_initial(
     api_version = "2021-11-15-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/schedules/{scheduleName}')
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "labName": _SERIALIZER.url("lab_name", lab_name, 'str', max_length=100, min_length=1),
-        "userName": _SERIALIZER.url("user_name", user_name, 'str', max_length=100, min_length=1, pattern=r'^[-\w\\._\\(\\)]+$'),
+        "scheduleName": _SERIALIZER.url("schedule_name", schedule_name, 'str', max_length=100, min_length=1, pattern=r'^[-\w\\._\\(\\)]+$'),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -151,11 +151,11 @@ def build_create_or_update_request_initial(
     )
 
 
-def build_update_request_initial(
+def build_update_request(
     subscription_id: str,
     resource_group_name: str,
     lab_name: str,
-    user_name: str,
+    schedule_name: str,
     *,
     json: JSONType = None,
     content: Any = None,
@@ -166,12 +166,12 @@ def build_update_request_initial(
     api_version = "2021-11-15-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/schedules/{scheduleName}')
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "labName": _SERIALIZER.url("lab_name", lab_name, 'str', max_length=100, min_length=1),
-        "userName": _SERIALIZER.url("user_name", user_name, 'str', max_length=100, min_length=1, pattern=r'^[-\w\\._\\(\\)]+$'),
+        "scheduleName": _SERIALIZER.url("schedule_name", schedule_name, 'str', max_length=100, min_length=1, pattern=r'^[-\w\\._\\(\\)]+$'),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -201,18 +201,18 @@ def build_delete_request_initial(
     subscription_id: str,
     resource_group_name: str,
     lab_name: str,
-    user_name: str,
+    schedule_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = "2021-11-15-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/schedules/{scheduleName}')
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
         "labName": _SERIALIZER.url("lab_name", lab_name, 'str', max_length=100, min_length=1),
-        "userName": _SERIALIZER.url("user_name", user_name, 'str', max_length=100, min_length=1, pattern=r'^[-\w\\._\\(\\)]+$'),
+        "scheduleName": _SERIALIZER.url("schedule_name", schedule_name, 'str', max_length=100, min_length=1, pattern=r'^[-\w\\._\\(\\)]+$'),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -233,54 +233,8 @@ def build_delete_request_initial(
         **kwargs
     )
 
-
-def build_invite_request_initial(
-    subscription_id: str,
-    resource_group_name: str,
-    lab_name: str,
-    user_name: str,
-    *,
-    json: JSONType = None,
-    content: Any = None,
-    **kwargs: Any
-) -> HttpRequest:
-    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-
-    api_version = "2021-11-15-preview"
-    accept = "application/json"
-    # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}/invite')
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-        "labName": _SERIALIZER.url("lab_name", lab_name, 'str', max_length=100, min_length=1),
-        "userName": _SERIALIZER.url("user_name", user_name, 'str', max_length=100, min_length=1, pattern=r'^[-\w\\._\\(\\)]+$'),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    if content_type is not None:
-        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="POST",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        json=json,
-        content=content,
-        **kwargs
-    )
-
-class UsersOperations(object):
-    """UsersOperations operations.
+class SchedulesOperations(object):
+    """SchedulesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -308,10 +262,10 @@ class UsersOperations(object):
         lab_name: str,
         filter: Optional[str] = None,
         **kwargs: Any
-    ) -> Iterable["_models.PagedUsers"]:
-        """Get all users for a lab.
+    ) -> Iterable["_models.PagedSchedules"]:
+        """Get all schedules for a lab.
 
-        Returns a list of all users for a lab.
+        Returns a list of all schedules for a lab.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
@@ -321,11 +275,11 @@ class UsersOperations(object):
         :param filter: The filter to apply to the operation.
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PagedUsers or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.labservices.models.PagedUsers]
+        :return: An iterator like instance of either PagedSchedules or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.labservices.models.PagedSchedules]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PagedUsers"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PagedSchedules"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -358,7 +312,7 @@ class UsersOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("PagedUsers", pipeline_response)
+            deserialized = self._deserialize("PagedSchedules", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -381,34 +335,34 @@ class UsersOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list_by_lab.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users'}  # type: ignore
+    list_by_lab.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/schedules'}  # type: ignore
 
     @distributed_trace
     def get(
         self,
         resource_group_name: str,
         lab_name: str,
-        user_name: str,
+        schedule_name: str,
         **kwargs: Any
-    ) -> "_models.User":
-        """Get a lab user.
+    ) -> "_models.Schedule":
+        """Get a lab Schedule.
 
-        Returns the properties of a lab user.
+        Returns the properties of a lab Schedule.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param lab_name: The name of the lab that uniquely identifies it within containing lab account.
          Used in resource URIs.
         :type lab_name: str
-        :param user_name: The name of the user that uniquely identifies it within containing lab. Used
-         in resource URIs.
-        :type user_name: str
+        :param schedule_name: The name of the schedule that uniquely identifies it within containing
+         lab. Used in resource URIs.
+        :type schedule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: User, or the result of cls(response)
-        :rtype: ~azure.mgmt.labservices.models.User
+        :return: Schedule, or the result of cls(response)
+        :rtype: ~azure.mgmt.labservices.models.Schedule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.User"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Schedule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -419,7 +373,7 @@ class UsersOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             lab_name=lab_name,
-            user_name=user_name,
+            schedule_name=schedule_name,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
@@ -433,25 +387,45 @@ class UsersOperations(object):
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('User', pipeline_response)
+        deserialized = self._deserialize('Schedule', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/schedules/{scheduleName}'}  # type: ignore
 
 
-    def _create_or_update_initial(
+    @distributed_trace
+    def create_or_update(
         self,
         resource_group_name: str,
         lab_name: str,
-        user_name: str,
-        body: "_models.User",
+        schedule_name: str,
+        body: "_models.Schedule",
         **kwargs: Any
-    ) -> "_models.User":
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.User"]
+    ) -> "_models.Schedule":
+        """Create or update a lab schedule.
+
+        Operation to create or update a lab schedule.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param lab_name: The name of the lab that uniquely identifies it within containing lab account.
+         Used in resource URIs.
+        :type lab_name: str
+        :param schedule_name: The name of the schedule that uniquely identifies it within containing
+         lab. Used in resource URIs.
+        :type schedule_name: str
+        :param body: The request body.
+        :type body: ~azure.mgmt.labservices.models.Schedule
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: Schedule, or the result of cls(response)
+        :rtype: ~azure.mgmt.labservices.models.Schedule
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Schedule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -459,16 +433,16 @@ class UsersOperations(object):
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'User')
+        _json = self._serialize.body(body, 'Schedule')
 
-        request = build_create_or_update_request_initial(
+        request = build_create_or_update_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             lab_name=lab_name,
-            user_name=user_name,
+            schedule_name=schedule_name,
             content_type=content_type,
             json=_json,
-            template_url=self._create_or_update_initial.metadata['url'],
+            template_url=self.create_or_update.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -476,114 +450,54 @@ class UsersOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201, 202]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('User', pipeline_response)
+            deserialized = self._deserialize('Schedule', pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('User', pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize('User', pipeline_response)
+            deserialized = self._deserialize('Schedule', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}'}  # type: ignore
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/schedules/{scheduleName}'}  # type: ignore
 
 
     @distributed_trace
-    def begin_create_or_update(
+    def update(
         self,
         resource_group_name: str,
         lab_name: str,
-        user_name: str,
-        body: "_models.User",
+        schedule_name: str,
+        body: "_models.ScheduleUpdate",
         **kwargs: Any
-    ) -> LROPoller["_models.User"]:
-        """Create or update a lab user.
+    ) -> "_models.Schedule":
+        """Update a lab schedule.
 
-        Operation to create or update a lab user.
+        Operation to update a lab schedule.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param lab_name: The name of the lab that uniquely identifies it within containing lab account.
          Used in resource URIs.
         :type lab_name: str
-        :param user_name: The name of the user that uniquely identifies it within containing lab. Used
-         in resource URIs.
-        :type user_name: str
+        :param schedule_name: The name of the schedule that uniquely identifies it within containing
+         lab. Used in resource URIs.
+        :type schedule_name: str
         :param body: The request body.
-        :type body: ~azure.mgmt.labservices.models.User
+        :type body: ~azure.mgmt.labservices.models.ScheduleUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either User or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.labservices.models.User]
+        :return: Schedule, or the result of cls(response)
+        :rtype: ~azure.mgmt.labservices.models.Schedule
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.User"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = self._create_or_update_initial(
-                resource_group_name=resource_group_name,
-                lab_name=lab_name,
-                user_name=user_name,
-                body=body,
-                content_type=content_type,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-        kwargs.pop('error_map', None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = self._deserialize('User', pipeline_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'original-uri'}, **kwargs)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        else:
-            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}'}  # type: ignore
-
-    def _update_initial(
-        self,
-        resource_group_name: str,
-        lab_name: str,
-        user_name: str,
-        body: "_models.UserUpdate",
-        **kwargs: Any
-    ) -> "_models.User":
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.User"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Schedule"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -591,16 +505,16 @@ class UsersOperations(object):
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'UserUpdate')
+        _json = self._serialize.body(body, 'ScheduleUpdate')
 
-        request = build_update_request_initial(
+        request = build_update_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             lab_name=lab_name,
-            user_name=user_name,
+            schedule_name=schedule_name,
             content_type=content_type,
             json=_json,
-            template_url=self._update_initial.metadata['url'],
+            template_url=self.update.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -608,107 +522,26 @@ class UsersOperations(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('User', pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize('User', pipeline_response)
+        deserialized = self._deserialize('Schedule', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}'}  # type: ignore
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/schedules/{scheduleName}'}  # type: ignore
 
-
-    @distributed_trace
-    def begin_update(
-        self,
-        resource_group_name: str,
-        lab_name: str,
-        user_name: str,
-        body: "_models.UserUpdate",
-        **kwargs: Any
-    ) -> LROPoller["_models.User"]:
-        """Update a lab user.
-
-        Operation to update a lab user.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param lab_name: The name of the lab that uniquely identifies it within containing lab account.
-         Used in resource URIs.
-        :type lab_name: str
-        :param user_name: The name of the user that uniquely identifies it within containing lab. Used
-         in resource URIs.
-        :type user_name: str
-        :param body: The request body.
-        :type body: ~azure.mgmt.labservices.models.UserUpdate
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either User or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.labservices.models.User]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.User"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = self._update_initial(
-                resource_group_name=resource_group_name,
-                lab_name=lab_name,
-                user_name=user_name,
-                body=body,
-                content_type=content_type,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-        kwargs.pop('error_map', None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = self._deserialize('User', pipeline_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        else:
-            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}'}  # type: ignore
 
     def _delete_initial(
         self,
         resource_group_name: str,
         lab_name: str,
-        user_name: str,
+        schedule_name: str,
         **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -722,7 +555,7 @@ class UsersOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             lab_name=lab_name,
-            user_name=user_name,
+            schedule_name=schedule_name,
             template_url=self._delete_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -738,7 +571,7 @@ class UsersOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}'}  # type: ignore
+    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/schedules/{scheduleName}'}  # type: ignore
 
 
     @distributed_trace
@@ -746,21 +579,21 @@ class UsersOperations(object):
         self,
         resource_group_name: str,
         lab_name: str,
-        user_name: str,
+        schedule_name: str,
         **kwargs: Any
     ) -> LROPoller[None]:
-        """Deletes a user resource.
+        """Deletes a schedule resource.
 
-        Operation to delete a user resource.
+        Operation to delete a schedule resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param lab_name: The name of the lab that uniquely identifies it within containing lab account.
          Used in resource URIs.
         :type lab_name: str
-        :param user_name: The name of the user that uniquely identifies it within containing lab. Used
-         in resource URIs.
-        :type user_name: str
+        :param schedule_name: The name of the schedule that uniquely identifies it within containing
+         lab. Used in resource URIs.
+        :type schedule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -784,7 +617,7 @@ class UsersOperations(object):
             raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
                 lab_name=lab_name,
-                user_name=user_name,
+                schedule_name=schedule_name,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -808,122 +641,4 @@ class UsersOperations(object):
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}'}  # type: ignore
-
-    def _invite_initial(
-        self,
-        resource_group_name: str,
-        lab_name: str,
-        user_name: str,
-        body: "_models.InviteBody",
-        **kwargs: Any
-    ) -> None:
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-
-        _json = self._serialize.body(body, 'InviteBody')
-
-        request = build_invite_request_initial(
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            lab_name=lab_name,
-            user_name=user_name,
-            content_type=content_type,
-            json=_json,
-            template_url=self._invite_initial.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    _invite_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}/invite'}  # type: ignore
-
-
-    @distributed_trace
-    def begin_invite(
-        self,
-        resource_group_name: str,
-        lab_name: str,
-        user_name: str,
-        body: "_models.InviteBody",
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Invite a user to a lab.
-
-        Operation to invite a user to a lab.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param lab_name: The name of the lab that uniquely identifies it within containing lab account.
-         Used in resource URIs.
-        :type lab_name: str
-        :param user_name: The name of the user that uniquely identifies it within containing lab. Used
-         in resource URIs.
-        :type user_name: str
-        :param body: The request body.
-        :type body: ~azure.mgmt.labservices.models.InviteBody
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = self._invite_initial(
-                resource_group_name=resource_group_name,
-                lab_name=lab_name,
-                user_name=user_name,
-                body=body,
-                content_type=content_type,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-        kwargs.pop('error_map', None)
-
-        def get_long_running_output(pipeline_response):
-            if cls:
-                return cls(pipeline_response, None, {})
-
-
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        else:
-            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-    begin_invite.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}/invite'}  # type: ignore
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/schedules/{scheduleName}'}  # type: ignore

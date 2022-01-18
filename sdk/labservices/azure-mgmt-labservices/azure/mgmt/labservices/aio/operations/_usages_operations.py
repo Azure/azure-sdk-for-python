@@ -6,52 +6,26 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
+from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.mgmt.core.exceptions import ARMErrorFormat
-from msrest import Serializer
 
-from .. import models as _models
-from .._vendor import _convert_request
+from ... import models as _models
+from ..._vendor import _convert_request
+from ...operations._usages_operations import build_list_by_location_request
 T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-_SERIALIZER = Serializer()
-_SERIALIZER.client_side_validation = False
-
-def build_list_request(
-    **kwargs: Any
-) -> HttpRequest:
-    api_version = "2021-11-15-preview"
-    accept = "application/json"
-    # Construct URL
-    url = kwargs.pop("template_url", '/providers/Microsoft.LabServices/operations')
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-class Operations(object):
-    """Operations operations.
+class UsagesOperations:
+    """UsagesOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -66,27 +40,34 @@ class Operations(object):
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
+    def __init__(self, client, config, serializer, deserializer) -> None:
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
         self._config = config
 
     @distributed_trace
-    def list(
+    def list_by_location(
         self,
+        location: str,
+        filter: Optional[str] = None,
         **kwargs: Any
-    ) -> Iterable["_models.OperationListResult"]:
-        """Get all operations.
+    ) -> AsyncIterable["_models.ListUsagesResult"]:
+        """Gets the list of usages.
 
-        Returns a list of all operations.
+        Returns list of usage per SKU family for the specified subscription in the specified region.
 
+        :param location: The location name.
+        :type location: str
+        :param filter: The filter to apply to the operation.
+        :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either OperationListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.labservices.models.OperationListResult]
+        :return: An iterator like instance of either ListUsagesResult or the result of cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.labservices.models.ListUsagesResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListUsagesResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -94,15 +75,21 @@ class Operations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_request(
-                    template_url=self.list.metadata['url'],
+                request = build_list_by_location_request(
+                    subscription_id=self._config.subscription_id,
+                    location=location,
+                    filter=filter,
+                    template_url=self.list_by_location.metadata['url'],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
                 
-                request = build_list_request(
+                request = build_list_by_location_request(
+                    subscription_id=self._config.subscription_id,
+                    location=location,
+                    filter=filter,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -110,17 +97,17 @@ class Operations(object):
                 request.method = "GET"
             return request
 
-        def extract_data(pipeline_response):
-            deserialized = self._deserialize("OperationListResult", pipeline_response)
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("ListUsagesResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, iter(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -131,7 +118,7 @@ class Operations(object):
             return pipeline_response
 
 
-        return ItemPaged(
+        return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/providers/Microsoft.LabServices/operations'}  # type: ignore
+    list_by_location.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.LabServices/locations/{location}/usages'}  # type: ignore

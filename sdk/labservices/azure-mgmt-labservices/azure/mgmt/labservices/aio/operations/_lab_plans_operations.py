@@ -22,12 +22,12 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._users_operations import build_create_or_update_request_initial, build_delete_request_initial, build_get_request, build_invite_request_initial, build_list_by_lab_request, build_update_request_initial
+from ...operations._lab_plans_operations import build_create_or_update_request_initial, build_delete_request_initial, build_get_request, build_list_by_resource_group_request, build_list_by_subscription_request, build_save_image_request_initial, build_update_request_initial
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class UsersOperations:
-    """UsersOperations async operations.
+class LabPlansOperations:
+    """LabPlansOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -49,30 +49,23 @@ class UsersOperations:
         self._config = config
 
     @distributed_trace
-    def list_by_lab(
+    def list_by_subscription(
         self,
-        resource_group_name: str,
-        lab_name: str,
         filter: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.PagedUsers"]:
-        """Get all users for a lab.
+    ) -> AsyncIterable["_models.PagedLabPlans"]:
+        """Get all lab plans for a subscription.
 
-        Returns a list of all users for a lab.
+        Returns a list of all lab plans within a subscription.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param lab_name: The name of the lab that uniquely identifies it within containing lab account.
-         Used in resource URIs.
-        :type lab_name: str
         :param filter: The filter to apply to the operation.
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PagedUsers or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.labservices.models.PagedUsers]
+        :return: An iterator like instance of either PagedLabPlans or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.labservices.models.PagedLabPlans]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PagedUsers"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PagedLabPlans"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -80,22 +73,18 @@ class UsersOperations:
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_by_lab_request(
+                request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
-                    resource_group_name=resource_group_name,
-                    lab_name=lab_name,
                     filter=filter,
-                    template_url=self.list_by_lab.metadata['url'],
+                    template_url=self.list_by_subscription.metadata['url'],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
                 
-                request = build_list_by_lab_request(
+                request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
-                    resource_group_name=resource_group_name,
-                    lab_name=lab_name,
                     filter=filter,
                     template_url=next_link,
                 )
@@ -105,7 +94,7 @@ class UsersOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PagedUsers", pipeline_response)
+            deserialized = self._deserialize("PagedLabPlans", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -128,34 +117,101 @@ class UsersOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_by_lab.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users'}  # type: ignore
+    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.LabServices/labPlans'}  # type: ignore
+
+    @distributed_trace
+    def list_by_resource_group(
+        self,
+        resource_group_name: str,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.PagedLabPlans"]:
+        """Get all lab plans for a subscription and resource group.
+
+        Returns a list of all lab plans for a subscription and resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either PagedLabPlans or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.labservices.models.PagedLabPlans]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PagedLabPlans"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        def prepare_request(next_link=None):
+            if not next_link:
+                
+                request = build_list_by_resource_group_request(
+                    subscription_id=self._config.subscription_id,
+                    resource_group_name=resource_group_name,
+                    template_url=self.list_by_resource_group.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+
+            else:
+                
+                request = build_list_by_resource_group_request(
+                    subscription_id=self._config.subscription_id,
+                    resource_group_name=resource_group_name,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("PagedLabPlans", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labPlans'}  # type: ignore
 
     @distributed_trace_async
     async def get(
         self,
         resource_group_name: str,
-        lab_name: str,
-        user_name: str,
+        lab_plan_name: str,
         **kwargs: Any
-    ) -> "_models.User":
-        """Get a lab user.
+    ) -> "_models.LabPlan":
+        """Retrieves a Lab Plan resource.
 
-        Returns the properties of a lab user.
+        Retrieves the properties of a Lab Plan.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param lab_name: The name of the lab that uniquely identifies it within containing lab account.
-         Used in resource URIs.
-        :type lab_name: str
-        :param user_name: The name of the user that uniquely identifies it within containing lab. Used
-         in resource URIs.
-        :type user_name: str
+        :param lab_plan_name: The name of the lab plan that uniquely identifies it within containing
+         resource group. Used in resource URIs and in UI.
+        :type lab_plan_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: User, or the result of cls(response)
-        :rtype: ~azure.mgmt.labservices.models.User
+        :return: LabPlan, or the result of cls(response)
+        :rtype: ~azure.mgmt.labservices.models.LabPlan
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.User"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LabPlan"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -165,8 +221,7 @@ class UsersOperations:
         request = build_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            lab_name=lab_name,
-            user_name=user_name,
+            lab_plan_name=lab_plan_name,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
@@ -180,25 +235,24 @@ class UsersOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('User', pipeline_response)
+        deserialized = self._deserialize('LabPlan', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labPlans/{labPlanName}'}  # type: ignore
 
 
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
-        lab_name: str,
-        user_name: str,
-        body: "_models.User",
+        lab_plan_name: str,
+        body: "_models.LabPlan",
         **kwargs: Any
-    ) -> "_models.User":
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.User"]
+    ) -> "_models.LabPlan":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LabPlan"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -206,13 +260,12 @@ class UsersOperations:
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'User')
+        _json = self._serialize.body(body, 'LabPlan')
 
         request = build_create_or_update_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            lab_name=lab_name,
-            user_name=user_name,
+            lab_plan_name=lab_plan_name,
             content_type=content_type,
             json=_json,
             template_url=self._create_or_update_initial.metadata['url'],
@@ -228,45 +281,41 @@ class UsersOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('User', pipeline_response)
+            deserialized = self._deserialize('LabPlan', pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('User', pipeline_response)
+            deserialized = self._deserialize('LabPlan', pipeline_response)
 
         if response.status_code == 202:
-            deserialized = self._deserialize('User', pipeline_response)
+            deserialized = self._deserialize('LabPlan', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}'}  # type: ignore
+    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labPlans/{labPlanName}'}  # type: ignore
 
 
     @distributed_trace_async
     async def begin_create_or_update(
         self,
         resource_group_name: str,
-        lab_name: str,
-        user_name: str,
-        body: "_models.User",
+        lab_plan_name: str,
+        body: "_models.LabPlan",
         **kwargs: Any
-    ) -> AsyncLROPoller["_models.User"]:
-        """Create or update a lab user.
+    ) -> AsyncLROPoller["_models.LabPlan"]:
+        """Updates or creates a Lab Plan resource.
 
-        Operation to create or update a lab user.
+        Operation to create or update a Lab Plan resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param lab_name: The name of the lab that uniquely identifies it within containing lab account.
-         Used in resource URIs.
-        :type lab_name: str
-        :param user_name: The name of the user that uniquely identifies it within containing lab. Used
-         in resource URIs.
-        :type user_name: str
+        :param lab_plan_name: The name of the lab plan that uniquely identifies it within containing
+         resource group. Used in resource URIs and in UI.
+        :type lab_plan_name: str
         :param body: The request body.
-        :type body: ~azure.mgmt.labservices.models.User
+        :type body: ~azure.mgmt.labservices.models.LabPlan
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -275,13 +324,14 @@ class UsersOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either User or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.labservices.models.User]
+        :return: An instance of AsyncLROPoller that returns either LabPlan or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.labservices.models.LabPlan]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.User"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LabPlan"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -290,8 +340,7 @@ class UsersOperations:
         if cont_token is None:
             raw_result = await self._create_or_update_initial(
                 resource_group_name=resource_group_name,
-                lab_name=lab_name,
-                user_name=user_name,
+                lab_plan_name=lab_plan_name,
                 body=body,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
@@ -301,7 +350,7 @@ class UsersOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('User', pipeline_response)
+            deserialized = self._deserialize('LabPlan', pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
@@ -320,17 +369,16 @@ class UsersOperations:
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}'}  # type: ignore
+    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labPlans/{labPlanName}'}  # type: ignore
 
     async def _update_initial(
         self,
         resource_group_name: str,
-        lab_name: str,
-        user_name: str,
-        body: "_models.UserUpdate",
+        lab_plan_name: str,
+        body: "_models.LabPlanUpdate",
         **kwargs: Any
-    ) -> "_models.User":
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.User"]
+    ) -> "_models.LabPlan":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LabPlan"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -338,13 +386,12 @@ class UsersOperations:
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'UserUpdate')
+        _json = self._serialize.body(body, 'LabPlanUpdate')
 
         request = build_update_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            lab_name=lab_name,
-            user_name=user_name,
+            lab_plan_name=lab_plan_name,
             content_type=content_type,
             json=_json,
             template_url=self._update_initial.metadata['url'],
@@ -360,42 +407,38 @@ class UsersOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('User', pipeline_response)
+            deserialized = self._deserialize('LabPlan', pipeline_response)
 
         if response.status_code == 202:
-            deserialized = self._deserialize('User', pipeline_response)
+            deserialized = self._deserialize('LabPlan', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}'}  # type: ignore
+    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labPlans/{labPlanName}'}  # type: ignore
 
 
     @distributed_trace_async
     async def begin_update(
         self,
         resource_group_name: str,
-        lab_name: str,
-        user_name: str,
-        body: "_models.UserUpdate",
+        lab_plan_name: str,
+        body: "_models.LabPlanUpdate",
         **kwargs: Any
-    ) -> AsyncLROPoller["_models.User"]:
-        """Update a lab user.
+    ) -> AsyncLROPoller["_models.LabPlan"]:
+        """Updates a Lab Plan resource.
 
-        Operation to update a lab user.
+        Operation to update a Lab Plan resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param lab_name: The name of the lab that uniquely identifies it within containing lab account.
-         Used in resource URIs.
-        :type lab_name: str
-        :param user_name: The name of the user that uniquely identifies it within containing lab. Used
-         in resource URIs.
-        :type user_name: str
+        :param lab_plan_name: The name of the lab plan that uniquely identifies it within containing
+         resource group. Used in resource URIs and in UI.
+        :type lab_plan_name: str
         :param body: The request body.
-        :type body: ~azure.mgmt.labservices.models.UserUpdate
+        :type body: ~azure.mgmt.labservices.models.LabPlanUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -404,13 +447,14 @@ class UsersOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either User or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.labservices.models.User]
+        :return: An instance of AsyncLROPoller that returns either LabPlan or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.labservices.models.LabPlan]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.User"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LabPlan"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -419,8 +463,7 @@ class UsersOperations:
         if cont_token is None:
             raw_result = await self._update_initial(
                 resource_group_name=resource_group_name,
-                lab_name=lab_name,
-                user_name=user_name,
+                lab_plan_name=lab_plan_name,
                 body=body,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
@@ -430,7 +473,7 @@ class UsersOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('User', pipeline_response)
+            deserialized = self._deserialize('LabPlan', pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
@@ -449,13 +492,12 @@ class UsersOperations:
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}'}  # type: ignore
+    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labPlans/{labPlanName}'}  # type: ignore
 
     async def _delete_initial(
         self,
         resource_group_name: str,
-        lab_name: str,
-        user_name: str,
+        lab_plan_name: str,
         **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -468,8 +510,7 @@ class UsersOperations:
         request = build_delete_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            lab_name=lab_name,
-            user_name=user_name,
+            lab_plan_name=lab_plan_name,
             template_url=self._delete_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -485,29 +526,27 @@ class UsersOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}'}  # type: ignore
+    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labPlans/{labPlanName}'}  # type: ignore
 
 
     @distributed_trace_async
     async def begin_delete(
         self,
         resource_group_name: str,
-        lab_name: str,
-        user_name: str,
+        lab_plan_name: str,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Deletes a user resource.
+        """Deletes a Lab Plan resource.
 
-        Operation to delete a user resource.
+        Operation to delete a Lab Plan resource. Deleting a lab plan does not delete labs associated
+        with a lab plan, nor does it delete shared images added to a gallery via the lab plan
+        permission container.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param lab_name: The name of the lab that uniquely identifies it within containing lab account.
-         Used in resource URIs.
-        :type lab_name: str
-        :param user_name: The name of the user that uniquely identifies it within containing lab. Used
-         in resource URIs.
-        :type user_name: str
+        :param lab_plan_name: The name of the lab plan that uniquely identifies it within containing
+         resource group. Used in resource URIs and in UI.
+        :type lab_plan_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -530,8 +569,7 @@ class UsersOperations:
         if cont_token is None:
             raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
-                lab_name=lab_name,
-                user_name=user_name,
+                lab_plan_name=lab_plan_name,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -555,14 +593,13 @@ class UsersOperations:
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}'}  # type: ignore
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labPlans/{labPlanName}'}  # type: ignore
 
-    async def _invite_initial(
+    async def _save_image_initial(
         self,
         resource_group_name: str,
-        lab_name: str,
-        user_name: str,
-        body: "_models.InviteBody",
+        lab_plan_name: str,
+        body: "_models.SaveImageBody",
         **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -573,16 +610,15 @@ class UsersOperations:
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'InviteBody')
+        _json = self._serialize.body(body, 'SaveImageBody')
 
-        request = build_invite_request_initial(
+        request = build_save_image_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            lab_name=lab_name,
-            user_name=user_name,
+            lab_plan_name=lab_plan_name,
             content_type=content_type,
             json=_json,
-            template_url=self._invite_initial.metadata['url'],
+            template_url=self._save_image_initial.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -597,32 +633,28 @@ class UsersOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _invite_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}/invite'}  # type: ignore
+    _save_image_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labPlans/{labPlanName}/saveImage'}  # type: ignore
 
 
     @distributed_trace_async
-    async def begin_invite(
+    async def begin_save_image(
         self,
         resource_group_name: str,
-        lab_name: str,
-        user_name: str,
-        body: "_models.InviteBody",
+        lab_plan_name: str,
+        body: "_models.SaveImageBody",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Invite a user to a lab.
+        """Save an image from a lab VM to the attached shared image gallery.
 
-        Operation to invite a user to a lab.
+        Saves an image from a lab VM to the attached shared image gallery.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param lab_name: The name of the lab that uniquely identifies it within containing lab account.
-         Used in resource URIs.
-        :type lab_name: str
-        :param user_name: The name of the user that uniquely identifies it within containing lab. Used
-         in resource URIs.
-        :type user_name: str
+        :param lab_plan_name: The name of the lab plan that uniquely identifies it within containing
+         resource group. Used in resource URIs and in UI.
+        :type lab_plan_name: str
         :param body: The request body.
-        :type body: ~azure.mgmt.labservices.models.InviteBody
+        :type body: ~azure.mgmt.labservices.models.SaveImageBody
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -644,10 +676,9 @@ class UsersOperations:
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = await self._invite_initial(
+            raw_result = await self._save_image_initial(
                 resource_group_name=resource_group_name,
-                lab_name=lab_name,
-                user_name=user_name,
+                lab_plan_name=lab_plan_name,
                 body=body,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
@@ -673,4 +704,4 @@ class UsersOperations:
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_invite.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labs/{labName}/users/{userName}/invite'}  # type: ignore
+    begin_save_image.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LabServices/labPlans/{labPlanName}/saveImage'}  # type: ignore
