@@ -8,6 +8,7 @@ from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.core.credentials import AzureKeyCredential
 from testcase import TextAnalyticsPreparer
 from testcase import TextAnalyticsTest
+import os
 
 
 class TestAuth(TextAnalyticsTest):
@@ -16,7 +17,9 @@ class TestAuth(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     async def test_active_directory_auth(self, textanalytics_test_endpoint):
         token = self.get_credential(TextAnalyticsClient, is_async=True)
-        text_analytics = TextAnalyticsClient(textanalytics_test_endpoint, token)
+        text_analytics_endpoint_suffix = os.environ.get("TEXTANALYTICS_ENDPOINT_SUFFIX",".cognitiveservices.azure.com")
+        credential_scopes = ["https://{}/.default".format(text_analytics_endpoint_suffix[1:])]
+        text_analytics = TextAnalyticsClient(textanalytics_test_endpoint, token, credential_scopes=credential_scopes)
 
         docs = [{"id": "1", "text": "I should take my cat to the veterinarian."},
                 {"id": "2", "text": "Este es un document escrito en Español."},

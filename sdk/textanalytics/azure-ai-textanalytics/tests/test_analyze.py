@@ -14,7 +14,7 @@ import json
 from unittest import mock
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
-from testcase import TextAnalyticsTest, TextAnalyticsPreparer
+from testcase import TextAnalyticsTest, TextAnalyticsPreparer, is_public_cloud
 from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.ai.textanalytics import (
@@ -47,6 +47,17 @@ from azure.ai.textanalytics import (
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
 TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
 
+TextAnalyticsCustomPreparer = functools.partial(
+    TextAnalyticsPreparer,
+    textanalytics_custom_text_endpoint="https://fakeendpoint.cognitiveservices.azure.com",
+    textanalytics_custom_text_key="fakeZmFrZV9hY29jdW50X2tleQ==",
+    textanalytics_single_category_classify_project_name="single_category_classify_project_name",
+    textanalytics_single_category_classify_deployment_name="single_category_classify_deployment_name",
+    textanalytics_multi_category_classify_project_name="multi_category_classify_project_name",
+    textanalytics_multi_category_classify_deployment_name="multi_category_classify_deployment_name",
+    textanalytics_custom_entities_project_name="custom_entities_project_name",
+    textanalytics_custom_entities_deployment_name="custom_entities_deployment_name",
+)
 
 class TestAnalyze(TextAnalyticsTest):
 
@@ -627,7 +638,8 @@ class TestAnalyze(TextAnalyticsTest):
             )
         assert excinfo.value.status_code == 400
 
-    @TextAnalyticsPreparer()
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
+    @TextAnalyticsCustomPreparer()
     @recorded_by_proxy
     def test_disable_service_logs(
             self,
@@ -989,7 +1001,8 @@ class TestAnalyze(TextAnalyticsTest):
         assert not document_results[1][0].is_error
         assert isinstance(document_results[1][0], ExtractSummaryResult)
 
-    @TextAnalyticsPreparer()
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
+    @TextAnalyticsCustomPreparer()
     @recorded_by_proxy
     def test_single_category_classify(
             self,
@@ -1028,7 +1041,8 @@ class TestAnalyze(TextAnalyticsTest):
                 assert result.classification.category
                 assert result.classification.confidence_score
 
-    @TextAnalyticsPreparer()
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
+    @TextAnalyticsCustomPreparer()
     @recorded_by_proxy
     def test_multi_category_classify(
             self,
@@ -1068,7 +1082,8 @@ class TestAnalyze(TextAnalyticsTest):
                     assert classification.category
                     assert classification.confidence_score
 
-    @TextAnalyticsPreparer()
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
+    @TextAnalyticsCustomPreparer()
     @recorded_by_proxy
     def test_recognize_custom_entities(
             self,
@@ -1216,7 +1231,8 @@ class TestAnalyze(TextAnalyticsTest):
 
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
-    @TextAnalyticsPreparer()
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
+    @TextAnalyticsCustomPreparer()
     def test_generic_action_error_no_target(
         self,
         textanalytics_custom_text_endpoint,
@@ -1276,7 +1292,8 @@ class TestAnalyze(TextAnalyticsTest):
             ).result())
         assert e.value.message == "(InternalServerError) 1 out of 3 job tasks failed. Failed job tasks : v3.2-preview.2/custom/entities/general."
 
-    @TextAnalyticsPreparer()
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
+    @TextAnalyticsCustomPreparer()
     def test_action_errors_with_targets(
         self,
         textanalytics_custom_text_endpoint,
@@ -1366,7 +1383,8 @@ class TestAnalyze(TextAnalyticsTest):
                 assert result.error.code == "InvalidRequest"
                 assert result.error.message == "Some error" + str(idx)  # confirms correct doc error order
 
-    @TextAnalyticsPreparer()
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
+    @TextAnalyticsCustomPreparer()
     def test_action_job_failure(
             self,
             textanalytics_custom_text_endpoint,
