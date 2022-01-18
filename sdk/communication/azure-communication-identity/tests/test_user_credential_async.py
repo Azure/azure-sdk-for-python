@@ -183,6 +183,31 @@ class TestCommunicationTokenCredential(TestCase):
         assert credential._timer is not None
 
     @pytest.mark.asyncio
+    async def test_fractional_backoff_applied_when_token_expiring(self):
+        token_validity_seconds = 5 * 60
+        expiring_token = generate_token_with_custom_expiry(
+            token_validity_seconds)
+
+        refresher = MagicMock(
+            side_effect=[create_access_token(expiring_token), create_access_token(expiring_token)])
+
+        credential = CommunicationTokenCredential(
+            expiring_token,
+            token_refresher=refresher,
+            refresh_proactively=True)
+
+        next_milestone = token_validity_seconds / 2
+        assert credential._timer.interval == next_milestone
+
+        async with credential:
+            with patch(user_credential_async.__name__+'.'+get_current_utc_as_int.__name__, return_value=(get_current_utc_as_int() + next_milestone)):
+                await credential.get_token()
+
+        assert refresher.call_count == 1
+        next_milestone = next_milestone / 2
+        assert credential._timer.interval == next_milestone
+
+    @pytest.mark.asyncio
     async def test_exit_cancels_timer(self):
         refreshed_token = create_access_token(
             generate_token_with_custom_expiry(30 * 60))

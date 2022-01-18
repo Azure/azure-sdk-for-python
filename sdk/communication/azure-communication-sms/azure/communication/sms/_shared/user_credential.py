@@ -116,5 +116,6 @@ class CommunicationTokenCredential(object):
         return token.expires_on - get_current_utc_as_int() <\
             interval.total_seconds()
 
-    def _is_token_valid(self, token):
+    @classmethod
+    def _is_token_valid(cls, token):
         return get_current_utc_as_int() < token.expires_on
