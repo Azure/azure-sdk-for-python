@@ -26,7 +26,6 @@ import numbers
 import copy
 import hashlib
 import json
-import six
 
 from azure.cosmos._execution_context.aggregators import (
     _AverageAggregator,
@@ -127,8 +126,7 @@ class _QueryExecutionDistinctUnorderedEndpointComponent(_QueryExecutionEndpointC
         res = next(self._execution_context)
 
         json_repr = json.dumps(self.make_hash(res))
-        if six.PY3:
-            json_repr = json_repr.encode("utf-8")
+        json_repr = json_repr.encode("utf-8")
 
         hash_object = hashlib.sha1(json_repr)   # nosec
         hashed_result = hash_object.hexdigest()
@@ -136,8 +134,7 @@ class _QueryExecutionDistinctUnorderedEndpointComponent(_QueryExecutionEndpointC
         while hashed_result in self.last_result:
             res = next(self._execution_context)
             json_repr = json.dumps(self.make_hash(res))
-            if six.PY3:
-                json_repr = json_repr.encode("utf-8")
+            json_repr = json_repr.encode("utf-8")
 
             hash_object = hashlib.sha1(json_repr)   # nosec
             hashed_result = hash_object.hexdigest()

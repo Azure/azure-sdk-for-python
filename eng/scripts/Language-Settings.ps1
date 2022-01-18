@@ -288,6 +288,15 @@ $PackageExclusions = @{
   'azure-mgmt-signalr' = 'Unsupported doc directives https://github.com/Azure/azure-sdk-for-python/issues/18085';
   'azure-mgmt-mixedreality' = 'Missing version info https://github.com/Azure/azure-sdk-for-python/issues/18457';
   'azure-mgmt-network' = 'Manual process used to build';
+
+  'azure-mgmt-compute' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+  'azure-mgmt-consumption' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+  'azure-mgmt-notificationhubs' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+  'azure-servicebus' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+  'azure-mgmt-web' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+  'azure-mgmt-netapp' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+  'azure-synapse-artifacts' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
+  'azure-mgmt-streamanalytics' = 'Latest package requires Python >= 3.7 and this breaks docs build. https://github.com/Azure/azure-sdk-for-python/issues/22492';
 }
 
 function Update-python-DocsMsPackages($DocsRepoLocation, $DocsMetadata, $PackageSourceOverride, $DocValidationImageId) {

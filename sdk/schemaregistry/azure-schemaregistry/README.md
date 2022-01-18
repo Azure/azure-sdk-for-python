@@ -24,7 +24,7 @@ pip install azure-schemaregistry
 To use this package, you must have:
 * Azure subscription - [Create a free account][azure_sub]
 * [Azure Schema Registry][schemaregistry_service]
-* Python 3.7 or later - [Install Python][python]
+* Python 3.6 or later - [Install Python][python]
 
 ### Authenticate the client
 
