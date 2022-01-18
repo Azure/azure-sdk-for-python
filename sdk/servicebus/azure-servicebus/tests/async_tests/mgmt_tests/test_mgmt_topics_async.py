@@ -17,9 +17,8 @@ from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
 from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
-from servicebus_preparer import (
-    CachedServiceBusNamespacePreparer,
-    ServiceBusNamespacePreparer
+from sb_new_preparer import (
+    ServiceBusPreparer
 )
 
 from mgmt_test_utilities_async import async_pageable_to_list, clear_topics
@@ -27,12 +26,11 @@ from mgmt_test_utilities_async import async_pageable_to_list, clear_topics
 _logger = get_logger(logging.DEBUG)
 
 
-class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtRecordedTestCase):
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+class TestServiceBusAdministrationClientTopicAsync(AzureMgmtRecordedTestCase):
+    @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_topic_create_by_name(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+    async def test_async_mgmt_topic_create_by_name(self, servicebus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_topics(mgmt_service)
         topic_name = "topic_testaddf"
 
@@ -45,11 +43,10 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtRecordedTestCase):
         finally:
             await mgmt_service.delete_topic(topic_name)
 
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_topic_create_with_topic_description(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+    async def test_async_mgmt_topic_create_with_topic_description(self, servicebus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_topics(mgmt_service)
         topic_name = "iweidk"
         topic_name_2 = "dkozq"
@@ -105,10 +102,10 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtRecordedTestCase):
             await mgmt_service.delete_topic(topic_name)
             await mgmt_service.delete_topic(topic_name_2)
 
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest', sku='Premium')
-    async def test_async_mgmt_topic_premium_create_with_topic_description(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+    @ServiceBusPreparer()
+    @recorded_by_proxy_async
+    async def test_async_mgmt_topic_premium_create_with_topic_description(self, servicebus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_topics(mgmt_service)
         topic_name = "iweidk"
         topic_name_2 = "dkozq"
@@ -170,11 +167,10 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtRecordedTestCase):
             await mgmt_service.delete_topic(topic_name)
             await mgmt_service.delete_topic(topic_name_2)
 
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_topic_create_duplicate(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+    async def test_async_mgmt_topic_create_duplicate(self, servicebus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_topics(mgmt_service)
         topic_name = "dqkodq"
         try:
@@ -184,11 +180,10 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtRecordedTestCase):
         finally:
             await mgmt_service.delete_topic(topic_name)
 
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_topic_update_success(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+    async def test_async_mgmt_topic_update_success(self, servicebus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_topics(mgmt_service)
         topic_name = "fjrui"
         try:
@@ -264,11 +259,10 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtRecordedTestCase):
             await mgmt_service.delete_topic(topic_name)
             await mgmt_service.close()
 
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_topic_update_invalid(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+    async def test_async_mgmt_topic_update_invalid(self, servicebus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_topics(mgmt_service)
         topic_name = "dfjfj"
         try:
@@ -302,11 +296,10 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtRecordedTestCase):
         finally:
             await mgmt_service.delete_topic(topic_name)
 
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_topic_delete(self, servicebus_namespace_connection_string):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+    async def test_async_mgmt_topic_delete(self, servicebus_connection_str):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_topics(mgmt_service)
         await mgmt_service.create_topic('test_topic')
         topics = await async_pageable_to_list(mgmt_service.list_topics())
@@ -328,11 +321,10 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtRecordedTestCase):
         topics = await async_pageable_to_list(mgmt_service.list_topics())
         assert len(topics) == 0
 
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_topic_list(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+    async def test_async_mgmt_topic_list(self, servicebus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_topics(mgmt_service)
         topics = await async_pageable_to_list(mgmt_service.list_topics())
         assert len(topics) == 0
@@ -347,11 +339,10 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtRecordedTestCase):
         topics = await async_pageable_to_list(mgmt_service.list_topics())
         assert len(topics) == 0
 
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_topic_list_runtime_properties(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+    async def test_async_mgmt_topic_list_runtime_properties(self, servicebus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_topics(mgmt_service)
         topics = await async_pageable_to_list(mgmt_service.list_topics())
         topics_infos = await async_pageable_to_list(mgmt_service.list_topics_runtime_properties())
@@ -379,11 +370,10 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtRecordedTestCase):
         topics_infos = await async_pageable_to_list(mgmt_service.list_topics_runtime_properties())
         assert len(topics_infos) == 0
 
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_topic_get_runtime_properties_basic(self, servicebus_namespace_connection_string):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+    async def test_async_mgmt_topic_get_runtime_properties_basic(self, servicebus_connection_str):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_topics(mgmt_service)
         await mgmt_service.create_topic("test_topic")
         try:
@@ -400,11 +390,10 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtRecordedTestCase):
         finally:
             await mgmt_service.delete_topic("test_topic")
 
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_mgmt_topic_async_update_dict_success(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+    async def test_mgmt_topic_async_update_dict_success(self, servicebus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_topics(mgmt_service)
         topic_name = "fjruid"
 
@@ -472,11 +461,10 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtRecordedTestCase):
             await mgmt_service.delete_topic(topic_name)
             await mgmt_service.close()
 
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_mgmt_topic_async_update_dict_error(self, servicebus_namespace_connection_string, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string)
+    async def test_mgmt_topic_async_update_dict_error(self, servicebus_connection_str, **kwargs):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
         await clear_topics(mgmt_service)
         topic_name = "fjruid"
         try:
@@ -488,12 +476,11 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtRecordedTestCase):
         finally:
             await mgmt_service.delete_topic(topic_name)
 
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusPreparer()
     @recorded_by_proxy_async
-    async def test_async_mgmt_topic_basic_v2017_04(self, servicebus_namespace_connection_string, servicebus_namespace,
-                                    servicebus_namespace_key_name, servicebus_namespace_primary_key):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_namespace_connection_string, api_version=ApiVersion.V2017_04)
+    async def test_async_mgmt_topic_basic_v2017_04(self, servicebus_connection_str, servicebus_fully_qualified_namespace,
+                                    servicebus_fully_qualified_namespace_key_name, servicebus_fully_qualified_namespace_primary_key):
+        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str, api_version=ApiVersion.V2017_04)
         await clear_topics(mgmt_service)
 
         await mgmt_service.create_topic("test_topic")
@@ -508,10 +495,10 @@ class ServiceBusAdministrationClientTopicAsyncTests(AzureMgmtRecordedTestCase):
         with pytest.raises(HttpResponseError):
             await mgmt_service.create_topic("topic_can_not_be_created", max_message_size_in_kilobytes=1024)
 
-        fully_qualified_namespace = servicebus_namespace.name + '.servicebus.windows.net'
+        fully_qualified_namespace = servicebus_fully_qualified_namespace.name + '.servicebus.windows.net'
         mgmt_service = ServiceBusAdministrationClient(
             fully_qualified_namespace,
-            credential=ServiceBusSharedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key),
+            credential=ServiceBusSharedKeyCredential(servicebus_fully_qualified_namespace_key_name, servicebus_fully_qualified_namespace_primary_key),
             api_version=ApiVersion.V2017_04
         )
 
