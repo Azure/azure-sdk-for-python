@@ -38,7 +38,7 @@ Several DataLake Storage Python SDK samples are available to you in the SDK's Gi
     * Delete file system
 
 ## Prerequisites
-* Python 2.7, or 3.5 or later is required to use this package
+* Python 3.6 later is required to use this package
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
 [Azure storage account](https://docs.microsoft.com/azure/storage/blobs/data-lake-storage-quickstart-create-account) to run these samples.
 

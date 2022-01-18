@@ -27,6 +27,7 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: servicebus
+    TestProxy: true
     MatrixFilters:
       - PythonVersion=^(?!pypy3).*
     Artifacts:

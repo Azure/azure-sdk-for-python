@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class ResourceSkuCapacityScaleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceSkuCapacityScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The scale type applicable to the sku.
     """
 
@@ -34,14 +19,14 @@ class ResourceSkuCapacityScaleType(with_metaclass(_CaseInsensitiveEnumMeta, str,
     MANUAL = "Manual"
     NONE = "None"
 
-class ResourceSkuRestrictionsReasonCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceSkuRestrictionsReasonCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The reason for restriction.
     """
 
     QUOTA_ID = "QuotaId"
     NOT_AVAILABLE_FOR_SUBSCRIPTION = "NotAvailableForSubscription"
 
-class ResourceSkuRestrictionsType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceSkuRestrictionsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of restrictions.
     """
 

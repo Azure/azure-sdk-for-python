@@ -205,6 +205,7 @@ class ClientBaseAsync(ClientBase):
                 custom_endpoint_hostname=self._config.custom_endpoint_hostname,
                 port=self._config.connection_port,
                 verify=self._config.connection_verify,
+                refresh_window=300,
             )
             await auth.update_token()
             return auth

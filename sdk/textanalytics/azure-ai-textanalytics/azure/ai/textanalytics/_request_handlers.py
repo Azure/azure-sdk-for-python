@@ -1,11 +1,9 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
 
 
-import six
 from ._generated.models import (
     EntitiesTask,
     PiiTask,
@@ -35,13 +33,13 @@ def _validate_input(documents, hint, whole_input_hint):
     if not documents:
         raise ValueError("Input documents can not be empty or None")
 
-    if isinstance(documents, six.string_types):
+    if isinstance(documents, str):
         raise TypeError("Input documents cannot be a string.")
 
     if isinstance(documents, dict):
         raise TypeError("Input documents cannot be a dict")
 
-    if not all(isinstance(x, six.string_types) for x in documents):
+    if not all(isinstance(x, str) for x in documents):
         if not all(
             isinstance(x, (dict, TextDocumentInput, DetectLanguageInput))
             for x in documents
@@ -52,7 +50,7 @@ def _validate_input(documents, hint, whole_input_hint):
 
     request_batch = []
     for idx, doc in enumerate(documents):
-        if isinstance(doc, six.string_types):
+        if isinstance(doc, str):
             if hint == "country_hint" and whole_input_hint.lower() == "none":
                 whole_input_hint = ""
             document = {"id": str(idx), hint: whole_input_hint, "text": doc}
