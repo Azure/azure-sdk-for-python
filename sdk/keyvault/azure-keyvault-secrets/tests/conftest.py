@@ -27,6 +27,7 @@ import os
 import platform
 import pytest
 import sys
+<<<<<<< HEAD
 from unittest import mock
 from devtools_testutils import (
     is_live, 
@@ -34,6 +35,8 @@ from devtools_testutils import (
     add_oauth_response_sanitizer, 
     add_general_regex_sanitizer
 )
+=======
+>>>>>>> e3f3ed54ff (Adding in conftest)
 
 
 #from devtools_testutils import test_proxy, add_general_regex_sanitizer
@@ -41,6 +44,7 @@ from devtools_testutils import (
 # Ignore async tests for Python < 3.5
 collect_ignore_glob = []
 if sys.version_info < (3, 5) or platform.python_implementation() == "PyPy":
+<<<<<<< HEAD
     collect_ignore_glob.append("*_async.py")
 
 @pytest.fixture(scope="session", autouse=True)
@@ -75,3 +79,6 @@ def patch_sleep():
         yield mock.patch("time.sleep", immediate_return)
 
     yield
+=======
+    collect_ignore_glob.append("*_async.py")
+>>>>>>> e3f3ed54ff (Adding in conftest)
