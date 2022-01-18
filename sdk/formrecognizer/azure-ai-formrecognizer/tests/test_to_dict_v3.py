@@ -41,6 +41,20 @@ class TestToDict(FormRecognizerTest):
         }
         assert d == final
 
+    # TODO consider adding a currency field example when converting an AnalyzedDocument
+    def test_currency_value_to_dict(self):
+        model = _models.CurrencyValue(
+            amount=5.01,
+            symbol="$",
+        )
+
+        d = model.to_dict()
+        final = {
+            "amount": 5.01,
+            "symbol": "$",
+        }
+        assert d == final
+
     def test_document_content_element_to_dict(self):
         model = _models.DocumentContentElement(
             content="sample",
