@@ -1,14 +1,14 @@
 # Release History
 
-## 1.0.0b8 (Unreleased)
+## 1.0.0 (2022-01-19)
 
 ### Features Added
 
+- Supported passing the rest api version via `ContainerRegistryClient`.
+
 ### Breaking Changes
 
-### Bugs Fixed
-
-### Other Changes
+- Renamed the property `size` of `ArtifactManifestProperties` to `size_in_bytes`.
 
 ## 1.0.0b7 (2021-11-19)
 
