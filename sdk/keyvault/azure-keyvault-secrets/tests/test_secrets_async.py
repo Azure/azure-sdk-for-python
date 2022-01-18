@@ -31,7 +31,7 @@ class MockHandler(logging.Handler):
         self.messages.append(record)
 
 
-class KeyVaultSecretTest(SecretsTestCase, KeyVaultTestCase):
+class TestKeyVaultSecret(SecretsTestCase, KeyVaultTestCase):
     def _assert_secret_attributes_equal(self, s1, s2):
         assert s1.name == s2.name
         assert s1.vault_url == s2.vault_url
