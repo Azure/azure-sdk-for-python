@@ -9,6 +9,7 @@ import pytest
 from _shared.test_case_async import KeyVaultTestCase
 from _test_case import client_setup, get_decorator, SecretsTestCase
 
+from devtools_testutils.aio import recorded_by_proxy_async
 
 all_api_versions = get_decorator(is_async=True)
 
@@ -39,6 +40,8 @@ async def test_create_secret_client():
 class TestExamplesKeyVault(SecretsTestCase, KeyVaultTestCase):
     @all_api_versions()
     @client_setup
+    @recorded_by_proxy_async
+    @pytest.mark.asyncio
     async def test_example_secret_crud_operations(self, client, **kwargs):
         secret_client = client
         secret_name = self.get_resource_name("secret-name")
@@ -100,6 +103,8 @@ class TestExamplesKeyVault(SecretsTestCase, KeyVaultTestCase):
 
     @all_api_versions()
     @client_setup
+    @recorded_by_proxy_async
+    @pytest.mark.asyncio
     async def test_example_secret_list_operations(self, client, **kwargs):
         secret_client = client
 
@@ -144,6 +149,8 @@ class TestExamplesKeyVault(SecretsTestCase, KeyVaultTestCase):
 
     @all_api_versions()
     @client_setup
+    @recorded_by_proxy_async
+    @pytest.mark.asyncio
     async def test_example_secrets_backup_restore(self, client, **kwargs):
         secret_client = client
         secret_name = self.get_resource_name("secret-name")
@@ -171,6 +178,8 @@ class TestExamplesKeyVault(SecretsTestCase, KeyVaultTestCase):
 
     @all_api_versions()
     @client_setup
+    @recorded_by_proxy_async
+    @pytest.mark.asyncio
     async def test_example_secrets_recover(self, client, **kwargs):
         secret_client = client
         secret_name = self.get_resource_name("secret-name")

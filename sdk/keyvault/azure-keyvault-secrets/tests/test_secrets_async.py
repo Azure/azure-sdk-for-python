@@ -15,6 +15,9 @@ from dateutil import parser as date_parse
 from _shared.test_case_async import KeyVaultTestCase
 from _test_case import client_setup, get_decorator, SecretsTestCase
 
+from devtools_testutils.aio import recorded_by_proxy_async
+import pytest
+
 
 all_api_versions = get_decorator(is_async=True)
 logging_enabled = get_decorator(is_async=True, logging_enable=True)
@@ -63,6 +66,8 @@ class TestKeyVaultSecret(SecretsTestCase, KeyVaultTestCase):
 
     @all_api_versions()
     @client_setup
+    @recorded_by_proxy_async
+    @pytest.mark.asyncio
     async def test_secret_crud_operations(self, client, **kwargs):
         secret_name = self.get_resource_name("crud-secret")
         secret_value = "crud_secret_value"
@@ -125,6 +130,8 @@ class TestKeyVaultSecret(SecretsTestCase, KeyVaultTestCase):
 
     @all_api_versions()
     @client_setup
+    @recorded_by_proxy_async
+    @pytest.mark.asyncio
     async def test_secret_list(self, client, **kwargs):
         max_secrets = self.list_test_size
         expected = {}
@@ -144,6 +151,8 @@ class TestKeyVaultSecret(SecretsTestCase, KeyVaultTestCase):
 
     @all_api_versions()
     @client_setup
+    @recorded_by_proxy_async
+    @pytest.mark.asyncio
     async def test_list_deleted_secrets(self, client, **kwargs):
         expected = {}
 
@@ -168,6 +177,8 @@ class TestKeyVaultSecret(SecretsTestCase, KeyVaultTestCase):
 
     @all_api_versions()
     @client_setup
+    @recorded_by_proxy_async
+    @pytest.mark.asyncio
     async def test_list_versions(self, client, **kwargs):
         secret_name = self.get_resource_name("sec")
         secret_value = "secVal"
@@ -195,6 +206,8 @@ class TestKeyVaultSecret(SecretsTestCase, KeyVaultTestCase):
 
     @all_api_versions()
     @client_setup
+    @recorded_by_proxy_async
+    @pytest.mark.asyncio
     async def test_backup_restore(self, client, **kwargs):
         secret_name = self.get_resource_name("secbak")
         secret_value = "secVal"
@@ -219,6 +232,8 @@ class TestKeyVaultSecret(SecretsTestCase, KeyVaultTestCase):
 
     @all_api_versions()
     @client_setup
+    @recorded_by_proxy_async
+    @pytest.mark.asyncio
     async def test_recover(self, client, **kwargs):
         secrets = {}
 
@@ -249,6 +264,8 @@ class TestKeyVaultSecret(SecretsTestCase, KeyVaultTestCase):
 
     @all_api_versions()
     @client_setup
+    @recorded_by_proxy_async
+    @pytest.mark.asyncio
     async def test_purge(self, client, **kwargs):
         secrets = {}
 
@@ -274,6 +291,8 @@ class TestKeyVaultSecret(SecretsTestCase, KeyVaultTestCase):
 
     @logging_enabled()
     @client_setup
+    @recorded_by_proxy_async
+    @pytest.mark.asyncio
     async def test_logging_enabled(self, client, **kwargs):
         mock_handler = MockHandler()
 
@@ -307,6 +326,8 @@ class TestKeyVaultSecret(SecretsTestCase, KeyVaultTestCase):
 
     @logging_disabled()
     @client_setup
+    @recorded_by_proxy_async
+    @pytest.mark.asyncio
     async def test_logging_disabled(self, client, **kwargs):
         mock_handler = MockHandler()
 
