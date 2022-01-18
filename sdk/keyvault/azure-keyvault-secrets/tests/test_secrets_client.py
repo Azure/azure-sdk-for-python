@@ -15,6 +15,7 @@ from azure.keyvault.secrets import SecretClient
 from _shared.test_case import KeyVaultTestCase
 from _test_case import client_setup, get_decorator, SecretsTestCase
 
+from devtools_testutils import recorded_by_proxy
 
 all_api_versions = get_decorator()
 logging_enabled = get_decorator(logging_enable=True)
@@ -61,8 +62,10 @@ class TestSecretClient(SecretsTestCase, KeyVaultTestCase):
                 del expected[secret.name]
         assert len(expected) == 0
 
+    
     @all_api_versions()
     @client_setup
+    @recorded_by_proxy
     def test_secret_crud_operations(self, client, **kwargs):
         secret_name = self.get_resource_name("crud-secret")
         secret_value = "crud_secret_value"
@@ -131,6 +134,7 @@ class TestSecretClient(SecretsTestCase, KeyVaultTestCase):
 
     @all_api_versions()
     @client_setup
+    @recorded_by_proxy
     def test_secret_list(self, client, **kwargs):
         max_secrets = self.list_test_size
         expected = {}
@@ -150,6 +154,7 @@ class TestSecretClient(SecretsTestCase, KeyVaultTestCase):
 
     @all_api_versions()
     @client_setup
+    @recorded_by_proxy
     def test_list_versions(self, client, **kwargs):
         secret_name = self.get_resource_name("secVer")
         secret_value = "secVal"
@@ -176,6 +181,7 @@ class TestSecretClient(SecretsTestCase, KeyVaultTestCase):
 
     @all_api_versions()
     @client_setup
+    @recorded_by_proxy
     def test_list_deleted_secrets(self, client, **kwargs):
         expected = {}
 
@@ -200,6 +206,7 @@ class TestSecretClient(SecretsTestCase, KeyVaultTestCase):
 
     @all_api_versions()
     @client_setup
+    @recorded_by_proxy
     def test_backup_restore(self, client, **kwargs):
         secret_name = self.get_resource_name("secbak")
         secret_value = "secVal"
@@ -221,8 +228,10 @@ class TestSecretClient(SecretsTestCase, KeyVaultTestCase):
         restore_function = functools.partial(client.restore_secret_backup, secret_backup)
         restored_secret = self._poll_until_no_exception(restore_function, ResourceExistsError)
         self._assert_secret_attributes_equal(created_bundle.properties, restored_secret)
+
     @all_api_versions()
     @client_setup
+    @recorded_by_proxy
     def test_recover(self, client, **kwargs):
         secrets = {}
 
@@ -251,6 +260,7 @@ class TestSecretClient(SecretsTestCase, KeyVaultTestCase):
 
     @all_api_versions()
     @client_setup
+    @recorded_by_proxy
     def test_purge(self, client, **kwargs):
         secrets = {}
 
@@ -279,6 +289,7 @@ class TestSecretClient(SecretsTestCase, KeyVaultTestCase):
 
     @logging_enabled()
     @client_setup
+    @recorded_by_proxy
     def test_logging_enabled(self, client, **kwargs):
         mock_handler = MockHandler()
 
@@ -312,6 +323,7 @@ class TestSecretClient(SecretsTestCase, KeyVaultTestCase):
 
     @logging_disabled()
     @client_setup
+    @recorded_by_proxy
     def test_logging_disabled(self, client, **kwargs):
         mock_handler = MockHandler()
 
