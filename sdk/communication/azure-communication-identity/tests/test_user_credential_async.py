@@ -156,13 +156,15 @@ class TestCommunicationTokenCredential(TestCase):
 
     @pytest.mark.asyncio
     async def test_proactive_refresher_keeps_scheduling_again(self):
-        refresh_seconds = 10 * 60
+        refresh_minutes = 10
+        token_validity_minutes = 60
         expired_token = generate_token_with_custom_expiry(-5 * 60)
-        skip_to_timestamp = get_current_utc_as_int() + refresh_seconds + 4
+        skip_to_timestamp = get_current_utc_as_int() + (token_validity_minutes -
+                                                        refresh_minutes) * 60 + 1
         first_refreshed_token = create_access_token(
-            generate_token_with_custom_expiry(4))
+            generate_token_with_custom_expiry(token_validity_minutes * 60))
         last_refreshed_token = create_access_token(
-            generate_token_with_custom_expiry(10 * 60))
+            generate_token_with_custom_expiry(2 * token_validity_minutes * 60))
         refresher = MagicMock(
             side_effect=[get_completed_future(first_refreshed_token), get_completed_future(last_refreshed_token)])
 
