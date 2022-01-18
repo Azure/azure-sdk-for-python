@@ -7,7 +7,7 @@ import functools
 from azure.keyvault.secrets import ApiVersion
 from azure.keyvault.secrets._shared import HttpChallengeCache
 from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
 from parameterized import parameterized, param
 import pytest
 
@@ -41,7 +41,7 @@ def suffixed_test_name(testcase_func, param_num, param):
     return "{}_{}".format(testcase_func.__name__, parameterized.to_safe_name(param.kwargs.get("api_version")))
 
 
-class SecretsTestCase(AzureTestCase):
+class SecretsTestCase(AzureRecordedTestCase):
     def tearDown(self):
         HttpChallengeCache.clear()
         assert len(HttpChallengeCache._cache) == 0

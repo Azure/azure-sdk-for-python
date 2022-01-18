@@ -5,16 +5,16 @@
 import time
 
 from azure_devtools.scenario_tests.patches import patch_time_sleep_api
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
 
 
-class KeyVaultTestCase(AzureTestCase):
-    def __init__(self, *args, **kwargs):
-        if "match_body" not in kwargs:
-            kwargs["match_body"] = True
+class KeyVaultTestCase(AzureRecordedTestCase):
+    # def __init__(self, *args, **kwargs):
+    #     if "match_body" not in kwargs:
+    #         kwargs["match_body"] = True
 
-        super(KeyVaultTestCase, self).__init__(*args, **kwargs)
-        self.replay_patches.append(patch_time_sleep_api)
+    #     super(KeyVaultTestCase, self).__init__(*args, **kwargs)
+    #     self.replay_patches.append(patch_time_sleep_api)
 
     def setUp(self):
         self.list_test_size = 7
