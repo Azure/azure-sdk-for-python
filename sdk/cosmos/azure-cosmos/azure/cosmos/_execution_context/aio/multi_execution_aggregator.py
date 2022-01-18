@@ -130,11 +130,6 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
 
                 self._orderByPQ.push(targetQueryExContext)
 
-            except exceptions.CosmosHttpResponseError as e:
-                if document_producer.partition_range_is_gone(e):
-                    # error shouldn't bubble up all the way up here, but we raise to make sure we retry if it does
-                    raise
-
             except StopAsyncIteration:
                 continue
 

@@ -121,14 +121,8 @@ class _QueryExecutionContextBase(object):
                 self._has_started = True
             new_options = copy.deepcopy(self._options)
             new_options["continuation"] = self._continuation
-            try:
-                (fetched_items, response_headers) = await fetch_function(new_options)
-            except exceptions.CosmosHttpResponseError as e:
-                if e.status_code == http_constants.StatusCodes.GONE:
-                    # error comes here from fetch function in document producer
-                    # raise error to rebuild context within multi_execution_aggregator on partition split
-                    raise
-                (fetched_items, response_headers) = await fetch_function(new_options)
+
+            (fetched_items, response_headers) = await fetch_function(new_options)
             continuation_key = http_constants.HttpHeaders.Continuation
             # Use Etag as continuation token for change feed queries.
             if self._is_change_feed:
