@@ -2444,12 +2444,13 @@ class DocumentField(object):
 
     :ivar str value_type: The type of `value` found on DocumentField. Possible types include:
      "string", "date", "time", "phoneNumber", "float", "integer", "selectionMark", "countryRegion",
-     "signature", "list", "dictionary".
+     "signature", "currency", "list", "dictionary".
     :ivar value:
         The value for the recognized field. Its semantic data type is described by `value_type`.
         If the value is extracted from the document, but cannot be normalized to its type,
         then access the `content` property for a textual representation of the value.
     :vartype value: str, int, float, :class:`~datetime.date`, :class:`~datetime.time`,
+        :class:`~azure.ai.formrecognizer.CurrencyValue`,
         dict[str, :class:`~azure.ai.formrecognizer.DocumentField`],
         or list[:class:`~azure.ai.formrecognizer.DocumentField`]
     :ivar content: The field's content.
