@@ -8,17 +8,16 @@
 import unittest
 
 from azure.core.exceptions import ResourceExistsError
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 from _aio_testcase import AzureMgmtAsyncTestCase
 
 
 AZURE_LOCATION = 'eastus'
 
-class MgmtComputeTest(AzureMgmtAsyncTestCase):
+class TestMgmtCompute(AzureMgmtAsyncTestCase):
 
-    def setUp(self):
-        super(MgmtComputeTest, self).setUp()
+    def setup_method(self, method):
         from azure.mgmt.compute.aio import ComputeManagementClient
         self.mgmt_client = self.create_mgmt_aio_client(
             ComputeManagementClient
@@ -74,6 +73,7 @@ class MgmtComputeTest(AzureMgmtAsyncTestCase):
 
     @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_compute_vm(self, resource_group):
 
         SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID

@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -45,9 +44,9 @@ class TestHealth(TextAnalyticsTest):
     @recorded_by_proxy_async
     async def test_passing_only_string(self, client):
         docs = [
-            u"Patient does not suffer from high blood pressure.",
-            u"Prescribed 100mg ibuprofen, taken twice daily.",
-            u""
+            "Patient does not suffer from high blood pressure.",
+            "Prescribed 100mg ibuprofen, taken twice daily.",
+            ""
         ]
 
         async with client:
