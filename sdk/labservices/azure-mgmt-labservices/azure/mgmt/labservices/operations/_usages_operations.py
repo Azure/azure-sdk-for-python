@@ -19,24 +19,36 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from msrest import Serializer
 
 from .. import models as _models
-from .._vendor import _convert_request
+from .._vendor import _convert_request, _format_url_section
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
-def build_list_request(
+def build_list_by_location_request(
+    subscription_id: str,
+    location: str,
+    *,
+    filter: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = "2021-11-15-preview"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/providers/Microsoft.LabServices/operations')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/providers/Microsoft.LabServices/locations/{location}/usages')
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
+        "location": _SERIALIZER.url("location", location, 'str', max_length=100, min_length=1, pattern=r'^[-\w\._]+$'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    if filter is not None:
+        query_parameters['$filter'] = _SERIALIZER.query("filter", filter, 'str')
 
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -50,8 +62,8 @@ def build_list_request(
         **kwargs
     )
 
-class Operations(object):
-    """Operations operations.
+class UsagesOperations(object):
+    """UsagesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -73,20 +85,26 @@ class Operations(object):
         self._config = config
 
     @distributed_trace
-    def list(
+    def list_by_location(
         self,
+        location: str,
+        filter: Optional[str] = None,
         **kwargs: Any
-    ) -> Iterable["_models.OperationListResult"]:
-        """Get all operations.
+    ) -> Iterable["_models.ListUsagesResult"]:
+        """Gets the list of usages.
 
-        Returns a list of all operations.
+        Returns list of usage per SKU family for the specified subscription in the specified region.
 
+        :param location: The location name.
+        :type location: str
+        :param filter: The filter to apply to the operation.
+        :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either OperationListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.labservices.models.OperationListResult]
+        :return: An iterator like instance of either ListUsagesResult or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.labservices.models.ListUsagesResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ListUsagesResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -94,15 +112,21 @@ class Operations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_request(
-                    template_url=self.list.metadata['url'],
+                request = build_list_by_location_request(
+                    subscription_id=self._config.subscription_id,
+                    location=location,
+                    filter=filter,
+                    template_url=self.list_by_location.metadata['url'],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
                 
-                request = build_list_request(
+                request = build_list_by_location_request(
+                    subscription_id=self._config.subscription_id,
+                    location=location,
+                    filter=filter,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -111,7 +135,7 @@ class Operations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("OperationListResult", pipeline_response)
+            deserialized = self._deserialize("ListUsagesResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -134,4 +158,4 @@ class Operations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/providers/Microsoft.LabServices/operations'}  # type: ignore
+    list_by_location.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.LabServices/locations/{location}/usages'}  # type: ignore
