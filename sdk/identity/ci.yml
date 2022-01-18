@@ -30,12 +30,6 @@ extends:
   parameters:
     ServiceDirectory: identity
     TestProxy: true
-    # Override the base matrix due to https://github.com/Azure/azure-sdk-for-python/issues/17837
-    MatrixConfigs:
-      - Name: identity_ci_matrix
-        Path: sdk/identity/platform-matrix.json
-        Selection: sparse
-        GenerateVMJobs: true
     Artifacts:
      - name: azure-identity
        safeName: azureidentity
