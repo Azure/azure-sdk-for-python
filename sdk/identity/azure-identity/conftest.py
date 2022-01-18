@@ -7,6 +7,7 @@ import sys
 
 import pytest
 import six
+from devtools_testutils import test_proxy, add_general_regex_sanitizer
 from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID, EnvironmentVariables
 
 RECORD_IMDS = "--record-imds"
@@ -159,3 +160,28 @@ def event_loop():
 
     yield loop
     loop.close()
+
+@pytest.fixture(scope="session", autouse=True)
+def add_sanitizers(test_proxy):
+    if EnvironmentVariables.MSI_ENDPOINT in os.environ:
+        url = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
+        PLAYBACK_URL = "https://msi-endpoint/token"
+        add_general_regex_sanitizer(regex=url, value=PLAYBACK_URL)
+    if "USER_ASSIGNED_IDENTITY_CLIENT_ID" in os.environ:
+        PLAYBACK_CLIENT_ID = "client-id"
+        user_assigned_identity_client_id = os.environ.get("USER_ASSIGNED_IDENTITY_CLIENT_ID")
+        add_general_regex_sanitizer(regex=user_assigned_identity_client_id, value=PLAYBACK_CLIENT_ID)
+    if "CAE_ARM_URL" in os.environ and "CAE_TENANT_ID" in os.environ and "CAE_USERNAME" in os.environ:
+        try:
+            from six.moves.urllib_parse import urlparse
+            arm_url = os.environ["CAE_ARM_URL"]
+            real = urlparse(arm_url)
+            add_general_regex_sanitizer(regex=real.netloc, value="management.azure.com")
+            add_general_regex_sanitizer(regex=os.environ["CAE_TENANT_ID"], value="tenant")
+            add_general_regex_sanitizer(regex=os.environ.get("CAE_USERNAME"), value="username")
+        except Exception:
+            pass
+    if "OBO_TENANT_ID" in os.environ and "OBO_USERNAME" in os.environ:
+        add_general_regex_sanitizer(regex=os.environ["OBO_TENANT_ID"], value="tenant")
+        add_general_regex_sanitizer(regex=os.environ["OBO_USERNAME"], value="username")
+

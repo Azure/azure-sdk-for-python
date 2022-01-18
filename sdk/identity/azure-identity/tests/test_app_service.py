@@ -10,6 +10,7 @@ import pytest
 
 from helpers import mock
 from recorded_test_case import RecordedTestCase
+from devtools_testutils import is_live
 
 PLAYBACK_URL = "https://msi-endpoint/token"
 
@@ -18,12 +19,10 @@ class RecordedTests(RecordedTestCase):
     def __init__(self, *args, **kwargs):
         super(RecordedTests, self).__init__(*args, **kwargs)
 
-        if self.is_live:
+        if is_live:
             url = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
             if not (url and EnvironmentVariables.MSI_SECRET in os.environ):
                 pytest.skip("Recording requires values for $MSI_ENDPOINT and $MSI_SECRET")
-            else:
-                self.scrubber.register_name_pair(url, PLAYBACK_URL)
             self.patch = mock.MagicMock()  # no need to patch anything when recording
         else:
             # in playback we need to set environment variables and clear any that would interfere

@@ -18,7 +18,7 @@ from azure.identity import (
 from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID
 from azure.mgmt.resource.subscriptions import SubscriptionClient
 from azure_devtools.scenario_tests import GeneralNameReplacer, RequestUrlNormalizer, patch_time_sleep_api
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase, is_live
 import pytest
 import requests
 from six.moves.urllib_parse import urlparse
@@ -27,17 +27,9 @@ from recording_processors import IdTokenProcessor, RecordingRedactor
 
 
 @pytest.mark.skip("these tests require support in azure-core")
-class CaeTestCase(AzureTestCase):
+class CaeTestCase(AzureRecordedTestCase):
     def __init__(self, *args, **kwargs):
-        scrubber = GeneralNameReplacer()
-        super(CaeTestCase, self).__init__(
-            *args,
-            recording_processors=[RecordingRedactor(record_unique_values=True), scrubber],
-            replay_processors=[RequestUrlNormalizer(), IdTokenProcessor()],
-            **kwargs
-        )
-        self.scrubber = scrubber
-        if self.is_live:
+        if is_live:
             if "CAE_TENANT_ID" not in os.environ:
                 pytest.skip("Missing a tenant ID for CAE tests")
             if "CAE_ARM_URL" not in os.environ:
@@ -52,10 +44,6 @@ class CaeTestCase(AzureTestCase):
                 "tenant_id": os.environ["CAE_TENANT_ID"],
                 "username": os.environ.get("CAE_USERNAME"),
             }
-            real = urlparse(self.cae_settings["arm_url"])
-            self.scrubber.register_name_pair(real.netloc, "management.azure.com")
-            self.scrubber.register_name_pair(self.cae_settings["tenant_id"], "tenant")
-            self.scrubber.register_name_pair(self.cae_settings["username"], "username")
         else:
             self.cae_settings = {
                 "arm_scope": "https://management.azure.com/.default",
@@ -74,7 +62,7 @@ class CaeTestCase(AzureTestCase):
         list(client.subscriptions.list())
         first_token = credential.get_token(self.cae_settings["arm_scope"])
 
-        if self.is_live:
+        if is_live:
             validate_ssm_token(first_token.token)
 
             # revoking sessions revokes access and refresh tokens
@@ -112,7 +100,7 @@ class CaeTestCase(AzureTestCase):
         self.cae_test(credential)
 
     def test_username_password(self):
-        if self.is_live and not ("username" in self.cae_settings and "password" in self.cae_settings):
+        if is_live and not ("username" in self.cae_settings and "password" in self.cae_settings):
             pytest.skip("Missing a username or password for CAE test")
 
         credential = UsernamePasswordCredential(

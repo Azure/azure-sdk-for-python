@@ -8,6 +8,7 @@ from unittest import mock
 from azure.identity.aio._credentials.app_service import AppServiceCredential
 from azure.identity._constants import EnvironmentVariables
 import pytest
+from devtools_testutils import is_live
 
 from helpers_async import await_test
 from recorded_test_case import RecordedTestCase
@@ -18,12 +19,10 @@ class RecordedTests(RecordedTestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        if self.is_live:
+        if is_live:
             url = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
             if not (url and EnvironmentVariables.MSI_SECRET in os.environ):
                 pytest.skip("Recording requires values for $MSI_ENDPOINT and $MSI_SECRET")
-            else:
-                self.scrubber.register_name_pair(url, PLAYBACK_URL)
             self.patch = mock.MagicMock()  # no need to patch anything when recording
         else:
             # in playback we need to set environment variables and clear any that would interfere

@@ -20,13 +20,14 @@ from six.moves.urllib_parse import urlparse
 from helpers import build_aad_response, FAKE_CLIENT_ID, get_discovery_response, mock_response
 from recorded_test_case import RecordedTestCase
 from test_certificate_credential import PEM_CERT_PATH
+from devtools_testutils import is_live
 
 
 class OboRecordedTestCase(RecordedTestCase):
     def __init__(self, *args, **kwargs):
         super(OboRecordedTestCase, self).__init__(*args, **kwargs)
 
-        if self.is_live:
+        if is_live:
             missing_variables = [
                 var
                 for var in (
@@ -52,10 +53,6 @@ class OboRecordedTestCase(RecordedTestCase):
                 "tenant_id": os.environ["OBO_TENANT_ID"],
                 "username": os.environ["OBO_USERNAME"],
             }
-
-            self.scrubber.register_name_pair(self.obo_settings["tenant_id"], "tenant")
-            self.scrubber.register_name_pair(self.obo_settings["username"], "username")
-
         else:
             self.obo_settings = {
                 "cert_bytes": open(PEM_CERT_PATH, "rb").read(),
