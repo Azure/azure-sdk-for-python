@@ -33,30 +33,25 @@ class MockHandler(logging.Handler):
 
 class KeyVaultSecretTest(SecretsTestCase, KeyVaultTestCase):
     def _assert_secret_attributes_equal(self, s1, s2):
-        self.assertEqual(s1.name, s2.name)
-        self.assertEqual(s1.vault_url, s2.vault_url)
-        self.assertEqual(s1.content_type, s2.content_type)
-        self.assertEqual(s1.enabled, s2.enabled)
-        self.assertEqual(s1.not_before, s2.not_before)
-        self.assertEqual(s1.expires_on, s2.expires_on)
-        self.assertEqual(s1.created_on, s2.created_on)
-        self.assertEqual(s1.updated_on, s2.updated_on)
-        self.assertEqual(s1.recovery_level, s2.recovery_level)
-        self.assertEqual(s1.key_id, s2.key_id)
+        assert s1.name == s2.name
+        assert s1.vault_url == s2.vault_url
+        assert s1.content_type == s2.content_type
+        assert s1.enabled == s2.enabled
+        assert s1.not_before == s2.not_before
+        assert s1.expires_on == s2.expires_on
+        assert s1.created_on == s2.created_on
+        assert s1.updated_on == s2.updated_on
+        assert s1.recovery_level == s2.recovery_level
+        assert s1.key_id == s2.key_id
 
     def _validate_secret_bundle(self, secret_attributes, vault, secret_name, secret_value):
         prefix = "/".join(s.strip("/") for s in [vault, "secrets", secret_name])
         id = secret_attributes.id
-        self.assertTrue(id.index(prefix) == 0, "Id should start with '{}', but value is '{}'".format(prefix, id))
-        self.assertEqual(
-            secret_attributes.value,
-            secret_value,
-            "value should be '{}', but is '{}'".format(secret_value, secret_attributes.value),
-        )
-        self.assertTrue(
-            secret_attributes.properties.created_on and secret_attributes.properties.updated_on,
-            "Missing required date attributes.",
-        )
+        assert id.index(prefix) == 0, f"Id should start with '{prefix}', but value is '{id}'"
+        assert secret_attributes.value == secret_value,f"value should be '{secret_value}', but is '{secret_attributes.value}'"
+        
+        assert secret_attributes.properties.created_on and secret_attributes.properties.updated_on,"Missing required date attributes."
+        
 
     async def _validate_secret_list(self, secrets, expected):
         async for secret in secrets:
@@ -64,7 +59,7 @@ class KeyVaultSecretTest(SecretsTestCase, KeyVaultTestCase):
                 expected_secret = expected[secret.name]
                 self._assert_secret_attributes_equal(expected_secret.properties, secret)
                 del expected[secret.name]
-        self.assertEqual(len(expected), 0)
+        assert len(expected) == 0
 
     @all_api_versions()
     @client_setup
@@ -82,18 +77,18 @@ class KeyVaultSecretTest(SecretsTestCase, KeyVaultTestCase):
         tags = {"foo": "created tag"}
         created = await client.set_secret(secret_name, secret_value, enabled=enabled, not_before=not_before, tags=tags)
         self._validate_secret_bundle(created, client.vault_url, secret_name, secret_value)
-        self.assertEqual(enabled, created.properties.enabled)
-        self.assertEqual(not_before, created.properties.not_before)
-        self.assertEqual(tags, created.properties.tags)
+        assert enabled == created.properties.enabled
+        assert not_before == created.properties.not_before
+        assert tags == created.properties.tags
 
         # get secret without version
         retrieved_secret = await client.get_secret(created.name, "")
-        self.assertEqual(created.id, retrieved_secret.id)
+        assert created.id == retrieved_secret.id
         self._assert_secret_attributes_equal(created.properties, retrieved_secret.properties)
 
         # get secret with version
         secret_with_version = await client.get_secret(created.name, created.properties.version)
-        self.assertEqual(created.id, retrieved_secret.id)
+        assert created.id == retrieved_secret.id
         self._assert_secret_attributes_equal(created.properties, secret_with_version.properties)
 
         async def _update_secret(secret):
@@ -109,12 +104,12 @@ class KeyVaultSecretTest(SecretsTestCase, KeyVaultTestCase):
                 tags=tags,
                 enabled=enabled,
             )
-            self.assertEqual(tags, updated_secret.tags)
-            self.assertEqual(secret.id, updated_secret.id)
-            self.assertEqual(content_type, updated_secret.content_type)
-            self.assertEqual(expires, updated_secret.expires_on)
-            self.assertNotEqual(secret.properties.enabled, updated_secret.enabled)
-            self.assertNotEqual(secret.properties.updated_on, updated_secret.updated_on)
+            assert tags == updated_secret.tags
+            assert secret.id == updated_secret.id
+            assert content_type == updated_secret.content_type
+            assert expires == updated_secret.expires_on
+            assert secret.properties.enabled != updated_secret.enabled
+            assert secret.properties.updated_on != updated_secret.updated_on
             return updated_secret
 
         # update secret with version
@@ -126,7 +121,7 @@ class KeyVaultSecretTest(SecretsTestCase, KeyVaultTestCase):
 
         # delete secret
         deleted = await client.delete_secret(updated.name)
-        self.assertIsNotNone(deleted)
+        assert deleted is not None
 
     @all_api_versions()
     @client_setup
@@ -164,9 +159,9 @@ class KeyVaultSecretTest(SecretsTestCase, KeyVaultTestCase):
 
         # validate list deleted secrets with attributes
         async for deleted_secret in client.list_deleted_secrets():
-            self.assertIsNotNone(deleted_secret.deleted_date)
-            self.assertIsNotNone(deleted_secret.scheduled_purge_date)
-            self.assertIsNotNone(deleted_secret.recovery_id)
+            assert deleted_secret.deleted_date is not None
+            assert deleted_secret.scheduled_purge_date is not None
+            assert deleted_secret.recovery_id is not None
             if deleted_secret.name in expected:
                 expected_secret = expected[deleted_secret.name]
                 self._assert_secret_attributes_equal(expected_secret.properties, deleted_secret.properties)
@@ -196,7 +191,7 @@ class KeyVaultSecretTest(SecretsTestCase, KeyVaultTestCase):
                 expected_secret = expected[secret.id]
                 del expected[secret.id]
                 self._assert_secret_attributes_equal(expected_secret.properties, secret)
-        self.assertEqual(len(expected), 0)
+        assert len(expected) == 0
 
     @all_api_versions()
     @client_setup
@@ -209,7 +204,7 @@ class KeyVaultSecretTest(SecretsTestCase, KeyVaultTestCase):
 
         # backup secret
         secret_backup = await client.backup_secret(created_bundle.name)
-        self.assertIsNotNone(secret_backup, "secret_backup")
+        assert secret_backup is not None, "secret_backup"
 
         # delete secret
         await client.delete_secret(created_bundle.name)
