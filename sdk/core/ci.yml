@@ -31,11 +31,6 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: core
-    MatrixConfigs:
-      - Name: core_ci_matrix
-        Path: sdk/core/platform-matrix.json
-        Selection: sparse
-        GenerateVMJobs: true
     Artifacts:
     - name: azure-core
       safeName: azurecore
