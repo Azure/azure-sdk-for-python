@@ -10,7 +10,7 @@ import functools
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
-from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import GetOperationResponse, ModelInfo
+from azure.ai.formrecognizer._generated.v2022_01_30_preview.models import GetOperationResponse, ModelInfo
 from azure.ai.formrecognizer._models import CustomFormModel, DocumentModel
 from azure.ai.formrecognizer import DocumentModelAdministrationClient, _models
 from testcase import FormRecognizerTest
@@ -19,7 +19,7 @@ from preparers import FormRecognizerPreparer
 
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
-
+@pytest.mark.skip()
 class TestDMACTraining(FormRecognizerTest):
 
     @FormRecognizerPreparer()

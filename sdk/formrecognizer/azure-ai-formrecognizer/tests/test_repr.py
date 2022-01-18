@@ -438,9 +438,9 @@ class TestRepr():
         assert repr(model) == model_repr
 
     def test_analyze_result(self, document_page, document_table, document_key_value_pair, document_entity, document_style, analyzed_document):
-        model = _models.AnalyzeResult(api_version="2021-09-30-preview", model_id="mymodel", content="document content", pages=[document_page[0]], tables=[document_table[0]], key_value_pairs=[document_key_value_pair[0]], entities=[document_entity[0]], styles=[document_style[0]], documents=[analyzed_document[0]])
+        model = _models.AnalyzeResult(api_version="2022-01-30-preview", model_id="mymodel", content="document content", pages=[document_page[0]], tables=[document_table[0]], key_value_pairs=[document_key_value_pair[0]], entities=[document_entity[0]], styles=[document_style[0]], documents=[analyzed_document[0]])
         model_repr = "AnalyzeResult(api_version={}, model_id={}, content={}, pages=[{}], tables=[{}], key_value_pairs=[{}], entities=[{}], styles=[{}], documents=[{}])".format(
-                "2021-09-30-preview",
+                "2022-01-30-preview",
                 "mymodel",
                 "document content",
                 document_page[1],

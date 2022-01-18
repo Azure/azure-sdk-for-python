@@ -27,6 +27,7 @@ from ._polling import (
 from ._form_base_client import FormRecognizerClientBase
 from ._document_analysis_client import DocumentAnalysisClient
 from ._models import (
+    DocumentBuildMode,
     DocumentModel,
     DocumentModelInfo,
     ModelOperation,
@@ -85,7 +86,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
         api_version = kwargs.pop(
-            "api_version", DocumentAnalysisApiVersion.V2021_09_30_PREVIEW
+            "api_version", DocumentAnalysisApiVersion.V2022_01_30_PREVIEW
         )
         super(DocumentModelAdministrationClient, self).__init__(
             endpoint=endpoint,
@@ -96,8 +97,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_build_model(self, source, **kwargs):
-        # type: (str, Any) -> DocumentModelAdministrationLROPoller[DocumentModel]
+    def begin_build_model(self, source, build_mode, **kwargs):
+        # type: (str, Union[str, DocumentBuildMode], Any) -> DocumentModelAdministrationLROPoller[DocumentModel]
         """Build a custom model.
 
         The request must include a `source` parameter that is an
@@ -108,6 +109,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         :param str source: An Azure Storage blob container's SAS URI. A container URI (without SAS)
             can be used if the container is public. For more information on setting up a training data set, see:
             https://aka.ms/azsdk/formrecognizer/buildtrainingset
+        :param build_mode: The custom model build mode. Possible values include: "template", "neural".
+        :type build_mode: str or :class:`~azure.ai.formrecognizer.DocumentBuildMode`
         :keyword str model_id: A unique ID for your model. If not specified, a model ID will be created for you.
         :keyword str description: An optional description to add to the model.
         :keyword str prefix: A case-sensitive prefix string to filter documents in the source path.
@@ -152,6 +155,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         return self._client.begin_build_document_model(  # type: ignore
             build_request=self._generated_models.BuildDocumentModelRequest(
                 model_id=model_id,
+                build_mode=build_mode,
                 description=description,
                 azure_blob_source=self._generated_models.AzureBlobContentSource(
                     container_url=source,

@@ -12,7 +12,6 @@
 from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 from msrest import Deserializer, Serializer
@@ -22,6 +21,7 @@ from ._operations_mixin import FormRecognizerClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials import TokenCredential
     from azure.core.credentials_async import AsyncTokenCredential
 
 class _SDKClient(object):
@@ -54,7 +54,7 @@ example: https://westus2.api.cognitive.microsoft.com).
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '2021-09-30-preview'
+    DEFAULT_API_VERSION = '2022-01-30-preview'
     _PROFILE_TAG = "azure.ai.formrecognizer.FormRecognizerClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -71,7 +71,7 @@ example: https://westus2.api.cognitive.microsoft.com).
         profile: KnownProfiles = KnownProfiles.default,
         **kwargs  # type: Any
     ) -> None:
-        if api_version == '2021-09-30-preview':
+        if api_version == '2022-01-30-preview':
             base_url = '{endpoint}/formrecognizer'
         elif api_version == '2.0':
             base_url = '{endpoint}/formrecognizer/v2.0'
@@ -94,12 +94,12 @@ example: https://westus2.api.cognitive.microsoft.com).
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
-           * 2021-09-30-preview: :mod:`v2021_09_30_preview.models<azure.ai.formrecognizer.v2021_09_30_preview.models>`
+           * 2022-01-30-preview: :mod:`v2022_01_30_preview.models<azure.ai.formrecognizer.v2022_01_30_preview.models>`
            * 2.0: :mod:`v2_0.models<azure.ai.formrecognizer.v2_0.models>`
            * 2.1: :mod:`v2_1.models<azure.ai.formrecognizer.v2_1.models>`
         """
-        if api_version == '2021-09-30-preview':
-            from ..v2021_09_30_preview import models
+        if api_version == '2022-01-30-preview':
+            from ..v2022_01_30_preview import models
             return models
         elif api_version == '2.0':
             from ..v2_0 import models
