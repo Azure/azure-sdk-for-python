@@ -2132,6 +2132,49 @@ class BoundingRegion(object):
         )
 
 
+class CurrencyValue(object):
+    """ A currency value element.
+
+    :ivar amount: The currency amount.
+    :vartype: float
+    :ivar symbol: The currency symbol, if found.
+    :vartype: str
+    """
+
+    def __init__(self, **kwargs):
+        self.amount = kwargs.get("amount", None)
+        self.symbol = kwargs.get("symbol", None)
+
+    def __repr__(self):
+        return "CurrencyValue(amount={}, symbol={})".format(self.amount, self.symbol)
+
+    def to_dict(self):
+        # type: () -> dict
+        """Returns a dict representation of CurrencyValue.
+
+        :return: dict
+        :rtype: dict
+        """
+        return {
+            "amount": self.amount,
+            "symbol": self.symbol,
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        # type: (dict) -> CurrencyValue
+        """Converts a dict in the shape of a CurrencyValue to the model itself.
+
+        :param dict data: A dictionary in the shape of CurrencyValue.
+        :return: CurrencyValue
+        :rtype: CurrencyValue
+        """
+        return cls(
+            amount=data.get("amount", None),
+            symbol=data.get("symbol", None),
+        )
+
+
 class DocumentContentElement(object):
     """A DocumentContentElement.
 
