@@ -378,7 +378,7 @@ class EntityOperations:
     ) -> Any:
         """List entities in bulk identified by its GUIDs.
 
-        :keyword guids: An array of GUIDs of entities to create.
+        :keyword guids: An array of GUIDs of entities to list.
         :paramtype guids: list[str]
         :keyword min_ext_info: Whether to return minimal information for referred entities.
         :paramtype min_ext_info: bool
@@ -9852,7 +9852,7 @@ class DiscoveryOperations:
                     "filter": {},  # Optional. The filter for the search. See examples for the usage of supported filters.
                     "keywords": "str",  # Optional. The keywords applied to all searchable fields.
                     "limit": 0,  # Optional. The limit of the number of the search result. default value is 50; maximum value is 1000.
-                    "offset": 0,  # Optional. The offset. The default value is 0.
+                    "offset": 0,  # Optional. The offset. The default value is 0. The maximum value is 100000.
                     "taxonomySetting": {
                         "assetTypes": [
                             "str"  # Optional.
@@ -10129,8 +10129,8 @@ class DiscoveryOperations:
                 # JSON input template you can fill out and use as your body input.
                 browse_request = {
                     "entityType": "str",  # Optional. The entity type to browse as the root level entry point.
-                    "limit": 0,  # Optional. The number of browse items we hope to return.
-                    "offset": 0,  # Optional. The offset. The default value is 0.
+                    "limit": 0,  # Optional. The number of browse items we hope to return. The maximum value is 10000.
+                    "offset": 0,  # Optional. The offset. The default value is 0. The maximum value is 100000.
                     "path": "str"  # Optional. The path to browse the next level child entities.
                 }
 

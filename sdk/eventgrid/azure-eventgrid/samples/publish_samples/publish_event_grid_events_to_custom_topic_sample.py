@@ -11,8 +11,8 @@ DESCRIPTION:
 USAGE:
     python publish_event_grid_events_to_custom_topic_sample.py
     Set the environment variables with your own values before running the sample:
-    1) EG_ACCESS_KEY - The access key of your eventgrid account.
-    2) EG_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format
+    1) EVENTGRID_TOPIC_KEY - The access key of your eventgrid account.
+    2) EVENTGRID_TOPIC_ENDPOINT - The topic hostname. Typically it exists in the format
     "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
 """
 import os
@@ -22,8 +22,8 @@ import time
 from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid import EventGridPublisherClient, EventGridEvent
 
-key = os.environ["EG_ACCESS_KEY"]
-endpoint = os.environ["EG_TOPIC_HOSTNAME"]
+key = os.environ["EVENTGRID_TOPIC_KEY"]
+endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 
 # authenticate client
 credential = AzureKeyCredential(key)
