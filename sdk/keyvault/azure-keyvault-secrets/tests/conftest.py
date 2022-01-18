@@ -27,6 +27,8 @@ import os
 import platform
 import pytest
 import sys
+from unittest import mock
+from azure_devtools.scenario_tests.patches import mock_in_unit_test, is_live
 
 
 #from devtools_testutils import test_proxy, add_general_regex_sanitizer
@@ -35,3 +37,22 @@ import sys
 collect_ignore_glob = []
 if sys.version_info < (3, 5) or platform.python_implementation() == "PyPy":
     collect_ignore_glob.append("*_async.py")
+
+
+@pytest.fixture(scope="session", autouse=True)
+def patch_async_sleep():
+    async def immediate_return(_):
+        return
+    if not is_live():
+        yield mock.patch("asyncio.sleep", immediate_return)
+
+    yield
+
+@pytest.fixture(scope="session", autouse=True)
+def patch_sleep():
+    async def immediate_return(_):
+        return
+    if not is_live():
+        yield mock.patch("time.sleep", immediate_return)
+
+    yield
