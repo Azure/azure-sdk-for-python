@@ -114,6 +114,8 @@ def get_field_value_v3(value):  # pylint: disable=too-many-return-statements
         return value.value_time
     if value.type == "signature":
         return value.value_signature
+    if value.type == "currency":
+        return CurrencyValue._from_generated(value)
     if value.type == "array":
         return (
             [DocumentField._from_generated(value) for value in value.value_array]
@@ -2144,6 +2146,13 @@ class CurrencyValue(object):
     def __init__(self, **kwargs):
         self.amount = kwargs.get("amount", None)
         self.symbol = kwargs.get("symbol", None)
+
+    @classmethod
+    def _from_generated(cls, data):
+        return cls(
+            amount=data.amount,
+            symbol=data.symbol,
+        )
 
     def __repr__(self):
         return "CurrencyValue(amount={}, symbol={})".format(self.amount, self.symbol)
