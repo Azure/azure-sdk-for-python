@@ -75,6 +75,7 @@ jobs:
         export ISSUE_LINK=$(ISSUE_LINK)
         export UPDATE_TOKEN=$(UPDATE_TOKEN)
         export USR_TOKEN=$(USR_TOKEN)
+        export BASE_BRANCH=$(BASE_BRANCH)
 
         # run
         cd azure-sdk-for-python
