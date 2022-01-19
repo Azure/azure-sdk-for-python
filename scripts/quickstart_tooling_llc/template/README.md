@@ -16,7 +16,7 @@ python -m pip install {{ package_name }}
 
 #### Prequisites
 
-- Python 2.7, or 3.6 or later is required to use this package.
+- Python 3.6 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - An existing {{ package_pprint_name }} instance.
 

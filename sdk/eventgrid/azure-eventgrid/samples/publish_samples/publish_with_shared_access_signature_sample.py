@@ -11,8 +11,8 @@ DESCRIPTION:
 USAGE:
     python publish_with_shared_access_signature_sample.py
     Set the environment variables with your own values before running the sample:
-    1) CLOUD_ACCESS_KEY - The access key of your eventgrid account.
-    2) CLOUD_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format
+    1) EVENTGRID_CLOUD_EVENT_TOPIC_KEY - The access key of your eventgrid account.
+    2) EVENTGRID_CLOUD_EVENT_TOPIC_ENDPOINT - The topic hostname. Typically it exists in the format
     "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
 """
 import os
@@ -24,8 +24,8 @@ from azure.core.credentials import AzureSasCredential
 from azure.core.messaging import CloudEvent
 from azure.eventgrid import EventGridPublisherClient, generate_sas
 
-key = os.environ["CLOUD_ACCESS_KEY"]
-endpoint = os.environ["CLOUD_TOPIC_HOSTNAME"]
+key = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_KEY"]
+endpoint = os.environ["EVENTGRID_CLOUD_EVENT_TOPIC_ENDPOINT"]
 expiration_date_utc = datetime.utcnow() + timedelta(hours=1)
 
 signature = generate_sas(endpoint, key, expiration_date_utc)

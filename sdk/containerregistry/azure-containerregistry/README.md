@@ -11,6 +11,10 @@ Use the client library for Azure Container Registry to:
 
 [Source code][source] | [Package (Pypi)][package] | [API reference documentation][docs] | [REST API documentation][rest_docs] | [Product documentation][product_docs]
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 ## Getting started
 
 ### Install the package
@@ -23,7 +27,8 @@ pip install --pre azure-containerregistry
 
 ### Prerequisites
 
-You need an [Azure subscription][azure_sub] and a [Container Registry account][container_registry_docs] to use this package.
+* Python 3.6 or later is required to use this package.
+* You need an [Azure subscription][azure_sub] and a [Container Registry account][container_registry_docs] to use this package.
 
 To create a new Container Registry, you can use the [Azure Portal][container_registry_create_portal],
 [Azure PowerShell][container_registry_create_ps], or the [Azure CLI][container_registry_create_cli].
