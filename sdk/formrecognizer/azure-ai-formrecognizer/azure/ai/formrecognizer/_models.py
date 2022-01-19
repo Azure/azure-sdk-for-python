@@ -115,7 +115,7 @@ def get_field_value_v3(value):  # pylint: disable=too-many-return-statements
     if value.type == "signature":
         return value.value_signature
     if value.type == "currency":
-        return DocumentCurrencyValue._from_generated(value.value_currency)
+        return CurrencyValue._from_generated(value.value_currency)
     if value.type == "array":
         return (
             [DocumentField._from_generated(value) for value in value.value_array]
@@ -2134,7 +2134,7 @@ class BoundingRegion(object):
         )
 
 
-class DocumentCurrencyValue(object):
+class CurrencyValue(object):
     """ A currency value element.
 
     :ivar amount: The currency amount.
@@ -2155,11 +2155,11 @@ class DocumentCurrencyValue(object):
         )
 
     def __repr__(self):
-        return "DocumentCurrencyValue(amount={}, symbol={})".format(self.amount, self.symbol)
+        return "CurrencyValue(amount={}, symbol={})".format(self.amount, self.symbol)
 
     def to_dict(self):
         # type: () -> dict
-        """Returns a dict representation of DocumentCurrencyValue.
+        """Returns a dict representation of CurrencyValue.
 
         :return: dict
         :rtype: dict
@@ -2171,12 +2171,12 @@ class DocumentCurrencyValue(object):
 
     @classmethod
     def from_dict(cls, data):
-        # type: (dict) -> DocumentCurrencyValue
-        """Converts a dict in the shape of a DocumentCurrencyValue to the model itself.
+        # type: (dict) -> CurrencyValue
+        """Converts a dict in the shape of a CurrencyValue to the model itself.
 
-        :param dict data: A dictionary in the shape of DocumentCurrencyValue.
-        :return: DocumentCurrencyValue
-        :rtype: DocumentCurrencyValue
+        :param dict data: A dictionary in the shape of CurrencyValue.
+        :return: CurrencyValue
+        :rtype: CurrencyValue
         """
         return cls(
             amount=data.get("amount", None),
@@ -2459,7 +2459,7 @@ class DocumentField(object):
         If the value is extracted from the document, but cannot be normalized to its type,
         then access the `content` property for a textual representation of the value.
     :vartype value: str, int, float, :class:`~datetime.date`, :class:`~datetime.time`,
-        :class:`~azure.ai.formrecognizer.DocumentCurrencyValue`,
+        :class:`~azure.ai.formrecognizer.CurrencyValue`,
         dict[str, :class:`~azure.ai.formrecognizer.DocumentField`],
         or list[:class:`~azure.ai.formrecognizer.DocumentField`]
     :ivar content: The field's content.
