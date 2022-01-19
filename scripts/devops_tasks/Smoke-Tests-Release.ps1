@@ -22,7 +22,8 @@ python $fileName release
 if ($LASTEXITCODE) {
     exit $LASTEXITCODE
 }
-
+$fileName = Join-Path $repoRoot scripts devops_tasks  smoke_tests.py
+python $fileName
 Pop-Location
 
 # Run pip install -r requirements-release.txt.
