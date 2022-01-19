@@ -23,7 +23,6 @@ if TYPE_CHECKING:
     from typing import Any, Optional
 
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
@@ -56,16 +55,24 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '2019-05-01'
+    DEFAULT_API_VERSION = '2021-09-01'
     _PROFILE_TAG = "azure.mgmt.containerregistry.ContainerRegistryManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
+            'agent_pools': '2019-06-01-preview',
             'build_steps': '2018-02-01-preview',
             'build_tasks': '2018-02-01-preview',
             'builds': '2018-02-01-preview',
+            'connected_registries': '2021-08-01-preview',
+            'export_pipelines': '2021-08-01-preview',
+            'import_pipelines': '2021-08-01-preview',
+            'pipeline_runs': '2021-08-01-preview',
             'runs': '2019-04-01',
+            'scope_maps': '2021-08-01-preview',
+            'task_runs': '2019-06-01-preview',
             'tasks': '2019-04-01',
+            'tokens': '2021-08-01-preview',
         }},
         _PROFILE_TAG + " latest"
     )
@@ -75,12 +82,10 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
         credential,  # type: "TokenCredential"
         subscription_id,  # type: str
         api_version=None, # type: Optional[str]
-        base_url=None,  # type: Optional[str]
+        base_url="https://management.azure.com",  # type: str
         profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
     ):
-        if not base_url:
-            base_url = 'https://management.azure.com'
         self._config = ContainerRegistryManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(ContainerRegistryManagementClient, self).__init__(
@@ -108,6 +113,7 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-11-01-preview: :mod:`v2020_11_01_preview.models<azure.mgmt.containerregistry.v2020_11_01_preview.models>`
            * 2021-06-01-preview: :mod:`v2021_06_01_preview.models<azure.mgmt.containerregistry.v2021_06_01_preview.models>`
            * 2021-08-01-preview: :mod:`v2021_08_01_preview.models<azure.mgmt.containerregistry.v2021_08_01_preview.models>`
+           * 2021-09-01: :mod:`v2021_09_01.models<azure.mgmt.containerregistry.v2021_09_01.models>`
         """
         if api_version == '2017-03-01':
             from .v2017_03_01 import models
@@ -144,6 +150,9 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
             return models
         elif api_version == '2021-08-01-preview':
             from .v2021_08_01_preview import models
+            return models
+        elif api_version == '2021-09-01':
+            from .v2021_09_01 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -273,6 +282,7 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-11-01-preview: :class:`Operations<azure.mgmt.containerregistry.v2020_11_01_preview.operations.Operations>`
            * 2021-06-01-preview: :class:`Operations<azure.mgmt.containerregistry.v2021_06_01_preview.operations.Operations>`
            * 2021-08-01-preview: :class:`Operations<azure.mgmt.containerregistry.v2021_08_01_preview.operations.Operations>`
+           * 2021-09-01: :class:`Operations<azure.mgmt.containerregistry.v2021_09_01.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2017-03-01':
@@ -289,6 +299,8 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_06_01_preview.operations import Operations as OperationClass
         elif api_version == '2021-08-01-preview':
             from .v2021_08_01_preview.operations import Operations as OperationClass
+        elif api_version == '2021-09-01':
+            from .v2021_09_01.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -323,6 +335,7 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-11-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerregistry.v2020_11_01_preview.operations.PrivateEndpointConnectionsOperations>`
            * 2021-06-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerregistry.v2021_06_01_preview.operations.PrivateEndpointConnectionsOperations>`
            * 2021-08-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerregistry.v2021_08_01_preview.operations.PrivateEndpointConnectionsOperations>`
+           * 2021-09-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.containerregistry.v2021_09_01.operations.PrivateEndpointConnectionsOperations>`
         """
         api_version = self._get_api_version('private_endpoint_connections')
         if api_version == '2019-12-01-preview':
@@ -333,6 +346,8 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_06_01_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
         elif api_version == '2021-08-01-preview':
             from .v2021_08_01_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == '2021-09-01':
+            from .v2021_09_01.operations import PrivateEndpointConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_endpoint_connections'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -353,6 +368,7 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-11-01-preview: :class:`RegistriesOperations<azure.mgmt.containerregistry.v2020_11_01_preview.operations.RegistriesOperations>`
            * 2021-06-01-preview: :class:`RegistriesOperations<azure.mgmt.containerregistry.v2021_06_01_preview.operations.RegistriesOperations>`
            * 2021-08-01-preview: :class:`RegistriesOperations<azure.mgmt.containerregistry.v2021_08_01_preview.operations.RegistriesOperations>`
+           * 2021-09-01: :class:`RegistriesOperations<azure.mgmt.containerregistry.v2021_09_01.operations.RegistriesOperations>`
         """
         api_version = self._get_api_version('registries')
         if api_version == '2017-03-01':
@@ -379,6 +395,8 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_06_01_preview.operations import RegistriesOperations as OperationClass
         elif api_version == '2021-08-01-preview':
             from .v2021_08_01_preview.operations import RegistriesOperations as OperationClass
+        elif api_version == '2021-09-01':
+            from .v2021_09_01.operations import RegistriesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'registries'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -393,6 +411,7 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-11-01-preview: :class:`ReplicationsOperations<azure.mgmt.containerregistry.v2020_11_01_preview.operations.ReplicationsOperations>`
            * 2021-06-01-preview: :class:`ReplicationsOperations<azure.mgmt.containerregistry.v2021_06_01_preview.operations.ReplicationsOperations>`
            * 2021-08-01-preview: :class:`ReplicationsOperations<azure.mgmt.containerregistry.v2021_08_01_preview.operations.ReplicationsOperations>`
+           * 2021-09-01: :class:`ReplicationsOperations<azure.mgmt.containerregistry.v2021_09_01.operations.ReplicationsOperations>`
         """
         api_version = self._get_api_version('replications')
         if api_version == '2017-10-01':
@@ -407,6 +426,8 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_06_01_preview.operations import ReplicationsOperations as OperationClass
         elif api_version == '2021-08-01-preview':
             from .v2021_08_01_preview.operations import ReplicationsOperations as OperationClass
+        elif api_version == '2021-09-01':
+            from .v2021_09_01.operations import ReplicationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'replications'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -516,6 +537,7 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
            * 2020-11-01-preview: :class:`WebhooksOperations<azure.mgmt.containerregistry.v2020_11_01_preview.operations.WebhooksOperations>`
            * 2021-06-01-preview: :class:`WebhooksOperations<azure.mgmt.containerregistry.v2021_06_01_preview.operations.WebhooksOperations>`
            * 2021-08-01-preview: :class:`WebhooksOperations<azure.mgmt.containerregistry.v2021_08_01_preview.operations.WebhooksOperations>`
+           * 2021-09-01: :class:`WebhooksOperations<azure.mgmt.containerregistry.v2021_09_01.operations.WebhooksOperations>`
         """
         api_version = self._get_api_version('webhooks')
         if api_version == '2017-10-01':
@@ -530,6 +552,8 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_06_01_preview.operations import WebhooksOperations as OperationClass
         elif api_version == '2021-08-01-preview':
             from .v2021_08_01_preview.operations import WebhooksOperations as OperationClass
+        elif api_version == '2021-09-01':
+            from .v2021_09_01.operations import WebhooksOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'webhooks'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
