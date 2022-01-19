@@ -76,9 +76,11 @@ jobs:
         export UPDATE_TOKEN=$(UPDATE_TOKEN)
         export USR_TOKEN=$(USR_TOKEN)
         export BASE_BRANCH=$(BASE_BRANCH)
+        export SCRIPT_PATH=$script_path
 
         # run
         cd azure-sdk-for-python
+        python scripts/dev_setup.py -p azure-core
         python $script_path/main.py $(BASE_BRANCH) "$script_path" "$output_path"
 
         # judge
