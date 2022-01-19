@@ -21,7 +21,7 @@ autorest
 
 ```yaml
 input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/MetricsAdvisor/stable/v1.0/MetricsAdvisor.json
-output-folder: ../azure/ai/metricsadvisor/_generated
+output-folder: ../azure/ai/metricsadvisor/
 namespace: azure.ai.metricsadvisor
 package-name: azure-ai-metricsadvisor
 license-header: MICROSOFT_MIT_NO_VERSION

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -19,21 +19,16 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_get_active_series_count_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    **kwargs: Any
+) -> HttpRequest:
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/stats/latest')
@@ -51,10 +46,9 @@ def build_get_active_series_count_request(
 
 
 def build_get_alert_configuration_request(
-    configuration_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    configuration_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/alert/anomaly/configurations/{configurationId}')
@@ -77,10 +71,12 @@ def build_get_alert_configuration_request(
 
 
 def build_update_alert_configuration_request(
-    configuration_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    configuration_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -102,15 +98,16 @@ def build_update_alert_configuration_request(
         method="PATCH",
         url=url,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_delete_alert_configuration_request(
-    configuration_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    configuration_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/alert/anomaly/configurations/{configurationId}')
@@ -133,9 +130,11 @@ def build_delete_alert_configuration_request(
 
 
 def build_create_alert_configuration_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -152,18 +151,22 @@ def build_create_alert_configuration_request(
         method="POST",
         url=url,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_list_alerts_request(
-    configuration_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    configuration_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-    skip = kwargs.pop('skip', None)  # type: Optional[int]
-    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
 
     accept = "application/json"
     # Construct URL
@@ -192,19 +195,20 @@ def build_list_alerts_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_get_anomalies_from_alert_by_anomaly_alerting_configuration_request(
-    configuration_id,  # type: str
-    alert_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    skip = kwargs.pop('skip', None)  # type: Optional[int]
-    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
-
+    configuration_id: str,
+    alert_id: str,
+    *,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/alert/anomaly/configurations/{configurationId}/alerts/{alertId}/anomalies')
@@ -236,14 +240,13 @@ def build_get_anomalies_from_alert_by_anomaly_alerting_configuration_request(
 
 
 def build_get_incidents_from_alert_by_anomaly_alerting_configuration_request(
-    configuration_id,  # type: str
-    alert_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    skip = kwargs.pop('skip', None)  # type: Optional[int]
-    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
-
+    configuration_id: str,
+    alert_id: str,
+    *,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/alert/anomaly/configurations/{configurationId}/alerts/{alertId}/incidents')
@@ -275,10 +278,9 @@ def build_get_incidents_from_alert_by_anomaly_alerting_configuration_request(
 
 
 def build_get_detection_configuration_request(
-    configuration_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    configuration_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/enrichment/anomalyDetection/configurations/{configurationId}')
@@ -301,10 +303,12 @@ def build_get_detection_configuration_request(
 
 
 def build_update_anomaly_detection_configuration_request(
-    configuration_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    configuration_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -326,15 +330,16 @@ def build_update_anomaly_detection_configuration_request(
         method="PATCH",
         url=url,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_delete_detection_configuration_request(
-    configuration_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    configuration_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/enrichment/anomalyDetection/configurations/{configurationId}')
@@ -357,9 +362,11 @@ def build_delete_detection_configuration_request(
 
 
 def build_create_detection_configuration_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -376,18 +383,19 @@ def build_create_detection_configuration_request(
         method="POST",
         url=url,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_list_alert_configurations_request(
-    configuration_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    skip = kwargs.pop('skip', None)  # type: Optional[int]
-    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
-
+    configuration_id: str,
+    *,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/enrichment/anomalyDetection/configurations/{configurationId}/alert/anomaly/configurations')
@@ -418,10 +426,12 @@ def build_list_alert_configurations_request(
 
 
 def build_list_metric_enriched_series_data_request(
-    configuration_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    configuration_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -443,18 +453,22 @@ def build_list_metric_enriched_series_data_request(
         method="POST",
         url=url,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_get_anomalies_by_anomaly_detection_configuration_request(
-    configuration_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    configuration_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-    skip = kwargs.pop('skip', None)  # type: Optional[int]
-    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
 
     accept = "application/json"
     # Construct URL
@@ -483,18 +497,22 @@ def build_get_anomalies_by_anomaly_detection_configuration_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_list_anomaly_dimension_values_request(
-    configuration_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    configuration_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-    skip = kwargs.pop('skip', None)  # type: Optional[int]
-    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
 
     accept = "application/json"
     # Construct URL
@@ -523,17 +541,21 @@ def build_list_anomaly_dimension_values_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_get_incidents_by_anomaly_detection_configuration_request(
-    configuration_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    configuration_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
 
     accept = "application/json"
     # Construct URL
@@ -560,18 +582,19 @@ def build_get_incidents_by_anomaly_detection_configuration_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_get_incidents_by_anomaly_detection_configuration_next_pages_request(
-    configuration_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
-    token = kwargs.pop('token', None)  # type: Optional[str]
-
+    configuration_id: str,
+    *,
+    maxpagesize: Optional[int] = None,
+    token: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/enrichment/anomalyDetection/configurations/{configurationId}/incidents/query')
@@ -602,11 +625,10 @@ def build_get_incidents_by_anomaly_detection_configuration_next_pages_request(
 
 
 def build_list_incident_root_causes_request(
-    configuration_id,  # type: str
-    incident_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    configuration_id: str,
+    incident_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/enrichment/anomalyDetection/configurations/{configurationId}/incidents/{incidentId}/rootCause')
@@ -630,9 +652,11 @@ def build_list_incident_root_causes_request(
 
 
 def build_create_datasource_credential_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -649,17 +673,18 @@ def build_create_datasource_credential_request(
         method="POST",
         url=url,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_list_datasource_credentials_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    skip = kwargs.pop('skip', None)  # type: Optional[int]
-    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
-
+    *,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/credentials')
@@ -685,10 +710,12 @@ def build_list_datasource_credentials_request(
 
 
 def build_update_datasource_credential_request(
-    credential_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    credential_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -710,15 +737,16 @@ def build_update_datasource_credential_request(
         method="PATCH",
         url=url,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_delete_datasource_credential_request(
-    credential_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    credential_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/credentials/{credentialId}')
@@ -741,10 +769,9 @@ def build_delete_datasource_credential_request(
 
 
 def build_get_datasource_credential_request(
-    credential_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    credential_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/credentials/{credentialId}')
@@ -767,17 +794,16 @@ def build_get_datasource_credential_request(
 
 
 def build_list_data_feeds_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    data_feed_name = kwargs.pop('data_feed_name', None)  # type: Optional[str]
-    data_source_type = kwargs.pop('data_source_type', None)  # type: Optional[Union[str, "_models.DataSourceType"]]
-    granularity_name = kwargs.pop('granularity_name', None)  # type: Optional[Union[str, "_models.DataFeedGranularityType"]]
-    status = kwargs.pop('status', None)  # type: Optional[Union[str, "_models.DataFeedStatus"]]
-    creator = kwargs.pop('creator', None)  # type: Optional[str]
-    skip = kwargs.pop('skip', None)  # type: Optional[int]
-    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
-
+    *,
+    data_feed_name: Optional[str] = None,
+    data_source_type: Optional[Union[str, "_models.DataSourceType"]] = None,
+    granularity_name: Optional[Union[str, "_models.DataFeedGranularityType"]] = None,
+    status: Optional[Union[str, "_models.DataFeedStatus"]] = None,
+    creator: Optional[str] = None,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/dataFeeds')
@@ -813,9 +839,11 @@ def build_list_data_feeds_request(
 
 
 def build_create_data_feed_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -832,15 +860,16 @@ def build_create_data_feed_request(
         method="POST",
         url=url,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_get_data_feed_request(
-    data_feed_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    data_feed_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/dataFeeds/{dataFeedId}')
@@ -863,10 +892,12 @@ def build_get_data_feed_request(
 
 
 def build_update_data_feed_request(
-    data_feed_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    data_feed_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -888,15 +919,16 @@ def build_update_data_feed_request(
         method="PATCH",
         url=url,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_delete_data_feed_request(
-    data_feed_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    data_feed_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/dataFeeds/{dataFeedId}')
@@ -919,10 +951,9 @@ def build_delete_data_feed_request(
 
 
 def build_get_feedback_request(
-    feedback_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    feedback_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/feedback/metric/{feedbackId}')
@@ -945,12 +976,14 @@ def build_get_feedback_request(
 
 
 def build_list_feedback_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-    skip = kwargs.pop('skip', None)  # type: Optional[int]
-    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
 
     accept = "application/json"
     # Construct URL
@@ -974,14 +1007,18 @@ def build_list_feedback_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_add_feedback_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -998,18 +1035,19 @@ def build_add_feedback_request(
         method="POST",
         url=url,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_list_hooks_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    hook_name = kwargs.pop('hook_name', None)  # type: Optional[str]
-    skip = kwargs.pop('skip', None)  # type: Optional[int]
-    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
-
+    *,
+    hook_name: Optional[str] = None,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/hooks')
@@ -1037,9 +1075,11 @@ def build_list_hooks_request(
 
 
 def build_create_hook_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -1056,15 +1096,16 @@ def build_create_hook_request(
         method="POST",
         url=url,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_get_hook_request(
-    hook_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    hook_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/hooks/{hookId}')
@@ -1087,10 +1128,12 @@ def build_get_hook_request(
 
 
 def build_update_hook_request(
-    hook_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    hook_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -1112,15 +1155,16 @@ def build_update_hook_request(
         method="PATCH",
         url=url,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_delete_hook_request(
-    hook_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    hook_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/hooks/{hookId}')
@@ -1143,13 +1187,15 @@ def build_delete_hook_request(
 
 
 def build_list_data_feed_ingestion_status_request(
-    data_feed_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    data_feed_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-    skip = kwargs.pop('skip', None)  # type: Optional[int]
-    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
 
     accept = "application/json"
     # Construct URL
@@ -1178,15 +1224,19 @@ def build_list_data_feed_ingestion_status_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_refresh_data_feed_ingestion_request(
-    data_feed_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    data_feed_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -1208,15 +1258,16 @@ def build_refresh_data_feed_ingestion_request(
         method="POST",
         url=url,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_get_data_feed_ingestion_progress_request(
-    data_feed_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    data_feed_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/dataFeeds/{dataFeedId}/ingestionProgress')
@@ -1239,10 +1290,12 @@ def build_get_data_feed_ingestion_progress_request(
 
 
 def build_list_metric_series_data_request(
-    metric_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    metric_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -1264,18 +1317,22 @@ def build_list_metric_series_data_request(
         method="POST",
         url=url,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_list_metric_series_definitions_request(
-    metric_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    metric_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-    skip = kwargs.pop('skip', None)  # type: Optional[int]
-    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
 
     accept = "application/json"
     # Construct URL
@@ -1304,18 +1361,22 @@ def build_list_metric_series_definitions_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_list_metric_dimension_values_request(
-    metric_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    metric_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-    skip = kwargs.pop('skip', None)  # type: Optional[int]
-    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
 
     accept = "application/json"
     # Construct URL
@@ -1344,18 +1405,19 @@ def build_list_metric_dimension_values_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_list_detection_configurations_request(
-    metric_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    skip = kwargs.pop('skip', None)  # type: Optional[int]
-    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
-
+    metric_id: str,
+    *,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/metrics/{metricId}/enrichment/anomalyDetection/configurations')
@@ -1386,13 +1448,15 @@ def build_list_detection_configurations_request(
 
 
 def build_list_metric_enrichment_status_request(
-    metric_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    metric_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-    skip = kwargs.pop('skip', None)  # type: Optional[int]
-    maxpagesize = kwargs.pop('maxpagesize', None)  # type: Optional[int]
 
     accept = "application/json"
     # Construct URL
@@ -1421,18 +1485,18 @@ def build_list_metric_enrichment_status_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
-# fmt: on
 class MetricsAdvisorClientOperationsMixinGenerated(object):
 
     @distributed_trace
     def get_active_series_count(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.UsageStats"
+        **kwargs: Any
+    ) -> "_models.UsageStats":
         """Get latest usage stats.
 
         Get latest usage stats.
@@ -1479,10 +1543,9 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def get_alert_configuration(
         self,
-        configuration_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.AnomalyAlertConfiguration"
+        configuration_id: str,
+        **kwargs: Any
+    ) -> "_models.AnomalyAlertConfiguration":
         """Query a single anomaly alerting configuration.
 
         Query a single anomaly alerting configuration.
@@ -1532,11 +1595,10 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def update_alert_configuration(
         self,
-        configuration_id,  # type: str
-        body,  # type: "_models.AnomalyAlertingConfigurationPatch"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.AnomalyAlertConfiguration"
+        configuration_id: str,
+        body: "_models.AnomalyAlertingConfigurationPatch",
+        **kwargs: Any
+    ) -> "_models.AnomalyAlertConfiguration":
         """Update anomaly alerting configuration.
 
         Update anomaly alerting configuration.
@@ -1593,10 +1655,9 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def delete_alert_configuration(
         self,
-        configuration_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        configuration_id: str,
+        **kwargs: Any
+    ) -> None:
         """Delete anomaly alerting configuration.
 
         Delete anomaly alerting configuration.
@@ -1642,10 +1703,9 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def create_alert_configuration(
         self,
-        body,  # type: "_models.AnomalyAlertConfiguration"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        body: "_models.AnomalyAlertConfiguration",
+        **kwargs: Any
+    ) -> None:
         """Create anomaly alerting configuration.
 
         Create anomaly alerting configuration.
@@ -1699,13 +1759,12 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def list_alerts(
         self,
-        configuration_id,  # type: str
-        body,  # type: "_models.AlertingResultQuery"
-        skip=None,  # type: Optional[int]
-        maxpagesize=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.AlertResultList"]
+        configuration_id: str,
+        body: "_models.AlertingResultQuery",
+        skip: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.AlertResultList"]:
         """Query alerts under anomaly alerting configuration.
 
         Query alerts under anomaly alerting configuration.
@@ -1800,13 +1859,12 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def get_anomalies_from_alert_by_anomaly_alerting_configuration(
         self,
-        configuration_id,  # type: str
-        alert_id,  # type: str
-        skip=None,  # type: Optional[int]
-        maxpagesize=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.AnomalyResultList"]
+        configuration_id: str,
+        alert_id: str,
+        skip: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.AnomalyResultList"]:
         """Query anomalies under a specific alert.
 
         Query anomalies under a specific alert.
@@ -1895,13 +1953,12 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def get_incidents_from_alert_by_anomaly_alerting_configuration(
         self,
-        configuration_id,  # type: str
-        alert_id,  # type: str
-        skip=None,  # type: Optional[int]
-        maxpagesize=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.IncidentResultList"]
+        configuration_id: str,
+        alert_id: str,
+        skip: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.IncidentResultList"]:
         """Query incidents under a specific alert.
 
         Query incidents under a specific alert.
@@ -1990,10 +2047,9 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def get_detection_configuration(
         self,
-        configuration_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.AnomalyDetectionConfiguration"
+        configuration_id: str,
+        **kwargs: Any
+    ) -> "_models.AnomalyDetectionConfiguration":
         """Query a single anomaly detection configuration.
 
         Query a single anomaly detection configuration.
@@ -2043,11 +2099,10 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def update_anomaly_detection_configuration(
         self,
-        configuration_id,  # type: str
-        body,  # type: "_models.AnomalyDetectionConfigurationPatch"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.AnomalyDetectionConfiguration"
+        configuration_id: str,
+        body: "_models.AnomalyDetectionConfigurationPatch",
+        **kwargs: Any
+    ) -> "_models.AnomalyDetectionConfiguration":
         """Update anomaly detection configuration.
 
         Update anomaly detection configuration.
@@ -2104,10 +2159,9 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def delete_detection_configuration(
         self,
-        configuration_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        configuration_id: str,
+        **kwargs: Any
+    ) -> None:
         """Delete anomaly detection configuration.
 
         Delete anomaly detection configuration.
@@ -2153,10 +2207,9 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def create_detection_configuration(
         self,
-        body,  # type: "_models.AnomalyDetectionConfiguration"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        body: "_models.AnomalyDetectionConfiguration",
+        **kwargs: Any
+    ) -> None:
         """Create anomaly detection configuration.
 
         Create anomaly detection configuration.
@@ -2210,12 +2263,11 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def list_alert_configurations(
         self,
-        configuration_id,  # type: str
-        skip=None,  # type: Optional[int]
-        maxpagesize=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.AnomalyAlertingConfigurationList"]
+        configuration_id: str,
+        skip: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.AnomalyAlertingConfigurationList"]:
         """List all anomaly alerting configurations for specific anomaly detection configuration.
 
         List all anomaly alerting configurations for specific anomaly detection configuration.
@@ -2302,11 +2354,10 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def list_metric_enriched_series_data(
         self,
-        configuration_id,  # type: str
-        body,  # type: "_models.DetectionSeriesQuery"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.SeriesResultList"]
+        configuration_id: str,
+        body: "_models.DetectionSeriesQuery",
+        **kwargs: Any
+    ) -> Iterable["_models.SeriesResultList"]:
         """Query series enriched by anomaly detection.
 
         Query series enriched by anomaly detection.
@@ -2393,13 +2444,12 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def get_anomalies_by_anomaly_detection_configuration(
         self,
-        configuration_id,  # type: str
-        body,  # type: "_models.DetectionAnomalyResultQuery"
-        skip=None,  # type: Optional[int]
-        maxpagesize=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.AnomalyResultList"]
+        configuration_id: str,
+        body: "_models.DetectionAnomalyResultQuery",
+        skip: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.AnomalyResultList"]:
         """Query anomalies under anomaly detection configuration.
 
         Query anomalies under anomaly detection configuration.
@@ -2494,13 +2544,12 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def list_anomaly_dimension_values(
         self,
-        configuration_id,  # type: str
-        body,  # type: "_models.AnomalyDimensionQuery"
-        skip=None,  # type: Optional[int]
-        maxpagesize=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.AnomalyDimensionList"]
+        configuration_id: str,
+        body: "_models.AnomalyDimensionQuery",
+        skip: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.AnomalyDimensionList"]:
         """Query dimension values of anomalies.
 
         Query dimension values of anomalies.
@@ -2596,12 +2645,11 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def get_incidents_by_anomaly_detection_configuration(
         self,
-        configuration_id,  # type: str
-        body,  # type: "_models.DetectionIncidentResultQuery"
-        maxpagesize=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.IncidentResultList"]
+        configuration_id: str,
+        body: "_models.DetectionIncidentResultQuery",
+        maxpagesize: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.IncidentResultList"]:
         """Query incidents under anomaly detection configuration.
 
         Query incidents under anomaly detection configuration.
@@ -2692,12 +2740,11 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def get_incidents_by_anomaly_detection_configuration_next_pages(
         self,
-        configuration_id,  # type: str
-        maxpagesize=None,  # type: Optional[int]
-        token=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.IncidentResultList"]
+        configuration_id: str,
+        maxpagesize: Optional[int] = None,
+        token: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.IncidentResultList"]:
         """Query incidents under anomaly detection configuration.
 
         Query incidents under anomaly detection configuration.
@@ -2782,11 +2829,10 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def list_incident_root_causes(
         self,
-        configuration_id,  # type: str
-        incident_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.RootCauseList"]
+        configuration_id: str,
+        incident_id: str,
+        **kwargs: Any
+    ) -> Iterable["_models.RootCauseList"]:
         """Query root cause for incident.
 
         Query root cause for incident.
@@ -2867,10 +2913,9 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def create_datasource_credential(
         self,
-        body,  # type: "_models.DataSourceCredential"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        body: "_models.DataSourceCredential",
+        **kwargs: Any
+    ) -> None:
         """Create a new data source credential.
 
         Create a new data source credential.
@@ -2924,11 +2969,10 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def list_datasource_credentials(
         self,
-        skip=None,  # type: Optional[int]
-        maxpagesize=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.DataSourceCredentialList"]
+        skip: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.DataSourceCredentialList"]:
         """List all credentials.
 
         List all credentials.
@@ -3010,11 +3054,10 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def update_datasource_credential(
         self,
-        credential_id,  # type: str
-        body,  # type: "_models.DataSourceCredentialPatch"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.DataSourceCredential"
+        credential_id: str,
+        body: "_models.DataSourceCredentialPatch",
+        **kwargs: Any
+    ) -> "_models.DataSourceCredential":
         """Update a data source credential.
 
         Update a data source credential.
@@ -3071,10 +3114,9 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def delete_datasource_credential(
         self,
-        credential_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        credential_id: str,
+        **kwargs: Any
+    ) -> None:
         """Delete a data source credential.
 
         Delete a data source credential.
@@ -3120,10 +3162,9 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def get_datasource_credential(
         self,
-        credential_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.DataSourceCredential"
+        credential_id: str,
+        **kwargs: Any
+    ) -> "_models.DataSourceCredential":
         """Get a data source credential.
 
         Get a data source credential.
@@ -3173,16 +3214,15 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def list_data_feeds(
         self,
-        data_feed_name=None,  # type: Optional[str]
-        data_source_type=None,  # type: Optional[Union[str, "_models.DataSourceType"]]
-        granularity_name=None,  # type: Optional[Union[str, "_models.DataFeedGranularityType"]]
-        status=None,  # type: Optional[Union[str, "_models.DataFeedStatus"]]
-        creator=None,  # type: Optional[str]
-        skip=None,  # type: Optional[int]
-        maxpagesize=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.DataFeedList"]
+        data_feed_name: Optional[str] = None,
+        data_source_type: Optional[Union[str, "_models.DataSourceType"]] = None,
+        granularity_name: Optional[Union[str, "_models.DataFeedGranularityType"]] = None,
+        status: Optional[Union[str, "_models.DataFeedStatus"]] = None,
+        creator: Optional[str] = None,
+        skip: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.DataFeedList"]:
         """List all data feeds.
 
         List all data feeds.
@@ -3283,10 +3323,9 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def create_data_feed(
         self,
-        body,  # type: "_models.DataFeedSource"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        body: "_models.DataFeedSource",
+        **kwargs: Any
+    ) -> None:
         """Create a new data feed.
 
         Create a new data feed.
@@ -3340,10 +3379,9 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def get_data_feed(
         self,
-        data_feed_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.DataFeedSource"
+        data_feed_id: str,
+        **kwargs: Any
+    ) -> "_models.DataFeedSource":
         """Get a data feed by its id.
 
         Get a data feed by its id.
@@ -3393,11 +3431,10 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def update_data_feed(
         self,
-        data_feed_id,  # type: str
-        body,  # type: "_models.DataFeedDetailPatch"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.DataFeedSource"
+        data_feed_id: str,
+        body: "_models.DataFeedDetailPatch",
+        **kwargs: Any
+    ) -> "_models.DataFeedSource":
         """Update a data feed.
 
         Update a data feed.
@@ -3454,10 +3491,9 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def delete_data_feed(
         self,
-        data_feed_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        data_feed_id: str,
+        **kwargs: Any
+    ) -> None:
         """Delete a data feed.
 
         Delete a data feed.
@@ -3503,10 +3539,9 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def get_feedback(
         self,
-        feedback_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.MetricFeedback"
+        feedback_id: str,
+        **kwargs: Any
+    ) -> "_models.MetricFeedback":
         """Get a metric feedback by its id.
 
         Get a metric feedback by its id.
@@ -3556,12 +3591,11 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def list_feedback(
         self,
-        body,  # type: "_models.MetricFeedbackFilter"
-        skip=None,  # type: Optional[int]
-        maxpagesize=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.MetricFeedbackList"]
+        body: "_models.MetricFeedbackFilter",
+        skip: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.MetricFeedbackList"]:
         """List feedback on the given metric.
 
         List feedback on the given metric.
@@ -3652,10 +3686,9 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def add_feedback(
         self,
-        body,  # type: "_models.MetricFeedback"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        body: "_models.MetricFeedback",
+        **kwargs: Any
+    ) -> None:
         """Create a new metric feedback.
 
         Create a new metric feedback.
@@ -3709,12 +3742,11 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def list_hooks(
         self,
-        hook_name=None,  # type: Optional[str]
-        skip=None,  # type: Optional[int]
-        maxpagesize=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.HookList"]
+        hook_name: Optional[str] = None,
+        skip: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.HookList"]:
         """List all hooks.
 
         List all hooks.
@@ -3799,10 +3831,9 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def create_hook(
         self,
-        body,  # type: "_models.NotificationHook"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        body: "_models.NotificationHook",
+        **kwargs: Any
+    ) -> None:
         """Create a new hook.
 
         Create a new hook.
@@ -3856,10 +3887,9 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def get_hook(
         self,
-        hook_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.NotificationHook"
+        hook_id: str,
+        **kwargs: Any
+    ) -> "_models.NotificationHook":
         """Get a hook by its id.
 
         Get a hook by its id.
@@ -3909,11 +3939,10 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def update_hook(
         self,
-        hook_id,  # type: str
-        body,  # type: "_models.HookInfoPatch"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.NotificationHook"
+        hook_id: str,
+        body: "_models.HookInfoPatch",
+        **kwargs: Any
+    ) -> "_models.NotificationHook":
         """Update a hook.
 
         Update a hook.
@@ -3970,10 +3999,9 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def delete_hook(
         self,
-        hook_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        hook_id: str,
+        **kwargs: Any
+    ) -> None:
         """Delete a hook.
 
         Delete a hook.
@@ -4019,13 +4047,12 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def list_data_feed_ingestion_status(
         self,
-        data_feed_id,  # type: str
-        body,  # type: "_models.IngestionStatusQueryOptions"
-        skip=None,  # type: Optional[int]
-        maxpagesize=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.IngestionStatusList"]
+        data_feed_id: str,
+        body: "_models.IngestionStatusQueryOptions",
+        skip: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.IngestionStatusList"]:
         """Get data ingestion status by data feed.
 
         Get data ingestion status by data feed.
@@ -4120,11 +4147,10 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def refresh_data_feed_ingestion(
         self,
-        data_feed_id,  # type: str
-        body,  # type: "_models.IngestionProgressResetOptions"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        data_feed_id: str,
+        body: "_models.IngestionProgressResetOptions",
+        **kwargs: Any
+    ) -> None:
         """Reset data ingestion status by data feed to backfill data.
 
         Reset data ingestion status by data feed to backfill data.
@@ -4177,10 +4203,9 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def get_data_feed_ingestion_progress(
         self,
-        data_feed_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.DataFeedIngestionProgress"
+        data_feed_id: str,
+        **kwargs: Any
+    ) -> "_models.DataFeedIngestionProgress":
         """Get data last success ingestion job timestamp by data feed.
 
         Get data last success ingestion job timestamp by data feed.
@@ -4230,11 +4255,10 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def list_metric_series_data(
         self,
-        metric_id,  # type: str
-        body,  # type: "_models.MetricDataQueryOptions"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.MetricDataList"]
+        metric_id: str,
+        body: "_models.MetricDataQueryOptions",
+        **kwargs: Any
+    ) -> Iterable["_models.MetricDataList"]:
         """Get time series data from metric.
 
         Get time series data from metric.
@@ -4321,13 +4345,12 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def list_metric_series_definitions(
         self,
-        metric_id,  # type: str
-        body,  # type: "_models.MetricSeriesQueryOptions"
-        skip=None,  # type: Optional[int]
-        maxpagesize=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.MetricSeriesList"]
+        metric_id: str,
+        body: "_models.MetricSeriesQueryOptions",
+        skip: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.MetricSeriesList"]:
         """List series (dimension combinations) from metric.
 
         List series (dimension combinations) from metric.
@@ -4422,13 +4445,12 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def list_metric_dimension_values(
         self,
-        metric_id,  # type: str
-        body,  # type: "_models.MetricDimensionQueryOptions"
-        skip=None,  # type: Optional[int]
-        maxpagesize=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.MetricDimensionList"]
+        metric_id: str,
+        body: "_models.MetricDimensionQueryOptions",
+        skip: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.MetricDimensionList"]:
         """List dimension from certain metric.
 
         List dimension from certain metric.
@@ -4523,12 +4545,11 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def list_detection_configurations(
         self,
-        metric_id,  # type: str
-        skip=None,  # type: Optional[int]
-        maxpagesize=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.AnomalyDetectionConfigurationList"]
+        metric_id: str,
+        skip: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.AnomalyDetectionConfigurationList"]:
         """List all anomaly detection configurations for specific metric.
 
         List all anomaly detection configurations for specific metric.
@@ -4615,13 +4636,12 @@ class MetricsAdvisorClientOperationsMixinGenerated(object):
     @distributed_trace
     def list_metric_enrichment_status(
         self,
-        metric_id,  # type: str
-        body,  # type: "_models.EnrichmentStatusQueryOption"
-        skip=None,  # type: Optional[int]
-        maxpagesize=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.EnrichmentStatusList"]
+        metric_id: str,
+        body: "_models.EnrichmentStatusQueryOption",
+        skip: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.EnrichmentStatusList"]:
         """Query anomaly detection status.
 
         Query anomaly detection status.

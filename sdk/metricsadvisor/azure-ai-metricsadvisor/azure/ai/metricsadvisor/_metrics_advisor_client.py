@@ -7,9 +7,10 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from azure.core import PipelineClient
+from azure.core.rest import HttpRequest, HttpResponse
 from msrest import Deserializer, Serializer
 
 from . import models
@@ -18,10 +19,7 @@ from .operations import MetricsAdvisorClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
-
     from azure.core.credentials import TokenCredential
-    from azure.core.rest import HttpRequest, HttpResponse
 
 class MetricsAdvisorClientGenerated(MetricsAdvisorClientOperationsMixin):
     """Microsoft Azure Metrics Advisor REST API (OpenAPI v2).
@@ -35,11 +33,10 @@ class MetricsAdvisorClientGenerated(MetricsAdvisorClientOperationsMixin):
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        endpoint,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        credential: "TokenCredential",
+        endpoint: str,
+        **kwargs: Any
+    ) -> None:
         _base_url = '{endpoint}/metricsadvisor/v1.0'
         self._config = MetricsAdvisorClientConfiguration(credential=credential, endpoint=endpoint, **kwargs)
         self._client = PipelineClient(base_url=_base_url, config=self._config, **kwargs)
@@ -53,9 +50,8 @@ class MetricsAdvisorClientGenerated(MetricsAdvisorClientOperationsMixin):
     def _send_request(
         self,
         request,  # type: HttpRequest
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> HttpResponse
+        **kwargs: Any
+    ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest

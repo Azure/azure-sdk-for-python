@@ -12,7 +12,8 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ..models import *
 from ..models._patch import DataFeedSourceUnion
-from typing import TYPE_CHECKING, Union, List, Any, Dict
+from typing import TYPE_CHECKING, Union, List, Any, Dict, cast, overload
+from azure.core.paging import ItemPaged
 
 DATA_FEED = {
     "SqlServer": SqlServerDataFeedSource,
@@ -336,42 +337,6 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         )
 
     @distributed_trace
-    def delete_alert_configuration(self, *alert_configuration_id, **kwargs):
-        # type: (*str, Any) -> None
-        if len(alert_configuration_id) != 1:
-            raise TypeError("Alert configuration requires exactly one id.")
-
-        super().delete_alert_configuration(
-            alert_configuration_id[0], **kwargs
-        )
-
-    @distributed_trace
-    def delete_detection_configuration(self, *detection_configuration_id, **kwargs):
-        # type: (*str, Any) -> None
-        if len(detection_configuration_id) != 1:
-            raise TypeError("Detection configuration requires exactly one id.")
-
-        super().delete_detection_configuration(
-            detection_configuration_id[0], **kwargs
-        )
-
-    @distributed_trace
-    def delete_data_feed(self, *data_feed_id, **kwargs):
-        # type: (*str, Any) -> None
-        if len(data_feed_id) != 1:
-            raise TypeError("Data feed requires exactly one id.")
-
-        super().delete_data_feed(data_feed_id[0], **kwargs)
-
-    @distributed_trace
-    def delete_hook(self, *hook_id, **kwargs):
-        # type: (*str, Any) -> None
-        if len(hook_id) != 1:
-            raise TypeError("Hook requires exactly one id.")
-
-        super().delete_hook(hook_id[0], **kwargs)
-
-    @distributed_trace
     def update_data_feed(
         self,
         data_feed,  # type: Union[str, DataFeed]
@@ -522,42 +487,6 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         return super().update_hook(hook_id, hook_patch, **kwargs)
 
     @distributed_trace
-    def list_hooks(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> ItemPaged[Union[NotificationHook, EmailNotificationHook, WebNotificationHook]]
-        hook_name = kwargs.pop("hook_name", None)
-        skip = kwargs.pop("skip", None)
-
-        return super().list_hooks(  # type: ignore
-            hook_name=hook_name,
-            skip=skip,
-            **kwargs
-        )
-
-    @distributed_trace
-    def list_data_feeds(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> ItemPaged[DataFeed]
-        data_feed_name = kwargs.pop("data_feed_name", None)
-        data_source_type = kwargs.pop("data_source_type", None)
-        granularity_type = kwargs.pop("granularity_type", None)
-        status = kwargs.pop("status", None)
-        creator = kwargs.pop("creator", None)
-        skip = kwargs.pop("skip", None)
-
-        return super().list_data_feeds(  # type: ignore
-            data_feed_name=data_feed_name,
-            data_source_type=data_source_type,
-            granularity_name=granularity_type,
-            status=status,
-            creator=creator,
-            skip=skip,
-            **kwargs
-        )
-
-    @distributed_trace
     def list_data_feed_ingestion_status(
         self,
         data_feed_id,  # type: str
@@ -604,11 +533,295 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         return self.get_datasource_credential(credential_id)
 
     @distributed_trace
-    def delete_datasource_credential(self, *credential_id, **kwargs):
-        # type: (*str, Any) -> None
-        if len(credential_id) != 1:
-            raise TypeError("Credential requires exactly one id.")
+    def list_feedback(self, metric_id, **kwargs):
+        # type: (str, Any) -> ItemPaged[Union[MetricFeedback, FeedbackUnion]]
+        skip = kwargs.pop("skip", None)
+        dimension_filter = None
+        dimension_key = kwargs.pop("dimension_key", None)
+        if dimension_key:
+            dimension_filter = FeedbackDimensionFilter(dimension=dimension_key)
+        feedback_type = kwargs.pop("feedback_type", None)
+        start_time = kwargs.pop("start_time", None)
+        end_time = kwargs.pop("end_time", None)
+        converted_start_time = convert_datetime(start_time) if start_time else None
+        converted_end_time = convert_datetime(end_time) if end_time else None
+        time_mode = kwargs.pop("time_mode", None)
+        feedback_filter = MetricFeedbackFilter(
+            metric_id=metric_id,
+            dimension_filter=dimension_filter,
+            feedback_type=feedback_type,
+            start_time=converted_start_time,
+            end_time=converted_end_time,
+            time_mode=time_mode,
+        )
 
-        super().delete_datasource_credential(credential_id=credential_id[0], **kwargs)
+        return super().list_feedback(
+            skip=skip,
+            body=feedback_filter,
+            **kwargs
+        )
+
+    @distributed_trace
+    def list_metric_enriched_series_data(
+        self,
+        detection_configuration_id,  # type: str
+        series,  # type: Union[List[SeriesIdentity], List[Dict[str, str]]]
+        start_time,  # type: Union[str, datetime.datetime]
+        end_time,  # type: Union[str, datetime.datetime]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> ItemPaged[MetricEnrichedSeriesData]
+        series_list = [
+            SeriesIdentity(dimension=dimension)
+            for dimension in series
+            if isinstance(dimension, dict)
+        ] or series
+
+        series_list = cast(List[SeriesIdentity], series_list)
+        converted_start_time = convert_datetime(start_time)
+        converted_end_time = convert_datetime(end_time)
+        detection_series_query = DetectionSeriesQuery(
+            start_time=converted_start_time,
+            end_time=converted_end_time,
+            series=series_list,
+        )
+
+        return super().list_metric_enriched_series_data(
+            configuration_id=detection_configuration_id,
+            body=detection_series_query,
+            **kwargs
+        )
+
+    @distributed_trace
+    def list_alerts(
+        self,
+        alert_configuration_id,  # type: str
+        start_time,  # type: datetime.datetime
+        end_time,  # type: datetime.datetime
+        time_mode,  # type: Union[str, AlertQueryTimeMode]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> ItemPaged[AnomalyAlert]
+        skip = kwargs.pop("skip", None)
+        converted_start_time = convert_datetime(start_time)
+        converted_end_time = convert_datetime(end_time)
+
+        alerting_result_query = AlertingResultQuery(
+            start_time=converted_start_time,
+            end_time=converted_end_time,
+            time_mode=time_mode,
+        )
+
+        return super().list_alerts(
+            configuration_id=alert_configuration_id,
+            skip=skip,
+            body=alerting_result_query,
+            **kwargs
+        )
+
+    def _list_anomalies_for_alert(self, alert_configuration_id, alert_id, **kwargs):
+        # type: (str, str, Any) -> ItemPaged[DataPointAnomaly]
+        skip = kwargs.pop("skip", None)
+        return super().get_anomalies_from_alert_by_anomaly_alerting_configuration(
+            configuration_id=alert_configuration_id,
+            alert_id=alert_id,
+            skip=skip,
+            **kwargs
+        )
+
+    def _list_anomalies_for_detection_configuration(
+        self, detection_configuration_id, start_time, end_time, **kwargs
+    ):
+        # type: (...) -> ItemPaged[DataPointAnomaly]
+        skip = kwargs.pop("skip", None)
+        condition = kwargs.pop("filter", None)
+        filter_condition = condition._to_generated() if condition else None
+        converted_start_time = convert_datetime(start_time)
+        converted_end_time = convert_datetime(end_time)
+        detection_anomaly_result_query = DetectionAnomalyResultQuery(
+            start_time=converted_start_time,
+            end_time=converted_end_time,
+            filter=filter_condition,
+        )
+
+        return super().get_anomalies_by_anomaly_detection_configuration(
+            configuration_id=detection_configuration_id,
+            skip=skip,
+            body=detection_anomaly_result_query,
+            **kwargs
+        )
+
+    @distributed_trace
+    def list_anomalies(self, **kwargs):
+        # type: (Any) -> ItemPaged[DataPointAnomaly]
+        alert_configuration_id = kwargs.get("alert_configuration_id", None)
+        alert_id = kwargs.get("alert_id", None)
+        detection_configuration_id = kwargs.get("detection_configuration_id", None)
+        start_time = kwargs.get("start_time", None)
+        end_time = kwargs.get("end_time", None)
+        if detection_configuration_id:
+            if alert_configuration_id or alert_id:
+                raise TypeError(
+                    'Specify either "detection_configuration_id" or "alert_configuration_id" and "alert_id"'
+                )
+            if not start_time or not end_time:
+                raise TypeError('"start_time" and "end_time" are required')
+            return self._list_anomalies_for_detection_configuration(**kwargs)
+        if not alert_configuration_id or not alert_id:
+            raise TypeError('"alert_configuration_id" and "alert_id" are required')
+        return self._list_anomalies_for_alert(**kwargs)
+
+    @distributed_trace
+    def list_anomaly_dimension_values(
+        self, detection_configuration_id, dimension_name, start_time, end_time, **kwargs
+    ):
+        # type: (str, str, Union[str, datetime.datetime], Union[str, datetime.datetime], Any) -> ItemPaged[str]
+        skip = kwargs.pop("skip", None)
+        dimension = kwargs.pop("dimension_filter", None)
+        dimension_filter = DimensionGroupIdentity(dimension=dimension) if dimension else None
+        converted_start_time = convert_datetime(start_time)
+        converted_end_time = convert_datetime(end_time)
+        anomaly_dimension_query = AnomalyDimensionQuery(
+            start_time=converted_start_time,
+            end_time=converted_end_time,
+            dimension_name=dimension_name,
+            dimension_filter=dimension_filter,
+        )
+
+        return super().list_anomaly_dimension_values(
+            configuration_id=detection_configuration_id,
+            skip=skip,
+            body=anomaly_dimension_query,
+            **kwargs
+        )
+
+    def _list_incidents_for_alert(self, alert_configuration_id, alert_id, **kwargs):
+        # type: (str, str, Any) -> ItemPaged[AnomalyIncident]
+
+        skip = kwargs.pop("skip", None)
+
+        return super().get_incidents_from_alert_by_anomaly_alerting_configuration(  # type: ignore
+            configuration_id=alert_configuration_id,
+            alert_id=alert_id,
+            skip=skip,
+            **kwargs
+        )
+
+    def _list_incidents_for_detection_configuration(
+        self, detection_configuration_id, start_time, end_time, **kwargs
+    ):
+        # type: (str, Union[str, datetime.datetime], Union[str, datetime.datetime], Any) -> ItemPaged[AnomalyIncident]
+        condition = kwargs.pop("filter", None)
+        filter_condition = condition._to_generated() if condition else None
+        converted_start_time = convert_datetime(start_time)
+        converted_end_time = convert_datetime(end_time)
+
+        detection_incident_result_query = DetectionIncidentResultQuery(
+            start_time=converted_start_time,
+            end_time=converted_end_time,
+            filter=filter_condition,
+        )
+
+        return super().get_incidents_by_anomaly_detection_configuration(  # type: ignore
+            configuration_id=detection_configuration_id,
+            body=detection_incident_result_query,
+            **kwargs
+        )
+
+    @distributed_trace
+    def list_incidents(self, **kwargs):
+        # type: (Any) -> ItemPaged[AnomalyIncident]
+        alert_configuration_id = kwargs.get("alert_configuration_id", None)
+        alert_id = kwargs.get("alert_id", None)
+        detection_configuration_id = kwargs.get("detection_configuration_id", None)
+        start_time = kwargs.get("start_time", None)
+        end_time = kwargs.get("end_time", None)
+        if detection_configuration_id:
+            if alert_configuration_id or alert_id:
+                raise TypeError(
+                    'Specify either "detection_configuration_id" or "alert_configuration_id" and "alert_id"'
+                )
+            if not start_time or not end_time:
+                raise TypeError('"start_time" and "end_time" are required')
+            return self._list_incidents_for_detection_configuration(**kwargs)
+        if not alert_configuration_id or not alert_id:
+            raise TypeError('"alert_configuration_id" and "alert_id" are required')
+        return self._list_incidents_for_alert(**kwargs)
+
+    @distributed_trace
+    def list_metric_dimension_values(self, metric_id, dimension_name, **kwargs):
+        # type: (str, str, Any) -> ItemPaged[str]
+        skip = kwargs.pop("skip", None)
+        dimension_value_filter = kwargs.pop("dimension_value_filter", None)
+
+        metric_dimension_query_options = MetricDimensionQueryOptions(
+            dimension_name=dimension_name,
+            dimension_value_filter=dimension_value_filter,
+        )
+
+        return super().list_metric_dimension_values(  # type: ignore
+            metric_id=metric_id,
+            body=metric_dimension_query_options,
+            skip=skip,
+            **kwargs
+        )
+
+    @distributed_trace
+    def list_metric_series_data(
+        self,
+        metric_id,  # type: str
+        series_keys,  # type: List[Dict[str, str]]
+        start_time,  # type: Union[str, datetime.datetime]
+        end_time,  # type: Union[str, datetime.datetime]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> ItemPaged[MetricSeriesData]
+        converted_start_time = convert_datetime(start_time)
+        converted_end_time = convert_datetime(end_time)
+
+        metric_data_query_options = MetricDataQueryOptions(
+            start_time=converted_start_time,
+            end_time=converted_end_time,
+            series=series_keys,
+        )
+
+        return super().list_metric_series_data(  # type: ignore
+            metric_id=metric_id,
+            body=metric_data_query_options,
+            **kwargs
+        )
+
+    @distributed_trace
+    def list_metric_series_definitions(self, metric_id, active_since, **kwargs):
+        # type: (str, datetime.datetime, Any) -> ItemPaged[MetricSeriesDefinition]
+        skip = kwargs.pop("skip", None)
+        dimension_filter = kwargs.pop("dimension_filter", None)
+
+        metric_series_query_options = MetricSeriesQueryOptions(
+            active_since=active_since,
+            dimension_filter=dimension_filter,
+        )
+
+        return super().list_metric_series_definitions(  # type: ignore
+            metric_id=metric_id, body=metric_series_query_options, skip=skip, **kwargs
+        )
+
+    @distributed_trace
+    def list_metric_enrichment_status(self, metric_id, start_time, end_time, **kwargs):
+        # type: (str, Union[str, datetime.datetime], Union[str, datetime.datetime], Any) -> ItemPaged[EnrichmentStatus]
+        skip = kwargs.pop("skip", None)
+        converted_start_time = convert_datetime(start_time)
+        converted_end_time = convert_datetime(end_time)
+        enrichment_status_query_option = EnrichmentStatusQueryOption(
+            start_time=converted_start_time,
+            end_time=converted_end_time,
+        )
+
+        return super().list_metric_enrichment_status(  # type: ignore
+            metric_id=metric_id,
+            skip=skip,
+            body=enrichment_status_query_option,
+            **kwargs
+        )
 
 __all__ = ["MetricsAdvisorClientOperationsMixin"]
