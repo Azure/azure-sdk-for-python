@@ -99,7 +99,7 @@ def build_requirements_nightly(packages):
     f = open(file_path + "/requirements-nightly.txt", 'w')
     for package in packages:
         pkg_name, _, setup_py_path = package
-        f.write(pkg_name + ' ' + setup_py_path + '\n')
+        f.write(setup_py_path + '\n')
     f.close()
 
 def build_requirements_release(packages):
