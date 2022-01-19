@@ -58,13 +58,7 @@ class _DocumentProducer(object):
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
         def fetch_fn(options):
-            try:
-                return self._client.QueryFeed(path, collection_id, query, options, partition_key_target_range["id"])
-            except exceptions.CosmosHttpResponseError as e:
-                if e.status_code == http_constants.StatusCodes.GONE:
-                    # 410 within fetch function, raise to properly handle within execution context
-                    raise
-                return self._client.QueryFeed(path, collection_id, query, options, partition_key_target_range["id"])
+            return self._client.QueryFeed(path, collection_id, query, options, partition_key_target_range["id"])
 
         self._ex_context = _DefaultQueryExecutionContext(client, self._options, fetch_fn)
 
@@ -107,10 +101,8 @@ class _DocumentProducer(object):
         if self._cur_item is None:
             try:
                 self._cur_item = next(self._ex_context)
-            except exceptions.CosmosHttpResponseError as e:
-                if partition_range_is_gone(e):
-                    # raising within document producer peek in order to properly handle within execution context
-                    raise
+            except exceptions.CosmosHttpResponseError:
+                raise
 
         return self._cur_item
 

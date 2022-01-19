@@ -33,6 +33,7 @@ class GoneRetryPolicy(object):
         self._max_retry_attempt_count = 3
         self.current_retry_attempt_count = 0
         self.retry_after_in_milliseconds = 1000
+        self.refresh_partition_key_range_cache = True
         self.args = args
         self.client = client
 
@@ -44,12 +45,15 @@ class GoneRetryPolicy(object):
         :rtype: boolean
 
         """
-        if exception.sub_status == http_constants.SubStatusCodes.PARTITION_KEY_RANGE_GONE:
-            # refresh routing_map_provider to refresh partition key range cache
-            # return False to raise error to multi_execution_aggregator and repair document producer
-            self.client.refresh_routing_map_provider()
-            return False
         if self.current_retry_attempt_count < self._max_retry_attempt_count:
             self.current_retry_attempt_count += 1
+            if (self.refresh_partition_key_range_cache
+                    and exception.sub_status == http_constants.SubStatusCodes.PARTITION_KEY_RANGE_GONE):
+                # refresh routing_map_provider to refresh partition key range cache
+                # make refresh_partition_key_range_cache False to skip this check on subsequent Gone exceptions
+                # return False to raise error to multi_execution_aggregator and repair document producer context
+                self.client.refresh_routing_map_provider()
+                self.refresh_partition_key_range_cache = False
+                return False
             return True
         return False

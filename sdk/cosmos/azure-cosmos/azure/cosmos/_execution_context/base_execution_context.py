@@ -25,7 +25,7 @@ database service.
 
 from collections import deque
 import copy
-from .. import _retry_utility, http_constants, exceptions
+from .. import _retry_utility, http_constants
 
 # pylint: disable=protected-access
 
