@@ -203,6 +203,35 @@ class DataFeedRollupSettings:
             )[:1024]
         )
 
+class DataFeedMetric(DataFeedMetricGenerated):
+    """DataFeedMetric.
+
+    :param name: Required. metric name.
+    :type name: str
+    :keyword display_name: metric display name.
+    :paramtype display_name: str
+    :keyword description: metric description.
+    :paramtype description: str
+    :ivar id: metric id.
+    :vartype id: str
+    """
+
+    def __init__(self, name: str, **kwargs: Any) -> None:
+        super().__init__(
+            metric_name=kwargs.pop("name", None),
+            metric_display_name=kwargs.pop("display_name", None),
+            metric_description=kwargs.pop("description", None),
+        )
+        self.name = name
+        self.id = kwargs.get("id", None)
+        self.display_name = kwargs.get("display_name", None)
+        self.description = kwargs.get("description", None)
+
+    def __repr__(self):
+        return "DataFeedMetric(name={}, id={}, display_name={}, description={})".format(
+            self.name, self.id, self.display_name, self.description
+        )[:1024]
+
 class DataFeedSchema:
     """Data feed schema
 
@@ -430,7 +459,7 @@ class MetricAnomalyAlertSnoozeCondition(MetricAnomalyAlertSnoozeConditionGenerat
     def __init__(
         self,
         auto_snooze: int,
-        snooze_scope: SnoozeScope,
+        snooze_scope: "SnoozeScope",
         only_for_successive: bool,
         **kwargs: Any
     ) -> None:
@@ -478,7 +507,7 @@ class MetricBoundaryCondition:
      metric should be specified only when using other metric to filter.
     """
 
-    def __init__(self, direction: Union[str, AnomalyDetectorDirection], **kwargs: Any) -> None:
+    def __init__(self, direction: Union[str, "AnomalyDetectorDirection"], **kwargs: Any) -> None:
         self.direction = direction
         self.lower = kwargs.get("lower", None)
         self.upper = kwargs.get("upper", None)
@@ -621,7 +650,7 @@ class AnomalyDetectionConfiguration(AnomalyDetectionConfigurationGenerated):
         self,
         name: str,
         metric_id: str,
-        whole_series_detection_condition: MetricDetectionCondition,
+        whole_series_detection_condition: "MetricDetectionCondition",
         **kwargs: Any
     ) -> None:
         super().__init__(
@@ -683,7 +712,7 @@ class DataFeedSource(dict):
         self.authentication_type = kwargs.get("authentication_type", None)
         self.credential_id = kwargs.get("credential_id", None)
 
-class AzureApplicationInsightsDataFeedSource(AzureApplicationInsightsDataFeedSourceGenerated, DataFeedSource):
+class AzureApplicationInsightsDataFeedSource(DataFeedSource):
     """AzureApplicationInsightsDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -703,11 +732,8 @@ class AzureApplicationInsightsDataFeedSource(AzureApplicationInsightsDataFeedSou
     """
 
     def __init__(self, query: str, **kwargs: Any) -> None:
-        super().__init__(
-            data_source_type="AzureApplicationInsights",
-            authentication_type="Basic",
-            **kwargs
-        )
+        self.data_source_type = "AzureApplicationInsights"
+        self.authentication_type = "Basic"
         self.azure_cloud = kwargs.get("azure_cloud", None)
         self.application_id = kwargs.get("application_id", None)
         self.api_key = kwargs.get("api_key", None)
@@ -727,9 +753,9 @@ class AzureApplicationInsightsDataFeedSource(AzureApplicationInsightsDataFeedSou
             )[:1024]
         )
 
-class AzureBlobDataFeedSource(AzureBlobDataFeedSourceGenerated, DataFeed):
-
+class AzureBlobDataFeedSource(DataFeed):
     """AzureBlobDataFeedSource.
+
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
@@ -754,11 +780,8 @@ class AzureBlobDataFeedSource(AzureBlobDataFeedSourceGenerated, DataFeed):
             authentication_type = "ManagedIdentity"
         else:
             authentication_type = "Basic"
-        super(AzureBlobDataFeedSource, self).__init__(=
-            data_source_type="AzureBlob",
-            authentication_type=authentication_type,
-            **kwargs
-        )
+        self.data_source_type = "AzureBlob"
+        self.authentication_type = authentication_type
         self.connection_string = kwargs.get("connection_string", None)
         self.container = container
         self.blob_template = blob_template
@@ -777,7 +800,7 @@ class AzureBlobDataFeedSource(AzureBlobDataFeedSourceGenerated, DataFeed):
             )[:1024]
         )
 
-class AzureCosmosDbDataFeedSource(AzureCosmosDbDataFeedSourceGenerated, DataFeedSource):
+class AzureCosmosDbDataFeedSource(DataFeedSource):
     """AzureCosmosDbDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -803,10 +826,11 @@ class AzureCosmosDbDataFeedSource(AzureCosmosDbDataFeedSourceGenerated, DataFeed
         self, sql_query: str, database: str, collection_id: str, **kwargs: Any
     ) -> None:
         super().__init__(
-            data_source_type="AzureCosmosDB",
-            authentication_type="Basic",
+
             **kwargs,
         )
+        self.data_source_type = "AzureCosmosDB"
+        self.authentication_type = "Basic"
         self.connection_string = kwargs.pop("connection_string", None)
         self.sql_query = sql_query
         self.database = database
@@ -826,8 +850,9 @@ class AzureCosmosDbDataFeedSource(AzureCosmosDbDataFeedSourceGenerated, DataFeed
             )[:1024]
         )
 
-class AzureDataExplorerDataFeedSource(AzureDataExplorerDataFeedSourceGenerated, DataFeed):
+class AzureDataExplorerDataFeedSource(DataFeed):
     """AzureDataExplorerDataFeedSource.
+
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
      include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
      "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
@@ -865,14 +890,11 @@ class AzureDataExplorerDataFeedSource(AzureDataExplorerDataFeedSourceGenerated, 
             credential_id = datasource_service_principal_in_kv_id
         else:
             authentication_type = "Basic"
-        super().__init__(
-            datasource_service_principal_id=datasource_service_principal_id,
-            datasource_service_principal_in_kv_id=datasource_service_principal_in_kv_id,
-            data_source_type="AzureDataExplorer",
-            credential_id=credential_id,
-            authentication_type=authentication_type,
-            **kwargs
-        )
+        self.datasource_service_principal_id = datasource_service_principal_id
+        self.datasource_service_principal_in_kv_id=datasource_service_principal_in_kv_id
+        self.data_source_type="AzureDataExplorer"
+        self.credential_id=credential_id
+        self.authentication_type=authentication_type
         self.connection_string = kwargs.pop("connection_string", None)
         self.query = query
 
@@ -1543,7 +1565,7 @@ class ChangeThresholdCondition(ChangeThresholdConditionGenerated):
         change_percentage: float,  # type: float
         shift_point: int,  # type: int
         within_range: bool,  # type: bool
-        anomaly_detector_direction: Union[str, AnomalyDetectorDirection],
+        anomaly_detector_direction: Union[str, "AnomalyDetectorDirection"],
         suppress_condition: SuppressCondition,
         **kwargs: Any
     ) -> None:  # pylint: disable=unused-argument
@@ -1586,7 +1608,7 @@ class HardThresholdCondition(HardThresholdConditionGenerated):
 
     def __init__(
         self,
-        anomaly_detector_direction: Union[str, AnomalyDetectorDirection],
+        anomaly_detector_direction: Union[str, "AnomalyDetectorDirection"],
         suppress_condition: SuppressCondition,
         **kwargs: Any
     ) -> None:
@@ -1678,35 +1700,6 @@ class MetricSingleSeriesDetectionCondition(MetricDetectionCondition):
                 :1024
             ]
         )
-
-class DataFeedMetric(DataFeedMetricGenerated):
-    """DataFeedMetric.
-
-    :param name: Required. metric name.
-    :type name: str
-    :keyword display_name: metric display name.
-    :paramtype display_name: str
-    :keyword description: metric description.
-    :paramtype description: str
-    :ivar id: metric id.
-    :vartype id: str
-    """
-
-    def __init__(self, name: str, **kwargs: Any) -> None:
-        super().__init__(
-            metric_name=kwargs.pop("name", None),
-            metric_display_name=kwargs.pop("display_name", None),
-            metric_description=kwargs.pop("description", None),
-        )
-        self.name = name
-        self.id = kwargs.get("id", None)
-        self.display_name = kwargs.get("display_name", None)
-        self.description = kwargs.get("description", None)
-
-    def __repr__(self):
-        return "DataFeedMetric(name={}, id={}, display_name={}, description={})".format(
-            self.name, self.id, self.display_name, self.description
-        )[:1024]
 
 class DataFeedDimension(DataFeedDimensionGenerated):
     """DataFeedDimension.

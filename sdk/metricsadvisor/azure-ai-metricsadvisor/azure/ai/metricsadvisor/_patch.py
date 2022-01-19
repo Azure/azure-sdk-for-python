@@ -26,14 +26,30 @@
 # --------------------------------------------------------------------------
 import datetime
 import six
-from typing import Any, List, Union, Dict, overload
+from typing import TYPE_CHECKING, Any, List, Union, Dict, overload
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from ._metrics_advisor_client import MetricsAdvisorClientGenerated
 from ._version import SDK_MONIKER
 from .models import *
-from .models._patch import DataFeedSourceUnion
+
+DatasourceCredentialUnion = Union[
+    DatasourceSqlConnectionString,
+    DatasourceDataLakeGen2SharedKey,
+    DatasourceServicePrincipal,
+    DatasourceServicePrincipalInKeyVault,
+]
+
+if TYPE_CHECKING:
+    from .models._patch import DataFeedSourceUnion
+
+FeedbackUnion = Union[
+    AnomalyFeedback,
+    ChangePointFeedback,
+    CommentFeedback,
+    PeriodFeedback,
+]
 
 _API_KEY_HEADER_NAME = "Ocp-Apim-Subscription-Key"
 _X_API_KEY_HEADER_NAME = "x-api-key"
@@ -114,7 +130,7 @@ class MetricsAdvisorKeyCredentialPolicy(SansIOHTTPPolicy):
         request.http_request.headers[
             _API_KEY_HEADER_NAME
         ] = self._credential.subscription_key
-        request.http_request.headers[_X_API_KEY_HEADER_NAME] = self._credential.
+        request.http_request.headers[_X_API_KEY_HEADER_NAME] = self._credential.api_key
 
 def get_authentication_policy(credential):
     authentication_policy = None
@@ -234,7 +250,7 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
     def create_data_feed(
         self,
         name: str,
-        source: DataFeedSourceUnion,
+        source: "DataFeedSourceUnion",
         granularity: Union[str, DataFeedGranularityType, DataFeedGranularity],
         schema: Union[List[str], DataFeedSchema],
         ingestion_settings: Union[datetime.datetime, DataFeedIngestionSettings],
@@ -531,7 +547,7 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
 
     @distributed_trace
     def delete_alert_configuration(
-        self, *alert_configuration_id: *str, **kwargs: Any
+        self, *alert_configuration_id: str, **kwargs: Any
     ) -> None:
         """Delete an anomaly alert configuration by its ID.
 
@@ -557,7 +573,7 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
 
     @distributed_trace
     def delete_detection_configuration(
-        self, *detection_configuration_id: *str, **kwargs: Any
+        self, *detection_configuration_id: str, **kwargs: Any
     ) -> None:
         """Delete an anomaly detection configuration by its ID.
 
@@ -582,7 +598,7 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
         )
 
     @distributed_trace
-    def delete_data_feed(self, *data_feed_id: *str, **kwargs: Any) -> None:
+    def delete_data_feed(self, *data_feed_id: str, **kwargs: Any) -> None:
         """Delete a data feed by its ID.
 
         :param str data_feed_id: The data feed unique id.
@@ -606,7 +622,7 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
         )
 
     @distributed_trace
-    def delete_hook(self, *hook_id: *str, **kwargs: Any) -> None:
+    def delete_hook(self, *hook_id: str, **kwargs: Any) -> None:
         """Delete a web or email hook by its ID.
         :param str hook_id: Hook unique ID.
         :return: None
@@ -1094,7 +1110,7 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
 
     @distributed_trace
     def delete_datasource_credential(
-        self, *credential_id: *str, **kwargs: Any
+        self, *credential_id: str, **kwargs: Any
     ) -> None:
         """Delete a datasource credential by its ID.
 
@@ -1642,6 +1658,9 @@ class MetricsAdvisorClient(_MetricsAdvisorClientBase):
             end_time=end_time,
             **kwargs
         )
+
+def patch_sdk():
+    pass
 
 __all__ = [
     "MetricsAdvisorAdministrationClient",

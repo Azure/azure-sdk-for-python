@@ -11,9 +11,11 @@ from msrest import Serializer
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ..models import *
-from ..models._patch import DataFeedSourceUnion
+
 from typing import TYPE_CHECKING, Union, List, Any, Dict, cast, overload
 from azure.core.paging import ItemPaged
+if TYPE_CHECKING:
+    from ..models._patch import DataFeedSourceUnion
 
 DATA_FEED = {
     "SqlServer": SqlServerDataFeedSource,
