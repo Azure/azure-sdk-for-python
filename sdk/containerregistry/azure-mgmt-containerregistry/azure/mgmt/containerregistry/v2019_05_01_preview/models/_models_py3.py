@@ -17,12 +17,12 @@ from ._container_registry_management_client_enums import *
 class ActiveDirectoryObject(msrest.serialization.Model):
     """The Active Directory Object that will be used for authenticating the token of a container registry.
 
-    :param object_id: The user/group/application object ID for Active Directory Object that will be
+    :ivar object_id: The user/group/application object ID for Active Directory Object that will be
      used for authenticating the token of a container registry.
-    :type object_id: str
-    :param tenant_id: The tenant ID of user/group/application object Active Directory Object that
+    :vartype object_id: str
+    :ivar tenant_id: The tenant ID of user/group/application object Active Directory Object that
      will be used for authenticating the token of a container registry.
-    :type tenant_id: str
+    :vartype tenant_id: str
     """
 
     _attribute_map = {
@@ -37,6 +37,14 @@ class ActiveDirectoryObject(msrest.serialization.Model):
         tenant_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword object_id: The user/group/application object ID for Active Directory Object that will
+         be used for authenticating the token of a container registry.
+        :paramtype object_id: str
+        :keyword tenant_id: The tenant ID of user/group/application object Active Directory Object that
+         will be used for authenticating the token of a container registry.
+        :paramtype tenant_id: str
+        """
         super(ActiveDirectoryObject, self).__init__(**kwargs)
         self.object_id = object_id
         self.tenant_id = tenant_id
@@ -45,14 +53,15 @@ class ActiveDirectoryObject(msrest.serialization.Model):
 class GenerateCredentialsParameters(msrest.serialization.Model):
     """The parameters used to generate credentials for a specified token or user of a container registry.
 
-    :param token_id: The resource ID of the token for which credentials have to be generated.
-    :type token_id: str
-    :param expiry: The expiry date of the generated credentials after which the credentials become
+    :ivar token_id: The resource ID of the token for which credentials have to be generated.
+    :vartype token_id: str
+    :ivar expiry: The expiry date of the generated credentials after which the credentials become
      invalid.
-    :type expiry: ~datetime.datetime
-    :param name: Specifies name of the password which should be regenerated if any -- password1 or
+    :vartype expiry: ~datetime.datetime
+    :ivar name: Specifies name of the password which should be regenerated if any -- password1 or
      password2. Possible values include: "password1", "password2".
-    :type name: str or ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenPasswordName
+    :vartype name: str or
+     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenPasswordName
     """
 
     _attribute_map = {
@@ -69,6 +78,17 @@ class GenerateCredentialsParameters(msrest.serialization.Model):
         name: Optional[Union[str, "TokenPasswordName"]] = None,
         **kwargs
     ):
+        """
+        :keyword token_id: The resource ID of the token for which credentials have to be generated.
+        :paramtype token_id: str
+        :keyword expiry: The expiry date of the generated credentials after which the credentials
+         become invalid.
+        :paramtype expiry: ~datetime.datetime
+        :keyword name: Specifies name of the password which should be regenerated if any -- password1
+         or password2. Possible values include: "password1", "password2".
+        :paramtype name: str or
+         ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenPasswordName
+        """
         super(GenerateCredentialsParameters, self).__init__(**kwargs)
         self.token_id = token_id
         self.expiry = expiry
@@ -78,10 +98,11 @@ class GenerateCredentialsParameters(msrest.serialization.Model):
 class GenerateCredentialsResult(msrest.serialization.Model):
     """The response from the GenerateCredentials operation.
 
-    :param username: The username for a container registry.
-    :type username: str
-    :param passwords: The list of passwords for a container registry.
-    :type passwords: list[~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenPassword]
+    :ivar username: The username for a container registry.
+    :vartype username: str
+    :ivar passwords: The list of passwords for a container registry.
+    :vartype passwords:
+     list[~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenPassword]
     """
 
     _attribute_map = {
@@ -96,6 +117,13 @@ class GenerateCredentialsResult(msrest.serialization.Model):
         passwords: Optional[List["TokenPassword"]] = None,
         **kwargs
     ):
+        """
+        :keyword username: The username for a container registry.
+        :paramtype username: str
+        :keyword passwords: The list of passwords for a container registry.
+        :paramtype passwords:
+         list[~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenPassword]
+        """
         super(GenerateCredentialsResult, self).__init__(**kwargs)
         self.username = username
         self.passwords = passwords
@@ -134,6 +162,8 @@ class ProxyResource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ProxyResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -154,8 +184,8 @@ class ScopeMap(ProxyResource):
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.containerregistry.v2019_05_01_preview.models.SystemData
-    :param description: The user friendly description of the scope map.
-    :type description: str
+    :ivar description: The user friendly description of the scope map.
+    :vartype description: str
     :ivar type_properties_type: The type of the scope map. E.g. BuildIn scope map.
     :vartype type_properties_type: str
     :ivar creation_date: The creation date of scope map.
@@ -164,10 +194,10 @@ class ScopeMap(ProxyResource):
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.containerregistry.v2019_05_01_preview.models.ProvisioningState
-    :param actions: The list of scoped permissions for registry artifacts.
+    :ivar actions: The list of scoped permissions for registry artifacts.
      E.g. repositories/repository-name/content/read,
      repositories/repository-name/metadata/write.
-    :type actions: list[str]
+    :vartype actions: list[str]
     """
 
     _validation = {
@@ -199,6 +229,14 @@ class ScopeMap(ProxyResource):
         actions: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword description: The user friendly description of the scope map.
+        :paramtype description: str
+        :keyword actions: The list of scoped permissions for registry artifacts.
+         E.g. repositories/repository-name/content/read,
+         repositories/repository-name/metadata/write.
+        :paramtype actions: list[str]
+        """
         super(ScopeMap, self).__init__(**kwargs)
         self.description = description
         self.type_properties_type = None
@@ -210,11 +248,11 @@ class ScopeMap(ProxyResource):
 class ScopeMapListResult(msrest.serialization.Model):
     """The result of a request to list scope maps for a container registry.
 
-    :param value: The list of scope maps. Since this list may be incomplete, the nextLink field
+    :ivar value: The list of scope maps. Since this list may be incomplete, the nextLink field
      should be used to request the next list of scope maps.
-    :type value: list[~azure.mgmt.containerregistry.v2019_05_01_preview.models.ScopeMap]
-    :param next_link: The URI that can be used to request the next list of scope maps.
-    :type next_link: str
+    :vartype value: list[~azure.mgmt.containerregistry.v2019_05_01_preview.models.ScopeMap]
+    :ivar next_link: The URI that can be used to request the next list of scope maps.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -229,6 +267,13 @@ class ScopeMapListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of scope maps. Since this list may be incomplete, the nextLink field
+         should be used to request the next list of scope maps.
+        :paramtype value: list[~azure.mgmt.containerregistry.v2019_05_01_preview.models.ScopeMap]
+        :keyword next_link: The URI that can be used to request the next list of scope maps.
+        :paramtype next_link: str
+        """
         super(ScopeMapListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -237,12 +282,12 @@ class ScopeMapListResult(msrest.serialization.Model):
 class ScopeMapUpdateParameters(msrest.serialization.Model):
     """The properties for updating the scope map.
 
-    :param description: The user friendly description of the scope map.
-    :type description: str
-    :param actions: The list of scope permissions for registry artifacts.
+    :ivar description: The user friendly description of the scope map.
+    :vartype description: str
+    :ivar actions: The list of scope permissions for registry artifacts.
      E.g. repositories/repository-name/pull,
      repositories/repository-name/delete.
-    :type actions: list[str]
+    :vartype actions: list[str]
     """
 
     _attribute_map = {
@@ -257,6 +302,14 @@ class ScopeMapUpdateParameters(msrest.serialization.Model):
         actions: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword description: The user friendly description of the scope map.
+        :paramtype description: str
+        :keyword actions: The list of scope permissions for registry artifacts.
+         E.g. repositories/repository-name/pull,
+         repositories/repository-name/delete.
+        :paramtype actions: list[str]
+        """
         super(ScopeMapUpdateParameters, self).__init__(**kwargs)
         self.description = description
         self.actions = actions
@@ -265,22 +318,22 @@ class ScopeMapUpdateParameters(msrest.serialization.Model):
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or
      ~azure.mgmt.containerregistry.v2019_05_01_preview.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or
+    :vartype last_modified_by_type: str or
      ~azure.mgmt.containerregistry.v2019_05_01_preview.models.LastModifiedByType
-    :param last_modified_at: The timestamp of resource modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :ivar last_modified_at: The timestamp of resource modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -303,6 +356,24 @@ class SystemData(msrest.serialization.Model):
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or
+         ~azure.mgmt.containerregistry.v2019_05_01_preview.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or
+         ~azure.mgmt.containerregistry.v2019_05_01_preview.models.LastModifiedByType
+        :keyword last_modified_at: The timestamp of resource modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
@@ -331,15 +402,15 @@ class Token(ProxyResource):
      "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.containerregistry.v2019_05_01_preview.models.ProvisioningState
-    :param scope_map_id: The resource ID of the scope map to which the token will be associated
+    :ivar scope_map_id: The resource ID of the scope map to which the token will be associated
      with.
-    :type scope_map_id: str
-    :param credentials: The credentials that can be used for authenticating the token.
-    :type credentials:
+    :vartype scope_map_id: str
+    :ivar credentials: The credentials that can be used for authenticating the token.
+    :vartype credentials:
      ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenCredentialsProperties
-    :param status: The status of the token example enabled or disabled. Possible values include:
+    :ivar status: The status of the token example enabled or disabled. Possible values include:
      "enabled", "disabled".
-    :type status: str or ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenStatus
+    :vartype status: str or ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenStatus
     """
 
     _validation = {
@@ -371,6 +442,17 @@ class Token(ProxyResource):
         status: Optional[Union[str, "TokenStatus"]] = None,
         **kwargs
     ):
+        """
+        :keyword scope_map_id: The resource ID of the scope map to which the token will be associated
+         with.
+        :paramtype scope_map_id: str
+        :keyword credentials: The credentials that can be used for authenticating the token.
+        :paramtype credentials:
+         ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenCredentialsProperties
+        :keyword status: The status of the token example enabled or disabled. Possible values include:
+         "enabled", "disabled".
+        :paramtype status: str or ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenStatus
+        """
         super(Token, self).__init__(**kwargs)
         self.creation_date = None
         self.provisioning_state = None
@@ -382,16 +464,16 @@ class Token(ProxyResource):
 class TokenCertificate(msrest.serialization.Model):
     """The properties of a certificate used for authenticating a token.
 
-    :param name:  Possible values include: "certificate1", "certificate2".
-    :type name: str or
+    :ivar name: Possible values include: "certificate1", "certificate2".
+    :vartype name: str or
      ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenCertificateName
-    :param expiry: The expiry datetime of the certificate.
-    :type expiry: ~datetime.datetime
-    :param thumbprint: The thumbprint of the certificate.
-    :type thumbprint: str
-    :param encoded_pem_certificate: Base 64 encoded string of the public certificate1 in PEM format
+    :ivar expiry: The expiry datetime of the certificate.
+    :vartype expiry: ~datetime.datetime
+    :ivar thumbprint: The thumbprint of the certificate.
+    :vartype thumbprint: str
+    :ivar encoded_pem_certificate: Base 64 encoded string of the public certificate1 in PEM format
      that will be used for authenticating the token.
-    :type encoded_pem_certificate: str
+    :vartype encoded_pem_certificate: str
     """
 
     _attribute_map = {
@@ -410,6 +492,18 @@ class TokenCertificate(msrest.serialization.Model):
         encoded_pem_certificate: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Possible values include: "certificate1", "certificate2".
+        :paramtype name: str or
+         ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenCertificateName
+        :keyword expiry: The expiry datetime of the certificate.
+        :paramtype expiry: ~datetime.datetime
+        :keyword thumbprint: The thumbprint of the certificate.
+        :paramtype thumbprint: str
+        :keyword encoded_pem_certificate: Base 64 encoded string of the public certificate1 in PEM
+         format that will be used for authenticating the token.
+        :paramtype encoded_pem_certificate: str
+        """
         super(TokenCertificate, self).__init__(**kwargs)
         self.name = name
         self.expiry = expiry
@@ -420,15 +514,16 @@ class TokenCertificate(msrest.serialization.Model):
 class TokenCredentialsProperties(msrest.serialization.Model):
     """The properties of the credentials that can be used for authenticating the token.
 
-    :param active_directory_object: The Active Directory Object that will be used for
-     authenticating the token of a container registry.
-    :type active_directory_object:
+    :ivar active_directory_object: The Active Directory Object that will be used for authenticating
+     the token of a container registry.
+    :vartype active_directory_object:
      ~azure.mgmt.containerregistry.v2019_05_01_preview.models.ActiveDirectoryObject
-    :param certificates:
-    :type certificates:
+    :ivar certificates:
+    :vartype certificates:
      list[~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenCertificate]
-    :param passwords:
-    :type passwords: list[~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenPassword]
+    :ivar passwords:
+    :vartype passwords:
+     list[~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenPassword]
     """
 
     _attribute_map = {
@@ -445,6 +540,18 @@ class TokenCredentialsProperties(msrest.serialization.Model):
         passwords: Optional[List["TokenPassword"]] = None,
         **kwargs
     ):
+        """
+        :keyword active_directory_object: The Active Directory Object that will be used for
+         authenticating the token of a container registry.
+        :paramtype active_directory_object:
+         ~azure.mgmt.containerregistry.v2019_05_01_preview.models.ActiveDirectoryObject
+        :keyword certificates:
+        :paramtype certificates:
+         list[~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenCertificate]
+        :keyword passwords:
+        :paramtype passwords:
+         list[~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenPassword]
+        """
         super(TokenCredentialsProperties, self).__init__(**kwargs)
         self.active_directory_object = active_directory_object
         self.certificates = certificates
@@ -454,11 +561,11 @@ class TokenCredentialsProperties(msrest.serialization.Model):
 class TokenListResult(msrest.serialization.Model):
     """The result of a request to list tokens for a container registry.
 
-    :param value: The list of tokens. Since this list may be incomplete, the nextLink field should
+    :ivar value: The list of tokens. Since this list may be incomplete, the nextLink field should
      be used to request the next list of tokens.
-    :type value: list[~azure.mgmt.containerregistry.v2019_05_01_preview.models.Token]
-    :param next_link: The URI that can be used to request the next list of tokens.
-    :type next_link: str
+    :vartype value: list[~azure.mgmt.containerregistry.v2019_05_01_preview.models.Token]
+    :ivar next_link: The URI that can be used to request the next list of tokens.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -473,6 +580,13 @@ class TokenListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of tokens. Since this list may be incomplete, the nextLink field
+         should be used to request the next list of tokens.
+        :paramtype value: list[~azure.mgmt.containerregistry.v2019_05_01_preview.models.Token]
+        :keyword next_link: The URI that can be used to request the next list of tokens.
+        :paramtype next_link: str
+        """
         super(TokenListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -483,13 +597,14 @@ class TokenPassword(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param creation_time: The creation datetime of the password.
-    :type creation_time: ~datetime.datetime
-    :param expiry: The expiry datetime of the password.
-    :type expiry: ~datetime.datetime
-    :param name: The password name "password1" or "password2". Possible values include:
-     "password1", "password2".
-    :type name: str or ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenPasswordName
+    :ivar creation_time: The creation datetime of the password.
+    :vartype creation_time: ~datetime.datetime
+    :ivar expiry: The expiry datetime of the password.
+    :vartype expiry: ~datetime.datetime
+    :ivar name: The password name "password1" or "password2". Possible values include: "password1",
+     "password2".
+    :vartype name: str or
+     ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenPasswordName
     :ivar value: The password value.
     :vartype value: str
     """
@@ -513,6 +628,16 @@ class TokenPassword(msrest.serialization.Model):
         name: Optional[Union[str, "TokenPasswordName"]] = None,
         **kwargs
     ):
+        """
+        :keyword creation_time: The creation datetime of the password.
+        :paramtype creation_time: ~datetime.datetime
+        :keyword expiry: The expiry datetime of the password.
+        :paramtype expiry: ~datetime.datetime
+        :keyword name: The password name "password1" or "password2". Possible values include:
+         "password1", "password2".
+        :paramtype name: str or
+         ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenPasswordName
+        """
         super(TokenPassword, self).__init__(**kwargs)
         self.creation_time = creation_time
         self.expiry = expiry
@@ -523,14 +648,14 @@ class TokenPassword(msrest.serialization.Model):
 class TokenUpdateParameters(msrest.serialization.Model):
     """The parameters for updating a token.
 
-    :param scope_map_id: The resource ID of the scope map to which the token will be associated
+    :ivar scope_map_id: The resource ID of the scope map to which the token will be associated
      with.
-    :type scope_map_id: str
-    :param status: The status of the token example enabled or disabled. Possible values include:
+    :vartype scope_map_id: str
+    :ivar status: The status of the token example enabled or disabled. Possible values include:
      "enabled", "disabled".
-    :type status: str or ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenStatus
-    :param credentials: The credentials that can be used for authenticating the token.
-    :type credentials:
+    :vartype status: str or ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenStatus
+    :ivar credentials: The credentials that can be used for authenticating the token.
+    :vartype credentials:
      ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenCredentialsProperties
     """
 
@@ -548,6 +673,17 @@ class TokenUpdateParameters(msrest.serialization.Model):
         credentials: Optional["TokenCredentialsProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword scope_map_id: The resource ID of the scope map to which the token will be associated
+         with.
+        :paramtype scope_map_id: str
+        :keyword status: The status of the token example enabled or disabled. Possible values include:
+         "enabled", "disabled".
+        :paramtype status: str or ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenStatus
+        :keyword credentials: The credentials that can be used for authenticating the token.
+        :paramtype credentials:
+         ~azure.mgmt.containerregistry.v2019_05_01_preview.models.TokenCredentialsProperties
+        """
         super(TokenUpdateParameters, self).__init__(**kwargs)
         self.scope_map_id = scope_map_id
         self.status = status
