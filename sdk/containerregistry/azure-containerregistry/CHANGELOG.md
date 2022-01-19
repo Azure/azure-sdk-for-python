@@ -12,6 +12,10 @@
 - Renamed `TagOrder` to `ArtifactTagOrder`.
 - Renamed `ManifestOrder` to `ArtifactManifestOrder`.
 
+### Other Changes
+
+- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+
 ## 1.0.0b7 (2021-11-19)
 
 ### Features Added
