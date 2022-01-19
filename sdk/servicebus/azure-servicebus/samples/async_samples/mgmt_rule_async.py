@@ -15,8 +15,6 @@ Example to show managing rule entities under a ServiceBus Subscription, includin
     - List rules under the given ServiceBus Namespace
 """
 
-# pylint: disable=C0111
-
 import os
 import asyncio
 import uuid

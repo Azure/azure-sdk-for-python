@@ -386,7 +386,7 @@ class EventData(object):
 
         :param encoding: The encoding to use for decoding event data.
          Default is 'UTF-8'
-        :rtype: dict
+        :rtype: Dict[str, Any]
         """
         data_str = self.body_as_str(encoding=encoding)
         try:

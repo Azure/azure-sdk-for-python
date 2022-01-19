@@ -9,8 +9,6 @@
 Example to show iterator receiving from a Service Bus Queue asynchronously.
 """
 
-# pylint: disable=C0111
-
 import os
 import asyncio
 from azure.servicebus.aio import ServiceBusClient

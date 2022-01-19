@@ -9,8 +9,6 @@
 Example to show browsing messages currently pending in the queue asynchronously.
 """
 
-# pylint: disable=C0111
-
 import os
 import asyncio
 from azure.servicebus.aio import ServiceBusClient

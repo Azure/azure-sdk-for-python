@@ -68,7 +68,7 @@ class ServiceBusMessage(
     :param body: The data to send in a single message.
     :type body: Optional[Union[str, bytes]]
 
-    :keyword Optional[dict] application_properties: The user defined properties on the message.
+    :keyword Optional[Dict] application_properties: The user defined properties on the message.
     :keyword Optional[str] session_id: The session identifier of the message for a sessionful entity.
     :keyword Optional[str] message_id: The id to identify the message.
     :keyword Optional[datetime.datetime] scheduled_enqueue_time_utc: The utc scheduled enqueue time to the message.
@@ -279,7 +279,7 @@ class ServiceBusMessage(
 
     @property
     def application_properties(self):
-        # type: () -> Optional[dict]
+        # type: () -> Optional[Dict]
         """The user defined properties on the message.
 
         :rtype: dict
@@ -288,7 +288,7 @@ class ServiceBusMessage(
 
     @application_properties.setter
     def application_properties(self, value):
-        # type: (dict) -> None
+        # type: (Dict) -> None
         self._raw_amqp_message.application_properties = value
 
     @property
