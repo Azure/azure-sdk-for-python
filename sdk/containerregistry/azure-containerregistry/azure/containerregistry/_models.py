@@ -226,20 +226,6 @@ class RepositoryProperties(object):
         return self._tag_count
 
 
-class ArtifactManifestOrder(str, Enum):
-    """Enum for ordering registry artifacts"""
-
-    LAST_UPDATE_TIME_DESCENDING = "timedesc"
-    LAST_UPDATE_TIME_ASCENDING = "timeasc"
-
-
-class ArtifactTagOrder(str, Enum):
-    """Enum for ordering tags"""
-
-    LAST_UPDATE_TIME_DESCENDING = "timedesc"
-    LAST_UPDATE_TIME_ASCENDING = "timeasc"
-
-
 class ArtifactTagProperties(object):
     """Model for storing properties of a single tag
 

@@ -205,7 +205,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
         prev_last_updated_on = None
         count = 0
-        for artifact in client.list_manifest_properties(BUSYBOX, order_by=ArtifactManifestOrder.LAST_UPDATE_TIME_DESCENDING):
+        for artifact in client.list_manifest_properties(BUSYBOX, order_by=ArtifactManifestOrder.LAST_UPDATED_ON_DESCENDING):
             if prev_last_updated_on:
                 assert artifact.last_updated_on < prev_last_updated_on
             prev_last_updated_on = artifact.last_updated_on
@@ -229,7 +229,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
         prev_last_updated_on = None
         count = 0
-        for artifact in client.list_manifest_properties(BUSYBOX, order_by=ArtifactManifestOrder.LAST_UPDATE_TIME_ASCENDING):
+        for artifact in client.list_manifest_properties(BUSYBOX, order_by=ArtifactManifestOrder.LAST_UPDATED_ON_ASCENDING):
             if prev_last_updated_on:
                 assert artifact.last_updated_on > prev_last_updated_on
             prev_last_updated_on = artifact.last_updated_on
@@ -449,7 +449,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
         prev_last_updated_on = None
         count = 0
-        for tag in client.list_tag_properties(repo, order_by=ArtifactTagOrder.LAST_UPDATE_TIME_DESCENDING):
+        for tag in client.list_tag_properties(repo, order_by=ArtifactTagOrder.LAST_UPDATED_ON_DESCENDING):
             assert "{}:{}".format(repo, tag.name) in tags
             if prev_last_updated_on:
                 assert tag.last_updated_on < prev_last_updated_on
@@ -478,7 +478,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
         prev_last_updated_on = None
         count = 0
-        for tag in client.list_tag_properties(repo, order_by=ArtifactTagOrder.LAST_UPDATE_TIME_ASCENDING):
+        for tag in client.list_tag_properties(repo, order_by=ArtifactTagOrder.LAST_UPDATED_ON_ASCENDING):
             assert "{}:{}".format(repo, tag.name) in tags
             if prev_last_updated_on:
                 assert tag.last_updated_on > prev_last_updated_on

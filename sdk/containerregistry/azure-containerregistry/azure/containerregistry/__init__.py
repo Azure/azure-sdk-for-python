@@ -7,13 +7,15 @@
 # --------------------------------------------------------------------------
 
 from ._container_registry_client import ContainerRegistryClient
+from ._generated.models._container_registry_enums import ( 
+    ArtifactManifestOrder,
+    ArtifactTagOrder,
+)
 from ._models import (
     ArtifactArchitecture,
     ArtifactOperatingSystem,
-    ArtifactManifestOrder,
     ArtifactManifestProperties,
     RepositoryProperties,
-    ArtifactTagOrder,
     ArtifactTagProperties,
 )
 from ._version import VERSION
