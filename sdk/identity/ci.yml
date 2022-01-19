@@ -29,6 +29,12 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: identity
+    # Override the base matrix due to https://github.com/Azure/azure-sdk-for-python/issues/17837
+    MatrixConfigs:
+      - Name: identity_ci_matrix
+        Path: sdk/identity/platform-matrix.json
+        Selection: sparse
+        GenerateVMJobs: true
     TestProxy: true
     Artifacts:
      - name: azure-identity
