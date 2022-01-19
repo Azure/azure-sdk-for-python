@@ -1,6 +1,11 @@
 # Release History
 
-## 1.0.0 (2022-02-04)
+## 1.0.0b3 (Unreleased)
+
+- Added support for proactive refreshing of tokens
+  - `CommunicationTokenCredential` exposes a new boolean keyword argument `refresh_proactively` that defaults to `False`. If set to `True`, the refreshing of the token will be scheduled in the background ensuring continuous authentication state.
+
+### Features Added
 
 ### Breaking Changes
 
@@ -31,4 +36,5 @@ The first preview of the Azure Communication Relay Client has the following feat
 - Added CommunicationRelayClient.get_relay_configuration in preview.
 
 <!-- LINKS -->
+
 [read_me]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication/
