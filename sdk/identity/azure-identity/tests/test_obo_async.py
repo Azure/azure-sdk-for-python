@@ -19,7 +19,7 @@ from recorded_test_case import RecordedTestCase
 from test_obo import OboRecordedTestCase
 
 
-class RecordedTests(OboRecordedTestCase):
+class TestOboAsync(OboRecordedTestCase):
     @RecordedTestCase.await_prepared_test
     @recorded_by_proxy_async
     async def test_obo(self):

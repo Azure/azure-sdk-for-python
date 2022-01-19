@@ -21,7 +21,7 @@ import pytest
 
 
 @pytest.mark.skip("these tests require support in azure-core")
-class CaeTestCase(AzureRecordedTestCase):
+class TestCae(AzureRecordedTestCase):
     def __init__(self, *args, **kwargs):
         if is_live:
             if "CAE_TENANT_ID" not in os.environ:

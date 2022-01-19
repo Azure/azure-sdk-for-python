@@ -216,7 +216,7 @@ def test_imds_authority_override():
 
 
 @pytest.mark.usefixtures("record_imds_test")
-class RecordedTests(RecordedTestCase):
+class TestImds(RecordedTestCase):
     @recorded_by_proxy
     def test_system_assigned(self):
         credential = ImdsCredential()

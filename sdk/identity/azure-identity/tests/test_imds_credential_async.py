@@ -251,7 +251,7 @@ async def test_imds_authority_override():
 
 
 @pytest.mark.usefixtures("record_imds_test")
-class RecordedTests(RecordedTestCase):
+class TestImdsAsync(RecordedTestCase):
     @await_test
     @recorded_by_proxy_async
     async def test_system_assigned(self):

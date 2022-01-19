@@ -15,9 +15,9 @@ from devtools_testutils import is_live, recorded_by_proxy
 PLAYBACK_URL = "https://msi-endpoint/token"
 
 
-class RecordedTests(RecordedTestCase):
+class TestAppService(RecordedTestCase):
     def __init__(self, *args, **kwargs):
-        super(RecordedTests, self).__init__(*args, **kwargs)
+        super(TestAppService, self).__init__(*args, **kwargs)
 
         if is_live:
             url = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)

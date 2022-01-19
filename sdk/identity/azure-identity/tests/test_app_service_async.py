@@ -16,7 +16,7 @@ from recorded_test_case import RecordedTestCase
 from test_app_service import PLAYBACK_URL
 
 
-class RecordedTests(RecordedTestCase):
+class TestAppServiceAsync(RecordedTestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

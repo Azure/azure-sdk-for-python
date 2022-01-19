@@ -65,7 +65,7 @@ class OboRecordedTestCase(RecordedTestCase):
             }
 
 
-class RecordedTests(OboRecordedTestCase):
+class TestObo(OboRecordedTestCase):
     @recorded_by_proxy
     def test_obo(self):
         client_id = self.obo_settings["client_id"]
