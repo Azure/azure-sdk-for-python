@@ -39,4 +39,4 @@ pip install -r requirements-release.txt
 Pop-Location
 
 # Clean-up the directory created
-#Remove-Item -Path $smoketestsDir -Recurse -Force
+Remove-Item -Path $smoketestsDir -Recurse -Force
