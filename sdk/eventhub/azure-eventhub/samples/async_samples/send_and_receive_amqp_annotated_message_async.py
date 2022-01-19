@@ -9,8 +9,6 @@
 Example to show sending, receiving and parsing amqp annotated message(s) to Event Hubs.
 """
 
-# pylint: disable=C0111
-
 import os
 import asyncio
 from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient
