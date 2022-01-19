@@ -1,8 +1,5 @@
 import os
-import sys
 import subprocess as sp
-import time
-import argparse
 import logging
 from ghapi.all import GhApi
 from pathlib import Path
@@ -45,82 +42,13 @@ def print_check(cmd):
     sp.check_call(cmd, shell=True)
 
 
-def find_report_name(result):
-    pattern = 'written to'
-    merged = 'merged_report'
-    for line in result:
-        idx = line.find(pattern)
-        idx1 = line.find(merged)
-        if idx > 0 and idx1 > 0:
-            return line[idx + len(pattern):]
-
-    for line in result:
-        idx = line.find(pattern)
-        if idx > 0:
-            return line[idx + len(pattern):]
-
-    return ''
-
-
-def get_version(report):
-    global VERSION_LAST_RELEASE
-    pattern = 'code_reports/'
-    idx1 = report.find(pattern)
-    idx2 = report.find('/', idx1 + len(pattern))
-    if idx2 > -1 and idx1 > -1:
-        VERSION_LAST_RELEASE = report[idx1 + len(pattern):idx2]
-
-
-def create_changelog_content():
-    result1 = print_exec_output(f'python -m packaging_tools.code_report --last-pypi azure-mgmt-{PACKAGE_NAME}')
-    report1 = find_report_name(result1)
-    result2 = print_exec_output(f'python -m packaging_tools.code_report azure-mgmt-{PACKAGE_NAME}')
-    report2 = find_report_name(result2)
-    result = print_exec_output(f'python -m packaging_tools.change_log {report1} {report2}')
-    if len(result) > 0:
-        add_content = result[1:]
-        get_version(report1)
-    else:
-        add_content = []
-
-    return add_content
-
-
-def judge_tag():
-    path = f'{os.getcwd()}/sdk/{SDK_FOLDER}/azure-mgmt-{PACKAGE_NAME}'
-    files = []
-    all_files(path, files)
-    default_api_version = ''  # for multi-api
-    api_version = ''  # for single-api
-    for file in files:
-        if '.py' not in file:
-            continue
-        try:
-            with open(file, 'r') as file_in:
-                list_in = file_in.readlines()
-        except:
-            _LOG.info(f'can not open {file}')
-            continue
-
-        for line in list_in:
-            if line.find('DEFAULT_API_VERSION = ') > -1:
-                default_api_version += line.split('=')[-1].strip('\n')  # collect all default api version
-            if default_api_version == '' and line.find('api_version = ') > -1:
-                api_version += line.split('=')[-1].strip('\n')  # collect all single api version
-    if default_api_version != '':
-        my_print(f'find default api version:{default_api_version}')
-        return 'preview' in default_api_version
-    my_print(f'find single api version:{api_version}')
-    return 'preview' in api_version
-
-
 def preview_version_plus(preview_label: str) -> str:
     num = VERSION_LAST_RELEASE.split(preview_label)
     num[1] = str(int(num[1]) + 1)
     return f'{num[0]}{preview_label}{num[1]}'
 
 
-def stable_version_plus(add_content):
+def stable_version_plus(add_content: List[str]):
     flag = [False, False, False]  # breaking, feature, bugfix
     for line in add_content:
         if line.find('**Breaking changes**') > -1:
@@ -173,121 +101,13 @@ def edit_version(add_content):
         api_request.issues.add_labels(issue_number=int(issue_number), labels=['base-branch-attention'])
 
 
-def edit_changelog(add_content):
-    path = f'sdk/{SDK_FOLDER}/azure-mgmt-{PACKAGE_NAME}'
-    with open(f'{path}/CHANGELOG.md', 'r') as file_in:
-        list_in = file_in.readlines()
-    list_out = [list_in[0], '\n']
-    date = time.localtime(time.time())
-    list_out.append('## {} ({}-{:02d}-{:02d})\n\n'.format(VERSION_NEW, date.tm_year, date.tm_mon, date.tm_mday))
-    for line in add_content:
-        list_out.append(line + '\n')
-    list_out.extend(list_in[1:])
-    with open(f'{path}/CHANGELOG.md', 'w') as file_out:
-        file_out.writelines(list_out)
 
 
-def print_changelog(add_content):
-    for line in add_content:
-        _LOG.info('[CHANGELOG] ' + line)
 
 
-def edit_dependency_check_file(dependency):
-    with open(f'shared_requirements.txt', 'r') as file_in:
-        list_in = file_in.readlines()
-    new_line = f'#override azure-mgmt-{PACKAGE_NAME} {dependency}'
-    for i in range(0, len(list_in)):
-        if list_in[i].find(f'{new_line}') > -1:
-            return
-    list_in.append(f'{new_line}\n')
-    with open(f'shared_requirements.txt', 'w') as file_out:
-        file_out.writelines(list_in)
 
 
-def edit_file_setup():
-    path = f'sdk/{SDK_FOLDER}/azure-mgmt-{PACKAGE_NAME}'
-    with open(f'{path}/setup.py', 'r') as file_in:
-        list_in = file_in.readlines()
-    for i in range(0, len(list_in)):
-        list_in[i] = list_in[i].replace('msrestazure>=0.4.32,<2.0.0', 'azure-mgmt-core>=1.3.0,<2.0.0')
-        list_in[i] = list_in[i].replace('azure-mgmt-core>=1.2.0,<2.0.0', 'azure-mgmt-core>=1.3.0,<2.0.0')
-        list_in[i] = list_in[i].replace('msrest>=0.5.0', 'msrest>=0.6.21')
-    with open(f'{path}/setup.py', 'w') as file_out:
-        file_out.writelines(list_in)
 
-    # avoid pipeline check fail
-    edit_dependency_check_file('msrest>=0.6.21')
-    edit_dependency_check_file('azure-mgmt-core>=1.3.0,<2.0.0')
-
-
-def edit_file_readme():
-    path = f'sdk/{SDK_FOLDER}/azure-mgmt-{PACKAGE_NAME}'
-    # edit README
-    with open(f'{path}/README.md', 'r') as file_in:
-        list_in = file_in.readlines()
-    for i in range(0, len(list_in)):
-        if list_in[i].find('MyService') > 0:
-            list_in[i] = list_in[i].replace('MyService', PACKAGE_NAME.capitalize())
-    with open(f'{path}/README.md', 'w') as file_out:
-        file_out.writelines(list_in)
-
-
-def edit_first_release():
-    global VERSION_NEW
-    VERSION_NEW = '1.0.0b1'
-    # edit version.py
-    path = f'sdk/{SDK_FOLDER}/azure-mgmt-{PACKAGE_NAME}/azure/mgmt/{PACKAGE_NAME}'
-    file_name = 'version.py' if TRACK == '1' else '_version.py'
-    print_check(f'cp {SCRIPT_PATH}/version.py {path}/{file_name}')
-
-    # edit CHANGELOG.md
-    with open(f'{SCRIPT_PATH}/CHANGELOG.md', 'r') as file_in:
-        content = file_in.readlines()
-
-    date = time.localtime(time.time())
-    data_format = '{}-{:02d}-{:02d}'.format(date.tm_year, date.tm_mon, date.tm_mday)
-    for i in range(0, len(content)):
-        content[i] = content[i].replace('data_format', data_format)
-    with open(f'sdk/{SDK_FOLDER}/azure-mgmt-{PACKAGE_NAME}/CHANGELOG.md', 'w') as file_out:
-        file_out.writelines(content)
-
-
-def edit_file():
-    from pypi import PyPIClient
-    client = PyPIClient()
-    try:
-        client.get_ordered_versions(f'azure-mgmt-{PACKAGE_NAME}')
-    except:
-        print_changelog(['* Initial Release'])
-        edit_first_release()
-        edit_file_readme()
-        if TRACK == '2':
-            edit_file_setup()
-        my_print(f'CHANGELOG and version(new:{VERSION_NEW}) generate successfully. It is first release')
-    else:
-        add_content = create_changelog_content()
-        if len(add_content) == 0:
-            raise Exception('changelog and version generate failed, please do it manually')
-        else:
-            print_changelog(add_content)
-            edit_version(add_content)
-            edit_changelog(add_content)
-            edit_file_readme()
-            if TRACK == '2':
-                edit_file_setup()
-            my_print(f'CHANGELOG and version(new:{VERSION_NEW}) generate successfully, please check it(compare with '
-                     f'{VERSION_LAST_RELEASE}[https://pypi.org/pypi/azure-mgmt-{PACKAGE_NAME}/{VERSION_LAST_RELEASE}])')
-
-
-def build_wheel():
-    path = os.getcwd()
-    setup_path = f'{path}/sdk/{SDK_FOLDER}/azure-mgmt-{PACKAGE_NAME}'
-    print_check(f'cd {setup_path} && python setup.py bdist_wheel')
-    print_check(f'cd {path}')
-
-    # check whether package can install
-    print_check(f'python -c "import azure.mgmt.{PACKAGE_NAME}"')
-    print_check(f'python -m packaging_tools.code_report azure-mgmt-{PACKAGE_NAME}')
 
 
 def livetest_env_init():
@@ -347,20 +167,6 @@ def all_files(path: str, files: List[str]):
             files.append(folder)
 
 
-def edit_useless_file():
-    target_file = 'version.py'
-    path = f'{os.getcwd()}/sdk/{SDK_FOLDER}/azure-mgmt-{PACKAGE_NAME}'
-    files = []
-    all_files(path, files)
-    for file in files:
-        if target_file in file:
-            with open(file, 'r') as file_in:
-                list_in = file_in.readlines()
-            for i in range(0, len(list_in)):
-                if list_in[i].find('VERSION') > -1:
-                    list_in[i] = f'VERSION = "{VERSION_NEW}"\n'
-            with open(file, 'w') as file_output:
-                file_output.writelines(list_in)
 
 
 def commit_test():
@@ -374,95 +180,15 @@ def init_env():
     print_exec(f'python scripts/dev_setup.py -p azure-mgmt-{PACKAGE_NAME}')
 
 
-def check_pprint_name():
-    path = f'{os.getcwd()}/sdk/{SDK_FOLDER}/azure-mgmt-{PACKAGE_NAME}'
-    pprint_name = PACKAGE_NAME.capitalize()
-    for file in os.listdir(path):
-        file_path = f'{path}/{file}'
-        if os.path.isfile(file_path):
-            with open(file_path, 'r', encoding="utf-8") as file_in:
-                list_in = file_in.readlines()
-            for i in range(0, len(list_in)):
-                list_in[i] = list_in[i].replace('MyService', pprint_name)
-            with open(file_path, 'w') as file_out:
-                file_out.writelines(list_in)
-    my_print(f' replace \"MyService\" with \"{pprint_name}\" successfully ')
 
 
-def judge_sdk_folder():
-    global SDK_FOLDER, TRACK
-    from livetest_folder_link import FOLDER_LINK
-
-    SDK_FOLDER = FOLDER_LINK[PACKAGE_NAME] if PACKAGE_NAME in FOLDER_LINK else PACKAGE_NAME
-    sdk_path = f'sdk/{SDK_FOLDER}/azure-mgmt-{PACKAGE_NAME}'
-    if not os.path.exists(sdk_path):
-        raise Exception(f'{sdk_path} does not exist, please update livetest_folder_link.py')
-
-    # additional rule to judge track1 or track2
-    if os.path.exists('swagger_to_sdk_config_autorest.json'):
-        with open('swagger_to_sdk_config_autorest.json', 'r') as file_in:
-            content = file_in.readlines()
-        for line in content:
-            if line.find('azure-sdk-for-python-track2') > 0:
-                TRACK = '2'
-                break
 
 
-def checkout_branch():
-    print_exec(f'git remote add {USER_REPO} https://github.com/{USER_REPO}/azure-sdk-for-python.git')
-    print_check(f'git fetch {USER_REPO} {BRANCH_BASE}')
-    print_check(f'git checkout {USER_REPO}/{BRANCH_BASE}')
-
-
-def generate_code():
-    print_exec('git remote add azure https://github.com/Azure/azure-sdk-for-python.git')
-    print_check('git fetch azure main')
-    print_check('git checkout azure/main')
-
-    head_sha = print_exec_output('git rev-parse HEAD')[0]
-    html_link = 'https://github.com/Azure/azure-rest-api-specs/blob/main/'
-    input_data = {
-        'headSha': head_sha,
-        'repoHttpsUrl': "https://github.com/Azure/azure-rest-api-specs",
-        'specFolder': os.getenv('SPEC_REPO'),
-        'relatedReadmeMdFiles': [os.getenv('SPEC_README').replace(html_link, '') + 'readme.md']
-    }
-    temp_folder = Path(os.getenv('TEMP_FOLDER'))
-    input_file = str(temp_folder / 'temp.json')
-    with open(input_file, 'w') as file:
-        json.dump(input_data, file)
-
-    temp_file = str(temp_folder / 'temp.txt')
-    Path(temp_file).touch()
-    output_file = str(temp_folder / 'output.json')
-    Path(output_file).touch()
-
-    print_exec('python scripts/dev_setup.py -p azure-core')
-    print_check(f'python -m packaging_tools.auto_codegen {input_file} {input_file}')
-    print_check(f'python -m packaging_tools.auto_codegen {input_file} {input_file}')
 
 
 def git_clean():
     print_exec('git checkout . && git clean -fd && git reset --hard HEAD ')
 
-
-def checkout_base_branch():
-    # init git
-    print_exec('git checkout . && git clean -fd && git reset --hard HEAD ')
-
-    if os.getenv('SPEC_README'):
-        generate_code()
-    else:
-        checkout_branch()
-
-
-def create_branch():
-    global NEW_BRANCH
-    # create new branch
-    t = time.time()
-    d = time.localtime(t)
-    NEW_BRANCH = 't{}-{}-{}-{:02d}-{:02d}-{}'.format(TRACK, PACKAGE_NAME, d.tm_year, d.tm_mon, d.tm_mday, str(t)[-5:])
-    print_exec(f'git checkout -b {NEW_BRANCH}')
 
 
 def commit_file():
@@ -473,19 +199,8 @@ def commit_file():
     my_print(f'== {PACKAGE_NAME}(track{TRACK}) Automatic Release file-edit done !!! ==')
 
 
-def main():
-    checkout_base_branch()
-    judge_sdk_folder()
-    create_branch()
-    add_certificate()
-    init_env()
-    edit_file()
-    edit_useless_file()
-    check_pprint_name()
-    commit_file()
-    run_live_test()
-    build_wheel()
-    commit_test()
+
+
 
 
 def checkout_azure_default_branch():
@@ -507,7 +222,7 @@ def current_time():
     return '{}-{:02d}-{:02d}'.format(date.tm_year, date.tm_mon, date.tm_mday)
 
 
-def get_latest_commit() -> str:
+def get_latest_commit_in_swagger_repo() -> str:
     current_folder = os.getcwd()
     os.chdir(Path(os.getenv('SPEC_REPO')))
     head_sha = print_exec_output('git rev-parse HEAD')[0]
@@ -538,24 +253,24 @@ class CodegenTestPR:
         self.sdk_folder = generate_result["packages"][0]["path"][0].split('/')[-1]
 
     def generate_code(self):
-        # checkout_azure_default_branch()
+        checkout_azure_default_branch()
 
         # prepare input data
         input_data = {
-            'headSha': get_latest_commit(),
+            'headSha': get_latest_commit_in_swagger_repo(),
             'repoHttpsUrl': "https://github.com/Azure/azure-rest-api-specs",
             'specFolder': os.getenv('SPEC_REPO'),
             'relatedReadmeMdFiles': [str(self.readme_local_folder())]
         }
         temp_folder = Path(os.getenv('TEMP_FOLDER'))
         self.autorest_result = str(temp_folder / 'temp.json')
-        # with open(self.autorest_result, 'w') as file:
-        #     json.dump(input_data, file)
+        with open(self.autorest_result, 'w') as file:
+            json.dump(input_data, file)
 
         # generate code
-        # print_exec('python scripts/dev_setup.py -p azure-core')
-        # print_check(f'python -m packaging_tools.auto_codegen {self.autorest_result} {self.autorest_result}')
-        # print_check(f'python -m packaging_tools.auto_package {self.autorest_result} {self.autorest_result}')
+        print_exec('python scripts/dev_setup.py -p azure-core')
+        print_check(f'python -m packaging_tools.auto_codegen {self.autorest_result} {self.autorest_result}')
+        print_check(f'python -m packaging_tools.auto_package {self.autorest_result} {self.autorest_result}')
 
     def get_package_name_with_readme(self):
         with open(self.autorest_result, 'r') as file:
@@ -603,7 +318,7 @@ class CodegenTestPR:
         self.sdk_folder = Path(folder_info).parts[1]
 
     def prepare_branch(self):
-        # git_clean()
+        git_clean()
         if self.spec_readme:
             self.prepare_branch_with_readme()
         else:
@@ -766,11 +481,29 @@ class CodegenTestPR:
         else:
             self.edit_changelog()
 
+    def check_ci_file_proc(self, dependency: str):
+        path = str(Path('shared_requirements.txt'))
+
+        def edit_ci_file(content: List[str]):
+            new_line = f'#override azure-mgmt-{self.package_name} {dependency}'
+            for i in range(len(content)):
+                if new_line in content[i]:
+                    return
+            prefix = '' if '\n' in content[-1] else '\n'
+            content.append(prefix + new_line + '\n')
+
+        modify_file(path, edit_ci_file)
+
+    def check_ci_file(self):
+        self.check_ci_file_proc('msrest>=0.6.21')
+        self.check_ci_file_proc('azure-mgmt-core>=1.3.0,<2.0.0')
+
     def check_file(self):
         self.check_pprint_name()
         self.check_sdk_setup()
         self.check_version()
         self.check_changelog_file()
+        self.check_ci_file()
 
     def run_test(self):
         pass
