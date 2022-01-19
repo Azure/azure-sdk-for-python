@@ -17,7 +17,6 @@ New-Item -Path $smoketestsDir -ItemType Directory
 Write-Host "Creating requirements.txt in the smoketest folder"
 virtualenv env
 env/bin/activate
-pip install -e ../azure-sdk-tools
 $fileName = Join-Path $repoRoot scripts devops_tasks  get_track2_packages.py
 python $fileName release
 if ($LASTEXITCODE) {
