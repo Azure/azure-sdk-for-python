@@ -3258,6 +3258,10 @@ class ModelOperationInfo(object):
     :vartype kind: str
     :ivar resource_location: URL of the resource targeted by this operation.
     :vartype resource_location: str
+    :ivar api_version: API version used to create this operation.
+    :vartype api_version: str
+    :ivar tags: List of key-value tag attributes associated with the model.
+    :vartype tags: dict[str, str]
     """
 
     def __init__(self, **kwargs):
@@ -3268,11 +3272,13 @@ class ModelOperationInfo(object):
         self.last_updated_on = kwargs.get("last_updated_on", None)
         self.kind = kwargs.get("kind", None)
         self.resource_location = kwargs.get("resource_location", None)
+        self.api_version = kwargs.get("api_version", None)
+        self.tags = kwargs.get("tags", None)
 
     def __repr__(self):
         return (
             "ModelOperationInfo(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, "
-            "kind={}, resource_location={})".format(
+            "kind={}, resource_location={}, api_version={}, tags={})".format(
                 self.operation_id,
                 self.status,
                 self.percent_completed,
@@ -3280,6 +3286,8 @@ class ModelOperationInfo(object):
                 self.last_updated_on,
                 self.kind,
                 self.resource_location,
+                self.api_version,
+                repr(self.tags),
             )
         )
 
@@ -3298,6 +3306,8 @@ class ModelOperationInfo(object):
             "last_updated_on": self.last_updated_on,
             "kind": self.kind,
             "resource_location": self.resource_location,
+            "api_version": self.api_version,
+            "tags": self.tags,
         }
 
     @classmethod
@@ -3317,6 +3327,8 @@ class ModelOperationInfo(object):
             last_updated_on=data.get("last_updated_on", None),
             kind=data.get("kind", None),
             resource_location=data.get("resource_location", None),
+            api_version=data.get("api_version", None),
+            tags=data.get("tags", {}),
         )
 
     @classmethod
@@ -3328,7 +3340,9 @@ class ModelOperationInfo(object):
             created_on=op.created_date_time,
             last_updated_on=op.last_updated_date_time,
             kind=op.kind,
-            resource_location=op.resource_location
+            resource_location=op.resource_location,
+            api_version=op.api_version,
+            tags=op.tags if op.tags else {},
         )
 
 

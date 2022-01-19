@@ -948,6 +948,8 @@ class TestToDict(FormRecognizerTest):
             last_updated_on="1994-11-05T13:20:30Z",
             kind="documentModelBuild",
             resource_location="https://contoso.com/resource",
+            api_version="2022-01-30-preview",
+            tags={"test": "value"},
         )
 
         d = model.to_dict()
@@ -960,6 +962,8 @@ class TestToDict(FormRecognizerTest):
             "last_updated_on": "1994-11-05T13:20:30Z",
             "kind": "documentModelBuild",
             "resource_location": "https://contoso.com/resource",
+            "api_version": "2022-01-30-preview",
+            "tags": {"test": "value"},
         }
 
         assert d == final

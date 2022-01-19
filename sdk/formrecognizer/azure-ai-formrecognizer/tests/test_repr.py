@@ -468,8 +468,18 @@ class TestRepr():
         assert repr(model) == model_repr
 
     def test_model_operation_info(self):
-        model = _models.ModelOperationInfo(operation_id="id", status="succeeded", percent_completed=100, created_on=datetime.datetime(2021, 9, 16, 10, 10, 59, 342380), last_updated_on=datetime.datetime(2021, 9, 16, 10, 30, 15, 342380), kind="documentModelCompose", resource_location="westus")
-        model_repr = "ModelOperationInfo(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, kind={}, resource_location={})".format(
+        model = _models.ModelOperationInfo(
+                operation_id="id",
+                status="succeeded",
+                percent_completed=100,
+                created_on=datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
+                last_updated_on=datetime.datetime(2021, 9, 16, 10, 30, 15, 342380),
+                kind="documentModelCompose",
+                resource_location="westus",
+                api_version="2022-01-30-preview",
+                tags={"test": "value"},
+            )
+        model_repr = "ModelOperationInfo(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, kind={}, resource_location={}, api_version={}, tags={})".format(
                     "id",
                     "succeeded",
                     100,
@@ -477,6 +487,8 @@ class TestRepr():
                     datetime.datetime(2021, 9, 16, 10, 30, 15, 342380),
                     "documentModelCompose",
                     "westus",
+                    "2022-01-30-preview",
+                    {"test": "value"},
                 )
         assert repr(model) == model_repr
 
