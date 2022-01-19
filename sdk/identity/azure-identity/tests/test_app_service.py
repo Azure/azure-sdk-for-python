@@ -10,7 +10,7 @@ import pytest
 
 from helpers import mock
 from recorded_test_case import RecordedTestCase
-from devtools_testutils import is_live
+from devtools_testutils import is_live, recorded_by_proxy
 
 PLAYBACK_URL = "https://msi-endpoint/token"
 
@@ -30,6 +30,7 @@ class RecordedTests(RecordedTestCase):
             env = {EnvironmentVariables.MSI_ENDPOINT: PLAYBACK_URL, EnvironmentVariables.MSI_SECRET: "redacted"}
             self.patch = mock.patch.dict(os.environ, env, clear=True)
 
+    @recorded_by_proxy
     def test_system_assigned(self):
         with self.patch:
             credential = AppServiceCredential()
@@ -38,6 +39,7 @@ class RecordedTests(RecordedTestCase):
         assert isinstance(token.expires_on, int)
 
     @pytest.mark.usefixtures("user_assigned_identity_client_id")
+    @recorded_by_proxy
     def test_user_assigned(self):
         with self.patch:
             credential = AppServiceCredential(client_id=self.user_assigned_identity_client_id)

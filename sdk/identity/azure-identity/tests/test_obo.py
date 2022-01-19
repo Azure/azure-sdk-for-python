@@ -20,7 +20,7 @@ from six.moves.urllib_parse import urlparse
 from helpers import build_aad_response, FAKE_CLIENT_ID, get_discovery_response, mock_response
 from recorded_test_case import RecordedTestCase
 from test_certificate_credential import PEM_CERT_PATH
-from devtools_testutils import is_live
+from devtools_testutils import is_live, recorded_by_proxy
 
 
 class OboRecordedTestCase(RecordedTestCase):
@@ -66,6 +66,7 @@ class OboRecordedTestCase(RecordedTestCase):
 
 
 class RecordedTests(OboRecordedTestCase):
+    @recorded_by_proxy
     def test_obo(self):
         client_id = self.obo_settings["client_id"]
         tenant_id = self.obo_settings["tenant_id"]
@@ -77,6 +78,7 @@ class RecordedTests(OboRecordedTestCase):
         credential = OnBehalfOfCredential(tenant_id, client_id, client_secret=self.obo_settings["client_secret"], user_assertion=assertion)
         credential.get_token(self.obo_settings["scope"])
 
+    @recorded_by_proxy
     def test_obo_cert(self):
         client_id = self.obo_settings["client_id"]
         tenant_id = self.obo_settings["tenant_id"]

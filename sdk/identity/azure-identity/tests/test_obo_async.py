@@ -5,6 +5,7 @@
 from urllib.parse import urlparse
 from unittest.mock import Mock, patch
 
+from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity import UsernamePasswordCredential
 from azure.identity._constants import EnvironmentVariables
@@ -20,6 +21,7 @@ from test_obo import OboRecordedTestCase
 
 class RecordedTests(OboRecordedTestCase):
     @RecordedTestCase.await_prepared_test
+    @recorded_by_proxy_async
     async def test_obo(self):
         client_id = self.obo_settings["client_id"]
         client_secret = self.obo_settings["client_secret"]
@@ -33,6 +35,7 @@ class RecordedTests(OboRecordedTestCase):
         await credential.get_token(self.obo_settings["scope"])
 
     @RecordedTestCase.await_prepared_test
+    @recorded_by_proxy_async
     async def test_obo_cert(self):
         client_id = self.obo_settings["client_id"]
         tenant_id = self.obo_settings["tenant_id"]

@@ -6,6 +6,7 @@ import json
 import time
 from unittest import mock
 
+from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import CredentialUnavailableError
@@ -252,6 +253,7 @@ async def test_imds_authority_override():
 @pytest.mark.usefixtures("record_imds_test")
 class RecordedTests(RecordedTestCase):
     @await_test
+    @recorded_by_proxy_async
     async def test_system_assigned(self):
         credential = ImdsCredential()
         token = await credential.get_token(self.scope)
@@ -260,6 +262,7 @@ class RecordedTests(RecordedTestCase):
 
     @pytest.mark.usefixtures("user_assigned_identity_client_id")
     @await_test
+    @recorded_by_proxy_async
     async def test_user_assigned(self):
         credential = ImdsCredential(client_id=self.user_assigned_identity_client_id)
         token = await credential.get_token(self.scope)

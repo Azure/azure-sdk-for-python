@@ -9,6 +9,7 @@ from azure.identity.aio._credentials.app_service import AppServiceCredential
 from azure.identity._constants import EnvironmentVariables
 import pytest
 from devtools_testutils import is_live
+from devtools_testutils.aio import recorded_by_proxy_async
 
 from helpers_async import await_test
 from recorded_test_case import RecordedTestCase
@@ -31,6 +32,7 @@ class RecordedTests(RecordedTestCase):
             self.patch = mock.patch.dict(os.environ, env, clear=True)
 
     @await_test
+    @recorded_by_proxy_async
     async def test_system_assigned(self):
         with self.patch:
             credential = AppServiceCredential()
@@ -40,6 +42,7 @@ class RecordedTests(RecordedTestCase):
 
     @pytest.mark.usefixtures("user_assigned_identity_client_id")
     @await_test
+    @recorded_by_proxy_async
     async def test_user_assigned(self):
         with self.patch:
             credential = AppServiceCredential(client_id=self.user_assigned_identity_client_id)

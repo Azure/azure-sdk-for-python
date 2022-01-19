@@ -7,8 +7,6 @@ import json
 import os
 import time
 
-from azure.core.pipeline.transport import HttpRequest
-from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import (
     AzureAuthorityHosts,
     DeviceCodeCredential,
@@ -17,13 +15,9 @@ from azure.identity import (
 )
 from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID
 from azure.mgmt.resource.subscriptions import SubscriptionClient
-from azure_devtools.scenario_tests import GeneralNameReplacer, RequestUrlNormalizer, patch_time_sleep_api
-from devtools_testutils import AzureRecordedTestCase, is_live
+from azure_devtools.scenario_tests import patch_time_sleep_api
+from devtools_testutils import AzureRecordedTestCase, is_live, recorded_by_proxy
 import pytest
-import requests
-from six.moves.urllib_parse import urlparse
-
-from recording_processors import IdTokenProcessor, RecordingRedactor
 
 
 @pytest.mark.skip("these tests require support in azure-core")
@@ -93,12 +87,14 @@ class CaeTestCase(AzureRecordedTestCase):
         )
         self.cae_test(credential)
 
+    @recorded_by_proxy
     def test_device_code(self):
         credential = DeviceCodeCredential(
             authority=self.cae_settings["authority"], tenant_id=self.cae_settings["tenant_id"]
         )
         self.cae_test(credential)
 
+    @recorded_by_proxy
     def test_username_password(self):
         if is_live and not ("username" in self.cae_settings and "password" in self.cae_settings):
             pytest.skip("Missing a username or password for CAE test")
