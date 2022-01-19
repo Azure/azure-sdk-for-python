@@ -35,6 +35,7 @@ add-credential: true
 credential-scopes: https://cognitiveservices.azure.com/.default
 want-operation-metadata: false
 keep-version-file: true
+python3-only: true
 ```
 
 ### Make get_root_cause_of_incident_by_anomaly_detection_configuration pageable
