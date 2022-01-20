@@ -72,4 +72,5 @@ jobs:
 
         # run
         cd azure-sdk-for-python
+        echo $(pwd)
         python $script_path/main.py

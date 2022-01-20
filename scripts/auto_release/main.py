@@ -103,11 +103,7 @@ def current_time():
     return '{}-{:02d}-{:02d}'.format(date.tm_year, date.tm_mon, date.tm_mday)
 
 
-@return_origin_path
-def get_latest_commit_in_swagger_repo() -> str:
-    os.chdir(Path(os.getenv('SPEC_REPO')))
-    head_sha = print_exec_output('git rev-parse HEAD')[0]
-    return head_sha
+
 
 
 def set_test_env_var():
@@ -140,6 +136,7 @@ class CodegenTestPR:
         self.pipeline_link = os.getenv('PIPELINE_LINK')
         self.bot_token = os.getenv('UPDATE_TOKEN')
         self.spec_readme = os.getenv('SPEC_README', '')
+        self.spec_repo = os.getenv('SPEC_REPO', '')
 
         self.package_name = ''
         self.new_branch = ''
@@ -147,6 +144,12 @@ class CodegenTestPR:
         self.autorest_result = ''
         self.next_version = ''
         self.test_result = ''
+
+    @return_origin_path
+    def get_latest_commit_in_swagger_repo(self) -> str:
+        os.chdir(Path(self.spec_repo))
+        head_sha = print_exec_output('git rev-parse HEAD')[0]
+        return head_sha
 
     def readme_local_folder(self) -> Path:
         html_link = 'https://github.com/Azure/azure-rest-api-specs/blob/main/'
@@ -161,17 +164,22 @@ class CodegenTestPR:
 
         # prepare input data
         input_data = {
-            'headSha': get_latest_commit_in_swagger_repo(),
+            'headSha': self.get_latest_commit_in_swagger_repo(),
             'repoHttpsUrl': "https://github.com/Azure/azure-rest-api-specs",
-            'specFolder': os.getenv('SPEC_REPO'),
+            'specFolder': self.spec_repo,
             'relatedReadmeMdFiles': [str(self.readme_local_folder())]
         }
 
         my_print(input_data['headSha'])
         my_print(input_data['specFolder'])
         my_print(input_data['relatedReadmeMdFiles'][0])
-        with open(f'{input_data["specFolder"]}/{input_data["relatedReadmeMdFiles"][0]}') as file_in:
-            temp = file_in.readlines()
+        path = f'{input_data["specFolder"]}/{input_data["relatedReadmeMdFiles"][0]}'
+        if os.path.exists(path):
+            with open(path, 'r') as file_in:
+                temp = file_in.readlines()
+        else:
+            my_print(f'{path} does not exist')
+
         temp_folder = Path(os.getenv('TEMP_FOLDER'))
         self.autorest_result = str(temp_folder / 'temp.json')
         with open(self.autorest_result, 'w') as file:
