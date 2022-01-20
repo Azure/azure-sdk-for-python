@@ -492,3 +492,17 @@ def get_package_properties(setup_py_path):
     pkgName, version, _, requires = parse_setup(setup_py_path)
     is_new_sdk = pkgName in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x)[0] in NEW_REQ_PACKAGES), requires))
     return pkgName, version, is_new_sdk, setup_py_path
+
+def get_all_track2_packages(path):
+    eligible_libraries = []
+    for root, dirs, files in os.walk(os.path.abspath(path)):
+        if re.search(r"sdk[\\/][^\\/]+[\\/][^\\/]+$", root):
+            if "setup.py" in files:
+                try:
+                    pkg_name, version, is_track2, setup_py_path = get_package_properties(root)
+                    if is_track2:
+                        eligible_libraries.append((pkg_name, version, setup_py_path))
+                except:
+                    # Skip setup.py if the package cannot be parsed
+                    pass
+    return eligible_libraries
