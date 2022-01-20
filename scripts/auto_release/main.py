@@ -9,7 +9,6 @@ from glob import glob
 import time
 from util import add_certificate
 from functools import wraps
-from devtools_testutils.proxy_docker_startup import start_test_proxy, stop_test_proxy
 from packaging.version import Version
 import base64
 
@@ -111,7 +110,7 @@ def get_latest_commit_in_swagger_repo() -> str:
     return head_sha
 
 
-def set_test_env_var(self):
+def set_test_env_var():
     setting_path = str(Path(os.getenv('SCRIPT_PATH')) / 'mgmt_settings_real_.py')
     # edit mgmt_settings_real.py
     with open(setting_path, 'r') as file_in:
@@ -417,10 +416,6 @@ class CodegenTestPR:
 
     @return_origin_path
     def run_test_proc(self):
-        # create test proxy container(necessary for first time)
-        start_test_proxy()
-        stop_test_proxy()
-
         # run test
         os.chdir(Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}'))
         succeeded_result = 'Live test success'

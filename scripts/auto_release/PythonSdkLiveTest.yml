@@ -72,8 +72,13 @@ jobs:
         export BASE_BRANCH=$(BASE_BRANCH)
         export SCRIPT_PATH=$script_path
 
+        # start test proxy
+        cd azure-sdk-for-python
+        sudo apt-get install -y powershell
+        powershell eng/common/testproxy/docker-start-proxy.ps1 "start"
+
+        # prepare test env
+        python scripts/dev_setup.py -p azure-core
 
         # run
-        cd azure-sdk-for-python
-        python scripts/dev_setup.py -p azure-core
         python $script_path/main.py
