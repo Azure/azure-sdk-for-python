@@ -99,10 +99,7 @@ class _DocumentProducer(object):
 
         """
         if self._cur_item is None:
-            try:
-                self._cur_item = next(self._ex_context)
-            except exceptions.CosmosHttpResponseError:
-                raise
+            self._cur_item = next(self._ex_context)
 
         return self._cur_item
 
