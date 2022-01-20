@@ -44,6 +44,9 @@ class EnvironmentCredential(object):
       - **AZURE_CLIENT_ID**: the service principal's client ID
       - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM or PKCS12 certificate file including the private key. The
         certificate must not be password-protected.
+      - **AZURE_CLIENT_SEND_CERTIFICATE_CHAIN**: Specifies whether an authentication request will include an x5c
+        header to support subject name / issuer based authentication.
+     * When set to `true` or `1`, authentication requests include the x5c header.
 
     User with username and password:
       - **AZURE_CLIENT_ID**: the application's client ID
@@ -73,6 +76,9 @@ class EnvironmentCredential(object):
                 **kwargs
             )
         elif all(os.environ.get(v) is not None for v in EnvironmentVariables.USERNAME_PASSWORD_VARS):
+            if EnvironmentVariables.AZURE_CLIENT_SEND_CERTIFICATE_CHAIN in os.environ and "send_certificate_chain" not in kwargs:
+                send_chain = os.environ[EnvironmentVariables.AZURE_CLIENT_SEND_CERTIFICATE_CHAIN].lower() == "true" or os.environ[EnvironmentVariables.AZURE_CLIENT_SEND_CERTIFICATE_CHAIN] == "1"
+                kwargs["send_certificate_chain"] = send_chain
             self._credential = UsernamePasswordCredential(
                 client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
                 username=os.environ[EnvironmentVariables.AZURE_USERNAME],
