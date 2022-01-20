@@ -4,13 +4,13 @@ import logging
 from ghapi.all import GhApi
 from pathlib import Path
 import json
-from typing import List, Any
+from typing import List, Any, Dict
 from glob import glob
 import time
 from util import add_certificate
-from pypi import PyPIClient
 from functools import wraps
 from devtools_testutils.proxy_docker_startup import start_test_proxy, stop_test_proxy
+from packaging.version import Version
 import base64
 
 _LOG = logging.getLogger()
@@ -70,84 +70,6 @@ def stable_version_plus(add_content: List[str], last_version: str):
         return '0.0.0'
 
 
-def edit_version(add_content):
-    global VERSION_NEW
-
-    preview_tag = judge_tag()
-    preview_version = 'rc' in VERSION_LAST_RELEASE or 'b' in VERSION_LAST_RELEASE
-    #                                           |   preview tag                     | stable tag
-    # preview version(1.0.0rc1/1.0.0b1)         | 1.0.0rc2(track1)/1.0.0b2(track2)  |  1.0.0
-    # stable  version (1.0.0) (breaking change) | 2.0.0rc1(track1)/2.0.0b1(track2)  |  2.0.0
-    # stable  version (1.0.0) (feature)         | 1.1.0rc1(track1)/1.1.0b1(track2)  |  1.1.0
-    # stable  version (1.0.0) (bugfix)          | 1.0.1rc1(track1)/1.0.1b1(track2)  |  1.0.1
-    preview_label = 'rc' if TRACK == '1' else 'b'
-    if preview_version and preview_tag:
-        VERSION_NEW = preview_version_plus(preview_label)
-    elif preview_version and not preview_tag:
-        VERSION_NEW = VERSION_LAST_RELEASE.split(preview_label)[0]
-    elif not preview_version and preview_tag:
-        VERSION_NEW = stable_version_plus(add_content) + preview_label + '1'
-    else:
-        VERSION_NEW = stable_version_plus(add_content)
-
-    # additional rule for track1: if version is 0.x.x, next version is 0.x+1.0
-    if TRACK == '1' and VERSION_LAST_RELEASE[0] == '0':
-        num = VERSION_LAST_RELEASE.split('.')
-        VERSION_NEW = f'{num[0]}.{int(num[1]) + 1}.0'
-    # '0.0.0' means there must be abnormal situation
-    if VERSION_NEW == '0.0.0':
-        api_request = GhApi(owner='Azure', repo='sdk-release-request', token=os.getenv('UPDATE_TOKEN'))
-        link = os.getenv('ISSUE_LINK')
-        issue_number = link.split('/')[-1]
-        api_request.issues.add_labels(issue_number=int(issue_number), labels=['base-branch-attention'])
-
-
-def livetest_env_init():
-    file = f'{SCRIPT_PATH}/livetest_package_{PACKAGE_NAME}_track{TRACK}.txt'
-    if os.path.exists(file):
-        print_exec(f'pip install -r {file}')
-    else:
-        my_print(f'{file} does not exist')
-
-    # edit mgmt_settings_real.py
-    with open(f'{SCRIPT_PATH}/mgmt_settings_real_.py', 'r') as file_in:
-        list_in = file_in.readlines()
-
-    ENV_TENANT_ID = os.environ['TENANT_ID']
-    ENV_CLIENT_ID = os.environ['CLIENT_ID']
-    ENV_CLIENT_SECRET = os.environ['CLIENT_SECRET']
-    ENV_SUBSCRIPTION_ID = os.environ['SUBSCRIPTION_ID']
-
-    for i in range(0, len(list_in)):
-        list_in[i] = list_in[i].replace('ENV_TENANT_ID', ENV_TENANT_ID)
-        list_in[i] = list_in[i].replace('ENV_CLIENT_ID', ENV_CLIENT_ID)
-        list_in[i] = list_in[i].replace('ENV_CLIENT_SECRET', ENV_CLIENT_SECRET)
-        list_in[i] = list_in[i].replace('ENV_SUBSCRIPTION_ID', ENV_SUBSCRIPTION_ID)
-
-    with open('tools/azure-sdk-tools/devtools_testutils/mgmt_settings_real.py', 'w') as file_out:
-        file_out.writelines(list_in)
-
-
-def run_live_test():
-    livetest_env_init()
-    print_exec(f'python scripts/dev_setup.py -p azure-mgmt-{PACKAGE_NAME}')
-    # run live test
-    try:
-        print_check(f'pytest sdk/{SDK_FOLDER}/azure-mgmt-{PACKAGE_NAME}/  --collect-only')
-    except:
-        my_print('live test run done, do not find any test !!!')
-        return
-
-    try:
-        print_check(f'pytest -s sdk/{SDK_FOLDER}/azure-mgmt-{PACKAGE_NAME}/')
-    except:
-        with open(f'{OUT_PATH}/live_test_fail.txt', 'w') as file_out:
-            file_out.writelines([''])
-        my_print('some test failed, please fix it locally')
-    else:
-        my_print('live test run done, do not find failure !!!')
-
-
 # find all the files of one folder, including files in subdirectory
 def all_files(path: str, files: List[str]):
     all_folder = os.listdir(path)
@@ -157,17 +79,6 @@ def all_files(path: str, files: List[str]):
             all_files(folder, files)
         else:
             files.append(folder)
-
-
-def commit_test():
-    print_exec('git add sdk/')
-    print_exec('git commit -m \"test"')
-    print_exec('git push -f origin HEAD')
-    my_print(f'== {PACKAGE_NAME}(track{TRACK}) Automatic Release live test done !!! ==')
-
-
-def init_env():
-    print_exec(f'python scripts/dev_setup.py -p azure-mgmt-{PACKAGE_NAME}')
 
 
 def git_clean():
@@ -232,7 +143,7 @@ class CodegenTestPR:
         self.sdk_folder = ''  # 'compute' in 'sdk/compute/azure-mgmt-dns'
         self.autorest_result = ''
         self.next_version = ''
-        self.test_result = False
+        self.test_result = ''
 
     def readme_local_folder(self) -> Path:
         html_link = 'https://github.com/Azure/azure-rest-api-specs/blob/main/'
@@ -244,7 +155,7 @@ class CodegenTestPR:
         self.sdk_folder = generate_result["packages"][0]["path"][0].split('/')[-1]
 
     def generate_code(self):
-        # checkout_azure_default_branch()
+        checkout_azure_default_branch()
 
         # prepare input data
         input_data = {
@@ -255,12 +166,12 @@ class CodegenTestPR:
         }
         temp_folder = Path(os.getenv('TEMP_FOLDER'))
         self.autorest_result = str(temp_folder / 'temp.json')
-        # with open(self.autorest_result, 'w') as file:
-        #     json.dump(input_data, file)
+        with open(self.autorest_result, 'w') as file:
+            json.dump(input_data, file)
 
         # generate code
-        # print_check(f'python -m packaging_tools.auto_codegen {self.autorest_result} {self.autorest_result}')
-        # print_check(f'python -m packaging_tools.auto_package {self.autorest_result} {self.autorest_result}')
+        print_check(f'python -m packaging_tools.auto_codegen {self.autorest_result} {self.autorest_result}')
+        print_check(f'python -m packaging_tools.auto_package {self.autorest_result} {self.autorest_result}')
 
     def get_package_name_with_readme(self):
         with open(self.autorest_result, 'r') as file:
@@ -308,11 +219,11 @@ class CodegenTestPR:
         self.sdk_folder = Path(folder_info).parts[1]
 
     def prepare_branch(self):
-        # git_clean()
+        git_clean()
         if self.spec_readme:
             self.prepare_branch_with_readme()
         else:
-            self.prepare_branch_with_base_branch()
+            # self.prepare_branch_with_base_branch() TODO
 
     def check_sdk_readme(self):
         sdk_readme = str(Path(f'sdk/{self.sdk_folder}/{self.package_name}/README.md'))
@@ -359,7 +270,7 @@ class CodegenTestPR:
         default_api_version = ''  # for multi-api
         api_version = ''  # for single-api
         for file in files:
-            if '.py' not in file:
+            if '.py' not in file or '.pyc' in file:
                 continue
             try:
                 with open(file, 'r') as file_in:
@@ -398,27 +309,24 @@ class CodegenTestPR:
         else:
             next_version = stable_version_plus(add_content, last_version)
 
-        # '0.0.0' means there must be abnormal situation
-        if next_version == '0.0.0':
-            api_request = GhApi(owner='Azure', repo='sdk-release-request', token=os.getenv('UPDATE_TOKEN'))
-            link = os.getenv('ISSUE_LINK')
-            issue_number = link.split('/')[-1]
-            api_request.issues.add_labels(issue_number=int(issue_number), labels=['base-branch-attention'])
-
         return next_version
 
-    def get_changelog(self) -> List[str]:
+    def get_autorest_result(self) -> Dict[Any, Any]:
         with open(self.autorest_result, 'r') as file_in:
             content = json.load(file_in)
+        return content
+
+    def get_changelog(self) -> List[str]:
+        content = self.get_autorest_result()
         return content["packages"][0]["changelog"]["content"].split('\n')
 
     def get_last_release_version(self) -> str:
-        client = PyPIClient()
+        content = self.get_autorest_result()
+        last_version = content["packages"][0]["version"]
         try:
-            versions = client.get_ordered_versions(f'azure-mgmt-{self.package_name}')
+            return str(Version(last_version))
         except:
             return ''
-        return str(versions[-1])
 
     def calculate_next_version(self):
         last_version = self.get_last_release_version()
@@ -434,6 +342,7 @@ class CodegenTestPR:
             for i in range(0, len(content)):
                 if content[i].find('VERSION') > -1:
                     content[i] = f'VERSION = "{self.next_version}"\n'
+                    break
 
         for file in files:
             if '_version.py' in file:
@@ -516,21 +425,23 @@ class CodegenTestPR:
 
         # run test
         os.chdir(Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}'))
+        succeeded_result = 'Live test success'
+        failed_result = 'Live test fail, detailed info is in pipeline log(search keyword FAILED)!!!'
         try:
             print_check(f'pytest  --collect-only')
         except:
             my_print('live test run done, do not find any test !!!')
-            self.test_result = True
+            self.test_result = succeeded_result
             return
 
         try:
             print_check(f'pytest -s')
         except:
             my_print('some test failed, please fix it locally')
-            self.test_result = False
+            self.test_result = failed_result
         else:
             my_print('live test run done, do not find failure !!!')
-            self.test_result = True
+            self.test_result = succeeded_result
 
     def run_test(self):
         self.prepare_test_env()
@@ -540,9 +451,8 @@ class CodegenTestPR:
         api = GhApi(owner='Azure', repo='azure-sdk-for-python', token=self.usr_token)
         pr_title = "[AutoRelease] {}(Do not merge)".format(self.new_branch)
         pr_head = "{}:{}".format(os.getenv('USR_NAME'), self.new_branch)
-        test_result = 'Live test success' if self.test_result else 'Live test fail, detailed info is in pipeline log(search keyword FAILED)!!!'
         pr_base = 'main'
-        pr_body = "{} \n{} \n{}".format(self.issue_link, test_result, self.pipeline_link)
+        pr_body = "{} \n{} \n{}".format(self.issue_link, self.test_result, self.pipeline_link)
         res_create = api.pulls.create(pr_title, pr_head, pr_base, pr_body)
         pr_number = res_create.number
 
@@ -556,21 +466,18 @@ class CodegenTestPR:
             issue_number = self.issue_link.split('/')[-1]
             api_request.issues.add_labels(issue_number=int(issue_number), labels=['base-branch-attention'])
 
-    def get_package_encoded(self):
-        with open(self.autorest_result, 'r') as file_in:
-            content = json.load(file_in)
-        package_path = content["packages"][0]["artifacts"][0]
-        with open(package_path, 'rb') as file_in:
-            package_content = file_in.read()
-        return base64.b64encode(package_content)
+    # def get_package_encoded(self):
+    #     content = self.get_autorest_result()
+    #     package_path = content["packages"][0]["artifacts"][0]
+    #     with open(package_path, 'rb') as file_in:
+    #         package_content = file_in.read()
+    #     return base64.b64encode(package_content)
 
     def upload_private_package_policy(self):
         pass
 
     def issue_comment(self):
-        issue_number = int(self.issue_link.split('/')[-1])
-        api = GhApi(owner='Azure', repo='sdk-release-request', token=self.bot_token)
-        api.issues.create_comment(issue_number=issue_number, body='issue link:{}'.format(self.issue_link))
+        self.zero_version_policy()
 
     def create_pr(self):
         # commit all code
@@ -587,7 +494,7 @@ class CodegenTestPR:
     def run(self):
         self.prepare_branch()
         self.check_file()
-        # self.run_test()
+        self.run_test()
         self.create_pr()
 
 
