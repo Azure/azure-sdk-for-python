@@ -125,7 +125,8 @@ class TestManagement(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
-    def test_get_list_operations(self, client):
+    # TODO add checks for api version? this should be consistent across new ops
+    def test_get_list_operations(self, client, **kwargs):
         operations = client.list_operations()
         successful_op = None
         failed_op = None
