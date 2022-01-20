@@ -16,10 +16,8 @@ PLAYBACK_URL = "https://msi-endpoint/token"
 
 
 class TestAppService(RecordedTestCase):
-    def __init__(self, *args, **kwargs):
-        super(TestAppService, self).__init__(*args, **kwargs)
-
-        if is_live:
+    def load_settings(self):
+        if is_live():
             url = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
             if not (url and EnvironmentVariables.MSI_SECRET in os.environ):
                 pytest.skip("Recording requires values for $MSI_ENDPOINT and $MSI_SECRET")
@@ -32,6 +30,7 @@ class TestAppService(RecordedTestCase):
 
     @recorded_by_proxy
     def test_system_assigned(self):
+        self.load_settings()
         with self.patch:
             credential = AppServiceCredential()
         token = credential.get_token(self.scope)
@@ -41,6 +40,7 @@ class TestAppService(RecordedTestCase):
     @pytest.mark.usefixtures("user_assigned_identity_client_id")
     @recorded_by_proxy
     def test_user_assigned(self):
+        self.load_settings()
         with self.patch:
             credential = AppServiceCredential(client_id=self.user_assigned_identity_client_id)
         token = credential.get_token(self.scope)

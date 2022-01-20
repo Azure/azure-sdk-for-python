@@ -7,7 +7,7 @@ import sys
 
 import pytest
 import six
-from devtools_testutils import test_proxy, add_general_regex_sanitizer
+from devtools_testutils import test_proxy, add_general_regex_sanitizer, is_live
 from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID, EnvironmentVariables
 
 RECORD_IMDS = "--record-imds"
@@ -46,7 +46,7 @@ def record_imds_test(request):
     Recorded IMDS tests run as expected in playback. However, because they require particular live environments, a
     custom pytest option ("--record-imds") controls whether they're included in a live test run.
     """
-    if request.instance.is_live and not request.session.config.getoption(RECORD_IMDS):
+    if is_live() and not request.session.config.getoption(RECORD_IMDS):
         pytest.skip('Run "pytest {}" to record a live run of this test'.format(RECORD_IMDS))
 
 

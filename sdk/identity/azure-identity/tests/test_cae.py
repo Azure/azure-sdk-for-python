@@ -15,15 +15,12 @@ from azure.identity import (
 )
 from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID
 from azure.mgmt.resource.subscriptions import SubscriptionClient
-from azure_devtools.scenario_tests import patch_time_sleep_api
 from devtools_testutils import AzureRecordedTestCase, is_live, recorded_by_proxy
 import pytest
 
-
-@pytest.mark.skip("these tests require support in azure-core")
-class TestCae(AzureRecordedTestCase):
-    def __init__(self, *args, **kwargs):
-        if is_live:
+class CaePreparer(object):
+    def __init__(self):
+        if is_live():
             if "CAE_TENANT_ID" not in os.environ:
                 pytest.skip("Missing a tenant ID for CAE tests")
             if "CAE_ARM_URL" not in os.environ:
@@ -47,8 +44,14 @@ class TestCae(AzureRecordedTestCase):
                 "tenant_id": "tenant",
                 "username": "username",
             }
-            self.replay_patches.append(patch_time_sleep_api)
 
+    def __call__(self, fn):
+        def _preparer_wrapper(test_class):
+            fn(test_class, cae_settings=self.cae_settings)
+        return _preparer_wrapper
+
+@pytest.mark.skip("these tests require support in azure-core")
+class TestCae(AzureRecordedTestCase):
     def cae_test(self, credential):
         client = SubscriptionClient(credential, base_url=self.cae_settings["arm_url"])
 
@@ -56,7 +59,7 @@ class TestCae(AzureRecordedTestCase):
         list(client.subscriptions.list())
         first_token = credential.get_token(self.cae_settings["arm_scope"])
 
-        if is_live:
+        if is_live():
             validate_ssm_token(first_token.token)
 
             # revoking sessions revokes access and refresh tokens
@@ -82,13 +85,15 @@ class TestCae(AzureRecordedTestCase):
 
     @pytest.mark.manual
     def test_browser(self):
+        self.load_settings()
         credential = InteractiveBrowserCredential(
             authority=self.cae_settings["authority"], tenant_id=self.cae_settings["tenant_id"]
         )
-        self.cae_test(credential)
+        self.cae_test(credential, cae_settings=self.cae_settings)
 
     @recorded_by_proxy
     def test_device_code(self):
+        self.load_settings()
         credential = DeviceCodeCredential(
             authority=self.cae_settings["authority"], tenant_id=self.cae_settings["tenant_id"]
         )
@@ -96,7 +101,8 @@ class TestCae(AzureRecordedTestCase):
 
     @recorded_by_proxy
     def test_username_password(self):
-        if is_live and not ("username" in self.cae_settings and "password" in self.cae_settings):
+        self.load_settings()
+        if is_live() and not ("username" in self.cae_settings and "password" in self.cae_settings):
             pytest.skip("Missing a username or password for CAE test")
 
         credential = UsernamePasswordCredential(
@@ -107,6 +113,32 @@ class TestCae(AzureRecordedTestCase):
             password=self.cae_settings["password"],
         )
         self.cae_test(credential)
+
+    def load_settings(self):
+        if is_live():
+            if "CAE_TENANT_ID" not in os.environ:
+                pytest.skip("Missing a tenant ID for CAE tests")
+            if "CAE_ARM_URL" not in os.environ:
+                pytest.skip("Missing an ARM URL for CAE tests")
+
+            self.cae_settings = {
+                "arm_scope": os.environ.get("CAE_ARM_SCOPE", "https://management.azure.com/.default"),
+                "arm_url": os.environ["CAE_ARM_URL"],
+                "authority": os.environ.get("CAE_AUTHORITY", AzureAuthorityHosts.AZURE_PUBLIC_CLOUD),
+                "graph_url": os.environ.get("CAE_GRAPH_URL", "https://graph.microsoft.com"),
+                "password": os.environ.get("CAE_PASSWORD"),
+                "tenant_id": os.environ["CAE_TENANT_ID"],
+                "username": os.environ.get("CAE_USERNAME"),
+            }
+        else:
+            self.cae_settings = {
+                "arm_scope": "https://management.azure.com/.default",
+                "arm_url": "https://management.azure.com/",
+                "authority": AzureAuthorityHosts.AZURE_PUBLIC_CLOUD,
+                "password": "password",
+                "tenant_id": "tenant",
+                "username": "username",
+            }
 
 
 def validate_ssm_token(access_token):

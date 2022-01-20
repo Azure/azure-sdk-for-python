@@ -17,10 +17,8 @@ from test_app_service import PLAYBACK_URL
 
 
 class TestAppServiceAsync(RecordedTestCase):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        if is_live:
+    def load_settings(self):
+        if is_live():
             url = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
             if not (url and EnvironmentVariables.MSI_SECRET in os.environ):
                 pytest.skip("Recording requires values for $MSI_ENDPOINT and $MSI_SECRET")
@@ -34,6 +32,7 @@ class TestAppServiceAsync(RecordedTestCase):
     @await_test
     @recorded_by_proxy_async
     async def test_system_assigned(self):
+        self.load_settings()
         with self.patch:
             credential = AppServiceCredential()
         token = await credential.get_token(self.scope)
@@ -44,6 +43,7 @@ class TestAppServiceAsync(RecordedTestCase):
     @await_test
     @recorded_by_proxy_async
     async def test_user_assigned(self):
+        self.load_settings()
         with self.patch:
             credential = AppServiceCredential(client_id=self.user_assigned_identity_client_id)
         token = await credential.get_token(self.scope)

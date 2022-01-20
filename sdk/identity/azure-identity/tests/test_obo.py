@@ -14,20 +14,16 @@ from azure.identity import OnBehalfOfCredential, UsernamePasswordCredential
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 import pytest
-import six
-from six.moves.urllib_parse import urlparse
+from urllib.parse import urlparse
 
 from helpers import build_aad_response, FAKE_CLIENT_ID, get_discovery_response, mock_response
 from recorded_test_case import RecordedTestCase
 from test_certificate_credential import PEM_CERT_PATH
 from devtools_testutils import is_live, recorded_by_proxy
 
-
-class OboRecordedTestCase(RecordedTestCase):
-    def __init__(self, *args, **kwargs):
-        super(OboRecordedTestCase, self).__init__(*args, **kwargs)
-
-        if is_live:
+class OboPreparer(object):
+    def __init__(self):
+        if is_live():
             missing_variables = [
                 var
                 for var in (
@@ -45,7 +41,7 @@ class OboRecordedTestCase(RecordedTestCase):
                 pytest.skip("No value for environment variables: " + ", ".join(missing_variables))
 
             self.obo_settings = {
-                "cert_bytes": six.ensure_binary(os.environ["OBO_CERT_BYTES"]),
+                "cert_bytes": os.environ["OBO_CERT_BYTES"],
                 "client_id": os.environ["OBO_CLIENT_ID"],
                 "client_secret": os.environ["OBO_CLIENT_SECRET"],
                 "password": os.environ["OBO_PASSWORD"],
@@ -64,31 +60,38 @@ class OboRecordedTestCase(RecordedTestCase):
                 "username": "username",
             }
 
+    def __call__(self, fn):
+        def _preparer_wrapper(test_class):
+            fn(test_class, obo_settings=self.obo_settings)
+        return _preparer_wrapper
 
-class TestObo(OboRecordedTestCase):
+
+class TestObo(RecordedTestCase):
+    @OboPreparer()
     @recorded_by_proxy
-    def test_obo(self):
-        client_id = self.obo_settings["client_id"]
-        tenant_id = self.obo_settings["tenant_id"]
+    def test_obo(self, obo_settings):
+        client_id = obo_settings["client_id"]
+        tenant_id = obo_settings["tenant_id"]
 
         user_credential = UsernamePasswordCredential(
-            client_id, self.obo_settings["username"], self.obo_settings["password"], tenant_id=tenant_id
+            client_id, obo_settings["username"], obo_settings["password"], tenant_id=tenant_id
         )
-        assertion = user_credential.get_token(self.obo_settings["scope"]).token
-        credential = OnBehalfOfCredential(tenant_id, client_id, client_secret=self.obo_settings["client_secret"], user_assertion=assertion)
-        credential.get_token(self.obo_settings["scope"])
+        assertion = user_credential.get_token(obo_settings["scope"]).token
+        credential = OnBehalfOfCredential(tenant_id, client_id, client_secret=obo_settings["client_secret"], user_assertion=assertion)
+        credential.get_token(obo_settings["scope"])
 
+    @OboPreparer()
     @recorded_by_proxy
-    def test_obo_cert(self):
-        client_id = self.obo_settings["client_id"]
-        tenant_id = self.obo_settings["tenant_id"]
+    def test_obo_cert(self, obo_settings):
+        client_id = obo_settings["client_id"]
+        tenant_id = obo_settings["tenant_id"]
 
         user_credential = UsernamePasswordCredential(
-            client_id, self.obo_settings["username"], self.obo_settings["password"], tenant_id=tenant_id
+            client_id, obo_settings["username"], obo_settings["password"], tenant_id=tenant_id
         )
-        assertion = user_credential.get_token(self.obo_settings["scope"]).token
-        credential = OnBehalfOfCredential(tenant_id, client_id, client_certificate=self.obo_settings["cert_bytes"], user_assertion=assertion)
-        credential.get_token(self.obo_settings["scope"])
+        assertion = user_credential.get_token(obo_settings["scope"]).token
+        credential = OnBehalfOfCredential(tenant_id, client_id, client_certificate=obo_settings["cert_bytes"], user_assertion=assertion)
+        credential.get_token(obo_settings["scope"])
 
 
 def test_multitenant_authentication():
