@@ -150,8 +150,7 @@ class CodegenTestPR:
         return Path(self.spec_readme.replace(html_link, '')) / 'readme.md'
 
     def get_sdk_folder_with_readme(self):
-        with open(self.autorest_result, 'r') as file:
-            generate_result = json.load(file)
+        generate_result = self.get_autorest_result()
         self.sdk_folder = generate_result["packages"][0]["path"][0].split('/')[-1]
 
     def generate_code(self):
@@ -174,8 +173,7 @@ class CodegenTestPR:
         print_check(f'python -m packaging_tools.auto_package {self.autorest_result} {self.autorest_result}')
 
     def get_package_name_with_readme(self):
-        with open(self.autorest_result, 'r') as file:
-            generate_result = json.load(file)
+        generate_result = self.get_autorest_result()
         self.package_name = generate_result["packages"][0]["packageName"].split('-')[-1]
 
     def prepare_branch_with_readme(self):
@@ -222,8 +220,8 @@ class CodegenTestPR:
         git_clean()
         if self.spec_readme:
             self.prepare_branch_with_readme()
-        else:
-            # self.prepare_branch_with_base_branch() TODO
+        # else:
+            # self.prepare_branch_with_base_branch()
 
     def check_sdk_readme(self):
         sdk_readme = str(Path(f'sdk/{self.sdk_folder}/{self.package_name}/README.md'))
