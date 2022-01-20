@@ -23,12 +23,6 @@ jobs:
         addToPath: true
         architecture: 'x64'
     - bash: |
-        # verify $ISSUE_LINK and $BASE_BRANCH are not null
-        if [ -z "$(BASE_BRANCH)" -o -z "$(ISSUE_LINK)" ]; then
-          echo "ISSUE_LINK or BASE_BRANCH do not exist, pipeline fail!!!"
-          exit 1
-        fi
-
         script_path=$(pwd)/scripts/auto_release
         cd ..
         git config --global user.email "PythonSdkPipelines"
