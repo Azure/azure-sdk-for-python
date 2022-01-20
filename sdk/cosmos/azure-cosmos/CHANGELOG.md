@@ -8,12 +8,6 @@ We will also be removing support for Python 3.6 and will only support Python 3.7
 #### Features Added
 - Added support for split-proof queries for the sync client
 
-#### Breaking Changes
-
-#### Bugs Fixed
-
-#### Other Changes
-
 ### 4.3.0b1 (2021-12-14)
 **New features**
 - Added language native async i/o client
