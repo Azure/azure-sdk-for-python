@@ -13,8 +13,6 @@ For an example of basic usage for receiving from a dead-letter queue asynchronou
 to the sample `receive_deadlettered_messages_async.py`.
 """
 
-# pylint: disable=C0111
-
 import os
 import asyncio
 from azure.servicebus import ServiceBusMessage, ServiceBusSubQueue
@@ -114,5 +112,4 @@ async def main():
 
     await servicebus_client.close()
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+asyncio.run(main())

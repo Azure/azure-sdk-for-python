@@ -9,11 +9,6 @@ import pytest
 import six
 from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID, EnvironmentVariables
 
-
-if sys.version_info < (3, 5, 3):
-    collect_ignore_glob = ["*_async.py"]
-
-
 RECORD_IMDS = "--record-imds"
 
 

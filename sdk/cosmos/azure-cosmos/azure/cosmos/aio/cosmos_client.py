@@ -151,6 +151,7 @@ class CosmosClient(object):
             cls: ClassType,
             conn_str: str,
             credential: Union[str, Dict[str, Any]] = None,
+            consistency_level: str = "Session",
             **kwargs: Any
     ) -> ClassType:
         """Create a CosmosClient instance from a connection string.
@@ -162,9 +163,11 @@ class CosmosClient(object):
         :type conn_str: str
         :param credential: Alternative credentials to use instead of the key
             provided in the connection string.
-        :type credential: str or Dict[str, Any]
-        :keyword consistency_level: Consistency level to use for the session. The default value is "Session".
-        :paramtype consistency_level: str
+        :type credential: str or Dict[str, str]
+        :param conn_str: The connection string.
+        :type conn_str: str
+        :param consistency_level: Consistency level to use for the session. The default value is "Session".
+        :type consistency_level: str
         :returns: a CosmosClient instance
         :rtype: ~azure.cosmos.aio.CosmosClient
         """
@@ -172,7 +175,7 @@ class CosmosClient(object):
         return cls(
             url=settings['AccountEndpoint'],
             credential=credential or settings['AccountKey'],
-            consistency_level=kwargs.get('consistency_level', 'Session'),
+            consistency_level=consistency_level,
             **kwargs
         )
 

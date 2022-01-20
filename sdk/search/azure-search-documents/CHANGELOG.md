@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+
 ## 11.3.0b6 (2021-11-19)
 
 ### Features Added

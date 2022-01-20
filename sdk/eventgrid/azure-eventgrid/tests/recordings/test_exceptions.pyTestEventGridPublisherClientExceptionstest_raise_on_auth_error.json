@@ -1,0 +1,40 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeresource.westus2-1.eventgrid.azure.net/api/events?api-version=2018-01-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "212",
+        "Content-Type": "application/json; charset=utf-8",
+        "User-Agent": "azsdk-python-eventgrid/4.7.2 Python/3.7.3 (Windows-10-10.0.18362-SP0)",
+        "x-ms-client-request-id": "8b1c07a8-74e0-11ec-bf7d-2816a845e8c6"
+      },
+      "RequestBody": "[{\u0022id\u0022: \u0022d9ba0e7d-043a-4f1e-8677-e5a0064aefe8\u0022, \u0022subject\u0022: \u0022sample\u0022, \u0022data\u0022: {\u0022sample\u0022: \u0022eventgridevent\u0022}, \u0022eventType\u0022: \u0022Sample.EventGrid.Event\u0022, \u0022eventTime\u0022: \u00222022-01-14T02:20:29.699787Z\u0022, \u0022dataVersion\u0022: \u00222.0\u0022}]",
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Content-Length": "815",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 14 Jan 2022 02:20:27 GMT",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-ms-request-id": "c4978ae8-f213-465b-986a-e27f97cbc1eb"
+      },
+      "ResponseBody": [
+        "{\r\n",
+        "    \u0022error\u0022: {\r\n",
+        "        \u0022code\u0022: \u0022Unauthorized\u0022,\r\n",
+        "        \u0022message\u0022: \u0022The request authorization key is not authorized for ADMINISTRATOREVENTGRIDTOPIC.WESTUS2-1.EVENTGRID.AZURE.NET. This is due to the reason: Invalid length for a Base-64 char array or string. Report \u0027c4978ae8-f213-465b-986a-e27f97cbc1eb:4:1/14/2022 2:20:28 AM (UTC)\u0027 to our forums for assistance or raise a support ticket.\u0022,\r\n",
+        "        \u0022details\u0022: [{\r\n",
+        "            \u0022code\u0022: \u0022Unauthorized\u0022,\r\n",
+        "            \u0022message\u0022: \u0022The request authorization key is not authorized for ADMINISTRATOREVENTGRIDTOPIC.WESTUS2-1.EVENTGRID.AZURE.NET. This is due to the reason: Invalid length for a Base-64 char array or string. Report \u0027c4978ae8-f213-465b-986a-e27f97cbc1eb:4:1/14/2022 2:20:28 AM (UTC)\u0027 to our forums for assistance or raise a support ticket.\u0022\r\n",
+        "    }]\r\n",
+        "  }\r\n",
+        "}"
+      ]
+    }
+  ],
+  "Variables": {}
+}

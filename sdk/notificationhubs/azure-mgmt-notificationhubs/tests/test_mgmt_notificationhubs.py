@@ -9,20 +9,20 @@ import time
 import unittest
 
 import azure.mgmt.notificationhubs
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, ResourceGroupPreparer, recorded_by_proxy
 
 
 AZURE_LOCATION = "eastus"
 
-class MgmtNotificationHubsTest(AzureMgmtTestCase):
+class TestMgmtNotificationHubs(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtNotificationHubsTest, self).setUp()
+    def setup_method(self, method):
         self.notificationhubs_client = self.create_mgmt_client(
             azure.mgmt.notificationhubs.NotificationHubsManagementClient
         )
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_notification_hubs(self, resource_group):
         GROUP_NAME = resource_group.name
         namespace_name = "namespacexxz"
@@ -70,6 +70,7 @@ class MgmtNotificationHubsTest(AzureMgmtTestCase):
         )
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_namespaces(self, resource_group):
         GROUP_NAME = resource_group.name
         namespace_name = "namespacexxx"

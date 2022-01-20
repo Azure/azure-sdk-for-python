@@ -6,24 +6,24 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._functions_operations import FunctionsOperations
+from ._operations import Operations
+from ._streaming_jobs_operations import StreamingJobsOperations
 from ._inputs_operations import InputsOperations
 from ._outputs_operations import OutputsOperations
-from ._streaming_jobs_operations import StreamingJobsOperations
-from ._subscriptions_operations import SubscriptionsOperations
 from ._transformations_operations import TransformationsOperations
-from ._operations import Operations
+from ._functions_operations import FunctionsOperations
+from ._subscriptions_operations import SubscriptionsOperations
 from ._clusters_operations import ClustersOperations
 from ._private_endpoints_operations import PrivateEndpointsOperations
 
 __all__ = [
-    'FunctionsOperations',
+    'Operations',
+    'StreamingJobsOperations',
     'InputsOperations',
     'OutputsOperations',
-    'StreamingJobsOperations',
-    'SubscriptionsOperations',
     'TransformationsOperations',
-    'Operations',
+    'FunctionsOperations',
+    'SubscriptionsOperations',
     'ClustersOperations',
     'PrivateEndpointsOperations',
 ]
