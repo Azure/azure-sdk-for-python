@@ -160,7 +160,7 @@ def test_regional_authority():
 
         assert mock_confidential_client.call_count == 1
         _, kwargs = mock_confidential_client.call_args
-        assert str(kwargs["azure_region"]) == str(region)
+        assert kwargs["azure_region"] == region
 
 
 def test_requires_certificate():
