@@ -23,6 +23,7 @@
 Cosmos database service.
 """
 
+
 # pylint: disable=protected-access
 
 
@@ -33,7 +34,7 @@ class PartitionKeyRangeGoneRetryPolicy(object):
         self.refresh_partition_key_range_cache = True
         self.args = args
         self.client = client
-
+        self.exception = None
 
     def ShouldRetry(self, exception):
         """Returns true if should retry based on the passed-in exception.
@@ -42,6 +43,7 @@ class PartitionKeyRangeGoneRetryPolicy(object):
         :rtype: boolean
 
         """
+        self.exception = exception  # needed for pylint
         if self.refresh_partition_key_range_cache:
             # refresh routing_map_provider to refresh partition key range cache
             # make refresh_partition_key_range_cache False to skip this check on subsequent Gone exceptions
