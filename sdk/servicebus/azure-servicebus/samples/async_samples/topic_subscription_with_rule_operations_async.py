@@ -9,8 +9,6 @@
 Example to show selecting a message into Subscriptions on a Topic using various Filters asynchronously.
 """
 
-# pylint: disable=C0111
-
 import os
 import time
 import asyncio
