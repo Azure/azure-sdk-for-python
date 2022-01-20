@@ -24,7 +24,7 @@ and is generally name of the directory in the specification folder of the azure-
 The `module_name` is the name for the specific feature or function of the REST API that underlies this SDK.
 Usually this name comes from the name of the REST API file itself or one of the directories toward the end of the file path.
 
-In Python, a project's `package name` will normally be `azure-{service_name}-{module_name}`. After release, you can find it in pypi.
+In Python, a project's `package name` will normally be `azure-{service_name}-{module_name}`. After release, you can find it in PyPI.
 For example: you can find [azure-messaging-webpubsubservice](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/webpubsub/azure-messaging-webpubsubservice) in [pypi](https://pypi.org/project/azure-messaging-webpubsubservice/).
 
 ## Project folder structure
