@@ -52,8 +52,6 @@ jobs:
         # create virtual env
         python -m venv venv-sdk
         source venv-sdk/bin/activate
-        output_path=$(pwd)/venv-sdk
-        pip install packaging
         pip install -r $script_path/requirement.txt
 
         # import env variable
@@ -82,7 +80,7 @@ jobs:
         echo 2222222222222222222
         cd testproxy
         echo 333333333333333
-        ll
+        ls
 
         pwsh docker-start-proxy.ps1 "start"
 
