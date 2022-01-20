@@ -73,8 +73,10 @@ jobs:
         export SCRIPT_PATH=$script_path
 
         # start test proxy
-        cd azure-sdk-for-python
-        ./eng/common/testproxy/docker-start-proxy.ps1 "start"
+        cd azure-sdk-for-python/eng/common/testproxy
+        ll
+
+        pwsh docker-start-proxy.ps1 "start"
 
         # prepare test env
         # python scripts/dev_setup.py -p azure-core
