@@ -86,6 +86,7 @@ steps:
 
   - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
     displayName: 'Upload Conda Package SBOM'
+    condition: succeededOrFailed()
     inputs:
       BuildDropPath: '$(Agent.BuildDirectory)/conda/manifest'
 
