@@ -74,7 +74,7 @@ jobs:
 
         # start test proxy
         cd azure-sdk-for-python
-        pwsh eng/common/testproxy/docker-start-proxy.ps1 "start"
+        ./eng/common/testproxy/docker-start-proxy.ps1 "start"
 
         # prepare test env
         # python scripts/dev_setup.py -p azure-core
