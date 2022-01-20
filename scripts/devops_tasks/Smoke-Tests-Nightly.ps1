@@ -24,6 +24,9 @@ if ($LASTEXITCODE) {
 }
 $fileName = Join-Path $repoRoot scripts devops_tasks  smoke_tests.py
 python $fileName
+if ($LASTEXITCODE) {
+    exit $LASTEXITCODE
+}
 Pop-Location
 
 # Run pip install -r requirements-nightly.txt.
@@ -34,7 +37,9 @@ Write-Host "Printing content of requirements-nightly.txt file:"
 Get-Content requirements-nightly.txt
 Write-Host "Installing the packages in the file recursively"
 pip install -r requirements-nightly.txt
-
+if ($LASTEXITCODE) {
+    exit $LASTEXITCODE
+}
 
 Pop-Location
 

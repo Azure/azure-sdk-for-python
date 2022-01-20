@@ -91,7 +91,7 @@ steps:
     displayName: 'Run Nightly SmokeTests'
     inputs:
       targetType: 'filePath'
-      filePath: scripts/devops_tasks//Smoke-Tests-Nightly.ps1
+      filePath: scripts/devops_tasks/Smoke-Tests-Nightly.ps1
       pwsh: true
       arguments: '${{ parameters.ServiceDirectory }}'
       condition: and(eq(variables['Build.Reason'],'Schedule'))
@@ -100,7 +100,7 @@ steps:
     displayName: 'Run Release SmokeTests'
     inputs:
       targetType: 'filePath'
-      filePath: scripts/devops_tasks//Smoke-Tests-Release.ps1
+      filePath: scripts/devops_tasks/Smoke-Tests-Release.ps1
       pwsh: true
       arguments: '${{ parameters.ServiceDirectory }}'
       condition: and(eq(variables['Build.Reason'],'Manual'))
