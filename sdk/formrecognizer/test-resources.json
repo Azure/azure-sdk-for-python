@@ -42,8 +42,8 @@
                 "description": "The application client secret used to run tests."
             }
         },
-        "formRecognizerEndpointSuffix": {
-            "defaultValue": ".cognitiveservices.azure.com/",
+        "cognitiveServicesEndpointSuffix": {
+            "defaultValue": ".cognitiveservices.azure.com",
             "type": "String"
         },
         "blobStorageAccount": {
@@ -204,7 +204,7 @@
         "authorizationApiVersion": "2018-09-01-preview",
         "formRecognizerBaseName": "[concat('formrecognizer', parameters('baseName'))]",
         "formRecognizerApiVersion": "2017-04-18",
-        "azureFormRecognizerUrl": "[concat('https://', variables('formRecognizerBaseName'), parameters('formRecognizerEndpointSuffix'))]",
+        "azureFormRecognizerUrl": "[concat('https://', variables('formRecognizerBaseName'), parameters('cognitiveServicesEndpointSuffix'))]",
         "cognitiveServiceUserRoleId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/a97b65f3-24c7-4388-baec-2e87135dc908')]"
     },
     "resources": [
@@ -406,6 +406,10 @@
         "CONTAINER_SAS_URL_DYNAMIC_V2": {
             "type": "string",
             "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('labelTablesVariableRowsContainer'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('labelTablesVariableRowsSasProperties')).serviceSasToken)]"
+        },
+        "FORMRECOGNIZER_ENDPOINT_SUFFIX": {
+            "type": "string",
+            "value": "[parameters('cognitiveServicesEndpointSuffix')]"
         }
     }
 }
