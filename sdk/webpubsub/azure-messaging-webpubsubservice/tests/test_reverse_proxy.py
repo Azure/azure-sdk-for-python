@@ -44,8 +44,8 @@ class WebpubsubReverseProxyTest(WebpubsubTest):
 
     @WebpubsubPowerShellPreparer()
     def test_reverse_proxy_call(self, webpubsub_connection_string, webpubsub_reverse_proxy_endpoint):
-        client = WebPubSubServiceClient.from_connection_string(
-            webpubsub_connection_string,
+        client = self.create_client(
+            connection_string=webpubsub_connection_string,
             hub='hub',
             logging_enable=True,
             reverse_proxy_endpoint=webpubsub_reverse_proxy_endpoint
