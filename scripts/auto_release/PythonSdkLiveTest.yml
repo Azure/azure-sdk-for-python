@@ -73,7 +73,15 @@ jobs:
         export SCRIPT_PATH=$script_path
 
         # start test proxy
-        cd azure-sdk-for-python/eng/common/testproxy
+        echo $(pwd)
+        cd azure-sdk-for-python
+        echo 0000000000000000000
+        cd eng
+        echo 1111111111111111111
+        cd common
+        echo 2222222222222222222
+        cd testproxy
+        echo 333333333333333
         ll
 
         pwsh docker-start-proxy.ps1 "start"
