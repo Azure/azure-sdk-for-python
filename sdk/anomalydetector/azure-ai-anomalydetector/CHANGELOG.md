@@ -2,7 +2,7 @@
 
 ## 3.0.0b5 (2022-01-23)
 
-   - Fix release issues
+  - Fix release issues
 
 ## 3.0.0b4 (2022-01-18)
 
