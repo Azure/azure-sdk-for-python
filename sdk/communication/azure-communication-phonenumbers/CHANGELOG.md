@@ -1,5 +1,15 @@
 # Release History
 
+## 1.1.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.1.0b1 (2022-01-24)
 
 - Users can now purchase United Kingdom (GB) toll free and geographic phone numbers for PSTN Calling
