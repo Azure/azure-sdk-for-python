@@ -112,7 +112,7 @@ class WebPubSubServiceClientConfiguration(Configuration):
         self.authentication_policy = kwargs.get('authentication_policy')
         if self.credential and not self.authentication_policy:
             if isinstance(self.credential, AzureKeyCredential):
-                self.authentication_policy = JwtCredentialPolicy(self.credential, kwargs.get('user'))
+                self.authentication_policy = JwtCredentialPolicy(self.credential, **kwargs)
             else:
                 self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
 

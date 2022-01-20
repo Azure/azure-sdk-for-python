@@ -4,10 +4,6 @@ interactions:
     headers:
       Accept:
       - application/json, text/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
       - '36'
       Content-Type:
@@ -20,17 +16,13 @@ interactions:
     body:
       string: ''
     headers:
-      api-supported-versions:
-      - '2021-10-01'
-      connection:
-      - keep-alive
-      content-length:
-      - '0'
-      date:
-      - Thu, 20 Jan 2022 21:53:17 GMT
-      strict-transport-security:
-      - max-age=15724800; includeSubDomains
+      api-supported-versions: '2021-10-01'
+      connection: keep-alive
+      content-length: '0'
+      date: Thu, 20 Jan 2022 21:55:24 GMT
+      strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 202
       message: Accepted
+    url: https://webpubsub-yyc.webpubsub.azure.com/api/hubs/hub/:send?api-version=2021-10-01
 version: 1
