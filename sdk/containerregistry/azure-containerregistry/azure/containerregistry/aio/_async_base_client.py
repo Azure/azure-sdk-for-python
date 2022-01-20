@@ -27,7 +27,7 @@ class ContainerRegistryBaseClient(object):
     :param endpoint: Azure Container Registry endpoint
     :type endpoint: str
     :param credential: AAD Token for authenticating requests with Azure
-    :type credential: :class:`~azure.identity.DefaultTokenCredential`
+    :type credential: ~azure.identity.DefaultTokenCredential
     :keyword credential_scopes: URL for credential authentication if different from the default
     :paramtype credential_scopes: List[str]
     """
