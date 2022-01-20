@@ -26,7 +26,7 @@ database service.
 import numbers
 from collections import deque
 
-from azure.cosmos import _base, exceptions, http_constants
+from azure.cosmos import _base, http_constants
 from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
 
 
