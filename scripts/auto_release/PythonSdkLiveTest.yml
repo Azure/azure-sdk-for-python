@@ -81,31 +81,4 @@ jobs:
         # run
         cd azure-sdk-for-python
         python scripts/dev_setup.py -p azure-core
-        python $script_path/main.py $(BASE_BRANCH) "$script_path" "$output_path"
-
-        # judge
-        if [ ! -f "$output_path/output.txt" ]; then
-          echo "output.txt does not exist, pipeline fail!!!"
-          exit 1
-        fi
-
-        test_result="Live test success"
-        if [ -f "$output_path/live_test_fail.txt" ]; then
-          test_result="Live test fail, detailed info is in pipeline log(search keyword FAILED)!!!\n"
-        fi
-
-        # create PR
-        export NEW_BRANCH=`sed -n '1p' $output_path/output.txt`
-        export TARGET_BRANCH=`sed -n '2p' $output_path/output.txt`
-        export PIPELINE_LINK=$(PIPELINE_LINK)
-        export USR_NAME=$(USR_NAME)
-        export TEST_RESULT=$test_result
-
-        python $script_path/create_auto_release_pr.py
-        echo "\'[AutoRelease] $new_branch \' has been created!!!"
-
-        # if test fail, still push and crete PR. But pipeline would fail to remind user
-        if [ -f "$output_path/live_test_fail.txt" ]; then
-          echo "please fix failure test $(ISSUE_LINK)!!! \'[AutoRelease] $new_branch \' has been created!!!"
-          exit 1
-        fi
+        python $script_path/main.py
