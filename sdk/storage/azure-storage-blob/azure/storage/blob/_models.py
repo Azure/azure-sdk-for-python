@@ -926,7 +926,7 @@ class ContainerSasPermissions(object):
         To get immutability policy, you just need read permission.
     """
     def __init__(self, read=False, write=False, delete=False, delete_previous_version=False,
-                 list=False,  tag=False, **kwargs):  # pylint: disable=redefined-builtin
+                 list=False, tag=False, **kwargs):  # pylint: disable=redefined-builtin
         self.read = read
         self.write = write
         self.delete = delete
