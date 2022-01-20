@@ -26,7 +26,7 @@ database service.
 import numbers
 from collections import deque
 
-from azure.cosmos import _base, http_constants
+from azure.cosmos import _base
 from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
 
 
@@ -110,13 +110,6 @@ def _compare_helper(a, b):
     if a is None and b is None:
         return 0
     return (a > b) - (a < b)
-
-
-def partition_range_is_gone(e):
-    if (e.status_code == http_constants.StatusCodes.GONE
-            and e.sub_status == http_constants.SubStatusCodes.PARTITION_KEY_RANGE_GONE):
-        return True
-    return False
 
 
 class _PartitionKeyRangeDocumentProduerComparator(object):
