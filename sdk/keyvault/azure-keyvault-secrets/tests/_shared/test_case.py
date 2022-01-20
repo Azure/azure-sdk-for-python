@@ -18,7 +18,7 @@ class KeyVaultTestCase(AzureRecordedTestCase):
 
     def setUp(self):
         self.list_test_size = 7
-        super(KeyVaultTestCase, self).setUp()
+        #super(KeyVaultTestCase, self).setUp()
 
     def get_resource_name(self, name):
         """helper to create resources with a consistent, test-indicative prefix"""

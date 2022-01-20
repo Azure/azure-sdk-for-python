@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import functools
+from sys import api_version
 from dateutil import parser as date_parse
 import time
 import logging
@@ -11,16 +12,19 @@ import json
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.keyvault.secrets import SecretClient
+from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import client_setup, get_decorator, SecretsTestCase
+from _test_case import client_setup, get_decorator, SecretsTestCaseClientPrepaper
 
 from devtools_testutils import recorded_by_proxy
+import pytest
 
 all_api_versions = get_decorator()
 logging_enabled = get_decorator(logging_enable=True)
 logging_disabled = get_decorator(logging_enable=False)
 
+SecretsPreparer = functools.partial(SecretsTestCaseClientPrepaper, is_async=False)
 
 # used for logging tests
 class MockHandler(logging.Handler):
@@ -32,7 +36,7 @@ class MockHandler(logging.Handler):
         self.messages.append(record)
 
 
-class TestSecretClient(SecretsTestCase, KeyVaultTestCase):
+class TestSecretClient(KeyVaultTestCase):
     def _assert_secret_attributes_equal(self, s1, s2):
         assert s1.name == s2.name
         assert s1.vault_url == s2.vault_url
@@ -62,9 +66,11 @@ class TestSecretClient(SecretsTestCase, KeyVaultTestCase):
                 del expected[secret.name]
         assert len(expected) == 0
 
-    
-    @all_api_versions()
-    @client_setup
+ 
+    #@all_api_versions()
+    #@client_setup
+    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
+    @SecretsPreparer()
     @recorded_by_proxy
     def test_secret_crud_operations(self, client, **kwargs):
         secret_name = self.get_resource_name("crud-secret")
@@ -132,8 +138,11 @@ class TestSecretClient(SecretsTestCase, KeyVaultTestCase):
         deleted = client.begin_delete_secret(updated.name).result()
         assert deleted is not None
 
-    @all_api_versions()
-    @client_setup
+    #@all_api_versions()
+    #@client_setup
+    #@recorded_by_proxy
+    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
+    @SecretsPreparer()
     @recorded_by_proxy
     def test_secret_list(self, client, **kwargs):
         max_secrets = self.list_test_size
@@ -152,8 +161,8 @@ class TestSecretClient(SecretsTestCase, KeyVaultTestCase):
         result = list(client.list_properties_of_secrets(max_page_size=max_secrets - 1))
         self._validate_secret_list(result, expected)
 
-    @all_api_versions()
-    @client_setup
+    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
+    @SecretsPreparer()
     @recorded_by_proxy
     def test_list_versions(self, client, **kwargs):
         secret_name = self.get_resource_name("secVer")
@@ -179,8 +188,8 @@ class TestSecretClient(SecretsTestCase, KeyVaultTestCase):
                 self._assert_secret_attributes_equal(expected_secret.properties, secret)
         assert len(expected) == 0
 
-    @all_api_versions()
-    @client_setup
+    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
+    @SecretsPreparer()
     @recorded_by_proxy
     def test_list_deleted_secrets(self, client, **kwargs):
         expected = {}
@@ -204,8 +213,8 @@ class TestSecretClient(SecretsTestCase, KeyVaultTestCase):
                 expected_secret = expected[deleted_secret.name]
                 self._assert_secret_attributes_equal(expected_secret.properties, deleted_secret.properties)
 
-    @all_api_versions()
-    @client_setup
+    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
+    @SecretsPreparer()
     @recorded_by_proxy
     def test_backup_restore(self, client, **kwargs):
         secret_name = self.get_resource_name("secbak")
@@ -229,8 +238,8 @@ class TestSecretClient(SecretsTestCase, KeyVaultTestCase):
         restored_secret = self._poll_until_no_exception(restore_function, ResourceExistsError)
         self._assert_secret_attributes_equal(created_bundle.properties, restored_secret)
 
-    @all_api_versions()
-    @client_setup
+    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
+    @SecretsPreparer()
     @recorded_by_proxy
     def test_recover(self, client, **kwargs):
         secrets = {}
@@ -258,8 +267,8 @@ class TestSecretClient(SecretsTestCase, KeyVaultTestCase):
             secret = client.get_secret(name=secret_name)
             self._assert_secret_attributes_equal(secret.properties, secrets[secret.name].properties)
 
-    @all_api_versions()
-    @client_setup
+    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
+    @SecretsPreparer()
     @recorded_by_proxy
     def test_purge(self, client, **kwargs):
         secrets = {}
@@ -287,8 +296,9 @@ class TestSecretClient(SecretsTestCase, KeyVaultTestCase):
         deleted = [s.name for s in client.list_deleted_secrets()]
         assert not any(s in deleted for s in secrets.keys())
 
-    @logging_enabled()
-    @client_setup
+    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
+    #@logging_enabled
+    @SecretsPreparer()
     @recorded_by_proxy
     def test_logging_enabled(self, client, **kwargs):
         mock_handler = MockHandler()
@@ -321,8 +331,9 @@ class TestSecretClient(SecretsTestCase, KeyVaultTestCase):
         mock_handler.close()
         assert False, "Expected request body wasn't logged"
 
-    @logging_disabled()
-    @client_setup
+    # @logging_disabled()
+    @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
+    @SecretsPreparer()
     @recorded_by_proxy
     def test_logging_disabled(self, client, **kwargs):
         mock_handler = MockHandler()

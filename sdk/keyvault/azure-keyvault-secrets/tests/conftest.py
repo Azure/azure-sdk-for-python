@@ -40,7 +40,7 @@ if sys.version_info < (3, 5) or platform.python_implementation() == "PyPy":
 
 
 @pytest.fixture(scope="session", autouse=True)
-def patch_async_sleep():
+def patch_async_sleep(test_proxy):
     async def immediate_return(_):
         return
     if not is_live():
