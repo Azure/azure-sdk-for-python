@@ -23,13 +23,8 @@ jobs:
         addToPath: true
         architecture: 'x64'
     - bash: |
-
-        echo xxxxxxxxxxxxxxx
-        echo $(pwd)
         script_path=$(pwd)/scripts/auto_release
         cd ..
-        echo yyyyyyyyyyyyyyyyyy
-        echo $(pwd)
         git config --global user.email "PythonSdkPipelines"
         git config --global user.name "PythonSdkPipelines"
 
@@ -75,25 +70,6 @@ jobs:
         export BASE_BRANCH=$(BASE_BRANCH)
         export SCRIPT_PATH=$script_path
 
-        # start test proxy
-        echo $(pwd)
-        cd azure-sdk-for-python
-        echo 0000000000000000000
-        ls
-        cd eng
-        ls
-        echo 1111111111111111111
-        cd common
-        ls
-        echo 2222222222222222222
-        cd testproxy
-        ls
-        echo 333333333333333
-
-        pwsh docker-start-proxy.ps1 "start"
-
-        # prepare test env
-        # python scripts/dev_setup.py -p azure-core
-
         # run
-        # python $script_path/main.py
+        cd azure-sdk-for-python
+        python $script_path/main.py

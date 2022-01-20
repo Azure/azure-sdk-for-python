@@ -125,6 +125,10 @@ def set_test_env_var():
         file_out.writelines(list_in)
 
 
+def start_test_proxy():
+    print_check('pwsh eng/common/testproxy/docker-start-proxy.ps1 \"start\"')
+
+
 class CodegenTestPR:
     """
     This class can generate SDK code, run live test and create RP
@@ -168,6 +172,7 @@ class CodegenTestPR:
             json.dump(input_data, file)
 
         # generate code
+        print_exec('python scripts/dev_setup.py -p azure-core')
         print_check(f'python -m packaging_tools.auto_codegen {self.autorest_result} {self.autorest_result}')
         print_check(f'python -m packaging_tools.auto_package {self.autorest_result} {self.autorest_result}')
 
@@ -220,7 +225,7 @@ class CodegenTestPR:
         if self.spec_readme:
             self.prepare_branch_with_readme()
         # else:
-            # self.prepare_branch_with_base_branch()
+        # self.prepare_branch_with_base_branch()
 
     def check_sdk_readme(self):
         sdk_readme = str(Path(f'sdk/{self.sdk_folder}/{self.package_name}/README.md'))
@@ -413,6 +418,7 @@ class CodegenTestPR:
         self.install_package_locally()
         set_test_env_var()
         add_certificate()
+        start_test_proxy()
 
     @return_origin_path
     def run_test_proc(self):
