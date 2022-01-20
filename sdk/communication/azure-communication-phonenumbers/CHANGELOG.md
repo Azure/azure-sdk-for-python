@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0b1 (Unreleased)
+## 1.1.0b1 (2022-01-24)
 
 - Users can now purchase United Kingdom (GB) toll free and geographic phone numbers for PSTN Calling
 - Users can now purchase Denmark (DK) toll free and geographic phone numbers for PSTN Calling
