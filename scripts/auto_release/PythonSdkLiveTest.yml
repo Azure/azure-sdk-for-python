@@ -33,7 +33,7 @@ jobs:
         git clone ${REPO:0:8}$(USR_NAME):$(USR_TOKEN)@${REPO:8} $(pwd)/azure-sdk-for-python
 
         # prepare env if need to generate SDK code
-        if [ "$(SPEC_README)"]; then
+        if [$(SPEC_README)]; then
           mkdir azure-rest-api-specs
           git clone https://github.com/Azure/azure-rest-api-specs.git $(pwd)/azure-rest-api-specs
 
