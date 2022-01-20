@@ -166,6 +166,12 @@ class CodegenTestPR:
             'specFolder': os.getenv('SPEC_REPO'),
             'relatedReadmeMdFiles': [str(self.readme_local_folder())]
         }
+
+        my_print(input_data['headSha'])
+        my_print(input_data['specFolder'])
+        my_print(input_data['relatedReadmeMdFiles'])
+        with open(f'{input_data["specFolder"]}/{input_data["relatedReadmeMdFiles"]}') as file_in:
+            temp = file_in.readlines()
         temp_folder = Path(os.getenv('TEMP_FOLDER'))
         self.autorest_result = str(temp_folder / 'temp.json')
         with open(self.autorest_result, 'w') as file:
