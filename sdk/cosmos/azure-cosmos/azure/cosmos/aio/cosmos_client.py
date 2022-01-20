@@ -163,7 +163,7 @@ class CosmosClient(object):
         :type conn_str: str
         :param credential: Alternative credentials to use instead of the key
             provided in the connection string.
-        :type credential: str or Dict[str, str]
+        :type credential: str or Dict[str, Any]
         :param conn_str: The connection string.
         :type conn_str: str
         :param consistency_level: Consistency level to use for the session. The default value is "Session".
