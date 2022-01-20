@@ -66,6 +66,7 @@ class OboPreparer(object):
         return _preparer_wrapper
 
 class TestOboAsync(RecordedTestCase):
+    @pytest.mark.manual
     @RecordedTestCase.await_prepared_test
     @OboPreparer()
     @recorded_by_proxy_async
@@ -81,6 +82,7 @@ class TestOboAsync(RecordedTestCase):
         credential = OnBehalfOfCredential(tenant_id, client_id, client_secret=client_secret, user_assertion=assertion)
         await credential.get_token(obo_settings["scope"])
 
+    @pytest.mark.manual
     @RecordedTestCase.await_prepared_test
     @OboPreparer()
     @recorded_by_proxy_async

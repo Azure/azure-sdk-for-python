@@ -217,6 +217,7 @@ def test_imds_authority_override():
 
 @pytest.mark.usefixtures("record_imds_test")
 class TestImds(RecordedTestCase):
+    @pytest.mark.manual
     @recorded_by_proxy
     def test_system_assigned(self):
         credential = ImdsCredential()
@@ -224,6 +225,7 @@ class TestImds(RecordedTestCase):
         assert token.token
         assert isinstance(token.expires_on, int)
 
+    @pytest.mark.manual
     @pytest.mark.usefixtures("user_assigned_identity_client_id")
     @recorded_by_proxy
     def test_user_assigned(self):

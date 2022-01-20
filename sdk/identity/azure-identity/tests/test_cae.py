@@ -91,6 +91,7 @@ class TestCae(AzureRecordedTestCase):
         )
         self.cae_test(credential, cae_settings=self.cae_settings)
 
+    @pytest.mark.manual
     @recorded_by_proxy
     def test_device_code(self):
         self.load_settings()
@@ -99,6 +100,7 @@ class TestCae(AzureRecordedTestCase):
         )
         self.cae_test(credential)
 
+    @pytest.mark.manual
     @recorded_by_proxy
     def test_username_password(self):
         self.load_settings()

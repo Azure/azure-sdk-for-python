@@ -67,6 +67,7 @@ class OboPreparer(object):
 
 
 class TestObo(RecordedTestCase):
+    @pytest.mark.manual
     @OboPreparer()
     @recorded_by_proxy
     def test_obo(self, obo_settings):
@@ -80,6 +81,7 @@ class TestObo(RecordedTestCase):
         credential = OnBehalfOfCredential(tenant_id, client_id, client_secret=obo_settings["client_secret"], user_assertion=assertion)
         credential.get_token(obo_settings["scope"])
 
+    @pytest.mark.manual
     @OboPreparer()
     @recorded_by_proxy
     def test_obo_cert(self, obo_settings):

@@ -29,6 +29,7 @@ class TestAppServiceAsync(RecordedTestCase):
             env = {EnvironmentVariables.MSI_ENDPOINT: PLAYBACK_URL, EnvironmentVariables.MSI_SECRET: "redacted"}
             self.patch = mock.patch.dict(os.environ, env, clear=True)
 
+    @pytest.mark.manual
     @await_test
     @recorded_by_proxy_async
     async def test_system_assigned(self):
@@ -39,6 +40,7 @@ class TestAppServiceAsync(RecordedTestCase):
         assert token.token
         assert isinstance(token.expires_on, int)
 
+    @pytest.mark.manual
     @pytest.mark.usefixtures("user_assigned_identity_client_id")
     @await_test
     @recorded_by_proxy_async
