@@ -78,11 +78,13 @@ class TestManagement(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
-    def test_get_model_prebuilt(self, client):
+    def test_get_model_prebuilt(self, client, **kwargs):
         model = client.get_model("prebuilt-invoice")
         assert model.model_id == "prebuilt-invoice"
         assert model.description is not None
         assert model.created_on
+        assert model.api_version
+        assert model.tags is None
         for name, doc_type in model.doc_types.items():
             assert name
             for key, field in doc_type.field_schema.items():

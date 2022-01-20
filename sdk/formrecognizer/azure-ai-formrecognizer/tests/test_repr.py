@@ -497,14 +497,18 @@ class TestRepr():
             description="my description",
             created_on=datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
             model_id="prebuilt-invoice",
+            api_version="2022-01-30-preview",
+            tags={"test": "value"},
             doc_types={
                 "prebuilt-invoice": doc_type_info[0],
             }
         )
-        model_repr = "DocumentModel(model_id={}, description={}, created_on={}, doc_types={{'prebuilt-invoice': {}}})".format(
+        model_repr = "DocumentModel(model_id={}, description={}, created_on={}, api_version={}, tags={}, doc_types={{'prebuilt-invoice': {}}})".format(
             "prebuilt-invoice",
             "my description",
             datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
+            "2022-01-30-preview",
+            {"test": "value"},
             doc_type_info[1]
         )
         assert repr(model) == model_repr
@@ -514,11 +518,15 @@ class TestRepr():
             description="my description",
             created_on=datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
             model_id="prebuilt-invoice",
+            api_version="2022-01-30-preview",
+            tags={"test": "value"},
         )
-        model_repr = "DocumentModelInfo(model_id={}, description={}, created_on={})".format(
+        model_repr = "DocumentModelInfo(model_id={}, description={}, created_on={}, api_version={}, tags={})".format(
             "prebuilt-invoice",
             "my description",
-            datetime.datetime(2021, 9, 16, 10, 10, 59, 342380)
+            datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
+            "2022-01-30-preview",
+            {"test": "value"},
         )
         assert repr(model) == model_repr
 

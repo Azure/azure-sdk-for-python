@@ -1827,6 +1827,8 @@ class TestToDict(FormRecognizerTest):
             description="my description",
             created_on="1994-11-05T13:15:30Z",
             model_id="prebuilt-invoice",
+            api_version="2022-01-30-preview",
+            tags={"test": "value"},
             doc_types={
                 "prebuilt-invoice": _models.DocTypeInfo(
                     description="my description",
@@ -1887,6 +1889,8 @@ class TestToDict(FormRecognizerTest):
             "description": "my description",
             "created_on": "1994-11-05T13:15:30Z",
             "model_id": "prebuilt-invoice",
+            "api_version": "2022-01-30-preview",
+            "tags": {"test": "value"},
             "doc_types": {
                 "prebuilt-invoice": {
                     "description": "my description",
@@ -1948,6 +1952,8 @@ class TestToDict(FormRecognizerTest):
             description="my description",
             created_on="1994-11-05T13:15:30Z",
             model_id="prebuilt-invoice",
+            api_version="2022-01-30-preview",
+            tags={"test": "value"},
         )
 
         d = model.to_dict()
@@ -1956,6 +1962,8 @@ class TestToDict(FormRecognizerTest):
             "description": "my description",
             "created_on": "1994-11-05T13:15:30Z",
             "model_id": "prebuilt-invoice",
+            "api_version": "2022-01-30-preview",
+            "tags": {"test": "value"},
         }
 
         assert d == final

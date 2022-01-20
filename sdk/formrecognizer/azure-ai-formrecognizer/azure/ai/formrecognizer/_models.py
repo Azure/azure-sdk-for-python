@@ -3691,6 +3691,10 @@ class DocumentModelInfo(object):
     :ivar str description: A description for the model.
     :ivar created_on: Date and time (UTC) when the model was created.
     :vartype created_on: ~datetime.datetime
+    :ivar api_version: API version used to create this model.
+    :vartype api_version: str
+    :ivar tags: List of key-value tag attributes associated with the model.
+    :vartype tags: dict[str, str]
     """
 
     def __init__(
@@ -3700,13 +3704,17 @@ class DocumentModelInfo(object):
         self.model_id = kwargs.get('model_id', None)
         self.description = kwargs.get('description', None)
         self.created_on = kwargs.get('created_on', None)
+        self.api_version = kwargs.get("api_version", None)
+        self.tags = kwargs.get("tags", None)
 
     def __repr__(self):
         return (
-            "DocumentModelInfo(model_id={}, description={}, created_on={})".format(
+            "DocumentModelInfo(model_id={}, description={}, created_on={}, api_version={}, tags={})".format(
                 self.model_id,
                 self.description,
                 self.created_on,
+                self.api_version,
+                self.tags,
             )
         )
 
@@ -3716,6 +3724,8 @@ class DocumentModelInfo(object):
             model_id=model.model_id,
             description=model.description,
             created_on=model.created_date_time,
+            api_version=model.api_version,
+            tags=model.tags,
         )
 
     def to_dict(self):
@@ -3729,6 +3739,8 @@ class DocumentModelInfo(object):
             "model_id": self.model_id,
             "description": self.description,
             "created_on": self.created_on,
+            "api_version": self.api_version,
+            "tags": self.tags if self.tags else {},
         }
 
     @classmethod
@@ -3744,6 +3756,8 @@ class DocumentModelInfo(object):
             model_id=data.get("model_id", None),
             description=data.get("description", None),
             created_on=data.get("created_on", None),
+            api_version=data.get("api_version", None),
+            tags=data.get("tags", {})
         )
 
 
@@ -3754,6 +3768,10 @@ class DocumentModel(DocumentModelInfo):
     :ivar str description: A description for the model.
     :ivar created_on: Date and time (UTC) when the model was created.
     :vartype created_on: ~datetime.datetime
+    :ivar api_version: API version used to create this model.
+    :vartype api_version: str
+    :ivar tags: List of key-value tag attributes associated with the model.
+    :vartype tags: dict[str, str]
     :ivar doc_types: Supported document types, including the fields for each document and their types.
     :vartype doc_types: dict[str, ~azure.ai.formrecognizer.DocTypeInfo]
     """
@@ -3767,10 +3785,12 @@ class DocumentModel(DocumentModelInfo):
 
     def __repr__(self):
         return (
-            "DocumentModel(model_id={}, description={}, created_on={}, doc_types={})".format(
+            "DocumentModel(model_id={}, description={}, created_on={}, api_version={}, tags={}, doc_types={})".format(
                 self.model_id,
                 self.description,
                 self.created_on,
+                self.api_version,
+                self.tags,
                 repr(self.doc_types),
             )
         )
@@ -3781,6 +3801,8 @@ class DocumentModel(DocumentModelInfo):
             model_id=model.model_id,
             description=model.description,
             created_on=model.created_date_time,
+            api_version=model.api_version,
+            tags=model.tags,
             doc_types={k: DocTypeInfo._from_generated(v) for k, v in model.doc_types.items()}
             if model.doc_types else {}
         )
@@ -3796,6 +3818,8 @@ class DocumentModel(DocumentModelInfo):
             "model_id": self.model_id,
             "description": self.description,
             "created_on": self.created_on,
+            "api_version": self.api_version,
+            "tags": self.tags if self.tags else {},
             "doc_types": {k: v.to_dict() for k, v in self.doc_types.items()} if self.doc_types else {}
         }
 
@@ -3812,6 +3836,8 @@ class DocumentModel(DocumentModelInfo):
             model_id=data.get("model_id", None),
             description=data.get("description", None),
             created_on=data.get("created_on", None),
+            api_version=data.get("api_version", None),
+            tags=data.get("tags", {}),
             doc_types={k: DocTypeInfo.from_dict(v) for k, v in data.get("doc_types").items()}  # type: ignore
             if data.get("doc_types")
             else {},
