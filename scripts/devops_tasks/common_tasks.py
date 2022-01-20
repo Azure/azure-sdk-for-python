@@ -493,13 +493,26 @@ def get_package_properties(setup_py_path):
     is_new_sdk = pkgName in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x)[0] in NEW_REQ_PACKAGES), requires))
     return pkgName, version, is_new_sdk, setup_py_path
 
+def is_track2_package(reqs):
+    for req in reqs:
+        if req.startswith('azure-core'):
+            return True
+    return False
+
+def get_track2_package_properties(setup_py_path):
+    """Parse setup.py and return package details like package name, version, whether it's new SDK
+    """
+    pkg_name, version, _, requires = parse_setup(setup_py_path)
+    is_track2 = is_track2_package(requires)
+    return pkg_name, version, is_track2, setup_py_path
+
 def get_all_track2_packages(path):
     eligible_libraries = []
     for root, dirs, files in os.walk(os.path.abspath(path)):
         if re.search(r"sdk[\\/][^\\/]+[\\/][^\\/]+$", root):
             if "setup.py" in files:
                 try:
-                    pkg_name, version, is_track2, setup_py_path = get_package_properties(root)
+                    pkg_name, version, is_track2, setup_py_path = get_track2_package_properties(root)
                     if is_track2:
                         eligible_libraries.append((pkg_name, version, setup_py_path))
                 except:
