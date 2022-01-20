@@ -77,6 +77,8 @@ jobs:
         export USR_TOKEN=$(USR_TOKEN)
         export BASE_BRANCH=$(BASE_BRANCH)
         export SCRIPT_PATH=$script_path
+        export SPEC_README=$(SPEC_README)
+
 
         # run
         cd azure-sdk-for-python
