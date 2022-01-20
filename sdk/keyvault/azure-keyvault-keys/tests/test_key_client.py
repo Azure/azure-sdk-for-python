@@ -8,7 +8,6 @@ import functools
 import json
 import logging
 import time
-import os
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -31,6 +30,7 @@ all_api_versions = get_decorator()
 only_hsm = get_decorator(only_hsm=True)
 only_hsm_7_3_preview = get_decorator(only_hsm=True, api_versions=[ApiVersion.V7_3_PREVIEW])
 only_vault_7_3_preview = get_decorator(only_vault=True, api_versions=[ApiVersion.V7_3_PREVIEW])
+only_7_3_preview = get_decorator(api_versions=[ApiVersion.V7_3_PREVIEW])
 logging_enabled = get_decorator(logging_enable=True)
 logging_disabled = get_decorator(logging_enable=False)
 
@@ -489,7 +489,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
             assert all(random_bytes != rb for rb in generated_random_bytes)
             generated_random_bytes.append(random_bytes)
 
-    @only_hsm_7_3_preview()
+    @only_7_3_preview()
     @client_setup
     def test_key_release(self, client, **kwargs):
         attestation_uri = self._get_attestation_uri()
