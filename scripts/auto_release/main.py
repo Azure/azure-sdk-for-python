@@ -169,8 +169,8 @@ class CodegenTestPR:
 
         my_print(input_data['headSha'])
         my_print(input_data['specFolder'])
-        my_print(input_data['relatedReadmeMdFiles'])
-        with open(f'{input_data["specFolder"]}/{input_data["relatedReadmeMdFiles"]}') as file_in:
+        my_print(input_data['relatedReadmeMdFiles'][0])
+        with open(f'{input_data["specFolder"]}/{input_data["relatedReadmeMdFiles"][0]}') as file_in:
             temp = file_in.readlines()
         temp_folder = Path(os.getenv('TEMP_FOLDER'))
         self.autorest_result = str(temp_folder / 'temp.json')
@@ -180,6 +180,9 @@ class CodegenTestPR:
         # generate code
         print_exec('python scripts/dev_setup.py -p azure-core')
         print_check(f'python -m packaging_tools.auto_codegen {self.autorest_result} {self.autorest_result}')
+
+        my_print(self.get_autorest_result())
+
         print_check(f'python -m packaging_tools.auto_package {self.autorest_result} {self.autorest_result}')
 
     def get_package_name_with_readme(self):
