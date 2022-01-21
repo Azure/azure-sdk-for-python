@@ -39,6 +39,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         "https://management.usgovcloudapi.net"
         :paramtype audience: str
         :returns: None
+        :rtype: None
         :raises ValueError: if audience keyword-only argument isn't provided
 
         .. admonition:: Example:
@@ -210,7 +211,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """Get the properties of a repository
 
         :param str repository: Name of the repository
-        :returns: ~azure.containerregistry.RepositoryProperties
+        :rtype: ~azure.containerregistry.RepositoryProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
         """
         return RepositoryProperties._from_generated(  # pylint: disable=protected-access
@@ -227,7 +228,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :paramtype order_by: ~azure.containerregistry.ArtifactManifestOrder or str
         :keyword results_per_page: Number of repositories to return per page
         :paramtype results_per_page: int
-        :returns: An iterable of ~azure.containerregistry.ArtifactManifestProperties
+        :returns: An iterable of :class:`~azure.containerregistry.ArtifactManifestProperties`
         :rtype: ~azure.core.paging.ItemPaged[~azure.containerregistry.ArtifactManifestProperties]
         :raises: ~azure.core.exceptions.ResourceNotFoundError
         """
@@ -395,7 +396,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         :param str repository: Name of the repository
         :param str tag_or_digest: Tag or digest of the manifest
-        :returns: ~azure.containerregistry.ArtifactManifestProperties
+        :rtype: ~azure.containerregistry.ArtifactManifestProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
 
         Example
@@ -425,7 +426,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         :param str repository: Name of the repository
         :param str tag: The tag to get tag properties for
-        :returns: ~azure.containerregistry.ArtifactTagProperties
+        :rtype: ~azure.containerregistry.ArtifactTagProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
 
         Example
@@ -454,9 +455,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :paramtype order_by: ~azure.containerregistry.ArtifactTagOrder or str
         :keyword results_per_page: Number of repositories to return per page
         :paramtype results_per_page: int
-        :returns: An iterable of ~azure.containerregistry.ArtifactTagProperties
+        :returns: An iterable of :class:`~azure.containerregistry.ArtifactTagProperties`
         :rtype: ~azure.core.paging.ItemPaged[~azure.containerregistry.ArtifactTagProperties]
-        :rtype: ~azure.core.paging.ItemPaged
         :raises: ~azure.core.exceptions.ResourceNotFoundError
 
         Example
@@ -597,7 +597,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str tag_or_digest: Tag or digest of the manifest
         :param properties: The property's values to be set
         :type properties: ~azure.containerregistry.ArtifactManifestProperties
-        :returns: ~azure.containerregistry.ArtifactManifestProperties
+        :rtype: ~azure.containerregistry.ArtifactManifestProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
 
         Example
@@ -666,7 +666,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str tag: Tag to set properties for
         :param properties: The property's values to be set
         :type properties: ArtifactTagProperties
-        :returns: ~azure.containerregistry.ArtifactTagProperties
+        :rtype: ~azure.containerregistry.ArtifactTagProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
 
         Example
@@ -727,7 +727,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str repository: Name of the repository
         :param properties: Properties to set for the repository
         :type properties: ~azure.containerregistry.RepositoryProperties
-        :returns: ~azure.containerregistry.RepositoryProperties
+        :rtype: ~azure.containerregistry.RepositoryProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
         """
         repository, properties = None, None
