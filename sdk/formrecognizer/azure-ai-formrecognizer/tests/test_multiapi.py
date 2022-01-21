@@ -27,32 +27,38 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 class TestMultiapi(FormRecognizerTest):
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    def test_default_api_version_form_recognizer_client(self, client):
+    def test_default_api_version_form_recognizer_client(self, **kwargs):
+        client = kwargs.pop("client")
         assert "v2.1" in client._client._client._base_url
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    def test_default_api_version_form_training_client(self, client):
+    def test_default_api_version_form_training_client(self, **kwargs):
+        client = kwargs.pop("client")
         assert "v2.1" in client._client._client._base_url
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
-    def test_v2_0_form_recognizer_client(self, client):
+    def test_v2_0_form_recognizer_client(self, **kwargs):
+        client = kwargs.pop("client")
         assert "v2.0" in client._client._client._base_url
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
-    def test_v2_0_form_training_client(self, client):
+    def test_v2_0_form_training_client(self, **kwargs):
+        client = kwargs.pop("client")
         assert "v2.0" in client._client._client._base_url
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_1})
-    def test_v2_1_form_recognizer_client(self, client):
+    def test_v2_1_form_recognizer_client(self, **kwargs):
+        client = kwargs.pop("client")
         assert "v2.1" in client._client._client._base_url
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_1})
-    def test_v2_1_form_training_client(self, client):
+    def test_v2_1_form_training_client(self, **kwargs):
+        client = kwargs.pop("client")
         assert "v2.1" in client._client._client._base_url
 
     @FormRecognizerPreparer()
@@ -87,7 +93,8 @@ class TestMultiapi(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
-    def test_default_api_version_document_analysis_client(self, client):
+    def test_default_api_version_document_analysis_client(self, **kwargs):
+        client = kwargs.pop("client")
         assert "2021-09-30-preview" == client._api_version
 
     @FormRecognizerPreparer()
@@ -107,7 +114,8 @@ class TestMultiapi(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
-    def test_default_api_version_document_model_admin_client(self, client):
+    def test_default_api_version_document_model_admin_client(self, **kwargs):
+        client = kwargs.pop("client")
         assert "2021-09-30-preview" == client._api_version
 
     @FormRecognizerPreparer()
