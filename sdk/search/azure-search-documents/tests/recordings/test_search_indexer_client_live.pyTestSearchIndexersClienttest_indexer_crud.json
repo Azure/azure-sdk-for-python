@@ -1,0 +1,898 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "3e074a1b-7aff-11ec-9350-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "763",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Fri, 21 Jan 2022 21:15:22 GMT",
+        "elapsed-time": "29",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "3e074a1b-7aff-11ec-9350-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#indexers",
+        "value": [
+          {
+            "@odata.etag": "\u00220x8D9DD1EE729F8B1\u0022",
+            "name": "sample-indexer-tnvaclmfwe",
+            "description": "updated",
+            "dataSourceName": "sample-datasource-zpitsnmktu",
+            "skillsetName": null,
+            "targetIndexName": "hotels-qfmxqyoscc",
+            "disabled": false,
+            "schedule": null,
+            "parameters": null,
+            "fieldMappings": [],
+            "outputFieldMappings": [],
+            "cache": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8D9DD222D2B0D81\u0022",
+            "name": "sample-indexer-xodsxuuutu",
+            "description": "updated",
+            "dataSourceName": "sample-datasource-nssjdkcqtz",
+            "skillsetName": null,
+            "targetIndexName": "hotels-cubudzhjty",
+            "disabled": false,
+            "schedule": null,
+            "parameters": null,
+            "fieldMappings": [],
+            "outputFieldMappings": [],
+            "cache": null,
+            "encryptionKey": null
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2021-04-30-Preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "253",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "3e7439b9-7aff-11ec-aca1-74c63bed1137"
+      },
+      "RequestBody": "{\u0022name\u0022: \u0022sample-datasource-alapcuefah\u0022, \u0022type\u0022: \u0022azureblob\u0022, \u0022credentials\u0022: {\u0022connectionString\u0022: \u0022DefaultEndpointsProtocol=https;AccountName=fakestoragecs;AccountKey=FAKE;EndpointSuffix=core.windows.net\u0022}, \u0022container\u0022: {\u0022name\u0022: \u0022fakestoragecontainer\u0022}}",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "427",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Fri, 21 Jan 2022 21:15:22 GMT",
+        "elapsed-time": "52",
+        "ETag": "W/\u00220x8D9DD2322A22356\u0022",
+        "Expires": "-1",
+        "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027sample-datasource-alapcuefah\u0027)?api-version=2021-04-30-Preview",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "3e7439b9-7aff-11ec-aca1-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#datasources/$entity",
+        "@odata.etag": "\u00220x8D9DD2322A22356\u0022",
+        "name": "sample-datasource-alapcuefah",
+        "description": null,
+        "type": "azureblob",
+        "subtype": null,
+        "credentials": {
+          "connectionString": null
+        },
+        "container": {
+          "name": "fakestoragecontainer",
+          "query": null
+        },
+        "dataChangeDetectionPolicy": null,
+        "dataDeletionDetectionPolicy": null,
+        "encryptionKey": null,
+        "identity": null
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes?api-version=2021-04-30-Preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "139",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "3e91acf6-7aff-11ec-971f-74c63bed1137"
+      },
+      "RequestBody": "{\u0022name\u0022: \u0022hotels-rfzplaglso\u0022, \u0022fields\u0022: [{\u0022name\u0022: \u0022hotelId\u0022, \u0022type\u0022: \u0022Edm.String\u0022, \u0022key\u0022: true, \u0022retrievable\u0022: true, \u0022searchable\u0022: false}]}",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "695",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Fri, 21 Jan 2022 21:15:23 GMT",
+        "elapsed-time": "714",
+        "ETag": "W/\u00220x8D9DD232322FF7E\u0022",
+        "Expires": "-1",
+        "Location": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels-rfzplaglso\u0027)?api-version=2021-04-30-Preview",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "3e91acf6-7aff-11ec-971f-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#indexes/$entity",
+        "@odata.etag": "\u00220x8D9DD232322FF7E\u0022",
+        "name": "hotels-rfzplaglso",
+        "defaultScoringProfile": null,
+        "fields": [
+          {
+            "name": "hotelId",
+            "type": "Edm.String",
+            "searchable": false,
+            "filterable": true,
+            "retrievable": true,
+            "sortable": true,
+            "facetable": true,
+            "key": true,
+            "indexAnalyzer": null,
+            "searchAnalyzer": null,
+            "analyzer": null,
+            "normalizer": null,
+            "synonymMaps": []
+          }
+        ],
+        "scoringProfiles": [],
+        "corsOptions": null,
+        "suggesters": [],
+        "analyzers": [],
+        "normalizers": [],
+        "tokenizers": [],
+        "tokenFilters": [],
+        "charFilters": [],
+        "encryptionKey": null,
+        "similarity": {
+          "@odata.type": "#Microsoft.Azure.Search.BM25Similarity",
+          "k1": null,
+          "b": null
+        },
+        "semantic": null
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers?api-version=2021-04-30-Preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "146",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "3f138d42-7aff-11ec-ba27-74c63bed1137"
+      },
+      "RequestBody": "{\u0022name\u0022: \u0022sample-indexer-ipzysyukqq\u0022, \u0022dataSourceName\u0022: \u0022sample-datasource-alapcuefah\u0022, \u0022targetIndexName\u0022: \u0022hotels-rfzplaglso\u0022, \u0022disabled\u0022: false}",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "420",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Fri, 21 Jan 2022 21:15:24 GMT",
+        "elapsed-time": "1031",
+        "ETag": "W/\u00220x8D9DD2323B95C31\u0022",
+        "Expires": "-1",
+        "Location": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-ipzysyukqq\u0027)?api-version=2021-04-30-Preview",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "3f138d42-7aff-11ec-ba27-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#indexers/$entity",
+        "@odata.etag": "\u00220x8D9DD2323B95C31\u0022",
+        "name": "sample-indexer-ipzysyukqq",
+        "description": null,
+        "dataSourceName": "sample-datasource-alapcuefah",
+        "skillsetName": null,
+        "targetIndexName": "hotels-rfzplaglso",
+        "disabled": false,
+        "schedule": null,
+        "parameters": null,
+        "fieldMappings": [],
+        "outputFieldMappings": [],
+        "cache": null,
+        "encryptionKey": null
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-ipzysyukqq\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "3fc47323-7aff-11ec-972c-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "420",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Fri, 21 Jan 2022 21:15:24 GMT",
+        "elapsed-time": "8",
+        "ETag": "W/\u00220x8D9DD2323B95C31\u0022",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "3fc47323-7aff-11ec-972c-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#indexers/$entity",
+        "@odata.etag": "\u00220x8D9DD2323B95C31\u0022",
+        "name": "sample-indexer-ipzysyukqq",
+        "description": null,
+        "dataSourceName": "sample-datasource-alapcuefah",
+        "skillsetName": null,
+        "targetIndexName": "hotels-rfzplaglso",
+        "disabled": false,
+        "schedule": null,
+        "parameters": null,
+        "fieldMappings": [],
+        "outputFieldMappings": [],
+        "cache": null,
+        "encryptionKey": null
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-ipzysyukqq\u0027)/search.run?api-version=2021-04-30-Preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "3fd62834-7aff-11ec-a7f9-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Fri, 21 Jan 2022 21:15:24 GMT",
+        "elapsed-time": "33",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-id": "3fd62834-7aff-11ec-a7f9-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-ipzysyukqq\u0027)/search.status?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "3fede4cd-7aff-11ec-a9be-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "574",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Fri, 21 Jan 2022 21:15:24 GMT",
+        "elapsed-time": "17",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "3fede4cd-7aff-11ec-a9be-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#Microsoft.Azure.Search.V2021_04_30_Preview.IndexerExecutionInfo",
+        "name": "sample-indexer-ipzysyukqq",
+        "status": "running",
+        "lastResult": null,
+        "executionHistory": [],
+        "limits": {
+          "maxRunTime": "PT0S",
+          "maxDocumentExtractionSize": 0,
+          "maxDocumentContentCharactersToExtract": 0
+        },
+        "currentState": {
+          "mode": "indexingAllDocs",
+          "allDocsInitialTrackingState": null,
+          "allDocsFinalTrackingState": null,
+          "resetDocsInitialTrackingState": null,
+          "resetDocsFinalTrackingState": null,
+          "resetDocumentKeys": [],
+          "resetDatasourceDocumentIds": []
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-ipzysyukqq\u0027)/search.reset?api-version=2021-04-30-Preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "40006575-7aff-11ec-86d5-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Date": "Fri, 21 Jan 2022 21:15:24 GMT",
+        "elapsed-time": "430",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-id": "40006575-7aff-11ec-86d5-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-ipzysyukqq\u0027)/search.status?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "405299fc-7aff-11ec-b4dd-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "1059",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Fri, 21 Jan 2022 21:15:25 GMT",
+        "elapsed-time": "16",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "405299fc-7aff-11ec-b4dd-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#Microsoft.Azure.Search.V2021_04_30_Preview.IndexerExecutionInfo",
+        "name": "sample-indexer-ipzysyukqq",
+        "status": "running",
+        "lastResult": {
+          "status": "reset",
+          "statusDetail": null,
+          "errorMessage": null,
+          "startTime": "2022-01-21T21:15:24.957Z",
+          "endTime": "2022-01-21T21:15:24.957Z",
+          "itemsProcessed": 0,
+          "itemsFailed": 0,
+          "initialTrackingState": null,
+          "finalTrackingState": null,
+          "mode": "indexingAllDocs",
+          "errors": [],
+          "warnings": [],
+          "metrics": null
+        },
+        "executionHistory": [
+          {
+            "status": "reset",
+            "statusDetail": null,
+            "errorMessage": null,
+            "startTime": "2022-01-21T21:15:24.957Z",
+            "endTime": "2022-01-21T21:15:24.957Z",
+            "itemsProcessed": 0,
+            "itemsFailed": 0,
+            "initialTrackingState": null,
+            "finalTrackingState": null,
+            "mode": "indexingAllDocs",
+            "errors": [],
+            "warnings": [],
+            "metrics": null
+          }
+        ],
+        "limits": null,
+        "currentState": {
+          "mode": "indexingAllDocs",
+          "allDocsInitialTrackingState": null,
+          "allDocsFinalTrackingState": null,
+          "resetDocsInitialTrackingState": null,
+          "resetDocsFinalTrackingState": null,
+          "resetDocumentKeys": [],
+          "resetDatasourceDocumentIds": []
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-ipzysyukqq\u0027)/search.status?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "40677adc-7aff-11ec-9bd6-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "1059",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Fri, 21 Jan 2022 21:15:25 GMT",
+        "elapsed-time": "12",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "40677adc-7aff-11ec-9bd6-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#Microsoft.Azure.Search.V2021_04_30_Preview.IndexerExecutionInfo",
+        "name": "sample-indexer-ipzysyukqq",
+        "status": "running",
+        "lastResult": {
+          "status": "reset",
+          "statusDetail": null,
+          "errorMessage": null,
+          "startTime": "2022-01-21T21:15:24.957Z",
+          "endTime": "2022-01-21T21:15:24.957Z",
+          "itemsProcessed": 0,
+          "itemsFailed": 0,
+          "initialTrackingState": null,
+          "finalTrackingState": null,
+          "mode": "indexingAllDocs",
+          "errors": [],
+          "warnings": [],
+          "metrics": null
+        },
+        "executionHistory": [
+          {
+            "status": "reset",
+            "statusDetail": null,
+            "errorMessage": null,
+            "startTime": "2022-01-21T21:15:24.957Z",
+            "endTime": "2022-01-21T21:15:24.957Z",
+            "itemsProcessed": 0,
+            "itemsFailed": 0,
+            "initialTrackingState": null,
+            "finalTrackingState": null,
+            "mode": "indexingAllDocs",
+            "errors": [],
+            "warnings": [],
+            "metrics": null
+          }
+        ],
+        "limits": null,
+        "currentState": {
+          "mode": "indexingAllDocs",
+          "allDocsInitialTrackingState": null,
+          "allDocsFinalTrackingState": null,
+          "resetDocsInitialTrackingState": null,
+          "resetDocsFinalTrackingState": null,
+          "resetDocumentKeys": [],
+          "resetDatasourceDocumentIds": []
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2021-04-30-Preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "253",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "407e0562-7aff-11ec-96dc-74c63bed1137"
+      },
+      "RequestBody": "{\u0022name\u0022: \u0022sample-datasource-gddcipqxrb\u0022, \u0022type\u0022: \u0022azureblob\u0022, \u0022credentials\u0022: {\u0022connectionString\u0022: \u0022DefaultEndpointsProtocol=https;AccountName=fakestoragecs;AccountKey=FAKE;EndpointSuffix=core.windows.net\u0022}, \u0022container\u0022: {\u0022name\u0022: \u0022fakestoragecontainer\u0022}}",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "427",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Fri, 21 Jan 2022 21:15:25 GMT",
+        "elapsed-time": "55",
+        "ETag": "W/\u00220x8D9DD2324ACBED7\u0022",
+        "Expires": "-1",
+        "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027sample-datasource-gddcipqxrb\u0027)?api-version=2021-04-30-Preview",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "407e0562-7aff-11ec-96dc-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#datasources/$entity",
+        "@odata.etag": "\u00220x8D9DD2324ACBED7\u0022",
+        "name": "sample-datasource-gddcipqxrb",
+        "description": null,
+        "type": "azureblob",
+        "subtype": null,
+        "credentials": {
+          "connectionString": null
+        },
+        "container": {
+          "name": "fakestoragecontainer",
+          "query": null
+        },
+        "dataChangeDetectionPolicy": null,
+        "dataDeletionDetectionPolicy": null,
+        "encryptionKey": null,
+        "identity": null
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes?api-version=2021-04-30-Preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "139",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "409c604c-7aff-11ec-9374-74c63bed1137"
+      },
+      "RequestBody": "{\u0022name\u0022: \u0022hotels-cnbmvntvby\u0022, \u0022fields\u0022: [{\u0022name\u0022: \u0022hotelId\u0022, \u0022type\u0022: \u0022Edm.String\u0022, \u0022key\u0022: true, \u0022retrievable\u0022: true, \u0022searchable\u0022: false}]}",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "695",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Fri, 21 Jan 2022 21:15:26 GMT",
+        "elapsed-time": "659",
+        "ETag": "W/\u00220x8D9DD23252474A5\u0022",
+        "Expires": "-1",
+        "Location": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels-cnbmvntvby\u0027)?api-version=2021-04-30-Preview",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "409c604c-7aff-11ec-9374-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#indexes/$entity",
+        "@odata.etag": "\u00220x8D9DD23252474A5\u0022",
+        "name": "hotels-cnbmvntvby",
+        "defaultScoringProfile": null,
+        "fields": [
+          {
+            "name": "hotelId",
+            "type": "Edm.String",
+            "searchable": false,
+            "filterable": true,
+            "retrievable": true,
+            "sortable": true,
+            "facetable": true,
+            "key": true,
+            "indexAnalyzer": null,
+            "searchAnalyzer": null,
+            "analyzer": null,
+            "normalizer": null,
+            "synonymMaps": []
+          }
+        ],
+        "scoringProfiles": [],
+        "corsOptions": null,
+        "suggesters": [],
+        "analyzers": [],
+        "normalizers": [],
+        "tokenizers": [],
+        "tokenFilters": [],
+        "charFilters": [],
+        "encryptionKey": null,
+        "similarity": {
+          "@odata.type": "#Microsoft.Azure.Search.BM25Similarity",
+          "k1": null,
+          "b": null
+        },
+        "semantic": null
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers?api-version=2021-04-30-Preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "146",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "41153a0d-7aff-11ec-a649-74c63bed1137"
+      },
+      "RequestBody": "{\u0022name\u0022: \u0022sample-indexer-xmmsyqaakq\u0022, \u0022dataSourceName\u0022: \u0022sample-datasource-gddcipqxrb\u0022, \u0022targetIndexName\u0022: \u0022hotels-cnbmvntvby\u0022, \u0022disabled\u0022: false}",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "420",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Fri, 21 Jan 2022 21:15:26 GMT",
+        "elapsed-time": "477",
+        "ETag": "W/\u00220x8D9DD232569FE81\u0022",
+        "Expires": "-1",
+        "Location": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-xmmsyqaakq\u0027)?api-version=2021-04-30-Preview",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "41153a0d-7aff-11ec-a649-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#indexers/$entity",
+        "@odata.etag": "\u00220x8D9DD232569FE81\u0022",
+        "name": "sample-indexer-xmmsyqaakq",
+        "description": null,
+        "dataSourceName": "sample-datasource-gddcipqxrb",
+        "skillsetName": null,
+        "targetIndexName": "hotels-cnbmvntvby",
+        "disabled": false,
+        "schedule": null,
+        "parameters": null,
+        "fieldMappings": [],
+        "outputFieldMappings": [],
+        "cache": null,
+        "encryptionKey": null
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "416f861a-7aff-11ec-b707-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "1421",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Fri, 21 Jan 2022 21:15:26 GMT",
+        "elapsed-time": "31",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "416f861a-7aff-11ec-b707-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#indexers",
+        "value": [
+          {
+            "@odata.etag": "\u00220x8D9DD232462EFD2\u0022",
+            "name": "sample-indexer-ipzysyukqq",
+            "description": null,
+            "dataSourceName": "sample-datasource-alapcuefah",
+            "skillsetName": null,
+            "targetIndexName": "hotels-rfzplaglso",
+            "disabled": false,
+            "schedule": null,
+            "parameters": null,
+            "fieldMappings": [],
+            "outputFieldMappings": [],
+            "cache": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8D9DD1EE729F8B1\u0022",
+            "name": "sample-indexer-tnvaclmfwe",
+            "description": "updated",
+            "dataSourceName": "sample-datasource-zpitsnmktu",
+            "skillsetName": null,
+            "targetIndexName": "hotels-qfmxqyoscc",
+            "disabled": false,
+            "schedule": null,
+            "parameters": null,
+            "fieldMappings": [],
+            "outputFieldMappings": [],
+            "cache": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8D9DD232569FE81\u0022",
+            "name": "sample-indexer-xmmsyqaakq",
+            "description": null,
+            "dataSourceName": "sample-datasource-gddcipqxrb",
+            "skillsetName": null,
+            "targetIndexName": "hotels-cnbmvntvby",
+            "disabled": false,
+            "schedule": null,
+            "parameters": null,
+            "fieldMappings": [],
+            "outputFieldMappings": [],
+            "cache": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8D9DD222D2B0D81\u0022",
+            "name": "sample-indexer-xodsxuuutu",
+            "description": "updated",
+            "dataSourceName": "sample-datasource-nssjdkcqtz",
+            "skillsetName": null,
+            "targetIndexName": "hotels-cubudzhjty",
+            "disabled": false,
+            "schedule": null,
+            "parameters": null,
+            "fieldMappings": [],
+            "outputFieldMappings": [],
+            "cache": null,
+            "encryptionKey": null
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-ipzysyukqq\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "4185bb0d-7aff-11ec-ba85-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Date": "Fri, 21 Jan 2022 21:15:26 GMT",
+        "elapsed-time": "44",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-id": "4185bb0d-7aff-11ec-ba85-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-xmmsyqaakq\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "419d84a1-7aff-11ec-b348-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Date": "Fri, 21 Jan 2022 21:15:27 GMT",
+        "elapsed-time": "67",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-id": "419d84a1-7aff-11ec-b348-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=minimal",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "41b97c2a-7aff-11ec-984d-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "763",
+        "Content-Type": "application/json; odata.metadata=minimal",
+        "Date": "Fri, 21 Jan 2022 21:15:27 GMT",
+        "elapsed-time": "40",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "41b97c2a-7aff-11ec-984d-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#indexers",
+        "value": [
+          {
+            "@odata.etag": "\u00220x8D9DD1EE729F8B1\u0022",
+            "name": "sample-indexer-tnvaclmfwe",
+            "description": "updated",
+            "dataSourceName": "sample-datasource-zpitsnmktu",
+            "skillsetName": null,
+            "targetIndexName": "hotels-qfmxqyoscc",
+            "disabled": false,
+            "schedule": null,
+            "parameters": null,
+            "fieldMappings": [],
+            "outputFieldMappings": [],
+            "cache": null,
+            "encryptionKey": null
+          },
+          {
+            "@odata.etag": "\u00220x8D9DD222D2B0D81\u0022",
+            "name": "sample-indexer-xodsxuuutu",
+            "description": "updated",
+            "dataSourceName": "sample-datasource-nssjdkcqtz",
+            "skillsetName": null,
+            "targetIndexName": "hotels-cubudzhjty",
+            "disabled": false,
+            "schedule": null,
+            "parameters": null,
+            "fieldMappings": [],
+            "outputFieldMappings": [],
+            "cache": null,
+            "encryptionKey": null
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {
+    "datasource_name": "sample-datasource-alapcuefah",
+    "datasource_name2": "sample-datasource-gddcipqxrb",
+    "indexer_name": "sample-indexer-ipzysyukqq",
+    "indexer_name2": "sample-indexer-xmmsyqaakq",
+    "index_name": "hotels-rfzplaglso",
+    "index_name2": "hotels-cnbmvntvby"
+  }
+}

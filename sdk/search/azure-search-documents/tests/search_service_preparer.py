@@ -32,7 +32,7 @@ SearchPreparer = functools.partial(
     search_service_endpoint="https://fakesearchendpoint.search.windows.net",
     search_service_api_key="fakesearchapikey",
     search_query_api_key="fakequeryapikey",
-    search_storage_connection_string="fakestoragecs",
+    search_storage_connection_string="DefaultEndpointsProtocol=https;AccountName=fakestoragecs;AccountKey=FAKE;EndpointSuffix=core.windows.net",
     search_storage_container_name="fakestoragecontainer"
 )
 

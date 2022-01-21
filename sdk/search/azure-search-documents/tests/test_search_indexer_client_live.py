@@ -71,98 +71,98 @@ class TestSearchIndexersClient(AzureRecordedTestCase):
         random_tag = "".join(random.choice(allowed_chars) for x in range(length)).lower()
         return "{}{}".format(prefix, random_tag)
 
-    # @search_decorator
-    # @recorded_by_proxy
-    # def test_indexer_crud(self, variables, **kwargs):
-    #     search_endpoint, search_api_key, storage_cs, container_name = self._parse_kwargs(**kwargs)
-    #     variables = self._update_variables(variables)
-    #     indexer_name, datasource_name, index_name = self._parse_variables(variables)
-    #     client = SearchIndexerClient(search_endpoint, search_api_key)
-    #     indexer_count = len(client.get_indexers())
+    @search_decorator
+    @recorded_by_proxy
+    def test_indexer_crud(self, variables, **kwargs):
+        search_endpoint, search_api_key, storage_cs, container_name = self._parse_kwargs(**kwargs)
+        variables = self._update_variables(variables)
+        indexer_name, datasource_name, index_name = self._parse_variables(variables)
+        client = SearchIndexerClient(search_endpoint, search_api_key)
+        indexer_count = len(client.get_indexers())
 
-    #     # Create indexer
-    #     indexer = self._prepare_indexer(search_endpoint, search_api_key, storage_cs, container_name, indexer_name, datasource_name, index_name)
-    #     result = client.create_indexer(indexer)
-    #     assert result.name == indexer_name
-    #     assert result.target_index_name == index_name
-    #     assert result.data_source_name == datasource_name
+        # Create indexer
+        indexer = self._prepare_indexer(search_endpoint, search_api_key, storage_cs, container_name, indexer_name, datasource_name, index_name)
+        result = client.create_indexer(indexer)
+        assert result.name == indexer_name
+        assert result.target_index_name == index_name
+        assert result.data_source_name == datasource_name
 
-    #     # Get indexer
-    #     result = client.get_indexer(indexer_name)
-    #     assert result.name == indexer_name
+        # Get indexer
+        result = client.get_indexer(indexer_name)
+        assert result.name == indexer_name
 
-    #     # Run indexer
-    #     client.run_indexer(indexer_name)
-    #     assert client.get_indexer_status(indexer_name).status == 'running'
+        # Run indexer
+        client.run_indexer(indexer_name)
+        assert client.get_indexer_status(indexer_name).status == 'running'
 
-    #     # Reset indexer
-    #     client.reset_indexer(indexer_name)
-    #     assert client.get_indexer_status(indexer_name).last_result.status.lower() in ('inprogress', 'reset')
+        # Reset indexer
+        client.reset_indexer(indexer_name)
+        assert client.get_indexer_status(indexer_name).last_result.status.lower() in ('inprogress', 'reset')
 
-    #     # Get indexer status
-    #     status = client.get_indexer_status(indexer_name)
-    #     assert status.status is not None
+        # Get indexer status
+        status = client.get_indexer_status(indexer_name)
+        assert status.status is not None
 
-    #     # List indexers
-    #     variables = self._update_variables(variables, prefix_tag="2")
-    #     indexer2_name, datasource2_name, index2_name = self._parse_variables(variables, prefix_tag="2")
-    #     indexer2 = self._prepare_indexer(search_endpoint, search_api_key, storage_cs, container_name, indexer2_name, datasource2_name, index2_name)
-    #     client.create_indexer(indexer2)
-    #     result = client.get_indexers()
-    #     assert isinstance(result, list)
-    #     assert len(result) == indexer_count + 2
-    #     indexer_count = len(result)
-    #     assert indexer_name in set(x.name for x in result)
-    #     assert indexer2_name in set(x.name for x in result)
+        # List indexers
+        variables = self._update_variables(variables, prefix_tag="2")
+        indexer2_name, datasource2_name, index2_name = self._parse_variables(variables, prefix_tag="2")
+        indexer2 = self._prepare_indexer(search_endpoint, search_api_key, storage_cs, container_name, indexer2_name, datasource2_name, index2_name)
+        client.create_indexer(indexer2)
+        result = client.get_indexers()
+        assert isinstance(result, list)
+        assert len(result) == indexer_count + 2
+        indexer_count = len(result)
+        assert indexer_name in set(x.name for x in result)
+        assert indexer2_name in set(x.name for x in result)
 
-    #     # Delete indexer
-    #     client.delete_indexer(indexer_name)
-    #     client.delete_indexer(indexer2_name)
-    #     assert len(client.get_indexers()) == indexer_count - 2
+        # Delete indexer
+        client.delete_indexer(indexer_name)
+        client.delete_indexer(indexer2_name)
+        assert len(client.get_indexers()) == indexer_count - 2
 
-    #     return variables
+        return variables
 
-    # @search_decorator
-    # @recorded_by_proxy
-    # def test_create_or_update_indexer(self, variables, **kwargs):
-    #     search_endpoint, search_api_key, storage_cs, container_name = self._parse_kwargs(**kwargs)
-    #     variables = self._update_variables(variables)
-    #     indexer_name, datasource_name, index_name = self._parse_variables(variables)
-    #     client = SearchIndexerClient(search_endpoint, search_api_key)
-    #     indexer = self._prepare_indexer(search_endpoint, search_api_key, storage_cs, container_name, indexer_name, datasource_name, index_name)
+    @search_decorator
+    @recorded_by_proxy
+    def test_create_or_update_indexer(self, variables, **kwargs):
+        search_endpoint, search_api_key, storage_cs, container_name = self._parse_kwargs(**kwargs)
+        variables = self._update_variables(variables)
+        indexer_name, datasource_name, index_name = self._parse_variables(variables)
+        client = SearchIndexerClient(search_endpoint, search_api_key)
+        indexer = self._prepare_indexer(search_endpoint, search_api_key, storage_cs, container_name, indexer_name, datasource_name, index_name)
 
-    #     start_count = len(client.get_indexers())
-    #     client.create_indexer(indexer)
-    #     assert(len(client.get_indexers())) == start_count + 1
+        start_count = len(client.get_indexers())
+        client.create_indexer(indexer)
+        assert(len(client.get_indexers())) == start_count + 1
         
-    #     indexer.description = "updated"
-    #     client.create_or_update_indexer(indexer)
-    #     assert len(client.get_indexers()) == start_count + 1
+        indexer.description = "updated"
+        client.create_or_update_indexer(indexer)
+        assert len(client.get_indexers()) == start_count + 1
 
-    #     result = client.get_indexer(indexer_name)
-    #     assert result.name == indexer_name
-    #     assert result.description == "updated"
-    #     return variables
+        result = client.get_indexer(indexer_name)
+        assert result.name == indexer_name
+        assert result.description == "updated"
+        return variables
 
-    # @search_decorator
-    # @recorded_by_proxy
-    # def test_create_or_update_indexer_if_unchanged(self, variables, **kwargs):
-    #     search_endpoint, search_api_key, storage_cs, container_name = self._parse_kwargs(**kwargs)
-    #     variables = self._update_variables(variables)
-    #     indexer_name, datasource_name, index_name = self._parse_variables(variables)
-    #     client = SearchIndexerClient(search_endpoint, search_api_key)
-    #     indexer = self._prepare_indexer(search_endpoint, search_api_key, storage_cs, container_name, indexer_name, datasource_name, index_name)
+    @search_decorator
+    @recorded_by_proxy
+    def test_create_or_update_indexer_if_unchanged(self, variables, **kwargs):
+        search_endpoint, search_api_key, storage_cs, container_name = self._parse_kwargs(**kwargs)
+        variables = self._update_variables(variables)
+        indexer_name, datasource_name, index_name = self._parse_variables(variables)
+        client = SearchIndexerClient(search_endpoint, search_api_key)
+        indexer = self._prepare_indexer(search_endpoint, search_api_key, storage_cs, container_name, indexer_name, datasource_name, index_name)
 
-    #     created = client.create_indexer(indexer)
-    #     etag = created.e_tag
+        created = client.create_indexer(indexer)
+        etag = created.e_tag
 
-    #     indexer.description = "updated"
-    #     client.create_or_update_indexer(indexer)
+        indexer.description = "updated"
+        client.create_or_update_indexer(indexer)
 
-    #     indexer.e_tag = etag
-    #     with pytest.raises(HttpResponseError):
-    #         client.create_or_update_indexer(indexer, match_condition=MatchConditions.IfNotModified)
-    #     return variables
+        indexer.e_tag = etag
+        with pytest.raises(HttpResponseError):
+            client.create_or_update_indexer(indexer, match_condition=MatchConditions.IfNotModified)
+        return variables
 
     @search_decorator
     @recorded_by_proxy
