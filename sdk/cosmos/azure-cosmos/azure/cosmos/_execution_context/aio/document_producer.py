@@ -123,13 +123,6 @@ def _compare_helper(a, b):
     return (a > b) - (a < b)
 
 
-def partition_range_is_gone(e):
-    if (e.status_code == http_constants.StatusCodes.GONE
-            and e.sub_status == http_constants.SubStatusCodes.PARTITION_KEY_RANGE_GONE):
-        return True
-    return False
-
-
 class _PartitionKeyRangeDocumentProduerComparator(object):
     """
     Provides a Comparator for document producers using the min value of the

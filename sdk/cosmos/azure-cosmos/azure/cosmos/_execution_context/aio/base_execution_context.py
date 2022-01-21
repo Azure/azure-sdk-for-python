@@ -27,7 +27,7 @@ from collections import deque
 import copy
 
 from ...aio import _retry_utility_async
-from ... import http_constants, exceptions
+from ... import http_constants
 
 # pylint: disable=protected-access
 

@@ -109,6 +109,10 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         raise NotImplementedError("You should use pipeline's fetch_next_block.")
 
     async def _repair_document_producer(self):
+        """Repairs the document producer context by using the re-initialized routing map provider in the client,
+        which loads in a refreshed partition key range cache to re-create the partition key ranges.
+        After loading this new cache, the document producers get re-created with the new valid ranges.
+        """
         # refresh the routing provider to get the newly initialized one post-refresh
         self._routing_provider = self._client._routing_map_provider
         # will be a list of (partition_min, partition_max) tuples
@@ -122,7 +126,6 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
             )
 
         for targetQueryExContext in targetPartitionQueryExecutionContextList:
-
             try:
                 # TODO: we can also use more_itertools.peekable to be more python friendly
                 await targetQueryExContext.peek()
@@ -174,7 +177,6 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
             )
 
         for targetQueryExContext in targetPartitionQueryExecutionContextList:
-
             try:
                 # TODO: we can also use more_itertools.peekable to be more python friendly
                 await targetQueryExContext.peek()
@@ -183,9 +185,11 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
                 self._orderByPQ.push(targetQueryExContext)
 
             except exceptions.CosmosHttpResponseError as e:
-                if document_producer.partition_range_is_gone(e):
+                if exceptions.partition_range_is_gone(e):
                     # repairing document producer context on partition split
                     await self._repair_document_producer()
+                else:
+                    raise
 
             except StopAsyncIteration:
                 continue

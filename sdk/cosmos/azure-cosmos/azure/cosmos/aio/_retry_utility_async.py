@@ -69,7 +69,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
     sessionRetry_policy = _session_retry_policy._SessionRetryPolicy(
         client.connection_policy.EnableEndpointDiscovery, global_endpoint_manager, *args
     )
-    gone_retry_policy = _gone_retry_policy.GoneRetryPolicy(client, *args)
+    partition_key_range_gone_retry_policy = _gone_retry_policy.PartitionKeyRangeGoneRetryPolicy(client, *args)
 
     while True:
         try:
@@ -103,9 +103,8 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 and e.sub_status == SubStatusCodes.READ_SESSION_NOTAVAILABLE
             ):
                 retry_policy = sessionRetry_policy
-            elif e.status_code == StatusCodes.GONE:
-                print("using gone retry policy")
-                retry_policy = gone_retry_policy
+            elif exceptions.partition_range_is_gone(e):
+                retry_policy = partition_key_range_gone_retry_policy
             else:
                 retry_policy = defaultRetry_policy
 

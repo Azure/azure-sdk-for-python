@@ -159,7 +159,7 @@ class CosmosClient(object):
         return cls(
             url=settings['AccountEndpoint'],
             credential=credential or settings['AccountKey'],
-            consistency_level=kwargs.get('consistency_level', 'Session')
+            consistency_level=kwargs.get('consistency_level', 'Session'),
             **kwargs
         )
 
