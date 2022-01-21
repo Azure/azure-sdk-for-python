@@ -15,7 +15,6 @@ from devtools_testutils.aio import recorded_by_proxy_async
 all_api_versions = get_decorator()
 SecretsPreparer = functools.partial(SecretsTestCaseClientPrepaper, is_async=True)
 
-
 def print(*args):
     assert all(arg is not None for arg in args)
 

@@ -8,12 +8,9 @@ import time
 
 import pytest
 
-<<<<<<< HEAD
 from _shared.test_case import KeyVaultTestCase
 from _test_case import client_setup, get_decorator, SecretsTestCaseClientPrepaper
 
-=======
->>>>>>> 7b88c70118 (missing imports)
 from devtools_testutils import recorded_by_proxy
 
 all_api_versions = get_decorator()
