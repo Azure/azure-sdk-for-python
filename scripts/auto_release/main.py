@@ -80,14 +80,12 @@ def all_files(path: str, files: List[str]):
             files.append(folder)
 
 
-def git_clean():
-    print_exec('git checkout . && git clean -fd && git reset --hard HEAD ')
-
-
 def checkout_azure_default_branch():
-    print_exec('git remote add Azure https://github.com/Azure/azure-sdk-for-python.git')
-    print_check('git fetch Azure main')
-    print_check('git checkout Azure/main')
+    usr = 'msyyc'
+    branch = 'temp'
+    print_exec(f'git remote add {usr} https://github.com/{usr}/azure-sdk-for-python.git')
+    print_check(f'git fetch {usr} {branch}')
+    print_check(f'git checkout {usr}/{branch}')
 
 
 def modify_file(file_path: str, func: Any):
@@ -101,9 +99,6 @@ def modify_file(file_path: str, func: Any):
 def current_time():
     date = time.localtime(time.time())
     return '{}-{:02d}-{:02d}'.format(date.tm_year, date.tm_mon, date.tm_mday)
-
-
-
 
 
 def set_test_env_var():
@@ -189,7 +184,7 @@ class CodegenTestPR:
         print_exec('python scripts/dev_setup.py -p azure-core')
         print_check(f'python -m packaging_tools.auto_codegen {self.autorest_result} {self.autorest_result}')
 
-        my_print(self.get_autorest_result())
+        my_print(str(self.get_autorest_result()))
 
         print_check(f'python -m packaging_tools.auto_package {self.autorest_result} {self.autorest_result}')
 
@@ -238,7 +233,6 @@ class CodegenTestPR:
         self.sdk_folder = Path(folder_info).parts[1]
 
     def prepare_branch(self):
-        git_clean()
         if self.spec_readme:
             self.prepare_branch_with_readme()
         # else:
