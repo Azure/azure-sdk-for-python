@@ -6,19 +6,15 @@
 
 import random
 import string
-from os import environ
-from os.path import dirname, join, realpath
 
 import pytest
 from azure.core import MatchConditions
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.search.documents.indexes import (SearchIndexClient,
-                                            SearchIndexerClient)
+from azure.core.exceptions import HttpResponseError
+from azure.search.documents.indexes import SearchIndexClient, SearchIndexerClient
 from azure.search.documents.indexes.models import (
     SearchIndex, SearchIndexer, SearchIndexerDataContainer,
     SearchIndexerDataSourceConnection)
-from devtools_testutils import (AzureRecordedTestCase, is_live,
-                                recorded_by_proxy)
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 from tests.search_service_preparer import search_decorator
 
