@@ -17,25 +17,6 @@ import pytest
 
 KeyVaultSecretsPreparer = functools.partial(PowerShellPreparer, "keyvault", azure_keyvault_url="https://vaultname.vault.azure.net")
 
-# def client_setup(testcase_func):
-#     """decorator that creates a client to be passed in to a test method"""
-#     @KeyVaultSecretsPreparer()
-#     @functools.wraps(testcase_func)
-#     def wrapper(test_class_instance,  api_version, **kwargs):
-#         test_class_instance._skip_if_not_configured(api_version)
-#         azure_keyvault_url = kwargs.pop("azure_keyvault_url")
-#         client = test_class_instance.create_client(azure_keyvault_url, api_version=api_version, **kwargs)
-#         testcase_func(test_class_instance, client)
-
-#         # if kwargs.get("is_async"):
-#         #     import asyncio
-
-#         #     coroutine = testcase_func(test_class_instance, client)
-#         #     loop = asyncio.get_event_loop()
-#         #     loop.run_until_complete(coroutine)
-#         # else:
-#         #     testcase_func(test_class_instance, client)
-#     return wrapper
 
 class AsyncSecretsTestCaseClientPrepaper(AzureRecordedTestCase):
     def __init__(self, **kwargs) -> None:
