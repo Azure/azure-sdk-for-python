@@ -4,7 +4,6 @@
 # ------------------------------------
 
 import pytest
-from devtools_testutils import recorded_by_proxy
 from testcase import TextAnalyticsTest, TextAnalyticsPreparer
 from azure.ai.textanalytics import TextAnalyticsClient
 from azure.core.credentials import AzureKeyCredential
