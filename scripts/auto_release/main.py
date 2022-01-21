@@ -11,6 +11,7 @@ from util import add_certificate
 from functools import wraps
 from packaging.version import Version
 import base64
+import shutil
 
 _LOG = logging.getLogger()
 
@@ -512,6 +513,9 @@ if __name__ == '__main__':
     main_logger = logging.getLogger()
     logging.basicConfig()
     main_logger.setLevel(logging.INFO)
+
+    auto_position = shutil.which("autorest")
+    my_print(f'autorest position: {auto_position}')
 
     instance = CodegenTestPR()
     instance.run()
