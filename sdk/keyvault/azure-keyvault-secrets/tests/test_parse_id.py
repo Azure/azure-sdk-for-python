@@ -12,10 +12,10 @@ from _test_case import SecretsTestCaseClientPrepaper
 SecretsPreparer = functools.partial(SecretsTestCaseClientPrepaper, is_async=False)
 
 class TestParseId(KeyVaultTestCase):
-    @SecretsPreparer()
+    @PowerShellPreparer("keyvault", azure_keyvault_url="https://vaultname.vault.azure.net")
     @recorded_by_proxy
-    def test_parse_secret_id_with_version(self, client):
-        
+    def test_parse_secret_id_with_version(self, azure_keyvault_url):
+        client = self.create_client(azure_keyvault_url)
         secret_name = self.get_resource_name("secret")
         secret_value = "secret_value"
         # create secret
