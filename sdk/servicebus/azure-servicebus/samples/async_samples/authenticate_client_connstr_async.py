@@ -19,8 +19,6 @@ export SERVICE_BUS_CONN_STR=$(az servicebus namespace authorization-rule keys li
 ```
 """
 
-# pylint: disable=C0111
-
 from azure.servicebus.aio import ServiceBusClient
 
 import os

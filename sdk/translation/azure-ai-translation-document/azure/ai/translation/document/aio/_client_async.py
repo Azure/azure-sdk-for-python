@@ -134,12 +134,16 @@ class DocumentTranslationClient(object):
         For supported languages and document formats, see the service documentation:
         https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
 
-        :param str source_url: The source SAS URL to the Azure Blob container containing the documents
-            to be translated. See the service documentation for the supported SAS permissions for accessing
-            source storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions
-        :param str target_url: The target SAS URL to the Azure Blob container where the translated documents
-            should be written. See the service documentation for the supported SAS permissions for accessing
-            target storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions
+        :param str source_url: The source URL to the Azure Blob container containing the documents to be translated.
+            This can be a SAS URL (see the service documentation for the supported SAS permissions for accessing
+            source storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions) or a managed
+            identity can be created and used to access documents in your storage account
+            (see https://aka.ms/azsdk/documenttranslation/managed-identity).
+        :param str target_url: The target URL to the Azure Blob container where the translated documents
+            should be written. This can be a SAS URL (see the service documentation for the supported SAS permissions
+            for accessing target storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions)
+            or a managed identity can be created and used to access documents in your storage account
+            (see https://aka.ms/azsdk/documenttranslation/managed-identity).
         :param str target_language_code: This is the language you want your documents to be translated to.
             See supported language codes here:
             https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate

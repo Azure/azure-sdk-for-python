@@ -6,228 +6,188 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AddUsersPayload
-    from ._models_py3 import CloudErrorBody
-    from ._models_py3 import CreateLabProperties
-    from ._models_py3 import Environment
-    from ._models_py3 import EnvironmentDetails
-    from ._models_py3 import EnvironmentFragment
-    from ._models_py3 import EnvironmentOperationsPayload
-    from ._models_py3 import EnvironmentSetting
-    from ._models_py3 import EnvironmentSettingCreationParameters
-    from ._models_py3 import EnvironmentSettingFragment
-    from ._models_py3 import EnvironmentSize
-    from ._models_py3 import EnvironmentSizeFragment
-    from ._models_py3 import GalleryImage
-    from ._models_py3 import GalleryImageFragment
-    from ._models_py3 import GalleryImageReference
-    from ._models_py3 import GalleryImageReferenceFragment
-    from ._models_py3 import GetEnvironmentResponse
-    from ._models_py3 import GetPersonalPreferencesResponse
-    from ._models_py3 import GetRegionalAvailabilityResponse
-    from ._models_py3 import Lab
-    from ._models_py3 import LabAccount
-    from ._models_py3 import LabAccountFragment
-    from ._models_py3 import LabCreationParameters
-    from ._models_py3 import LabDetails
-    from ._models_py3 import LabFragment
-    from ._models_py3 import LatestOperationResult
-    from ._models_py3 import ListEnvironmentsPayload
-    from ._models_py3 import ListEnvironmentsResponse
-    from ._models_py3 import ListLabsResponse
-    from ._models_py3 import NetworkInterface
-    from ._models_py3 import OperationBatchStatusPayload
-    from ._models_py3 import OperationBatchStatusResponse
-    from ._models_py3 import OperationBatchStatusResponseItem
-    from ._models_py3 import OperationError
-    from ._models_py3 import OperationMetadata
-    from ._models_py3 import OperationMetadataDisplay
-    from ._models_py3 import OperationResult
-    from ._models_py3 import OperationStatusPayload
-    from ._models_py3 import OperationStatusResponse
-    from ._models_py3 import PersonalPreferencesOperationsPayload
-    from ._models_py3 import ProviderOperationResult
-    from ._models_py3 import PublishPayload
-    from ._models_py3 import ReferenceVm
-    from ._models_py3 import ReferenceVmCreationParameters
-    from ._models_py3 import ReferenceVmFragment
-    from ._models_py3 import RegionalAvailability
-    from ._models_py3 import RegisterPayload
-    from ._models_py3 import ResetPasswordPayload
-    from ._models_py3 import Resource
-    from ._models_py3 import ResourceSet
-    from ._models_py3 import ResourceSetFragment
-    from ._models_py3 import ResourceSettingCreationParameters
-    from ._models_py3 import ResourceSettings
-    from ._models_py3 import ResourceSettingsFragment
-    from ._models_py3 import ResponseWithContinuationEnvironment
-    from ._models_py3 import ResponseWithContinuationEnvironmentSetting
-    from ._models_py3 import ResponseWithContinuationGalleryImage
-    from ._models_py3 import ResponseWithContinuationLab
-    from ._models_py3 import ResponseWithContinuationLabAccount
-    from ._models_py3 import ResponseWithContinuationUser
-    from ._models_py3 import SizeAvailability
-    from ._models_py3 import SizeConfigurationProperties
-    from ._models_py3 import SizeConfigurationPropertiesFragment
-    from ._models_py3 import SizeInfo
-    from ._models_py3 import SizeInfoFragment
-    from ._models_py3 import User
-    from ._models_py3 import UserFragment
-    from ._models_py3 import VirtualMachineDetails
-    from ._models_py3 import VmStateDetails
-except (SyntaxError, ImportError):
-    from ._models import AddUsersPayload  # type: ignore
-    from ._models import CloudErrorBody  # type: ignore
-    from ._models import CreateLabProperties  # type: ignore
-    from ._models import Environment  # type: ignore
-    from ._models import EnvironmentDetails  # type: ignore
-    from ._models import EnvironmentFragment  # type: ignore
-    from ._models import EnvironmentOperationsPayload  # type: ignore
-    from ._models import EnvironmentSetting  # type: ignore
-    from ._models import EnvironmentSettingCreationParameters  # type: ignore
-    from ._models import EnvironmentSettingFragment  # type: ignore
-    from ._models import EnvironmentSize  # type: ignore
-    from ._models import EnvironmentSizeFragment  # type: ignore
-    from ._models import GalleryImage  # type: ignore
-    from ._models import GalleryImageFragment  # type: ignore
-    from ._models import GalleryImageReference  # type: ignore
-    from ._models import GalleryImageReferenceFragment  # type: ignore
-    from ._models import GetEnvironmentResponse  # type: ignore
-    from ._models import GetPersonalPreferencesResponse  # type: ignore
-    from ._models import GetRegionalAvailabilityResponse  # type: ignore
-    from ._models import Lab  # type: ignore
-    from ._models import LabAccount  # type: ignore
-    from ._models import LabAccountFragment  # type: ignore
-    from ._models import LabCreationParameters  # type: ignore
-    from ._models import LabDetails  # type: ignore
-    from ._models import LabFragment  # type: ignore
-    from ._models import LatestOperationResult  # type: ignore
-    from ._models import ListEnvironmentsPayload  # type: ignore
-    from ._models import ListEnvironmentsResponse  # type: ignore
-    from ._models import ListLabsResponse  # type: ignore
-    from ._models import NetworkInterface  # type: ignore
-    from ._models import OperationBatchStatusPayload  # type: ignore
-    from ._models import OperationBatchStatusResponse  # type: ignore
-    from ._models import OperationBatchStatusResponseItem  # type: ignore
-    from ._models import OperationError  # type: ignore
-    from ._models import OperationMetadata  # type: ignore
-    from ._models import OperationMetadataDisplay  # type: ignore
-    from ._models import OperationResult  # type: ignore
-    from ._models import OperationStatusPayload  # type: ignore
-    from ._models import OperationStatusResponse  # type: ignore
-    from ._models import PersonalPreferencesOperationsPayload  # type: ignore
-    from ._models import ProviderOperationResult  # type: ignore
-    from ._models import PublishPayload  # type: ignore
-    from ._models import ReferenceVm  # type: ignore
-    from ._models import ReferenceVmCreationParameters  # type: ignore
-    from ._models import ReferenceVmFragment  # type: ignore
-    from ._models import RegionalAvailability  # type: ignore
-    from ._models import RegisterPayload  # type: ignore
-    from ._models import ResetPasswordPayload  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ResourceSet  # type: ignore
-    from ._models import ResourceSetFragment  # type: ignore
-    from ._models import ResourceSettingCreationParameters  # type: ignore
-    from ._models import ResourceSettings  # type: ignore
-    from ._models import ResourceSettingsFragment  # type: ignore
-    from ._models import ResponseWithContinuationEnvironment  # type: ignore
-    from ._models import ResponseWithContinuationEnvironmentSetting  # type: ignore
-    from ._models import ResponseWithContinuationGalleryImage  # type: ignore
-    from ._models import ResponseWithContinuationLab  # type: ignore
-    from ._models import ResponseWithContinuationLabAccount  # type: ignore
-    from ._models import ResponseWithContinuationUser  # type: ignore
-    from ._models import SizeAvailability  # type: ignore
-    from ._models import SizeConfigurationProperties  # type: ignore
-    from ._models import SizeConfigurationPropertiesFragment  # type: ignore
-    from ._models import SizeInfo  # type: ignore
-    from ._models import SizeInfoFragment  # type: ignore
-    from ._models import User  # type: ignore
-    from ._models import UserFragment  # type: ignore
-    from ._models import VirtualMachineDetails  # type: ignore
-    from ._models import VmStateDetails  # type: ignore
+from ._models_py3 import AutoShutdownProfile
+from ._models_py3 import ConnectionProfile
+from ._models_py3 import Credentials
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
+from ._models_py3 import Image
+from ._models_py3 import ImageProperties
+from ._models_py3 import ImageReference
+from ._models_py3 import ImageUpdate
+from ._models_py3 import ImageUpdateProperties
+from ._models_py3 import InviteBody
+from ._models_py3 import Lab
+from ._models_py3 import LabNetworkProfile
+from ._models_py3 import LabPlan
+from ._models_py3 import LabPlanNetworkProfile
+from ._models_py3 import LabPlanProperties
+from ._models_py3 import LabPlanUpdate
+from ._models_py3 import LabPlanUpdateProperties
+from ._models_py3 import LabProperties
+from ._models_py3 import LabServicesSku
+from ._models_py3 import LabServicesSkuCapabilities
+from ._models_py3 import LabServicesSkuCapacity
+from ._models_py3 import LabServicesSkuCost
+from ._models_py3 import LabServicesSkuRestrictions
+from ._models_py3 import LabUpdate
+from ._models_py3 import LabUpdateProperties
+from ._models_py3 import ListUsagesResult
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import OperationResult
+from ._models_py3 import PagedImages
+from ._models_py3 import PagedLabPlans
+from ._models_py3 import PagedLabServicesSkus
+from ._models_py3 import PagedLabs
+from ._models_py3 import PagedSchedules
+from ._models_py3 import PagedUsers
+from ._models_py3 import PagedVirtualMachines
+from ._models_py3 import ProxyResource
+from ._models_py3 import RecurrencePattern
+from ._models_py3 import ResetPasswordBody
+from ._models_py3 import Resource
+from ._models_py3 import RosterProfile
+from ._models_py3 import SaveImageBody
+from ._models_py3 import Schedule
+from ._models_py3 import ScheduleProperties
+from ._models_py3 import ScheduleUpdate
+from ._models_py3 import ScheduleUpdateProperties
+from ._models_py3 import SecurityProfile
+from ._models_py3 import Sku
+from ._models_py3 import SupportInfo
+from ._models_py3 import SystemData
+from ._models_py3 import TrackedResource
+from ._models_py3 import TrackedResourceUpdate
+from ._models_py3 import Usage
+from ._models_py3 import UsageName
+from ._models_py3 import User
+from ._models_py3 import UserProperties
+from ._models_py3 import UserUpdate
+from ._models_py3 import UserUpdateProperties
+from ._models_py3 import VirtualMachine
+from ._models_py3 import VirtualMachineAdditionalCapabilities
+from ._models_py3 import VirtualMachineConnectionProfile
+from ._models_py3 import VirtualMachineProfile
 
-from ._managed_labs_client_enums import (
-    AddRemove,
-    ConfigurationState,
-    LabUserAccessMode,
-    ManagedLabVmSize,
-    PublishingState,
+
+from ._lab_services_client_enums import (
+    ActionType,
+    ConnectionType,
+    CreateOption,
+    CreatedByType,
+    EnableState,
+    InvitationState,
+    LabServicesSkuTier,
+    LabState,
+    OperationStatus,
+    Origin,
+    OsState,
+    OsType,
+    ProvisioningState,
+    RecurrenceFrequency,
+    RegistrationState,
+    RestrictionReasonCode,
+    RestrictionType,
+    ScaleType,
+    ShutdownOnIdleMode,
+    SkuTier,
+    UsageUnit,
+    VirtualMachineState,
+    VirtualMachineType,
+    WeekDay,
 )
 
 __all__ = [
-    'AddUsersPayload',
-    'CloudErrorBody',
-    'CreateLabProperties',
-    'Environment',
-    'EnvironmentDetails',
-    'EnvironmentFragment',
-    'EnvironmentOperationsPayload',
-    'EnvironmentSetting',
-    'EnvironmentSettingCreationParameters',
-    'EnvironmentSettingFragment',
-    'EnvironmentSize',
-    'EnvironmentSizeFragment',
-    'GalleryImage',
-    'GalleryImageFragment',
-    'GalleryImageReference',
-    'GalleryImageReferenceFragment',
-    'GetEnvironmentResponse',
-    'GetPersonalPreferencesResponse',
-    'GetRegionalAvailabilityResponse',
+    'AutoShutdownProfile',
+    'ConnectionProfile',
+    'Credentials',
+    'ErrorAdditionalInfo',
+    'ErrorDetail',
+    'ErrorResponse',
+    'Image',
+    'ImageProperties',
+    'ImageReference',
+    'ImageUpdate',
+    'ImageUpdateProperties',
+    'InviteBody',
     'Lab',
-    'LabAccount',
-    'LabAccountFragment',
-    'LabCreationParameters',
-    'LabDetails',
-    'LabFragment',
-    'LatestOperationResult',
-    'ListEnvironmentsPayload',
-    'ListEnvironmentsResponse',
-    'ListLabsResponse',
-    'NetworkInterface',
-    'OperationBatchStatusPayload',
-    'OperationBatchStatusResponse',
-    'OperationBatchStatusResponseItem',
-    'OperationError',
-    'OperationMetadata',
-    'OperationMetadataDisplay',
+    'LabNetworkProfile',
+    'LabPlan',
+    'LabPlanNetworkProfile',
+    'LabPlanProperties',
+    'LabPlanUpdate',
+    'LabPlanUpdateProperties',
+    'LabProperties',
+    'LabServicesSku',
+    'LabServicesSkuCapabilities',
+    'LabServicesSkuCapacity',
+    'LabServicesSkuCost',
+    'LabServicesSkuRestrictions',
+    'LabUpdate',
+    'LabUpdateProperties',
+    'ListUsagesResult',
+    'Operation',
+    'OperationDisplay',
+    'OperationListResult',
     'OperationResult',
-    'OperationStatusPayload',
-    'OperationStatusResponse',
-    'PersonalPreferencesOperationsPayload',
-    'ProviderOperationResult',
-    'PublishPayload',
-    'ReferenceVm',
-    'ReferenceVmCreationParameters',
-    'ReferenceVmFragment',
-    'RegionalAvailability',
-    'RegisterPayload',
-    'ResetPasswordPayload',
+    'PagedImages',
+    'PagedLabPlans',
+    'PagedLabServicesSkus',
+    'PagedLabs',
+    'PagedSchedules',
+    'PagedUsers',
+    'PagedVirtualMachines',
+    'ProxyResource',
+    'RecurrencePattern',
+    'ResetPasswordBody',
     'Resource',
-    'ResourceSet',
-    'ResourceSetFragment',
-    'ResourceSettingCreationParameters',
-    'ResourceSettings',
-    'ResourceSettingsFragment',
-    'ResponseWithContinuationEnvironment',
-    'ResponseWithContinuationEnvironmentSetting',
-    'ResponseWithContinuationGalleryImage',
-    'ResponseWithContinuationLab',
-    'ResponseWithContinuationLabAccount',
-    'ResponseWithContinuationUser',
-    'SizeAvailability',
-    'SizeConfigurationProperties',
-    'SizeConfigurationPropertiesFragment',
-    'SizeInfo',
-    'SizeInfoFragment',
+    'RosterProfile',
+    'SaveImageBody',
+    'Schedule',
+    'ScheduleProperties',
+    'ScheduleUpdate',
+    'ScheduleUpdateProperties',
+    'SecurityProfile',
+    'Sku',
+    'SupportInfo',
+    'SystemData',
+    'TrackedResource',
+    'TrackedResourceUpdate',
+    'Usage',
+    'UsageName',
     'User',
-    'UserFragment',
-    'VirtualMachineDetails',
-    'VmStateDetails',
-    'AddRemove',
-    'ConfigurationState',
-    'LabUserAccessMode',
-    'ManagedLabVmSize',
-    'PublishingState',
+    'UserProperties',
+    'UserUpdate',
+    'UserUpdateProperties',
+    'VirtualMachine',
+    'VirtualMachineAdditionalCapabilities',
+    'VirtualMachineConnectionProfile',
+    'VirtualMachineProfile',
+    'ActionType',
+    'ConnectionType',
+    'CreateOption',
+    'CreatedByType',
+    'EnableState',
+    'InvitationState',
+    'LabServicesSkuTier',
+    'LabState',
+    'OperationStatus',
+    'Origin',
+    'OsState',
+    'OsType',
+    'ProvisioningState',
+    'RecurrenceFrequency',
+    'RegistrationState',
+    'RestrictionReasonCode',
+    'RestrictionType',
+    'ScaleType',
+    'ShutdownOnIdleMode',
+    'SkuTier',
+    'UsageUnit',
+    'VirtualMachineState',
+    'VirtualMachineType',
+    'WeekDay',
 ]
