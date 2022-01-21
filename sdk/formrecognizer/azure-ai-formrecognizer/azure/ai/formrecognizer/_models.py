@@ -3849,6 +3849,9 @@ class DocTypeInfo(object):
     fields and types, and the confidence for those fields.
 
     :ivar str description: A description for the model.
+    :ivar build_mode: The build mode used when building the custom model.
+     Possible values include: "template", "neural".
+    :vartype build_mode: str or :class:`~azure.ai.formrecognizer.DocumentBuildMode`
     :ivar field_schema: Description of the document semantic schema.
     :vartype field_schema: dict[str, Any]
     :ivar field_confidence: Estimated confidence for each field.
@@ -3860,13 +3863,15 @@ class DocTypeInfo(object):
         **kwargs
     ):
         self.description = kwargs.get('description', None)
+        self.build_mode = kwargs.get('build_mode', None)
         self.field_schema = kwargs.get('field_schema', None)
         self.field_confidence = kwargs.get('field_confidence', None)
 
     def __repr__(self):
         return (
-            "DocTypeInfo(description={}, field_schema={}, field_confidence={})".format(
+            "DocTypeInfo(description={}, build_mode={}, field_schema={}, field_confidence={})".format(
                 self.description,
+                self.build_mode,
                 self.field_schema,
                 self.field_confidence,
             )
@@ -3876,6 +3881,7 @@ class DocTypeInfo(object):
     def _from_generated(cls, doc_type):
         return cls(
             description=doc_type.description,
+            build_mode=doc_type.build_mode,
             field_schema={name: field.serialize() for name, field in doc_type.field_schema.items()}
             if doc_type.field_schema else {},
             field_confidence=doc_type.field_confidence,
@@ -3890,6 +3896,7 @@ class DocTypeInfo(object):
         """
         return {
             "description": self.description,
+            "build_mode": self.build_mode,
             "field_schema": self.field_schema,
             "field_confidence": self.field_confidence,
         }
@@ -3905,6 +3912,7 @@ class DocTypeInfo(object):
         """
         return cls(
             description=data.get("description", None),
+            build_mode=data.get("build_mode", None),
             field_schema=data.get("field_schema", {}),
             field_confidence=data.get("field_confidence", {}),
         )

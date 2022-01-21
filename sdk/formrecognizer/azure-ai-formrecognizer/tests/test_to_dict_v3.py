@@ -1718,6 +1718,7 @@ class TestToDict(FormRecognizerTest):
     def test_doc_type_info_to_dict(self):
         model = _models.DocTypeInfo(
             description="my description",
+            build_mode="neural",
             field_confidence={"CustomerName": 95},
             field_schema={
                 "prebuilt-invoice": {
@@ -1771,6 +1772,7 @@ class TestToDict(FormRecognizerTest):
 
         final = {
             "description": "my description",
+            "build_mode": "neural",
             "field_confidence": {"CustomerName": 95},
             "field_schema": {
                 "prebuilt-invoice": {

@@ -22,9 +22,9 @@ from preparers import GlobalClientPreparer as _GlobalClientPreparer
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
 
-@pytest.mark.skip()
 class TestDMACTrainingAsync(AsyncFormRecognizerTest):
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -44,6 +44,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
         check_poll_value(poller2._polling_method._timeout)  # goes back to client default
         await client.close()
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -57,6 +58,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
                 assert "https://fakeuri.com/blank%20space" in poller._polling_method._initial_response.http_request.body
                 await poller.wait()
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
     async def test_build_model_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
@@ -67,6 +69,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
                 poller = await client.begin_build_model("xx")
                 result = await poller.result()
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -100,7 +103,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
     async def test_build_model_multipage(self, client, formrecognizer_multipage_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
         async with client:
-            poller = await client.begin_build_model(formrecognizer_multipage_storage_container_sas_url)
+            poller = await client.begin_build_model(formrecognizer_multipage_storage_container_sas_url, "template")
             model = await poller.result()
 
         assert model.model_id
@@ -112,7 +115,9 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
                 assert key
                 assert field["type"]
                 assert doc_type.field_confidence[key] is not None
+                assert doc_type.build_mode == "template"
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -132,6 +137,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
                 assert field["type"]
                 assert doc_type.field_confidence[key] is not None
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -160,6 +166,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
         assert document_model_from_dict.model_id == document_model.model_id
         self.assertModelTransformCorrect(document_model_from_dict, raw_model)
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -183,6 +190,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
         document_model = raw_response[1]
         self.assertModelTransformCorrect(document_model, raw_model)
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -212,6 +220,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
         assert document_model_from_dict.model_id == document_model.model_id
         self.assertModelTransformCorrect(document_model_from_dict, raw_model)
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -227,13 +236,14 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     async def test_build_model_continuation_token(self, client, formrecognizer_storage_container_sas_url):
         async with client:
-            initial_poller = await client.begin_build_model(formrecognizer_storage_container_sas_url)
+            initial_poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
             cont_token = initial_poller.continuation_token()
-            poller = await client.begin_build_model(None, continuation_token=cont_token)
+            poller = await client.begin_build_model(None, "template", continuation_token=cont_token)
             result = await poller.result()
             assert result
             await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async

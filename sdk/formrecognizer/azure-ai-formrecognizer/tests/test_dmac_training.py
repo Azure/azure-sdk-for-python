@@ -19,9 +19,9 @@ from preparers import FormRecognizerPreparer
 
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
-@pytest.mark.skip()
 class TestDMACTraining(FormRecognizerTest):
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -33,14 +33,15 @@ class TestDMACTraining(FormRecognizerTest):
             else:
                 assert poll == 0
         check_poll_value(client._client._config.polling_interval)
-        poller = client.begin_build_model(source=formrecognizer_storage_container_sas_url,  polling_interval=6)
+        poller = client.begin_build_model(source=formrecognizer_storage_container_sas_url, build_mode="template", polling_interval=6)
         poller.wait()
         assert poller._polling_method._timeout == 6
-        poller2 = client.begin_build_model(source=formrecognizer_storage_container_sas_url)
+        poller2 = client.begin_build_model(source=formrecognizer_storage_container_sas_url, build_mode="template")
         poller2.wait()
         check_poll_value(poller2._polling_method._timeout)  # goes back to client default
         client.close()
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -48,19 +49,21 @@ class TestDMACTraining(FormRecognizerTest):
         set_bodiless_matcher()
         with pytest.raises(HttpResponseError):
             poller = client.begin_build_model(
-                source="https://fakeuri.com/blank%20space"
+                source="https://fakeuri.com/blank%20space", build_mode="template"
             )
             assert "https://fakeuri.com/blank%20space" in poller._polling_method._initial_response.http_request.body
             poller.wait()
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_build_model_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
         set_bodiless_matcher()
         client = DocumentModelAdministrationClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with pytest.raises(ClientAuthenticationError):
-            poller = client.begin_build_model("xx")
+            poller = client.begin_build_model("xx", build_mode="template")
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -69,6 +72,7 @@ class TestDMACTraining(FormRecognizerTest):
         model_id = str(uuid.uuid4())
         poller = client.begin_build_model(
             formrecognizer_storage_container_sas_url,
+            build_mode="template",
             model_id=model_id,
             description="a v3 model"
         )
@@ -93,7 +97,7 @@ class TestDMACTraining(FormRecognizerTest):
     def test_build_model_multipage(self, client, formrecognizer_multipage_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
         
-        poller = client.begin_build_model(formrecognizer_multipage_storage_container_sas_url)
+        poller = client.begin_build_model(formrecognizer_multipage_storage_container_sas_url, "template")
         model = poller.result()
 
         assert model.model_id
@@ -105,14 +109,16 @@ class TestDMACTraining(FormRecognizerTest):
                 assert key
                 assert field["type"]
                 assert doc_type.field_confidence[key] is not None
+                assert doc_type.build_mode == "template"
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_build_model_nested_schema(self, client, formrecognizer_table_variable_rows_container_sas_url, **kwargs):
         set_bodiless_matcher()
         
-        poller = client.begin_build_model(formrecognizer_table_variable_rows_container_sas_url)
+        poller = client.begin_build_model(formrecognizer_table_variable_rows_container_sas_url, "template")
         model = poller.result()
 
         assert model.model_id
@@ -125,6 +131,7 @@ class TestDMACTraining(FormRecognizerTest):
                 assert field["type"]
                 assert doc_type.field_confidence[key] is not None
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -140,7 +147,7 @@ class TestDMACTraining(FormRecognizerTest):
             raw_response.append(model_info)
             raw_response.append(document_model)
 
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, cls=callback)
+        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template", cls=callback)
         model = poller.result()
 
         raw_model = raw_response[0]
@@ -152,6 +159,7 @@ class TestDMACTraining(FormRecognizerTest):
         assert document_model_from_dict.model_id == document_model.model_id
         self.assertModelTransformCorrect(document_model_from_dict, raw_model)
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -167,13 +175,14 @@ class TestDMACTraining(FormRecognizerTest):
             raw_response.append(model_info)
             raw_response.append(document_model)
 
-        poller = client.begin_build_model(formrecognizer_multipage_storage_container_sas_url, cls=callback)
+        poller = client.begin_build_model(formrecognizer_multipage_storage_container_sas_url, "template", cls=callback)
         model = poller.result()
 
         raw_model = raw_response[0]
         document_model = raw_response[1]
         self.assertModelTransformCorrect(document_model, raw_model)
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -189,7 +198,7 @@ class TestDMACTraining(FormRecognizerTest):
             raw_response.append(model_info)
             raw_response.append(document_model)
 
-        poller = client.begin_build_model(formrecognizer_table_variable_rows_container_sas_url, cls=callback)
+        poller = client.begin_build_model(formrecognizer_table_variable_rows_container_sas_url, "template", cls=callback)
         model = poller.result()
 
         raw_model = raw_response[0]
@@ -202,13 +211,14 @@ class TestDMACTraining(FormRecognizerTest):
         assert document_model_from_dict.model_id == document_model.model_id
         self.assertModelTransformCorrect(document_model_from_dict, raw_model)
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_build_model_azure_blob_path_filter(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
         with pytest.raises(HttpResponseError) as e:
-            poller = client.begin_build_model(formrecognizer_storage_container_sas_url,  prefix="subfolder")
+            poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template", prefix="subfolder")
             model = poller.result()
 
     @pytest.mark.live_test_only
@@ -216,19 +226,20 @@ class TestDMACTraining(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     def test_build_model_continuation_token(self, client, formrecognizer_storage_container_sas_url):
 
-        initial_poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
+        initial_poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
         cont_token = initial_poller.continuation_token()
-        poller = client.begin_build_model(None, continuation_token=cont_token)
+        poller = client.begin_build_model(None, "template", continuation_token=cont_token)
         result = poller.result()
         assert result
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_build_model_poller_metadata(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
+        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
         assert poller.operation_id
         assert poller.percent_completed is not None
         poller.result()

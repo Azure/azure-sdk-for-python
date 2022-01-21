@@ -314,11 +314,13 @@ def document_table(bounding_region, document_span, document_table_cell):
 def doc_type_info():
     model = _models.DocTypeInfo(
             description="my description",
+            build_mode="neural",
             field_confidence={"CustomerName": 95},
             field_schema={"prebuilt-invoice": {"CustomerName": {"type": "string"}}}
     )
-    model_repr = "DocTypeInfo(description={}, field_schema={{'prebuilt-invoice': {}}}, field_confidence={{'CustomerName': {}}})".format(
+    model_repr = "DocTypeInfo(description={}, build_mode={}, field_schema={{'prebuilt-invoice': {}}}, field_confidence={{'CustomerName': {}}})".format(
                 "my description",
+                "neural",
                 {"CustomerName": {"type": "string"}},
                 95
             )
