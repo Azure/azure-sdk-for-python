@@ -11,14 +11,16 @@ from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.keyvault.secrets.aio import SecretClient
 from dateutil import parser as date_parse
+from devtools_testutils import AzureRecordedTestCase
 
 from _shared.test_case_async import KeyVaultTestCase
-from _test_case import client_setup, get_decorator, SecretsTestCaseClientPrepaper
+from _test_case import client_setup, get_decorator
+from _async_test_case import AsyncSecretsTestCaseClientPrepaper
 
 from devtools_testutils.aio import recorded_by_proxy_async
 import pytest
 
-SecretsPreparer = functools.partial(SecretsTestCaseClientPrepaper, is_async=True)
+SecretsPreparer = functools.partial(AsyncSecretsTestCaseClientPrepaper, is_async=True)
 all_api_versions = get_decorator()
 #logging_enabled = get_decorator(is_async=True, logging_enable=True)
 #logging_disabled = get_decorator(is_async=True, logging_enable=False)
@@ -64,7 +66,7 @@ class TestKeyVaultSecret(KeyVaultTestCase):
                 del expected[secret.name]
         assert len(expected) == 0
 
-    @pytest.mark.asyncio
+    @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version", all_api_versions, ids=all_api_versions)
     @SecretsPreparer()
     @recorded_by_proxy_async
@@ -72,61 +74,62 @@ class TestKeyVaultSecret(KeyVaultTestCase):
         secret_name = self.get_resource_name("crud-secret")
         secret_value = "crud_secret_value"
 
-        # create secret
-        created = await client.set_secret(secret_name, secret_value)
-        self._validate_secret_bundle(created, client.vault_url, secret_name, secret_value)
+        async with client:
+            # create secret
+            created = await client.set_secret(secret_name, secret_value)
+            self._validate_secret_bundle(created, client.vault_url, secret_name, secret_value)
 
-        # set secret with optional arguments
-        not_before = date_parse.parse("2015-02-02T08:00:00.000Z")
-        enabled = True
-        tags = {"foo": "created tag"}
-        created = await client.set_secret(secret_name, secret_value, enabled=enabled, not_before=not_before, tags=tags)
-        self._validate_secret_bundle(created, client.vault_url, secret_name, secret_value)
-        assert enabled == created.properties.enabled
-        assert not_before == created.properties.not_before
-        assert tags == created.properties.tags
+            # set secret with optional arguments
+            not_before = date_parse.parse("2015-02-02T08:00:00.000Z")
+            enabled = True
+            tags = {"foo": "created tag"}
+            created = await client.set_secret(secret_name, secret_value, enabled=enabled, not_before=not_before, tags=tags)
+            self._validate_secret_bundle(created, client.vault_url, secret_name, secret_value)
+            assert enabled == created.properties.enabled
+            assert not_before == created.properties.not_before
+            assert tags == created.properties.tags
 
-        # get secret without version
-        retrieved_secret = await client.get_secret(created.name, "")
-        assert created.id == retrieved_secret.id
-        self._assert_secret_attributes_equal(created.properties, retrieved_secret.properties)
+            # get secret without version
+            retrieved_secret = await client.get_secret(created.name, "")
+            assert created.id == retrieved_secret.id
+            self._assert_secret_attributes_equal(created.properties, retrieved_secret.properties)
 
-        # get secret with version
-        secret_with_version = await client.get_secret(created.name, created.properties.version)
-        assert created.id == retrieved_secret.id
-        self._assert_secret_attributes_equal(created.properties, secret_with_version.properties)
+            # get secret with version
+            secret_with_version = await client.get_secret(created.name, created.properties.version)
+            assert created.id == retrieved_secret.id
+            self._assert_secret_attributes_equal(created.properties, secret_with_version.properties)
 
-        async def _update_secret(secret):
-            content_type = "text/plain"
-            expires = date_parse.parse("2050-02-02T08:00:00.000Z")
-            tags = {"foo": "updated tag"}
-            enabled = not secret.properties.enabled
-            updated_secret = await client.update_secret_properties(
-                secret.name,
-                version=secret.properties.version,
-                content_type=content_type,
-                expires_on=expires,
-                tags=tags,
-                enabled=enabled,
-            )
-            assert tags == updated_secret.tags
-            assert secret.id == updated_secret.id
-            assert content_type == updated_secret.content_type
-            assert expires == updated_secret.expires_on
-            assert secret.properties.enabled != updated_secret.enabled
-            assert secret.properties.updated_on != updated_secret.updated_on
-            return updated_secret
+            async def _update_secret(secret):
+                content_type = "text/plain"
+                expires = date_parse.parse("2050-02-02T08:00:00.000Z")
+                tags = {"foo": "updated tag"}
+                enabled = not secret.properties.enabled
+                updated_secret = await client.update_secret_properties(
+                    secret.name,
+                    version=secret.properties.version,
+                    content_type=content_type,
+                    expires_on=expires,
+                    tags=tags,
+                    enabled=enabled,
+                )
+                assert tags == updated_secret.tags
+                assert secret.id == updated_secret.id
+                assert content_type == updated_secret.content_type
+                assert expires == updated_secret.expires_on
+                assert secret.properties.enabled != updated_secret.enabled
+                assert secret.properties.updated_on != updated_secret.updated_on
+                return updated_secret
 
-        # update secret with version
-        if self.is_live:
-            # wait a second to ensure the secret's update time won't equal its creation time
-            await asyncio.sleep(1)
+            # update secret with version
+            if self.is_live:
+                # wait a second to ensure the secret's update time won't equal its creation time
+                await asyncio.sleep(1)
 
-        updated = await _update_secret(created)
+            updated = await _update_secret(created)
 
-        # delete secret
-        deleted = await client.delete_secret(updated.name)
-        assert deleted is not None
+            # delete secret
+            deleted = await client.delete_secret(updated.name)
+            assert deleted is not None
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
