@@ -35,11 +35,7 @@ class MockHandler(logging.Handler):
         self.messages.append(record)
 
 
-<<<<<<< HEAD
 class TestKeyVaultSecret(KeyVaultTestCase):
-=======
-class TestKeyVaultSecret(SecretsTestCase, KeyVaultTestCase):
->>>>>>> 32f1744c70 (Change class name for pytest)
     def _assert_secret_attributes_equal(self, s1, s2):
         assert s1.name == s2.name
         assert s1.vault_url == s2.vault_url
