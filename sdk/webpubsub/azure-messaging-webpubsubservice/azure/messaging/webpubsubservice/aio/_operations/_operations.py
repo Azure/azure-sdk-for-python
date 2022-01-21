@@ -20,7 +20,7 @@ T = TypeVar('T')
 JSONType = Any
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class WebPubSubServiceClientOperationsMixin:
+class WebPubSubServiceClientOperationsMixinGenerated:
 
     @distributed_trace_async
     async def get_client_access_token(
@@ -71,7 +71,6 @@ class WebPubSubServiceClientOperationsMixin:
             user_id=user_id,
             roles=roles,
             minutes_to_expire=minutes_to_expire,
-            template_url=self.get_client_access_token.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -135,7 +134,6 @@ class WebPubSubServiceClientOperationsMixin:
             api_version=api_version,
             excluded=excluded,
             reason=reason,
-            template_url=self.close_all_connections.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -190,12 +188,12 @@ class WebPubSubServiceClientOperationsMixin:
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = None
-        content = None
+        _json = None
+        _content = None
         if content_type.split(";")[0] in ['application/json']:
-            json = message
+            _json = message
         elif content_type.split(";")[0] in ['application/octet-stream', 'text/plain']:
-            content = message
+            _content = message
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
@@ -206,10 +204,9 @@ class WebPubSubServiceClientOperationsMixin:
             hub=self._config.hub,
             api_version=api_version,
             content_type=content_type,
-            json=json,
-            content=content,
+            json=_json,
+            content=_content,
             excluded=excluded,
-            template_url=self.send_to_all.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -261,7 +258,6 @@ class WebPubSubServiceClientOperationsMixin:
             hub=self._config.hub,
             connection_id=connection_id,
             api_version=api_version,
-            template_url=self.connection_exists.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -319,7 +315,6 @@ class WebPubSubServiceClientOperationsMixin:
             connection_id=connection_id,
             api_version=api_version,
             reason=reason,
-            template_url=self.close_connection.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -373,12 +368,12 @@ class WebPubSubServiceClientOperationsMixin:
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = None
-        content = None
+        _json = None
+        _content = None
         if content_type.split(";")[0] in ['application/json']:
-            json = message
+            _json = message
         elif content_type.split(";")[0] in ['application/octet-stream', 'text/plain']:
-            content = message
+            _content = message
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
@@ -390,9 +385,8 @@ class WebPubSubServiceClientOperationsMixin:
             connection_id=connection_id,
             api_version=api_version,
             content_type=content_type,
-            json=json,
-            content=content,
-            template_url=self.send_to_connection.metadata['url'],
+            json=_json,
+            content=_content,
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -444,7 +438,6 @@ class WebPubSubServiceClientOperationsMixin:
             hub=self._config.hub,
             group=group,
             api_version=api_version,
-            template_url=self.group_exists.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -506,7 +499,6 @@ class WebPubSubServiceClientOperationsMixin:
             api_version=api_version,
             excluded=excluded,
             reason=reason,
-            template_url=self.close_group_connections.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -564,12 +556,12 @@ class WebPubSubServiceClientOperationsMixin:
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = None
-        content = None
+        _json = None
+        _content = None
         if content_type.split(";")[0] in ['application/json']:
-            json = message
+            _json = message
         elif content_type.split(";")[0] in ['application/octet-stream', 'text/plain']:
-            content = message
+            _content = message
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
@@ -581,10 +573,9 @@ class WebPubSubServiceClientOperationsMixin:
             group=group,
             api_version=api_version,
             content_type=content_type,
-            json=json,
-            content=content,
+            json=_json,
+            content=_content,
             excluded=excluded,
-            template_url=self.send_to_group.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -640,7 +631,6 @@ class WebPubSubServiceClientOperationsMixin:
             group=group,
             connection_id=connection_id,
             api_version=api_version,
-            template_url=self.add_connection_to_group.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -696,7 +686,6 @@ class WebPubSubServiceClientOperationsMixin:
             group=group,
             connection_id=connection_id,
             api_version=api_version,
-            template_url=self.remove_connection_from_group.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -748,7 +737,6 @@ class WebPubSubServiceClientOperationsMixin:
             hub=self._config.hub,
             user_id=user_id,
             api_version=api_version,
-            template_url=self.user_exists.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -810,7 +798,6 @@ class WebPubSubServiceClientOperationsMixin:
             api_version=api_version,
             excluded=excluded,
             reason=reason,
-            template_url=self.close_user_connections.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -864,12 +851,12 @@ class WebPubSubServiceClientOperationsMixin:
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = None
-        content = None
+        _json = None
+        _content = None
         if content_type.split(";")[0] in ['application/json']:
-            json = message
+            _json = message
         elif content_type.split(";")[0] in ['application/octet-stream', 'text/plain']:
-            content = message
+            _content = message
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
@@ -881,9 +868,8 @@ class WebPubSubServiceClientOperationsMixin:
             user_id=user_id,
             api_version=api_version,
             content_type=content_type,
-            json=json,
-            content=content,
-            template_url=self.send_to_user.metadata['url'],
+            json=_json,
+            content=_content,
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -939,7 +925,6 @@ class WebPubSubServiceClientOperationsMixin:
             group=group,
             user_id=user_id,
             api_version=api_version,
-            template_url=self.add_user_to_group.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -995,7 +980,6 @@ class WebPubSubServiceClientOperationsMixin:
             group=group,
             user_id=user_id,
             api_version=api_version,
-            template_url=self.remove_user_from_group.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1047,7 +1031,6 @@ class WebPubSubServiceClientOperationsMixin:
             hub=self._config.hub,
             user_id=user_id,
             api_version=api_version,
-            template_url=self.remove_user_from_all_groups.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1110,7 +1093,6 @@ class WebPubSubServiceClientOperationsMixin:
             connection_id=connection_id,
             api_version=api_version,
             target_name=target_name,
-            template_url=self.grant_permission.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1173,7 +1155,6 @@ class WebPubSubServiceClientOperationsMixin:
             connection_id=connection_id,
             api_version=api_version,
             target_name=target_name,
-            template_url=self.revoke_permission.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1236,7 +1217,6 @@ class WebPubSubServiceClientOperationsMixin:
             connection_id=connection_id,
             api_version=api_version,
             target_name=target_name,
-            template_url=self.has_permission.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),

@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
     from azure.core.credentials_async import AsyncTokenCredential
 
-class WebPubSubServiceClient(WebPubSubServiceClientOperationsMixin):
+class WebPubSubServiceClientGenerated(WebPubSubServiceClientOperationsMixin):
     """WebPubSubServiceClient.
 
     :param hub: Target hub name, which should start with alphabetic characters and only contain

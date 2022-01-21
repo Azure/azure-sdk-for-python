@@ -7,9 +7,10 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core import PipelineClient
+from azure.core.rest import HttpRequest, HttpResponse
 from msrest import Deserializer, Serializer
 
 from ._configuration import WebPubSubServiceClientConfiguration
@@ -17,12 +18,11 @@ from ._operations import WebPubSubServiceClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Dict, Optional
+    from typing import Dict
 
     from azure.core.credentials import TokenCredential
-    from azure.core.rest import HttpRequest, HttpResponse
 
-class WebPubSubServiceClient(WebPubSubServiceClientOperationsMixin):
+class WebPubSubServiceClientGenerated(WebPubSubServiceClientOperationsMixin):
     """WebPubSubServiceClient.
 
     :param hub: Target hub name, which should start with alphabetic characters and only contain
@@ -39,12 +39,11 @@ class WebPubSubServiceClient(WebPubSubServiceClientOperationsMixin):
 
     def __init__(
         self,
-        hub,  # type: str
-        endpoint,  # type: str
-        credential,  # type: "TokenCredential"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        hub: str,
+        endpoint: str,
+        credential: "TokenCredential",
+        **kwargs: Any
+    ) -> None:
         _endpoint = '{Endpoint}'
         self._config = WebPubSubServiceClientConfiguration(hub=hub, endpoint=endpoint, credential=credential, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
@@ -57,9 +56,8 @@ class WebPubSubServiceClient(WebPubSubServiceClientOperationsMixin):
     def send_request(
         self,
         request,  # type: HttpRequest
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> HttpResponse
+        **kwargs: Any
+    ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest

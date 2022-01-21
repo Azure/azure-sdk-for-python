@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, IO, List, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -17,31 +17,26 @@ from azure.core.tracing.decorator import distributed_trace
 from msrest import Serializer
 
 from .._vendor import _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, IO, List, Optional, TypeVar, Union
-    T = TypeVar('T')
-    JSONType = Any
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_get_client_access_token_request(
-    hub,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    hub: str,
+    *,
+    user_id: Optional[str] = None,
+    roles: Optional[List[str]] = None,
+    minutes_to_expire: Optional[int] = 60,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-    user_id = kwargs.pop('user_id', None)  # type: Optional[str]
-    roles = kwargs.pop('roles', None)  # type: Optional[List[str]]
-    minutes_to_expire = kwargs.pop('minutes_to_expire', 60)  # type: Optional[int]
 
     accept = "application/json, text/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/api/hubs/{hub}/:generateToken')
+    url = '/api/hubs/{hub}/:generateToken'
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
     }
@@ -72,17 +67,17 @@ def build_get_client_access_token_request(
 
 
 def build_close_all_connections_request(
-    hub,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    hub: str,
+    *,
+    excluded: Optional[List[str]] = None,
+    reason: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-    excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
-    reason = kwargs.pop('reason', None)  # type: Optional[str]
 
     accept = "application/json, text/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/api/hubs/{hub}/:closeConnections')
+    url = '/api/hubs/{hub}/:closeConnections'
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
     }
@@ -111,17 +106,19 @@ def build_close_all_connections_request(
 
 
 def build_send_to_all_request(
-    hub,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    hub: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    excluded: Optional[List[str]] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-    excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
 
     accept = "application/json, text/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/api/hubs/{hub}/:send')
+    url = '/api/hubs/{hub}/:send'
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
     }
@@ -145,21 +142,22 @@ def build_send_to_all_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_connection_exists_request(
-    hub,  # type: str
-    connection_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    hub: str,
+    connection_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
     accept = "application/json, text/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/api/hubs/{hub}/connections/{connectionId}')
+    url = '/api/hubs/{hub}/connections/{connectionId}'
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
         "connectionId": _SERIALIZER.url("connection_id", connection_id, 'str', min_length=1),
@@ -185,17 +183,17 @@ def build_connection_exists_request(
 
 
 def build_close_connection_request(
-    hub,  # type: str
-    connection_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    hub: str,
+    connection_id: str,
+    *,
+    reason: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-    reason = kwargs.pop('reason', None)  # type: Optional[str]
 
     accept = "application/json, text/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/api/hubs/{hub}/connections/{connectionId}')
+    url = '/api/hubs/{hub}/connections/{connectionId}'
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
         "connectionId": _SERIALIZER.url("connection_id", connection_id, 'str', min_length=1),
@@ -223,17 +221,19 @@ def build_close_connection_request(
 
 
 def build_send_to_connection_request(
-    hub,  # type: str
-    connection_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    hub: str,
+    connection_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json, text/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/api/hubs/{hub}/connections/{connectionId}/:send')
+    url = '/api/hubs/{hub}/connections/{connectionId}/:send'
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
         "connectionId": _SERIALIZER.url("connection_id", connection_id, 'str', min_length=1),
@@ -256,21 +256,22 @@ def build_send_to_connection_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_group_exists_request(
-    hub,  # type: str
-    group,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    hub: str,
+    group: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
     accept = "application/json, text/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/api/hubs/{hub}/groups/{group}')
+    url = '/api/hubs/{hub}/groups/{group}'
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
         "group": _SERIALIZER.url("group", group, 'str', max_length=1024, min_length=1),
@@ -296,18 +297,18 @@ def build_group_exists_request(
 
 
 def build_close_group_connections_request(
-    hub,  # type: str
-    group,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    hub: str,
+    group: str,
+    *,
+    excluded: Optional[List[str]] = None,
+    reason: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-    excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
-    reason = kwargs.pop('reason', None)  # type: Optional[str]
 
     accept = "application/json, text/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/api/hubs/{hub}/groups/{group}/:closeConnections')
+    url = '/api/hubs/{hub}/groups/{group}/:closeConnections'
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
         "group": _SERIALIZER.url("group", group, 'str', max_length=1024, min_length=1),
@@ -337,18 +338,20 @@ def build_close_group_connections_request(
 
 
 def build_send_to_group_request(
-    hub,  # type: str
-    group,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    hub: str,
+    group: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    excluded: Optional[List[str]] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-    excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
 
     accept = "application/json, text/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/api/hubs/{hub}/groups/{group}/:send')
+    url = '/api/hubs/{hub}/groups/{group}/:send'
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
         "group": _SERIALIZER.url("group", group, 'str', max_length=1024, min_length=1),
@@ -373,22 +376,23 @@ def build_send_to_group_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_add_connection_to_group_request(
-    hub,  # type: str
-    group,  # type: str
-    connection_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    hub: str,
+    group: str,
+    connection_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
     accept = "application/json, text/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/api/hubs/{hub}/groups/{group}/connections/{connectionId}')
+    url = '/api/hubs/{hub}/groups/{group}/connections/{connectionId}'
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
         "group": _SERIALIZER.url("group", group, 'str', max_length=1024, min_length=1),
@@ -415,17 +419,16 @@ def build_add_connection_to_group_request(
 
 
 def build_remove_connection_from_group_request(
-    hub,  # type: str
-    group,  # type: str
-    connection_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    hub: str,
+    group: str,
+    connection_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
     accept = "application/json, text/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/api/hubs/{hub}/groups/{group}/connections/{connectionId}')
+    url = '/api/hubs/{hub}/groups/{group}/connections/{connectionId}'
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
         "group": _SERIALIZER.url("group", group, 'str', max_length=1024, min_length=1),
@@ -452,16 +455,15 @@ def build_remove_connection_from_group_request(
 
 
 def build_user_exists_request(
-    hub,  # type: str
-    user_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    hub: str,
+    user_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
     accept = "application/json, text/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}')
+    url = '/api/hubs/{hub}/users/{userId}'
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
         "userId": _SERIALIZER.url("user_id", user_id, 'str', min_length=1),
@@ -487,18 +489,18 @@ def build_user_exists_request(
 
 
 def build_close_user_connections_request(
-    hub,  # type: str
-    user_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    hub: str,
+    user_id: str,
+    *,
+    excluded: Optional[List[str]] = None,
+    reason: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-    excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
-    reason = kwargs.pop('reason', None)  # type: Optional[str]
 
     accept = "application/json, text/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}/:closeConnections')
+    url = '/api/hubs/{hub}/users/{userId}/:closeConnections'
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
         "userId": _SERIALIZER.url("user_id", user_id, 'str', min_length=1),
@@ -528,17 +530,19 @@ def build_close_user_connections_request(
 
 
 def build_send_to_user_request(
-    hub,  # type: str
-    user_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    hub: str,
+    user_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json, text/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}/:send')
+    url = '/api/hubs/{hub}/users/{userId}/:send'
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
         "userId": _SERIALIZER.url("user_id", user_id, 'str', min_length=1),
@@ -561,22 +565,23 @@ def build_send_to_user_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_add_user_to_group_request(
-    hub,  # type: str
-    group,  # type: str
-    user_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    hub: str,
+    group: str,
+    user_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
     accept = "application/json, text/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}/groups/{group}')
+    url = '/api/hubs/{hub}/users/{userId}/groups/{group}'
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
         "group": _SERIALIZER.url("group", group, 'str', max_length=1024, min_length=1),
@@ -603,17 +608,16 @@ def build_add_user_to_group_request(
 
 
 def build_remove_user_from_group_request(
-    hub,  # type: str
-    group,  # type: str
-    user_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    hub: str,
+    group: str,
+    user_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
     accept = "application/json, text/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}/groups/{group}')
+    url = '/api/hubs/{hub}/users/{userId}/groups/{group}'
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
         "group": _SERIALIZER.url("group", group, 'str', max_length=1024, min_length=1),
@@ -640,16 +644,15 @@ def build_remove_user_from_group_request(
 
 
 def build_remove_user_from_all_groups_request(
-    hub,  # type: str
-    user_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    hub: str,
+    user_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
     accept = "application/json, text/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/api/hubs/{hub}/users/{userId}/groups')
+    url = '/api/hubs/{hub}/users/{userId}/groups'
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
         "userId": _SERIALIZER.url("user_id", user_id, 'str', min_length=1),
@@ -675,18 +678,18 @@ def build_remove_user_from_all_groups_request(
 
 
 def build_grant_permission_request(
-    hub,  # type: str
-    permission,  # type: str
-    connection_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    hub: str,
+    permission: str,
+    connection_id: str,
+    *,
+    target_name: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-    target_name = kwargs.pop('target_name', None)  # type: Optional[str]
 
     accept = "application/json, text/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}')
+    url = '/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}'
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
         "permission": _SERIALIZER.url("permission", permission, 'str'),
@@ -715,18 +718,18 @@ def build_grant_permission_request(
 
 
 def build_revoke_permission_request(
-    hub,  # type: str
-    permission,  # type: str
-    connection_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    hub: str,
+    permission: str,
+    connection_id: str,
+    *,
+    target_name: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-    target_name = kwargs.pop('target_name', None)  # type: Optional[str]
 
     accept = "application/json, text/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}')
+    url = '/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}'
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
         "permission": _SERIALIZER.url("permission", permission, 'str'),
@@ -755,18 +758,18 @@ def build_revoke_permission_request(
 
 
 def build_has_permission_request(
-    hub,  # type: str
-    permission,  # type: str
-    connection_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    hub: str,
+    permission: str,
+    connection_id: str,
+    *,
+    target_name: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-    target_name = kwargs.pop('target_name', None)  # type: Optional[str]
 
     accept = "application/json, text/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}')
+    url = '/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}'
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, 'str', pattern=r'^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$'),
         "permission": _SERIALIZER.url("permission", permission, 'str'),
@@ -793,15 +796,17 @@ def build_has_permission_request(
         **kwargs
     )
 
-# fmt: on
-class WebPubSubServiceClientOperationsMixin(object):
+class WebPubSubServiceClientOperationsMixinGenerated(object):
 
     @distributed_trace
     def get_client_access_token(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> JSONType
+        *,
+        user_id: Optional[str] = None,
+        roles: Optional[List[str]] = None,
+        minutes_to_expire: Optional[int] = 60,
+        **kwargs: Any
+    ) -> JSONType:
         """Generate token for the client to connect Azure Web PubSub service.
 
         Generate token for the client to connect Azure Web PubSub service.
@@ -834,9 +839,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-        user_id = kwargs.pop('user_id', None)  # type: Optional[str]
-        roles = kwargs.pop('roles', None)  # type: Optional[List[str]]
-        minutes_to_expire = kwargs.pop('minutes_to_expire', 60)  # type: Optional[int]
 
 
         request = build_get_client_access_token_request(
@@ -845,7 +847,6 @@ class WebPubSubServiceClientOperationsMixin(object):
             user_id=user_id,
             roles=roles,
             minutes_to_expire=minutes_to_expire,
-            template_url=self.get_client_access_token.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -875,9 +876,11 @@ class WebPubSubServiceClientOperationsMixin(object):
     @distributed_trace
     def close_all_connections(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        *,
+        excluded: Optional[List[str]] = None,
+        reason: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """Close the connections in the hub.
 
         Close the connections in the hub.
@@ -900,8 +903,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-        excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
-        reason = kwargs.pop('reason', None)  # type: Optional[str]
 
 
         request = build_close_all_connections_request(
@@ -909,7 +910,6 @@ class WebPubSubServiceClientOperationsMixin(object):
             api_version=api_version,
             excluded=excluded,
             reason=reason,
-            template_url=self.close_all_connections.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -932,10 +932,11 @@ class WebPubSubServiceClientOperationsMixin(object):
     @distributed_trace
     def send_to_all(
         self,
-        message,  # type: Union[IO, str, JSONType]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        message: Union[IO, str, JSONType],
+        *,
+        excluded: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
         """Broadcast content inside request body to all the connected client connections.
 
         Broadcast content inside request body to all the connected client connections.
@@ -962,14 +963,13 @@ class WebPubSubServiceClientOperationsMixin(object):
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
 
-        json = None
-        content = None
+        _json = None
+        _content = None
         if content_type.split(";")[0] in ['application/json']:
-            json = message
+            _json = message
         elif content_type.split(";")[0] in ['application/octet-stream', 'text/plain']:
-            content = message
+            _content = message
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
@@ -980,10 +980,9 @@ class WebPubSubServiceClientOperationsMixin(object):
             hub=self._config.hub,
             api_version=api_version,
             content_type=content_type,
-            json=json,
-            content=content,
+            json=_json,
+            content=_content,
             excluded=excluded,
-            template_url=self.send_to_all.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1006,10 +1005,9 @@ class WebPubSubServiceClientOperationsMixin(object):
     @distributed_trace
     def connection_exists(
         self,
-        connection_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> bool
+        connection_id: str,
+        **kwargs: Any
+    ) -> bool:
         """Check if the connection with the given connectionId exists.
 
         Check if the connection with the given connectionId exists.
@@ -1036,7 +1034,6 @@ class WebPubSubServiceClientOperationsMixin(object):
             hub=self._config.hub,
             connection_id=connection_id,
             api_version=api_version,
-            template_url=self.connection_exists.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1060,10 +1057,11 @@ class WebPubSubServiceClientOperationsMixin(object):
     @distributed_trace
     def close_connection(
         self,
-        connection_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        connection_id: str,
+        *,
+        reason: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """Close the client connection.
 
         Close the client connection.
@@ -1086,7 +1084,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-        reason = kwargs.pop('reason', None)  # type: Optional[str]
 
 
         request = build_close_connection_request(
@@ -1094,7 +1091,6 @@ class WebPubSubServiceClientOperationsMixin(object):
             connection_id=connection_id,
             api_version=api_version,
             reason=reason,
-            template_url=self.close_connection.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1117,11 +1113,10 @@ class WebPubSubServiceClientOperationsMixin(object):
     @distributed_trace
     def send_to_connection(
         self,
-        connection_id,  # type: str
-        message,  # type: Union[IO, str, JSONType]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        connection_id: str,
+        message: Union[IO, str, JSONType],
+        **kwargs: Any
+    ) -> None:
         """Send content inside request body to the specific connection.
 
         Send content inside request body to the specific connection.
@@ -1149,12 +1144,12 @@ class WebPubSubServiceClientOperationsMixin(object):
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = None
-        content = None
+        _json = None
+        _content = None
         if content_type.split(";")[0] in ['application/json']:
-            json = message
+            _json = message
         elif content_type.split(";")[0] in ['application/octet-stream', 'text/plain']:
-            content = message
+            _content = message
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
@@ -1166,9 +1161,8 @@ class WebPubSubServiceClientOperationsMixin(object):
             connection_id=connection_id,
             api_version=api_version,
             content_type=content_type,
-            json=json,
-            content=content,
-            template_url=self.send_to_connection.metadata['url'],
+            json=_json,
+            content=_content,
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1191,10 +1185,9 @@ class WebPubSubServiceClientOperationsMixin(object):
     @distributed_trace
     def group_exists(
         self,
-        group,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> bool
+        group: str,
+        **kwargs: Any
+    ) -> bool:
         """Check if there are any client connections inside the given group.
 
         Check if there are any client connections inside the given group.
@@ -1221,7 +1214,6 @@ class WebPubSubServiceClientOperationsMixin(object):
             hub=self._config.hub,
             group=group,
             api_version=api_version,
-            template_url=self.group_exists.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1245,10 +1237,12 @@ class WebPubSubServiceClientOperationsMixin(object):
     @distributed_trace
     def close_group_connections(
         self,
-        group,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        group: str,
+        *,
+        excluded: Optional[List[str]] = None,
+        reason: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """Close connections in the specific group.
 
         Close connections in the specific group.
@@ -1273,8 +1267,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-        excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
-        reason = kwargs.pop('reason', None)  # type: Optional[str]
 
 
         request = build_close_group_connections_request(
@@ -1283,7 +1275,6 @@ class WebPubSubServiceClientOperationsMixin(object):
             api_version=api_version,
             excluded=excluded,
             reason=reason,
-            template_url=self.close_group_connections.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1306,11 +1297,12 @@ class WebPubSubServiceClientOperationsMixin(object):
     @distributed_trace
     def send_to_group(
         self,
-        group,  # type: str
-        message,  # type: Union[IO, str, JSONType]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        group: str,
+        message: Union[IO, str, JSONType],
+        *,
+        excluded: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
         """Send content inside request body to a group of connections.
 
         Send content inside request body to a group of connections.
@@ -1339,14 +1331,13 @@ class WebPubSubServiceClientOperationsMixin(object):
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
 
-        json = None
-        content = None
+        _json = None
+        _content = None
         if content_type.split(";")[0] in ['application/json']:
-            json = message
+            _json = message
         elif content_type.split(";")[0] in ['application/octet-stream', 'text/plain']:
-            content = message
+            _content = message
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
@@ -1358,10 +1349,9 @@ class WebPubSubServiceClientOperationsMixin(object):
             group=group,
             api_version=api_version,
             content_type=content_type,
-            json=json,
-            content=content,
+            json=_json,
+            content=_content,
             excluded=excluded,
-            template_url=self.send_to_group.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1384,11 +1374,10 @@ class WebPubSubServiceClientOperationsMixin(object):
     @distributed_trace
     def add_connection_to_group(
         self,
-        group,  # type: str
-        connection_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        group: str,
+        connection_id: str,
+        **kwargs: Any
+    ) -> None:
         """Add a connection to the target group.
 
         Add a connection to the target group.
@@ -1418,7 +1407,6 @@ class WebPubSubServiceClientOperationsMixin(object):
             group=group,
             connection_id=connection_id,
             api_version=api_version,
-            template_url=self.add_connection_to_group.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1441,11 +1429,10 @@ class WebPubSubServiceClientOperationsMixin(object):
     @distributed_trace
     def remove_connection_from_group(
         self,
-        group,  # type: str
-        connection_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        group: str,
+        connection_id: str,
+        **kwargs: Any
+    ) -> None:
         """Remove a connection from the target group.
 
         Remove a connection from the target group.
@@ -1475,7 +1462,6 @@ class WebPubSubServiceClientOperationsMixin(object):
             group=group,
             connection_id=connection_id,
             api_version=api_version,
-            template_url=self.remove_connection_from_group.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1498,10 +1484,9 @@ class WebPubSubServiceClientOperationsMixin(object):
     @distributed_trace
     def user_exists(
         self,
-        user_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> bool
+        user_id: str,
+        **kwargs: Any
+    ) -> bool:
         """Check if there are any client connections connected for the given user.
 
         Check if there are any client connections connected for the given user.
@@ -1528,7 +1513,6 @@ class WebPubSubServiceClientOperationsMixin(object):
             hub=self._config.hub,
             user_id=user_id,
             api_version=api_version,
-            template_url=self.user_exists.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1552,10 +1536,12 @@ class WebPubSubServiceClientOperationsMixin(object):
     @distributed_trace
     def close_user_connections(
         self,
-        user_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        user_id: str,
+        *,
+        excluded: Optional[List[str]] = None,
+        reason: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """Close connections for the specific user.
 
         Close connections for the specific user.
@@ -1580,8 +1566,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-        excluded = kwargs.pop('excluded', None)  # type: Optional[List[str]]
-        reason = kwargs.pop('reason', None)  # type: Optional[str]
 
 
         request = build_close_user_connections_request(
@@ -1590,7 +1574,6 @@ class WebPubSubServiceClientOperationsMixin(object):
             api_version=api_version,
             excluded=excluded,
             reason=reason,
-            template_url=self.close_user_connections.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1613,11 +1596,10 @@ class WebPubSubServiceClientOperationsMixin(object):
     @distributed_trace
     def send_to_user(
         self,
-        user_id,  # type: str
-        message,  # type: Union[IO, str, JSONType]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        user_id: str,
+        message: Union[IO, str, JSONType],
+        **kwargs: Any
+    ) -> None:
         """Send content inside request body to the specific user.
 
         Send content inside request body to the specific user.
@@ -1645,12 +1627,12 @@ class WebPubSubServiceClientOperationsMixin(object):
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = None
-        content = None
+        _json = None
+        _content = None
         if content_type.split(";")[0] in ['application/json']:
-            json = message
+            _json = message
         elif content_type.split(";")[0] in ['application/octet-stream', 'text/plain']:
-            content = message
+            _content = message
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
@@ -1662,9 +1644,8 @@ class WebPubSubServiceClientOperationsMixin(object):
             user_id=user_id,
             api_version=api_version,
             content_type=content_type,
-            json=json,
-            content=content,
-            template_url=self.send_to_user.metadata['url'],
+            json=_json,
+            content=_content,
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1687,11 +1668,10 @@ class WebPubSubServiceClientOperationsMixin(object):
     @distributed_trace
     def add_user_to_group(
         self,
-        group,  # type: str
-        user_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        group: str,
+        user_id: str,
+        **kwargs: Any
+    ) -> None:
         """Add a user to the target group.
 
         Add a user to the target group.
@@ -1721,7 +1701,6 @@ class WebPubSubServiceClientOperationsMixin(object):
             group=group,
             user_id=user_id,
             api_version=api_version,
-            template_url=self.add_user_to_group.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1744,11 +1723,10 @@ class WebPubSubServiceClientOperationsMixin(object):
     @distributed_trace
     def remove_user_from_group(
         self,
-        group,  # type: str
-        user_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        group: str,
+        user_id: str,
+        **kwargs: Any
+    ) -> None:
         """Remove a user from the target group.
 
         Remove a user from the target group.
@@ -1778,7 +1756,6 @@ class WebPubSubServiceClientOperationsMixin(object):
             group=group,
             user_id=user_id,
             api_version=api_version,
-            template_url=self.remove_user_from_group.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1801,10 +1778,9 @@ class WebPubSubServiceClientOperationsMixin(object):
     @distributed_trace
     def remove_user_from_all_groups(
         self,
-        user_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        user_id: str,
+        **kwargs: Any
+    ) -> None:
         """Remove a user from all groups.
 
         Remove a user from all groups.
@@ -1831,7 +1807,6 @@ class WebPubSubServiceClientOperationsMixin(object):
             hub=self._config.hub,
             user_id=user_id,
             api_version=api_version,
-            template_url=self.remove_user_from_all_groups.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1854,11 +1829,12 @@ class WebPubSubServiceClientOperationsMixin(object):
     @distributed_trace
     def grant_permission(
         self,
-        permission,  # type: str
-        connection_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        permission: str,
+        connection_id: str,
+        *,
+        target_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """Grant permission to the connection.
 
         Grant permission to the connection.
@@ -1885,7 +1861,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-        target_name = kwargs.pop('target_name', None)  # type: Optional[str]
 
 
         request = build_grant_permission_request(
@@ -1894,7 +1869,6 @@ class WebPubSubServiceClientOperationsMixin(object):
             connection_id=connection_id,
             api_version=api_version,
             target_name=target_name,
-            template_url=self.grant_permission.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1917,11 +1891,12 @@ class WebPubSubServiceClientOperationsMixin(object):
     @distributed_trace
     def revoke_permission(
         self,
-        permission,  # type: str
-        connection_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        permission: str,
+        connection_id: str,
+        *,
+        target_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """Revoke permission for the connection.
 
         Revoke permission for the connection.
@@ -1948,7 +1923,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-        target_name = kwargs.pop('target_name', None)  # type: Optional[str]
 
 
         request = build_revoke_permission_request(
@@ -1957,7 +1931,6 @@ class WebPubSubServiceClientOperationsMixin(object):
             connection_id=connection_id,
             api_version=api_version,
             target_name=target_name,
-            template_url=self.revoke_permission.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
@@ -1980,11 +1953,12 @@ class WebPubSubServiceClientOperationsMixin(object):
     @distributed_trace
     def has_permission(
         self,
-        permission,  # type: str
-        connection_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> bool
+        permission: str,
+        connection_id: str,
+        *,
+        target_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> bool:
         """Check if a connection has permission to the specified action.
 
         Check if a connection has permission to the specified action.
@@ -2011,7 +1985,6 @@ class WebPubSubServiceClientOperationsMixin(object):
         error_map.update(kwargs.pop('error_map', {}))
 
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
-        target_name = kwargs.pop('target_name', None)  # type: Optional[str]
 
 
         request = build_has_permission_request(
@@ -2020,7 +1993,6 @@ class WebPubSubServiceClientOperationsMixin(object):
             connection_id=connection_id,
             api_version=api_version,
             target_name=target_name,
-            template_url=self.has_permission.metadata['url'],
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),

@@ -6,11 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._web_pub_sub_service_client import WebPubSubServiceClient
-__all__ = ['WebPubSubServiceClient']
+from ._web_pub_sub_service_client import WebPubSubServiceClientGenerated as WebPubSubServiceClient
 
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
+from ._patch import __all__ as _patch_all
+from ._patch import *
+__all__ = ['WebPubSubServiceClient']
+__all__.extend(_patch_all)
+
+# `._patch.py` is used for handwritten extensions to the generated code
+# Example: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md
+from ._patch import patch_sdk
+patch_sdk()
