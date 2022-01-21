@@ -9,7 +9,7 @@ from aiohttp import client
 from azure.keyvault.secrets import ApiVersion
 from azure.keyvault.secrets._shared import HttpChallengeCache
 from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
-from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
+from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, is_live
 import pytest
 
 
@@ -38,17 +38,7 @@ def client_setup(testcase_func):
 
 def get_decorator(**kwargs):
     """returns a test decorator for test parameterization"""
-    #params = [(api_version) for api_version in ApiVersion]
     return [(api_version) for api_version in ApiVersion]
-    #return functools.partial(pytest.mark.parametrize, "api", ApiVersion)
-    #params = [param(api_version=api_version, **kwargs) for api_version in ApiVersion]
-    #return functools.partial(parameterized.expand, params, name_func=suffixed_test_name)
-
-
-
-#def suffixed_test_name(testcase_func, param_num, param):
-#    return "{}_{}".format(testcase_func.__name__, parameterized.to_safe_name(param.kwargs.get("api_version")))
-
 
 class SecretsTestCaseClientPrepaper(AzureRecordedTestCase):
     def __init__(self, **kwargs) -> None:
@@ -68,16 +58,12 @@ class SecretsTestCaseClientPrepaper(AzureRecordedTestCase):
         #super(SecretsTestCaseClientPrepaper, self).tearDown()
 
     def create_client(self, vault_uri, **kwargs):
-        if self.is_async:
-            from azure.keyvault.secrets.aio import SecretClient
-            credential = self.get_credential(SecretClient, is_async=True)
-        else:
-            from azure.keyvault.secrets import SecretClient
-            credential = self.get_credential(SecretClient)
+        from azure.keyvault.secrets import SecretClient
+        credential = self.get_credential(SecretClient)
         return self.create_client_from_credential(
             SecretClient, credential=credential, vault_url=vault_uri, **kwargs
         )
 
     def _skip_if_not_configured(self, api_version, **kwargs):
-        if self.is_live and api_version != DEFAULT_VERSION:
+        if is_live() and api_version != DEFAULT_VERSION:
             pytest.skip("This test only uses the default API version for live tests")
