@@ -43,6 +43,8 @@ jobs:
           sudo npm install autorest
           echo 000000000000000000000
           echo | autorest --version
+          echo 111111111111111111111
+          echo | which autorest
 
           mkdir temp_folder
 
