@@ -109,6 +109,8 @@ jobs:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
     - template: /eng/common/pipelines/templates/steps/check-spelling.yml
+      parameters:
+        ContinueOnError: false
 
     - template: /eng/common/pipelines/templates/steps/verify-links.yml
       parameters:
