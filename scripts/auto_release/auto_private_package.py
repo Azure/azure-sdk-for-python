@@ -1,15 +1,7 @@
 import os
-import json
-import time
-import logging
 from glob import glob
 from subprocess import check_call, call
 from pathlib import Path
-from functools import wraps
-from typing import List, Any, Dict
-from packaging.version import Version
-from ghapi.all import GhApi
-from util import add_certificate
 
 
 def print_check(cmd: str):
@@ -23,6 +15,12 @@ def print_exec(cmd: str):
 def get_repo_root_folder() -> str:
     current_path = os.getcwd()
     return str(Path(current_path.split('azure-sdk-for-python')[0]) / 'azure-sdk-for-python')
+
+
+def git_clean():
+    print_check('git checkout .')
+    print_check('git clean -fd')
+    print_check('git reset --hard HEAD')
 
 
 class AutoPrivatePackage:
@@ -43,12 +41,8 @@ class AutoPrivatePackage:
         self.target_branch = info[1]
         self.package_name = info[1].split('-')[1]
 
-    def git_clean(self):
-        print_check('git checkout .')
-        print_check('git clean -fd')
-        print_check('git reset --hard HEAD')
-
     def checkout_target_branch(self):
+        git_clean()
         print_exec(f'git remote add {self.usr} https://github.com/{self.usr}/azure-sdk-for-python.git')
         print_check(f'git fetch {self.usr} {self.target_branch}')
         print_check(f'git checkout {self.usr}/{self.target_branch}')
@@ -70,7 +64,6 @@ class AutoPrivatePackage:
 
     def run(self):
         self.get_input()
-        self.git_clean()
         self.checkout_target_branch()
         self.generate_private_package()
 
