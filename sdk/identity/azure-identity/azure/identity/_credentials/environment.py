@@ -46,7 +46,7 @@ class EnvironmentCredential(object):
         certificate must not be password-protected.
       - **AZURE_CLIENT_SEND_CERTIFICATE_CHAIN**: Specifies whether an authentication request will include an x5c
         header to support subject name / issuer based authentication.
-     * When set to `true` or `1`, authentication requests include the x5c header.
+     * When set to 'true' or '1', authentication requests include the x5c header.
 
     User with username and password:
       - **AZURE_CLIENT_ID**: the application's client ID
