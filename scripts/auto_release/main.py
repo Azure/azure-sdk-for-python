@@ -472,6 +472,7 @@ class CodegenTestPR:
         print_exec('git add sdk/')
         print_exec('git commit -m \"code and test\"')
         print_check('git push origin HEAD -f')
+        time.sleep(10)
 
         # create PR
         self.create_pr_proc()
