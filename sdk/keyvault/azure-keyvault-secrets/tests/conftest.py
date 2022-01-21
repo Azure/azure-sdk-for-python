@@ -28,12 +28,16 @@ import platform
 import pytest
 import sys
 from unittest import mock
+<<<<<<< HEAD
 from devtools_testutils import (
     is_live, 
     test_proxy, 
     add_oauth_response_sanitizer, 
     add_general_regex_sanitizer
 )
+=======
+from devtools_testutils import is_live
+>>>>>>> 968b34f18d (fix import)
 
 
 #from devtools_testutils import test_proxy, add_general_regex_sanitizer
