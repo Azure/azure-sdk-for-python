@@ -726,8 +726,8 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
-    @recorded_by_proxy
-    def test_opinion_mining_v3(self, client):
+    def test_opinion_mining_v3(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ValueError) as excinfo:
             client.analyze_sentiment(["will fail"], show_opinion_mining=True)
 
