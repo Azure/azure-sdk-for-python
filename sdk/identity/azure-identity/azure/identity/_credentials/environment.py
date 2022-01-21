@@ -77,7 +77,7 @@ class EnvironmentCredential(object):
             )
         elif all(os.environ.get(v) is not None for v in EnvironmentVariables.USERNAME_PASSWORD_VARS):
             if EnvironmentVariables.AZURE_CLIENT_SEND_CERTIFICATE_CHAIN in os.environ and "send_certificate_chain" not in kwargs:
-                send_chain = os.environ[EnvironmentVariables.AZURE_CLIENT_SEND_CERTIFICATE_CHAIN].lower() == "true" or os.environ[EnvironmentVariables.AZURE_CLIENT_SEND_CERTIFICATE_CHAIN] == "1"
+                send_chain = os.environ[EnvironmentVariables.AZURE_CLIENT_SEND_CERTIFICATE_CHAIN].lower() in ["true", "1"]
                 kwargs["send_certificate_chain"] = send_chain
             self._credential = UsernamePasswordCredential(
                 client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
