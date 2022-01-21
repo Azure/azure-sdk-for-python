@@ -6,10 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import Any, Callable, Dict, Generic, Optional, TypeVar
+from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
@@ -18,26 +19,20 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from msrest import Serializer
 
 from .. import models as _models
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
-def build_get_policy_request(
-    billing_account_id: str,
+def build_list_request(
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-10-01"
+    api_version = "2016-06-01"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.Subscription/policies/default')
-    path_format_arguments = {
-        "billingAccountId": _SERIALIZER.url("billing_account_id", billing_account_id, 'str'),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
+    url = kwargs.pop("template_url", '/tenants')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -55,8 +50,8 @@ def build_get_policy_request(
         **kwargs
     )
 
-class BillingAccountOperations(object):
-    """BillingAccountOperations operations.
+class TenantsOperations(object):
+    """TenantsOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -78,48 +73,62 @@ class BillingAccountOperations(object):
         self._config = config
 
     @distributed_trace
-    def get_policy(
+    def list(
         self,
-        billing_account_id: str,
         **kwargs: Any
-    ) -> "_models.BillingAccountPoliciesResponse":
-        """Get Billing Account Policy.
+    ) -> Iterable["_models.TenantListResult"]:
+        """Gets the tenants for your account.
 
-        :param billing_account_id: Billing Account Id.
-        :type billing_account_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: BillingAccountPoliciesResponse, or the result of cls(response)
-        :rtype: ~azure.mgmt.subscription.models.BillingAccountPoliciesResponse
+        :return: An iterator like instance of either TenantListResult or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.subscription.models.TenantListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BillingAccountPoliciesResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.TenantListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        def prepare_request(next_link=None):
+            if not next_link:
+                
+                request = build_list_request(
+                    template_url=self.list.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-        
-        request = build_get_policy_request(
-            billing_account_id=billing_account_id,
-            template_url=self.get_policy.metadata['url'],
+            else:
+                
+                request = build_list_request(
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize("TenantListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+
+        return ItemPaged(
+            get_next, extract_data
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponseBody, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('BillingAccountPoliciesResponse', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    get_policy.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.Subscription/policies/default'}  # type: ignore
-
+    list.metadata = {'url': '/tenants'}  # type: ignore
