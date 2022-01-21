@@ -756,3 +756,106 @@ class TestBasePolling(object):
 
         LOCATION_BODY = json.dumps({ 'name': TEST_NAME })
         POLLING_STATUS = 200
+
+    @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(REQUESTS_TRANSPORT_RESPONSES))
+    def test_post_final_state_via(self, pipeline_client_builder, deserialization_cb, http_request, http_response):
+        # Test POST LRO with both Location and Operation-Location
+        CLIENT.http_request_type = http_request
+        CLIENT.http_response_type = http_response
+        # The initial response contains both Location and Operation-Location, a 202 and no Body
+        initial_response = TestBasePolling.mock_send(
+            http_request,
+            http_response,
+            'POST',
+            202,
+            {
+                'location': 'http://example.org/location',
+                'operation-location': 'http://example.org/async_monitor',
+            },
+            ''
+        )
+
+        def send(request, **kwargs):
+            assert request.method == 'GET'
+
+            if request.url == 'http://example.org/location':
+                return TestBasePolling.mock_send(
+                    http_request,
+                    http_response,
+                    'GET',
+                    200,
+                    body={'location_result': True}
+                ).http_response
+            elif request.url == 'http://example.org/async_monitor':
+                return TestBasePolling.mock_send(
+                    http_request,
+                    http_response,
+                    'GET',
+                    200,
+                    body={'status': 'Succeeded'}
+                ).http_response
+            else:
+                pytest.fail("No other query allowed")
+
+        client = pipeline_client_builder(send)
+
+        # Test 1, LRO options with Location final state
+        poll = LROPoller(
+            client,
+            initial_response,
+            deserialization_cb,
+            LROBasePolling(0, lro_options={"final-state-via": "location"}))
+        result = poll.result()
+        assert result['location_result'] == True
+
+        # Test 2, LRO options with Operation-Location final state
+        poll = LROPoller(
+            client,
+            initial_response,
+            deserialization_cb,
+            LROBasePolling(0, lro_options={"final-state-via": "operation-location"}))
+        result = poll.result()
+        assert result['status'] == 'Succeeded'
+
+        # Test 3, "do the right thing" and use Location by default
+        poll = LROPoller(
+            client,
+            initial_response,
+            deserialization_cb,
+            LROBasePolling(0))
+        result = poll.result()
+        assert result['location_result'] == True
+
+        # Test 4, location has no body
+
+        def send(request, **kwargs):
+            assert request.method == 'GET'
+
+            if request.url == 'http://example.org/location':
+                return TestBasePolling.mock_send(
+                    http_request,
+                    http_response,
+                    'GET',
+                    200,
+                    body=None
+                ).http_response
+            elif request.url == 'http://example.org/async_monitor':
+                return TestBasePolling.mock_send(
+                    http_request,
+                    http_response,
+                    'GET',
+                    200,
+                    body={'status': 'Succeeded'}
+                ).http_response
+            else:
+                pytest.fail("No other query allowed")
+
+        client = pipeline_client_builder(send)
+
+        poll = LROPoller(
+            client,
+            initial_response,
+            deserialization_cb,
+            LROBasePolling(0, lro_options={"final-state-via": "location"}))
+        result = poll.result()
+        assert result is None
