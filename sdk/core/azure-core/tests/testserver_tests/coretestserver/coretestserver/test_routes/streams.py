@@ -34,11 +34,13 @@ def stream_compressed_header_error():
 
 def stream_compressed_no_header():
     try:
-        file_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./files/test.tar.gz"))
-    except:
         file_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./files/test.tar.gz"))
-    with open(file_path, "rb") as fd:
-        yield fd.read()
+        with open(file_path, "rb") as fd:
+            yield fd.read()
+    except:
+        file_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./files/test.tar.gz"))
+        with open(file_path, "rb") as fd:
+            yield fd.read()
 
 @streams_api.route('/basic', methods=['GET'])
 def basic():
