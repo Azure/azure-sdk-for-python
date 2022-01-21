@@ -3376,6 +3376,10 @@ class ModelOperation(ModelOperationInfo):
         all information about the model including the doc types
         and fields it can analyze from documents.
     :vartype result: ~azure.ai.formrecognizer.DocumentModel
+    :ivar api_version: API version used to create this operation.
+    :vartype api_version: str
+    :ivar tags: List of key-value tag attributes associated with the model.
+    :vartype tags: dict[str, str]
     """
 
     def __init__(self, **kwargs):
@@ -3386,7 +3390,7 @@ class ModelOperation(ModelOperationInfo):
     def __repr__(self):
         return (
             "ModelOperation(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, "
-            "kind={}, resource_location={}, result={}, error={})".format(
+            "kind={}, resource_location={}, result={}, error={}, api_version={}, tags={})".format(
                 self.operation_id,
                 self.status,
                 self.percent_completed,
@@ -3396,6 +3400,8 @@ class ModelOperation(ModelOperationInfo):
                 self.resource_location,
                 repr(self.result),
                 repr(self.error),
+                self.api_version,
+                repr(self.tags),
             )
         )
 
@@ -3416,6 +3422,8 @@ class ModelOperation(ModelOperationInfo):
             "resource_location": self.resource_location,
             "result": self.result.to_dict() if self.result else None,
             "error": self.error.to_dict() if self.error else None,
+            "api_version": self.api_version,
+            "tags": self.tags,
         }
 
     @classmethod
@@ -3437,6 +3445,8 @@ class ModelOperation(ModelOperationInfo):
             resource_location=data.get("resource_location", None),
             result=DocumentModel.from_dict(data.get("result")) if data.get("result") else None,  # type: ignore
             error=DocumentAnalysisError.from_dict(data.get("error")) if data.get("error") else None,  # type: ignore
+            api_version=data.get("api_version", None),
+            tags=data.get("tags", {}),
         )
 
     @classmethod
@@ -3453,7 +3463,9 @@ class ModelOperation(ModelOperationInfo):
             result=DocumentModel._from_generated(deserialize(ModelInfo, op.result))
             if op.result else None,
             error=DocumentAnalysisError._from_generated(deserialize(Error, op.error))
-            if op.error else None
+            if op.error else None,
+            api_version=op.api_version,
+            tags=op.tags if op.tags else {},
         )
 
 
