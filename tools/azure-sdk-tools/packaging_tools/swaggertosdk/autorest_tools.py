@@ -1,6 +1,7 @@
 import json
 import logging
 import os.path
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -21,6 +22,13 @@ def autorest_swagger_to_sdk_conf(readme, output_folder, config):
     cmd_line = "{} {} --perform-load=false --swagger-to-sdk --output-artifact=configuration.json --input-file=foo --output-folder={} --version={}".format(
         autorest_bin, str(readme), str(output_folder), str(config["meta"]["autorest_options"]["version"])
     )
+    if os.path.exists(readme):
+        with open(readme, 'r') as file_in:
+            temp = file_in.readlines()
+    else:
+        raise Exception(f'== {readme} does not exist')
+    _LOGGER.info(f"XXXXXXXXXXXXXXXXXXX: {cmd_line}")
+    _LOGGER.info(f"XXXXXXXXXXXXXXXXXXX: work path {os.getcwd()}")
     execute_simple_command(cmd_line.split())
     conf_path = Path(output_folder, "configuration.json")
     with conf_path.open(encoding="utf-8") as fd:
