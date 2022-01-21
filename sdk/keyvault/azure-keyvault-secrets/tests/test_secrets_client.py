@@ -234,15 +234,10 @@ class TestSecretClient(KeyVaultTestCase):
         restore_function = functools.partial(client.restore_secret_backup, secret_backup)
         restored_secret = self._poll_until_no_exception(restore_function, ResourceExistsError)
         self._assert_secret_attributes_equal(created_bundle.properties, restored_secret)
-<<<<<<< HEAD
 
     @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
     @SecretsPreparer()
     @recorded_by_proxy
-=======
-    @all_api_versions()
-    @client_setup
->>>>>>> 5f4f81d377 (switch to assert from self.assert*)
     def test_recover(self, client, **kwargs):
         secrets = {}
 

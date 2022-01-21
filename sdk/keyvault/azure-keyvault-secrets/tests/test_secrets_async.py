@@ -16,7 +16,6 @@ from devtools_testutils import AzureRecordedTestCase
 from _shared.test_case_async import KeyVaultTestCase
 from _test_case import client_setup, get_decorator
 from _async_test_case import AsyncSecretsTestCaseClientPrepaper
-
 from devtools_testutils.aio import recorded_by_proxy_async
 import pytest
 
@@ -79,7 +78,6 @@ class TestKeyVaultSecret(KeyVaultTestCase):
             created = await client.set_secret(secret_name, secret_value)
             self._validate_secret_bundle(created, client.vault_url, secret_name, secret_value)
 
-<<<<<<< HEAD
             # set secret with optional arguments
             not_before = date_parse.parse("2015-02-02T08:00:00.000Z")
             enabled = True
@@ -120,48 +118,6 @@ class TestKeyVaultSecret(KeyVaultTestCase):
                 assert secret.properties.enabled != updated_secret.enabled
                 assert secret.properties.updated_on != updated_secret.updated_on
                 return updated_secret
-=======
-        # set secret with optional arguments
-        not_before = date_parse.parse("2015-02-02T08:00:00.000Z")
-        enabled = True
-        tags = {"foo": "created tag"}
-        created = await client.set_secret(secret_name, secret_value, enabled=enabled, not_before=not_before, tags=tags)
-        self._validate_secret_bundle(created, client.vault_url, secret_name, secret_value)
-        assert enabled == created.properties.enabled
-        assert not_before == created.properties.not_before
-        assert tags == created.properties.tags
-
-        # get secret without version
-        retrieved_secret = await client.get_secret(created.name, "")
-        assert created.id == retrieved_secret.id
-        self._assert_secret_attributes_equal(created.properties, retrieved_secret.properties)
-
-        # get secret with version
-        secret_with_version = await client.get_secret(created.name, created.properties.version)
-        assert created.id == retrieved_secret.id
-        self._assert_secret_attributes_equal(created.properties, secret_with_version.properties)
-
-        async def _update_secret(secret):
-            content_type = "text/plain"
-            expires = date_parse.parse("2050-02-02T08:00:00.000Z")
-            tags = {"foo": "updated tag"}
-            enabled = not secret.properties.enabled
-            updated_secret = await client.update_secret_properties(
-                secret.name,
-                version=secret.properties.version,
-                content_type=content_type,
-                expires_on=expires,
-                tags=tags,
-                enabled=enabled,
-            )
-            assert tags == updated_secret.tags
-            assert secret.id == updated_secret.id
-            assert content_type == updated_secret.content_type
-            assert expires == updated_secret.expires_on
-            assert secret.properties.enabled != updated_secret.enabled
-            assert secret.properties.updated_on != updated_secret.updated_on
-            return updated_secret
->>>>>>> 5f4f81d377 (switch to assert from self.assert*)
 
             # update secret with version
             if self.is_live:
@@ -170,15 +126,9 @@ class TestKeyVaultSecret(KeyVaultTestCase):
 
             updated = await _update_secret(created)
 
-<<<<<<< HEAD
             # delete secret
             deleted = await client.delete_secret(updated.name)
             assert deleted is not None
-=======
-        # delete secret
-        deleted = await client.delete_secret(updated.name)
-        assert deleted is not None
->>>>>>> 5f4f81d377 (switch to assert from self.assert*)
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
