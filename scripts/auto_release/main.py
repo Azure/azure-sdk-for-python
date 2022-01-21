@@ -25,16 +25,16 @@ def return_origin_path(func):
     return wrapper
 
 
-def log(cmd):
+def log(cmd: str):
     _LOG.info('==' + cmd + ' ==\n')
 
 
-def print_exec(cmd):
+def print_exec(cmd: str):
     log(cmd)
     subprocess.call(cmd, shell=True)
 
 
-def print_exec_output(cmd) -> List[str]:
+def print_exec_output(cmd: str) -> List[str]:
     log(cmd)
     return subprocess.getoutput(cmd).split('\n')
 
