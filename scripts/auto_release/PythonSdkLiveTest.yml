@@ -37,10 +37,12 @@ jobs:
           mkdir azure-rest-api-specs
           git clone https://github.com/Azure/azure-rest-api-specs.git $(pwd)/azure-rest-api-specs
 
+          # install autorest
           sudo npm install -g n
           sudo n 14.15.0
           export PATH=/usr/local/n/versions/node/14.15.0/bin:$PATH
-          sudo npm install autorest
+          sudo npm init -f
+          sudo npm install -g autorest --save
           echo 000000000000000000000
           echo | autorest --version
           echo 111111111111111111111
