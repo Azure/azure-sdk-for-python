@@ -23,6 +23,7 @@ import pytest
 all_api_versions = get_decorator()
 logging_enabled = get_decorator(logging_enable=True)
 logging_disabled = get_decorator(logging_enable=False)
+list_test_size = 7
 
 SecretsPreparer = functools.partial(SecretsTestCaseClientPrepaper, is_async=False)
 
@@ -141,7 +142,7 @@ class TestSecretClient(KeyVaultTestCase):
     @SecretsPreparer()
     @recorded_by_proxy
     def test_secret_list(self, client, **kwargs):
-        max_secrets = self.list_test_size
+        max_secrets = list_test_size
         expected = {}
 
         # create many secrets
@@ -164,7 +165,7 @@ class TestSecretClient(KeyVaultTestCase):
         secret_name = self.get_resource_name("secVer")
         secret_value = "secVal"
 
-        max_secrets = self.list_test_size
+        max_secrets = list_test_size
         expected = {}
 
         # create many secret versions
@@ -191,7 +192,7 @@ class TestSecretClient(KeyVaultTestCase):
         expected = {}
 
         # create secrets
-        for i in range(self.list_test_size):
+        for i in range(list_test_size):
             secret_name = self.get_resource_name("secret{}".format(i))
             secret_value = "value{}".format(i)
             expected[secret_name] = client.set_secret(secret_name, secret_value)
@@ -241,7 +242,7 @@ class TestSecretClient(KeyVaultTestCase):
         secrets = {}
 
         # create secrets to recover
-        for i in range(self.list_test_size):
+        for i in range(list_test_size):
             secret_name = self.get_resource_name("secret{}".format(i))
             secret_value = "value{}".format(i)
             secrets[secret_name] = client.set_secret(secret_name, secret_value)
@@ -270,7 +271,7 @@ class TestSecretClient(KeyVaultTestCase):
         secrets = {}
 
         # create secrets to purge
-        for i in range(self.list_test_size):
+        for i in range(list_test_size):
             secret_name = self.get_resource_name("secret{}".format(i))
             secret_value = "value{}".format(i)
             secrets[secret_name] = client.set_secret(secret_name, secret_value)
@@ -293,10 +294,9 @@ class TestSecretClient(KeyVaultTestCase):
         assert not any(s in deleted for s in secrets.keys())
 
     @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
-    @SecretsPreparer()
+    @SecretsPreparer(logging_enable = True)
     @recorded_by_proxy
     def test_logging_enabled(self, client, **kwargs):
-        kwargs.update({'logging_enable': True})
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
@@ -328,10 +328,9 @@ class TestSecretClient(KeyVaultTestCase):
         assert False, "Expected request body wasn't logged"
 
     @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
-    @SecretsPreparer()
+    @SecretsPreparer(logging_enable = False)
     @recorded_by_proxy
     def test_logging_disabled(self, client, **kwargs):
-        kwargs.update({'logging_enable': False})
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
