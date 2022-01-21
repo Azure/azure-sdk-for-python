@@ -1,17 +1,15 @@
 import os
-import subprocess as sp
-import logging
-from ghapi.all import GhApi
-from pathlib import Path
 import json
-from typing import List, Any, Dict
-from glob import glob
 import time
-from util import add_certificate
+import logging
+from glob import glob
+import subprocess
+from pathlib import Path
 from functools import wraps
+from typing import List, Any, Dict
 from packaging.version import Version
-import base64
-import shutil
+from ghapi.all import GhApi
+from util import add_certificate
 
 _LOG = logging.getLogger()
 
@@ -27,23 +25,23 @@ def return_origin_path(func):
     return wrapper
 
 
-def my_print(cmd):
+def log(cmd):
     _LOG.info('==' + cmd + ' ==\n')
 
 
 def print_exec(cmd):
-    my_print(cmd)
-    sp.call(cmd, shell=True)
+    log(cmd)
+    subprocess.call(cmd, shell=True)
 
 
 def print_exec_output(cmd) -> List[str]:
-    my_print(cmd)
-    return sp.getoutput(cmd).split('\n')
+    log(cmd)
+    return subprocess.getoutput(cmd).split('\n')
 
 
 def print_check(cmd):
-    my_print(cmd)
-    sp.check_call(cmd, shell=True)
+    log(cmd)
+    subprocess.check_call(cmd, shell=True)
 
 
 def preview_version_plus(preview_label: str, last_version: str) -> str:
@@ -52,12 +50,11 @@ def preview_version_plus(preview_label: str, last_version: str) -> str:
     return f'{num[0]}{preview_label}{num[1]}'
 
 
-def stable_version_plus(add_content: List[str], last_version: str):
+def stable_version_plus(changelog: str, last_version: str):
     flag = [False, False, False]  # breaking, feature, bugfix
-    content = ''.join(add_content)
-    flag[0] = '**Breaking changes**' in content
-    flag[1] = '**Features**' in content
-    flag[2] = '**Bugfixes**' in content
+    flag[0] = '**Breaking changes**' in changelog
+    flag[1] = '**Features**' in changelog
+    flag[2] = '**Bugfixes**' in changelog
 
     num = last_version.split('.')
     if flag[0]:
@@ -82,8 +79,8 @@ def all_files(path: str, files: List[str]):
 
 
 def checkout_azure_default_branch():
-    usr = 'msyyc'
-    branch = 'temp'
+    usr = 'Azure'
+    branch = 'main'
     print_exec(f'git remote add {usr} https://github.com/{usr}/azure-sdk-for-python.git')
     print_check(f'git fetch {usr} {branch}')
     print_check(f'git checkout {usr}/{branch}')
@@ -130,7 +127,7 @@ class CodegenTestPR:
         self.issue_link = os.getenv('ISSUE_LINK')
         self.usr_token = os.getenv('USR_TOKEN')
         self.pipeline_link = os.getenv('PIPELINE_LINK')
-        self.bot_token = os.getenv('UPDATE_TOKEN')
+        self.bot_token = os.getenv('AZURESDK_BOT_TOKEN')
         self.spec_readme = os.getenv('SPEC_README', '')
         self.spec_repo = os.getenv('SPEC_REPO', '')
 
@@ -151,7 +148,7 @@ class CodegenTestPR:
         html_link = 'https://github.com/Azure/azure-rest-api-specs/blob/main/'
         return Path(self.spec_readme.replace(html_link, '')) / 'readme.md'
 
-    def get_sdk_folder_with_readme(self):
+    def get_sdk_folder_with_autorest_result(self):
         generate_result = self.get_autorest_result()
         self.sdk_folder = generate_result["packages"][0]["path"][0].split('/')[-1]
 
@@ -166,37 +163,23 @@ class CodegenTestPR:
             'relatedReadmeMdFiles': [str(self.readme_local_folder())]
         }
 
-        my_print(input_data['headSha'])
-        my_print(input_data['specFolder'])
-        my_print(input_data['relatedReadmeMdFiles'][0])
-        path = f'{input_data["specFolder"]}/{input_data["relatedReadmeMdFiles"][0]}'
-        if os.path.exists(path):
-            with open(path, 'r') as file_in:
-                temp = file_in.readlines()
-        else:
-            my_print(f'{path} does not exist')
-
-        temp_folder = Path(os.getenv('TEMP_FOLDER'))
-        self.autorest_result = str(temp_folder / 'temp.json')
+        self.autorest_result = str(Path(os.getenv('TEMP_FOLDER')) / 'temp.json')
         with open(self.autorest_result, 'w') as file:
             json.dump(input_data, file)
 
         # generate code
         print_exec('python scripts/dev_setup.py -p azure-core')
         print_check(f'python -m packaging_tools.auto_codegen {self.autorest_result} {self.autorest_result}')
-
-        my_print(str(self.get_autorest_result()))
-
         print_check(f'python -m packaging_tools.auto_package {self.autorest_result} {self.autorest_result}')
 
-    def get_package_name_with_readme(self):
+    def get_package_name_with_autorest_result(self):
         generate_result = self.get_autorest_result()
         self.package_name = generate_result["packages"][0]["packageName"].split('-')[-1]
 
     def prepare_branch_with_readme(self):
         self.generate_code()
-        self.get_package_name_with_readme()
-        self.get_sdk_folder_with_readme()
+        self.get_package_name_with_autorest_result()
+        self.get_sdk_folder_with_autorest_result()
         self.create_new_branch()
 
     def get_package_name_with_branch(self) -> (str, str):
@@ -250,37 +233,33 @@ class CodegenTestPR:
         modify_file(sdk_readme, edit_sdk_readme)
 
     def check_sdk_setup(self):
-        sdk_setup = str(Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}/setup.py'))
-
         def edit_sdk_setup(content: List[str]):
             for i in range(0, len(content)):
                 content[i] = content[i].replace('msrestazure>=0.4.32,<2.0.0', 'azure-mgmt-core>=1.3.0,<2.0.0')
                 content[i] = content[i].replace('azure-mgmt-core>=1.2.0,<2.0.0', 'azure-mgmt-core>=1.3.0,<2.0.0')
                 content[i] = content[i].replace('msrest>=0.5.0', 'msrest>=0.6.21')
 
-        modify_file(sdk_setup, edit_sdk_setup)
+        modify_file(str(Path(self.sdk_code_path()) / 'setup.py'), edit_sdk_setup)
 
     def check_pprint_name(self):
-        path = str(Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}'))
         pprint_name = self.package_name.capitalize()
 
         def edit_file_for_pprint_name(content: List[str]):
             for i in range(0, len(content)):
                 content[i] = content[i].replace('MyService', pprint_name)
 
-        for file in os.listdir(path):
+        for file in os.listdir(self.sdk_code_path()):
             if os.path.isfile(file):
                 modify_file(file, edit_file_for_pprint_name)
-        my_print(f' replace \"MyService\" with \"{pprint_name}\" successfully ')
+        log(f' replace \"MyService\" with \"{pprint_name}\" successfully ')
 
-    def get_all_files(self) -> List[str]:
-        path = str(Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}'))
+    def get_all_files_under_package_folder(self) -> List[str]:
         files = []
-        all_files(path, files)
+        all_files(self.sdk_code_path(), files)
         return files
 
     def judge_tag(self) -> bool:
-        files = self.get_all_files()
+        files = self.get_all_files_under_package_folder()
         default_api_version = ''  # for multi-api
         api_version = ''  # for single-api
         for file in files:
@@ -299,14 +278,16 @@ class CodegenTestPR:
                 if default_api_version == '' and line.find('api_version = ') > -1:
                     api_version += line.split('=')[-1].strip('\n')  # collect all single api version
         if default_api_version != '':
-            my_print(f'find default api version:{default_api_version}')
+            log(f'find default api version:{default_api_version}')
             return 'preview' in default_api_version
-        my_print(f'find single api version:{api_version}')
+        log(f'find single api version:{api_version}')
         return 'preview' in api_version
 
     def calculate_next_version_proc(self, last_version: str):
         preview_tag = self.judge_tag()
-        add_content = self.get_changelog()
+        changelog = self.get_changelog()
+        if changelog == '':
+            return '0.0.0'
         preview_version = 'rc' in last_version or 'b' in last_version
         #                                           |   preview tag                     | stable tag
         # preview version(1.0.0rc1/1.0.0b1)         | 1.0.0rc2(track1)/1.0.0b2(track2)  |  1.0.0
@@ -319,9 +300,9 @@ class CodegenTestPR:
         elif preview_version and not preview_tag:
             next_version = last_version.split(preview_label)[0]
         elif not preview_version and preview_tag:
-            next_version = stable_version_plus(add_content, last_version) + preview_label + '1'
+            next_version = stable_version_plus(changelog, last_version) + preview_label + '1'
         else:
-            next_version = stable_version_plus(add_content, last_version)
+            next_version = stable_version_plus(changelog, last_version)
 
         return next_version
 
@@ -330,9 +311,9 @@ class CodegenTestPR:
             content = json.load(file_in)
         return content
 
-    def get_changelog(self) -> List[str]:
+    def get_changelog(self) -> str:
         content = self.get_autorest_result()
-        return content["packages"][0]["changelog"]["content"].split('\n')
+        return content["packages"][0]["changelog"]["content"]
 
     def get_last_release_version(self) -> str:
         content = self.get_autorest_result()
@@ -350,7 +331,7 @@ class CodegenTestPR:
             self.next_version = '1.0.0b1'
 
     def edit_all_version_file(self):
-        files = self.get_all_files()
+        files = self.get_all_files_under_package_folder()
 
         def edit_version_file(content: List[str]):
             for i in range(0, len(content)):
@@ -367,26 +348,19 @@ class CodegenTestPR:
         self.edit_all_version_file()
 
     def edit_changelog_for_new_service(self):
-        path = str(Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}/CHANGELOG.md'))
-
         def edit_changelog_for_new_service_proc(content: List[str]):
             for i in range(0, len(content)):
                 if '##' in content[i]:
                     content[i] = f'## {self.next_version}({current_time()})'
                     break
 
-        modify_file(path, edit_changelog_for_new_service_proc)
+        modify_file(str(Path(self.sdk_code_path()) / 'CHANGELOG.md'), edit_changelog_for_new_service_proc)
 
     def edit_changelog(self):
-        path = str(Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}/CHANGELOG.md'))
-
         def edit_changelog_proc(content: List[str]):
-            add_content = ['\n', f'## {self.next_version} ({current_time()})\n\n']
-            changelog = [item + '\n' for item in self.get_changelog()]
-            add_content.extend(changelog)
-            content[1:1] = add_content
+            content[1:1] = ['\n', f'## {self.next_version} ({current_time()})\n\n', self.get_changelog()]
 
-        modify_file(path, edit_changelog_proc)
+        modify_file(str(Path(self.sdk_code_path()) / 'CHANGELOG.md'), edit_changelog_proc)
 
     def check_changelog_file(self):
         if self.next_version == '1.0.0b1':
@@ -395,8 +369,6 @@ class CodegenTestPR:
             self.edit_changelog()
 
     def check_ci_file_proc(self, dependency: str):
-        path = str(Path('shared_requirements.txt'))
-
         def edit_ci_file(content: List[str]):
             new_line = f'#override azure-mgmt-{self.package_name} {dependency}'
             for i in range(len(content)):
@@ -405,7 +377,7 @@ class CodegenTestPR:
             prefix = '' if '\n' in content[-1] else '\n'
             content.append(prefix + new_line + '\n')
 
-        modify_file(path, edit_ci_file)
+        modify_file(str(Path('shared_requirements.txt')), edit_ci_file)
         print_exec('git add shared_requirements.txt')
 
     def check_ci_file(self):
@@ -419,10 +391,12 @@ class CodegenTestPR:
         self.check_changelog_file()
         self.check_ci_file()
 
+    def sdk_code_path(self) -> str:
+        return str(Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}'))
+
     @return_origin_path
     def install_package_locally(self):
-        setup_path = str(Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}'))
-        os.chdir(setup_path)
+        os.chdir(self.sdk_code_path())
         print_check('pip install -e .')
         print_exec('pip install -r dev_requirements.txt')
 
@@ -435,23 +409,23 @@ class CodegenTestPR:
     @return_origin_path
     def run_test_proc(self):
         # run test
-        os.chdir(Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}'))
+        os.chdir(self.sdk_code_path())
         succeeded_result = 'Live test success'
         failed_result = 'Live test fail, detailed info is in pipeline log(search keyword FAILED)!!!'
         try:
             print_check(f'pytest  --collect-only')
         except:
-            my_print('live test run done, do not find any test !!!')
+            log('live test run done, do not find any test !!!')
             self.test_result = succeeded_result
             return
 
         try:
             print_check(f'pytest -s')
         except:
-            my_print('some test failed, please fix it locally')
+            log('some test failed, please fix it locally')
             self.test_result = failed_result
         else:
-            my_print('live test run done, do not find failure !!!')
+            log('live test run done, do not find failure !!!')
             self.test_result = succeeded_result
 
     def run_test(self):
@@ -465,30 +439,33 @@ class CodegenTestPR:
         pr_base = 'main'
         pr_body = "{} \n{} \n{}".format(self.issue_link, self.test_result, self.pipeline_link)
         res_create = api.pulls.create(pr_title, pr_head, pr_base, pr_body)
-        pr_number = res_create.number
 
         # Add issue link on PR
         api = GhApi(owner='Azure', repo='azure-sdk-for-python', token=self.bot_token)
-        api.issues.create_comment(issue_number=pr_number, body='issue link:{}'.format(self.issue_link))
+        api.issues.create_comment(issue_number=res_create.number, body='issue link:{}'.format(self.issue_link))
 
     def zero_version_policy(self):
         if self.next_version == '0.0.0':
             api_request = GhApi(owner='Azure', repo='sdk-release-request', token=self.bot_token)
-            issue_number = self.issue_link.split('/')[-1]
-            api_request.issues.add_labels(issue_number=int(issue_number), labels=['base-branch-attention'])
+            issue_number = int(self.issue_link.split('/')[-1])
+            api_request.issues.add_labels(issue_number=issue_number, labels=['base-branch-attention'])
 
-    # def get_package_encoded(self):
-    #     content = self.get_autorest_result()
-    #     package_path = content["packages"][0]["artifacts"][0]
-    #     with open(package_path, 'rb') as file_in:
-    #         package_content = file_in.read()
-    #     return base64.b64encode(package_content)
-
-    def upload_private_package_policy(self):
-        pass
+    def ask_check_policy(self):
+        changelog = self.get_changelog()
+        if changelog == '':
+            return
+        api = GhApi(owner='Azure', repo='sdk-release-request', token=self.bot_token)
+        author = api.issues.get(issue_number=2223).user.login
+        body = f'Hi @{author}, Please check whether CHANGELOG contains all that you need in this release:\n' \
+               f'```\n' \
+               f'CHANGELOG:\n' \
+               f'{changelog}\n' \
+               f'```'
+        api.issues.create_comment(issue_number=2223, body=body)
 
     def issue_comment(self):
         self.zero_version_policy()
+        self.ask_check_policy()
 
     def create_pr(self):
         # commit all code
@@ -513,9 +490,6 @@ if __name__ == '__main__':
     main_logger = logging.getLogger()
     logging.basicConfig()
     main_logger.setLevel(logging.INFO)
-
-    auto_position = shutil.which("autorest")
-    my_print(f'autorest position: {auto_position}')
 
     instance = CodegenTestPR()
     instance.run()
