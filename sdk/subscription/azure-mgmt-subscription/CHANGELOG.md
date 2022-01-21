@@ -34,7 +34,7 @@
 **Breaking changes**
 
   - Removed operation group TenantsOperations
-  - Removed operation group SubscriptionsOperations
+  - Removed operation group SubscriptionsOperations(SubscriptionsOperations can be used in [azure-mgmt-resource](https://pypi.org/project/azure-mgmt-resource/))
 
 ## 1.0.0 (2020-12-16)
 
