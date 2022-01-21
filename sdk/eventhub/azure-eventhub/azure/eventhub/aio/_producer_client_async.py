@@ -53,8 +53,9 @@ class EventHubProducerClient(ClientBaseAsync):
      seconds. If the backoff_factor is 0.1, then the retry will sleep
      for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
     :keyword float retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
-    :keyword retry_mode: Fixed or exponential delay between attempts, default is exponential.
-    :paramtype retry_mode: ~azure.eventhub.RetryMode
+    :keyword retry_mode: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential',
+     where default is 'exponential'.
+    :paramtype retry_mode: str
     :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
      if there is no activity. By default the value is None, meaning that the client will not shutdown due to inactivity
      unless initiated by the service.
@@ -63,7 +64,7 @@ class EventHubProducerClient(ClientBaseAsync):
      If the port 5671 is unavailable/blocked in the network environment, `TransportType.AmqpOverWebsocket` could
      be used instead which uses port 443 for communication.
     :paramtype transport_type: ~azure.eventhub.TransportType
-    :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+    :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword str custom_endpoint_address: The custom endpoint address to use for establishing a connection to
@@ -202,7 +203,7 @@ class EventHubProducerClient(ClientBaseAsync):
         :param str conn_str: The connection string of an Event Hub.
         :keyword str eventhub_name: The path of the specific Event Hub to connect the client to.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
-        :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+        :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
         :keyword float auth_timeout: The time in seconds to wait for a token to be authorized by the service.
@@ -217,8 +218,9 @@ class EventHubProducerClient(ClientBaseAsync):
          seconds. If the backoff_factor is 0.1, then the retry will sleep
          for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
         :keyword float retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
-        :keyword retry_mode: Fixed or exponential delay between attempts, default is exponential.
-        :paramtype retry_mode: ~azure.eventhub.RetryMode
+        :keyword retry_mode: The delay behavior between retry attempts. Supported values are 'fixed' or 'exponential',
+         where default is 'exponential'.
+        :paramtype retry_mode: str
         :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
          if there is no activity. By default the value is None, meaning that the client will not shutdown due to
          inactivity unless initiated by the service.
@@ -408,7 +410,7 @@ class EventHubProducerClient(ClientBaseAsync):
             - `created_at` (UTC datetime.datetime)
             - `partition_ids` (list[str])
 
-        :rtype: dict
+        :rtype: Dict[str, Any]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return await super(
@@ -438,7 +440,7 @@ class EventHubProducerClient(ClientBaseAsync):
 
         :param partition_id: The target partition ID.
         :type partition_id: str
-        :rtype: dict
+        :rtype: Dict[str, Any]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return await super(

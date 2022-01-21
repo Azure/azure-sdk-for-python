@@ -22,10 +22,8 @@
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 import requests
-import six
 import json
-import uuid
-from six.moves.urllib.parse import quote as urllib_quote
+from urllib.parse import quote as urllib_quote
 import azure.cosmos.auth as auth
 import azure.cosmos.partition_key as partition_key
 import datetime
@@ -76,9 +74,7 @@ def create_nonpartitioned_container(db):
                                 verify=False)
 
     data = response.content
-    if not six.PY2:
-        # python 3 compatible: convert data from byte to unicode string
-        data = data.decode('utf-8')
+    data = data.decode('utf-8')
     data = json.loads(data)
     created_container = db.get_container_client("mycoll")
 
@@ -100,9 +96,7 @@ def create_nonpartitioned_container(db):
                                 verify=False)
 
     data = response.content
-    if not six.PY2:
-        # python 3 compatible: convert data from byte to unicode string
-        data = data.decode('utf-8')
+    data = data.decode('utf-8')
     data = json.loads(data)
     created_document = data
     return created_container, "SaledOrder0"

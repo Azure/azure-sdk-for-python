@@ -9,7 +9,7 @@ import time
 import datetime
 import uuid
 import logging
-from typing import Optional, List, Union, Iterable, TYPE_CHECKING, Any, Mapping, cast
+from typing import Optional, Dict, List, Union, Iterable, TYPE_CHECKING, Any, Mapping, cast
 
 import six
 
@@ -68,7 +68,7 @@ class ServiceBusMessage(
     :param body: The data to send in a single message.
     :type body: Optional[Union[str, bytes]]
 
-    :keyword Optional[dict] application_properties: The user defined properties on the message.
+    :keyword Optional[Dict] application_properties: The user defined properties on the message.
     :keyword Optional[str] session_id: The session identifier of the message for a sessionful entity.
     :keyword Optional[str] message_id: The id to identify the message.
     :keyword Optional[datetime.datetime] scheduled_enqueue_time_utc: The utc scheduled enqueue time to the message.
@@ -92,8 +92,24 @@ class ServiceBusMessage(
 
     """
 
-    def __init__(self, body, **kwargs):
-        # type: (Optional[Union[str, bytes]], Any) -> None
+    def __init__(
+        self,
+        body: Optional[Union[str, bytes]],
+        *,
+        application_properties: Optional[Dict[str, Any]] = None,
+        session_id: Optional[str] = None,
+        message_id: Optional[str] = None,
+        scheduled_enqueue_time_utc: Optional[datetime.datetime] = None,
+        time_to_live: Optional[datetime.timedelta] = None,
+        content_type: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        subject: Optional[str] = None,
+        partition_key: Optional[str] = None,
+        to: Optional[str] = None,
+        reply_to: Optional[str] = None,
+        reply_to_session_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         # Although we might normally thread through **kwargs this causes
         # problems as MessageProperties won't absorb spurious args.
         self._encoding = kwargs.pop("encoding", "UTF-8")
@@ -108,20 +124,18 @@ class ServiceBusMessage(
             self._raw_amqp_message = AmqpAnnotatedMessage(message=self.message)
         else:
             self._build_message(body)
-            self.application_properties = kwargs.pop("application_properties", None)
-            self.session_id = kwargs.pop("session_id", None)
-            self.message_id = kwargs.pop("message_id", None)
-            self.content_type = kwargs.pop("content_type", None)
-            self.correlation_id = kwargs.pop("correlation_id", None)
-            self.to = kwargs.pop("to", None)
-            self.reply_to = kwargs.pop("reply_to", None)
-            self.reply_to_session_id = kwargs.pop("reply_to_session_id", None)
-            self.subject = kwargs.pop("subject", None)
-            self.scheduled_enqueue_time_utc = kwargs.pop(
-                "scheduled_enqueue_time_utc", None
-            )
-            self.time_to_live = kwargs.pop("time_to_live", None)
-            self.partition_key = kwargs.pop("partition_key", None)
+            self.application_properties = application_properties
+            self.session_id = session_id
+            self.message_id = message_id
+            self.content_type = content_type
+            self.correlation_id = correlation_id
+            self.to = to
+            self.reply_to = reply_to
+            self.reply_to_session_id = reply_to_session_id
+            self.subject = subject
+            self.scheduled_enqueue_time_utc = scheduled_enqueue_time_utc
+            self.time_to_live = time_to_live
+            self.partition_key = partition_key
 
     def __str__(self):
         # type: () -> str
@@ -265,7 +279,7 @@ class ServiceBusMessage(
 
     @property
     def application_properties(self):
-        # type: () -> Optional[dict]
+        # type: () -> Optional[Dict]
         """The user defined properties on the message.
 
         :rtype: dict
@@ -274,7 +288,7 @@ class ServiceBusMessage(
 
     @application_properties.setter
     def application_properties(self, value):
-        # type: (dict) -> None
+        # type: (Dict) -> None
         self._raw_amqp_message.application_properties = value
 
     @property
