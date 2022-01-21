@@ -107,6 +107,8 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
             model = await poller.result()
 
         assert model.model_id
+        assert model.api_version
+        assert model.tags is None
         assert model.description is None
         assert model.created_on
         for name, doc_type in model.doc_types.items():
