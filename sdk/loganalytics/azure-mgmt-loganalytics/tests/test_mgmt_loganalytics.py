@@ -1,8 +1,7 @@
 import pytest
 import azure.mgmt.loganalytics
-from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 
-AZURE_LOCATION = 'westeurope'
 class TestMgmtLogAnalytics(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
