@@ -37,7 +37,7 @@ class AutoPrivatePackage:
 
     def get_input(self):
         print('Please commit your code before execute this script!!!')
-        branch = input('Please input your target branch(e.g. azclibot:t2-compute-2022-01-21-22956)')
+        branch = input('Please input your target branch(e.g. azclibot:t2-compute-2022-01-21-22956):')
         info = branch.split(':')
         self.usr = info[0]
         self.target_branch = info[1]
@@ -64,14 +64,14 @@ class AutoPrivatePackage:
 
     def generate_private_package(self):
         self.step_into_package_folder()
-        check_call('python setup.py bdist')
+        check_call('python setup.py bdist_wheel')
         check_call('python setup.py sdist --format zip')
-        print(f'package in : {str(Path(os.getcwd()) / "dist")}')
+        print(f'\n package in : {str(Path(os.getcwd()) / "dist")}')
 
     def run(self):
         self.get_input()
-        # self.git_clean()
-        # self.checkout_target_branch()
+        self.git_clean()
+        self.checkout_target_branch()
         self.generate_private_package()
 
 
