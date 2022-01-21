@@ -1,5 +1,22 @@
 # Release History
 
+## 3.0.0 (2022-01-21)
+
+**Features**
+
+  - Added operation group SubscriptionsOperations
+  - Added operation group TenantsOperations
+  - Model CanceledSubscriptionId has a new parameter subscription_id
+  - Model EnabledSubscriptionId has a new parameter subscription_id
+  - Model RenamedSubscriptionId has a new parameter subscription_id
+  - Model SubscriptionAliasResponseProperties has a new parameter created_time
+
+**Breaking changes**
+
+  - Model CanceledSubscriptionId no longer has parameter value
+  - Model EnabledSubscriptionId no longer has parameter value
+  - Model RenamedSubscriptionId no longer has parameter value
+
 ## 2.0.0 (2021-11-25)
 
 **Features**
