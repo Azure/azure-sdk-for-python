@@ -32,8 +32,11 @@ def streaming_test():
 def stream_compressed_header_error():
     yield b'test'
 
-def stream_compress():
-    file_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./files/test.tar.gz"))
+def stream_compressed_no_header():
+    try:
+        file_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./files/test.tar.gz"))
+    except:
+        file_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./files/test.tar.gz"))
     with open(file_path, "rb") as fd:
         yield fd.read()
 
@@ -55,10 +58,10 @@ def string():
         streaming_test(), status=200, mimetype="text/plain"
     )
 
-@streams_api.route('/compress', methods=['GET'])
-def compress():
-    return Response(stream_compress(), status=200)
-    
+@streams_api.route('/compressed_no_header', methods=['GET'])
+def compressed_no_header():
+    return Response(stream_compressed_no_header(), status=300, headers={"Content-Encoding": "gzip"})
+
 @streams_api.route('/compressed', methods=['GET'])
 def compressed():
     return Response(stream_compressed_header_error(), status=300, headers={"Content-Encoding": "gzip"})

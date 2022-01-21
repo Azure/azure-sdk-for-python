@@ -26,7 +26,7 @@
 import pytest
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core import PipelineClient
-from azure.core.exceptions import DecodeError
+from azure.core.exceptions import DecodeError, HttpResponseError
 from azure.core.pipeline.transport import RequestsTransport
 from utils import HTTP_REQUESTS
 
@@ -96,7 +96,7 @@ def test_decompress_compressed_no_header(http_request):
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_compress_compressed_no_header_offline(port, http_request):
     # expect compressed text
-    request = http_request(method="GET", url="http://localhost:{}/streams/compress".format(port))
+    request = http_request(method="GET", url="http://localhost:{}/streams/compressed_no_header".format(port))
     with RequestsTransport() as sender:
         try:
             response = sender.send(request, stream=True)
