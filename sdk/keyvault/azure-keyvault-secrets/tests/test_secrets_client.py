@@ -67,8 +67,6 @@ class TestSecretClient(KeyVaultTestCase):
         assert len(expected) == 0
 
  
-    #@all_api_versions()
-    #@client_setup
     @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
     @SecretsPreparer()
     @recorded_by_proxy
@@ -138,9 +136,7 @@ class TestSecretClient(KeyVaultTestCase):
         deleted = client.begin_delete_secret(updated.name).result()
         assert deleted is not None
 
-    #@all_api_versions()
-    #@client_setup
-    #@recorded_by_proxy
+    
     @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
     @SecretsPreparer()
     @recorded_by_proxy
@@ -297,10 +293,10 @@ class TestSecretClient(KeyVaultTestCase):
         assert not any(s in deleted for s in secrets.keys())
 
     @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
-    #@logging_enabled
     @SecretsPreparer()
     @recorded_by_proxy
     def test_logging_enabled(self, client, **kwargs):
+        kwargs.update({'logging_enable': True})
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
@@ -331,11 +327,11 @@ class TestSecretClient(KeyVaultTestCase):
         mock_handler.close()
         assert False, "Expected request body wasn't logged"
 
-    # @logging_disabled()
     @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
     @SecretsPreparer()
     @recorded_by_proxy
     def test_logging_disabled(self, client, **kwargs):
+        kwargs.update({'logging_enable': False})
         mock_handler = MockHandler()
 
         logger = logging.getLogger("azure")
