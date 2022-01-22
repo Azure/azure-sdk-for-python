@@ -6,6 +6,8 @@ the Azure SDK test proxy.
 Documentation of the motivations and goals of the test proxy can be found [here][general_docs] in the azure-sdk-tools
 GitHub repository, and documentation of how to set up and use the proxy can be found [here][detailed_docs].
 
+Please refer to the [troubleshooting guide][troubleshooting] if you have any issues migrating a package.
+
 ## Table of contents
 - [Update existing tests](#update-existing-tests)
   - [Using resource preparers](#using-resource-preparers)
@@ -45,7 +47,7 @@ class TestExample(AzureTestCase):
 ### New test structure
 
 To use the proxy, test classes should inherit from AzureRecordedTestCase and recorded test methods should use a
-`recorded_by_proxy` decorator:
+`recorded_by_proxy` decorator directly on top of the test method:
 
 ```py
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
@@ -88,9 +90,8 @@ Docker is a requirement for using the test proxy. You can install Docker from
 [docs.docker.com](https://docs.docker.com/get-docker/). After installing, make sure Docker is running and is using
 Linux containers before running tests.
 
-The test proxy is made available for your tests via a Docker container. Some tests require an SSL connection to work, so
-the Docker image used for the container has a certificate imported that you need to trust on your machine. Instructions
-on how to do so can be found [here][proxy_cert_docs] and need to be followed before running tests.
+Follow the instructions [here][proxy_cert_docs] to complete setup. You need to trust a certificate on your machine in
+order to communicate with the test proxy over a secure connection.
 
 ### Start the proxy server
 
@@ -133,7 +134,7 @@ Recordings for a given package will end up in that package's `/tests/recordings`
 do. Recordings that use the test proxy are `.json` files instead of `.yml` files, so migrated test suites no longer
 need old `.yml` recordings.
 
-> **Note:** at this time, support for configuring live or playback tests with a `testsettings_local.cfg` file has been
+> **Note:** support for configuring live or playback tests with a `testsettings_local.cfg` file has been
 > deprecated in favor of using just `AZURE_TEST_RUN_LIVE`.
 
 > **Note:** the recording storage location is determined when the proxy Docker container is created. If there are
@@ -154,28 +155,41 @@ are shared by different tests, using a session fixture declared in a `conftest.p
 [pytest's scoped fixture documentation][pytest_fixtures] for more details.
 
 As a simple example, to emulate the effect registering a name pair with a `vcrpy` scrubber, you can provide the exact
-value you want to sanitize from recordings as the `regex` in the general regex sanitizer. To replace all instances of
-the string "my-key-vault" with "fake-vault" in recordings, you could add something like the following in the package's
+value you want to sanitize from recordings as the `regex` in the general regex sanitizer. With `vcrpy`, you would likely
+do something like the following:
+
+```python
+import os
+from devtools_testutils import AzureTestCase
+
+class TestExample(AzureTestCase):
+    def __init__(self):
+        # scrub the value of AZURE_KEYVAULT_NAME with a fake vault name
+        self.scrubber.register_name_pair(os.getenv("AZURE_KEYVAULT_NAME"), "fake-vault")
+```
+
+To do the same sanitization with the test proxy, you could add something like the following in the package's
 `conftest.py` file:
 
 ```python
+import os
 from devtools_testutils import add_general_regex_sanitizer, test_proxy
 
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
-    add_general_regex_sanitizer(regex="my-key-vault", value="fake-vault")
+    add_general_regex_sanitizer(regex=os.getenv("AZURE_KEYVAULT_NAME"), value="fake-vault")
 ```
 
 Note that the sanitizer fixture accepts the `test_proxy` fixture as a parameter to ensure the proxy is started
 beforehand.
 
-For a more advanced scenario, where we want to sanitize the account names of all storage endpoints in recordings, we
+For a more advanced scenario, where we want to sanitize the account names of all Tables endpoints in recordings, we
 could instead call
 
 ```python
 add_general_regex_sanitizer(
-    regex="(?<=\\/\\/)[a-z]+(?=(?:|-secondary)\\.(?:table|blob|queue)\\.core\\.windows\\.net)",
+    regex="(?<=\\/\\/)[a-z]+(?=(?:|-secondary)\\.table\\.core\\.windows\\.net)",
     value="fakeendpoint",
 )
 ```
@@ -233,13 +247,23 @@ class TestExample(AzureRecordedTestCase):
 
     @TablesPreparer()
     @recorded_by_proxy
-    def test_example_with_preparer(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_example_with_preparer(self, **kwargs):
+        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
+        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
         ...
 ```
 
 Or, they can be used in a custom decorator, as they are in the `cosmos_decorator` and `tables_decorator` defined in
 [preparers.py][tables_preparers]. `@tables_decorator`, for instance, is then used in place of `@TablesPreparer()` for
 the example above (note that the method-style `tables_decorator` is used without parentheses).
+
+Decorated test methods will have the values of environment variables passed to them as keyword arguments, and these
+values will automatically have sanitizers registered with the test proxy.
+
+> **Note:** For tests that are decorated by `@recorded_by_proxy` or `@recorded_by_proxy_async`, the keyword arguments
+> passed by PowerShellPreparer can be listed as positional arguments instead of using `**kwargs`. However, tests
+> without these decorators can only accept arguments through `**kwargs`. It's therefore recommended that you use
+> `**kwargs` in all cases so that tests run successfully with or without `@recorded_by_proxy` decorators.
 
 ### Record test variables
 
@@ -251,10 +275,10 @@ values in playback mode without a sanitizer.
 For example, imagine that a test uses a randomized `table_name` variable when creating resources. The same random value
 for `table_name` can be used in playback mode by using this `variables` API.
 
-There are two requirements for a test to use recorded variables. First, the test method should accept `**kwargs` and/or
-a `variables` parameter. Second, the test method should `return` a dictionary with any test variables that it wants to
-record. This dictionary will be stored in the recording when the test is run live, and will be passed to the test as a
-`variables` keyword argument when the test is run in playback.
+There are two requirements for a test to use recorded variables. First, the test method should accept `**kwargs`.
+Second, the test method should `return` a dictionary with any test variables that it wants to record. This dictionary
+will be stored in the recording when the test is run live, and will be passed to the test as a `variables` keyword
+argument when the test is run in playback.
 
 Below is a code example of how a test method could use recorded variables:
 
@@ -264,9 +288,10 @@ from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 class TestExample(AzureRecordedTestCase):
 
     @recorded_by_proxy
-    def test_example(self, variables):
+    def test_example(self, **kwargs):
         # in live mode, variables is an empty dictionary
         # in playback mode, the value of variables is {"table_name": "random-value"}
+        variables = kwargs.pop("variables")
         if self.is_live:
             table_name = "random-value"
             variables = {"table_name": table_name}
@@ -376,4 +401,5 @@ For more details on proxy startup, please refer to the [proxy documentation][det
 [sanitizers]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md#session-and-test-level-transforms-sanitiziers-and-matchers
 [tables_preparers]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/tests/preparers.py
 [test_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/TestResources#readme
+[troubleshooting]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_troubleshooting.md
 [vcrpy]: https://vcrpy.readthedocs.io
