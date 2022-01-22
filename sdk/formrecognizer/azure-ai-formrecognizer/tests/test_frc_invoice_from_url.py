@@ -88,7 +88,8 @@ class TestInvoiceFromUrl(FormRecognizerTest):
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    def test_invoice_continuation_token(self, client):
+    def test_invoice_continuation_token(self, **kwargs):
+        client = kwargs.pop("client")
 
         initial_poller = client.begin_recognize_invoices_from_url(self.invoice_url_tiff)
         cont_token = initial_poller.continuation_token()
@@ -99,7 +100,8 @@ class TestInvoiceFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
-    def test_invoice_v2(self, client):
+    def test_invoice_v2(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ValueError) as e:
             client.begin_recognize_invoices_from_url(self.invoice_url_tiff)
         assert "Method 'begin_recognize_invoices_from_url' is only available for API version V2_1 and up" in str(e.value)

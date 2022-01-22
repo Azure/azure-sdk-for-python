@@ -148,7 +148,9 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    def test_custom_form_continuation_token(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
+    def test_custom_form_continuation_token(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_storage_container_sas_url_v2 = kwargs.pop("formrecognizer_storage_container_sas_url_v2")
         fr_client = client.get_form_recognizer_client()
 
         training_poller = client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
