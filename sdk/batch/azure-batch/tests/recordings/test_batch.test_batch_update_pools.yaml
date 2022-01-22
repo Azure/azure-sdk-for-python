@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"id": "batch_paas_f0de0ddf", "vmSize": "standard_d1_v2", "cloudServiceConfiguration":
+    body: '{"id": "batch_paas_f0de0ddf", "vmSize": "standard_d2_v2", "cloudServiceConfiguration":
       {"osFamily": "5"}, "startTask": {"commandLine": "cmd.exe /c \"echo hello world\"",
       "resourceFiles": [{"httpUrl": "https://blobsource.com", "filePath": "filename.txt"}],
       "environmentSettings": [{"name": "ENV_VAR", "value": "env_value"}], "userIdentity":
@@ -216,7 +216,7 @@ interactions:
     uri: https://batch.southcentralus.batch.azure.com/pools/batch_paas_f0de0ddf?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_paas_f0de0ddf\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/batch_paas_f0de0ddf\",\"eTag\":\"0x8D9D66925F8BE75\",\"lastModified\":\"2022-01-13T07:48:54.6604661Z\",\"creationTime\":\"2022-01-13T07:48:53.3724344Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-13T07:48:53.3724344Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2022-01-13T07:48:54.5384616Z\",\"vmSize\":\"standard_d1_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"certificateReferences\":[],\"metadata\":[\r\n
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_paas_f0de0ddf\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/batch_paas_f0de0ddf\",\"eTag\":\"0x8D9D66925F8BE75\",\"lastModified\":\"2022-01-13T07:48:54.6604661Z\",\"creationTime\":\"2022-01-13T07:48:53.3724344Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-13T07:48:53.3724344Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2022-01-13T07:48:54.5384616Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"certificateReferences\":[],\"metadata\":[\r\n
         \   {\r\n      \"name\":\"foo2\",\"value\":\"bar2\"\r\n    }\r\n  ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
         \   \"nodeFillType\":\"Spread\"\r\n  },\"cloudServiceConfiguration\":{\r\n
         \   \"osFamily\":\"5\",\"osVersion\":\"*\"\r\n  }\r\n}"

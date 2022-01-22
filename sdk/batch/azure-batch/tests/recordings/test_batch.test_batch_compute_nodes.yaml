@@ -14,21 +14,30 @@ interactions:
       accept-language:
       - en-US
       ocp-date:
-      - Sun, 09 Jan 2022 07:28:20 GMT
+      - Fri, 21 Jan 2022 23:48:44 GMT
     method: GET
     uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#nodes\",\"value\":[]\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2022-01-21T23:46:25.312997Z\",\"lastBootTime\":\"2022-01-21T23:46:24.621649Z\",\"allocationTime\":\"2022-01-21T23:46:09.4332268Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"certificateReferences\":[],\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.97.88.3\",\"publicFQDN\":\"dns68c80e8b-2b1f-4443-8431-a80d1ce60ca5-azurebatch-cloudservice.southcentralus.cloudapp.azure.com\",\"frontendPort\":50000,\"backendPort\":22\r\n
+        \         }\r\n        ]\r\n      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2022-01-21T23:46:24.621649Z\",\"version\":\"1.9.22\"\r\n
+        \     },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202201180\"\r\n
+        \       }\r\n      }\r\n    },{\r\n      \"id\":\"tvmps_4ba75cef43e7b0f4270cdcc0122ce8a789f389abbeb68267b314a2c89c50cfc5_d\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_4ba75cef43e7b0f4270cdcc0122ce8a789f389abbeb68267b314a2c89c50cfc5_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2022-01-21T23:46:25.120216Z\",\"lastBootTime\":\"2022-01-21T23:46:24.638346Z\",\"allocationTime\":\"2022-01-21T23:46:09.4332268Z\",\"ipAddress\":\"10.0.0.5\",\"affinityId\":\"TVM:tvmps_4ba75cef43e7b0f4270cdcc0122ce8a789f389abbeb68267b314a2c89c50cfc5_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"certificateReferences\":[],\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.1\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.97.88.3\",\"publicFQDN\":\"dns68c80e8b-2b1f-4443-8431-a80d1ce60ca5-azurebatch-cloudservice.southcentralus.cloudapp.azure.com\",\"frontendPort\":50001,\"backendPort\":22\r\n
+        \         }\r\n        ]\r\n      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2022-01-21T23:46:24.638346Z\",\"version\":\"1.9.22\"\r\n
+        \     },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202201180\"\r\n
+        \       }\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Sun, 09 Jan 2022 07:28:20 GMT
+      - Fri, 21 Jan 2022 23:48:43 GMT
       request-id:
-      - 8d4b1d42-6a42-414f-8b2e-fd863dda7fbd
+      - 729adf7a-c411-4579-98de-e410f5060999
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -40,4 +49,328 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 21 Jan 2022 23:48:45 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#nodes/@Element\",\"id\":\"tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2022-01-21T23:46:25.312997Z\",\"lastBootTime\":\"2022-01-21T23:46:24.621649Z\",\"allocationTime\":\"2022-01-21T23:46:09.4332268Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"certificateReferences\":[],\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \   \"inboundEndpoints\":[\r\n      {\r\n        \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.97.88.3\",\"publicFQDN\":\"dns68c80e8b-2b1f-4443-8431-a80d1ce60ca5-azurebatch-cloudservice.southcentralus.cloudapp.azure.com\",\"frontendPort\":50000,\"backendPort\":22\r\n
+        \     }\r\n    ]\r\n  },\"nodeAgentInfo\":{\r\n    \"lastUpdateTime\":\"2022-01-21T23:46:24.621649Z\",\"version\":\"1.9.22\"\r\n
+        \ },\"virtualMachineInfo\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202201180\"\r\n
+        \   }\r\n  }\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 21 Jan 2022 23:48:44 GMT
+      request-id:
+      - 56adb55c-af91-4ce3-adbb-e53bb11e5612
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"containerUrl": "https://computecontainer.blob.core.windows.net/", "startTime":
+      "2022-01-21T23:42:52.967674Z"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '111'
+      Content-Type:
+      - application/json; odata=minimalmetadata; charset=utf-8
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 21 Jan 2022 23:48:55 GMT
+    method: POST
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d/uploadbatchservicelogs?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.UploadBatchServiceLogsResult\",\"virtualDirectoryName\":\"batch-22F04B46AA221C14/test_batch_test_batch_compute_nodesff3f0e45/tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d/eefc85a4-a970-4980-91c5-58ae924c85b2\",\"numberOfFilesUploaded\":4\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 21 Jan 2022 23:48:55 GMT
+      request-id:
+      - eefc85a4-a970-4980-91c5-58ae924c85b2
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json; odata=minimalmetadata; charset=utf-8
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 21 Jan 2022 23:49:28 GMT
+    method: POST
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d/disablescheduling?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: ''
+    headers:
+      dataserviceid:
+      - https://batchff3f0e45.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d/disablescheduling
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 21 Jan 2022 23:49:27 GMT
+      request-id:
+      - d972939f-2860-4c3d-8480-4762324e09ab
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 21 Jan 2022 23:49:28 GMT
+    method: POST
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d/enablescheduling?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: ''
+    headers:
+      dataserviceid:
+      - https://batchff3f0e45.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d/enablescheduling
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 21 Jan 2022 23:49:27 GMT
+      request-id:
+      - a04a82ba-6c82-4810-8736-f8ce1ae53879
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"nodeRebootOption": "terminate"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '33'
+      Content-Type:
+      - application/json; odata=minimalmetadata; charset=utf-8
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 21 Jan 2022 23:49:28 GMT
+    method: POST
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d/reboot?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: ''
+    headers:
+      dataserviceid:
+      - https://batchff3f0e45.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d/reboot
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 21 Jan 2022 23:49:28 GMT
+      request-id:
+      - 058ebf6b-5c0f-4b58-8246-83fb22983970
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: '{"nodeReimageOption": "terminate"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '34'
+      Content-Type:
+      - application/json; odata=minimalmetadata; charset=utf-8
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 21 Jan 2022 23:49:29 GMT
+    method: POST
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_4ba75cef43e7b0f4270cdcc0122ce8a789f389abbeb68267b314a2c89c50cfc5_d/reimage?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\",\"code\":\"OperationNotValidOnNode\",\"message\":{\r\n
+        \   \"lang\":\"en-US\",\"value\":\"The specified operation is not valid on
+        the node.\\nRequestId:c93812ba-2298-4faf-b74c-00857f0adedd\\nTime:2022-01-21T23:49:28.9117614Z\"\r\n
+        \ },\"values\":[\r\n    {\r\n      \"key\":\"Reason\",\"value\":\"Operation
+        reimage can be invoked only on pools created with cloudServiceConfiguration\"\r\n
+        \   }\r\n  ]\r\n}"
+    headers:
+      content-length:
+      - '516'
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 21 Jan 2022 23:49:28 GMT
+      request-id:
+      - c93812ba-2298-4faf-b74c-00857f0adedd
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 409
+      message: The specified operation is not valid on the node.
+- request:
+    body: '{"nodeList": ["tvmps_0b9677f8c5e8f87ea8f99290852630abb5d0d4156c6fd7b497ae1276f0307291_d",
+      "tvmps_4ba75cef43e7b0f4270cdcc0122ce8a789f389abbeb68267b314a2c89c50cfc5_d"]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '166'
+      Content-Type:
+      - application/json; odata=minimalmetadata; charset=utf-8
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 21 Jan 2022 23:49:29 GMT
+    method: POST
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/removenodes?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: ''
+    headers:
+      dataserviceid:
+      - https://batchff3f0e45.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/removenodes
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 21 Jan 2022 23:49:28 GMT
+      etag:
+      - '0x8D9DD38AA070034'
+      last-modified:
+      - Fri, 21 Jan 2022 23:49:29 GMT
+      request-id:
+      - 71fb8a63-6e56-40df-b4f4-aceaa9c5d3e7
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 202
+      message: Accepted
 version: 1

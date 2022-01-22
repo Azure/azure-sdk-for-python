@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"id": "batch_network_814e11b1", "vmSize": "standard_d1_v2", "virtualMachineConfiguration":
+    body: '{"id": "batch_network_814e11b1", "vmSize": "standard_d2_v2", "virtualMachineConfiguration":
       {"imageReference": {"publisher": "Canonical", "offer": "UbuntuServer", "sku":
       "18.04-LTS"}, "nodeAgentSKUId": "batch.node.ubuntu 18.04"}, "targetDedicatedNodes":
       1, "networkConfiguration": {"endpointConfiguration": {"inboundNATPools": [{"name":
@@ -24,7 +24,7 @@ interactions:
       accept-language:
       - en-US
       ocp-date:
-      - Sun, 09 Jan 2022 07:59:44 GMT
+      - Fri, 21 Jan 2022 19:40:58 GMT
     method: POST
     uri: https://batch.southcentralus.batch.azure.com/pools?api-version=2022-01-01.15.0
   response:
@@ -36,15 +36,15 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Sun, 09 Jan 2022 07:59:44 GMT
+      - Fri, 21 Jan 2022 19:40:57 GMT
       etag:
-      - '0x8D9D345FFEDE7AD'
+      - '0x8D9DD15F2DA7D90'
       last-modified:
-      - Sun, 09 Jan 2022 07:59:44 GMT
+      - Fri, 21 Jan 2022 19:40:58 GMT
       location:
       - https://batch.southcentralus.batch.azure.com/pools/batch_network_814e11b1
       request-id:
-      - 516c05fc-3619-47fb-be39-1169b274ac51
+      - 42478eeb-3069-4b54-9b7a-ae57f6bdc4f4
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -71,12 +71,12 @@ interactions:
       accept-language:
       - en-US
       ocp-date:
-      - Sun, 09 Jan 2022 07:59:45 GMT
+      - Fri, 21 Jan 2022 19:41:04 GMT
     method: GET
     uri: https://batch.southcentralus.batch.azure.com/pools/batch_network_814e11b1?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_network_814e11b1\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/batch_network_814e11b1\",\"eTag\":\"0x8D9D345FFEDE7AD\",\"lastModified\":\"2022-01-09T07:59:44.9621421Z\",\"creationTime\":\"2022-01-09T07:59:44.9621421Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-09T07:59:44.9621421Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-09T07:59:44.9621421Z\",\"vmSize\":\"standard_d1_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":1,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_network_814e11b1\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/batch_network_814e11b1\",\"eTag\":\"0x8D9DD15F2DA7D90\",\"lastModified\":\"2022-01-21T19:40:58.8092816Z\",\"creationTime\":\"2022-01-21T19:40:58.8092816Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-21T19:40:58.8092816Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-21T19:40:58.8092816Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":1,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
         \   \"nodeFillType\":\"Spread\"\r\n  },\"virtualMachineConfiguration\":{\r\n
         \   \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
         \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  },\"networkConfiguration\":{\r\n
@@ -91,13 +91,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Sun, 09 Jan 2022 07:59:44 GMT
+      - Fri, 21 Jan 2022 19:41:04 GMT
       etag:
-      - '0x8D9D345FFEDE7AD'
+      - '0x8D9DD15F2DA7D90'
       last-modified:
-      - Sun, 09 Jan 2022 07:59:44 GMT
+      - Fri, 21 Jan 2022 19:40:58 GMT
       request-id:
-      - b1553651-0c97-4e9f-8fc5-22e8ffa5bbaf
+      - 2f510502-baf5-439c-a23c-9f31a8e76be0
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -124,14 +124,12 @@ interactions:
       accept-language:
       - en-US
       ocp-date:
-      - Sun, 09 Jan 2022 07:59:55 GMT
+      - Fri, 21 Jan 2022 19:42:35 GMT
     method: GET
     uri: https://batch.southcentralus.batch.azure.com/pools/batch_network_814e11b1?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_network_814e11b1\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/batch_network_814e11b1\",\"eTag\":\"0x8D9D345FFEDE7AD\",\"lastModified\":\"2022-01-09T07:59:44.9621421Z\",\"creationTime\":\"2022-01-09T07:59:44.9621421Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-09T07:59:44.9621421Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2022-01-09T07:59:46.3164787Z\",\"vmSize\":\"standard_d1_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":1,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"resizeErrors\":[\r\n
-        \   {\r\n      \"code\":\"AccountCoreQuotaReached\",\"message\":\"The specified
-        account has reached core quota\"\r\n    }\r\n  ],\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_network_814e11b1\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/batch_network_814e11b1\",\"eTag\":\"0x8D9DD15F2DA7D90\",\"lastModified\":\"2022-01-21T19:40:58.8092816Z\",\"creationTime\":\"2022-01-21T19:40:58.8092816Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-21T19:40:58.8092816Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2022-01-21T19:41:55.8040485Z\",\"vmSize\":\"standard_d2_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":1,\"targetDedicatedNodes\":1,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
         \   \"nodeFillType\":\"Spread\"\r\n  },\"virtualMachineConfiguration\":{\r\n
         \   \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
         \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\"\r\n  },\"networkConfiguration\":{\r\n
@@ -146,13 +144,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Sun, 09 Jan 2022 07:59:54 GMT
+      - Fri, 21 Jan 2022 19:42:35 GMT
       etag:
-      - '0x8D9D345FFEDE7AD'
+      - '0x8D9DD15F2DA7D90'
       last-modified:
-      - Sun, 09 Jan 2022 07:59:44 GMT
+      - Fri, 21 Jan 2022 19:40:58 GMT
       request-id:
-      - fb15d4f7-2b12-4439-be0a-0acbd811365a
+      - f73ec9b6-f3fb-4a20-b235-78bab932d553
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -179,21 +177,27 @@ interactions:
       accept-language:
       - en-US
       ocp-date:
-      - Sun, 09 Jan 2022 07:59:55 GMT
+      - Fri, 21 Jan 2022 19:42:36 GMT
     method: GET
     uri: https://batch.southcentralus.batch.azure.com/pools/batch_network_814e11b1/nodes?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#nodes\",\"value\":[]\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvmps_eb9ead79497a2a9b88ac70509df6ffedfb49cad4e7f410fcf8eaaaf12e751ef0_d\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/batch_network_814e11b1/nodes/tvmps_eb9ead79497a2a9b88ac70509df6ffedfb49cad4e7f410fcf8eaaaf12e751ef0_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2022-01-21T19:42:10.929305Z\",\"lastBootTime\":\"2022-01-21T19:42:10.843945Z\",\"allocationTime\":\"2022-01-21T19:41:55.3336947Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_eb9ead79497a2a9b88ac70509df6ffedfb49cad4e7f410fcf8eaaaf12e751ef0_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"certificateReferences\":[],\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"TestEndpointConfig.0\",\"protocol\":\"udp\",\"publicIPAddress\":\"40.74.176.77\",\"publicFQDN\":\"dnse477b4bc-f0a1-4199-be75-6edba92ad61c-azurebatch-cloudservice.southcentralus.cloudapp.azure.com\",\"frontendPort\":60000,\"backendPort\":64444\r\n
+        \         },{\r\n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\":\"40.74.176.77\",\"publicFQDN\":\"dnse477b4bc-f0a1-4199-be75-6edba92ad61c-azurebatch-cloudservice.southcentralus.cloudapp.azure.com\",\"frontendPort\":50000,\"backendPort\":22\r\n
+        \         }\r\n        ]\r\n      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2022-01-21T19:42:10.843945Z\",\"version\":\"1.9.22\"\r\n
+        \     },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202201180\"\r\n
+        \       }\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Sun, 09 Jan 2022 07:59:54 GMT
+      - Fri, 21 Jan 2022 19:42:35 GMT
       request-id:
-      - 8edd5f27-98ba-4ca1-a8be-38bd041bae2a
+      - 521cac14-ff25-42c6-aa38-091613442ff2
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

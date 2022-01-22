@@ -33,7 +33,7 @@ from devtools_testutils import (
 AZURE_LOCATION = 'southcentralus'
 BATCH_ENVIRONMENT = None  # Set this to None if testing against prod
 BATCH_RESOURCE = 'https://batch.core.windows.net/'
-DEFAULT_VM_SIZE = 'standard_d1_v2'
+DEFAULT_VM_SIZE = 'standard_d2_v2'
 
 
 class BatchTest(AzureMgmtTestCase):
@@ -435,6 +435,10 @@ class BatchTest(AzureMgmtTestCase):
             '$TargetDedicatedNodes=3;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue')
         
         # Test Disable Autoscale
+        pool = client.pool.get(batch_pool.name)
+        while self.is_live and pool.allocation_state != models.AllocationState.steady:
+            time.sleep(5)
+            pool = client.pool.get(batch_pool.name)
         response = client.pool.disable_auto_scale(batch_pool.name)
         self.assertIsNone(response)
 
@@ -620,7 +624,7 @@ class BatchTest(AzureMgmtTestCase):
 
         # Test Upload Log
         config = models.UploadBatchServiceLogsConfiguration(
-            container_url = "https://test.blob.core.windows.net:443/test-container", 
+            container_url = "https://computecontainer.blob.core.windows.net/", 
             start_time = datetime.datetime.utcnow() - datetime.timedelta(minutes=6))
         result = client.compute_node.upload_batch_service_logs(batch_pool.name, nodes[0].id, config)
         self.assertIsNotNone(result)

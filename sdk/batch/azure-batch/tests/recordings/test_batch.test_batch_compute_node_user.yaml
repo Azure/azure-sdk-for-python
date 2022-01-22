@@ -14,21 +14,250 @@ interactions:
       accept-language:
       - en-US
       ocp-date:
-      - Sun, 09 Jan 2022 07:22:02 GMT
+      - Fri, 14 Jan 2022 19:06:08 GMT
     method: GET
     uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#nodes\",\"value\":[]\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-1910979920_1-20220114t190437z\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1910979920_1-20220114t190437z\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2022-01-14T19:05:03.665545Z\",\"lastBootTime\":\"2022-01-14T19:05:03.266297Z\",\"allocationTime\":\"2022-01-14T19:04:37.0071924Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvm-1910979920_1-20220114t190437z\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"certificateReferences\":[],\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"LogInPort\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.118.67.84\",\"publicFQDN\":\"dnsa7fb9b08-e684-4156-8bed-3f87bd57b0fe-azurebatch-cloudservice.southcentralus.cloudapp.azure.com\",\"frontendPort\":51000,\"backendPort\":29877\r\n
+        \         },{\r\n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.118.67.84\",\"publicFQDN\":\"dnsa7fb9b08-e684-4156-8bed-3f87bd57b0fe-azurebatch-cloudservice.southcentralus.cloudapp.azure.com\",\"frontendPort\":50000,\"backendPort\":22\r\n
+        \         }\r\n        ]\r\n      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2022-01-14T19:05:03.266297Z\",\"version\":\"1.9.22\"\r\n
+        \     },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \       }\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Sun, 09 Jan 2022 07:22:02 GMT
+      - Fri, 14 Jan 2022 19:06:08 GMT
       request-id:
-      - 7f217972-7c07-4769-b23c-cdbf59a5ce44
+      - dcd83cc9-fa2e-4c66-aee7-2d26ff69a493
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 19:06:09 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvm-1910979920_1-20220114t190437z\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1910979920_1-20220114t190437z\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2022-01-14T19:05:03.665545Z\",\"lastBootTime\":\"2022-01-14T19:05:03.266297Z\",\"allocationTime\":\"2022-01-14T19:04:37.0071924Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvm-1910979920_1-20220114t190437z\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"certificateReferences\":[],\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"LogInPort\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.118.67.84\",\"publicFQDN\":\"dnsa7fb9b08-e684-4156-8bed-3f87bd57b0fe-azurebatch-cloudservice.southcentralus.cloudapp.azure.com\",\"frontendPort\":51000,\"backendPort\":29877\r\n
+        \         },{\r\n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.118.67.84\",\"publicFQDN\":\"dnsa7fb9b08-e684-4156-8bed-3f87bd57b0fe-azurebatch-cloudservice.southcentralus.cloudapp.azure.com\",\"frontendPort\":50000,\"backendPort\":22\r\n
+        \         }\r\n        ]\r\n      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2022-01-14T19:05:03.266297Z\",\"version\":\"1.9.22\"\r\n
+        \     },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \       }\r\n      }\r\n    }\r\n  ]\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 19:06:08 GMT
+      request-id:
+      - 18aa8e5a-2d22-4ebb-8156-68faa09e3259
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"name": "BatchPythonSDKUser", "isAdmin": false, "password": "kt#_gahr!@aGERDXA"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '81'
+      Content-Type:
+      - application/json; odata=minimalmetadata; charset=utf-8
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 19:06:09 GMT
+    method: POST
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1910979920_1-20220114t190437z/users?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: ''
+    headers:
+      dataserviceid:
+      - https://batch3c670ff0.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1910979920_1-20220114t190437z/users/BatchPythonSDKUser
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 19:06:09 GMT
+      location:
+      - https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1910979920_1-20220114t190437z/users/BatchPythonSDKUser
+      request-id:
+      - 71cee6cb-b359-4c40-8394-5e705db87548
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{"password": "liilef#$DdRGSa_ewkjh"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '36'
+      Content-Type:
+      - application/json; odata=minimalmetadata; charset=utf-8
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 19:06:09 GMT
+    method: PUT
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1910979920_1-20220114t190437z/users/BatchPythonSDKUser?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: ''
+    headers:
+      dataserviceid:
+      - https://batch3c670ff0.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1910979920_1-20220114t190437z/users/BatchPythonSDKUser
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 19:06:09 GMT
+      request-id:
+      - 8216943e-f5ea-4651-92f1-a121f0a24f11
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 19:06:09 GMT
+    method: GET
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1910979920_1-20220114t190437z/remoteloginsettings?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.RemoteLoginSettings\",\"remoteLoginIPAddress\":\"20.118.67.84\",\"remoteLoginPort\":50000\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceid:
+      - https://batch3c670ff0.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1910979920_1-20220114t190437z/remoteloginsettings
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 19:06:09 GMT
+      request-id:
+      - d634d33e-4055-488d-8960-df89c6daabfc
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      ocp-date:
+      - Fri, 14 Jan 2022 19:06:10 GMT
+    method: DELETE
+    uri: https://batch.southcentralus.batch.azure.com/pools/test_batch_test_batch_compute_node_user3c670ff0/nodes/tvm-1910979920_1-20220114t190437z/users/BatchPythonSDKUser?api-version=2022-01-01.15.0
+  response:
+    body:
+      string: ''
+    headers:
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Fri, 14 Jan 2022 19:06:09 GMT
+      request-id:
+      - e26c1a1d-ca50-45c5-a7df-35bd46861974
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
