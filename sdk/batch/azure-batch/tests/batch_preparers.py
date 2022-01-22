@@ -183,7 +183,7 @@ class PoolPreparer(AzureMgmtPreparer):
             group = self._get_resource_group(**kwargs)
             batch_account = self._get_batch_account(**kwargs)
             user = models.UserAccount(name='task-user', password='kt#_gahr!@aGERDXA', elevation_level=models.ElevationLevel.admin)
-            vm_size = 'Standard_D1_v2'
+            vm_size = 'standard_d2_v2'
 
             if self.config == 'paas':
                 vm_size = 'small'
