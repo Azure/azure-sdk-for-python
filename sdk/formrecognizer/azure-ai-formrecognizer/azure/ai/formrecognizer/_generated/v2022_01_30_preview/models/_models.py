@@ -67,6 +67,8 @@ class AnalyzeResult(msrest.serialization.Model):
     :vartype entities: list[~azure.ai.formrecognizer.v2022_01_30_preview.models.DocumentEntity]
     :ivar styles: Extracted font styles.
     :vartype styles: list[~azure.ai.formrecognizer.v2022_01_30_preview.models.DocumentStyle]
+    :ivar languages: Detected languages.
+    :vartype languages: list[~azure.ai.formrecognizer.v2022_01_30_preview.models.DocumentLanguage]
     :ivar documents: Extracted documents.
     :vartype documents: list[~azure.ai.formrecognizer.v2022_01_30_preview.models.Document]
     """
@@ -89,6 +91,7 @@ class AnalyzeResult(msrest.serialization.Model):
         'key_value_pairs': {'key': 'keyValuePairs', 'type': '[DocumentKeyValuePair]'},
         'entities': {'key': 'entities', 'type': '[DocumentEntity]'},
         'styles': {'key': 'styles', 'type': '[DocumentStyle]'},
+        'languages': {'key': 'languages', 'type': '[DocumentLanguage]'},
         'documents': {'key': 'documents', 'type': '[Document]'},
     }
 
@@ -120,6 +123,9 @@ class AnalyzeResult(msrest.serialization.Model):
         :paramtype entities: list[~azure.ai.formrecognizer.v2022_01_30_preview.models.DocumentEntity]
         :keyword styles: Extracted font styles.
         :paramtype styles: list[~azure.ai.formrecognizer.v2022_01_30_preview.models.DocumentStyle]
+        :keyword languages: Detected languages.
+        :paramtype languages:
+         list[~azure.ai.formrecognizer.v2022_01_30_preview.models.DocumentLanguage]
         :keyword documents: Extracted documents.
         :paramtype documents: list[~azure.ai.formrecognizer.v2022_01_30_preview.models.Document]
         """
@@ -133,6 +139,7 @@ class AnalyzeResult(msrest.serialization.Model):
         self.key_value_pairs = kwargs.get('key_value_pairs', None)
         self.entities = kwargs.get('entities', None)
         self.styles = kwargs.get('styles', None)
+        self.languages = kwargs.get('languages', None)
         self.documents = kwargs.get('documents', None)
 
 
@@ -207,6 +214,8 @@ class AuthorizeCopyRequest(msrest.serialization.Model):
     :vartype model_id: str
     :ivar description: Model description.
     :vartype description: str
+    :ivar tags: A set of tags. List of key-value tag attributes associated with the model.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -217,6 +226,7 @@ class AuthorizeCopyRequest(msrest.serialization.Model):
     _attribute_map = {
         'model_id': {'key': 'modelId', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
     def __init__(
@@ -228,10 +238,13 @@ class AuthorizeCopyRequest(msrest.serialization.Model):
         :paramtype model_id: str
         :keyword description: Model description.
         :paramtype description: str
+        :keyword tags: A set of tags. List of key-value tag attributes associated with the model.
+        :paramtype tags: dict[str, str]
         """
         super(AuthorizeCopyRequest, self).__init__(**kwargs)
         self.model_id = kwargs['model_id']
         self.description = kwargs.get('description', None)
+        self.tags = kwargs.get('tags', None)
 
 
 class AzureBlobContentSource(msrest.serialization.Model):
@@ -407,6 +420,8 @@ class ComposeDocumentModelRequest(msrest.serialization.Model):
     :ivar component_models: Required. List of component models to compose.
     :vartype component_models:
      list[~azure.ai.formrecognizer.v2022_01_30_preview.models.ComponentModelInfo]
+    :ivar tags: A set of tags. List of key-value tag attributes associated with the model.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -419,6 +434,7 @@ class ComposeDocumentModelRequest(msrest.serialization.Model):
         'model_id': {'key': 'modelId', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'component_models': {'key': 'componentModels', 'type': '[ComponentModelInfo]'},
+        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
     def __init__(
@@ -433,11 +449,14 @@ class ComposeDocumentModelRequest(msrest.serialization.Model):
         :keyword component_models: Required. List of component models to compose.
         :paramtype component_models:
          list[~azure.ai.formrecognizer.v2022_01_30_preview.models.ComponentModelInfo]
+        :keyword tags: A set of tags. List of key-value tag attributes associated with the model.
+        :paramtype tags: dict[str, str]
         """
         super(ComposeDocumentModelRequest, self).__init__(**kwargs)
         self.model_id = kwargs['model_id']
         self.description = kwargs.get('description', None)
         self.component_models = kwargs['component_models']
+        self.tags = kwargs.get('tags', None)
 
 
 class CopyAuthorization(msrest.serialization.Model):
@@ -1039,6 +1058,53 @@ class DocumentKeyValuePair(msrest.serialization.Model):
         super(DocumentKeyValuePair, self).__init__(**kwargs)
         self.key = kwargs['key']
         self.value = kwargs.get('value', None)
+        self.confidence = kwargs['confidence']
+
+
+class DocumentLanguage(msrest.serialization.Model):
+    """An object representing the detected language for a given text span.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar language_code: Required. Detected language.  Value may an ISO 639-1 language code (ex.
+     "en", "fr") or BCP 47 language tag (ex. "zh-Hans").
+    :vartype language_code: str
+    :ivar spans: Required. Location of the text elements in the concatenated content the language
+     applies to.
+    :vartype spans: list[~azure.ai.formrecognizer.v2022_01_30_preview.models.DocumentSpan]
+    :ivar confidence: Required. Confidence of correctly identifying the language.
+    :vartype confidence: float
+    """
+
+    _validation = {
+        'language_code': {'required': True},
+        'spans': {'required': True},
+        'confidence': {'required': True, 'maximum': 1, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'language_code': {'key': 'languageCode', 'type': 'str'},
+        'spans': {'key': 'spans', 'type': '[DocumentSpan]'},
+        'confidence': {'key': 'confidence', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword language_code: Required. Detected language.  Value may an ISO 639-1 language code (ex.
+         "en", "fr") or BCP 47 language tag (ex. "zh-Hans").
+        :paramtype language_code: str
+        :keyword spans: Required. Location of the text elements in the concatenated content the
+         language applies to.
+        :paramtype spans: list[~azure.ai.formrecognizer.v2022_01_30_preview.models.DocumentSpan]
+        :keyword confidence: Required. Confidence of correctly identifying the language.
+        :paramtype confidence: float
+        """
+        super(DocumentLanguage, self).__init__(**kwargs)
+        self.language_code = kwargs['language_code']
+        self.spans = kwargs['spans']
         self.confidence = kwargs['confidence']
 
 

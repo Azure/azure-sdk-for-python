@@ -26,6 +26,7 @@ try:
     from ._models_py3 import DocumentFieldSchema
     from ._models_py3 import DocumentKeyValueElement
     from ._models_py3 import DocumentKeyValuePair
+    from ._models_py3 import DocumentLanguage
     from ._models_py3 import DocumentLine
     from ._models_py3 import DocumentPage
     from ._models_py3 import DocumentSelectionMark
@@ -64,6 +65,7 @@ except (SyntaxError, ImportError):
     from ._models import DocumentFieldSchema  # type: ignore
     from ._models import DocumentKeyValueElement  # type: ignore
     from ._models import DocumentKeyValuePair  # type: ignore
+    from ._models import DocumentLanguage  # type: ignore
     from ._models import DocumentLine  # type: ignore
     from ._models import DocumentPage  # type: ignore
     from ._models import DocumentSelectionMark  # type: ignore
@@ -118,6 +120,7 @@ __all__ = [
     'DocumentFieldSchema',
     'DocumentKeyValueElement',
     'DocumentKeyValuePair',
+    'DocumentLanguage',
     'DocumentLine',
     'DocumentPage',
     'DocumentSelectionMark',
