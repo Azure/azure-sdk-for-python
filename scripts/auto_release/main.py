@@ -358,7 +358,7 @@ class CodegenTestPR:
 
     def edit_changelog(self):
         def edit_changelog_proc(content: List[str]):
-            content[1:1] = ['\n', f'## {self.next_version} ({current_time()})\n\n', self.get_changelog()]
+            content[1:1] = ['\n', f'## {self.next_version} ({current_time()})\n\n', self.get_changelog(), '\n']
 
         modify_file(str(Path(self.sdk_code_path()) / 'CHANGELOG.md'), edit_changelog_proc)
 
