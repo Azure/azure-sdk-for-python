@@ -67,7 +67,7 @@ output-folder: $(python-sdks-folder)/formrecognizer/azure-ai-formrecognizer/azur
 These settings apply only when `--tag=release_2022_01_30_preview` is specified on the command line.
 
 ``` yaml $(tag) == 'release_2022_01_30_preview'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs-pr/36c999237f4c0d0bae9c610976c4a2cb6e2c2ace/specification/cognitiveservices/data-plane/FormRecognizer/preview/2022-01-30-preview/FormRecognizer.json?token=GHSAT0AAAAAABQHUPDZWYZVT6VR6W4YMWF4YPF3WLA
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs-pr/c3ca13e3eb250957c493993f300cb8137fe55aa4/specification/cognitiveservices/data-plane/FormRecognizer/preview/2022-01-30-preview/FormRecognizer.json?token=GHSAT0AAAAAABQHUPDZHEE67M7YOIJNHDI4YPUOSTQ
 namespace: azure.ai.formrecognizer.v2022_01_30_preview
 output-folder: $(python-sdks-folder)/formrecognizer/azure-ai-formrecognizer/azure/ai/formrecognizer/_generated/v2022_01_30_preview
 ```
