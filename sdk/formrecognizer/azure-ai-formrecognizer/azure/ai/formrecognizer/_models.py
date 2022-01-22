@@ -3260,7 +3260,7 @@ class ModelOperationInfo(object):
     :vartype resource_location: str
     :ivar api_version: API version used to create this operation.
     :vartype api_version: str
-    :ivar tags: List of key-value tag attributes associated with the model.
+    :ivar tags: List of user defined key-value tag attributes associated with the model.
     :vartype tags: dict[str, str]
     """
 
@@ -3287,7 +3287,7 @@ class ModelOperationInfo(object):
                 self.kind,
                 self.resource_location,
                 self.api_version,
-                repr(self.tags),
+                self.tags,
             )
         )
 
@@ -3378,7 +3378,7 @@ class ModelOperation(ModelOperationInfo):
     :vartype result: ~azure.ai.formrecognizer.DocumentModel
     :ivar api_version: API version used to create this operation.
     :vartype api_version: str
-    :ivar tags: List of key-value tag attributes associated with the model.
+    :ivar tags: List of user defined key-value tag attributes associated with the model.
     :vartype tags: dict[str, str]
     """
 
@@ -3401,7 +3401,7 @@ class ModelOperation(ModelOperationInfo):
                 repr(self.result),
                 repr(self.error),
                 self.api_version,
-                repr(self.tags),
+                self.tags,
             )
         )
 
@@ -3705,7 +3705,7 @@ class DocumentModelInfo(object):
     :vartype created_on: ~datetime.datetime
     :ivar api_version: API version used to create this model.
     :vartype api_version: str
-    :ivar tags: List of key-value tag attributes associated with the model.
+    :ivar tags: List of user defined key-value tag attributes associated with the model.
     :vartype tags: dict[str, str]
     """
 
@@ -3782,7 +3782,7 @@ class DocumentModel(DocumentModelInfo):
     :vartype created_on: ~datetime.datetime
     :ivar api_version: API version used to create this model.
     :vartype api_version: str
-    :ivar tags: List of key-value tag attributes associated with the model.
+    :ivar tags: List of user defined key-value tag attributes associated with the model.
     :vartype tags: dict[str, str]
     :ivar doc_types: Supported document types, including the fields for each document and their types.
     :vartype doc_types: dict[str, ~azure.ai.formrecognizer.DocTypeInfo]
@@ -3863,7 +3863,7 @@ class DocTypeInfo(object):
     :ivar str description: A description for the model.
     :ivar build_mode: The build mode used when building the custom model.
      Possible values include: "template", "neural".
-    :vartype build_mode: str or :class:`~azure.ai.formrecognizer.DocumentBuildMode`
+    :vartype build_mode: str
     :ivar field_schema: Description of the document semantic schema.
     :vartype field_schema: dict[str, Any]
     :ivar field_confidence: Estimated confidence for each field.
