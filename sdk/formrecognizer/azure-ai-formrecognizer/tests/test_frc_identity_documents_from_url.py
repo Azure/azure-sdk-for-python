@@ -97,7 +97,8 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    def test_identity_document_continuation_token(self, client):
+    def test_identity_document_continuation_token(self, **kwargs):
+        client = kwargs.pop("client")
         initial_poller = client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg)
         cont_token = initial_poller.continuation_token()
         poller = client.begin_recognize_identity_documents_from_url(None, continuation_token=cont_token)
@@ -107,7 +108,8 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
-    def test_identity_document_v2(self, client):
+    def test_identity_document_v2(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ValueError) as e:
             client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg)
         assert "Method 'begin_recognize_identity_documents_from_url' is only available for API version V2_1 and up" in str(e.value)

@@ -44,25 +44,29 @@ class TestManagement(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    def test_get_model_empty_model_id(self, client):
+    def test_get_model_empty_model_id(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ValueError):
             result = client.get_model("")
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    def test_get_model_none_model_id(self, client):
+    def test_get_model_none_model_id(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ValueError):
             result = client.get_model(None)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    def test_delete_model_none_model_id(self, client):
+    def test_delete_model_none_model_id(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ValueError):
             result = client.delete_model(None)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    def test_delete_model_empty_model_id(self, client):
+    def test_delete_model_empty_model_id(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ValueError):
             result = client.delete_model("")
 
@@ -177,7 +181,8 @@ class TestManagement(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    def test_get_operation_bad_model_id(self, client):
+    def test_get_operation_bad_model_id(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ValueError):
             client.get_operation("")
         with pytest.raises(ValueError):

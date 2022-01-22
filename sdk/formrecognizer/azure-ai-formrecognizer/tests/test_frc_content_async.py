@@ -75,7 +75,8 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    async def test_passing_bad_content_type_param_passed(self, client):
+    async def test_passing_bad_content_type_param_passed(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.invoice_pdf, "rb") as fd:
             myfile = fd.read()
         with pytest.raises(ValueError):
@@ -88,7 +89,8 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    async def test_auto_detect_unsupported_stream_content(self, client):
+    async def test_auto_detect_unsupported_stream_content(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.unsupported_content_py, "rb") as fd:
             myfile = fd.read()
 
@@ -219,7 +221,8 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    async def test_content_continuation_token(self, client):
+    async def test_content_continuation_token(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
         async with client:
@@ -346,7 +349,8 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
-    async def test_content_language_v2(self, client):
+    async def test_content_language_v2(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.form_jpg, "rb") as fd:
             myfile = fd.read()
         async with client:

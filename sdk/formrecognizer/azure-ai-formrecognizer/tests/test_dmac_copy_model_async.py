@@ -180,7 +180,9 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @pytest.mark.skip()
-    async def test_copy_continuation_token(self, client, formrecognizer_storage_container_sas_url):
+    async def test_copy_continuation_token(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
         async with client:
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url)
             model = await poller.result()

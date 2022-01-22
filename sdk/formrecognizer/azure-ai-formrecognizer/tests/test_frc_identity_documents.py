@@ -34,7 +34,8 @@ class TestIdDocument(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    def test_damaged_file_bytes_fails_autodetect_content_type(self, client):
+    def test_damaged_file_bytes_fails_autodetect_content_type(self, **kwargs):
+        client = kwargs.pop("client")
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
         with pytest.raises(ValueError):
             poller = client.begin_recognize_identity_documents(
@@ -43,7 +44,8 @@ class TestIdDocument(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    def test_damaged_file_bytes_io_fails_autodetect(self, client):
+    def test_damaged_file_bytes_io_fails_autodetect(self, **kwargs):
+        client = kwargs.pop("client")
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
         with pytest.raises(ValueError):
             poller = client.begin_recognize_identity_documents(
@@ -52,7 +54,8 @@ class TestIdDocument(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    def test_passing_bad_content_type_param_passed(self, client):
+    def test_passing_bad_content_type_param_passed(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.identity_document_license_jpg, "rb") as fd:
             myfile = fd.read()
         with pytest.raises(ValueError):
@@ -63,7 +66,8 @@ class TestIdDocument(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    def test_auto_detect_unsupported_stream_content(self, client):
+    def test_auto_detect_unsupported_stream_content(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.unsupported_content_py, "rb") as fd:
             myfile = fd.read()
 
@@ -137,7 +141,8 @@ class TestIdDocument(FormRecognizerTest):
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    def test_identity_document_continuation_token(self, client):
+    def test_identity_document_continuation_token(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.identity_document_license_jpg, "rb") as fd:
             id_document = fd.read()
 
@@ -150,7 +155,8 @@ class TestIdDocument(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
-    def test_identity_document_v2(self, client):
+    def test_identity_document_v2(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.identity_document_license_jpg, "rb") as fd:
             id_document = fd.read()
         with pytest.raises(ValueError) as e:

@@ -66,7 +66,8 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
-    async def test_passing_unsupported_url_content_type(self, client, **kwargs):
+    async def test_passing_unsupported_url_content_type(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(TypeError):
             async with client:
                 poller = await client.begin_analyze_document("prebuilt-receipt", "https://badurl.jpg", content_type="application/json")
@@ -283,7 +284,8 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
-    async def test_receipt_continuation_token(self, client):
+    async def test_receipt_continuation_token(self, **kwargs):
+        client = kwargs.pop("client")
 
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()

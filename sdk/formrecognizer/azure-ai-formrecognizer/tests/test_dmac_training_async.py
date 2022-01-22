@@ -224,7 +224,9 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_build_model_continuation_token(self, client, formrecognizer_storage_container_sas_url):
+    async def test_build_model_continuation_token(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
         async with client:
             initial_poller = await client.begin_build_model(formrecognizer_storage_container_sas_url)
             cont_token = initial_poller.continuation_token()

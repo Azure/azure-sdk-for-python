@@ -47,28 +47,32 @@ class TestManagementAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_get_model_empty_model_id(self, client):
+    async def test_get_model_empty_model_id(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ValueError):
             async with client:
                 result = await client.get_model("")
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_get_model_none_model_id(self, client):
+    async def test_get_model_none_model_id(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ValueError):
             async with client:
                 result = await client.get_model(None)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_delete_model_none_model_id(self, client):
+    async def test_delete_model_none_model_id(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ValueError):
             async with client:
                 result = await client.delete_model(None)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_delete_model_empty_model_id(self, client):
+    async def test_delete_model_empty_model_id(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ValueError):
             async with client:
                 result = await client.delete_model("")
@@ -187,7 +191,8 @@ class TestManagementAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_get_operation_bad_model_id(self, client):
+    async def test_get_operation_bad_model_id(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ValueError):
             await client.get_operation("")
         with pytest.raises(ValueError):

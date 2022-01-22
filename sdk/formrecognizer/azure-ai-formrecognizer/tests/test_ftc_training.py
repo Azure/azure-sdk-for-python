@@ -287,7 +287,8 @@ class TestTraining(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
-    def test_training_with_model_name_bad_api_version(self, client):
+    def test_training_with_model_name_bad_api_version(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ValueError) as excinfo:
             poller = client.begin_training(training_files_url="url", use_training_labels=True, model_name="not supported in v2.0")
             result = poller.result()

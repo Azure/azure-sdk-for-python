@@ -290,7 +290,8 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
-    async def test_training_with_model_name_bad_api_version(self, client):
+    async def test_training_with_model_name_bad_api_version(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ValueError) as excinfo:
             async with client:
                 poller = await client.begin_training(training_files_url="url", use_training_labels=True, model_name="not supported in v2.0")
