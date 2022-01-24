@@ -38,7 +38,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
     :ivar operating_system: Operating system for the artifact
     :vartype operating_system: ~azure.containerregistry.ArtifactOperatingSystem
     :ivar str repository_name: Repository name the artifact belongs to
-    :ivar str size: Size of the artifact
+    :ivar str size_in_bytes: Size of the artifact
     :ivar List[str] tags: Tags associated with a registry artifact
     """
 
@@ -54,7 +54,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
             self._operating_system = ArtifactOperatingSystem(self._operating_system)
         self._repository_name = kwargs.get("repository_name", None)
         self._registry = kwargs.get("registry", None)
-        self._size = kwargs.get("size", None)
+        self._size_in_bytes = kwargs.get("size_in_bytes", None)
         self._tags = kwargs.get("tags", None)
         self.can_delete = kwargs.get("can_delete")
         self.can_read = kwargs.get("can_read")
@@ -70,7 +70,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
             digest=generated.digest,
             last_updated_on=generated.last_updated_on,
             operating_system=generated.operating_system,
-            size=generated.size,
+            size_in_bytes=generated.size,
             tags=generated.tags,
             can_delete=generated.can_delete,
             can_read=generated.can_read,
@@ -120,9 +120,9 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
         return self._repository_name
 
     @property
-    def size(self):
+    def size_in_bytes(self):
         # type: () -> int
-        return self._size
+        return self._size_in_bytes
 
     @property
     def tags(self):
@@ -224,20 +224,6 @@ class RepositoryProperties(object):
     def tag_count(self):
         # type: () -> int
         return self._tag_count
-
-
-class ManifestOrder(str, Enum):
-    """Enum for ordering registry artifacts"""
-
-    LAST_UPDATE_TIME_DESCENDING = "timedesc"
-    LAST_UPDATE_TIME_ASCENDING = "timeasc"
-
-
-class TagOrder(str, Enum):
-    """Enum for ordering tags"""
-
-    LAST_UPDATE_TIME_DESCENDING = "timedesc"
-    LAST_UPDATE_TIME_ASCENDING = "timeasc"
 
 
 class ArtifactTagProperties(object):
