@@ -13,7 +13,7 @@ from azure.search.documents.indexes import SearchIndexClient
 from azure.search.documents.indexes.models import SynonymMap
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
-from tests.search_service_preparer import search_decorator
+from search_service_preparer import search_decorator
 
 
 class TestSearchSynonymMapsClient(AzureRecordedTestCase):
