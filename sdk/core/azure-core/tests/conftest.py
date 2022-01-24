@@ -34,12 +34,6 @@ from six.moves import urllib
 from rest_client import TestRestClient
 import sys
 
-# Ignore collection of async tests for Python 2
-collect_ignore = []
-if sys.version_info < (3, 5):
-    collect_ignore.append("async_tests")
-
-
 # If opencensus is loadable while doing these tests, register an empty tracer to avoid this:
 # https://github.com/census-instrumentation/opencensus-python/issues/442
 try:

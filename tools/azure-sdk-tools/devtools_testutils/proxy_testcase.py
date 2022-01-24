@@ -57,11 +57,21 @@ def get_recording_id():
 def get_test_id():
     # type: () -> str
     # pytest sets the current running test in an environment variable
+    # the path to the test can depend on the environment, so we can't assume this is the path from the repo root
     setting_value = os.getenv("PYTEST_CURRENT_TEST")
-
     path_to_test = os.path.normpath(setting_value.split(" ")[0])
-    path_components = path_to_test.split(os.sep)
+    full_path_to_test = os.path.abspath(path_to_test)
 
+    # walk up to the repo root by looking for "sdk" directory or root of file system
+    path_components = []
+    head, tail = os.path.split(full_path_to_test)
+    while tail != "sdk" and tail != "":
+        path_components.append(tail)
+        head, tail = os.path.split(head)
+
+    # reverse path_components to construct components of path from repo root: [sdk, ..., tests, {test}]
+    path_components.append("sdk")
+    path_components.reverse()
     for idx, val in enumerate(path_components):
         if val.startswith("test"):
             path_components.insert(idx + 1, "recordings")
@@ -84,7 +94,7 @@ def start_record_or_playback(test_id):
     if is_live():
         result = requests.post(
             RECORDING_START_URL,
-            headers={"x-recording-file": test_id, "x-recording-sha": current_sha},
+            json={"x-recording-file": test_id},
         )
         if result.status_code != 200:
             message = six.ensure_str(result._content)
@@ -94,7 +104,7 @@ def start_record_or_playback(test_id):
     else:
         result = requests.post(
             PLAYBACK_START_URL,
-            headers={"x-recording-file": test_id, "x-recording-sha": current_sha},
+            json={"x-recording-file": test_id},
         )
         if result.status_code != 200:
             message = six.ensure_str(result._content)
@@ -133,7 +143,7 @@ def stop_record_or_playback(test_id, recording_id, test_output):
     else:
         requests.post(
             PLAYBACK_STOP_URL,
-            headers={"x-recording-file": test_id, "x-recording-id": recording_id},
+            headers={"x-recording-id": recording_id},
         )
 
 

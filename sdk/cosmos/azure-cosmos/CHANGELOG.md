@@ -7,6 +7,7 @@ We will also be removing support for Python 3.6 and will only support Python 3.7
 
 #### Features Added
 - Added support for split-proof queries for the async client
+- Added async user agent for async client
 
 ### 4.3.0b1 (2021-12-14)
 

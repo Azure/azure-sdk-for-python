@@ -178,12 +178,14 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             host = self.connection_policy.ProxyConfiguration.Host
             url = urlparse(host)
             proxy = host if url.port else host + ":" + str(self.connection_policy.ProxyConfiguration.Port)
-            proxies.update({url.scheme : proxy})
+            proxies.update({url.scheme: proxy})
+
+        self._user_agent = _utils.get_user_agent_async()
 
         policies = [
             HeadersPolicy(**kwargs),
             ProxyPolicy(proxies=proxies),
-            UserAgentPolicy(base_user_agent=_utils.get_user_agent(), **kwargs),
+            UserAgentPolicy(base_user_agent=self._user_agent, **kwargs),
             ContentDecodePolicy(),
             retry_policy,
             CustomHookPolicy(**kwargs),
