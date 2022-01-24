@@ -12,9 +12,8 @@ def print_exec(cmd: str):
     call(cmd, shell=True)
 
 
-def get_repo_root_folder() -> str:
-    current_path = os.getcwd()
-    return str(Path(current_path.split('azure-sdk-for-python')[0]) / 'azure-sdk-for-python')
+def step_into_sdk_repo() -> str:
+    return os.chdir(Path(os.getcwd()) / 'azure-sdk-for-python')
 
 
 def git_clean():
@@ -42,13 +41,14 @@ class AutoPrivatePackage:
         self.package_name = info[1].split('-')[1]
 
     def checkout_target_branch(self):
+        step_into_sdk_repo()
         git_clean()
         print_exec(f'git remote add {self.usr} https://github.com/{self.usr}/azure-sdk-for-python.git')
         print_check(f'git fetch {self.usr} {self.target_branch}')
         print_check(f'git checkout {self.usr}/{self.target_branch}')
 
     def step_into_package_folder(self):
-        root_path = get_repo_root_folder()
+        root_path = os.getcwd()
         result = glob(f'{root_path}/sdk/*/azure-mgmt-{self.package_name}')
         if len(result) == 0:
             raise Exception(f'do not find azure-mgmt-{self.package_name}')
@@ -61,6 +61,7 @@ class AutoPrivatePackage:
         check_call('python setup.py bdist_wheel')
         check_call('python setup.py sdist --format zip')
         print(f'\n package in : {str(Path(os.getcwd()) / "dist")}')
+        os.system("pause")
 
     def run(self):
         self.get_input()
