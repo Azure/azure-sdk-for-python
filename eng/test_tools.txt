@@ -1,4 +1,3 @@
-pip==20.3
 cryptography<4
 
 # python 3.10 pinned packages
@@ -28,7 +27,6 @@ ConfigArgParse==1.2.3
 six==1.14.0
 pyyaml==5.3.1
 packaging==20.4
-wheel==0.37.0
 Jinja2==2.11.2
 
 # Locking pylint and required packages

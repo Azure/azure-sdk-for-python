@@ -101,7 +101,9 @@
     "sdk/translation/azure-ai-translation-document/**",
     "sdk/tables/azure-data-tables/**",
     "sdk/textanalytics/azure-ai-textanalytics/**",
-    "sdk/storage/azure-storage-blob/**"
+    "sdk/storage/azure-storage-blob/**",
+    "eng/*.txt",
+    "eng/tox/tox.ini"
   ],
   "words": [
     "adls",
