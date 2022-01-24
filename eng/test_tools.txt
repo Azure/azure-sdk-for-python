@@ -1,3 +1,4 @@
+pip==20.3
 cryptography<4
 
 # python 3.10 pinned packages
