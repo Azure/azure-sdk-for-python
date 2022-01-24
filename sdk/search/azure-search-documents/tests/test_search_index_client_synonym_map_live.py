@@ -37,7 +37,7 @@ class TestSearchSynonymMapsClient(AzureRecordedTestCase):
         for item in client.get_synonym_maps():
             client.delete_synonym_map(item.name)
 
-    @search_decorator
+    @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
     def test_synonym_map_crud(self, variables, **kwargs):
         search_endpoint, search_api_key = self._parse_kwargs(**kwargs)

@@ -67,7 +67,7 @@ class TestSearchIndexersClient(AzureRecordedTestCase):
         random_tag = "".join(random.choice(allowed_chars) for x in range(length)).lower()
         return "{}{}".format(prefix, random_tag)
 
-    @search_decorator
+    @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
     def test_indexer_crud(self, variables, **kwargs):
         search_endpoint, search_api_key, storage_cs, container_name = self._parse_kwargs(**kwargs)
@@ -118,7 +118,7 @@ class TestSearchIndexersClient(AzureRecordedTestCase):
 
         return variables
 
-    @search_decorator
+    @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
     def test_create_or_update_indexer(self, variables, **kwargs):
         search_endpoint, search_api_key, storage_cs, container_name = self._parse_kwargs(**kwargs)
@@ -140,7 +140,7 @@ class TestSearchIndexersClient(AzureRecordedTestCase):
         assert result.description == "updated"
         return variables
 
-    @search_decorator
+    @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
     def test_create_or_update_indexer_if_unchanged(self, variables, **kwargs):
         search_endpoint, search_api_key, storage_cs, container_name = self._parse_kwargs(**kwargs)
@@ -160,7 +160,7 @@ class TestSearchIndexersClient(AzureRecordedTestCase):
             client.create_or_update_indexer(indexer, match_condition=MatchConditions.IfNotModified)
         return variables
 
-    @search_decorator
+    @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
     def test_delete_indexer_if_unchanged(self, **kwargs):
         search_endpoint, search_api_key, storage_cs, container_name = self._parse_kwargs(**kwargs)

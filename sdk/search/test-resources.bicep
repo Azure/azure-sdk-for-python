@@ -42,5 +42,6 @@ resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@20
 output search_service_endpoint string = 'https://${searchServiceName}.${searchEndpointSuffix}'
 output search_service_api_key string = searchService.listAdminKeys(searchApiVersion).primaryKey
 output search_query_api_key string = searchService.listQueryKeys(searchApiVersion).value[0].key
+output search_service_name string = searchServiceName
 output search_storage_connection_string string = 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};AccountKey=${storageService.listKeys(storageApiVersion).keys[0].value};EndpointSuffix=${storageEndpointSuffix}'
 output search_storage_container_name string = storageContainerName

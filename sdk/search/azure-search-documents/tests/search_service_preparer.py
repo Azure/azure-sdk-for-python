@@ -3,20 +3,15 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import datetime
 import functools
-from os.path import dirname, realpath
-
-try:
-    from unittest.mock import Mock
-except ImportError:  # python < 3.3
-    from mock import Mock
+from os import environ
+from os.path import dirname, realpath, join
 
 import json
 import requests
+import wrapt
 
-from devtools_testutils import PowerShellPreparer, is_live, AzureMgmtPreparer, ResourceGroupPreparer
-from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
+from devtools_testutils import PowerShellPreparer
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
 from azure.core.credentials import AzureKeyCredential
@@ -26,7 +21,7 @@ SERVICE_URL_FMT = "https://{}.search.windows.net/indexes?api-version=2021-04-30-
 TIME_TO_SLEEP = 3
 
 
-SearchPreparer = functools.partial(
+SearchEnvVarPreparer = functools.partial(
     PowerShellPreparer,
     "search",
     search_service_endpoint="https://fakesearchendpoint.search.windows.net",
@@ -36,14 +31,79 @@ SearchPreparer = functools.partial(
     search_storage_container_name="fakestoragecontainer"
 )
 
-def search_decorator(func, **kwargs):
-    @SearchPreparer()
-    def wrapper(*args, **kwargs):
-        # automatically wrap service API key as an AzureKeyCredential
+def _load_schema(filename):
+    if not filename:
+        return None
+    cwd = dirname(realpath(__file__))
+    return open(join(cwd, filename)).read()
+
+def _load_batch(filename):
+    if not filename:
+        return None
+    cwd = dirname(realpath(__file__))
+    try:
+        return json.load(open(join(cwd, filename)))
+    except UnicodeDecodeError:
+        return json.load(open(join(cwd, filename), encoding='utf-8'))
+
+def _set_up_index(service_name, endpoint, api_key, schema, index_batch):
+    schema = _load_schema(schema)
+    index_batch = _load_batch(index_batch)
+    if schema:
+        response = requests.post(
+            SERVICE_URL_FMT.format(service_name),
+            headers={"Content-Type": "application/json", "api-key": api_key},
+            data=schema,
+        )
+        if response.status_code != 201:
+            raise AzureTestError(
+                "Could not create a search index {}".format(response.status_code)
+            )
+        index_name = schema["name"]
+
+    # optionally load data into the index
+    if index_batch and schema:
+        from azure.core.credentials import AzureKeyCredential
+        from azure.search.documents import SearchClient
+        from azure.search.documents._generated.models import IndexBatch
+
+        batch = IndexBatch.deserialize(index_batch)
+        index_client = SearchClient(endpoint, index_name, AzureKeyCredential(api_key))
+        results = index_client.index_documents(batch)
+        if not all(result.succeeded for result in results):
+            raise AzureTestError("Document upload to search index failed")
+
+        # Indexing is asynchronous, so if you get a 200 from the REST API, that only means that the documents are
+        # persisted, not that they're searchable yet. The only way to check for searchability is to run queries,
+        # and even then things are eventually consistent due to replication. In the Track 1 SDK tests, we "solved"
+        # this by using a constant delay between indexing and querying.
+        import time
+        time.sleep(TIME_TO_SLEEP)
+
+
+def search_decorator(*, schema, index_batch):
+
+    @wrapt.decorator
+    def wrapper(func, instance, args, kwargs):
+        envvars = SearchEnvVarPreparer()
+        kwargs = envvars.real_values or envvars.fake_values
+        # set up hotels search index
         api_key = kwargs.get('search_service_api_key', None)
+        endpoint = kwargs.get('search_service_endpoint')
+        service_name = kwargs.get('search_service_name')
+        _set_up_index(service_name, endpoint, api_key, schema, index_batch)
+        kwargs['index_name'] = _load_schema(schema).name
+
+        # automatically wrap service API key as an AzureKeyCredential
         kwargs['search_service_api_key'] = AzureKeyCredential(api_key)
-        func(*args, **kwargs)
+        return func(*args, **kwargs)
     return wrapper
+
+# FIXME: DELETE EVERYTHING AFTER THIS LINE BEFORE MERGING
+
+from devtools_testutils import ResourceGroupPreparer, AzureMgmtPreparer
+from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
+import datetime
 
 
 # TODO: Remove this
