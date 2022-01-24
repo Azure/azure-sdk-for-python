@@ -24,7 +24,7 @@
 
 import heapq
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
-from azure.cosmos._execution_context.aio import document_producer
+from azure.cosmos._execution_context.aio import document_producer, _queue_async_helper
 from azure.cosmos._routing import routing_range
 from azure.cosmos import exceptions
 
@@ -51,11 +51,11 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         def __init__(self):
             self._heap = []
 
-        def pop(self):
-            return heapq.heappop(self._heap)
+        async def pop_async(self, document_producer_comparator):
+            return await _queue_async_helper.heap_pop(self._heap, document_producer_comparator)
 
-        def push(self, item):
-            heapq.heappush(self._heap, item)
+        async def push_async(self, item, document_producer_comparator):
+            await _queue_async_helper.heap_push(self._heap, item, document_producer_comparator)
 
         def peek(self):
             return self._heap[0]
@@ -77,7 +77,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         if self._sort_orders:
             self._document_producer_comparator = document_producer._OrderByDocumentProducerComparator(self._sort_orders)
         else:
-            self._document_producer_comparator = document_producer._PartitionKeyRangeDocumentProduerComparator()
+            self._document_producer_comparator = document_producer._PartitionKeyRangeDocumentProducerComparator()
 
         self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
 
@@ -90,13 +90,13 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         """
         if self._orderByPQ.size() > 0:
 
-            targetRangeExContext = self._orderByPQ.pop()
+            targetRangeExContext = await self._orderByPQ.pop_async(self._document_producer_comparator)
             res = await targetRangeExContext.__anext__()
 
             try:
                 # TODO: we can also use more_itertools.peekable to be more python friendly
                 await targetRangeExContext.peek()
-                self._orderByPQ.push(targetRangeExContext)
+                await self._orderByPQ.push_async(targetRangeExContext, self._document_producer_comparator)
 
             except StopAsyncIteration:
                 pass
@@ -130,8 +130,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
                 # TODO: we can also use more_itertools.peekable to be more python friendly
                 await targetQueryExContext.peek()
                 # if there are matching results in the target ex range add it to the priority queue
-
-                self._orderByPQ.push(targetQueryExContext)
+                await self._orderByPQ.push_async(targetQueryExContext, self._document_producer_comparator)
 
             except StopAsyncIteration:
                 continue
@@ -182,7 +181,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
                 await targetQueryExContext.peek()
                 # if there are matching results in the target ex range add it to the priority queue
 
-                self._orderByPQ.push(targetQueryExContext)
+                await self._orderByPQ.push_async(targetQueryExContext, self._document_producer_comparator)
 
             except exceptions.CosmosHttpResponseError as e:
                 if exceptions.partition_range_is_gone(e):

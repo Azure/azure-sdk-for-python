@@ -70,9 +70,6 @@ class _DocumentProducer(object):
 
         self._ex_context = _DefaultQueryExecutionContext(client, self._options, fetch_fn)
 
-    def __lt__(self, other):
-        return self._doc_producer_comp.compare(self, other) < 0
-
     async def __aiter__(self):
         return self
 
@@ -110,7 +107,7 @@ class _DocumentProducer(object):
             try:
                 self._cur_item = await self._ex_context.__anext__()
             except exceptions.CosmosHttpResponseError as e:
-                if partition_range_is_gone(e):
+                if exceptions.partition_range_is_gone(e):
                     # raising within document producer peek in order to properly handle within execution context
                     raise
 
@@ -123,7 +120,7 @@ def _compare_helper(a, b):
     return (a > b) - (a < b)
 
 
-class _PartitionKeyRangeDocumentProduerComparator(object):
+class _PartitionKeyRangeDocumentProducerComparator(object):
     """
     Provides a Comparator for document producers using the min value of the
     corresponding target partition.
@@ -225,7 +222,7 @@ def _peek_order_by_items(peek_result):
     return peek_result["orderByItems"]
 
 
-class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerComparator):
+class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProducerComparator):
     """Provide a Comparator for document producers which respects orderby sort order.
     """
 
@@ -241,7 +238,7 @@ class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerCompar
         """
         self._sort_order = sort_order
 
-    def compare(self, doc_producer1, doc_producer2):
+    async def compare(self, doc_producer1, doc_producer2):
         """Compares the given two instances of DocumentProducers.
 
         Based on the orderby query items and whether the sort order is Ascending
@@ -250,17 +247,17 @@ class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerCompar
         If the peek results are equal based on the sort order, this comparator
         compares the target partition key range of the two DocumentProducers.
 
-        :param _DocumentProducer doc_producers1: first instance
-        :param _DocumentProducer doc_producers2: first instance
+        :param _DocumentProducer doc_producer1: first instance
+        :param _DocumentProducer doc_producer2: first instance
         :return:
             Integer value of compare result.
-                positive integer if doc_producers1 > doc_producers2
-                negative integer if doc_producers1 < doc_producers2
+                positive integer if doc_producer1 > doc_producer2
+                negative integer if doc_producer1 < doc_producer2
         :rtype: int
         """
 
-        res1 = _peek_order_by_items(doc_producer1.peek())
-        res2 = _peek_order_by_items(doc_producer2.peek())
+        res1 = _peek_order_by_items(await doc_producer1.peek())
+        res2 = _peek_order_by_items(await doc_producer2.peek())
 
         self._validate_orderby_items(res1, res2)
 
@@ -272,7 +269,7 @@ class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerCompar
                 if self._sort_order[i] == "Descending":
                     return -res
 
-        return _PartitionKeyRangeDocumentProduerComparator.compare(self, doc_producer1, doc_producer2)
+        return _PartitionKeyRangeDocumentProducerComparator.compare(self, doc_producer1, doc_producer2)
 
     def _validate_orderby_items(self, res1, res2):
         if len(res1) != len(res2):
