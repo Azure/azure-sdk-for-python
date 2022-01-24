@@ -61,13 +61,13 @@ from ._models_py3 import ChangeThresholdConditionGenerated as ChangeThresholdCon
 from ._models_py3 import ChangeThresholdConditionPatchGenerated as ChangeThresholdConditionPatch
 from ._models_py3 import CommentFeedbackGenerated as CommentFeedback
 from ._models_py3 import CommentFeedbackValueGenerated as CommentFeedbackValue
+from ._models_py3 import DataFeedGenerated as DataFeed
 from ._models_py3 import DataFeedDetailPatchGenerated as DataFeedDetailPatch
 from ._models_py3 import DataFeedDimensionGenerated as DataFeedDimension
 from ._models_py3 import DataFeedIngestionProgressGenerated as DataFeedIngestionProgress
 from ._models_py3 import DataFeedIngestionStatusGenerated as DataFeedIngestionStatus
 from ._models_py3 import DataFeedListGenerated as DataFeedList
 from ._models_py3 import DataFeedMetricGenerated as DataFeedMetric
-from ._models_py3 import DataFeedSourceGenerated as DataFeedSource
 from ._models_py3 import DataLakeGen2SharedKeyCredentialPatchGenerated as DataLakeGen2SharedKeyCredentialPatch
 from ._models_py3 import DataLakeGen2SharedKeyParamGenerated as DataLakeGen2SharedKeyParam
 from ._models_py3 import DataLakeGen2SharedKeyParamPatchGenerated as DataLakeGen2SharedKeyParamPatch
@@ -254,13 +254,13 @@ __all__ = [
     'ChangeThresholdConditionPatch',
     'CommentFeedback',
     'CommentFeedbackValue',
+    'DataFeed',
     'DataFeedDetailPatch',
     'DataFeedDimension',
     'DataFeedIngestionProgress',
     'DataFeedIngestionStatus',
     'DataFeedList',
     'DataFeedMetric',
-    'DataFeedSource',
     'DataLakeGen2SharedKeyCredentialPatch',
     'DataLakeGen2SharedKeyParam',
     'DataLakeGen2SharedKeyParamPatch',

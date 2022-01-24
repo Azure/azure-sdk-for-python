@@ -1392,8 +1392,8 @@ class AzureApplicationInsightsDataFeedPatchGenerated(DataFeedDetailPatchGenerate
         self.data_source_parameter = data_source_parameter
 
 
-class DataFeedSourceGenerated(msrest.serialization.Model):
-    """DataFeedSource.
+class DataFeedGenerated(msrest.serialization.Model):
+    """DataFeed.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource, AzureCosmosDbDataFeedSource, AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource, AzureEventHubsDataFeedSource, AzureLogAnalyticsDataFeedSource, AzureTableDataFeedSource, InfluxDbDataFeedSource, MongoDbDataFeedSource, MySqlDataFeedSource, PostgreSqlDataFeedSource, SqlServerDataFeedSource.
@@ -1627,7 +1627,7 @@ class DataFeedSourceGenerated(msrest.serialization.Model):
         :keyword credential_id: The credential entity id.
         :paramtype credential_id: str
         """
-        super(DataFeedSourceGenerated, self).__init__(**kwargs)
+        super(DataFeedGenerated, self).__init__(**kwargs)
         self.data_source_type = None  # type: Optional[str]
         self.data_feed_id = None
         self.data_feed_name = data_feed_name
@@ -1660,7 +1660,7 @@ class DataFeedSourceGenerated(msrest.serialization.Model):
         self.credential_id = credential_id
 
 
-class AzureApplicationInsightsDataFeedSourceGenerated(DataFeedSourceGenerated):
+class AzureApplicationInsightsDataFeedSourceGenerated(DataFeedGenerated):
     """AzureApplicationInsightsDataFeedSource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2192,7 +2192,7 @@ class AzureBlobDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         self.data_source_parameter = data_source_parameter
 
 
-class AzureBlobDataFeedSourceGenerated(DataFeedSourceGenerated):
+class AzureBlobDataFeedSourceGenerated(DataFeedGenerated):
     """AzureBlobDataFeedSource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2709,7 +2709,7 @@ class AzureCosmosDBDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         self.data_source_parameter = data_source_parameter
 
 
-class AzureCosmosDbDataFeedSourceGenerated(DataFeedSourceGenerated):
+class AzureCosmosDbDataFeedSourceGenerated(DataFeedGenerated):
     """AzureCosmosDbDataFeedSource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3241,7 +3241,7 @@ class AzureDataExplorerDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         self.data_source_parameter = data_source_parameter
 
 
-class AzureDataExplorerDataFeedSourceGenerated(DataFeedSourceGenerated):
+class AzureDataExplorerDataFeedSourceGenerated(DataFeedGenerated):
     """AzureDataExplorerDataFeedSource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3675,7 +3675,7 @@ class AzureDataLakeStorageGen2DataFeedPatchGenerated(DataFeedDetailPatchGenerate
         self.data_source_parameter = data_source_parameter
 
 
-class AzureDataLakeStorageGen2DataFeedSourceGenerated(DataFeedSourceGenerated):
+class AzureDataLakeStorageGen2DataFeedSourceGenerated(DataFeedGenerated):
     """AzureDataLakeStorageGen2DataFeedSource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4223,7 +4223,7 @@ class AzureEventHubsDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         self.data_source_parameter = data_source_parameter
 
 
-class AzureEventHubsDataFeedSourceGenerated(DataFeedSourceGenerated):
+class AzureEventHubsDataFeedSourceGenerated(DataFeedGenerated):
     """AzureEventHubsDataFeedSource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4726,7 +4726,7 @@ class AzureLogAnalyticsDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         self.data_source_parameter = data_source_parameter
 
 
-class AzureLogAnalyticsDataFeedSourceGenerated(DataFeedSourceGenerated):
+class AzureLogAnalyticsDataFeedSourceGenerated(DataFeedGenerated):
     """AzureLogAnalyticsDataFeedSource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5429,7 +5429,7 @@ class AzureTableDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         self.data_source_parameter = data_source_parameter
 
 
-class AzureTableDataFeedSourceGenerated(DataFeedSourceGenerated):
+class AzureTableDataFeedSourceGenerated(DataFeedGenerated):
     """AzureTableDataFeedSource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6237,7 +6237,7 @@ class DataFeedListGenerated(msrest.serialization.Model):
     :ivar next_link:
     :vartype next_link: str
     :ivar value:
-    :vartype value: list[~azure.ai.metricsadvisor.models.DataFeedSource]
+    :vartype value: list[~azure.ai.metricsadvisor.models.DataFeed]
     """
 
     _validation = {
@@ -6247,7 +6247,7 @@ class DataFeedListGenerated(msrest.serialization.Model):
 
     _attribute_map = {
         'next_link': {'key': '@nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[DataFeedSource]'},
+        'value': {'key': 'value', 'type': '[DataFeed]'},
     }
 
     def __init__(
@@ -8054,7 +8054,7 @@ class InfluxDBDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         self.data_source_parameter = data_source_parameter
 
 
-class InfluxDbDataFeedSourceGenerated(DataFeedSourceGenerated):
+class InfluxDbDataFeedSourceGenerated(DataFeedGenerated):
     """InfluxDbDataFeedSource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9511,7 +9511,7 @@ class MongoDBDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         self.data_source_parameter = data_source_parameter
 
 
-class MongoDbDataFeedSourceGenerated(DataFeedSourceGenerated):
+class MongoDbDataFeedSourceGenerated(DataFeedGenerated):
     """MongoDbDataFeedSource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10027,7 +10027,7 @@ class MySqlDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         self.data_source_parameter = data_source_parameter
 
 
-class MySqlDataFeedSourceGenerated(DataFeedSourceGenerated):
+class MySqlDataFeedSourceGenerated(DataFeedGenerated):
     """MySqlDataFeedSource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10567,7 +10567,7 @@ class PostgreSqlDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         self.data_source_parameter = data_source_parameter
 
 
-class PostgreSqlDataFeedSourceGenerated(DataFeedSourceGenerated):
+class PostgreSqlDataFeedSourceGenerated(DataFeedGenerated):
     """PostgreSqlDataFeedSource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -11592,7 +11592,7 @@ class SQLServerDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         self.data_source_parameter = data_source_parameter
 
 
-class SqlServerDataFeedSourceGenerated(DataFeedSourceGenerated):
+class SqlServerDataFeedSourceGenerated(DataFeedGenerated):
     """SqlServerDataFeedSource.
 
     Variables are only populated by the server, and will be ignored when sending a request.

@@ -21,8 +21,6 @@ class AlertQueryTimeMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
 class AnomalyAlertingConfigurationLogicType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """cross metrics operator
-    
-    should be specified when setting up multiple metric alerting configurations
     """
 
     AND_ENUM = "AND"

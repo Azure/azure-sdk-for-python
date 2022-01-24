@@ -1865,7 +1865,7 @@ class MetricsAdvisorClientOperationsMixinGenerated:
     @distributed_trace_async
     async def create_data_feed(
         self,
-        body: "_models.DataFeedSource",
+        body: "_models.DataFeed",
         **kwargs: Any
     ) -> None:
         """Create a new data feed.
@@ -1873,7 +1873,7 @@ class MetricsAdvisorClientOperationsMixinGenerated:
         Create a new data feed.
 
         :param body: parameters to create a data feed.
-        :type body: ~azure.ai.metricsadvisor.models.DataFeedSource
+        :type body: ~azure.ai.metricsadvisor.models.DataFeed
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -1887,7 +1887,7 @@ class MetricsAdvisorClientOperationsMixinGenerated:
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'DataFeedSource')
+        _json = self._serialize.body(body, 'DataFeed')
 
         request = build_create_data_feed_request(
             content_type=content_type,
@@ -1923,7 +1923,7 @@ class MetricsAdvisorClientOperationsMixinGenerated:
         self,
         data_feed_id: str,
         **kwargs: Any
-    ) -> "_models.DataFeedSource":
+    ) -> "_models.DataFeed":
         """Get a data feed by its id.
 
         Get a data feed by its id.
@@ -1931,11 +1931,11 @@ class MetricsAdvisorClientOperationsMixinGenerated:
         :param data_feed_id: The data feed unique id.
         :type data_feed_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DataFeedSource, or the result of cls(response)
-        :rtype: ~azure.ai.metricsadvisor.models.DataFeedSource
+        :return: DataFeed, or the result of cls(response)
+        :rtype: ~azure.ai.metricsadvisor.models.DataFeed
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataFeedSource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataFeed"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -1960,7 +1960,7 @@ class MetricsAdvisorClientOperationsMixinGenerated:
             error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('DataFeedSource', pipeline_response)
+        deserialized = self._deserialize('DataFeed', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -1976,7 +1976,7 @@ class MetricsAdvisorClientOperationsMixinGenerated:
         data_feed_id: str,
         body: "_models.DataFeedDetailPatch",
         **kwargs: Any
-    ) -> "_models.DataFeedSource":
+    ) -> "_models.DataFeed":
         """Update a data feed.
 
         Update a data feed.
@@ -1986,11 +1986,11 @@ class MetricsAdvisorClientOperationsMixinGenerated:
         :param body: parameters to update a data feed.
         :type body: ~azure.ai.metricsadvisor.models.DataFeedDetailPatch
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DataFeedSource, or the result of cls(response)
-        :rtype: ~azure.ai.metricsadvisor.models.DataFeedSource
+        :return: DataFeed, or the result of cls(response)
+        :rtype: ~azure.ai.metricsadvisor.models.DataFeed
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataFeedSource"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataFeed"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -2020,7 +2020,7 @@ class MetricsAdvisorClientOperationsMixinGenerated:
             error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('DataFeedSource', pipeline_response)
+        deserialized = self._deserialize('DataFeed', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

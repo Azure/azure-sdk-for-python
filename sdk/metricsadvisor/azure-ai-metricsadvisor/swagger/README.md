@@ -322,16 +322,6 @@ directive:
       $["DataFeedDetailPatch"]["properties"]["authenticationType"]["x-ms-enum"]["name"] = "DatasourceAuthenticationType";
 ```
 
-```yaml
-declare-directive:
-    rename-model: >-
-        [{
-            from: 'swagger-document',
-            where: `$.definitions[${JSON.stringify($.from)}]`,
-            transform: `$["x-ms-client-name"] = ${JSON.stringify($.to)}`
-        }]
-```
-
 ### Rename models
 
 ```yaml
@@ -350,7 +340,7 @@ directive:
         to: AnomalyAlertConfiguration
     - rename-model:
         from: DataFeedDetail
-        to: DataFeedSource
+        to: DataFeed
     - rename-model:
         from: AzureApplicationInsightsDataFeed
         to: AzureApplicationInsightsDataFeedSource
@@ -408,9 +398,6 @@ directive:
     - rename-model:
         from: SeriesConfiguration
         to: MetricSingleSeriesDetectionCondition
-    - rename-model:
-        from: DataFeedSource
-        to: DataFeed
     - rename-model:
         from: Metric
         to: DataFeedMetric
