@@ -6,20 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import ErrorResponseLinkedStorage
-    from ._models_py3 import ErrorResponseLinkedStorageError
-    from ._models_py3 import LiveTokenResponse
-    from ._models_py3 import OperationInfo
-    from ._models_py3 import OperationLive
-    from ._models_py3 import OperationsListResult
-except (SyntaxError, ImportError):
-    from ._models import ErrorResponseLinkedStorage  # type: ignore
-    from ._models import ErrorResponseLinkedStorageError  # type: ignore
-    from ._models import LiveTokenResponse  # type: ignore
-    from ._models import OperationInfo  # type: ignore
-    from ._models import OperationLive  # type: ignore
-    from ._models import OperationsListResult  # type: ignore
+from ._models_py3 import ErrorResponseLinkedStorage
+from ._models_py3 import ErrorResponseLinkedStorageError
+from ._models_py3 import LiveTokenResponse
+from ._models_py3 import OperationInfo
+from ._models_py3 import OperationLive
+from ._models_py3 import OperationsListResult
+
 
 __all__ = [
     'ErrorResponseLinkedStorage',
