@@ -6,26 +6,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import Certificate
-    from ._models_py3 import CertificateCollection
-    from ._models_py3 import CertificatePatchResource
-    from ._models_py3 import DefaultErrorResponse
-    from ._models_py3 import DefaultErrorResponseError
-    from ._models_py3 import DefaultErrorResponseErrorDetailsItem
-    from ._models_py3 import HostingEnvironmentProfile
-    from ._models_py3 import ProxyOnlyResource
-    from ._models_py3 import Resource
-except (SyntaxError, ImportError):
-    from ._models import Certificate  # type: ignore
-    from ._models import CertificateCollection  # type: ignore
-    from ._models import CertificatePatchResource  # type: ignore
-    from ._models import DefaultErrorResponse  # type: ignore
-    from ._models import DefaultErrorResponseError  # type: ignore
-    from ._models import DefaultErrorResponseErrorDetailsItem  # type: ignore
-    from ._models import HostingEnvironmentProfile  # type: ignore
-    from ._models import ProxyOnlyResource  # type: ignore
-    from ._models import Resource  # type: ignore
+from ._models_py3 import Certificate
+from ._models_py3 import CertificateCollection
+from ._models_py3 import CertificatePatchResource
+from ._models_py3 import DefaultErrorResponse
+from ._models_py3 import DefaultErrorResponseError
+from ._models_py3 import DefaultErrorResponseErrorDetailsItem
+from ._models_py3 import HostingEnvironmentProfile
+from ._models_py3 import ProxyOnlyResource
+from ._models_py3 import Resource
+
 
 from ._web_site_management_client_enums import (
     KeyVaultSecretStatus,

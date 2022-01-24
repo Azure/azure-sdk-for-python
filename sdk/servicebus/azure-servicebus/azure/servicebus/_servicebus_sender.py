@@ -6,6 +6,7 @@ import logging
 import time
 import uuid
 import datetime
+import warnings
 from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast
 
 import uamqp
@@ -146,7 +147,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the Service Bus service. Default is `TransportType.Amqp`.
     :paramtype transport_type: ~azure.servicebus.TransportType
-    :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+    :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
@@ -205,7 +206,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Service Bus service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.servicebus.TransportType
-        :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+        :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
         :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
@@ -278,7 +279,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         messages: "MessageTypes",
         schedule_time_utc: datetime.datetime,
         *,
-        timeout: Optional[float] = None
+        timeout: Optional[float] = None,
+        **kwargs: Any
     ) -> List[int]:
         """Send Message or multiple Messages to be enqueued at a specific time.
         Returns a list of the sequence numbers of the enqueued messages.
@@ -301,6 +303,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :dedent: 4
                 :caption: Schedule a message to be sent in future
         """
+        if kwargs:
+            warnings.warn(f"Unsupported keyword args: {kwargs}")
         # pylint: disable=protected-access
 
         self._check_live()
@@ -332,7 +336,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self,
         sequence_numbers: Union[int, List[int]],
         *,
-        timeout: Optional[float] = None
+        timeout: Optional[float] = None,
+        **kwargs: Any
     ) -> None:
         """
         Cancel one or more messages that have previously been scheduled and are still pending.
@@ -354,6 +359,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :dedent: 4
                 :caption: Cancelling messages scheduled to be sent in future
         """
+        if kwargs:
+            warnings.warn(f"Unsupported keyword args: {kwargs}")
         self._check_live()
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -375,7 +382,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self,
         message: Union["MessageTypes", ServiceBusMessageBatch],
         *,
-        timeout: Optional[float] = None
+        timeout: Optional[float] = None,
+        **kwargs: Any
     ) -> None:
         """Sends message and blocks until acknowledgement is received or operation times out.
 
@@ -407,6 +415,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 :caption: Send message.
 
         """
+        if kwargs:
+            warnings.warn(f"Unsupported keyword args: {kwargs}")
         self._check_live()
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")

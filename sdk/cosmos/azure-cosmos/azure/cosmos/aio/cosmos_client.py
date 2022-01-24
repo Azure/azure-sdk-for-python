@@ -141,25 +141,28 @@ class CosmosClient(object):
         await self.__aexit__()
 
     @classmethod
-    def from_connection_string(cls, conn_str, credential=None, **kwargs):
-        # type: (str, Optional[Any], str, Any) -> CosmosClient
+    def from_connection_string(cls, conn_str, credential=None, consistency_level="Session", **kwargs):
+        # type: (str, Optional[Union[str, Dict[str, str]]], str, Any) -> CosmosClient
         """Create a CosmosClient instance from a connection string.
 
         This can be retrieved from the Azure portal.For full list of optional
         keyword arguments, see the CosmosClient constructor.
 
-        :param str conn_str: The connection string.
+        :param conn_str: The connection string.
+        :type conn_str: str
         :param credential: Alternative credentials to use instead of the key
             provided in the connection string.
-        :type credential: str or dict(str, str)
-        :keyword str consistency_level:
-            Consistency level to use for the session. The default value is "Session".
+        :type credential: str or Dict[str, str]
+        :param conn_str: The connection string.
+        :type conn_str: str
+        :param consistency_level: Consistency level to use for the session. The default value is "Session".
+        :type consistency_level: str
         """
         settings = _parse_connection_str(conn_str, credential)
         return cls(
             url=settings['AccountEndpoint'],
             credential=credential or settings['AccountKey'],
-            consistency_level=kwargs.get('consistency_level', 'Session')
+            consistency_level=consistency_level,
             **kwargs
         )
 

@@ -22,7 +22,7 @@ USAGE:
 from dotenv import find_dotenv, load_dotenv
 import os
 
-from azure.containerregistry import ContainerRegistryClient, ManifestOrder
+from azure.containerregistry import ContainerRegistryClient, ArtifactManifestOrder
 from azure.identity import DefaultAzureCredential
 
 class DeleteImages(object):
@@ -43,7 +43,7 @@ class DeleteImages(object):
                 # Keep the three most recent images, delete everything else
                 manifest_count = 0
                 for manifest in client.list_manifest_properties(
-                    repository, order_by=ManifestOrder.LAST_UPDATE_TIME_DESCENDING):
+                    repository, order_by=ArtifactManifestOrder.LAST_UPDATED_ON_DESCENDING):
                     manifest_count += 1
                     if manifest_count > 3:
                         print("Deleting {}:{}".format(repository, manifest.digest))
