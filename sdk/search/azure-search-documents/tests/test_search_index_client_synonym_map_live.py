@@ -17,7 +17,7 @@ from tests.search_service_preparer import search_decorator
 
 
 class TestSearchSynonymMapsClient(AzureRecordedTestCase):
-
+        
     def _parse_kwargs(self, **kwargs):
         search_endpoint = kwargs.pop('search_service_endpoint')
         search_api_key = kwargs.pop('search_service_api_key')
@@ -33,6 +33,10 @@ class TestSearchSynonymMapsClient(AzureRecordedTestCase):
         random_tag = "".join(random.choice(allowed_chars) for x in range(length)).lower()
         return "{}{}".format(prefix, random_tag)
 
+    def _clean_up_synonym_maps(self, client):
+        for item in client.get_synonym_maps():
+            client.delete_synonym_map(item.name)
+
     @search_decorator
     @recorded_by_proxy
     def test_synonym_map_crud(self, variables, **kwargs):
@@ -41,6 +45,7 @@ class TestSearchSynonymMapsClient(AzureRecordedTestCase):
         map_name = variables["map_name"]
 
         client = SearchIndexClient(search_endpoint, search_api_key)
+        self._clean_up_synonym_maps(client)
 
         # test create
         synonyms = [
@@ -49,6 +54,7 @@ class TestSearchSynonymMapsClient(AzureRecordedTestCase):
         ]
         synonym_map = SynonymMap(name=map_name, synonyms=synonyms)
         result = client.create_synonym_map(synonym_map)
+        original_result = result
         assert isinstance(result, SynonymMap)
         assert result.name == map_name
         assert result.synonyms == [
@@ -57,125 +63,35 @@ class TestSearchSynonymMapsClient(AzureRecordedTestCase):
         ]
         assert len(client.get_synonym_maps()) == 1
 
-        # test create_or_update
+        # test create_or_update if unchanged
         client.create_or_update_synonym_map(synonym_map)
         with pytest.raises(HttpResponseError):
             client.create_or_update_synonym_map(result, match_condition=MatchConditions.IfNotModified)
+        
+        # test create_or_update if changed
+        synonym_map.synonyms = ["Washington, Wash. => WA",]
+        result = client.create_or_update_synonym_map(synonym_map)
+
+        # test get_synonym_maps
+        result = client.get_synonym_maps()
+        assert isinstance(result, list)
+        assert all(isinstance(x, SynonymMap) for x in result)
+        assert all(x.name.startswith("synmap-") for x in result)
+
+        # test get_synonym_map
+        result = client.get_synonym_map(map_name)
+        assert isinstance(result, SynonymMap)
+        assert result.name == map_name
+        assert result.synonyms == [
+            "Washington, Wash. => WA",
+        ]
+
+        # test delete_synonym_map if unchanged
+        with pytest.raises(HttpResponseError):
+            client.delete_synonym_map(original_result, match_condition=MatchConditions.IfNotModified)
+
+        # test delete_synonym_map
+        client.delete_synonym_map(map_name)
+        assert len(client.get_synonym_maps()) == 0
 
         return variables
-
-
-    # @search_decorator
-    # @recorded_by_proxy
-    # def test_delete_synonym_map(self, variables, **kwargs):
-    #     search_endpoint, search_api_key = self._parse_kwargs(**kwargs)
-    #     variables = self._update_variables(variables)
-    #     map_name = variables["map_name"]
-    #     client = SearchIndexClient(search_endpoint, search_api_key)
-    #     synonyms = [
-    #         "USA, United States, United States of America",
-    #         "Washington, Wash. => WA",
-    #     ]
-    #     synonym_map = SynonymMap(name=map_name, synonyms=synonyms)
-    #     result = client.create_synonym_map(synonym_map)
-    #     assert len(client.get_synonym_maps()) == 1
-    #     client.delete_synonym_map(map_name)
-    #     assert len(client.get_synonym_maps()) == 0
-    #     return variables
-
-    # @search_decorator
-    # @recorded_by_proxy
-    # def test_delete_synonym_map_if_unchanged(self, variables, **kwargs):
-    #     search_endpoint, search_api_key = self._parse_kwargs(**kwargs)
-    #     variables = self._update_variables(variables)
-    #     map_name = variables["map_name"]
-    #     client = SearchIndexClient(search_endpoint, search_api_key)
-    #     synonyms = [
-    #         "USA, United States, United States of America",
-    #         "Washington, Wash. => WA",
-    #     ]
-    #     synonym_map = SynonymMap(name=map_name, synonyms=synonyms)
-    #     result = client.create_synonym_map(synonym_map)
-    #     etag = result.e_tag
-
-    #     synonym_map.synonyms = "\n".join([
-    #         "Washington, Wash. => WA",
-    #     ])
-    #     client.create_or_update_synonym_map(synonym_map)
-
-    #     result.e_tag = etag
-    #     with pytest.raises(HttpResponseError):
-    #         client.delete_synonym_map(result, match_condition=MatchConditions.IfNotModified)
-    #         assert len(client.get_synonym_maps()) == 1
-    #     return variables
-
-    # @search_decorator
-    # @recorded_by_proxy
-    # def test_get_synonym_map(self, variables, **kwargs):
-    #     search_endpoint, search_api_key = self._parse_kwargs(**kwargs)
-    #     variables = self._update_variables(variables)
-    #     map_name = variables["map_name"]
-    #     client = SearchIndexClient(search_endpoint, search_api_key)
-    #     synonyms = [
-    #         "USA, United States, United States of America",
-    #         "Washington, Wash. => WA",
-    #     ]
-    #     synonym_map = SynonymMap(name=map_name, synonyms=synonyms)
-    #     client.create_synonym_map(synonym_map)
-    #     assert len(client.get_synonym_maps()) == 1
-    #     result = client.get_synonym_map(map_name)
-    #     assert isinstance(result, SynonymMap)
-    #     assert result.name == map_name
-    #     assert result.synonyms == [
-    #         "USA, United States, United States of America",
-    #         "Washington, Wash. => WA",
-    #     ]
-    #     return variables
-
-    # @search_decorator
-    # @recorded_by_proxy
-    # def test_get_synonym_maps(self, variables, **kwargs):
-    #     search_endpoint, search_api_key = self._parse_kwargs(**kwargs)
-    #     variables = self._update_variables(variables)
-    #     map_name = variables["map_name"]
-    #     client = SearchIndexClient(search_endpoint, search_api_key)
-    #     synonyms = [
-    #         "USA, United States, United States of America",
-    #     ]
-    #     synonym_map_1 = SynonymMap(name="test-syn-map-1", synonyms=synonyms)
-    #     client.create_synonym_map(synonym_map_1)
-    #     synonyms = [
-    #         "Washington, Wash. => WA",
-    #     ]
-    #     synonym_map_2 = SynonymMap(name="test-syn-map-2", synonyms=synonyms)
-    #     client.create_synonym_map(synonym_map_2)
-    #     result = client.get_synonym_maps()
-    #     assert isinstance(result, list)
-    #     assert all(isinstance(x, SynonymMap) for x in result)
-    #     assert set(x.name for x in result) == {"test-syn-map-1", "test-syn-map-2"}
-    #     return variables
-
-    # @search_decorator
-    # @recorded_by_proxy
-    # def test_create_or_update_synonym_map(self, variables, **kwargs):
-    #     search_endpoint, search_api_key = self._parse_kwargs(**kwargs)
-    #     variables = self._update_variables(variables)
-    #     map_name = variables["map_name"]
-    #     client = SearchIndexClient(search_endpoint, search_api_key)
-    #     synonyms = [
-    #         "USA, United States, United States of America",
-    #         "Washington, Wash. => WA",
-    #     ]
-    #     synonym_map = SynonymMap(name=map_name, synonyms=synonyms)
-    #     client.create_synonym_map(synonym_map)
-    #     assert len(client.get_synonym_maps()) == 1
-    #     synonym_map.synonyms = ["Washington, Wash. => WA",]
-    #     client.create_or_update_synonym_map(synonym_map)
-    #     assert len(client.get_synonym_maps()) == 1
-    #     result = client.get_synonym_map(map_name)
-    #     assert isinstance(result, SynonymMap)
-    #     assert result.name == map_name
-    #     assert result.synonyms == [
-    #         "Washington, Wash. => WA",
-    #     ]
-    #     return variables
