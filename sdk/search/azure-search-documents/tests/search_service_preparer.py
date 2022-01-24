@@ -7,6 +7,7 @@ import functools
 from os import environ
 from os.path import dirname, realpath, join
 
+import inspect
 import json
 import requests
 import wrapt
@@ -26,6 +27,7 @@ SearchEnvVarPreparer = functools.partial(
     "search",
     search_service_endpoint="https://fakesearchendpoint.search.windows.net",
     search_service_api_key="fakesearchapikey",
+    search_service_name="fakesearchendpoint",
     search_query_api_key="fakequeryapikey",
     search_storage_connection_string="DefaultEndpointsProtocol=https;AccountName=fakestoragecs;AccountKey=FAKE;EndpointSuffix=core.windows.net",
     search_storage_container_name="fakestoragecontainer"
@@ -47,9 +49,19 @@ def _load_batch(filename):
         return json.load(open(join(cwd, filename), encoding='utf-8'))
 
 def _set_up_index(service_name, endpoint, api_key, schema, index_batch):
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents.indexes import SearchIndexClient
+    from azure.search.documents import SearchClient
+    from azure.search.documents._generated.models import IndexBatch
+
     schema = _load_schema(schema)
     index_batch = _load_batch(index_batch)
     if schema:
+        index_name = json.loads(schema)["name"]
+        # delete index if it already exists
+        client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
+        if client.get_index(index_name):
+            client.delete_index(index_name)
         response = requests.post(
             SERVICE_URL_FMT.format(service_name),
             headers={"Content-Type": "application/json", "api-key": api_key},
@@ -59,14 +71,9 @@ def _set_up_index(service_name, endpoint, api_key, schema, index_batch):
             raise AzureTestError(
                 "Could not create a search index {}".format(response.status_code)
             )
-        index_name = schema["name"]
-
+        
     # optionally load data into the index
     if index_batch and schema:
-        from azure.core.credentials import AzureKeyCredential
-        from azure.search.documents import SearchClient
-        from azure.search.documents._generated.models import IndexBatch
-
         batch = IndexBatch.deserialize(index_batch)
         index_client = SearchClient(endpoint, index_name, AzureKeyCredential(api_key))
         results = index_client.index_documents(batch)
@@ -80,23 +87,44 @@ def _set_up_index(service_name, endpoint, api_key, schema, index_batch):
         import time
         time.sleep(TIME_TO_SLEEP)
 
+def _trim_kwargs_from_test_function(fn, kwargs):
+    # the next function is the actual test function. the kwargs need to be trimmed so
+    # that parameters which are not required will not be passed to it.
+    if not getattr(fn, "__is_preparer", False):
+        try:
+            args, _, kw, _, _, _, _ = inspect.getfullargspec(fn)
+        except AttributeError:
+            args, _, kw, _ = inspect.getargspec(fn)  # pylint: disable=deprecated-method
+        if kw is None:
+            args = set(args)
+            for key in [k for k in kwargs if k not in args]:
+                del kwargs[key]
 
 def search_decorator(*, schema, index_batch):
 
     @wrapt.decorator
-    def wrapper(func, instance, args, kwargs):
-        envvars = SearchEnvVarPreparer()
-        kwargs = envvars.real_values or envvars.fake_values
+    def wrapper(func, _, args, kwargs):
         # set up hotels search index
-        api_key = kwargs.get('search_service_api_key', None)
+        test = args[0]
+        api_key = kwargs.get('search_service_api_key')
         endpoint = kwargs.get('search_service_endpoint')
         service_name = kwargs.get('search_service_name')
-        _set_up_index(service_name, endpoint, api_key, schema, index_batch)
-        kwargs['index_name'] = _load_schema(schema).name
+        if test.is_live:
+            _set_up_index(service_name, endpoint, api_key, schema, index_batch)
+        index_name = json.loads(_load_schema(schema))['name']
+        index_batch_data = _load_batch(index_batch)
 
-        # automatically wrap service API key as an AzureKeyCredential
-        kwargs['search_service_api_key'] = AzureKeyCredential(api_key)
-        return func(*args, **kwargs)
+        # ensure that the names in the test signatures are in the
+        # bag of kwargs
+        kwargs['endpoint'] = endpoint        
+        kwargs['api_key'] = AzureKeyCredential(api_key)
+        kwargs['index_name'] = index_name
+        kwargs['index_batch'] = index_batch_data
+
+        trimmed_kwargs = {k: v for k, v in kwargs.items()}
+        _trim_kwargs_from_test_function(func, trimmed_kwargs)
+
+        return func(*args, **trimmed_kwargs)
     return wrapper
 
 # FIXME: DELETE EVERYTHING AFTER THIS LINE BEFORE MERGING
