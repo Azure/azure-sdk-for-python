@@ -78,9 +78,7 @@ def sample_update_knowledge_sources():
                 "op": "add",
                 "value": {
                     "questions": [
-                        {
-                            "What is the easiest way to use azure services in my .NET project?"
-                        }
+                        "What is the easiest way to use azure services in my .NET project?"
                     ],
                     "answer": "Using Microsoft's Azure SDKs"
                 }
@@ -92,36 +90,39 @@ def sample_update_knowledge_sources():
             project_name=project_name
         )
         for item in qnas:
-            print(item)
+            print(u"qna: {}".format(item["id"]))
+            print("\tquestions:")
+            for question in item["questions"]:
+                print(u"\t\t{}".format(question))
+            print(u"\tanswer: {}".format(item["answer"]))
 
         # synonyms
         client.update_synonyms(
             project_name=project_name,
-            synonyms=[
+            synonyms=[{
+                "op": "add",
+                "value": [
                     {
-                        "op": "add",
-                        "value": [
-                            {
-                                "alterations": [
-                                    "qnamaker",
-                                    "qna maker"
-                                ]
-                            },
-                            {
-                                "alterations": [
-                                    "qna",
-                                    "question and answer"
-                                ]
-                            }
+                        "alterations": [
+                            "qnamaker",
+                            "qna maker"
+                        ]
+                    },
+                    {
+                        "alterations": [
+                            "qna",
+                            "question and answer"
                         ]
                     }
                 ]
+            }]
         )
         synonyms = client.list_synonyms(
             project_name=project_name
         )
         for item in synonyms:
             print(item)
+
 
     # [END update_knowledge_sources]
 
