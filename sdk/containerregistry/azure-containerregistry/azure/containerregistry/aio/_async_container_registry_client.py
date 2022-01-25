@@ -581,13 +581,18 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     async def update_repository_properties(
         self, *args: Union[str, RepositoryProperties], **kwargs: Any
     ) -> RepositoryProperties:
-        """Set the properties of a repository
+        """Set the permission properties of a repository.
 
-        :param args:
-        :type args: Union[str, ~azure.containerregistry.RepositoryProperties]
+        The updatable properties include: `can_delete`, `can_list`, `can_read`, and `can_write`.
+
         :param str repository: Name of the repository
-        :param properties: Properties to set for the repository
+        :param properties: Properties to set for the repository. This is a positional-only
+         parameter. Please provide either this or individual keyword parameters.
         :type properties: ~azure.containerregistry.RepositoryProperties
+        :keyword bool can_delete: Delete permissions for a repository.
+        :keyword bool can_list: List permissions for a repository.
+        :keyword bool can_read: Read permissions for a repository.
+        :keyword bool can_write: Write permissions for a repository.
         :rtype: ~azure.containerregistry.RepositoryProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
         """
@@ -626,14 +631,19 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     async def update_manifest_properties(
         self, *args: Union[str, ArtifactManifestProperties], **kwargs: Any
     ) -> ArtifactManifestProperties:
-        """Set the properties for a manifest
+        """Set the permission properties for a manifest.
 
-        :param args:
-        :type args: Union[str, ~azure.containerregistry.ArtifactManifestProperties]
-        :param str repository: Name of the repository
-        :param str tag_or_digest: Tag or digest of the manifest
-        :param properties: The property's values to be set
-        :type properties: ArtifactManifestProperties
+        The updatable properties include: `can_delete`, `can_list`, `can_read`, and `can_write`.
+
+        :param str repository: Repository the manifest belongs to.
+        :param str tag_or_digest: Tag or digest of the manifest.
+        :param properties: The property's values to be set. This is a positional-only
+         parameter. Please provide either this or individual keyword parameters.
+        :type properties: ~azure.containerregistry.ArtifactManifestProperties
+        :keyword bool can_delete: Delete permissions for a manifest.
+        :keyword bool can_list: List permissions for a manifest.
+        :keyword bool can_read: Read permissions for a manifest.
+        :keyword bool can_write: Write permissions for a manifest.
         :rtype: ~azure.containerregistry.ArtifactManifestProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
 
@@ -696,14 +706,19 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     async def update_tag_properties(
         self, *args: Union[str, ArtifactTagProperties], **kwargs: Any
     ) -> ArtifactTagProperties:
-        """Set the properties for a tag
+        """Set the permission properties for a tag.
 
-        :param args:
-        :type args: Union[str, ~azure.containerregistry.ArtifactTagProperties]
-        :param str repository: Repository the tag belongs to
-        :param str tag: Tag to set properties for
-        :param properties: The property's values to be set
-        :type properties: ArtifactTagProperties
+        The updatable properties include: `can_delete`, `can_list`, `can_read`, and `can_write`.
+
+        :param str repository: Repository the tag belongs to.
+        :param str tag: Tag to set properties for.
+        :param properties: The property's values to be set. This is a positional-only
+         parameter. Please provide either this or individual keyword parameters.
+        :type properties: ~azure.containerregistry.ArtifactTagProperties
+        :keyword bool can_delete: Delete permissions for a tag.
+        :keyword bool can_list: List permissions for a tag.
+        :keyword bool can_read: Read permissions for a tag.
+        :keyword bool can_write: Write permissions for a tag.
         :rtype: ~azure.containerregistry.ArtifactTagProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
 
