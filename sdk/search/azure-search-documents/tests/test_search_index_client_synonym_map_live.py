@@ -13,39 +13,18 @@ from azure.search.documents.indexes import SearchIndexClient
 from azure.search.documents.indexes.models import SynonymMap
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
-from search_service_preparer import search_decorator
+from search_service_preparer import SearchEnvVarPreparer, search_decorator
 
 
 class TestSearchSynonymMapsClient(AzureRecordedTestCase):
-        
-    def _parse_kwargs(self, **kwargs):
-        search_endpoint = kwargs.pop('search_service_endpoint')
-        search_api_key = kwargs.pop('search_service_api_key')
-        return (search_endpoint, search_api_key)
 
-    def _update_variables(self, variables):
-        if self.is_live:
-            variables["map_name"] = self._random_tag("synmap-")
-        return variables
-
-    def _random_tag(self, prefix="", length=10):
-        allowed_chars = string.ascii_letters
-        random_tag = "".join(random.choice(allowed_chars) for x in range(length)).lower()
-        return "{}{}".format(prefix, random_tag)
-
-    def _clean_up_synonym_maps(self, client):
-        for item in client.get_synonym_maps():
-            client.delete_synonym_map(item.name)
-
+    @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
-    def test_synonym_map_crud(self, variables, **kwargs):
-        search_endpoint, search_api_key = self._parse_kwargs(**kwargs)
-        variables = self._update_variables(variables)
-        map_name = variables["map_name"]
+    def test_synonym_map_crud(self, endpoint, api_key):
 
-        client = SearchIndexClient(search_endpoint, search_api_key)
-        self._clean_up_synonym_maps(client)
+        client = SearchIndexClient(endpoint, api_key)
+        map_name = "test-map"
 
         # test create
         synonyms = [
@@ -76,7 +55,7 @@ class TestSearchSynonymMapsClient(AzureRecordedTestCase):
         result = client.get_synonym_maps()
         assert isinstance(result, list)
         assert all(isinstance(x, SynonymMap) for x in result)
-        assert all(x.name.startswith("synmap-") for x in result)
+        assert all(x.name.startswith("test-map") for x in result)
 
         # test get_synonym_map
         result = client.get_synonym_map(map_name)
@@ -93,5 +72,3 @@ class TestSearchSynonymMapsClient(AzureRecordedTestCase):
         # test delete_synonym_map
         client.delete_synonym_map(map_name)
         assert len(client.get_synonym_maps()) == 0
-
-        return variables

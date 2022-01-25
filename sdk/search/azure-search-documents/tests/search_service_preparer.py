@@ -61,6 +61,10 @@ def _set_up_index(service_name, endpoint, api_key, schema, index_batch):
         # delete index if it already exists
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
         if client.get_index(index_name):
+            # wipe the synonym maps which seem to survive the index
+            for item in client.get_synonym_maps():
+                client.delete_synonym_map(item.name)
+            # delete the index
             client.delete_index(index_name)
         response = requests.post(
             SERVICE_URL_FMT.format(service_name),
@@ -86,6 +90,7 @@ def _set_up_index(service_name, endpoint, api_key, schema, index_batch):
         # this by using a constant delay between indexing and querying.
         import time
         time.sleep(TIME_TO_SLEEP)
+
 
 def _trim_kwargs_from_test_function(fn, kwargs):
     # the next function is the actual test function. the kwargs need to be trimmed so

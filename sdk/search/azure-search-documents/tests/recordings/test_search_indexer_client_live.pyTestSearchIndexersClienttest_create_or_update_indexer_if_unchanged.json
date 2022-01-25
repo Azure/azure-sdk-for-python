@@ -10,29 +10,29 @@
         "Content-Length": "253",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "43c513aa-7aff-11ec-9559-74c63bed1137"
+        "x-ms-client-request-id": "96dd7ad5-7d70-11ec-9f8d-74c63bed1137"
       },
-      "RequestBody": "{\u0022name\u0022: \u0022sample-datasource-fwtpqydwnu\u0022, \u0022type\u0022: \u0022azureblob\u0022, \u0022credentials\u0022: {\u0022connectionString\u0022: \u0022DefaultEndpointsProtocol=https;AccountName=fakestoragecs;AccountKey=FAKE;EndpointSuffix=core.windows.net\u0022}, \u0022container\u0022: {\u0022name\u0022: \u0022fakestoragecontainer\u0022}}",
+      "RequestBody": "{\u0022name\u0022: \u0022sample-datasource-ioptjqrlaj\u0022, \u0022type\u0022: \u0022azureblob\u0022, \u0022credentials\u0022: {\u0022connectionString\u0022: \u0022DefaultEndpointsProtocol=https;AccountName=fakestoragecs;AccountKey=FAKE;EndpointSuffix=core.windows.net\u0022}, \u0022container\u0022: {\u0022name\u0022: \u0022fakestoragecontainer\u0022}}",
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "427",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Fri, 21 Jan 2022 21:15:31 GMT",
-        "elapsed-time": "44",
-        "ETag": "W/\u00220x8D9DD2327EEE76F\u0022",
+        "Date": "Mon, 24 Jan 2022 23:51:45 GMT",
+        "elapsed-time": "80",
+        "ETag": "W/\u00220x8D9DF947AE74C50\u0022",
         "Expires": "-1",
-        "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027sample-datasource-fwtpqydwnu\u0027)?api-version=2021-04-30-Preview",
+        "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027sample-datasource-ioptjqrlaj\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "43c513aa-7aff-11ec-9559-74c63bed1137",
+        "request-id": "96dd7ad5-7d70-11ec-9f8d-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#datasources/$entity",
-        "@odata.etag": "\u00220x8D9DD2327EEE76F\u0022",
-        "name": "sample-datasource-fwtpqydwnu",
+        "@odata.etag": "\u00220x8D9DF947AE74C50\u0022",
+        "name": "sample-datasource-ioptjqrlaj",
         "description": null,
         "type": "azureblob",
         "subtype": null,
@@ -50,110 +50,42 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes?api-version=2021-04-30-Preview",
-      "RequestMethod": "POST",
-      "RequestHeaders": {
-        "Accept": "application/json;odata.metadata=minimal",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "Content-Length": "139",
-        "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "43de156c-7aff-11ec-a70e-74c63bed1137"
-      },
-      "RequestBody": "{\u0022name\u0022: \u0022hotels-ebfjysqchx\u0022, \u0022fields\u0022: [{\u0022name\u0022: \u0022hotelId\u0022, \u0022type\u0022: \u0022Edm.String\u0022, \u0022key\u0022: true, \u0022retrievable\u0022: true, \u0022searchable\u0022: false}]}",
-      "StatusCode": 201,
-      "ResponseHeaders": {
-        "Cache-Control": "no-cache",
-        "Content-Length": "695",
-        "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Fri, 21 Jan 2022 21:15:31 GMT",
-        "elapsed-time": "638",
-        "ETag": "W/\u00220x8D9DD2328627F2E\u0022",
-        "Expires": "-1",
-        "Location": "https://fakesearchendpoint.search.windows.net/indexes(\u0027hotels-ebfjysqchx\u0027)?api-version=2021-04-30-Preview",
-        "OData-Version": "4.0",
-        "Pragma": "no-cache",
-        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "43de156c-7aff-11ec-a70e-74c63bed1137",
-        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
-      },
-      "ResponseBody": {
-        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#indexes/$entity",
-        "@odata.etag": "\u00220x8D9DD2328627F2E\u0022",
-        "name": "hotels-ebfjysqchx",
-        "defaultScoringProfile": null,
-        "fields": [
-          {
-            "name": "hotelId",
-            "type": "Edm.String",
-            "searchable": false,
-            "filterable": true,
-            "retrievable": true,
-            "sortable": true,
-            "facetable": true,
-            "key": true,
-            "indexAnalyzer": null,
-            "searchAnalyzer": null,
-            "analyzer": null,
-            "normalizer": null,
-            "synonymMaps": []
-          }
-        ],
-        "scoringProfiles": [],
-        "corsOptions": null,
-        "suggesters": [],
-        "analyzers": [],
-        "normalizers": [],
-        "tokenizers": [],
-        "tokenFilters": [],
-        "charFilters": [],
-        "encryptionKey": null,
-        "similarity": {
-          "@odata.type": "#Microsoft.Azure.Search.BM25Similarity",
-          "k1": null,
-          "b": null
-        },
-        "semantic": null
-      }
-    },
-    {
       "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers?api-version=2021-04-30-Preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "146",
+        "Content-Length": "137",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "4452dee8-7aff-11ec-93c8-74c63bed1137"
+        "x-ms-client-request-id": "96fc459d-7d70-11ec-8fd8-74c63bed1137"
       },
-      "RequestBody": "{\u0022name\u0022: \u0022sample-indexer-epdxtbtpzp\u0022, \u0022dataSourceName\u0022: \u0022sample-datasource-fwtpqydwnu\u0022, \u0022targetIndexName\u0022: \u0022hotels-ebfjysqchx\u0022, \u0022disabled\u0022: false}",
+      "RequestBody": "{\u0022name\u0022: \u0022sample-indexer-ckjlvldbyh\u0022, \u0022dataSourceName\u0022: \u0022sample-datasource-ioptjqrlaj\u0022, \u0022targetIndexName\u0022: \u0022drgqefsg\u0022, \u0022disabled\u0022: false}",
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "420",
+        "Content-Length": "411",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Fri, 21 Jan 2022 21:15:32 GMT",
-        "elapsed-time": "501",
-        "ETag": "W/\u00220x8D9DD2328AF0CDE\u0022",
+        "Date": "Mon, 24 Jan 2022 23:51:45 GMT",
+        "elapsed-time": "526",
+        "ETag": "W/\u00220x8D9DF947B3560D3\u0022",
         "Expires": "-1",
-        "Location": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-epdxtbtpzp\u0027)?api-version=2021-04-30-Preview",
+        "Location": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-ckjlvldbyh\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "4452dee8-7aff-11ec-93c8-74c63bed1137",
+        "request-id": "96fc459d-7d70-11ec-8fd8-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#indexers/$entity",
-        "@odata.etag": "\u00220x8D9DD2328AF0CDE\u0022",
-        "name": "sample-indexer-epdxtbtpzp",
+        "@odata.etag": "\u00220x8D9DF947B3560D3\u0022",
+        "name": "sample-indexer-ckjlvldbyh",
         "description": null,
-        "dataSourceName": "sample-datasource-fwtpqydwnu",
+        "dataSourceName": "sample-datasource-ioptjqrlaj",
         "skillsetName": null,
-        "targetIndexName": "hotels-ebfjysqchx",
+        "targetIndexName": "drgqefsg",
         "disabled": false,
         "schedule": null,
         "parameters": null,
@@ -164,44 +96,44 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-epdxtbtpzp\u0027)?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-ckjlvldbyh\u0027)?api-version=2021-04-30-Preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "172",
+        "Content-Length": "163",
         "Content-Type": "application/json",
         "Prefer": "return=representation",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "44b660f3-7aff-11ec-9c80-74c63bed1137"
+        "x-ms-client-request-id": "975f71f5-7d70-11ec-b5a4-74c63bed1137"
       },
-      "RequestBody": "{\u0022name\u0022: \u0022sample-indexer-epdxtbtpzp\u0022, \u0022description\u0022: \u0022updated\u0022, \u0022dataSourceName\u0022: \u0022sample-datasource-fwtpqydwnu\u0022, \u0022targetIndexName\u0022: \u0022hotels-ebfjysqchx\u0022, \u0022disabled\u0022: false}",
+      "RequestBody": "{\u0022name\u0022: \u0022sample-indexer-ckjlvldbyh\u0022, \u0022description\u0022: \u0022updated\u0022, \u0022dataSourceName\u0022: \u0022sample-datasource-ioptjqrlaj\u0022, \u0022targetIndexName\u0022: \u0022drgqefsg\u0022, \u0022disabled\u0022: false}",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
-        "Content-Length": "425",
+        "Content-Length": "416",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Fri, 21 Jan 2022 21:15:32 GMT",
-        "elapsed-time": "342",
-        "ETag": "W/\u00220x8D9DD23290C39D8\u0022",
+        "Date": "Mon, 24 Jan 2022 23:51:47 GMT",
+        "elapsed-time": "316",
+        "ETag": "W/\u00220x8D9DF947B8AEE3D\u0022",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "44b660f3-7aff-11ec-9c80-74c63bed1137",
+        "request-id": "975f71f5-7d70-11ec-b5a4-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#indexers/$entity",
-        "@odata.etag": "\u00220x8D9DD23290C39D8\u0022",
-        "name": "sample-indexer-epdxtbtpzp",
+        "@odata.etag": "\u00220x8D9DF947B8AEE3D\u0022",
+        "name": "sample-indexer-ckjlvldbyh",
         "description": "updated",
-        "dataSourceName": "sample-datasource-fwtpqydwnu",
+        "dataSourceName": "sample-datasource-ioptjqrlaj",
         "skillsetName": null,
-        "targetIndexName": "hotels-ebfjysqchx",
+        "targetIndexName": "drgqefsg",
         "disabled": false,
         "schedule": null,
         "parameters": null,
@@ -212,33 +144,33 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-epdxtbtpzp\u0027)?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-ckjlvldbyh\u0027)?api-version=2021-04-30-Preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "212",
+        "Content-Length": "203",
         "Content-Type": "application/json",
-        "If-Match": "\u00220x8D9DD2328AF0CDE\u0022",
+        "If-Match": "\u00220x8D9DF947B3560D3\u0022",
         "Prefer": "return=representation",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "44fc6151-7aff-11ec-8ed1-74c63bed1137"
+        "x-ms-client-request-id": "97a011a6-7d70-11ec-8bb9-74c63bed1137"
       },
-      "RequestBody": "{\u0022name\u0022: \u0022sample-indexer-epdxtbtpzp\u0022, \u0022description\u0022: \u0022updated\u0022, \u0022dataSourceName\u0022: \u0022sample-datasource-fwtpqydwnu\u0022, \u0022targetIndexName\u0022: \u0022hotels-ebfjysqchx\u0022, \u0022disabled\u0022: false, \u0022@odata.etag\u0022: \u0022\\\u00220x8D9DD2328AF0CDE\\\u0022\u0022}",
+      "RequestBody": "{\u0022name\u0022: \u0022sample-indexer-ckjlvldbyh\u0022, \u0022description\u0022: \u0022updated\u0022, \u0022dataSourceName\u0022: \u0022sample-datasource-ioptjqrlaj\u0022, \u0022targetIndexName\u0022: \u0022drgqefsg\u0022, \u0022disabled\u0022: false, \u0022@odata.etag\u0022: \u0022\\\u00220x8D9DF947B3560D3\\\u0022\u0022}",
       "StatusCode": 412,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Language": "en",
         "Content-Length": "160",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Fri, 21 Jan 2022 21:15:32 GMT",
-        "elapsed-time": "10",
+        "Date": "Mon, 24 Jan 2022 23:51:47 GMT",
+        "elapsed-time": "9",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "44fc6151-7aff-11ec-8ed1-74c63bed1137",
+        "request-id": "97a011a6-7d70-11ec-8bb9-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": {
@@ -250,8 +182,7 @@
     }
   ],
   "Variables": {
-    "datasource_name": "sample-datasource-fwtpqydwnu",
-    "indexer_name": "sample-indexer-epdxtbtpzp",
-    "index_name": "hotels-ebfjysqchx"
+    "datasource_name": "sample-datasource-ioptjqrlaj",
+    "indexer_name": "sample-indexer-ckjlvldbyh"
   }
 }
