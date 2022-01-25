@@ -18,6 +18,9 @@ USAGE:
     2) AZURE_QUESTIONANSWERING_KEY - your QuestionAnswering API key.
 """
 
+from azure.ai.language.questionanswering import projects
+
+
 def sample_export_import_project():
     # [START export_import_project]
     import os
@@ -46,11 +49,12 @@ def sample_export_import_project():
             })
 
         # export
-        export_poller = client.begin_export( # returns LROPoller[None] ?!!!!
+        export_poller = client.begin_export(
             project_name=project_name,
             format="json"
         )
-        export_poller.result() # still no idea how to get the result !!
+        export_result = export_poller.result()
+        export_url = export_result["resultUrl"]
 
         # delete old project
         delete_poller = client.begin_delete_project(
@@ -59,12 +63,26 @@ def sample_export_import_project():
         delete_poller.result()
 
         # import project
+        project = {
+            "Metadata": {
+                "ProjectName": "IssacNewton",
+                "Description": "biography of Sir Issac Newton",
+                "Language": "en",
+                "DefaultAnswer": None,
+                "MultilingualResource": False,
+                "CreatedDateTime": "2022-01-25T13:10:08Z",
+                "LastModifiedDateTime": "2022-01-25T13:10:08Z",
+                "LastDeployedDateTime": None,
+                "Settings": {
+                    "DefaultAnswer": "no answer",
+                    "EnableHierarchicalExtraction": None,
+                    "DefaultAnswerUsedForExtraction": None
+                }
+            }
+        }
         import_poller = client.begin_import_assets(
             project_name=project_name,
-            format="json",
-            options={
-                "file_uri":"should/be/export/result/url"
-            }
+            options=project
         )
         import_poller.result()
 
@@ -76,9 +94,6 @@ def sample_export_import_project():
             print(u"\tlanguage: {}".format(p["language"]))
             print(u"\tdescription: {}".format(p["description"]))
 
-        client.question_answering_projects.get_project_details(
-            project_name=project_name
-        )
     # [END export_import_project]
 
 
