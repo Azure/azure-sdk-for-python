@@ -1,0 +1,108 @@
+{
+    "chosen_version": "2022-02-01-preview",
+    "total_api_version_list": ["2022-02-01-preview"],
+    "client": {
+        "name": "MicrosoftCognitiveLanguageService",
+        "filename": "_microsoft_cognitive_language_service",
+        "description": "The language service API is a suite of natural language processing (NLP) skills built with best-in-class Microsoft machine learning algorithms.  The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction, language detection and question answering. Further documentation can be found in :code:`\u003ca href=\"https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview\"\u003ehttps://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview\u003c/a\u003e`.0.",
+        "host_value": null,
+        "parameterized_host_template": "\u0027{Endpoint}/language\u0027",
+        "azure_arm": false,
+        "has_lro_operations": true,
+        "client_side_validation": false,
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.core\": [\"PipelineClient\"]}, \"local\": {\"._configuration\": [\"MicrosoftCognitiveLanguageServiceConfiguration\"], \"._operations_mixin\": [\"MicrosoftCognitiveLanguageServiceOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"], \"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.core\": [\"AsyncPipelineClient\"]}, \"local\": {\"._configuration\": [\"MicrosoftCognitiveLanguageServiceConfiguration\"], \"._operations_mixin\": [\"MicrosoftCognitiveLanguageServiceOperationsMixin\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
+    },
+    "global_parameters": {
+        "sync": {
+            "credential": {
+                "signature": "credential,  # type: \"TokenCredential\"",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials.TokenCredential",
+                "required": true
+            },
+            "endpoint": {
+                "signature": "endpoint,  # type: str",
+                "description": "Supported Cognitive Services endpoint (e.g., https://:code:`\u003cresource-name\u003e`.api.cognitiveservices.azure.com).",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "async": {
+            "credential": {
+                "signature": "credential: \"AsyncTokenCredential\",",
+                "description": "Credential needed for the client to connect to Azure.",
+                "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
+                "required": true
+            },
+            "endpoint": {
+                "signature": "endpoint: str,",
+                "description": "Supported Cognitive Services endpoint (e.g., https://:code:`\u003cresource-name\u003e`.api.cognitiveservices.azure.com).",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "constant": {
+        },
+        "call": "credential, endpoint",
+        "service_client_specific": {
+            "sync": {
+                "api_version": {
+                    "signature": "api_version=None, # type: Optional[str]",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile=KnownProfiles.default, # type: KnownProfiles",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            },
+            "async": {
+                "api_version": {
+                    "signature": "api_version: Optional[str] = None,",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false
+                },
+                "profile": {
+                    "signature": "profile: KnownProfiles = KnownProfiles.default,",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false
+                }
+            }
+        }
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://cognitiveservices.azure.com/.default"],
+        "credential_call_sync": "policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "credential_call_async": "policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
+    },
+    "operation_groups": {
+        "analyze_text": "AnalyzeTextOperations"
+    },
+    "operation_mixins": {
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "operations": {
+            "analyze_text" : {
+                "sync": {
+                    "signature": "def analyze_text(\n    self,\n    show_stats=None,  # type: Optional[bool]\n    body=None,  # type: Optional[\"_models.AnalyzeTextTask\"]\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.AnalyzeTextTaskResult\"\n",
+                    "doc": "\"\"\"Request text analysis over a collection of documents.\n\nSubmit a collection of text documents for analysis.  Specify a single unique task to be\nexecuted immediately.\n\n:param show_stats: (Optional) if set to true, response will contain request and document level\n statistics.\n:type show_stats: bool\n:param body: Collection of documents to analyze and a single task to execute.\n:type body: ~azure.ai.textanalytics.v2022_02_01_preview.models.AnalyzeTextTask\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: AnalyzeTextTaskResult, or the result of cls(response)\n:rtype: ~azure.ai.textanalytics.v2022_02_01_preview.models.AnalyzeTextTaskResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def analyze_text(\n    self,\n    show_stats: Optional[bool] = None,\n    body: Optional[\"_models.AnalyzeTextTask\"] = None,\n    **kwargs: Any\n) -\u003e \"_models.AnalyzeTextTaskResult\":\n",
+                    "doc": "\"\"\"Request text analysis over a collection of documents.\n\nSubmit a collection of text documents for analysis.  Specify a single unique task to be\nexecuted immediately.\n\n:param show_stats: (Optional) if set to true, response will contain request and document level\n statistics.\n:type show_stats: bool\n:param body: Collection of documents to analyze and a single task to execute.\n:type body: ~azure.ai.textanalytics.v2022_02_01_preview.models.AnalyzeTextTask\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: AnalyzeTextTaskResult, or the result of cls(response)\n:rtype: ~azure.ai.textanalytics.v2022_02_01_preview.models.AnalyzeTextTaskResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                },
+                "call": "show_stats, body"
+            }
+        }
+    }
+}
