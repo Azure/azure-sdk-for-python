@@ -14,7 +14,7 @@ from msrest import Deserializer, Serializer
 
 from . import models
 from ._configuration import SearchClientConfiguration
-from .operations import DataSourcesOperations, IndexersOperations, IndexesOperations, SearchClientOperationsMixin, SkillsetsOperations, SynonymMapsOperations
+from .operations import AliasesOperations, DataSourcesOperations, IndexersOperations, IndexesOperations, SearchClientOperationsMixin, SkillsetsOperations, SynonymMapsOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -35,6 +35,8 @@ class SearchClient(SearchClientOperationsMixin):
     :vartype synonym_maps: azure.search.documents.indexes.operations.SynonymMapsOperations
     :ivar indexes: IndexesOperations operations
     :vartype indexes: azure.search.documents.indexes.operations.IndexesOperations
+    :ivar aliases: AliasesOperations operations
+    :vartype aliases: azure.search.documents.indexes.operations.AliasesOperations
     :param endpoint: The endpoint URL of the search service.
     :type endpoint: str
     :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
@@ -61,6 +63,7 @@ class SearchClient(SearchClientOperationsMixin):
         self.skillsets = SkillsetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.synonym_maps = SynonymMapsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.aliases = AliasesOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
     def _send_request(
