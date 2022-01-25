@@ -139,6 +139,9 @@ class CodegenTestPR:
         self.conn_str = os.getenv('STORAGE_CONN_STR')
         self.storage_endpoint = os.getenv('STORAGE_ENDPOINT').strip('/')
 
+        if self.conn_str == '':
+            raise Exception('STORAGE_CONN_STR is null')
+
         self.package_name = ''
         self.new_branch = ''
         self.sdk_folder = ''  # 'compute' in 'sdk/compute/azure-mgmt-dns'
