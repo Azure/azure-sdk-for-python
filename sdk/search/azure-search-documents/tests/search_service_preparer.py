@@ -67,6 +67,8 @@ def _clean_up_indexers(endpoint, api_key):
     client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
     for indexer in client.get_indexers():
         client.delete_indexer(indexer)
+    for datasource in client.get_data_source_connection_names():
+        client.delete_data_source_connection(datasource)
     for skillset in client.get_skillset_names():
         client.delete_skillset(skillset)
 

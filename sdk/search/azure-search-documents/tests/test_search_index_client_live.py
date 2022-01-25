@@ -13,7 +13,6 @@ from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
 
 from azure.core import MatchConditions
-from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents.indexes.models import(
     AnalyzeTextOptions,

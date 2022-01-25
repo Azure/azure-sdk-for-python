@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import pytest
+
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents import SearchClient
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
