@@ -23,7 +23,7 @@ import asyncio
 from dotenv import find_dotenv, load_dotenv
 import os
 
-from azure.containerregistry import ManifestOrder
+from azure.containerregistry import ArtifactManifestOrder
 from azure.containerregistry.aio import ContainerRegistryClient
 from azure.identity.aio import DefaultAzureCredential
 
@@ -47,7 +47,7 @@ class DeleteImagesAsync(object):
                 # [START list_manifest_properties]
                 # Keep the three most recent images, delete everything else
                 manifest_count = 0
-                async for manifest in client.list_manifest_properties(repository, order_by=ManifestOrder.LAST_UPDATE_TIME_DESCENDING):
+                async for manifest in client.list_manifest_properties(repository, order_by=ArtifactManifestOrder.LAST_UPDATED_ON_DESCENDING):
                     manifest_count += 1
                     if manifest_count > 3:
                         await client.delete_manifest(repository, manifest.digest)
