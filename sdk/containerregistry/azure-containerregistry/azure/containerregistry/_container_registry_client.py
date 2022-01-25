@@ -35,8 +35,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
          may result in unsupported behavior.
         :paramtype api_version: str
         :keyword audience: URL to use for credential authentication with AAD. Its value could be
-         "https://management.azure.com", "https://management.chinacloudapi.cn", "https://management.microsoftazure.de" or
-         "https://management.usgovcloudapi.net".
+         "https://management.azure.com", "https://management.chinacloudapi.cn", "https://management.microsoftazure.de" 
+         or "https://management.usgovcloudapi.net".
         :paramtype audience: str
         :returns: None
         :rtype: None
