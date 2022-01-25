@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import time
 import logging
@@ -9,8 +10,8 @@ from functools import wraps
 from typing import List, Any, Dict
 from packaging.version import Version
 from ghapi.all import GhApi
-from util import add_certificate
 from azure.storage.blob import BlobServiceClient, ContainerClient
+from util import add_certificate
 
 _LOG = logging.getLogger()
 
@@ -156,8 +157,12 @@ class CodegenTestPR:
         return head_sha
 
     def readme_local_folder(self) -> Path:
-        html_link = 'https://github.com/Azure/azure-rest-api-specs/blob/main/'
-        return Path(self.spec_readme.replace(html_link, '')) / 'readme.md'
+        result = re.findall('specification/[a-zA-Z-]+/resource-manager', self.spec_readme)
+        if len(result) == 0:
+            service_name = self.spec_readme
+        else:
+            service_name = result[0].split('/')[1]
+        return Path(f'specification/{service_name}/resource-manager/readme.md')
 
     def get_sdk_folder_with_autorest_result(self):
         generate_result = self.get_autorest_result()
