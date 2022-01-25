@@ -183,7 +183,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
                 await self._orderByPQ.push_async(targetQueryExContext, self._document_producer_comparator)
 
             except exceptions.CosmosHttpResponseError as e:
-                if exceptions.partition_range_is_gone(e):
+                if exceptions._partition_range_is_gone(e):
                     # repairing document producer context on partition split
                     await self._repair_document_producer()
                 else:
