@@ -28,19 +28,22 @@ if TYPE_CHECKING:
 class ContainerRegistryClient(ContainerRegistryBaseClient):
     def __init__(
         self, endpoint: str, credential: Optional["AsyncTokenCredential"] = None, *, audience, **kwargs: Any) -> None:
-        """Create a ContainerRegistryClient from an endpoint and a credential
+        """Create a ContainerRegistryClient from an ACR endpoint and a credential.
 
-        :param endpoint: An ACR endpoint
-        :type endpoint: str
-        :param credential: The credential with which to authenticate
+        :param str endpoint: An ACR endpoint.
+        :param credential: The credential with which to authenticate.
         :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+        :keyword api_version: API Version. The default value is "2021-07-01". Note that overriding this default value
+         may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword audience: URL to use for credential authentication with AAD. Its value could be
-        "https://management.azure.com", "https://management.chinacloudapi.cn", "https://management.microsoftazure.de" or
-        "https://management.usgovcloudapi.net"
-        :paramtype audience: ~azure.containerregistry.ContainerRegistryAudience or str
+         "https://management.azure.com", "https://management.chinacloudapi.cn", "https://management.microsoftazure.de" 
+         or "https://management.usgovcloudapi.net".
+        :paramtype audience: str
         :returns: None
         :rtype: None
-        :raises: if the provided api_version keyword-only argument isn't supported
+        :raises ValueError: If the provided api_version keyword-only argument isn't supported or
+         audience keyword-only argument isn't provided.
 
         .. admonition:: Example:
 
