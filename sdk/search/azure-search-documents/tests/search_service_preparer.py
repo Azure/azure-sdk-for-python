@@ -16,6 +16,7 @@ from devtools_testutils import PowerShellPreparer
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
 from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import ResourceNotFoundError
 
 
 SERVICE_URL_FMT = "https://{}.search.windows.net/indexes?api-version=2021-04-30-Preview"
@@ -48,6 +49,14 @@ def _load_batch(filename):
     except UnicodeDecodeError:
         return json.load(open(join(cwd, filename), encoding='utf-8'))
 
+def _clean_up_indexers(endpoint, api_key):
+    from azure.search.documents.indexes import SearchIndexerClient
+    client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key))
+    for indexer in client.get_indexers():
+        client.delete_indexer(indexer)
+    for skillset in client.get_skillset_names():
+        client.delete_skillset(skillset)
+
 def _set_up_index(service_name, endpoint, api_key, schema, index_batch):
     from azure.core.credentials import AzureKeyCredential
     from azure.search.documents.indexes import SearchIndexClient
@@ -60,12 +69,15 @@ def _set_up_index(service_name, endpoint, api_key, schema, index_batch):
         index_name = json.loads(schema)["name"]
         # delete index if it already exists
         client = SearchIndexClient(endpoint, AzureKeyCredential(api_key))
-        if client.get_index(index_name):
-            # wipe the synonym maps which seem to survive the index
-            for item in client.get_synonym_maps():
-                client.delete_synonym_map(item.name)
-            # delete the index
-            client.delete_index(index_name)
+        try:
+            if client.get_index(index_name):
+                # wipe the synonym maps which seem to survive the index
+                for item in client.get_synonym_maps():
+                    client.delete_synonym_map(item.name)
+                # delete the index
+                client.delete_index(index_name)
+        except ResourceNotFoundError:
+            pass
         response = requests.post(
             SERVICE_URL_FMT.format(service_name),
             headers={"Content-Type": "application/json", "api-key": api_key},
@@ -116,6 +128,7 @@ def search_decorator(*, schema, index_batch):
         service_name = kwargs.get('search_service_name')
         if test.is_live:
             _set_up_index(service_name, endpoint, api_key, schema, index_batch)
+            _clean_up_indexers(endpoint, api_key)
         index_name = json.loads(_load_schema(schema))['name']
         index_batch_data = _load_batch(index_batch)
 
