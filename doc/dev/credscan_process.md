@@ -42,23 +42,24 @@ remediation can be done.
 
 If CredScan flags something that's not actually a credential or secret, we can suppress the warning to shut off the
 false alarm. CredScan allows you to suppress fake credentials by either suppressing a string value or by suppressing
-warnings for a whole file. Suppressing string values will disable warnings no matter where the string comes up during a
-scan, but is inefficient and inconvenient for lengthy strings. Suppressing warnings in a file is convenient for
-fake credential files, but strings in that file will still trigger warnings if present in another unsuppressed file.
-Files that contain more than just fake credentials shouldn't be suppressed.
+warnings for a whole file. **Files that contain more than just fake credentials shouldn't be suppressed.**
 
 Credential warnings are suppressed in [eng/CredScanSuppression.json][suppression_file]. Suppressed string values are in
 the `"placeholder"` list, and suppressed files are in the `"file"` list under `"suppressions"`.
-
-Ideally, fake credential files -- which contain nothing but fake secrets -- should be suppressed and their fake
-credentials shouldn't appear in any other files. Sanitizers should be used to keep fake credentials out of test
-recordings when possible. String value suppression should be avoided unless the string appears in many files.
 
 If you have a fake credential flagged by CredScan, try one of the following (listed from most to least preferable):
   - Import and use a suitable credential from a file that's already suppressed in [eng/CredScanSuppression.json][suppression_file].
   - Replace the credential with a string value that's already suppressed in [eng/CredScanSuppression.json][suppression_file].
   - Move the credential into a `fake_credentials.py` file in your package, and add the file path to the list of suppressed files if necessary.
   - Add the credential to the list of suppressed string values.
+
+Ideally, fake credential files -- which contain nothing but fake secrets -- should be suppressed and their fake
+credentials shouldn't appear in any other files. Sanitizers should be used to keep fake credentials out of test
+recordings when possible. String value suppression should be avoided unless the string appears in many files.
+
+Suppressing string values will disable warnings no matter where the string comes up during a scan, but is inefficient
+and inconvenient for lengthy strings. Suppressing warnings in a file is convenient for fake credential files, but
+strings in that file will still trigger warnings if present in another unsuppressed file.
 
 ## Correct baselined warnings
 
