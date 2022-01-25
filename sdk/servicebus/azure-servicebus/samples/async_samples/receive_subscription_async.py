@@ -9,8 +9,6 @@
 Example to show receiving batch messages from a Service Bus Subscription under specific Topic asynchronously.
 """
 
-# pylint: disable=C0111
-
 import os
 import asyncio
 from azure.servicebus.aio import ServiceBusClient

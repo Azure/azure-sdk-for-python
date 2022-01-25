@@ -217,7 +217,8 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
-    def test_fail_passing_content_type(self, client):
+    def test_fail_passing_content_type(self, **kwargs):
+        client = kwargs.pop("client")
         with open(self.receipt_png, "rb") as fd:
             myfile = fd.read()
         with pytest.raises(TypeError):
@@ -486,7 +487,8 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
-    def test_receipt_continuation_token(self, client):
+    def test_receipt_continuation_token(self, **kwargs):
+        client = kwargs.pop("client")
 
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()

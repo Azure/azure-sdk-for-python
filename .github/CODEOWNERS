@@ -77,6 +77,9 @@
 /sdk/datalake/                                                       @ro-joowan
 /sdk/datadatamigration/                                              @vchske
 
+# ServiceLabel: %Device Update for IoT Hub %Service Attention
+/sdk/deviceupdate/                                                   @dpokluda @sedols
+
 # PRLabel: %Event Grid
 /sdk/eventgrid/                                                      @lmazuel @yunhaoling @swathipil @rakshith91
 
