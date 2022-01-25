@@ -21,25 +21,23 @@ from recorded_test_case import RecordedTestCase
 from test_certificate_credential import PEM_CERT_PATH
 from devtools_testutils import is_live, recorded_by_proxy
 
-class OboPreparer(object):
-    def __init__(self):
-        if is_live():
-            missing_variables = [
-                var
-                for var in (
-                    "OBO_CERT_BYTES",
-                    "OBO_CLIENT_ID",
-                    "OBO_CLIENT_SECRET",
-                    "OBO_PASSWORD",
-                    "OBO_SCOPE",
-                    "OBO_TENANT_ID",
-                    "OBO_USERNAME",
-                )
-                if var not in os.environ
-            ]
-            if any(missing_variables):
-                pytest.skip("No value for environment variables: " + ", ".join(missing_variables))
+missing_variables = [
+    var
+    for var in (
+        "OBO_CERT_BYTES",
+        "OBO_CLIENT_ID",
+        "OBO_CLIENT_SECRET",
+        "OBO_PASSWORD",
+        "OBO_SCOPE",
+        "OBO_TENANT_ID",
+        "OBO_USERNAME",
+    )
+    if var not in os.environ
+]
 
+class TestObo(RecordedTestCase):
+    def load_settings(self):
+        if is_live():
             self.obo_settings = {
                 "cert_bytes": os.environ["OBO_CERT_BYTES"],
                 "client_id": os.environ["OBO_CLIENT_ID"],
@@ -60,17 +58,11 @@ class OboPreparer(object):
                 "username": "username",
             }
 
-    def __call__(self, fn):
-        def _preparer_wrapper(test_class):
-            fn(test_class, obo_settings=self.obo_settings)
-        return _preparer_wrapper
-
-
-class TestObo(RecordedTestCase):
     @pytest.mark.manual
-    @OboPreparer()
+    @pytest.mark.skipif(any(missing_variables), reason="No value for environment variables")
     @recorded_by_proxy
     def test_obo(self, obo_settings):
+        self.load_settings()
         client_id = obo_settings["client_id"]
         tenant_id = obo_settings["tenant_id"]
 
@@ -82,9 +74,10 @@ class TestObo(RecordedTestCase):
         credential.get_token(obo_settings["scope"])
 
     @pytest.mark.manual
-    @OboPreparer()
+    @pytest.mark.skipif(any(missing_variables), reason="No value for environment variables")
     @recorded_by_proxy
     def test_obo_cert(self, obo_settings):
+        self.load_settings()
         client_id = obo_settings["client_id"]
         tenant_id = obo_settings["tenant_id"]
 

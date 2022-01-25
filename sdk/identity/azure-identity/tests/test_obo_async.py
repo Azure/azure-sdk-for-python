@@ -20,25 +20,23 @@ from helpers import build_aad_response, get_discovery_response, mock_response, F
 from helpers_async import AsyncMockTransport
 from recorded_test_case import RecordedTestCase
 
-class OboPreparer(object):
-    def __init__(self):
-        if is_live():
-            missing_variables = [
-                var
-                for var in (
-                    "OBO_CERT_BYTES",
-                    "OBO_CLIENT_ID",
-                    "OBO_CLIENT_SECRET",
-                    "OBO_PASSWORD",
-                    "OBO_SCOPE",
-                    "OBO_TENANT_ID",
-                    "OBO_USERNAME",
-                )
-                if var not in os.environ
-            ]
-            if any(missing_variables):
-                pytest.skip("No value for environment variables: " + ", ".join(missing_variables))
+missing_variables = [
+    var
+    for var in (
+        "OBO_CERT_BYTES",
+        "OBO_CLIENT_ID",
+        "OBO_CLIENT_SECRET",
+        "OBO_PASSWORD",
+        "OBO_SCOPE",
+        "OBO_TENANT_ID",
+        "OBO_USERNAME",
+    )
+    if var not in os.environ
+]
 
+class TestOboAsync(RecordedTestCase):
+    def load_settings(self):
+        if is_live():
             self.obo_settings = {
                 "cert_bytes": os.environ["OBO_CERT_BYTES"],
                 "client_id": os.environ["OBO_CLIENT_ID"],
@@ -59,18 +57,13 @@ class OboPreparer(object):
                 "username": "username",
             }
 
-    def __call__(self, fn):
-        async def _preparer_wrapper(test_class):
-            await fn(test_class, obo_settings=self.obo_settings)
 
-        return _preparer_wrapper
-
-class TestOboAsync(RecordedTestCase):
     @pytest.mark.manual
+    @pytest.mark.skipif(any(missing_variables), reason="No value for environment variables")
     @RecordedTestCase.await_prepared_test
-    @OboPreparer()
     @recorded_by_proxy_async
     async def test_obo(self, obo_settings):
+        self.load_settings()
         client_id = obo_settings["client_id"]
         client_secret = obo_settings["client_secret"]
         tenant_id = obo_settings["tenant_id"]
@@ -83,10 +76,11 @@ class TestOboAsync(RecordedTestCase):
         await credential.get_token(obo_settings["scope"])
 
     @pytest.mark.manual
+    @pytest.mark.skipif(any(missing_variables), reason="No value for environment variables")
     @RecordedTestCase.await_prepared_test
-    @OboPreparer()
     @recorded_by_proxy_async
     async def test_obo_cert(self, obo_settings):
+        self.load_settings()
         client_id = obo_settings["client_id"]
         tenant_id = obo_settings["tenant_id"]
 
