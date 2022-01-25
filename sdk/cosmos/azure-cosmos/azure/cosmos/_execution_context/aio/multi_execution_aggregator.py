@@ -22,7 +22,6 @@
 """Internal class for multi execution context aggregator implementation in the Azure Cosmos database service.
 """
 
-import heapq
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio import document_producer, _queue_async_helper
 from azure.cosmos._routing import routing_range

@@ -26,7 +26,7 @@ database service.
 import numbers
 from collections import deque
 
-from azure.cosmos import _base, exceptions, http_constants
+from azure.cosmos import _base
 from azure.cosmos._execution_context.aio.base_execution_context import _DefaultQueryExecutionContext
 
 
@@ -58,15 +58,7 @@ class _DocumentProducer(object):
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
 
         async def fetch_fn(options):
-            try:
-                return await self._client.QueryFeed(path, collection_id, query, options,
-                                                    partition_key_target_range["id"])
-            except exceptions.CosmosHttpResponseError as e:
-                if e.status_code == http_constants.StatusCodes.GONE:
-                    # 410 within fetch function, raise to properly handle within execution context
-                    raise
-                return await self._client.QueryFeed(path, collection_id, query, options,
-                                                    partition_key_target_range["id"])
+            return await self._client.QueryFeed(path, collection_id, query, options, partition_key_target_range["id"])
 
         self._ex_context = _DefaultQueryExecutionContext(client, self._options, fetch_fn)
 
@@ -104,12 +96,7 @@ class _DocumentProducer(object):
 
         """
         if self._cur_item is None:
-            try:
-                self._cur_item = await self._ex_context.__anext__()
-            except exceptions.CosmosHttpResponseError as e:
-                if exceptions.partition_range_is_gone(e):
-                    # raising within document producer peek in order to properly handle within execution context
-                    raise
+            self._cur_item = await self._ex_context.__anext__()
 
         return self._cur_item
 
@@ -129,7 +116,7 @@ class _PartitionKeyRangeDocumentProducerComparator(object):
     def __init__(self):
         pass
 
-    def compare(self, doc_producer1, doc_producer2):  # pylint: disable=no-self-use
+    async def compare(self, doc_producer1, doc_producer2):  # pylint: disable=no-self-use
         return _compare_helper(
             doc_producer1.get_target_range()["minInclusive"], doc_producer2.get_target_range()["minInclusive"]
         )
@@ -188,7 +175,7 @@ class _OrderByHelper(object):
         raise TypeError("unknown type" + str(val))
 
     @staticmethod
-    def compare(orderby_item1, orderby_item2):
+    async def compare(orderby_item1, orderby_item2):
         """Compare two orderby item pairs.
 
         :param dict orderby_item1:
@@ -262,14 +249,14 @@ class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProducerCompa
         self._validate_orderby_items(res1, res2)
 
         for i, (elt1, elt2) in enumerate(zip(res1, res2)):
-            res = _OrderByHelper.compare(elt1, elt2)
+            res = await _OrderByHelper.compare(elt1, elt2)
             if res != 0:
                 if self._sort_order[i] == "Ascending":
                     return res
                 if self._sort_order[i] == "Descending":
                     return -res
 
-        return _PartitionKeyRangeDocumentProducerComparator.compare(self, doc_producer1, doc_producer2)
+        return await _PartitionKeyRangeDocumentProducerComparator.compare(self, doc_producer1, doc_producer2)
 
     def _validate_orderby_items(self, res1, res2):
         if len(res1) != len(res2):
