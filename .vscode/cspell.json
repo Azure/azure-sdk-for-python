@@ -101,7 +101,11 @@
     "sdk/translation/azure-ai-translation-document/**",
     "sdk/tables/azure-data-tables/**",
     "sdk/textanalytics/azure-ai-textanalytics/**",
-    "sdk/storage/azure-storage-blob/**"
+    "sdk/storage/azure-storage-blob/**",
+    "eng/**/*.json",
+    "eng/*.txt",
+    "eng/tox/tox.ini",
+    "./eng/tox/*.py"
   ],
   "words": [
     "adls",
@@ -176,11 +180,14 @@
     "substringof",
     "tenvparallel",
     "Teradata",
+    "toxenv",
     "uamqp",
     "unredacted",
     "upserted",
     "urandom",
     "urlunparse",
+    "verifysdist",
+    "verifywhl",
     "vmimage",
     "vmss",
     "vmwarecloudsimple",
