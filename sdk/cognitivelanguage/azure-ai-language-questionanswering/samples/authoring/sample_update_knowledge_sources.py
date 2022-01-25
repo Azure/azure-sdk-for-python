@@ -48,7 +48,7 @@ def sample_update_knowledge_sources():
         # sources
         sources_poller = client.begin_update_sources(
             project_name=project_name,
-            sources={
+            sources=[{
                 "op": "add",
                 "value": {
                     "displayName": "MicrosoftFAQ",
@@ -58,7 +58,7 @@ def sample_update_knowledge_sources():
                     "contentStructureKind": "unstructured",
                     "refresh": False
                 }
-            }
+            }]
         )
         sources_poller.result() # wait until done
 
@@ -66,24 +66,25 @@ def sample_update_knowledge_sources():
             project_name=project_name
         )
         for item in sources:
-            print(item)
+            print(u"source name: {}".format(item["displayName"]))
+            print(u"\tsource: {}".format(item["source"]))
+            print(u"\tsource uri: {}".format(item["sourceUri"]))
+            print(u"\tsource kind: {}".format(item["sourceKind"]))
 
         # qnas
         qna_poller = client.begin_update_qnas(
             project_name=project_name,
-            qnas=[
-                {
-                    "op": "add",
-                    "value": {
-                        "questions": [
-                            {
-                                "What is the easiest way to use azure services in my .NET project?"
-                            }
-                        ],
-                        "answer": "Using Microsoft's Azure SDKs"
-                    }
+            qnas=[{
+                "op": "add",
+                "value": {
+                    "questions": [
+                        {
+                            "What is the easiest way to use azure services in my .NET project?"
+                        }
+                    ],
+                    "answer": "Using Microsoft's Azure SDKs"
                 }
-            ]
+            }]
         )
         qna_poller.result()
 
