@@ -59,6 +59,7 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
+            'analyze_text': '2022-02-01-preview',
         }},
         _PROFILE_TAG + " latest"
     )
@@ -71,7 +72,9 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
         profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
     ):
-        if api_version == 'v3.0':
+        if api_version == '2022-02-01-preview':
+            base_url = '{Endpoint}/language'
+        elif api_version == 'v3.0':
             base_url = '{Endpoint}/text/analytics/v3.0'
         elif api_version == 'v3.1':
             base_url = '{Endpoint}/text/analytics/v3.1'
@@ -94,11 +97,15 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
+           * 2022-02-01-preview: :mod:`v2022_02_01_preview.models<azure.ai.textanalytics.v2022_02_01_preview.models>`
            * v3.0: :mod:`v3_0.models<azure.ai.textanalytics.v3_0.models>`
            * v3.1: :mod:`v3_1.models<azure.ai.textanalytics.v3_1.models>`
            * v3.2-preview.2: :mod:`v3_2_preview_2.models<azure.ai.textanalytics.v3_2_preview_2.models>`
         """
-        if api_version == 'v3.0':
+        if api_version == '2022-02-01-preview':
+            from .v2022_02_01_preview import models
+            return models
+        elif api_version == 'v3.0':
             from .v3_0 import models
             return models
         elif api_version == 'v3.1':
@@ -108,6 +115,19 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
             from .v3_2_preview_2 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
+
+    @property
+    def analyze_text(self):
+        """Instance depends on the API version:
+
+           * 2022-02-01-preview: :class:`AnalyzeTextOperations<azure.ai.textanalytics.v2022_02_01_preview.operations.AnalyzeTextOperations>`
+        """
+        api_version = self._get_api_version('analyze_text')
+        if api_version == '2022-02-01-preview':
+            from .v2022_02_01_preview.operations import AnalyzeTextOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'analyze_text'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     def close(self):
         self._client.close()

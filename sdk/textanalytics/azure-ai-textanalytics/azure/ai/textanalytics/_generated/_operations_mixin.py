@@ -15,8 +15,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, List, Optional, Union
 
-    # FIXME: have to manually reconfigure import path for multiapi operation mixin
-    from .._lro import AnalyzeActionsLROPoller, AnalyzeHealthcareEntitiesLROPoller
+    from ...._lro import AnalyzeActionsLROPoller, AnalyzeHealthcareEntitiesLROPoller
     from azure.core.polling import LROPoller
 
 
@@ -67,6 +66,41 @@ class TextAnalyticsClientOperationsMixin(object):
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.analyze_status(job_id, show_stats, top, skip, **kwargs)
+
+    def analyze_text(
+        self,
+        show_stats=None,  # type: Optional[bool]
+        body=None,  # type: Optional["_models.AnalyzeTextTask"]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.AnalyzeTextTaskResult"
+        """Request text analysis over a collection of documents.
+
+        Submit a collection of text documents for analysis.  Specify a single unique task to be
+        executed immediately.
+
+        :param show_stats: (Optional) if set to true, response will contain request and document level
+         statistics.
+        :type show_stats: bool
+        :param body: Collection of documents to analyze and a single task to execute.
+        :type body: ~azure.ai.textanalytics.v2022_02_01_preview.models.AnalyzeTextTask
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: AnalyzeTextTaskResult, or the result of cls(response)
+        :rtype: ~azure.ai.textanalytics.v2022_02_01_preview.models.AnalyzeTextTaskResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('analyze_text')
+        if api_version == '2022-02-01-preview':
+            from .v2022_02_01_preview.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'analyze_text'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return mixin_instance.analyze_text(show_stats, body, **kwargs)
 
     def begin_analyze(
         self,
@@ -265,11 +299,7 @@ class TextAnalyticsClientOperationsMixin(object):
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        # FIXME: this is handwritten
-        if api_version == 'v3.0':
-            return mixin_instance.entities_linking(documents, model_version, show_stats, **kwargs)
-        elif api_version == 'v3.1' or api_version == "v3.2-preview.2":
-            return mixin_instance.entities_linking(documents, model_version, show_stats, logging_opt_out, string_index_type, **kwargs)
+        return mixin_instance.entities_linking(documents, model_version, show_stats, logging_opt_out, string_index_type, **kwargs)
 
     def entities_recognition_general(
         self,
@@ -328,11 +358,7 @@ class TextAnalyticsClientOperationsMixin(object):
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        # FIXME: this is handwritten
-        if api_version == 'v3.0':
-            return mixin_instance.entities_recognition_general(documents, model_version, show_stats, **kwargs)
-        elif api_version == 'v3.1' or api_version == "v3.2-preview.2":
-            return mixin_instance.entities_recognition_general(documents, model_version, show_stats, logging_opt_out, string_index_type, **kwargs)
+        return mixin_instance.entities_recognition_general(documents, model_version, show_stats, logging_opt_out, string_index_type, **kwargs)
 
     def entities_recognition_pii(
         self,
@@ -494,11 +520,7 @@ class TextAnalyticsClientOperationsMixin(object):
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        # FIXME: this is handwritten
-        if api_version == 'v3.0':
-            return mixin_instance.key_phrases(documents, model_version, show_stats, **kwargs)
-        elif api_version == 'v3.1' or api_version == "v3.2-preview.2":
-            return mixin_instance.key_phrases(documents, model_version, show_stats, logging_opt_out, **kwargs)
+        return mixin_instance.key_phrases(documents, model_version, show_stats, logging_opt_out, **kwargs)
 
     def languages(
         self,
@@ -552,11 +574,7 @@ class TextAnalyticsClientOperationsMixin(object):
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        # FIXME: this is handwritten
-        if api_version == 'v3.0':
-            return mixin_instance.languages(documents, model_version, show_stats, **kwargs)
-        elif api_version == 'v3.1' or api_version == "v3.2-preview.2":
-            return mixin_instance.languages(documents, model_version, show_stats, logging_opt_out, **kwargs)
+        return mixin_instance.languages(documents, model_version, show_stats, logging_opt_out, **kwargs)
 
     def sentiment(
         self,
@@ -618,8 +636,4 @@ class TextAnalyticsClientOperationsMixin(object):
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        # FIXME: this is handwritten
-        if api_version == 'v3.0':
-            return mixin_instance.sentiment(documents, model_version, show_stats, **kwargs)
-        elif api_version == 'v3.1' or api_version == "v3.2-preview.2":
-            return mixin_instance.sentiment(documents, model_version, show_stats, logging_opt_out, opinion_mining, string_index_type, **kwargs)
+        return mixin_instance.sentiment(documents, model_version, show_stats, logging_opt_out, opinion_mining, string_index_type, **kwargs)

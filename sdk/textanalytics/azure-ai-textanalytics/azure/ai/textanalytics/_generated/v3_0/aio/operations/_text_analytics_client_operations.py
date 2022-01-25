@@ -18,7 +18,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._text_analytics_client_operations import build_entities_linking_request, build_entities_recognition_general_request, build_key_phrases_request, build_languages_request, build_sentiment_request
-
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -61,13 +60,13 @@ class TextAnalyticsClientOperationsMixin:
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
-        json = self._serialize.body(_input, 'MultiLanguageBatchInput')
+        _json = self._serialize.body(_input, 'MultiLanguageBatchInput')
 
         request = build_entities_recognition_general_request(
             content_type=content_type,
+            json=_json,
             model_version=model_version,
             show_stats=show_stats,
-            json=json,
             template_url=self.entities_recognition_general.metadata['url'],
         )
         request = _convert_request(request)
@@ -130,13 +129,13 @@ class TextAnalyticsClientOperationsMixin:
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
-        json = self._serialize.body(_input, 'MultiLanguageBatchInput')
+        _json = self._serialize.body(_input, 'MultiLanguageBatchInput')
 
         request = build_entities_linking_request(
             content_type=content_type,
+            json=_json,
             model_version=model_version,
             show_stats=show_stats,
-            json=json,
             template_url=self.entities_linking.metadata['url'],
         )
         request = _convert_request(request)
@@ -199,13 +198,13 @@ class TextAnalyticsClientOperationsMixin:
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
-        json = self._serialize.body(_input, 'MultiLanguageBatchInput')
+        _json = self._serialize.body(_input, 'MultiLanguageBatchInput')
 
         request = build_key_phrases_request(
             content_type=content_type,
+            json=_json,
             model_version=model_version,
             show_stats=show_stats,
-            json=json,
             template_url=self.key_phrases.metadata['url'],
         )
         request = _convert_request(request)
@@ -269,13 +268,13 @@ class TextAnalyticsClientOperationsMixin:
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _input = _models.LanguageBatchInput(documents=documents)
-        json = self._serialize.body(_input, 'LanguageBatchInput')
+        _json = self._serialize.body(_input, 'LanguageBatchInput')
 
         request = build_languages_request(
             content_type=content_type,
+            json=_json,
             model_version=model_version,
             show_stats=show_stats,
-            json=json,
             template_url=self.languages.metadata['url'],
         )
         request = _convert_request(request)
@@ -339,13 +338,13 @@ class TextAnalyticsClientOperationsMixin:
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _input = _models.MultiLanguageBatchInput(documents=documents)
-        json = self._serialize.body(_input, 'MultiLanguageBatchInput')
+        _json = self._serialize.body(_input, 'MultiLanguageBatchInput')
 
         request = build_sentiment_request(
             content_type=content_type,
+            json=_json,
             model_version=model_version,
             show_stats=show_stats,
-            json=json,
             template_url=self.sentiment.metadata['url'],
         )
         request = _convert_request(request)

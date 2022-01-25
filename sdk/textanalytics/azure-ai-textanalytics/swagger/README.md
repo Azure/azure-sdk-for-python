@@ -29,6 +29,7 @@ batch:
   - tag: release_3_0
   - tag: release_3_1
   - tag: release_3_2_preview.2
+  - tag: release_2022_02_01_preview
   - multiapiscript: true
 ```
 
@@ -36,7 +37,7 @@ batch:
 
 ```yaml $(multiapiscript)
 output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/
-default-api: v3_2_preview_2
+default-api: v2022_02_01_preview
 clear-output-folder: true
 perform-load: false
 ```
@@ -70,6 +71,17 @@ input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/sp
 namespace: azure.ai.textanalytics.v3_2_preview_2
 output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v3_2_preview_2
 ```
+
+## Release 2022-02-01-preview
+
+These settings apply only when `--tag=release_2022_02_01_preview` is specified on the command line.
+
+```yaml $(tag) == 'release_2022_02_01_preview'
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/7d28bb5738e96626ab1ba2a5ee4e2edd3de2c856/specification/cognitiveservices/data-plane/Language/preview/2022-02-01-preview/textanalytics.json
+namespace: azure.ai.textanalytics.v2022_02_01_preview
+output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v2022_02_01_preview
+```
+
 
 ### Override Analyze's pager poller
 
