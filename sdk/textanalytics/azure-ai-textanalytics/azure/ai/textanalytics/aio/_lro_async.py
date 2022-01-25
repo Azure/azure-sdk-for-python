@@ -418,3 +418,183 @@ class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType]):
             functools.partial(deserialization_callback, initial_response),
             polling_method  # type: ignore
         )
+
+
+class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType]):
+    def polling_method(self) -> AsyncAnalyzeActionsLROPollingMethod:  # type: ignore
+        """Return the polling method associated to this poller."""
+        return self._polling_method  # type: ignore
+
+    @property
+    def created_on(self) -> datetime.datetime:
+        """When your analyze job was created
+
+        :return: When your analyze job was created
+        :rtype: ~datetime.datetime
+        """
+        return self.polling_method().created_on
+
+    @property
+    def display_name(self) -> Optional[str]:
+        """The display name of your :func:`begin_analyze_actions` call.
+
+        Corresponds to the `display_name` kwarg you pass to your
+        :func:`begin_analyze_actions` call.
+
+        :return: The display name of your :func:`begin_analyze_actions` call.
+        :rtype: str
+        """
+        return self.polling_method().display_name
+
+    @property
+    def expires_on(self) -> datetime.datetime:
+        """When your analyze job will expire
+
+        :return: When your analyze job will expire
+        :rtype: ~datetime.datetime
+        """
+        return self.polling_method().expires_on
+
+    @property
+    def actions_failed_count(self) -> int:
+        """Total number of actions that have failed
+
+        :return: Total number of actions that have failed
+        :rtype: int
+        """
+        return self.polling_method().actions_failed_count
+
+    @property
+    def actions_in_progress_count(self) -> int:
+        """Total number of actions currently in progress
+
+        :return: Total number of actions currently in progress
+        :rtype: int
+        """
+        return self.polling_method().actions_in_progress_count
+
+    @property
+    def actions_succeeded_count(self) -> int:
+        """Total number of actions that succeeded
+
+        :return: Total number of actions that succeeded
+        :rtype: int
+        """
+        return self.polling_method().actions_succeeded_count
+
+    @property
+    def last_modified_on(self) -> datetime.datetime:
+        """The last time your actions results were updated
+
+        :return: The last time your actions results were updated
+        :rtype: ~datetime.datetime
+        """
+        return self.polling_method().last_modified_on
+
+    @property
+    def total_actions_count(self) -> int:
+        """Total number of actions you submitted
+
+        :return: Total number of actions submitted
+        :rtype: int
+        """
+        return self.polling_method().total_actions_count
+
+    @property
+    def id(self) -> str:
+        """ID of your :func:`begin_analyze_actions` call.
+
+        :return: ID of your :func:`begin_analyze_actions` call.
+        :rtype: str
+        """
+        return self.polling_method().id
+
+    @classmethod
+    def from_continuation_token(cls, polling_method, continuation_token, **kwargs):  # type: ignore
+        # type: (AsyncAnalyzeActionsLROPollingMethod, str, Any) -> AsyncAnalyzeActionsLROPoller
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        polling_method._lro_algorithms = [  # pylint: disable=protected-access
+            TextAnalyticsOperationResourcePolling(
+                show_stats=initial_response.context.options["show_stats"]
+            )
+        ]
+        return cls(
+            client,
+            initial_response,
+            functools.partial(deserialization_callback, initial_response),
+            polling_method  # type: ignore
+        )
+
+
+class AsyncTextAnalyticsLROPoller(AsyncLROPoller[PollingReturnType]):
+    def polling_method(self) -> AsyncAnalyzeActionsLROPollingMethod:  # type: ignore
+        """Return the polling method associated to this poller."""
+        return self._polling_method  # type: ignore
+
+    @property
+    def created_on(self) -> datetime.datetime:
+        """When your analyze job was created
+
+        :return: When your analyze job was created
+        :rtype: ~datetime.datetime
+        """
+        return self.polling_method().created_on
+
+    @property
+    def display_name(self) -> Optional[str]:
+        """The display name of your :func:`begin_analyze_actions` call.
+
+        Corresponds to the `display_name` kwarg you pass to your
+        :func:`begin_analyze_actions` call.
+
+        :return: The display name of your :func:`begin_analyze_actions` call.
+        :rtype: str
+        """
+        return self.polling_method().display_name
+
+    @property
+    def expires_on(self) -> datetime.datetime:
+        """When your analyze job will expire
+
+        :return: When your analyze job will expire
+        :rtype: ~datetime.datetime
+        """
+        return self.polling_method().expires_on
+
+    @property
+    def last_modified_on(self) -> datetime.datetime:
+        """The last time your actions results were updated
+
+        :return: The last time your actions results were updated
+        :rtype: ~datetime.datetime
+        """
+        return self.polling_method().last_modified_on
+
+    @property
+    def id(self) -> str:
+        """ID of your :func:`begin_analyze_actions` call.
+
+        :return: ID of your :func:`begin_analyze_actions` call.
+        :rtype: str
+        """
+        return self.polling_method().id
+
+    @classmethod
+    def from_continuation_token(cls, polling_method, continuation_token, **kwargs):  # type: ignore
+        # type: (AsyncAnalyzeActionsLROPollingMethod, str, Any) -> AsyncTextAnalyticsLROPoller
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        polling_method._lro_algorithms = [  # pylint: disable=protected-access
+            TextAnalyticsOperationResourcePolling(
+                show_stats=initial_response.context.options["show_stats"]
+            )
+        ]
+        return cls(
+            client,
+            initial_response,
+            functools.partial(deserialization_callback, initial_response),
+            polling_method  # type: ignore
+        )

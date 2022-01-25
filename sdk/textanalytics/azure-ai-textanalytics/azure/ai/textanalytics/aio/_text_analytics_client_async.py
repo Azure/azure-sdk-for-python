@@ -61,6 +61,7 @@ from ._lro_async import (
     AsyncAnalyzeActionsLROPollingMethod,
     AsyncAnalyzeHealthcareEntitiesLROPoller,
     AsyncAnalyzeActionsLROPoller,
+    AsyncTextAnalyticsLROPoller
 )
 
 if TYPE_CHECKING:
@@ -1093,9 +1094,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     async def begin_extract_summary(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        **kwargs  # type: Any
-    ):  # type: (...) -> AsyncAnalyzeActionsLROPoller[AsyncItemPaged[Union[ExtractSummaryResult, DocumentError]]]
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        **kwargs: Any
+    ) -> AsyncTextAnalyticsLROPoller[AsyncItemPaged[Union[ExtractSummaryResult, DocumentError]]]:
         """begin extract summary
 
         :param documents: The set of documents to process as part of this batch.
@@ -1127,25 +1128,24 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             Call `continuation_token()` on the poller object to save the long-running operation (LRO)
             state into an opaque token. Pass the value as the `continuation_token` keyword argument
             to restart the LRO from a saved state.
-        :return: An instance of an AsyncAnalyzeActionsLROPoller. Call `result()` on the this
+        :return: An instance of an AsyncTextAnalyticsLROPoller. Call `result()` on the this
             object to return a heterogeneous pageable of
             :class:`~azure.ai.textanalytics.ExtractSummaryResult` and
             :class:`~azure.ai.textanalytics.DocumentError`.
         :rtype:
-            ~azure.ai.textanalytics.AsyncAnalyzeActionsLROPoller[~azure.core.async_paging.AsyncItemPaged[
+            ~azure.ai.textanalytics.AsyncTextAnalyticsLROPoller[~azure.core.async_paging.AsyncItemPaged[
             ~azure.ai.textanalytics.ExtractSummaryResult or ~azure.ai.textanalytics.DocumentError]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
         """
-        pass
 
     @distributed_trace_async
     async def begin_recognize_custom_entities(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        project_name,  # type: str
-        deployment_name,  # type: str
-        **kwargs  # type: Any
-    ):  # type: (...) -> AsyncAnalyzeActionsLROPoller[AsyncItemPaged[Union[RecognizeCustomEntitiesResult, DocumentError]]]
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        project_name: str,
+        deployment_name: str,
+        **kwargs: Any
+    ) -> AsyncTextAnalyticsLROPoller[AsyncItemPaged[Union[RecognizeCustomEntitiesResult, DocumentError]]]:
         """begin extract summary
 
         :param documents: The set of documents to process as part of this batch.
@@ -1176,25 +1176,24 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             Call `continuation_token()` on the poller object to save the long-running operation (LRO)
             state into an opaque token. Pass the value as the `continuation_token` keyword argument
             to restart the LRO from a saved state.
-        :return: An instance of an AsyncAnalyzeActionsLROPoller. Call `result()` on the this
+        :return: An instance of an AsyncTextAnalyticsLROPoller. Call `result()` on the this
             object to return a heterogeneous pageable of
             :class:`~azure.ai.textanalytics.RecognizeCustomEntitiesResult` and
             :class:`~azure.ai.textanalytics.DocumentError`.
         :rtype:
-            ~azure.ai.textanalytics.AsyncAnalyzeActionsLROPoller[~azure.core.async_paging.AsyncItemPaged[
+            ~azure.ai.textanalytics.AsyncTextAnalyticsLROPoller[~azure.core.async_paging.AsyncItemPaged[
             ~azure.ai.textanalytics.RecognizeCustomEntitiesResult or ~azure.ai.textanalytics.DocumentError]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
         """
-        pass
 
     @distributed_trace_async
     async def begin_single_category_classify(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        project_name,  # type: str
-        deployment_name,  # type: str
-        **kwargs  # type: Any
-    ):  # type: (...) -> AsyncAnalyzeActionsLROPoller[AsyncItemPaged[Union[SingleCategoryClassifyResult, DocumentError]]]
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        project_name: str,
+        deployment_name: str,
+        **kwargs: Any
+    ) -> AsyncTextAnalyticsLROPoller[AsyncItemPaged[Union[SingleCategoryClassifyResult, DocumentError]]]:
         """begin extract summary
 
         :param documents: The set of documents to process as part of this batch.
@@ -1221,25 +1220,24 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             Call `continuation_token()` on the poller object to save the long-running operation (LRO)
             state into an opaque token. Pass the value as the `continuation_token` keyword argument
             to restart the LRO from a saved state.
-        :return: An instance of an AsyncAnalyzeActionsLROPoller. Call `result()` on the this
+        :return: An instance of an AsyncTextAnalyticsLROPoller. Call `result()` on the this
             object to return a heterogeneous pageable of
             :class:`~azure.ai.textanalytics.SingleCategoryClassifyResult` and
             :class:`~azure.ai.textanalytics.DocumentError`.
         :rtype:
-            ~azure.ai.textanalytics.AsyncAnalyzeActionsLROPoller[~azure.core.async_paging.AsyncItemPaged[
+            ~azure.ai.textanalytics.AsyncTextAnalyticsLROPoller[~azure.core.async_paging.AsyncItemPaged[
             ~azure.ai.textanalytics.SingleCategoryClassifyResult or ~azure.ai.textanalytics.DocumentError]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
         """
-        pass
 
     @distributed_trace_async
     async def begin_multi_category_classify(  # type: ignore
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        project_name,  # type: str
-        deployment_name,  # type: str
-        **kwargs  # type: Any
-    ):  # type: (...) -> AsyncAnalyzeActionsLROPoller[AsyncItemPaged[Union[MultiCategoryClassifyResult, DocumentError]]]
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        project_name: str,
+        deployment_name: str,
+        **kwargs: Any
+    ) -> AsyncTextAnalyticsLROPoller[AsyncItemPaged[Union[MultiCategoryClassifyResult, DocumentError]]]:
         """begin extract summary
 
         :param documents: The set of documents to process as part of this batch.
@@ -1266,13 +1264,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             Call `continuation_token()` on the poller object to save the long-running operation (LRO)
             state into an opaque token. Pass the value as the `continuation_token` keyword argument
             to restart the LRO from a saved state.
-        :return: An instance of an AsyncAnalyzeActionsLROPoller. Call `result()` on the this
+        :return: An instance of an AsyncTextAnalyticsLROPoller. Call `result()` on the this
             object to return a heterogeneous pageable of
             :class:`~azure.ai.textanalytics.MultiCategoryClassifyResult` and
             :class:`~azure.ai.textanalytics.DocumentError`.
         :rtype:
-            ~azure.ai.textanalytics.AsyncAnalyzeActionsLROPoller[~azure.core.async_paging.AsyncItemPaged[
+            ~azure.ai.textanalytics.AsyncTextAnalyticsLROPoller[~azure.core.async_paging.AsyncItemPaged[
             ~azure.ai.textanalytics.MultiCategoryClassifyResult or ~azure.ai.textanalytics.DocumentError]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
         """
-        pass

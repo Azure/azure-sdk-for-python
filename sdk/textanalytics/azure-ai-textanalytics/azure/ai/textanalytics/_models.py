@@ -2681,3 +2681,6 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
         self.model_version = kwargs.get("model_version", None)
         self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
         self.disable_service_logs = kwargs.get("disable_service_logs", None)
+
+    def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
+        pass

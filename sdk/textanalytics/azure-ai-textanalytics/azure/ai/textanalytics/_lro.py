@@ -459,3 +459,81 @@ class AnalyzeActionsLROPoller(LROPoller, Generic[PollingReturnType]):
             functools.partial(deserialization_callback, initial_response),
             polling_method
         )
+
+
+class TextAnalyticsLROPoller(LROPoller, Generic[PollingReturnType]):
+    def polling_method(self):
+        # type: () -> AnalyzeActionsLROPollingMethod
+        """Return the polling method associated to this poller."""
+        return self._polling_method  # type: ignore
+
+    @property
+    def created_on(self):
+        # type: () -> datetime.datetime
+        """When your analyze job was created
+
+        :return: When your analyze job was created
+        :rtype: ~datetime.datetime
+        """
+        return self.polling_method().created_on
+
+    @property
+    def expires_on(self):
+        # type: () -> datetime.datetime
+        """When your analyze job will expire
+
+        :return: When your analyze job will expire
+        :rtype: ~datetime.datetime
+        """
+        return self.polling_method().expires_on
+
+    @property
+    def display_name(self):
+        # type: () -> Optional[str]
+        """The display name of your :func:`begin_analyze_actions` call.
+
+        Corresponds to the `display_name` kwarg you pass to your
+        :func:`begin_analyze_actions` call.
+
+        :return: The display name of your :func:`begin_analyze_actions` call.
+        :rtype: str
+        """
+        return self.polling_method().display_name
+
+    @property
+    def last_modified_on(self):
+        # type: () -> datetime.datetime
+        """The last time your actions results were updated
+
+        :return: The last time your actions results were updated
+        :rtype: ~datetime.datetime
+        """
+        return self.polling_method().last_modified_on
+
+    @property
+    def id(self):
+        # type: () -> str
+        """ID of your :func:`begin_analyze_actions` call.
+
+        :return: ID of your :func:`begin_analyze_actions` call.
+        :rtype: str
+        """
+        return self.polling_method().id
+
+    @classmethod
+    def from_continuation_token(cls, polling_method, continuation_token, **kwargs):  # type: ignore
+        # type: (AnalyzeActionsLROPollingMethod, str, Any) -> TextAnalyticsLROPoller
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        polling_method._lro_algorithms = [  # pylint: disable=protected-access
+            TextAnalyticsOperationResourcePolling(
+                show_stats=initial_response.context.options["show_stats"]
+            )
+        ]
+        return cls(
+            client,
+            initial_response,
+            functools.partial(deserialization_callback, initial_response),
+            polling_method
+        )

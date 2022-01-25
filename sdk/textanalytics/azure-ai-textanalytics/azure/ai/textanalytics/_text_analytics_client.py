@@ -16,7 +16,7 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from ._base_client import TextAnalyticsClientBase, TextAnalyticsApiVersion
-from ._lro import AnalyzeActionsLROPoller, AnalyzeHealthcareEntitiesLROPoller
+from ._lro import AnalyzeActionsLROPoller, AnalyzeHealthcareEntitiesLROPoller, TextAnalyticsLROPoller
 from ._request_handlers import (
     _validate_input,
     _determine_action_type,
@@ -1073,7 +1073,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
         **kwargs  # type: Any
-    ):  # type: (...) -> AnalyzeActionsLROPoller[ItemPaged[Union[ExtractSummaryResult, DocumentError]]]
+    ):  # type: (...) -> TextAnalyticsLROPoller[ItemPaged[Union[ExtractSummaryResult, DocumentError]]]
         """begin extract summary
 
         :param documents: The set of documents to process as part of this batch.
@@ -1105,16 +1105,15 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             Call `continuation_token()` on the poller object to save the long-running operation (LRO)
             state into an opaque token. Pass the value as the `continuation_token` keyword argument
             to restart the LRO from a saved state.
-        :return: An instance of an AnalyzeActionsLROPoller. Call `result()` on the this
+        :return: An instance of an TextAnalyticsLROPoller. Call `result()` on the this
             object to return a heterogeneous pageable of
             :class:`~azure.ai.textanalytics.ExtractSummaryResult` and
             :class:`~azure.ai.textanalytics.DocumentError`.
         :rtype:
-            ~azure.ai.textanalytics.AnalyzeActionsLROPoller[~azure.core.paging.ItemPaged[
+            ~azure.ai.textanalytics.TextAnalyticsLROPoller[~azure.core.paging.ItemPaged[
             ~azure.ai.textanalytics.ExtractSummaryResult or ~azure.ai.textanalytics.DocumentError]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
         """
-        pass
 
     @distributed_trace
     def begin_recognize_custom_entities(  # type: ignore
@@ -1123,7 +1122,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         project_name,  # type: str
         deployment_name,  # type: str
         **kwargs  # type: Any
-    ):  # type: (...) -> AnalyzeActionsLROPoller[ItemPaged[Union[RecognizeCustomEntitiesResult, DocumentError]]]
+    ):  # type: (...) -> TextAnalyticsLROPoller[ItemPaged[Union[RecognizeCustomEntitiesResult, DocumentError]]]
         """begin extract summary
 
         :param documents: The set of documents to process as part of this batch.
@@ -1154,16 +1153,15 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             Call `continuation_token()` on the poller object to save the long-running operation (LRO)
             state into an opaque token. Pass the value as the `continuation_token` keyword argument
             to restart the LRO from a saved state.
-        :return: An instance of an AnalyzeActionsLROPoller. Call `result()` on the this
+        :return: An instance of an TextAnalyticsLROPoller. Call `result()` on the this
             object to return a heterogeneous pageable of
             :class:`~azure.ai.textanalytics.RecognizeCustomEntitiesResult` and
             :class:`~azure.ai.textanalytics.DocumentError`.
         :rtype:
-            ~azure.ai.textanalytics.AnalyzeActionsLROPoller[~azure.core.paging.ItemPaged[
+            ~azure.ai.textanalytics.TextAnalyticsLROPoller[~azure.core.paging.ItemPaged[
             ~azure.ai.textanalytics.RecognizeCustomEntitiesResult or ~azure.ai.textanalytics.DocumentError]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
         """
-        pass
 
     @distributed_trace
     def begin_single_category_classify(  # type: ignore
@@ -1172,7 +1170,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         project_name,  # type: str
         deployment_name,  # type: str
         **kwargs  # type: Any
-    ):  # type: (...) -> AnalyzeActionsLROPoller[ItemPaged[Union[SingleCategoryClassifyResult, DocumentError]]]
+    ):  # type: (...) -> TextAnalyticsLROPoller[ItemPaged[Union[SingleCategoryClassifyResult, DocumentError]]]
         """begin extract summary
 
         :param documents: The set of documents to process as part of this batch.
@@ -1199,16 +1197,15 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             Call `continuation_token()` on the poller object to save the long-running operation (LRO)
             state into an opaque token. Pass the value as the `continuation_token` keyword argument
             to restart the LRO from a saved state.
-        :return: An instance of an AnalyzeActionsLROPoller. Call `result()` on the this
+        :return: An instance of an TextAnalyticsLROPoller. Call `result()` on the this
             object to return a heterogeneous pageable of
             :class:`~azure.ai.textanalytics.SingleCategoryClassifyResult` and
             :class:`~azure.ai.textanalytics.DocumentError`.
         :rtype:
-            ~azure.ai.textanalytics.AnalyzeActionsLROPoller[~azure.core.paging.ItemPaged[
+            ~azure.ai.textanalytics.TextAnalyticsLROPoller[~azure.core.paging.ItemPaged[
             ~azure.ai.textanalytics.SingleCategoryClassifyResult or ~azure.ai.textanalytics.DocumentError]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
         """
-        pass
 
     @distributed_trace
     def begin_multi_category_classify(  # type: ignore
@@ -1217,7 +1214,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         project_name,  # type: str
         deployment_name,  # type: str
         **kwargs  # type: Any
-    ):  # type: (...) -> AnalyzeActionsLROPoller[ItemPaged[Union[MultiCategoryClassifyResult, DocumentError]]]
+    ):  # type: (...) -> TextAnalyticsLROPoller[ItemPaged[Union[MultiCategoryClassifyResult, DocumentError]]]
         """begin extract summary
 
         :param documents: The set of documents to process as part of this batch.
@@ -1244,13 +1241,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             Call `continuation_token()` on the poller object to save the long-running operation (LRO)
             state into an opaque token. Pass the value as the `continuation_token` keyword argument
             to restart the LRO from a saved state.
-        :return: An instance of an AnalyzeActionsLROPoller. Call `result()` on the this
+        :return: An instance of an TextAnalyticsLROPoller. Call `result()` on the this
             object to return a heterogeneous pageable of
             :class:`~azure.ai.textanalytics.MultiCategoryClassifyResult` and
             :class:`~azure.ai.textanalytics.DocumentError`.
         :rtype:
-            ~azure.ai.textanalytics.AnalyzeActionsLROPoller[~azure.core.paging.ItemPaged[
+            ~azure.ai.textanalytics.TextAnalyticsLROPoller[~azure.core.paging.ItemPaged[
             ~azure.ai.textanalytics.MultiCategoryClassifyResult or ~azure.ai.textanalytics.DocumentError]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
         """
-        pass
