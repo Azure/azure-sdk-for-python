@@ -65,6 +65,7 @@ setup(
         'azure',
         'azure.mgmt',
     ]),
+    python_requires=">=3.7",
     install_requires=[
         'msrest>=0.6.21',
         'azure-common~=1.1',
