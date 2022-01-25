@@ -83,6 +83,16 @@ class _test_config(object):
         return cls.TEST_DATABASE
 
     @classmethod
+    def create_database_if_not_exist_with_throughput(cls, client, throughput):
+        # type: (CosmosClient) -> Database
+        if cls.TEST_DATABASE is not None:
+            return cls.TEST_DATABASE
+        cls.try_delete_database(client)
+        cls.TEST_DATABASE = client.create_database(id=cls.TEST_DATABASE_ID, offer_throughput=throughput)
+        cls.IS_MULTIMASTER_ENABLED = client.get_database_account()._EnableMultipleWritableLocations
+        return cls.TEST_DATABASE
+
+    @classmethod
     def try_delete_database(cls, client):
         # type: (CosmosClient) -> None
         try:
@@ -118,6 +128,17 @@ class _test_config(object):
                     cls.THROUGHPUT_FOR_5_PARTITIONS, True)
         cls.remove_all_documents(cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK, True)
         return cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK
+
+    @classmethod
+    def create_collection_no_custom_throughput(cls, client):
+        # type: (CosmosClient) -> Container
+        database = cls.create_database_if_not_exist(client)
+        collection_id = cls.TEST_COLLECTION_SINGLE_PARTITION_ID
+
+        document_collection = database.create_container(
+            id=collection_id,
+            partition_key=PartitionKey(path="/id"))
+        return document_collection
 
     @classmethod
     def create_collection_with_required_throughput(cls, client, throughput, use_custom_partition_key):

@@ -25,8 +25,7 @@ database service.
 
 from collections import deque
 import copy
-from .. import _retry_utility
-from .. import http_constants
+from .. import _retry_utility, http_constants
 
 # pylint: disable=protected-access
 
@@ -120,6 +119,7 @@ class _QueryExecutionContextBase(object):
                 self._has_started = True
             new_options = copy.deepcopy(self._options)
             new_options["continuation"] = self._continuation
+
             (fetched_items, response_headers) = fetch_function(new_options)
             continuation_key = http_constants.HttpHeaders.Continuation
             # Use Etag as continuation token for change feed queries.

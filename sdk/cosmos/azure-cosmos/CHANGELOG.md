@@ -5,6 +5,9 @@
 This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
 We will also be removing support for Python 3.6 and will only support Python 3.7+ starting December 2022.
 
+#### Features Added
+- Added support for split-proof queries for the sync client
+
 #### Other Changes
 - Added async user agent for async client
 
