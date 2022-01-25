@@ -69,6 +69,7 @@ if TYPE_CHECKING:
         SingleCategoryClassifyResult,
         MultiCategoryClassifyAction,
         MultiCategoryClassifyResult,
+        AnalyzeHealthcareEntitiesAction
     )
 
 
@@ -149,8 +150,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             dict representations of :class:`~azure.ai.textanalytics.DetectLanguageInput`, like
             `{"id": "1", "country_hint": "us", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.ai.textanalytics.DetectLanguageInput] or
-            list[dict[str, str]]
+            list[str] or list[~azure.ai.textanalytics.DetectLanguageInput] or list[dict[str, str]]
         :keyword str country_hint: Country of origin hint for the entire batch. Accepts two
             letter country codes specified by ISO 3166-1 alpha-2. Per-document
             country hints will take precedence over whole batch hints. Defaults to
@@ -232,8 +232,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             of dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`,
             like `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
-            list[dict[str, str]]
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -324,8 +323,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
-            list[dict[str, str]]
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -439,8 +437,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
-            list[dict[str, str]]
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -545,8 +542,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
-            list[dict[str, str]]
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
@@ -686,8 +682,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
-            list[dict[str, str]]
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -767,8 +762,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             dict representations of  :class:`~azure.ai.textanalytics.TextDocumentInput`, like
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
-            list[dict[str, str]]
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
         :keyword bool show_opinion_mining: Whether to mine the opinions of a sentence and conduct more
             granular analysis around the aspects of a product or service (also known as
             aspect-based sentiment analysis). If set to true, the returned
@@ -875,9 +869,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def begin_analyze_actions(  # type: ignore
         self,
         documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        actions,  # type: List[Union[RecognizeEntitiesAction, RecognizeLinkedEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction, AnalyzeSentimentAction, ExtractSummaryAction, RecognizeCustomEntitiesAction, SingleCategoryClassifyAction, MultiCategoryClassifyAction]] # pylint: disable=line-too-long
+        actions,  # type: List[Union[RecognizeEntitiesAction, RecognizeLinkedEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction, AnalyzeSentimentAction, ExtractSummaryAction, RecognizeCustomEntitiesAction, SingleCategoryClassifyAction, MultiCategoryClassifyAction, AnalyzeHealthcareEntitiesAction]] # pylint: disable=line-too-long
         **kwargs  # type: Any
-    ):  # type: (...) -> AnalyzeActionsLROPoller[ItemPaged[List[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult, ExtractKeyPhrasesResult, AnalyzeSentimentResult, ExtractSummaryResult, RecognizeCustomEntitiesResult, SingleCategoryClassifyResult, MultiCategoryClassifyResult, DocumentError]]]]  # pylint: disable=line-too-long
+    ):  # type: (...) -> AnalyzeActionsLROPoller[ItemPaged[List[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult, ExtractKeyPhrasesResult, AnalyzeSentimentResult, ExtractSummaryResult, RecognizeCustomEntitiesResult, SingleCategoryClassifyResult, MultiCategoryClassifyResult, AnalyzeHealthcareEntitiesResult, DocumentError]]]]  # pylint: disable=line-too-long
         """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
 
         We recommend you use this function if you're looking to analyze larger documents, and / or
@@ -893,15 +887,15 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
-            list[dict[str, str]]
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
         :param actions: A heterogeneous list of actions to perform on the input documents.
             Each action object encapsulates the parameters used for the particular action type.
             The action results will be in the same order of the input actions.
         :type actions:
             list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction or
             RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or ExtractSummaryAction or
-            RecognizeCustomEntitiesAction or SingleCategoryClassifyAction or MultiCategoryClassifyAction]
+            RecognizeCustomEntitiesAction or SingleCategoryClassifyAction or MultiCategoryClassifyAction or
+            AnalyzeHealthcareEntitiesAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -928,9 +922,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` of "world".
         :rtype:
             ~azure.ai.textanalytics.AnalyzeActionsLROPoller[~azure.core.paging.ItemPaged[
-            list[RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult,
+            list[RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult or
             ExtractKeyPhrasesResult or AnalyzeSentimentResult or ExtractSummaryAction or RecognizeCustomEntitiesResult
-            or SingleCategoryClassifyResult or MultiCategoryClassifyResult or DocumentError]]]
+            or SingleCategoryClassifyResult or MultiCategoryClassifyResult or AnalyzeHealthcareEntitiesResult or
+            DocumentError]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
 
         .. versionadded:: v3.1
@@ -1075,3 +1070,190 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         except HttpResponseError as error:
             process_http_response_error(error)
+
+    @distributed_trace
+    def begin_extract_summary(  # type: ignore
+        self,
+        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
+        **kwargs  # type: Any
+    ):  # type: (...) -> AnalyzeActionsLROPoller[ItemPaged[Union[ExtractSummaryResult, DocumentError]]]
+        """begin extract summary
+
+        :param documents: The set of documents to process as part of this batch.
+            If you wish to specify the ID and language on a per-item basis you must
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
+        :type documents:
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
+        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword str model_version: The model version to use for the analysis.
+        :keyword str string_index_type: Specifies the method used to interpret string offsets.
+            `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+            you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+            see https://aka.ms/text-analytics-offsets
+        :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+            logged on the service side for troubleshooting. By default, Text Analytics logs your
+            input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+            the Text Analytics natural language processing functions. Setting this parameter to true,
+            disables input logging and may limit our ability to remediate issues that occur. Please see
+            Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+            additional details, and Microsoft Responsible AI principles at
+            https://www.microsoft.com/ai/responsible-ai.
+        :keyword int max_sentence_count: Maximum number of sentences to return. Defaults to 3.
+        :keyword str order_by:  Possible values include: "Offset", "Rank". Default value: "Offset".
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token:
+            Call `continuation_token()` on the poller object to save the long-running operation (LRO)
+            state into an opaque token. Pass the value as the `continuation_token` keyword argument
+            to restart the LRO from a saved state.
+        :return: An instance of an AnalyzeActionsLROPoller. Call `result()` on the this
+            object to return a heterogeneous pageable of
+            :class:`~azure.ai.textanalytics.ExtractSummaryResult` and
+            :class:`~azure.ai.textanalytics.DocumentError`.
+        :rtype:
+            ~azure.ai.textanalytics.AnalyzeActionsLROPoller[~azure.core.paging.ItemPaged[
+            ~azure.ai.textanalytics.ExtractSummaryResult or ~azure.ai.textanalytics.DocumentError]]
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
+        """
+        pass
+
+    @distributed_trace
+    def begin_recognize_custom_entities(  # type: ignore
+        self,
+        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
+        project_name,  # type: str
+        deployment_name,  # type: str
+        **kwargs  # type: Any
+    ):  # type: (...) -> AnalyzeActionsLROPoller[ItemPaged[Union[RecognizeCustomEntitiesResult, DocumentError]]]
+        """begin extract summary
+
+        :param documents: The set of documents to process as part of this batch.
+            If you wish to specify the ID and language on a per-item basis you must
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
+        :type documents:
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
+        :param str project_name: Required. This field indicates the project name for the model.
+        :param str deployment_name: This field indicates the deployment name for the model.
+        :keyword str string_index_type: Specifies the method used to interpret string offsets.
+            `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+            you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+            see https://aka.ms/text-analytics-offsets
+        :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+            logged on the service side for troubleshooting. By default, Text Analytics logs your
+            input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+            the Text Analytics natural language processing functions. Setting this parameter to true,
+            disables input logging and may limit our ability to remediate issues that occur. Please see
+            Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+            additional details, and Microsoft Responsible AI principles at
+            https://www.microsoft.com/ai/responsible-ai.
+        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token:
+            Call `continuation_token()` on the poller object to save the long-running operation (LRO)
+            state into an opaque token. Pass the value as the `continuation_token` keyword argument
+            to restart the LRO from a saved state.
+        :return: An instance of an AnalyzeActionsLROPoller. Call `result()` on the this
+            object to return a heterogeneous pageable of
+            :class:`~azure.ai.textanalytics.RecognizeCustomEntitiesResult` and
+            :class:`~azure.ai.textanalytics.DocumentError`.
+        :rtype:
+            ~azure.ai.textanalytics.AnalyzeActionsLROPoller[~azure.core.paging.ItemPaged[
+            ~azure.ai.textanalytics.RecognizeCustomEntitiesResult or ~azure.ai.textanalytics.DocumentError]]
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
+        """
+        pass
+
+    @distributed_trace
+    def begin_single_category_classify(  # type: ignore
+        self,
+        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
+        project_name,  # type: str
+        deployment_name,  # type: str
+        **kwargs  # type: Any
+    ):  # type: (...) -> AnalyzeActionsLROPoller[ItemPaged[Union[SingleCategoryClassifyResult, DocumentError]]]
+        """begin extract summary
+
+        :param documents: The set of documents to process as part of this batch.
+            If you wish to specify the ID and language on a per-item basis you must
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
+        :type documents:
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
+        :param str project_name: Required. This field indicates the project name for the model.
+        :param str deployment_name: Required. This field indicates the deployment name for the model.
+        :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+            logged on the service side for troubleshooting. By default, Text Analytics logs your
+            input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+            the Text Analytics natural language processing functions. Setting this parameter to true,
+            disables input logging and may limit our ability to remediate issues that occur. Please see
+            Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+            additional details, and Microsoft Responsible AI principles at
+            https://www.microsoft.com/ai/responsible-ai.
+        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token:
+            Call `continuation_token()` on the poller object to save the long-running operation (LRO)
+            state into an opaque token. Pass the value as the `continuation_token` keyword argument
+            to restart the LRO from a saved state.
+        :return: An instance of an AnalyzeActionsLROPoller. Call `result()` on the this
+            object to return a heterogeneous pageable of
+            :class:`~azure.ai.textanalytics.SingleCategoryClassifyResult` and
+            :class:`~azure.ai.textanalytics.DocumentError`.
+        :rtype:
+            ~azure.ai.textanalytics.AnalyzeActionsLROPoller[~azure.core.paging.ItemPaged[
+            ~azure.ai.textanalytics.SingleCategoryClassifyResult or ~azure.ai.textanalytics.DocumentError]]
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
+        """
+        pass
+
+    @distributed_trace
+    def begin_multi_category_classify(  # type: ignore
+        self,
+        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
+        project_name,  # type: str
+        deployment_name,  # type: str
+        **kwargs  # type: Any
+    ):  # type: (...) -> AnalyzeActionsLROPoller[ItemPaged[Union[MultiCategoryClassifyResult, DocumentError]]]
+        """begin extract summary
+
+        :param documents: The set of documents to process as part of this batch.
+            If you wish to specify the ID and language on a per-item basis you must
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
+        :type documents:
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
+        :param str project_name: Required. This field indicates the project name for the model.
+        :param str deployment_name: Required. This field indicates the deployment name for the model.
+        :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+            logged on the service side for troubleshooting. By default, Text Analytics logs your
+            input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+            the Text Analytics natural language processing functions. Setting this parameter to true,
+            disables input logging and may limit our ability to remediate issues that occur. Please see
+            Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+            additional details, and Microsoft Responsible AI principles at
+            https://www.microsoft.com/ai/responsible-ai.
+        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token:
+            Call `continuation_token()` on the poller object to save the long-running operation (LRO)
+            state into an opaque token. Pass the value as the `continuation_token` keyword argument
+            to restart the LRO from a saved state.
+        :return: An instance of an AnalyzeActionsLROPoller. Call `result()` on the this
+            object to return a heterogeneous pageable of
+            :class:`~azure.ai.textanalytics.MultiCategoryClassifyResult` and
+            :class:`~azure.ai.textanalytics.DocumentError`.
+        :rtype:
+            ~azure.ai.textanalytics.AnalyzeActionsLROPoller[~azure.core.paging.ItemPaged[
+            ~azure.ai.textanalytics.MultiCategoryClassifyResult or ~azure.ai.textanalytics.DocumentError]]
+        :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
+        """
+        pass
