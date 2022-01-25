@@ -16,7 +16,7 @@ You can find service libraries in the `/sdk` directory.
 
 ### Prerequisites
 
-The client libraries are supported on Python 2.7 and 3.6 or later.
+The client libraries are supported on Python 3.6 or later.
 
 ## Packages available
 
