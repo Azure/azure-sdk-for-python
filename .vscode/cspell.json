@@ -104,7 +104,8 @@
     "sdk/storage/azure-storage-blob/**",
     "eng/**/*.json",
     "eng/*.txt",
-    "eng/tox/tox.ini"
+    "eng/tox/tox.ini",
+    "./eng/tox/*.py"
   ],
   "words": [
     "adls",
