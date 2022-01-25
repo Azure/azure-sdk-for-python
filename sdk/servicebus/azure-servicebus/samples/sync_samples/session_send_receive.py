@@ -9,8 +9,6 @@
 Example to show sending message(s) to and receiving messages from a Service Bus Queue with session enabled.
 """
 
-# pylint: disable=C0111
-
 import os
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
 

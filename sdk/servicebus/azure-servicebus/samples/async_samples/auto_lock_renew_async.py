@@ -11,8 +11,6 @@ Example to show usage of AutoLockRenewer asynchronously:
     2. Automatically renew locks on the session of sessionful entity
 """
 
-# pylint: disable=C0111
-
 import os
 import asyncio
 

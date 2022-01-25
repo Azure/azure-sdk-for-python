@@ -5,13 +5,8 @@
 This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
 We will also be removing support for Python 3.6 and will only support Python 3.7+ starting December 2022.
 
-#### Features Added
-
-#### Breaking Changes
-
-#### Bugs Fixed
-
 #### Other Changes
+- Added async user agent for async client
 
 ### 4.3.0b1 (2021-12-14)
 **New features**

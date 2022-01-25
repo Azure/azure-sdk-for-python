@@ -22,7 +22,7 @@ USAGE:
 from dotenv import find_dotenv, load_dotenv
 import os
 
-from azure.containerregistry import ContainerRegistryClient, TagOrder
+from azure.containerregistry import ContainerRegistryClient, ArtifactTagOrder
 from azure.identity import DefaultAzureCredential
 
 
@@ -43,7 +43,7 @@ class DeleteTags(object):
                 # [START list_tag_properties]
                 # Keep the three most recent tags, delete everything else
                 tag_count = 0
-                for tag in client.list_tag_properties(repository, order_by=TagOrder.LAST_UPDATE_TIME_DESCENDING):
+                for tag in client.list_tag_properties(repository, order_by=ArtifactTagOrder.LAST_UPDATED_ON_DESCENDING):
                     tag_count += 1
                     if tag_count > 3:
                         print("Deleting {}:{}".format(repository, tag.name))
