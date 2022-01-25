@@ -14,7 +14,7 @@
 * [`StorageAccountPreparer`][storage_account_preparer]:
 * [`CachedStorageAccountPreparer`][cached_storage_account_preparer]:
 * [`KeyVaultPreparer`][kv_preparer]:
-* [`EnvironmentVariablesLoader`][env_loader]: Abstract preparer for delivering secrets from environment variables to individual tests
+* [`EnvironmentVariableLoader`][env_loader]: Abstract preparer for delivering secrets from environment variables to individual tests
 * [`RetryCounter`][retry_counter]: Object for counting retries on a request.
 * [`ResponseCallback`][response_callback]: Object for mocking response callbacks.
 * [`FakeCredential`][fake_credential]: Fake credential used for authenticating in playback mode.

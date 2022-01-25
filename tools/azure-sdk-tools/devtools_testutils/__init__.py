@@ -15,8 +15,8 @@ from .storage_testcase import (
     CachedStorageAccountPreparer,
 )
 from .keyvault_preparer import KeyVaultPreparer
-from .envvariable_loader import EnvironmentVariablesLoader
-PowerShellPreparer = EnvironmentVariablesLoader  # Backward compat
+from .envvariable_loader import EnvironmentVariableLoader
+PowerShellPreparer = EnvironmentVariableLoader  # Backward compat
 from .proxy_docker_startup import start_test_proxy, stop_test_proxy, test_proxy
 from .proxy_testcase import recorded_by_proxy
 from .sanitizers import (
@@ -61,7 +61,7 @@ __all__ = [
     "RandomNameResourceGroupPreparer",
     "CachedResourceGroupPreparer",
     "PowerShellPreparer",
-    "EnvironmentVariablesLoader",
+    "EnvironmentVariableLoader",
     "recorded_by_proxy",
     "test_proxy",
     "set_bodiless_matcher",
