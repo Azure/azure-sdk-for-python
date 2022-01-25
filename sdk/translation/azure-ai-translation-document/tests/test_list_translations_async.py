@@ -137,7 +137,8 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
     @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_list_translations_filter_by_created_after(self, client):
+    async def test_list_translations_filter_by_created_after(self, **kwargs):
+        client = kwargs.pop("client")
         # create some translations
         operations_count = 3
         docs_per_operation = 2
@@ -225,7 +226,8 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
     @pytest.mark.live_test_only()
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_list_translations_mixed_filters(self, client):
+    async def test_list_translations_mixed_filters(self, **kwargs):
+        client = kwargs.pop("client")
         # create some translations
         operations_count = 4
         docs_per_operation = 1

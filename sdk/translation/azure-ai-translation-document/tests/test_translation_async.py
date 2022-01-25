@@ -27,7 +27,8 @@ class TestTranslation(AsyncDocumentTranslationTest):
 
     @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
-    async def test_active_directory_auth_async(self, translation_document_test_endpoint):
+    async def test_active_directory_auth_async(self, **kwargs):
+        translation_document_test_endpoint = kwargs.pop("translation_document_test_endpoint")
         token = self.get_credential(DocumentTranslationClient, is_async=True)
         kwargs = {}
         if os.getenv("AZURE_COGNITIVE_SCOPE"):
@@ -441,7 +442,8 @@ class TestTranslation(AsyncDocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_overloaded_bad_input(self, client):
+    async def test_overloaded_bad_input(self, **kwargs):
+        client = kwargs.pop("client")
         translation_inputs = [
             DocumentTranslationInput(
                 source_url="container",
@@ -470,7 +472,8 @@ class TestTranslation(AsyncDocumentTranslationTest):
     @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_translation_continuation_token(self, client):
+    async def test_translation_continuation_token(self, **kwargs):
+        client = kwargs.pop("client")
         source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'))
         target_container_sas_url = self.create_target_container()
 
@@ -555,7 +558,8 @@ class TestTranslation(AsyncDocumentTranslationTest):
     @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_translation_with_glossary(self, client):
+    async def test_translation_with_glossary(self, **kwargs):
+        client = kwargs.pop("client")
         doc = Document(data=b'testing')
         source_container_sas_url = self.create_source_container(data=[doc])
         target_container_sas_url = self.create_target_container()
