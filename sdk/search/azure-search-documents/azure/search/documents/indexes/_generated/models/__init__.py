@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 try:
+    from ._models_py3 import AmlSkill
     from ._models_py3 import AnalyzeRequest
     from ._models_py3 import AnalyzeResult
     from ._models_py3 import AnalyzedTokenInfo
@@ -157,6 +158,7 @@ try:
     from ._models_py3 import WebApiSkill
     from ._models_py3 import WordDelimiterTokenFilter
 except (SyntaxError, ImportError):
+    from ._models import AmlSkill  # type: ignore
     from ._models import AnalyzeRequest  # type: ignore
     from ._models import AnalyzeResult  # type: ignore
     from ._models import AnalyzedTokenInfo  # type: ignore
@@ -353,6 +355,7 @@ from ._search_client_enums import (
 )
 
 __all__ = [
+    'AmlSkill',
     'AnalyzeRequest',
     'AnalyzeResult',
     'AnalyzedTokenInfo',

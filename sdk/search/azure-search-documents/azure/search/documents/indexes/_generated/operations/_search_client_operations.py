@@ -72,9 +72,6 @@ class SearchClientOperationsMixin(object):
 
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServiceStatistics, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.ServiceStatistics

@@ -487,9 +487,6 @@ class DocumentsOperations(object):
 
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.models.RequestOptions
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: long, or the result of cls(response)
         :rtype: long
@@ -555,9 +552,6 @@ class DocumentsOperations(object):
         :type search_options: ~azure.search.documents.models.SearchOptions
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.models.RequestOptions
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchDocumentsResult, or the result of cls(response)
         :rtype: ~azure.search.documents.models.SearchDocumentsResult
@@ -693,9 +687,6 @@ class DocumentsOperations(object):
         :type search_request: ~azure.search.documents.models.SearchRequest
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.models.RequestOptions
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchDocumentsResult, or the result of cls(response)
         :rtype: ~azure.search.documents.models.SearchDocumentsResult
@@ -713,12 +704,12 @@ class DocumentsOperations(object):
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        json = self._serialize.body(search_request, 'SearchRequest')
+        _json = self._serialize.body(search_request, 'SearchRequest')
 
         request = build_search_post_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.search_post.metadata['url'],
         )
@@ -765,9 +756,6 @@ class DocumentsOperations(object):
         :type selected_fields: list[str]
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.models.RequestOptions
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: any, or the result of cls(response)
         :rtype: any
@@ -839,9 +827,6 @@ class DocumentsOperations(object):
         :type suggest_options: ~azure.search.documents.models.SuggestOptions
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.models.RequestOptions
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SuggestDocumentsResult, or the result of cls(response)
         :rtype: ~azure.search.documents.models.SuggestDocumentsResult
@@ -933,9 +918,6 @@ class DocumentsOperations(object):
         :type suggest_request: ~azure.search.documents.models.SuggestRequest
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.models.RequestOptions
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SuggestDocumentsResult, or the result of cls(response)
         :rtype: ~azure.search.documents.models.SuggestDocumentsResult
@@ -953,12 +935,12 @@ class DocumentsOperations(object):
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        json = self._serialize.body(suggest_request, 'SuggestRequest')
+        _json = self._serialize.body(suggest_request, 'SuggestRequest')
 
         request = build_suggest_post_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.suggest_post.metadata['url'],
         )
@@ -1001,9 +983,6 @@ class DocumentsOperations(object):
         :type actions: list[~azure.search.documents.models.IndexAction]
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.models.RequestOptions
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IndexDocumentsResult, or the result of cls(response)
         :rtype: ~azure.search.documents.models.IndexDocumentsResult
@@ -1022,12 +1001,12 @@ class DocumentsOperations(object):
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         _batch = _models.IndexBatch(actions=actions)
-        json = self._serialize.body(_batch, 'IndexBatch')
+        _json = self._serialize.body(_batch, 'IndexBatch')
 
         request = build_index_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.index.metadata['url'],
         )
@@ -1081,9 +1060,6 @@ class DocumentsOperations(object):
         :type request_options: ~azure.search.documents.models.RequestOptions
         :param autocomplete_options: Parameter group.
         :type autocomplete_options: ~azure.search.documents.models.AutocompleteOptions
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AutocompleteResult, or the result of cls(response)
         :rtype: ~azure.search.documents.models.AutocompleteResult
@@ -1172,9 +1148,6 @@ class DocumentsOperations(object):
         :type autocomplete_request: ~azure.search.documents.models.AutocompleteRequest
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.models.RequestOptions
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AutocompleteResult, or the result of cls(response)
         :rtype: ~azure.search.documents.models.AutocompleteResult
@@ -1192,12 +1165,12 @@ class DocumentsOperations(object):
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        json = self._serialize.body(autocomplete_request, 'AutocompleteRequest')
+        _json = self._serialize.body(autocomplete_request, 'AutocompleteRequest')
 
         request = build_autocomplete_post_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.autocomplete_post.metadata['url'],
         )

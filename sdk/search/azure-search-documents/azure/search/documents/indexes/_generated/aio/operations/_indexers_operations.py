@@ -56,9 +56,6 @@ class IndexersOperations:
         :type indexer_name: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -122,9 +119,6 @@ class IndexersOperations:
         :type keys_or_ids: ~azure.search.documents.indexes.models.DocumentKeysOrIds
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -143,15 +137,15 @@ class IndexersOperations:
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         if keys_or_ids is not None:
-            json = self._serialize.body(keys_or_ids, 'DocumentKeysOrIds')
+            _json = self._serialize.body(keys_or_ids, 'DocumentKeysOrIds')
         else:
-            json = None
+            _json = None
 
         request = build_reset_docs_request(
             indexer_name=indexer_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             overwrite=overwrite,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.reset_docs.metadata['url'],
@@ -189,9 +183,6 @@ class IndexersOperations:
         :type indexer_name: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -270,9 +261,6 @@ class IndexersOperations:
          resource on success. The default value is "return=representation". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype prefer: str
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexer, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SearchIndexer
@@ -291,14 +279,14 @@ class IndexersOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        json = self._serialize.body(indexer, 'SearchIndexer')
+        _json = self._serialize.body(indexer, 'SearchIndexer')
 
         request = build_create_or_update_request(
             indexer_name=indexer_name,
             prefer=prefer,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             x_ms_client_request_id=_x_ms_client_request_id,
             if_match=if_match,
             if_none_match=if_none_match,
@@ -355,9 +343,6 @@ class IndexersOperations:
         :type if_none_match: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -416,9 +401,6 @@ class IndexersOperations:
         :type indexer_name: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexer, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SearchIndexer
@@ -481,9 +463,6 @@ class IndexersOperations:
         :type select: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListIndexersResult, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.ListIndexersResult
@@ -544,9 +523,6 @@ class IndexersOperations:
         :type indexer: ~azure.search.documents.indexes.models.SearchIndexer
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexer, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SearchIndexer
@@ -564,12 +540,12 @@ class IndexersOperations:
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        json = self._serialize.body(indexer, 'SearchIndexer')
+        _json = self._serialize.body(indexer, 'SearchIndexer')
 
         request = build_create_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.create.metadata['url'],
         )
@@ -610,9 +586,6 @@ class IndexersOperations:
         :type indexer_name: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexerStatus, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerStatus

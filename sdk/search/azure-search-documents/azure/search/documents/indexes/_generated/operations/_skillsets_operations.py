@@ -324,9 +324,6 @@ class SkillsetsOperations(object):
          resource on success. The default value is "return=representation". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype prefer: str
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexerSkillset, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
@@ -345,14 +342,14 @@ class SkillsetsOperations(object):
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        json = self._serialize.body(skillset, 'SearchIndexerSkillset')
+        _json = self._serialize.body(skillset, 'SearchIndexerSkillset')
 
         request = build_create_or_update_request(
             skillset_name=skillset_name,
             prefer=prefer,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             x_ms_client_request_id=_x_ms_client_request_id,
             if_match=if_match,
             if_none_match=if_none_match,
@@ -410,9 +407,6 @@ class SkillsetsOperations(object):
         :type if_none_match: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -472,9 +466,6 @@ class SkillsetsOperations(object):
         :type skillset_name: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexerSkillset, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
@@ -538,9 +529,6 @@ class SkillsetsOperations(object):
         :type select: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListSkillsetsResult, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.ListSkillsetsResult
@@ -602,9 +590,6 @@ class SkillsetsOperations(object):
         :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SearchIndexerSkillset, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
@@ -622,12 +607,12 @@ class SkillsetsOperations(object):
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        json = self._serialize.body(skillset, 'SearchIndexerSkillset')
+        _json = self._serialize.body(skillset, 'SearchIndexerSkillset')
 
         request = build_create_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.create.metadata['url'],
         )
@@ -672,9 +657,6 @@ class SkillsetsOperations(object):
         :type skill_names: list[str]
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -693,13 +675,13 @@ class SkillsetsOperations(object):
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
         _skill_names = _models.SkillNames(skill_names=skill_names)
-        json = self._serialize.body(_skill_names, 'SkillNames')
+        _json = self._serialize.body(_skill_names, 'SkillNames')
 
         request = build_reset_skills_request(
             skillset_name=skillset_name,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.reset_skills.metadata['url'],
         )

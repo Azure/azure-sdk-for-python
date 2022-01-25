@@ -34,6 +34,7 @@ from ._index import (
 from . import _edm as SearchFieldDataType
 from ..._generated.models import SuggestOptions
 from .._generated.models import (
+    AmlSkill,
     AnalyzeResult,
     AnalyzedTokenInfo,
     AsciiFoldingTokenFilter,
@@ -183,6 +184,7 @@ from ._models import (
 
 
 __all__ = (
+    "AmlSkill",
     "AnalyzeTextOptions",
     "AnalyzeResult",
     "AnalyzedTokenInfo",

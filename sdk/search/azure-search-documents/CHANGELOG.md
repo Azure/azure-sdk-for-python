@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added models: `AmlSkill`
+
 ### Breaking Changes
 
 ### Bugs Fixed

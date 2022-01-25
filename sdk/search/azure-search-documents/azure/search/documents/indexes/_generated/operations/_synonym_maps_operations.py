@@ -271,9 +271,6 @@ class SynonymMapsOperations(object):
          resource on success. The default value is "return=representation". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype prefer: str
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SynonymMap, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SynonymMap
@@ -292,14 +289,14 @@ class SynonymMapsOperations(object):
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        json = self._serialize.body(synonym_map, 'SynonymMap')
+        _json = self._serialize.body(synonym_map, 'SynonymMap')
 
         request = build_create_or_update_request(
             synonym_map_name=synonym_map_name,
             prefer=prefer,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             x_ms_client_request_id=_x_ms_client_request_id,
             if_match=if_match,
             if_none_match=if_none_match,
@@ -355,9 +352,6 @@ class SynonymMapsOperations(object):
         :type if_none_match: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -417,9 +411,6 @@ class SynonymMapsOperations(object):
         :type synonym_map_name: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SynonymMap, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SynonymMap
@@ -483,9 +474,6 @@ class SynonymMapsOperations(object):
         :type select: str
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListSynonymMapsResult, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.ListSynonymMapsResult
@@ -547,9 +535,6 @@ class SynonymMapsOperations(object):
         :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap
         :param request_options: Parameter group.
         :type request_options: ~azure.search.documents.indexes.models.RequestOptions
-        :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SynonymMap, or the result of cls(response)
         :rtype: ~azure.search.documents.indexes.models.SynonymMap
@@ -567,12 +552,12 @@ class SynonymMapsOperations(object):
         _x_ms_client_request_id = None
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
-        json = self._serialize.body(synonym_map, 'SynonymMap')
+        _json = self._serialize.body(synonym_map, 'SynonymMap')
 
         request = build_create_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             x_ms_client_request_id=_x_ms_client_request_id,
             template_url=self.create.metadata['url'],
         )
