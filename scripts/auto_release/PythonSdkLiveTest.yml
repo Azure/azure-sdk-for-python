@@ -9,6 +9,7 @@ trigger:
 
 variables:
   - group: Release Secrets for GitHub
+  - group: Azure SDK Auto Release Pipeline Secrets
 
 jobs:
 - job: LiveTestPython38
@@ -73,6 +74,8 @@ jobs:
         export BASE_BRANCH=$(BASE_BRANCH)
         export SCRIPT_PATH=$script_path
         export AZURESDK_BOT_TOKEN=$(azuresdk-github-pat)
+        export STORAGE_CONN_STR=$(storage-conn-str)
+        export STORAGE_ENDPOINT=$(storage-endpoint)
 
         # run
         cd azure-sdk-for-python

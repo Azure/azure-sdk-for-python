@@ -10,6 +10,7 @@ from typing import List, Any, Dict
 from packaging.version import Version
 from ghapi.all import GhApi
 from util import add_certificate
+from azure.storage.blob import BlobServiceClient, ContainerClient
 
 _LOG = logging.getLogger()
 
@@ -94,9 +95,14 @@ def modify_file(file_path: str, func: Any):
         file_out.writelines(content)
 
 
-def current_time():
+def current_time() -> str:
     date = time.localtime(time.time())
     return '{}-{:02d}-{:02d}'.format(date.tm_year, date.tm_mon, date.tm_mday)
+
+
+def current_time_month() -> str:
+    date = time.localtime(time.time())
+    return '{}-{:02d}'.format(date.tm_year, date.tm_mon)
 
 
 def set_test_env_var():
@@ -130,6 +136,8 @@ class CodegenTestPR:
         self.bot_token = os.getenv('AZURESDK_BOT_TOKEN')
         self.spec_readme = os.getenv('SPEC_README', '')
         self.spec_repo = os.getenv('SPEC_REPO', '')
+        self.conn_str = os.getenv('STORAGE_CONN_STR')
+        self.storage_endpoint = os.getenv('STORAGE_ENDPOINT')
 
         self.package_name = ''
         self.new_branch = ''
@@ -137,6 +145,9 @@ class CodegenTestPR:
         self.autorest_result = ''
         self.next_version = ''
         self.test_result = ''
+        self.pr_number = 0
+        self.container_name = ''
+        self.private_package_link = []  # List[str]
 
     @return_origin_path
     def get_latest_commit_in_swagger_repo(self) -> str:
@@ -443,6 +454,7 @@ class CodegenTestPR:
         # Add issue link on PR
         api = GhApi(owner='Azure', repo='azure-sdk-for-python', token=self.bot_token)
         api.issues.create_comment(issue_number=res_create.number, body='issue link:{}'.format(self.issue_link))
+        self.pr_number = res_create.number
 
     def zero_version_policy(self):
         if self.next_version == '0.0.0':
@@ -450,13 +462,54 @@ class CodegenTestPR:
             issue_number = int(self.issue_link.split('/')[-1])
             api_request.issues.add_labels(issue_number=issue_number, labels=['base-branch-attention'])
 
+    def get_container_name(self) -> str:
+        container_name = current_time_month()
+        service_client = BlobServiceClient.from_connection_string(conn_str=self.conn_str)
+        containers_exist = [container for container in service_client.list_containers()]
+        containers_name = {container.name for container in containers_exist}
+        # create new container if it does not exist
+        if container_name not in containers_name:
+            container_client = service_client.get_container_client(container=container_name)
+            container_client.create_container(public_access='container', timeout=60 * 24 * 3600)
+        return container_name
+
+    def get_private_package(self) -> List[str]:
+        content = self.get_autorest_result()
+        return content["packages"][0]["artifacts"]
+
+    def upload_private_package_proc(self, container_name: str):
+        container_client = ContainerClient.from_connection_string(conn_str=self.conn_str, container_name=container_name)
+        private_package = self.get_private_package()
+        for package in private_package:
+            package_name = Path(package).parts[-1]
+            # package will be uploaded to storage account in the folder : container_name / pr_number / package_name
+            blob_name = f'sdk_pr_{self.pr_number}/{package_name}'
+            blob_client = container_client.get_blob_client(blob=blob_name)
+            with open(package, 'rb') as data:
+                blob_client.upload_blob(data, overwrite=True)
+            self.private_package_link.append(f'{self.storage_endpoint}/{blob_name}')
+
+    def upload_private_package(self):
+        container_name = self.get_container_name()
+        self.upload_private_package_proc(container_name)
+
+    def get_private_package_link(self) -> str:
+        self.upload_private_package()
+        result = []
+        # it is for markdown
+        for link in self.private_package_link:
+            package_name = link.split('/')
+            result.append(f'- [{package_name}]({link})')
+        return '\n'.join(result)
+
     def ask_check_policy(self):
         changelog = self.get_changelog()
         if changelog == '':
-            return
+            changelog = 'no new content found by changelog tools!'
         api = GhApi(owner='Azure', repo='sdk-release-request', token=self.bot_token)
         author = api.issues.get(issue_number=2223).user.login
-        body = f'Hi @{author}, Please check whether CHANGELOG contains all that you need in this release:\n' \
+        body = f'Hi @{author}, Please check whether the package works well and the CHANGELOG info is as below:\n' \
+               f'{self.get_private_package_link()}' \
                f'```\n' \
                f'CHANGELOG:\n' \
                f'{changelog}\n' \
