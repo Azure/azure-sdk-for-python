@@ -137,7 +137,7 @@ class CodegenTestPR:
         self.spec_readme = os.getenv('SPEC_README', '')
         self.spec_repo = os.getenv('SPEC_REPO', '')
         self.conn_str = os.getenv('STORAGE_CONN_STR')
-        self.storage_endpoint = os.getenv('STORAGE_ENDPOINT')
+        self.storage_endpoint = os.getenv('STORAGE_ENDPOINT').strip('/')
 
         self.package_name = ''
         self.new_branch = ''
@@ -487,7 +487,7 @@ class CodegenTestPR:
             blob_client = container_client.get_blob_client(blob=blob_name)
             with open(package, 'rb') as data:
                 blob_client.upload_blob(data, overwrite=True)
-            self.private_package_link.append(f'{self.storage_endpoint}/{blob_name}')
+            self.private_package_link.append(f'{self.storage_endpoint}/{container_name}/{blob_name}')
 
     def upload_private_package(self):
         container_name = self.get_container_name()
@@ -499,13 +499,15 @@ class CodegenTestPR:
         # it is for markdown
         for link in self.private_package_link:
             package_name = link.split('/')
-            result.append(f'- [{package_name}]({link})')
+            result.append(f'* [{package_name}]({link})')
         return '\n'.join(result)
 
     def ask_check_policy(self):
         changelog = self.get_changelog()
         if changelog == '':
             changelog = 'no new content found by changelog tools!'
+
+        # comment to ask for check from users
         api = GhApi(owner='Azure', repo='sdk-release-request', token=self.bot_token)
         author = api.issues.get(issue_number=2223).user.login
         body = f'Hi @{author}, Please check whether the package works well and the CHANGELOG info is as below:\n' \
@@ -513,7 +515,15 @@ class CodegenTestPR:
                f'```\n' \
                f'CHANGELOG:\n' \
                f'{changelog}\n' \
-               f'```'
+               f'```\n' \
+               f'* (If you are not a Python User, you can mainly check whether the changelog meets your requirements)\n' \
+               f'* (The version of the package is only a temporary version for testing)\n\n' \
+               f'https://github.com/Azure/azure-sdk-for-python/pull/{self.pr_number}'
+        api.issues.create_comment(issue_number=2223, body=body)
+
+        # comment for hint
+        body = 'Tips: If you have special needs for release date or other things, please let us know. ' \
+               'Otherwise we will release it ASAP after your check.'
         api.issues.create_comment(issue_number=2223, body=body)
 
     def issue_comment(self):
