@@ -90,9 +90,10 @@ def sample_export_import_project():
         print("view all qna projects:")
         qna_projects = client.list_projects()
         for p in qna_projects:
-            print(u"project: {}".format(p["projectName"]))
-            print(u"\tlanguage: {}".format(p["language"]))
-            print(u"\tdescription: {}".format(p["description"]))
+            if p["projectName"] == project_name:
+                print(u"project: {}".format(p["projectName"]))
+                print(u"\tlanguage: {}".format(p["language"]))
+                print(u"\tdescription: {}".format(p["description"]))
 
     # [END export_import_project]
 
