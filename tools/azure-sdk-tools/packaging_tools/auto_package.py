@@ -89,7 +89,7 @@ def main(generate_input, generate_output):
             "full": "You can install the use using pip install of the artificats.",
             "lite": f"pip install {package_name}",
         }
-        package["result"]: "success"
+        package["result"] = "success"
         # to distinguish with track1
         package["packageName"] = "track2_" + package["packageName"]
         result["packages"].append(package)
