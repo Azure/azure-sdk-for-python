@@ -96,9 +96,9 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
                 self.real_values = {}
                 create_kwargs = {}
                 for preparer in self._backup_preparers:
-                    resource_name, vals = preparer._prepare_create_resource(self.test_class_instance, **create_kwargs)
-                    # vals = preparer.create_resource(name, **create_kwargs)
-                    self.real_values.update(vals)
+                    resource_name, values = preparer._prepare_create_resource(self.test_class_instance, **create_kwargs)
+                    # values = preparer.create_resource(name, **create_kwargs)
+                    self.real_values.update(values)
                     if "resource_group" in self.real_values.keys():
                         create_kwargs["resource_group"] = self.real_values["resource_group"]
 

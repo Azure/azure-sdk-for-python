@@ -10,6 +10,6 @@
     "**/tests/recordings/**",
     ".vscode/cspell.json"
   ],
-  "words": ["azsdk", "conda", "tenvparallel"],
+  "words": ["azsdk", "conda", "tenvparallel", "vcrpy"],
   "allowCompoundWords": false
 }
