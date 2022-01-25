@@ -892,10 +892,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             Each action object encapsulates the parameters used for the particular action type.
             The action results will be in the same order of the input actions.
         :type actions:
-            list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction or
-            RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or ExtractSummaryAction or
-            RecognizeCustomEntitiesAction or SingleCategoryClassifyAction or MultiCategoryClassifyAction or
-            AnalyzeHealthcareEntitiesAction]
+            list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction or RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or ExtractSummaryAction or RecognizeCustomEntitiesAction or SingleCategoryClassifyAction or MultiCategoryClassifyAction or AnalyzeHealthcareEntitiesAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
