@@ -139,13 +139,6 @@ class CodegenTestPR:
         self.conn_str = os.getenv('STORAGE_CONN_STR')
         self.storage_endpoint = os.getenv('STORAGE_ENDPOINT').strip('/')
 
-        if self.conn_str == '':
-            raise Exception('STORAGE_CONN_STR is brank string')
-        elif self.conn_str is None:
-            raise Exception('STORAGE_CONN_STR is None')
-
-        log('XXXXXXX' + self.conn_str)
-
         self.package_name = ''
         self.new_branch = ''
         self.sdk_folder = ''  # 'compute' in 'sdk/compute/azure-mgmt-dns'
@@ -505,9 +498,9 @@ class CodegenTestPR:
         result = []
         # it is for markdown
         for link in self.private_package_link:
-            package_name = link.split('/')
-            result.append(f'* [{package_name}]({link})')
-        return '\n'.join(result)
+            package_name = link.split('/')[-1]
+            result.append(f'* [{package_name}]({link})\n')
+        return ''.join(result)
 
     def ask_check_policy(self):
         changelog = self.get_changelog()
@@ -523,7 +516,7 @@ class CodegenTestPR:
                f'CHANGELOG:\n' \
                f'{changelog}\n' \
                f'```\n' \
-               f'* (If you are not a Python User, you can mainly check whether the changelog meets your requirements)\n' \
+               f'* (If you are not a Python User, you can mainly check whether the changelog meets your requirements)\n\n' \
                f'* (The version of the package is only a temporary version for testing)\n\n' \
                f'https://github.com/Azure/azure-sdk-for-python/pull/{self.pr_number}'
         api.issues.create_comment(issue_number=2223, body=body)
