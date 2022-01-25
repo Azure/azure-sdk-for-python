@@ -103,7 +103,8 @@
     "sdk/textanalytics/azure-ai-textanalytics/**",
     "sdk/storage/azure-storage-blob/**",
     "eng/*.txt",
-    "eng/tox/tox.ini"
+    "eng/tox/tox.ini",
+    "eng/common/docgeneration/Generate-DocIndex.ps1"
   ],
   "words": [
     "adls",
@@ -191,7 +192,9 @@
     "vmwarecloudsimple",
     "vnet",
     "vsts",
-    "westus"
+    "westus",
+    "docfx",
+    "Docfx"
   ],
   "overrides": [
     {
