@@ -102,7 +102,7 @@
     "sdk/tables/azure-data-tables/**",
     "sdk/textanalytics/azure-ai-textanalytics/**",
     "sdk/storage/azure-storage-blob/**",
-    "eng/**/*.json"
+    "eng/**/*.json",
     "eng/*.txt",
     "eng/tox/tox.ini"
   ],
