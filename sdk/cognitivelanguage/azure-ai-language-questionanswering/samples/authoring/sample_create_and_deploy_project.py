@@ -51,12 +51,13 @@ def sample_create_and_deploy_project():
         print(u"\tdescription: {}".format(project["description"]))
 
         # list projects
-        print("view all qna projects:")
+        print("find created project ..")
         qna_projects = client.list_projects()
         for p in qna_projects:
-            print(u"project: {}".format(p["projectName"]))
-            print(u"\tlanguage: {}".format(p["language"]))
-            print(u"\tdescription: {}".format(p["description"]))
+            if p["projectName"] == project_name:
+                print(u"project: {}".format(p["projectName"]))
+                print(u"\tlanguage: {}".format(p["language"]))
+                print(u"\tdescription: {}".format(p["description"]))
 
         # update sources (REQUIRED TO DEPLOY PROJECT)
         update_sources_poller = client.begin_update_sources(
