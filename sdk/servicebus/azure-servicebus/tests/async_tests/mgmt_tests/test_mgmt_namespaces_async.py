@@ -9,7 +9,7 @@ from azure.servicebus.aio.management import ServiceBusAdministrationClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
-from servicebus_preparer import ServiceBusPreparer
+from sb_new_preparer import ServiceBusPreparer
 
 
 class TestServiceBusManagementClientNamespaceAsync(AzureMgmtRecordedTestCase):
