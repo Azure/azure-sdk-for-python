@@ -140,7 +140,11 @@ class CodegenTestPR:
         self.storage_endpoint = os.getenv('STORAGE_ENDPOINT').strip('/')
 
         if self.conn_str == '':
-            raise Exception('STORAGE_CONN_STR is null')
+            raise Exception('STORAGE_CONN_STR is brank string')
+        elif self.conn_str is None:
+            raise Exception('STORAGE_CONN_STR is None')
+
+        log('XXXXXXX' + self.conn_str)
 
         self.package_name = ''
         self.new_branch = ''
