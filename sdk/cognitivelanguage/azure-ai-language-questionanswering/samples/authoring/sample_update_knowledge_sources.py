@@ -99,8 +99,7 @@ def sample_update_knowledge_sources():
         # synonyms
         client.update_synonyms(
             project_name=project_name,
-            synonyms=[{
-                "op": "add",
+            synonyms={
                 "value": [
                     {
                         "alterations": [
@@ -115,14 +114,17 @@ def sample_update_knowledge_sources():
                         ]
                     }
                 ]
-            }]
+            }
         )
         synonyms = client.list_synonyms(
             project_name=project_name
         )
         for item in synonyms:
-            print(item)
-
+            print("synonyms:")
+            print("\talterations:")
+            for alt in item["alterations"]:
+                print(u"\t\t{}".format(alt))
+            print('')
 
     # [END update_knowledge_sources]
 
