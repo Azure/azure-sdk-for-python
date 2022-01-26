@@ -28,6 +28,8 @@ USAGE:
         (which does not exist yet). E.g. https://mystorage.blob.core.windows.net/targetcontainer/document_french.pdf?<sas-token>
 """
 
+import asyncio
+
 
 async def sample_translation_under_folder_async():
     import os
@@ -81,6 +83,9 @@ async def sample_translation_specific_document_async():
                 print("Error Code: {}, Message: {}\n".format(document.error.code, document.error.message))
 
 
+async def main():
+    await sample_translation_under_folder_async()
+    await sample_translation_specific_document_async()
+
 if __name__ == '__main__':
-    sample_translation_under_folder_async()
-    sample_translation_specific_document_async()
+    asyncio.run(main())
