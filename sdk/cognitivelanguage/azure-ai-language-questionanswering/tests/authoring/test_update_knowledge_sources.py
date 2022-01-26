@@ -27,19 +27,20 @@ class SourcesQnasSynonymsTests(QuestionAnsweringTest):
         QnaAuthoringHelper.create_test_project(client, project_name=project_name)
 
         # add sources
+        source_display_name = "MicrosoftFAQ"
         sources_poller = client.begin_update_sources(
             project_name=project_name,
-            sources={
+            sources=[{
                 "op": "add",
                 "value": {
-                    "displayName": "MicrosoftFAQ",
+                    "displayName": source_display_name,
                     "source": "https://www.microsoft.com/en-in/software-download/faq",
                     "sourceUri": "https://www.microsoft.com/en-in/software-download/faq",
                     "sourceKind": "url",
                     "contentStructureKind": "unstructured",
                     "refresh": False
                 }
-            }
+            }]
         )
         sources_poller.result() # wait until done
 
@@ -49,7 +50,7 @@ class SourcesQnasSynonymsTests(QuestionAnsweringTest):
         )
         source_added = False
         for s in sources:
-            if s["displayName"] == "MicrosoftFAQ":
+            if s["displayName"] == source_display_name:
                 source_added = True
         assert source_added
 
@@ -63,21 +64,19 @@ class SourcesQnasSynonymsTests(QuestionAnsweringTest):
         QnaAuthoringHelper.create_test_project(client, project_name=project_name)
 
         # add qnas
+        question = "What is the easiest way to use azure services in my .NET project?"
+        answer = "Using Microsoft's Azure SDKs"
         qna_poller = client.begin_update_qnas(
             project_name=project_name,
-            qnas=[
-                {
-                    "op": "add",
-                    "value": {
-                        "questions": [
-                            {
-                                "What is the easiest way to use azure services in my .NET project?"
-                            }
-                        ],
-                        "answer": "Using Microsoft's Azure SDKs"
-                    }
+            qnas=[{
+                "op": "add",
+                "value": {
+                    "questions": [
+                        question
+                    ],
+                    "answer": answer
                 }
-            ]
+            }]
         )
         qna_poller.result()
 
@@ -87,7 +86,7 @@ class SourcesQnasSynonymsTests(QuestionAnsweringTest):
         )
         qna_added = False
         for qna in qnas:
-            if qna["displayName"] == "MicrosoftFAQ":
+            if qna["answer"] == answer and question in qna["questions"]:
                 qna_added = True
         assert qna_added
 
@@ -102,25 +101,16 @@ class SourcesQnasSynonymsTests(QuestionAnsweringTest):
         # add synonyms
         client.update_synonyms(
             project_name=project_name,
-            synonyms=[
+            synonyms={
+                "value": [
                     {
-                        "op": "add",
-                        "value": [
-                            {
-                                "alterations": [
-                                    "qnamaker",
-                                    "qna maker"
-                                ]
-                            },
-                            {
-                                "alterations": [
-                                    "qna",
-                                    "question and answer"
-                                ]
-                            }
+                        "alterations": [
+                            "qnamaker",
+                            "qna maker"
                         ]
                     }
                 ]
+            }
         )
 
         # assert
@@ -129,6 +119,6 @@ class SourcesQnasSynonymsTests(QuestionAnsweringTest):
             project_name=project_name
         )
         for s in synonyms:
-            if s["displayName"] == "MicrosoftFAQ":
+            if "qnamaker" in s["alterations"] and "qna maker" in s["alterations"]:
                 synonym_added = True
         assert synonym_added

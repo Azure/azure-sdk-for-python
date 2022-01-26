@@ -45,12 +45,20 @@ class ExportAndImportTests(QuestionAnsweringTest):
         export_url = QnaAuthoringHelper.create_test_project(client, project_name=project_name, get_export_url=True, delete_old_project=True)
 
         # import project
+        project = {
+            "Metadata": {
+                "ProjectName": project_name,
+                "Description": "biography of Sir Issac Newton",
+                "Language": "en",
+                "MultilingualResource": False,
+                "Settings": {
+                    "DefaultAnswer": "no answer"
+                }
+            }
+        }
         import_poller = client.begin_import_assets(
             project_name=project_name,
-            format="json",
-            options={
-                "file_uri":export_url
-            }
+            options=project
         )
         import_poller.result()
 

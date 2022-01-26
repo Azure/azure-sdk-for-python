@@ -133,10 +133,10 @@ class QnaAuthoringHelper:
 
         # add sources
         if is_deployable or add_sources:
-            add_sources(client, project_name)
+            QnaAuthoringHelper.add_sources(client, project_name)
 
         if get_export_url:
-            return export_project(client, project_name, delete_project=delete_old_project)
+            return QnaAuthoringHelper.export_project(client, project_name, delete_project=delete_old_project)
 
     def add_sources(client, project_name):
         update_sources_poller = client.begin_update_sources(
@@ -169,4 +169,4 @@ class QnaAuthoringHelper:
             )
             delete_poller.result()
 
-        return result
+        return result["resultUrl"]
