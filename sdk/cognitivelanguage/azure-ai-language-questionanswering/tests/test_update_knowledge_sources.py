@@ -8,7 +8,7 @@ import pytest
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
 
-from ..testcase import (
+from testcase import (
     QuestionAnsweringTest,
     GlobalQuestionAnsweringAccountPreparer,
     QnaAuthoringHelper
