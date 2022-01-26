@@ -45,7 +45,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_create_client.py
+            .. literalinclude:: ../samples/sample_hello_world.py
                 :start-after: [START create_registry_client]
                 :end-before: [END create_registry_client]
                 :language: python
@@ -89,7 +89,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_create_client.py
+            .. literalinclude:: ../samples/sample_hello_world.py
                 :start-after: [START delete_repository]
                 :end-before: [END delete_repository]
                 :language: python
@@ -111,7 +111,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_delete_old_tags.py
+            .. literalinclude:: ../samples/sample_delete_tags.py
                 :start-after: [START list_repository_names]
                 :end-before: [END list_repository_names]
                 :language: python

@@ -47,7 +47,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_create_client_async.py
+            .. literalinclude:: ../samples/async_samples/sample_hello_world_async.py
                 :start-after: [START create_registry_client]
                 :end-before: [END create_registry_client]
                 :language: python
@@ -86,7 +86,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_create_client_async.py
+            .. literalinclude:: ../samples/async_samples/sample_hello_world_async.py
                 :start-after: [START delete_repository]
                 :end-before: [END delete_repository]
                 :language: python
@@ -107,7 +107,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_delete_old_tags_async.py
+            .. literalinclude:: ../samples/async_samples/sample_delete_tags_async.py
                 :start-after: [START list_repository_names]
                 :end-before: [END list_repository_names]
                 :language: python
