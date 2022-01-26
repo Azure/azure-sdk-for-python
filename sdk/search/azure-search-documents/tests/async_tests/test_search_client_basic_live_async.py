@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import asyncio
 import pytest
 
 from azure.core.exceptions import HttpResponseError
