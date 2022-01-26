@@ -6,26 +6,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import ErrorDefinition
-    from ._models_py3 import InnerErrorTrace
-    from ._models_py3 import MyWorkbook
-    from ._models_py3 import MyWorkbookError
-    from ._models_py3 import MyWorkbookManagedIdentity
-    from ._models_py3 import MyWorkbookResource
-    from ._models_py3 import MyWorkbookUserAssignedIdentities
-    from ._models_py3 import MyWorkbooksListResult
-    from ._models_py3 import SystemData
-except (SyntaxError, ImportError):
-    from ._models import ErrorDefinition  # type: ignore
-    from ._models import InnerErrorTrace  # type: ignore
-    from ._models import MyWorkbook  # type: ignore
-    from ._models import MyWorkbookError  # type: ignore
-    from ._models import MyWorkbookManagedIdentity  # type: ignore
-    from ._models import MyWorkbookResource  # type: ignore
-    from ._models import MyWorkbookUserAssignedIdentities  # type: ignore
-    from ._models import MyWorkbooksListResult  # type: ignore
-    from ._models import SystemData  # type: ignore
+from ._models_py3 import ErrorDefinition
+from ._models_py3 import InnerErrorTrace
+from ._models_py3 import MyWorkbook
+from ._models_py3 import MyWorkbookError
+from ._models_py3 import MyWorkbookManagedIdentity
+from ._models_py3 import MyWorkbookResource
+from ._models_py3 import MyWorkbookUserAssignedIdentities
+from ._models_py3 import MyWorkbooksListResult
+from ._models_py3 import SystemData
+
 
 from ._application_insights_management_client_enums import (
     CategoryType,
