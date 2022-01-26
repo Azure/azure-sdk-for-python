@@ -105,7 +105,8 @@
     "eng/**/*.json",
     "eng/*.txt",
     "eng/tox/tox.ini",
-    "./eng/tox/*.py"
+    "eng/common/docgeneration/Generate-DocIndex.ps1",
+    "eng/tox/*.py"
   ],
   "words": [
     "adls",
@@ -193,7 +194,9 @@
     "vmwarecloudsimple",
     "vnet",
     "vsts",
-    "westus"
+    "westus",
+    "docfx",
+    "Docfx"
   ],
   "overrides": [
     {
