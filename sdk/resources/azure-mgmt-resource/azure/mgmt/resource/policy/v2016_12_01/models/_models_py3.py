@@ -20,20 +20,20 @@ class PolicyAssignment(msrest.serialization.Model):
 
     :ivar id: The ID of the policy assignment.
     :vartype id: str
-    :param type: The type of the policy assignment.
-    :type type: str
-    :param name: The name of the policy assignment.
-    :type name: str
-    :param display_name: The display name of the policy assignment.
-    :type display_name: str
-    :param policy_definition_id: The ID of the policy definition.
-    :type policy_definition_id: str
-    :param scope: The scope for the policy assignment.
-    :type scope: str
-    :param parameters: Required if a parameter is used in policy rule.
-    :type parameters: any
-    :param description: This message will be part of response in case of policy violation.
-    :type description: str
+    :ivar type: The type of the policy assignment.
+    :vartype type: str
+    :ivar name: The name of the policy assignment.
+    :vartype name: str
+    :ivar display_name: The display name of the policy assignment.
+    :vartype display_name: str
+    :ivar policy_definition_id: The ID of the policy definition.
+    :vartype policy_definition_id: str
+    :ivar scope: The scope for the policy assignment.
+    :vartype scope: str
+    :ivar parameters: Required if a parameter is used in policy rule.
+    :vartype parameters: any
+    :ivar description: This message will be part of response in case of policy violation.
+    :vartype description: str
     """
 
     _validation = {
@@ -63,6 +63,22 @@ class PolicyAssignment(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword type: The type of the policy assignment.
+        :paramtype type: str
+        :keyword name: The name of the policy assignment.
+        :paramtype name: str
+        :keyword display_name: The display name of the policy assignment.
+        :paramtype display_name: str
+        :keyword policy_definition_id: The ID of the policy definition.
+        :paramtype policy_definition_id: str
+        :keyword scope: The scope for the policy assignment.
+        :paramtype scope: str
+        :keyword parameters: Required if a parameter is used in policy rule.
+        :paramtype parameters: any
+        :keyword description: This message will be part of response in case of policy violation.
+        :paramtype description: str
+        """
         super(PolicyAssignment, self).__init__(**kwargs)
         self.id = None
         self.type = type
@@ -77,10 +93,10 @@ class PolicyAssignment(msrest.serialization.Model):
 class PolicyAssignmentListResult(msrest.serialization.Model):
     """List of policy assignments.
 
-    :param value: An array of policy assignments.
-    :type value: list[~azure.mgmt.resource.policy.v2016_12_01.models.PolicyAssignment]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: An array of policy assignments.
+    :vartype value: list[~azure.mgmt.resource.policy.v2016_12_01.models.PolicyAssignment]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -95,6 +111,12 @@ class PolicyAssignmentListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: An array of policy assignments.
+        :paramtype value: list[~azure.mgmt.resource.policy.v2016_12_01.models.PolicyAssignment]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(PolicyAssignmentListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -109,22 +131,22 @@ class PolicyDefinition(msrest.serialization.Model):
     :vartype id: str
     :ivar name: The name of the policy definition.
     :vartype name: str
-    :param policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
+    :ivar policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
      and Custom. Possible values include: "NotSpecified", "BuiltIn", "Custom".
-    :type policy_type: str or ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyType
-    :param mode: The policy definition mode. Possible values are NotSpecified, Indexed, and All.
+    :vartype policy_type: str or ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyType
+    :ivar mode: The policy definition mode. Possible values are NotSpecified, Indexed, and All.
      Possible values include: "NotSpecified", "Indexed", "All".
-    :type mode: str or ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyMode
-    :param display_name: The display name of the policy definition.
-    :type display_name: str
-    :param description: The policy definition description.
-    :type description: str
-    :param policy_rule: The policy rule.
-    :type policy_rule: any
-    :param metadata: The policy definition metadata.
-    :type metadata: any
-    :param parameters: Required if a parameter is used in policy rule.
-    :type parameters: any
+    :vartype mode: str or ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyMode
+    :ivar display_name: The display name of the policy definition.
+    :vartype display_name: str
+    :ivar description: The policy definition description.
+    :vartype description: str
+    :ivar policy_rule: The policy rule.
+    :vartype policy_rule: any
+    :ivar metadata: The policy definition metadata.
+    :vartype metadata: any
+    :ivar parameters: Required if a parameter is used in policy rule.
+    :vartype parameters: any
     """
 
     _validation = {
@@ -156,6 +178,24 @@ class PolicyDefinition(msrest.serialization.Model):
         parameters: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
+         and Custom. Possible values include: "NotSpecified", "BuiltIn", "Custom".
+        :paramtype policy_type: str or ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyType
+        :keyword mode: The policy definition mode. Possible values are NotSpecified, Indexed, and All.
+         Possible values include: "NotSpecified", "Indexed", "All".
+        :paramtype mode: str or ~azure.mgmt.resource.policy.v2016_12_01.models.PolicyMode
+        :keyword display_name: The display name of the policy definition.
+        :paramtype display_name: str
+        :keyword description: The policy definition description.
+        :paramtype description: str
+        :keyword policy_rule: The policy rule.
+        :paramtype policy_rule: any
+        :keyword metadata: The policy definition metadata.
+        :paramtype metadata: any
+        :keyword parameters: Required if a parameter is used in policy rule.
+        :paramtype parameters: any
+        """
         super(PolicyDefinition, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -171,10 +211,10 @@ class PolicyDefinition(msrest.serialization.Model):
 class PolicyDefinitionListResult(msrest.serialization.Model):
     """List of policy definitions.
 
-    :param value: An array of policy definitions.
-    :type value: list[~azure.mgmt.resource.policy.v2016_12_01.models.PolicyDefinition]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value: An array of policy definitions.
+    :vartype value: list[~azure.mgmt.resource.policy.v2016_12_01.models.PolicyDefinition]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -189,6 +229,12 @@ class PolicyDefinitionListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: An array of policy definitions.
+        :paramtype value: list[~azure.mgmt.resource.policy.v2016_12_01.models.PolicyDefinition]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
         super(PolicyDefinitionListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
