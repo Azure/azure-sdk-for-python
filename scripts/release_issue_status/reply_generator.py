@@ -85,12 +85,16 @@ def begin_reply_generate(item, rest_repo, readme_link, sdk_repo, pipeline_url, a
     labels = item.labels
     whether_change_readme = readme_comparison(rest_repo, link_dict, labels)
 
+    spec_readme = readme_link
+    print("************")
+    print(spec_readme)
+
     if not whether_change_readme:
         reply_content, sdk_link_number = get_reply_and_sdk_number_from_readme(rest_repo, link_dict, item)
         res_run = run_pipeline(issue_link=issue_object_rg.html_url,
-                                        sdk_issue_object=sdk_repo.get_pull(int(sdk_link_number)),
-                                        pipeline_url=pipeline_url
-                                        )
+                               pipeline_url=pipeline_url,
+                               spec_readme=spec_readme
+                               )
         if res_run:
             logging.info(f'{issue_object_rg.number} run pipeline successfully')
         else:
