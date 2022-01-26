@@ -129,7 +129,7 @@ def get_container_cpk_scope_info(kwargs):
 
 
 def get_api_version(kwargs):
-    # type: (Dict[str, Any], str) -> str
+    # type: (Dict[str, Any]) -> str
     api_version = kwargs.get('api_version', None)
     if api_version and api_version not in _SUPPORTED_API_VERSIONS:
         versions = '\n'.join(_SUPPORTED_API_VERSIONS)
