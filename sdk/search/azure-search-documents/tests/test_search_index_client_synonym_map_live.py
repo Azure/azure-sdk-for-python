@@ -72,3 +72,6 @@ class TestSearchSynonymMapsClient(AzureRecordedTestCase):
         # test delete_synonym_map
         client.delete_synonym_map(map_name)
         assert len(client.get_synonym_maps()) == 0
+
+        # TODO: Workaround for #22787
+        return {}

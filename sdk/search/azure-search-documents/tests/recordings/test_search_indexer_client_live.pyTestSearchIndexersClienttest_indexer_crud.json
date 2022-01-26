@@ -8,7 +8,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "2c48fe61-7e2a-11ec-8a51-74c63bed1137"
+        "x-ms-client-request-id": "42983b0e-7ecf-11ec-8263-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -17,13 +17,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "96",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Tue, 25 Jan 2022 22:00:13 GMT",
+        "Date": "Wed, 26 Jan 2022 17:41:55 GMT",
         "elapsed-time": "7",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "2c48fe61-7e2a-11ec-8a51-74c63bed1137",
+        "request-id": "42983b0e-7ecf-11ec-8263-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -42,10 +42,10 @@
         "Content-Length": "253",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "2cc3afb0-7e2a-11ec-bf9f-74c63bed1137"
+        "x-ms-client-request-id": "42f70442-7ecf-11ec-9c28-74c63bed1137"
       },
       "RequestBody": {
-        "name": "sample-datasource-zklzyipfwi",
+        "name": "sample-datasource-omconbsxsn",
         "type": "azureblob",
         "credentials": {
           "connectionString": "DefaultEndpointsProtocol=https;AccountName=fakestoragecs;AccountKey=FAKE;EndpointSuffix=core.windows.net"
@@ -59,21 +59,21 @@
         "Cache-Control": "no-cache",
         "Content-Length": "427",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Tue, 25 Jan 2022 22:00:14 GMT",
-        "elapsed-time": "42",
-        "ETag": "W/\u00220x8D9E04E10E57A83\u0022",
+        "Date": "Wed, 26 Jan 2022 17:41:56 GMT",
+        "elapsed-time": "33",
+        "ETag": "W/\u00220x8D9E0F325FA3C62\u0022",
         "Expires": "-1",
-        "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027sample-datasource-zklzyipfwi\u0027)?api-version=2021-04-30-Preview",
+        "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027sample-datasource-omconbsxsn\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "2cc3afb0-7e2a-11ec-bf9f-74c63bed1137",
+        "request-id": "42f70442-7ecf-11ec-9c28-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#datasources/$entity",
-        "@odata.etag": "\u00220x8D9E04E10E57A83\u0022",
-        "name": "sample-datasource-zklzyipfwi",
+        "@odata.etag": "\u00220x8D9E0F325FA3C62\u0022",
+        "name": "sample-datasource-omconbsxsn",
         "description": null,
         "type": "azureblob",
         "subtype": null,
@@ -100,11 +100,11 @@
         "Content-Length": "137",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "2cde952e-7e2a-11ec-a227-74c63bed1137"
+        "x-ms-client-request-id": "43128ce5-7ecf-11ec-a272-74c63bed1137"
       },
       "RequestBody": {
-        "name": "sample-indexer-xhpxhgtfpm",
-        "dataSourceName": "sample-datasource-zklzyipfwi",
+        "name": "sample-indexer-metrsdabsl",
+        "dataSourceName": "sample-datasource-omconbsxsn",
         "targetIndexName": "drgqefsg",
         "disabled": false
       },
@@ -113,23 +113,23 @@
         "Cache-Control": "no-cache",
         "Content-Length": "411",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Tue, 25 Jan 2022 22:00:15 GMT",
-        "elapsed-time": "1018",
-        "ETag": "W/\u00220x8D9E04E117AEDFD\u0022",
+        "Date": "Wed, 26 Jan 2022 17:41:57 GMT",
+        "elapsed-time": "1002",
+        "ETag": "W/\u00220x8D9E0F3268E019B\u0022",
         "Expires": "-1",
-        "Location": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-xhpxhgtfpm\u0027)?api-version=2021-04-30-Preview",
+        "Location": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-metrsdabsl\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "2cde952e-7e2a-11ec-a227-74c63bed1137",
+        "request-id": "43128ce5-7ecf-11ec-a272-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#indexers/$entity",
-        "@odata.etag": "\u00220x8D9E04E117AEDFD\u0022",
-        "name": "sample-indexer-xhpxhgtfpm",
+        "@odata.etag": "\u00220x8D9E0F3268E019B\u0022",
+        "name": "sample-indexer-metrsdabsl",
         "description": null,
-        "dataSourceName": "sample-datasource-zklzyipfwi",
+        "dataSourceName": "sample-datasource-omconbsxsn",
         "skillsetName": null,
         "targetIndexName": "drgqefsg",
         "disabled": false,
@@ -142,14 +142,14 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-xhpxhgtfpm\u0027)?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-metrsdabsl\u0027)?api-version=2021-04-30-Preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "2d8b0756-7e2a-11ec-8682-74c63bed1137"
+        "x-ms-client-request-id": "43bf1fff-7ecf-11ec-9a6a-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -158,23 +158,23 @@
         "Content-Encoding": "gzip",
         "Content-Length": "411",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Tue, 25 Jan 2022 22:00:15 GMT",
+        "Date": "Wed, 26 Jan 2022 17:41:57 GMT",
         "elapsed-time": "7",
-        "ETag": "W/\u00220x8D9E04E117AEDFD\u0022",
+        "ETag": "W/\u00220x8D9E0F3268E019B\u0022",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "2d8b0756-7e2a-11ec-8682-74c63bed1137",
+        "request-id": "43bf1fff-7ecf-11ec-9a6a-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#indexers/$entity",
-        "@odata.etag": "\u00220x8D9E04E117AEDFD\u0022",
-        "name": "sample-indexer-xhpxhgtfpm",
+        "@odata.etag": "\u00220x8D9E0F3268E019B\u0022",
+        "name": "sample-indexer-metrsdabsl",
         "description": null,
-        "dataSourceName": "sample-datasource-zklzyipfwi",
+        "dataSourceName": "sample-datasource-omconbsxsn",
         "skillsetName": null,
         "targetIndexName": "drgqefsg",
         "disabled": false,
@@ -187,7 +187,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-xhpxhgtfpm\u0027)/search.run?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-metrsdabsl\u0027)/search.run?api-version=2021-04-30-Preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -195,31 +195,31 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "2d9d15a8-7e2a-11ec-82aa-74c63bed1137"
+        "x-ms-client-request-id": "43d2980c-7ecf-11ec-b322-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Tue, 25 Jan 2022 22:00:15 GMT",
-        "elapsed-time": "39",
+        "Date": "Wed, 26 Jan 2022 17:41:57 GMT",
+        "elapsed-time": "109",
         "Expires": "-1",
         "Pragma": "no-cache",
-        "request-id": "2d9d15a8-7e2a-11ec-82aa-74c63bed1137",
+        "request-id": "43d2980c-7ecf-11ec-b322-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-xhpxhgtfpm\u0027)/search.status?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-metrsdabsl\u0027)/search.status?api-version=2021-04-30-Preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "2db31987-7e2a-11ec-b7f8-74c63bed1137"
+        "x-ms-client-request-id": "43f4a052-7ecf-11ec-b395-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -228,19 +228,19 @@
         "Content-Encoding": "gzip",
         "Content-Length": "574",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Tue, 25 Jan 2022 22:00:15 GMT",
-        "elapsed-time": "13",
+        "Date": "Wed, 26 Jan 2022 17:41:57 GMT",
+        "elapsed-time": "14",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "2db31987-7e2a-11ec-b7f8-74c63bed1137",
+        "request-id": "43f4a052-7ecf-11ec-b395-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#Microsoft.Azure.Search.V2021_04_30_Preview.IndexerExecutionInfo",
-        "name": "sample-indexer-xhpxhgtfpm",
+        "name": "sample-indexer-metrsdabsl",
         "status": "running",
         "lastResult": null,
         "executionHistory": [],
@@ -261,7 +261,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-xhpxhgtfpm\u0027)/search.reset?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-metrsdabsl\u0027)/search.reset?api-version=2021-04-30-Preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -269,30 +269,30 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "2dc5559c-7e2a-11ec-9356-74c63bed1137"
+        "x-ms-client-request-id": "44098df5-7ecf-11ec-836c-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Date": "Tue, 25 Jan 2022 22:00:15 GMT",
-        "elapsed-time": "329",
+        "Date": "Wed, 26 Jan 2022 17:41:57 GMT",
+        "elapsed-time": "323",
         "Expires": "-1",
         "Pragma": "no-cache",
-        "request-id": "2dc5559c-7e2a-11ec-9356-74c63bed1137",
+        "request-id": "44098df5-7ecf-11ec-836c-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-xhpxhgtfpm\u0027)/search.status?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-metrsdabsl\u0027)/search.status?api-version=2021-04-30-Preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "2e07883a-7e2a-11ec-9065-74c63bed1137"
+        "x-ms-client-request-id": "444b3f45-7ecf-11ec-bfe6-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -301,26 +301,26 @@
         "Content-Encoding": "gzip",
         "Content-Length": "1059",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Tue, 25 Jan 2022 22:00:15 GMT",
-        "elapsed-time": "15",
+        "Date": "Wed, 26 Jan 2022 17:41:59 GMT",
+        "elapsed-time": "13",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "2e07883a-7e2a-11ec-9065-74c63bed1137",
+        "request-id": "444b3f45-7ecf-11ec-bfe6-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#Microsoft.Azure.Search.V2021_04_30_Preview.IndexerExecutionInfo",
-        "name": "sample-indexer-xhpxhgtfpm",
+        "name": "sample-indexer-metrsdabsl",
         "status": "running",
         "lastResult": {
           "status": "reset",
           "statusDetail": null,
           "errorMessage": null,
-          "startTime": "2022-01-25T22:00:16.152Z",
-          "endTime": "2022-01-25T22:00:16.152Z",
+          "startTime": "2022-01-26T17:41:58.585Z",
+          "endTime": "2022-01-26T17:41:58.585Z",
           "itemsProcessed": 0,
           "itemsFailed": 0,
           "initialTrackingState": null,
@@ -335,8 +335,8 @@
             "status": "reset",
             "statusDetail": null,
             "errorMessage": null,
-            "startTime": "2022-01-25T22:00:16.152Z",
-            "endTime": "2022-01-25T22:00:16.152Z",
+            "startTime": "2022-01-26T17:41:58.585Z",
+            "endTime": "2022-01-26T17:41:58.585Z",
             "itemsProcessed": 0,
             "itemsFailed": 0,
             "initialTrackingState": null,
@@ -360,14 +360,14 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-xhpxhgtfpm\u0027)/search.status?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-metrsdabsl\u0027)/search.status?api-version=2021-04-30-Preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "2e1d7b8f-7e2a-11ec-9b34-74c63bed1137"
+        "x-ms-client-request-id": "44629391-7ecf-11ec-a512-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -376,26 +376,26 @@
         "Content-Encoding": "gzip",
         "Content-Length": "1059",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Tue, 25 Jan 2022 22:00:16 GMT",
-        "elapsed-time": "11",
+        "Date": "Wed, 26 Jan 2022 17:41:59 GMT",
+        "elapsed-time": "14",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "2e1d7b8f-7e2a-11ec-9b34-74c63bed1137",
+        "request-id": "44629391-7ecf-11ec-a512-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#Microsoft.Azure.Search.V2021_04_30_Preview.IndexerExecutionInfo",
-        "name": "sample-indexer-xhpxhgtfpm",
+        "name": "sample-indexer-metrsdabsl",
         "status": "running",
         "lastResult": {
           "status": "reset",
           "statusDetail": null,
           "errorMessage": null,
-          "startTime": "2022-01-25T22:00:16.152Z",
-          "endTime": "2022-01-25T22:00:16.152Z",
+          "startTime": "2022-01-26T17:41:58.585Z",
+          "endTime": "2022-01-26T17:41:58.585Z",
           "itemsProcessed": 0,
           "itemsFailed": 0,
           "initialTrackingState": null,
@@ -410,8 +410,8 @@
             "status": "reset",
             "statusDetail": null,
             "errorMessage": null,
-            "startTime": "2022-01-25T22:00:16.152Z",
-            "endTime": "2022-01-25T22:00:16.152Z",
+            "startTime": "2022-01-26T17:41:58.585Z",
+            "endTime": "2022-01-26T17:41:58.585Z",
             "itemsProcessed": 0,
             "itemsFailed": 0,
             "initialTrackingState": null,
@@ -444,10 +444,10 @@
         "Content-Length": "253",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "2e30854c-7e2a-11ec-8bc3-74c63bed1137"
+        "x-ms-client-request-id": "447652f3-7ecf-11ec-bd57-74c63bed1137"
       },
       "RequestBody": {
-        "name": "sample-datasource-incryoehsi",
+        "name": "sample-datasource-humjwgffth",
         "type": "azureblob",
         "credentials": {
           "connectionString": "DefaultEndpointsProtocol=https;AccountName=fakestoragecs;AccountKey=FAKE;EndpointSuffix=core.windows.net"
@@ -461,21 +461,21 @@
         "Cache-Control": "no-cache",
         "Content-Length": "427",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Tue, 25 Jan 2022 22:00:16 GMT",
-        "elapsed-time": "50",
-        "ETag": "W/\u00220x8D9E04E1253A237\u0022",
+        "Date": "Wed, 26 Jan 2022 17:41:59 GMT",
+        "elapsed-time": "40",
+        "ETag": "W/\u00220x8D9E0F3277BE71B\u0022",
         "Expires": "-1",
-        "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027sample-datasource-incryoehsi\u0027)?api-version=2021-04-30-Preview",
+        "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027sample-datasource-humjwgffth\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "2e30854c-7e2a-11ec-8bc3-74c63bed1137",
+        "request-id": "447652f3-7ecf-11ec-bd57-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#datasources/$entity",
-        "@odata.etag": "\u00220x8D9E04E1253A237\u0022",
-        "name": "sample-datasource-incryoehsi",
+        "@odata.etag": "\u00220x8D9E0F3277BE71B\u0022",
+        "name": "sample-datasource-humjwgffth",
         "description": null,
         "type": "azureblob",
         "subtype": null,
@@ -502,11 +502,11 @@
         "Content-Length": "137",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "2e4d39b3-7e2a-11ec-ba57-74c63bed1137"
+        "x-ms-client-request-id": "4493e5ef-7ecf-11ec-b9a2-74c63bed1137"
       },
       "RequestBody": {
-        "name": "sample-indexer-uzpwfkgofl",
-        "dataSourceName": "sample-datasource-incryoehsi",
+        "name": "sample-indexer-zgaeyubyvb",
+        "dataSourceName": "sample-datasource-humjwgffth",
         "targetIndexName": "drgqefsg",
         "disabled": false
       },
@@ -515,23 +515,23 @@
         "Cache-Control": "no-cache",
         "Content-Length": "411",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Tue, 25 Jan 2022 22:00:16 GMT",
-        "elapsed-time": "481",
-        "ETag": "W/\u00220x8D9E04E129C8774\u0022",
+        "Date": "Wed, 26 Jan 2022 17:41:59 GMT",
+        "elapsed-time": "434",
+        "ETag": "W/\u00220x8D9E0F327BC41B3\u0022",
         "Expires": "-1",
-        "Location": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-uzpwfkgofl\u0027)?api-version=2021-04-30-Preview",
+        "Location": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-zgaeyubyvb\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "2e4d39b3-7e2a-11ec-ba57-74c63bed1137",
+        "request-id": "4493e5ef-7ecf-11ec-b9a2-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#indexers/$entity",
-        "@odata.etag": "\u00220x8D9E04E129C8774\u0022",
-        "name": "sample-indexer-uzpwfkgofl",
+        "@odata.etag": "\u00220x8D9E0F327BC41B3\u0022",
+        "name": "sample-indexer-zgaeyubyvb",
         "description": null,
-        "dataSourceName": "sample-datasource-incryoehsi",
+        "dataSourceName": "sample-datasource-humjwgffth",
         "skillsetName": null,
         "targetIndexName": "drgqefsg",
         "disabled": false,
@@ -551,7 +551,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "2ea84276-7e2a-11ec-9aee-74c63bed1137"
+        "x-ms-client-request-id": "44e882a7-7ecf-11ec-8652-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -560,13 +560,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "735",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Tue, 25 Jan 2022 22:00:16 GMT",
-        "elapsed-time": "16",
+        "Date": "Wed, 26 Jan 2022 17:42:00 GMT",
+        "elapsed-time": "23",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "2ea84276-7e2a-11ec-9aee-74c63bed1137",
+        "request-id": "44e882a7-7ecf-11ec-8652-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -574,10 +574,10 @@
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#indexers",
         "value": [
           {
-            "@odata.etag": "\u00220x8D9E04E129C8774\u0022",
-            "name": "sample-indexer-uzpwfkgofl",
+            "@odata.etag": "\u00220x8D9E0F3273488A0\u0022",
+            "name": "sample-indexer-metrsdabsl",
             "description": null,
-            "dataSourceName": "sample-datasource-incryoehsi",
+            "dataSourceName": "sample-datasource-omconbsxsn",
             "skillsetName": null,
             "targetIndexName": "drgqefsg",
             "disabled": false,
@@ -589,10 +589,10 @@
             "encryptionKey": null
           },
           {
-            "@odata.etag": "\u00220x8D9E04E120EDB0C\u0022",
-            "name": "sample-indexer-xhpxhgtfpm",
+            "@odata.etag": "\u00220x8D9E0F327BC41B3\u0022",
+            "name": "sample-indexer-zgaeyubyvb",
             "description": null,
-            "dataSourceName": "sample-datasource-zklzyipfwi",
+            "dataSourceName": "sample-datasource-humjwgffth",
             "skillsetName": null,
             "targetIndexName": "drgqefsg",
             "disabled": false,
@@ -607,7 +607,7 @@
       }
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-xhpxhgtfpm\u0027)?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-metrsdabsl\u0027)?api-version=2021-04-30-Preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -615,23 +615,23 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "2ebbdcdf-7e2a-11ec-891a-74c63bed1137"
+        "x-ms-client-request-id": "44fdad00-7ecf-11ec-a93b-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Date": "Tue, 25 Jan 2022 22:00:17 GMT",
-        "elapsed-time": "42",
+        "Date": "Wed, 26 Jan 2022 17:42:00 GMT",
+        "elapsed-time": "47",
         "Expires": "-1",
         "Pragma": "no-cache",
-        "request-id": "2ebbdcdf-7e2a-11ec-891a-74c63bed1137",
+        "request-id": "44fdad00-7ecf-11ec-a93b-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-uzpwfkgofl\u0027)?api-version=2021-04-30-Preview",
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexers(\u0027sample-indexer-zgaeyubyvb\u0027)?api-version=2021-04-30-Preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
@@ -639,17 +639,17 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "2ed1f43c-7e2a-11ec-96c3-74c63bed1137"
+        "x-ms-client-request-id": "453c6699-7ecf-11ec-960e-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Date": "Tue, 25 Jan 2022 22:00:17 GMT",
-        "elapsed-time": "57",
+        "Date": "Wed, 26 Jan 2022 17:42:00 GMT",
+        "elapsed-time": "50",
         "Expires": "-1",
         "Pragma": "no-cache",
-        "request-id": "2ed1f43c-7e2a-11ec-96c3-74c63bed1137",
+        "request-id": "453c6699-7ecf-11ec-960e-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": null
@@ -662,7 +662,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "2eea6f4a-7e2a-11ec-ab5a-74c63bed1137"
+        "x-ms-client-request-id": "4554ec00-7ecf-11ec-882d-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -671,13 +671,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "96",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Tue, 25 Jan 2022 22:00:17 GMT",
-        "elapsed-time": "7",
+        "Date": "Wed, 26 Jan 2022 17:42:00 GMT",
+        "elapsed-time": "33",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "2eea6f4a-7e2a-11ec-ab5a-74c63bed1137",
+        "request-id": "4554ec00-7ecf-11ec-882d-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -688,9 +688,9 @@
     }
   ],
   "Variables": {
-    "datasource_name": "sample-datasource-zklzyipfwi",
-    "datasource_name2": "sample-datasource-incryoehsi",
-    "indexer_name": "sample-indexer-xhpxhgtfpm",
-    "indexer_name2": "sample-indexer-uzpwfkgofl"
+    "datasource_name": "sample-datasource-omconbsxsn",
+    "datasource_name2": "sample-datasource-humjwgffth",
+    "indexer_name": "sample-indexer-metrsdabsl",
+    "indexer_name2": "sample-indexer-zgaeyubyvb"
   }
 }

@@ -43,6 +43,8 @@ class TestSearchIndexClient(AzureRecordedTestCase):
         self._test_create_or_update_indexes_if_unchanged(client)
         self._test_analyze_text(client, index_name)
         self._test_delete_indexes(client)
+        # TODO: Workaround for #22787
+        return {}
 
     def _test_get_service_statistics(self, client):
         result = client.get_service_statistics()
