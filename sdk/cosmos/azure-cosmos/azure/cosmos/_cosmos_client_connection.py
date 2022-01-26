@@ -182,10 +182,12 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             proxy = host if url.port else host + ":" + str(self.connection_policy.ProxyConfiguration.Port)
             proxies.update({url.scheme: proxy})
 
+        self._user_agent = _utils.get_user_agent()
+
         policies = [
             HeadersPolicy(**kwargs),
             ProxyPolicy(proxies=proxies),
-            UserAgentPolicy(base_user_agent=_utils.get_user_agent(), **kwargs),
+            UserAgentPolicy(base_user_agent=self._user_agent, **kwargs),
             ContentDecodePolicy(),
             retry_policy,
             CustomHookPolicy(**kwargs),
@@ -2553,6 +2555,11 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             return self._return_undefined_or_empty_partition_key(is_system_key)
 
         return partitionKey
+
+    def refresh_routing_map_provider(self):
+        # re-initializes the routing map provider, effectively refreshing the current partition key range cache
+        self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
+
 
     def _UpdateSessionIfRequired(self, request_headers, response_result, response_headers):
         """

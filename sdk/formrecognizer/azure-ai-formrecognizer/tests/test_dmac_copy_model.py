@@ -178,8 +178,9 @@ class TestCopyModel(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @pytest.mark.skip()
-    def test_copy_continuation_token(self, client, formrecognizer_storage_container_sas_url):
-
+    def test_copy_continuation_token(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
         model = poller.result()
 

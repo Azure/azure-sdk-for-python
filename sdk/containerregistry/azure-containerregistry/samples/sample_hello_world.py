@@ -10,7 +10,8 @@
 FILE: sample_hello_world.py
 
 DESCRIPTION:
-    These samples demonstrate creating a ContainerRegistryClient and a ContainerRepository
+    This sample demonstrate creating a ContainerRegistryClient and iterating
+    through the collection of tags in the repository with anonymous access.
 
 USAGE:
     python sample_hello_world.py
