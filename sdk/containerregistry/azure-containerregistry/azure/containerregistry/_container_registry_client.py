@@ -26,22 +26,22 @@ if TYPE_CHECKING:
 class ContainerRegistryClient(ContainerRegistryBaseClient):
     def __init__(self, endpoint, credential=None, **kwargs):
         # type: (str, Optional[TokenCredential], **Any) -> None
-        """Create a ContainerRegistryClient from an ACR endpoint and a credential
+        """Create a ContainerRegistryClient from an ACR endpoint and a credential.
 
-        :param str endpoint: An ACR endpoint
-        :param credential: The credential with which to authenticate
+        :param str endpoint: An ACR endpoint.
+        :param credential: The credential with which to authenticate.
         :type credential: ~azure.core.credentials.TokenCredential
         :keyword api_version: API Version. The default value is "2021-07-01". Note that overriding this default value
-        may result in unsupported behavior.
+         may result in unsupported behavior.
         :paramtype api_version: str
         :keyword audience: URL to use for credential authentication with AAD. Its value could be
-        "https://management.azure.com", "https://management.chinacloudapi.cn", "https://management.microsoftazure.de" or
-        "https://management.usgovcloudapi.net"
+         "https://management.azure.com", "https://management.chinacloudapi.cn", "https://management.microsoftazure.de"
+         or "https://management.usgovcloudapi.net".
         :paramtype audience: str
         :returns: None
         :rtype: None
-        :raises ValueError: if the provided api_version keyword-only argument isn't supported or
-        audience keyword-only argument isn't provided
+        :raises ValueError: If the provided api_version keyword-only argument isn't supported or
+         audience keyword-only argument isn't provided.
 
         .. admonition:: Example:
 
@@ -590,14 +590,19 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     @distributed_trace
     def update_manifest_properties(self, *args, **kwargs):
         # type: (Union[str, ArtifactManifestProperties], **Any) -> ArtifactManifestProperties
-        """Set the properties for a manifest
+        """Set the permission properties for a manifest.
 
-        :param args:
-        :type args: Union[str, ~azure.containerregistry.ArtifactManifestProperties]
-        :param str repository: Repository the manifest belongs to
-        :param str tag_or_digest: Tag or digest of the manifest
-        :param properties: The property's values to be set
+        The updatable properties include: `can_delete`, `can_list`, `can_read`, and `can_write`.
+
+        :param str repository: Repository the manifest belongs to.
+        :param str tag_or_digest: Tag or digest of the manifest.
+        :param properties: The property's values to be set. This is a positional-only
+         parameter. Please provide either this or individual keyword parameters.
         :type properties: ~azure.containerregistry.ArtifactManifestProperties
+        :keyword bool can_delete: Delete permissions for a manifest.
+        :keyword bool can_list: List permissions for a manifest.
+        :keyword bool can_read: Read permissions for a manifest.
+        :keyword bool can_write: Write permissions for a manifest.
         :rtype: ~azure.containerregistry.ArtifactManifestProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
 
@@ -659,14 +664,19 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     @distributed_trace
     def update_tag_properties(self, *args, **kwargs):
         # type: (Union[str, ArtifactTagProperties], **Any) -> ArtifactTagProperties
-        """Set the properties for a tag
+        """Set the permission properties for a tag.
 
-        :param args:
-        :type args: Union[str, ~azure.containerregistry.ArtifactTagProperties]
-        :param str repository: Repository the tag belongs to
-        :param str tag: Tag to set properties for
-        :param properties: The property's values to be set
-        :type properties: ArtifactTagProperties
+        The updatable properties include: `can_delete`, `can_list`, `can_read`, and `can_write`.
+
+        :param str repository: Repository the tag belongs to.
+        :param str tag: Tag to set properties for.
+        :param properties: The property's values to be set. This is a positional-only
+         parameter. Please provide either this or individual keyword parameters.
+        :type properties: ~azure.containerregistry.ArtifactTagProperties
+        :keyword bool can_delete: Delete permissions for a tag.
+        :keyword bool can_list: List permissions for a tag.
+        :keyword bool can_read: Read permissions for a tag.
+        :keyword bool can_write: Write permissions for a tag.
         :rtype: ~azure.containerregistry.ArtifactTagProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
 
@@ -721,13 +731,18 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     @distributed_trace
     def update_repository_properties(self, *args, **kwargs):
         # type: (Union[str, RepositoryProperties], **Any) -> RepositoryProperties
-        """Set the properties of a repository
+        """Set the permission properties of a repository.
 
-        :param args:
-        :type args: Union[str, ~azure.containerregistry.RepositoryProperties]
-        :param str repository: Name of the repository
-        :param properties: Properties to set for the repository
+        The updatable properties include: `can_delete`, `can_list`, `can_read`, and `can_write`.
+
+        :param str repository: Name of the repository.
+        :param properties: Properties to set for the repository. This is a positional-only
+         parameter. Please provide either this or individual keyword parameters.
         :type properties: ~azure.containerregistry.RepositoryProperties
+        :keyword bool can_delete: Delete permissions for a repository.
+        :keyword bool can_list: List permissions for a repository.
+        :keyword bool can_read: Read permissions for a repository.
+        :keyword bool can_write: Write permissions for a repository.
         :rtype: ~azure.containerregistry.RepositoryProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
         """
