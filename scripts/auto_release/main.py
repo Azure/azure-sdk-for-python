@@ -513,8 +513,9 @@ class CodegenTestPR:
             changelog = 'no new content found by changelog tools!'
 
         # comment to ask for check from users
+        issue_number = int(self.issue_link.split('/')[-1])
         api = GhApi(owner='Azure', repo='sdk-release-request', token=self.bot_token)
-        author = api.issues.get(issue_number=2223).user.login
+        author = api.issues.get(issue_number=issue_number).user.login
         body = f'Hi @{author}, Please check whether the package works well and the CHANGELOG info is as below:\n' \
                f'{self.get_private_package_link()}' \
                f'```\n' \
@@ -524,12 +525,12 @@ class CodegenTestPR:
                f'* (If you are not a Python User, you can mainly check whether the changelog meets your requirements)\n\n' \
                f'* (The version of the package is only a temporary version for testing)\n\n' \
                f'https://github.com/Azure/azure-sdk-for-python/pull/{self.pr_number}'
-        api.issues.create_comment(issue_number=2223, body=body)
+        api.issues.create_comment(issue_number=issue_number, body=body)
 
         # comment for hint
         body = 'Tips: If you have special needs for release date or other things, please let us know. ' \
                'Otherwise we will release it ASAP after your check.'
-        api.issues.create_comment(issue_number=2223, body=body)
+        api.issues.create_comment(issue_number=issue_number, body=body)
 
     def issue_comment(self):
         self.zero_version_policy()
