@@ -14,8 +14,8 @@
   - Low-Priority Compute Nodes (VMs) will continue to be used for User Subscription pools (and only User Subscription pools), as before.
   - Spot Compute Nodes (VMs) will now be used for Batch Managed (and only Batch Managed pools) pools.
   - Relevant docs:
-    - https://docs.microsoft.com/en-us/azure/batch/nodes-and-pools
-    - https://docs.microsoft.com/en-us/azure/batch/batch-spot-vms
+      https://docs.microsoft.com/azure/batch/nodes-and-pools
+    - https://docs.microsoft.com/azure/batch/batch-spot-vms
 
 ## 11.0.1 (Unreleased)
 
