@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Default the `percent_completed` property to 0 when not returned with model operation information.
 
 ### Other Changes
 - Python 2.7 is no longer supported in this release. Please use Python 3.6 or later.
