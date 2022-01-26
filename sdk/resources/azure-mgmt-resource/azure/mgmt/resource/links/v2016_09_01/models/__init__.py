@@ -6,22 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import ResourceLink
-    from ._models_py3 import ResourceLinkFilter
-    from ._models_py3 import ResourceLinkProperties
-    from ._models_py3 import ResourceLinkResult
-except (SyntaxError, ImportError):
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import ResourceLink  # type: ignore
-    from ._models import ResourceLinkFilter  # type: ignore
-    from ._models import ResourceLinkProperties  # type: ignore
-    from ._models import ResourceLinkResult  # type: ignore
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import ResourceLink
+from ._models_py3 import ResourceLinkFilter
+from ._models_py3 import ResourceLinkProperties
+from ._models_py3 import ResourceLinkResult
+
 
 __all__ = [
     'Operation',
