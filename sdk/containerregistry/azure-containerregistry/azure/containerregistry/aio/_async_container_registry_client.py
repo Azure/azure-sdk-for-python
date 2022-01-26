@@ -588,7 +588,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         The updatable properties include: `can_delete`, `can_list`, `can_read`, and `can_write`.
 
-        :param str repository: Name of the repository
+        :param str repository: Name of the repository.
         :param properties: Properties to set for the repository. This is a positional-only
          parameter. Please provide either this or individual keyword parameters.
         :type properties: ~azure.containerregistry.RepositoryProperties
