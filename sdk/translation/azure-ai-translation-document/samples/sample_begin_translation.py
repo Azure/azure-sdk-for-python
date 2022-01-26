@@ -8,7 +8,8 @@
 FILE: sample_begin_translation.py
 
 DESCRIPTION:
-    This sample demonstrates how to translate documents in your Azure Blob Storage container.
+    This sample demonstrates how to translate documents in your Azure Blob Storage container. To translate a
+    specific document only, or to translate documents under a folder, see sample_begin_translation_with_filters.py.
 
     To set up your containers for translation and generate SAS tokens to your containers (or files)
     with the appropriate permissions, see the README.
