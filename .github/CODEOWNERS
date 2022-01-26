@@ -125,6 +125,9 @@
 # PRLabel: %Cognitive - Metrics Advisor
 /sdk/metricsadvisor/                                                 @xiangyan99 @kristapratico
 
+# PRLabel: %Cognitive - Anomaly Detector
+/sdk/anomalydetector/                                                @conhua @mengaims @juaduan @moreOver0
+
 # PRLabel: %Cognitive - Translator
 /sdk/translation/                                                    @kristapratico @mohamedshabanofficial
 
