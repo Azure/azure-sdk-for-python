@@ -60,7 +60,7 @@ setup(
         'azure',
         'azure.communication'
     ]),
-    python_requires=">=3.7",
+    python_requires=">=3.6",
     install_requires=[
         "msrest>=0.6.21",
         'azure-core<2.0.0,>=1.20.0',
