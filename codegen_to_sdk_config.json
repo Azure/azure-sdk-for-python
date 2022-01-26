@@ -1,0 +1,21 @@
+{
+    "init": {
+      "initScript": {
+        "path": ".scripts/automation_init.sh"
+      }
+    },
+  
+    "generateAndBuild": {
+      "generateAndBuildScript": {
+        "path": ".scripts/automation_generate_codegen.sh",
+        "stderr": {
+          "storeAllLog": true
+        },
+        "stdout": {
+          "storeLogByFilter": "^\\[Autorest\\]"
+        }
+      },
+  
+      "parseGenerateOutput": true
+    }
+  }
