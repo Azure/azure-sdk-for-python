@@ -14,10 +14,10 @@ import msrest.serialization
 class Operation(msrest.serialization.Model):
     """Microsoft.Resources operation.
 
-    :param name: Operation name: {provider}/{resource}/{operation}.
-    :type name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.resource.links.v2016_09_01.models.OperationDisplay
+    :ivar name: Operation name: {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar display: The object that represents the operation.
+    :vartype display: ~azure.mgmt.resource.links.v2016_09_01.models.OperationDisplay
     """
 
     _attribute_map = {
@@ -32,6 +32,12 @@ class Operation(msrest.serialization.Model):
         display: Optional["OperationDisplay"] = None,
         **kwargs
     ):
+        """
+        :keyword name: Operation name: {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword display: The object that represents the operation.
+        :paramtype display: ~azure.mgmt.resource.links.v2016_09_01.models.OperationDisplay
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -40,14 +46,14 @@ class Operation(msrest.serialization.Model):
 class OperationDisplay(msrest.serialization.Model):
     """The object that represents the operation.
 
-    :param provider: Service provider: Microsoft.Resources.
-    :type provider: str
-    :param resource: Resource on which the operation is performed: Profile, endpoint, etc.
-    :type resource: str
-    :param operation: Operation type: Read, write, delete, etc.
-    :type operation: str
-    :param description: Description of the operation.
-    :type description: str
+    :ivar provider: Service provider: Microsoft.Resources.
+    :vartype provider: str
+    :ivar resource: Resource on which the operation is performed: Profile, endpoint, etc.
+    :vartype resource: str
+    :ivar operation: Operation type: Read, write, delete, etc.
+    :vartype operation: str
+    :ivar description: Description of the operation.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -66,6 +72,16 @@ class OperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: Service provider: Microsoft.Resources.
+        :paramtype provider: str
+        :keyword resource: Resource on which the operation is performed: Profile, endpoint, etc.
+        :paramtype resource: str
+        :keyword operation: Operation type: Read, write, delete, etc.
+        :paramtype operation: str
+        :keyword description: Description of the operation.
+        :paramtype description: str
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
@@ -76,10 +92,10 @@ class OperationDisplay(msrest.serialization.Model):
 class OperationListResult(msrest.serialization.Model):
     """Result of the request to list Microsoft.Resources operations. It contains a list of operations and a URL link to get the next set of results.
 
-    :param value: List of Microsoft.Resources operations.
-    :type value: list[~azure.mgmt.resource.links.v2016_09_01.models.Operation]
-    :param next_link: URL to get the next set of operation list results if there are any.
-    :type next_link: str
+    :ivar value: List of Microsoft.Resources operations.
+    :vartype value: list[~azure.mgmt.resource.links.v2016_09_01.models.Operation]
+    :ivar next_link: URL to get the next set of operation list results if there are any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -94,6 +110,12 @@ class OperationListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of Microsoft.Resources operations.
+        :paramtype value: list[~azure.mgmt.resource.links.v2016_09_01.models.Operation]
+        :keyword next_link: URL to get the next set of operation list results if there are any.
+        :paramtype next_link: str
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -110,8 +132,8 @@ class ResourceLink(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The resource link object.
     :vartype type: any
-    :param properties: Properties for resource link.
-    :type properties: ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkProperties
+    :ivar properties: Properties for resource link.
+    :vartype properties: ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkProperties
     """
 
     _validation = {
@@ -133,6 +155,10 @@ class ResourceLink(msrest.serialization.Model):
         properties: Optional["ResourceLinkProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword properties: Properties for resource link.
+        :paramtype properties: ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkProperties
+        """
         super(ResourceLink, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -145,8 +171,8 @@ class ResourceLinkFilter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param target_id: Required. The ID of the target resource.
-    :type target_id: str
+    :ivar target_id: Required. The ID of the target resource.
+    :vartype target_id: str
     """
 
     _validation = {
@@ -163,6 +189,10 @@ class ResourceLinkFilter(msrest.serialization.Model):
         target_id: str,
         **kwargs
     ):
+        """
+        :keyword target_id: Required. The ID of the target resource.
+        :paramtype target_id: str
+        """
         super(ResourceLinkFilter, self).__init__(**kwargs)
         self.target_id = target_id
 
@@ -176,10 +206,10 @@ class ResourceLinkProperties(msrest.serialization.Model):
 
     :ivar source_id: The fully qualified ID of the source resource in the link.
     :vartype source_id: str
-    :param target_id: Required. The fully qualified ID of the target resource in the link.
-    :type target_id: str
-    :param notes: Notes about the resource link.
-    :type notes: str
+    :ivar target_id: Required. The fully qualified ID of the target resource in the link.
+    :vartype target_id: str
+    :ivar notes: Notes about the resource link.
+    :vartype notes: str
     """
 
     _validation = {
@@ -200,6 +230,12 @@ class ResourceLinkProperties(msrest.serialization.Model):
         notes: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword target_id: Required. The fully qualified ID of the target resource in the link.
+        :paramtype target_id: str
+        :keyword notes: Notes about the resource link.
+        :paramtype notes: str
+        """
         super(ResourceLinkProperties, self).__init__(**kwargs)
         self.source_id = None
         self.target_id = target_id
@@ -213,8 +249,8 @@ class ResourceLinkResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. An array of resource links.
-    :type value: list[~azure.mgmt.resource.links.v2016_09_01.models.ResourceLink]
+    :ivar value: Required. An array of resource links.
+    :vartype value: list[~azure.mgmt.resource.links.v2016_09_01.models.ResourceLink]
     :ivar next_link: The URL to use for getting the next set of results.
     :vartype next_link: str
     """
@@ -235,6 +271,10 @@ class ResourceLinkResult(msrest.serialization.Model):
         value: List["ResourceLink"],
         **kwargs
     ):
+        """
+        :keyword value: Required. An array of resource links.
+        :paramtype value: list[~azure.mgmt.resource.links.v2016_09_01.models.ResourceLink]
+        """
         super(ResourceLinkResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None

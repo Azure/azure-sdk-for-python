@@ -15,7 +15,9 @@ from azure.ai.textanalytics import TextAnalyticsClient
 class TestContextManager(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
-    def test_close(self, textanalytics_test_endpoint, textanalytics_test_api_key):
+    def test_close(self, **kwargs):
+        textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
+        textanalytics_test_api_key = kwargs.pop("textanalytics_test_api_key")
         transport = mock.MagicMock()
         client = TextAnalyticsClient(
             textanalytics_test_endpoint,
@@ -27,7 +29,9 @@ class TestContextManager(TextAnalyticsTest):
         assert transport.__exit__.call_count == 1
 
     @TextAnalyticsPreparer()
-    def test_context_manager(self, textanalytics_test_endpoint, textanalytics_test_api_key):
+    def test_context_manager(self, **kwargs):
+        textanalytics_test_endpoint = kwargs.pop("textanalytics_test_endpoint")
+        textanalytics_test_api_key = kwargs.pop("textanalytics_test_api_key")
         transport = mock.MagicMock()
         client = TextAnalyticsClient(
             textanalytics_test_endpoint,

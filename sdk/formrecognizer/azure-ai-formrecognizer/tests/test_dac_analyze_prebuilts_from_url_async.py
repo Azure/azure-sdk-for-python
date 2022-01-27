@@ -390,7 +390,8 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(AsyncFormRecognizerTest):
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
-    async def test_receipt_continuation_token(self, client):
+    async def test_receipt_continuation_token(self, **kwargs):
+        client = kwargs.pop("client")
 
         async with client:
             initial_poller = await client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
