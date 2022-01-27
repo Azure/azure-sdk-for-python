@@ -4,9 +4,10 @@
 # ------------------------------------
 
 import json
-from typing import Any, List, Union, TYPE_CHECKING, overload
+from typing import Any, List, Union, TYPE_CHECKING, overload, Optional
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
+from azure.core.credentials import AzureKeyCredential
 from ._generated import (
     BatchDocumentTranslationClient as _BatchDocumentTranslationClient,
 )
@@ -15,7 +16,9 @@ from ._models import (
     DocumentStatus,
     DocumentTranslationInput,
     DocumentTranslationFileFormat,
-    convert_status
+    convert_status,
+    StorageInputType,
+    TranslationGlossary
 )
 from ._user_agent import USER_AGENT
 from ._polling import TranslationPolling, DocumentTranslationLROPollingMethod, DocumentTranslationLROPoller
@@ -28,14 +31,14 @@ from ._helpers import (
     POLLING_INTERVAL,
 )
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential, AzureKeyCredential
+    from azure.core.credentials import TokenCredential
 
 
 class DocumentTranslationClient:
     def __init__(
         self,
         endpoint: str,
-        credential: Union["AzureKeyCredential", "TokenCredential"],
+        credential: Union[AzureKeyCredential, "TokenCredential"],
         **kwargs: Any
     ) -> None:
         """DocumentTranslationClient is your interface to the Document Translation service.
@@ -100,15 +103,83 @@ class DocumentTranslationClient:
 
     @overload
     def begin_translation(
-        self, source_url: str, target_url: str, target_language_code: str, **kwargs: Any
+        self,
+        source_url: str,
+        target_url: str,
+        target_language_code: str,
+        *,
+        source_language_code: Optional[str] = None,
+        prefix: Optional[str] = None,
+        suffix: Optional[str] = None,
+        storage_type: Optional[Union[str, StorageInputType]] = None,
+        category_id: Optional[str] = None,
+        glossaries: Optional[List[TranslationGlossary]] = None,
+        **kwargs: Any
     ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:  # type: ignore
-        ...
+        """Begin translating the document(s) in your source container to your target container
+        in the given language. There are two ways to call this method:
+
+        1) To perform translation on documents from a single source container to a single target container, pass the
+        `source_url`, `target_url`, and `target_language_code` parameters including any optional keyword arguments.
+
+        2) To pass multiple inputs for translation (multiple sources or targets), pass the `inputs` parameter
+        as a list of :class:`~azure.ai.translation.document.DocumentTranslationInput`.
+
+        :param str source_url: The source SAS URL to the Azure Blob container containing the documents
+            to be translated. See the service documentation for the supported SAS permissions for accessing
+            source storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions
+        :param str target_url: The target SAS URL to the Azure Blob container where the translated documents
+            should be written. See the service documentation for the supported SAS permissions for accessing
+            target storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions
+        :param str target_language_code: This is the language you want your documents to be translated to.
+            See supported language codes here:
+            https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
+        :keyword str source_language_code: Language code for the source documents.
+            If none is specified, the source language will be auto-detected for each document.
+        :keyword str prefix: A case-sensitive prefix string to filter documents in the source path for
+            translation. For example, when using a Azure storage blob Uri, use the prefix to restrict
+            sub folders for translation.
+        :keyword str suffix: A case-sensitive suffix string to filter documents in the source path for
+            translation. This is most often use for file extensions.
+        :keyword storage_type: Storage type of the input documents source string. Possible values
+            include: "Folder", "File".
+        :paramtype storage_type: str or ~azure.ai.translation.document.StorageInputType
+        :keyword str category_id: Category / custom model ID for using custom translation.
+        :keyword glossaries: Glossaries to apply to translation.
+        :paramtype glossaries: list[~azure.ai.translation.document.TranslationGlossary]
+        :return: An instance of a DocumentTranslationLROPoller. Call `result()` on the poller
+            object to return a pageable of DocumentStatus. A DocumentStatus will be
+            returned for each translation on a document.
+        :rtype: DocumentTranslationLROPoller[ItemPaged[~azure.ai.translation.document.DocumentStatus]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @overload
     def begin_translation(
         self, inputs: List[DocumentTranslationInput], **kwargs: Any
     ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:  # type: ignore
-        ...
+        """Begin translating the document(s) in your source container to your target container
+        in the given language. There are two ways to call this method:
+
+        1) To perform translation on documents from a single source container to a single target container, pass the
+        `source_url`, `target_url`, and `target_language_code` parameters including any optional keyword arguments.
+
+        2) To pass multiple inputs for translation (multiple sources or targets), pass the `inputs` parameter
+        as a list of :class:`~azure.ai.translation.document.DocumentTranslationInput`.
+
+        For supported languages and document formats, see the service documentation:
+        https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
+
+        :param inputs: A list of translation inputs. Each individual input has a single
+            source URL to documents and can contain multiple TranslationTargets (one for each language)
+            for the destination to write translated documents.
+        :type inputs: List[~azure.ai.translation.document.DocumentTranslationInput]
+        :return: An instance of a DocumentTranslationLROPoller. Call `result()` on the poller
+            object to return a pageable of DocumentStatus. A DocumentStatus will be
+            returned for each translation on a document.
+        :rtype: DocumentTranslationLROPoller[ItemPaged[~azure.ai.translation.document.DocumentStatus]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @distributed_trace
     def begin_translation(
