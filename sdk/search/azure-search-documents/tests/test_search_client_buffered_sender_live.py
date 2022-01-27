@@ -4,19 +4,16 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from pydoc import doc
 import pytest
 import time
-
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchIndexingBufferedSender, SearchClient
-
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
-
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
 
-TIME_TO_SLEEP = 5
+TIME_TO_SLEEP = 3
+
 
 class TestSearchIndexingBufferedSender(AzureRecordedTestCase):
 
@@ -108,13 +105,10 @@ class TestSearchIndexingBufferedSender(AzureRecordedTestCase):
             time.sleep(TIME_TO_SLEEP)
 
         assert client.get_document_count() == doc_count
-
         with pytest.raises(HttpResponseError):
             client.get_document(key="1003")
-
         with pytest.raises(HttpResponseError):
             client.get_document(key="2")
-
         return doc_count
 
     def _test_merge_documents_existing(self, client, batch_client, doc_count):
