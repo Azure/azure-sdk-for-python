@@ -146,9 +146,14 @@ def get_authentication_policy(credential):
 
     return authentication_policy
 
-class _MetricsAdvisorClientBase:
+class _MetricsAdvisorSansIOClientBase:
+
     def __init__(
-        self, endpoint: str, credential: MetricsAdvisorKeyCredential, **kwargs: Any
+        self,
+        endpoint: str,
+        credential: MetricsAdvisorKeyCredential,
+        client_class,
+        **kwargs: Any
     ) -> None:
         try:
             if not endpoint.lower().startswith("http"):
@@ -159,11 +164,26 @@ class _MetricsAdvisorClientBase:
 
         self._endpoint = endpoint
         authentication_policy = get_authentication_policy(credential)
-        self._client = MetricsAdvisorClientGenerated(
+        self._client = client_class(
             endpoint=endpoint,
             credential=credential,  # type: ignore
             sdk_moniker=SDK_MONIKER,
             authentication_policy=authentication_policy,
+            **kwargs
+        )
+
+class _MetricsAdvisorClientBase(_MetricsAdvisorSansIOClientBase):
+
+    def __init__(
+        self,
+        endpoint: str,
+        credential: MetricsAdvisorKeyCredential,
+        **kwargs: Any
+    ) -> None:
+        super().__init__(
+            endpoint=endpoint,
+            credential=credential,
+            client_class=MetricsAdvisorClientGenerated,
             **kwargs
         )
 

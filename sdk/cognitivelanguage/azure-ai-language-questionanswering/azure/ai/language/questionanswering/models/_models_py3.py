@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -22,7 +22,7 @@ class AnswersFromTextOptions(msrest.serialization.Model):
     :ivar question: Required. User question to query against the given text records.
     :vartype question: str
     :ivar text_documents: Required. Text records to be searched for given question.
-    :vartype text_documents: list[str or ~azure.ai.language.questionanswering.models.TextDocument]
+    :vartype text_documents: list[~azure.ai.language.questionanswering.models.TextDocument]
     :ivar language: Language of the text records. This is BCP-47 representation of a language. For
      example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
      default.
@@ -38,22 +38,16 @@ class AnswersFromTextOptions(msrest.serialization.Model):
         "question": {"key": "question", "type": "str"},
         "text_documents": {"key": "records", "type": "[TextDocument]"},
         "language": {"key": "language", "type": "str"},
-        "string_index_type": {"key": "stringIndexType", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        question: str,
-        text_documents: List[Union[str, "TextDocument"]],
-        language: Optional[str] = None,
-        **kwargs
+        self, *, question: str, text_documents: List["TextDocument"], language: Optional[str] = None, **kwargs
     ):
         """
         :keyword question: Required. User question to query against the given text records.
         :paramtype question: str
         :keyword text_documents: Required. Text records to be searched for given question.
-        :paramtype text_documents: list[str or ~azure.ai.language.questionanswering.models.TextDocument]
+        :paramtype text_documents: list[~azure.ai.language.questionanswering.models.TextDocument]
         :keyword language: Language of the text records. This is BCP-47 representation of a language.
          For example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
          default.
@@ -63,7 +57,6 @@ class AnswersFromTextOptions(msrest.serialization.Model):
         self.question = question
         self.text_documents = text_documents
         self.language = language
-        self.string_index_type = "UnicodeCodePoint"
 
 
 class AnswersFromTextResult(msrest.serialization.Model):
@@ -102,8 +95,7 @@ class AnswersOptions(msrest.serialization.Model):
     :vartype confidence_threshold: float
     :ivar answer_context: Context object with previous QnA's information.
     :vartype answer_context: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerContext
-    :ivar ranker_kind: Type of ranker to be used. Possible
-     values include: "Default", "QuestionOnly".
+    :ivar ranker_kind: Type of ranker to be used.
     :vartype ranker_kind: str
     :ivar filters: Filter QnAs based on given metadata list and knowledge base sources.
     :vartype filters: ~azure.ai.language.questionanswering.models.QueryFilters
@@ -158,9 +150,9 @@ class AnswersOptions(msrest.serialization.Model):
         :keyword confidence_threshold: Minimum threshold score for answers, value ranges from 0 to 1.
         :paramtype confidence_threshold: float
         :keyword answer_context: Context object with previous QnA's information.
-        :paramtype answer_context: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerContext
-        :keyword ranker_kind: Type of ranker to be used. Possible
-         values include: "Default", "QuestionOnly".
+        :paramtype answer_context:
+         ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerContext
+        :keyword ranker_kind: Type of ranker to be used.
         :paramtype ranker_kind: str
         :keyword filters: Filter QnAs based on given metadata list and knowledge base sources.
         :paramtype filters: ~azure.ai.language.questionanswering.models.QueryFilters
@@ -608,9 +600,8 @@ class MetadataFilter(msrest.serialization.Model):
     """Find QnAs that are associated with the given list of metadata.
 
     :ivar metadata:
-    :vartype metadata: list[tuple[str, str]]
-    :ivar logical_operation: Operation used to join metadata filters. Possible values include:
-     "AND", "OR".
+    :vartype metadata: list[any]
+    :ivar logical_operation: Operation used to join metadata filters.
     :vartype logical_operation: str
     """
 
@@ -619,14 +610,11 @@ class MetadataFilter(msrest.serialization.Model):
         "logical_operation": {"key": "logicalOperation", "type": "str"},
     }
 
-    def __init__(
-        self, *, metadata: Optional[List[Tuple[str, str]]] = None, logical_operation: Optional[str] = None, **kwargs
-    ):
+    def __init__(self, *, metadata: Optional[List[Any]] = None, logical_operation: Optional[str] = None, **kwargs):
         """
         :keyword metadata:
-        :paramtype metadata: list[tuple[str, str]]
-        :keyword logical_operation: Operation used to join metadata filters. Possible values include:
-         "AND", "OR".
+        :paramtype metadata: list[any]
+        :keyword logical_operation: Operation used to join metadata filters.
         :paramtype logical_operation: str
         """
         super(MetadataFilter, self).__init__(**kwargs)
@@ -643,7 +631,6 @@ class QueryFilters(msrest.serialization.Model):
      knowledge base.
     :vartype source_filter: list[str]
     :ivar logical_operation: Logical operation used to join metadata filter with source filter.
-     Possible values include: "AND", "OR".
     :vartype logical_operation: str
     """
 
@@ -668,7 +655,6 @@ class QueryFilters(msrest.serialization.Model):
          knowledge base.
         :paramtype source_filter: list[str]
         :keyword logical_operation: Logical operation used to join metadata filter with source filter.
-         Possible values include: "AND", "OR".
         :paramtype logical_operation: str
         """
         super(QueryFilters, self).__init__(**kwargs)

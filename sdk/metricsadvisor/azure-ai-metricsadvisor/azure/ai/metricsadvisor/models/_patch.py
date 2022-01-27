@@ -910,7 +910,7 @@ class AzureDataExplorerDataFeedSource(DataFeed):
             )[:1024]
         )
 
-class AzureTableDataFeedSource(AzureTableDataFeedSourceGenerated, DataFeed):
+class AzureTableDataFeedSource(DataFeed):
     """AzureTableDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -951,7 +951,7 @@ class AzureTableDataFeedSource(AzureTableDataFeedSourceGenerated, DataFeed):
             )[:1024]
         )
 
-class AzureEventHubsDataFeedSource(AzureEventHubsDataFeedSourceGenerated, DataFeed):
+class AzureEventHubsDataFeedSource(DataFeed):
     """AzureEventHubsDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -989,7 +989,7 @@ class AzureEventHubsDataFeedSource(AzureEventHubsDataFeedSourceGenerated, DataFe
             )[:1024]
         )
 
-class InfluxDbDataFeedSource(InfluxDbDataFeedSourceGenerated, DataFeed):
+class InfluxDbDataFeedSource(DataFeed):
     """InfluxDbDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1036,7 +1036,7 @@ class InfluxDbDataFeedSource(InfluxDbDataFeedSourceGenerated, DataFeed):
             )[:1024]
         )
 
-class MySqlDataFeedSource(MySqlDataFeedSourceGenerated, DataFeedSource):
+class MySqlDataFeedSource(DataFeedSource):
     """MySqlDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1072,7 +1072,7 @@ class MySqlDataFeedSource(MySqlDataFeedSourceGenerated, DataFeedSource):
             )[:1024]
         )
 
-class PostgreSqlDataFeedSource(PostgreSqlDataFeedSourceGenerated, DataFeedSource):
+class PostgreSqlDataFeedSource(DataFeedSource):
     """PostgreSqlDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1108,7 +1108,7 @@ class PostgreSqlDataFeedSource(PostgreSqlDataFeedSourceGenerated, DataFeedSource
             )[:1024]
         )
 
-class SqlServerDataFeedSource(SqlServerDataFeedSourceGenerated, DataFeedSource):
+class SqlServerDataFeedSource(DataFeedSource):
     """SqlServerDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values

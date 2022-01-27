@@ -9,10 +9,9 @@ import six
 import datetime
 from msrest import Serializer
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.exceptions import HttpResponseError
 from ..models import *
 
-from typing import TYPE_CHECKING, Union, List, Any, Dict, cast, overload
+from typing import TYPE_CHECKING, Union, List, Any, Dict, cast
 from azure.core.paging import ItemPaged
 if TYPE_CHECKING:
     from ..models._patch import DataFeedSourceUnion
@@ -228,7 +227,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         **kwargs  # type: Any
     ):  # type: (...) -> AnomalyAlertConfiguration
         cross_metrics_operator = kwargs.pop("cross_metrics_operator", None)
-        response_headers = super().create_anomaly_alerting_configuration(  # type: ignore
+        response_headers = super().create_alert_configuration(  # type: ignore
             AnomalyAlertConfiguration(
                 name=name,
                 metric_alert_configurations=metric_alert_configurations,
