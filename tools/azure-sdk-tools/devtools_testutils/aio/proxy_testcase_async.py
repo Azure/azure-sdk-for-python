@@ -69,15 +69,14 @@ def recorded_by_proxy_async(test_func):
         test_output = None
         try:
             try:
-                # tests don't record successfully unless test_output is a dictionary
-                test_output = await test_func(*args, variables=variables, **trimmed_kwargs) or {}
+                test_output = await test_func(*args, variables=variables, **trimmed_kwargs)
             except TypeError:
                 logger = logging.getLogger()
                 logger.info(
                     "This test can't accept variables as input. The test method should accept `**kwargs` and/or a "
                     "`variables` parameter to make use of recorded test variables."
                 )
-                test_output = await test_func(*args, **trimmed_kwargs) or {}
+                test_output = await test_func(*args, **trimmed_kwargs)
         except ResourceNotFoundError as error:
             error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
             message = error_body.get("message") or error_body.get("Message")
