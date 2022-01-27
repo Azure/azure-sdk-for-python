@@ -139,7 +139,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         }
 
         self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
-        print("initial consistency level: {}".format(consistency_level))
 
         # Keeps the latest response headers from server.
         self.last_response_headers = None
@@ -242,29 +241,33 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 **self._setup_kwargs)
             self._setup_kwargs['database_account'] = database_account
             await self._global_endpoint_manager.force_refresh(self._setup_kwargs['database_account'])
-            self._check_and_set_consistency_level(database_account, user_defined_consistency)
 
-    def _check_and_set_consistency_level(
+            # Use database_account if no consistency passed in to verify consistency level to be used
+            if user_defined_consistency is None:
+                self._set_account_consistency_level(database_account)
+
+    def _set_account_consistency_level(
             self,
             database_account: ClassType,
-            consistency_level: Optional[str] = None,
     ) -> None:
         """Checks if consistency level param was passed in by user and sets it to that value or to the account default.
         :param database_account: The database account to be used to check consistency levels
         :type database_account: ~azure.cosmos.documents.DatabaseAccount
-        :param consistency_level: The consistency level passed in by the user for the client
-        :type consistency_level: Optional[str]
         :rtype: None
         """
-        if consistency_level is None:
-            # If no consistency level was passed in by user, set to default level present in account
-            user_consistency_policy = database_account.ConsistencyPolicy
-            consistency_level = user_consistency_policy.get(constants._Constants.DefaultConsistencyLevel)
-            if consistency_level is documents.ConsistencyLevel.Session:
-                # If None was passed in but DatabaseAccount has Session consistency level, start a Session
-                self.session = _session.Session()
-        # Set header to be used as final consistency for client
+        # Set to default level present in account
+        user_consistency_policy = database_account.ConsistencyPolicy
+        consistency_level = user_consistency_policy.get(constants._Constants.DefaultConsistencyLevel)
+
         self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
+
+        if consistency_level == documents.ConsistencyLevel.Session:
+            # create a session - this is maintained only if the default consistency level
+            # on the client is set to session, or if the user explicitly sets it as a property
+            # via setter
+            self.session = _session.Session(self.url_connection)
+        else:
+            self.session = None  # type: ignore
 
 
     def _GetDatabaseIdWithPathForUser(self, database_link, user):  # pylint: disable=no-self-use
