@@ -1,7 +1,0 @@
-[packaging]
-auto_update = false
-package_name = "azure-communication-siprouting
-package_pprint_name = "Communication SIP routing"
-package_doc_id = ""
-is_stable = false
-is_arm = false
