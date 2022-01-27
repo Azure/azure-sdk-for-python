@@ -763,8 +763,8 @@ class StorageDirectoryTest(AsyncStorageTestCase):
         source_directory = await share_client.create_directory('dir1')
 
         file_attributes = NTFSAttributes(read_only=True, directory=True)
-        file_creation_time = datetime.utcnow()
-        file_last_write_time = datetime.utcnow()
+        file_creation_time = datetime(2022, 1, 26, 10, 9, 30, 500000)
+        file_last_write_time = datetime(2022, 1, 26, 10, 14, 30, 500000)
 
         # Act
         new_directory = await source_directory.rename_directory(
