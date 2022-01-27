@@ -7,6 +7,11 @@ trigger:
     exclude:
     - '*'
 
+pr:
+  branches:
+    exclude:
+    - '*'
+
 schedules:
   - cron: "0 16 * * *"
     displayName: SDK Issue Statistics
