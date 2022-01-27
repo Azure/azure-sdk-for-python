@@ -23,6 +23,7 @@ resource storageService 'Microsoft.Storage/storageAccounts@2021-06-01' = {
   name: storageAccountName
   location: location
   sku: {
+    /* cspell:disable-next-line */
     name: 'Standard_RAGRS'
   }
   kind: 'StorageV2'
