@@ -125,6 +125,9 @@ class DocumentTranslationClient:
         2) To pass multiple inputs for translation (multiple sources or targets), pass the `inputs` parameter
         as a list of :class:`~azure.ai.translation.document.DocumentTranslationInput`.
 
+        For supported languages and document formats, see the service documentation:
+        https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview
+
         :param str source_url: The source SAS URL to the Azure Blob container containing the documents
             to be translated. See the service documentation for the supported SAS permissions for accessing
             source storage containers/blobs: https://aka.ms/azsdk/documenttranslation/sas-permissions
