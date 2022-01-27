@@ -447,13 +447,13 @@ import os
 
 URL = os.environ['ACCOUNT_URI']
 KEY = os.environ['ACCOUNT_KEY']
+DATABASE_NAME = 'testDatabase'
+CONTAINER_NAME = 'products'    
 
-async def main():
+async def create_products():
     client = CosmosClient(URL, credential=KEY)
     await client.__aenter__()
-    DATABASE_NAME = 'testDatabase'
     database = client.get_database_client(DATABASE_NAME)
-    CONTAINER_NAME = 'products'
     container = database.get_container_client(CONTAINER_NAME)
     for i in range(10):
         await container.upsert_item({
@@ -476,8 +476,8 @@ KEY = os.environ['ACCOUNT_KEY']
 DATABASE_NAME = 'testDatabase'
 CONTAINER_NAME = 'products'
 
-async def main():
-    async with CosmosClient(URL, credential=KEY) as client: # the with statement will automatically warm up, initialize, and close the async client
+async def create_products():
+    async with CosmosClient(URL, credential=KEY) as client: # the with statement will automatically warm up, initialize,# and close the async client
         database = client.get_database_client(DATABASE_NAME)
         container = database.get_container_client(CONTAINER_NAME)
         for i in range(10):
