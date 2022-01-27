@@ -17,7 +17,9 @@ from typing import (
     List,
     TYPE_CHECKING,
     cast,
+    overload
 )
+import warnings
 
 import six
 
@@ -110,10 +112,29 @@ class EventData(object):
 
     """
 
-    def __init__(self, body=None):
-        # type: (Union[str, bytes, List[AnyStr]]) -> None
+    @overload
+    def __init__(self, *, data: bytes, content_type: str, **kwargs):
+        ...
+
+    @overload
+    def __init__(self, body: Optional[Union[str, bytes, List[AnyStr]]] = None) -> None:
+        ...
+
+    def __init__(
+        self,
+        body: Optional[Union[str, bytes, List[AnyStr]]]=None,
+        *,
+        data: bytes = None,
+        content_type: str = None
+    ) -> None:
         self._last_enqueued_event_properties = {}  # type: Dict[str, Any]
         self._sys_properties = None  # type: Optional[Dict[bytes, Any]]
+
+        if data:
+            if body:
+                warnings.warn("`data` and `body` passed in. `body` will be overwritten by `data`.")
+            body = data
+
         if body is None:
             raise ValueError("EventData cannot be None.")
 
@@ -125,7 +146,7 @@ class EventData(object):
         self._raw_amqp_message.header = AmqpMessageHeader()
         self._raw_amqp_message.properties = AmqpMessageProperties()
         self.message_id = None
-        self.content_type = None
+        self.content_type = content_type
         self.correlation_id = None
 
     def __repr__(self):
@@ -179,6 +200,12 @@ class EventData(object):
             pass
         event_str += " }"
         return event_str
+
+    def __data__(self):
+        return bytes(self.body_as_str(), encoding='UTF-8')
+
+    def __content_type__(self):
+        return self.content_type
 
     @classmethod
     def _from_message(cls, message, raw_amqp_message=None):
@@ -356,8 +383,7 @@ class EventData(object):
         """
         return self._raw_amqp_message.body_type
 
-    def body_as_str(self, encoding="UTF-8"):
-        # type: (str) -> str
+    def body_as_str(self, encoding="UTF-8") -> str:
         """The content of the event as a string, if the data is of a compatible type.
 
         :param encoding: The encoding to use for decoding event data.
@@ -365,6 +391,7 @@ class EventData(object):
         :rtype: str
         """
         data = self.body
+        encoding="UTF-8"
         try:
             if self.body_type != AmqpMessageBodyType.DATA:
                 return self._decode_non_data_body_as_str(encoding=encoding)
