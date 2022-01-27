@@ -405,7 +405,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         access_conditions = get_dest_access_conditions(kwargs.pop('lease', None))
 
         try:
-            new_directory_client._client.directory.rename(
+            new_directory_client._client.directory.rename(  # pylint: disable=protected-access
                 self.url,
                 timeout=timeout,
                 headers=headers,
