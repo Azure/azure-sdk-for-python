@@ -21,8 +21,7 @@ import pytest
 
 SecretsPreparer = functools.partial(AsyncSecretsTestCaseClientPrepaper, is_async=True)
 all_api_versions = get_decorator()
-#logging_enabled = get_decorator(is_async=True, logging_enable=True)
-#logging_disabled = get_decorator(is_async=True, logging_enable=False)
+list_test_size = 7
 
 
 # used for logging tests
@@ -129,13 +128,14 @@ class TestKeyVaultSecret(KeyVaultTestCase):
             # delete secret
             deleted = await client.delete_secret(updated.name)
             assert deleted is not None
+            return dict()
 
-    @pytest.mark.asyncio
+    @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
     @SecretsPreparer()
     @recorded_by_proxy_async
     async def test_secret_list(self, client, **kwargs):
-        max_secrets = self.list_test_size
+        max_secrets = list_test_size
         expected = {}
 
         # create many secrets
@@ -150,34 +150,39 @@ class TestKeyVaultSecret(KeyVaultTestCase):
         # list secrets
         result = client.list_properties_of_secrets(max_page_size=max_secrets - 1)
         await self._validate_secret_list(result, expected)
+        return dict()
 
-    @pytest.mark.asyncio
+    @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
     @SecretsPreparer()
     @recorded_by_proxy_async
     async def test_list_deleted_secrets(self, client, **kwargs):
         expected = {}
 
-        # create secrets
-        for i in range(self.list_test_size):
-            secret_name = self.get_resource_name("secret{}".format(i))
-            secret_value = "value{}".format(i)
-            expected[secret_name] = await client.set_secret(secret_name, secret_value)
+        async with client:
+            # create secrets
+            for i in range(list_test_size):
+                secret_name = self.get_resource_name("secret{}".format(i))
+                secret_value = "value{}".format(i)
+                expected[secret_name] = await client.set_secret(secret_name, secret_value)
 
-        # delete them
-        for secret_name in expected.keys():
-            await client.delete_secret(secret_name)
+            # delete them
+            for secret_name in expected.keys():
+                await client.delete_secret(secret_name)
 
-        # validate list deleted secrets with attributes
-        async for deleted_secret in client.list_deleted_secrets():
-            assert deleted_secret.deleted_date is not None
-            assert deleted_secret.scheduled_purge_date is not None
-            assert deleted_secret.recovery_id is not None
-            if deleted_secret.name in expected:
-                expected_secret = expected[deleted_secret.name]
-                self._assert_secret_attributes_equal(expected_secret.properties, deleted_secret.properties)
+            # validate list deleted secrets with attributes
+            async for deleted_secret in client.list_deleted_secrets():
+                assert deleted_secret.deleted_date is not None
+                assert deleted_secret.scheduled_purge_date is not None
+                assert deleted_secret.recovery_id is not None
+                if deleted_secret.name in expected:
+                    expected_secret = expected[deleted_secret.name]
+                    self._assert_secret_attributes_equal(expected_secret.properties, deleted_secret.properties)
+        
+        return dict()
+                
 
-    @pytest.mark.asyncio
+    @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
     @SecretsPreparer()
     @recorded_by_proxy_async
@@ -185,182 +190,192 @@ class TestKeyVaultSecret(KeyVaultTestCase):
         secret_name = self.get_resource_name("sec")
         secret_value = "secVal"
 
-        max_secrets = self.list_test_size
+        max_secrets = list_test_size
         expected = {}
 
-        # create many secret versions
-        for _ in range(0, max_secrets):
-            secret = None
-            while not secret:
-                secret = await client.set_secret(secret_name, secret_value)
-                expected[secret.id] = secret
+        async with client:
+            # create many secret versions
+            for _ in range(0, max_secrets):
+                secret = None
+                while not secret:
+                    secret = await client.set_secret(secret_name, secret_value)
+                    expected[secret.id] = secret
 
-        # list secret versions
-        result = client.list_properties_of_secret_versions(secret_name, max_page_size=max_secrets - 1)
+            # list secret versions
+            result = client.list_properties_of_secret_versions(secret_name, max_page_size=max_secrets - 1)
 
-        # validate list secret versions with attributes
-        async for secret in result:
-            if secret.id in expected.keys():
-                expected_secret = expected[secret.id]
-                del expected[secret.id]
-                self._assert_secret_attributes_equal(expected_secret.properties, secret)
-        assert len(expected) == 0
+            # validate list secret versions with attributes
+            async for secret in result:
+                if secret.id in expected.keys():
+                    expected_secret = expected[secret.id]
+                    del expected[secret.id]
+                    self._assert_secret_attributes_equal(expected_secret.properties, secret)
+            assert len(expected) == 0
 
-    @pytest.mark.asyncio
+        return dict()
+
+    @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
     @SecretsPreparer()
     @recorded_by_proxy_async
-    @pytest.mark.asyncio
     async def test_backup_restore(self, client, **kwargs):
         secret_name = self.get_resource_name("secbak")
         secret_value = "secVal"
 
-        # create secret
-        created_bundle = await client.set_secret(secret_name, secret_value)
+        async with client:
+            # create secret
+            created_bundle = await client.set_secret(secret_name, secret_value)
 
-        # backup secret
-        secret_backup = await client.backup_secret(created_bundle.name)
-        assert secret_backup is not None, "secret_backup"
+            # backup secret
+            secret_backup = await client.backup_secret(created_bundle.name)
+            assert secret_backup is not None, "secret_backup"
 
-        # delete secret
-        await client.delete_secret(created_bundle.name)
+            # delete secret
+            await client.delete_secret(created_bundle.name)
 
-        # purge secret
-        await client.purge_deleted_secret(created_bundle.name)
+            # purge secret
+            await client.purge_deleted_secret(created_bundle.name)
 
-        # restore secret
-        restore_function = functools.partial(client.restore_secret_backup, secret_backup)
-        restored_secret = await self._poll_until_no_exception(restore_function, expected_exception=ResourceExistsError)
-        self._assert_secret_attributes_equal(created_bundle.properties, restored_secret)
+            # restore secret
+            restore_function = functools.partial(client.restore_secret_backup, secret_backup)
+            restored_secret = await self._poll_until_no_exception(restore_function, expected_exception=ResourceExistsError)
+            self._assert_secret_attributes_equal(created_bundle.properties, restored_secret)
 
-    @pytest.mark.asyncio
+        return dict()
+
+    @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
     @SecretsPreparer()
     @recorded_by_proxy_async
     async def test_recover(self, client, **kwargs):
         secrets = {}
 
-        # create secrets to recover
-        for i in range(self.list_test_size):
-            secret_name = self.get_resource_name("secret{}".format(i))
-            secret_value = "value{}".format(i)
-            secrets[secret_name] = await client.set_secret(secret_name, secret_value)
+        async with client:
+            # create secrets to recover
+            for i in range(list_test_size):
+                secret_name = self.get_resource_name("secret{}".format(i))
+                secret_value = "value{}".format(i)
+                secrets[secret_name] = await client.set_secret(secret_name, secret_value)
 
-        # delete all secrets
-        for secret_name in secrets.keys():
-            await client.delete_secret(secret_name)
+            # delete all secrets
+            for secret_name in secrets.keys():
+                await client.delete_secret(secret_name)
 
-        # validate all our deleted secrets are returned by list_deleted_secrets
-        async for deleted_secret in client.list_deleted_secrets():
-            if deleted_secret.name in secrets:
-                secrets.pop(deleted_secret.name)
-        assert len(secrets.keys()) == 0
+            # validate all our deleted secrets are returned by list_deleted_secrets
+            async for deleted_secret in client.list_deleted_secrets():
+                if deleted_secret.name in secrets:
+                    secrets.pop(deleted_secret.name)
+            assert len(secrets.keys()) == 0
 
-        # recover select secrets
-        for secret_name in secrets.keys():
-            await client.recover_deleted_secret(secret_name)
+            # recover select secrets
+            for secret_name in secrets.keys():
+                await client.recover_deleted_secret(secret_name)
 
-        # validate the recovered secrets exist
-        for secret in secrets.keys():
-            get_function = functools.partial(client.get_secret, secret)
-            await self._poll_until_no_exception(get_function, expected_exception=ResourceNotFoundError)
+            # validate the recovered secrets exist
+            for secret in secrets.keys():
+                get_function = functools.partial(client.get_secret, secret)
+                await self._poll_until_no_exception(get_function, expected_exception=ResourceNotFoundError)
 
-    @pytest.mark.asyncio
+        return dict()
+
+    @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
     @SecretsPreparer()
     @recorded_by_proxy_async
     async def test_purge(self, client, **kwargs):
         secrets = {}
+        async with client:
+            # create secrets to purge
+            for i in range(list_test_size):
+                secret_name = self.get_resource_name("secret{}".format(i))
+                secret_value = "value{}".format(i)
+                secrets[secret_name] = await client.set_secret(secret_name, secret_value)
 
-        # create secrets to purge
-        for i in range(self.list_test_size):
-            secret_name = self.get_resource_name("secret{}".format(i))
-            secret_value = "value{}".format(i)
-            secrets[secret_name] = await client.set_secret(secret_name, secret_value)
+            # delete all secrets
+            for secret_name in secrets.keys():
+                await client.delete_secret(secret_name)
 
-        # delete all secrets
-        for secret_name in secrets.keys():
-            await client.delete_secret(secret_name)
+            # validate all our deleted secrets are returned by list_deleted_secrets
+            async for deleted_secret in client.list_deleted_secrets():
+                if deleted_secret.name in secrets:
+                    secrets.pop(deleted_secret.name)
+            assert len(secrets.keys()) == 0
 
-        # validate all our deleted secrets are returned by list_deleted_secrets
-        async for deleted_secret in client.list_deleted_secrets():
-            if deleted_secret.name in secrets:
-                secrets.pop(deleted_secret.name)
-        assert len(secrets.keys()) == 0
+            # purge secrets
+            for secret_name in secrets.keys():
+                await client.purge_deleted_secret(secret_name)
 
-        # purge secrets
-        for secret_name in secrets.keys():
-            await client.purge_deleted_secret(secret_name)
+        return dict()
 
     
-    @pytest.mark.asyncio
+    @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
-    @SecretsPreparer()
+    @SecretsPreparer(logging_enable = True)
     @recorded_by_proxy_async
     async def test_logging_enabled(self, client, **kwargs):
         mock_handler = MockHandler()
-        kwargs.update({'logging_enable': True})
+        #kwargs.update({'logging_enable': True})
         logger = logging.getLogger("azure")
         logger.addHandler(mock_handler)
         logger.setLevel(logging.DEBUG)
 
         secret_name = self.get_resource_name("secret-name")
-        await client.set_secret(secret_name, "secret-value")
 
-        for message in mock_handler.messages:
-            if message.levelname == "DEBUG" and message.funcName == "on_request":
-                # parts of the request are logged on new lines in a single message
-                if "'/n" in message.message:
+        async with client:
+            await client.set_secret(secret_name, "secret-value")
+
+            for message in mock_handler.messages:
+                if message.levelname == "DEBUG" and message.funcName == "on_request":
+                    # parts of the request are logged on new lines in a single message
                     request_sections = message.message.split("/n")
-                else:
-                    request_sections = message.message.split("\n")
-                for section in request_sections:
-                    try:
-                        # the body of the request should be JSON
-                        body = json.loads(section)
-                        if body["value"] == "secret-value":
-                            mock_handler.close()
-                            return
-                    except (ValueError, KeyError):
-                        # this means the request section is not JSON
-                        pass
+                    for section in request_sections:
+                        try:
+                            # the body of the request should be JSON
+                            body = json.loads(section)
+                            if body["value"] == "secret-value":
+                                mock_handler.close()
+                                return dict()
+                        except (ValueError, KeyError):
+                            # this means the request section is not JSON
+                            pass
 
-        mock_handler.close()
-        assert False, "Expected request body wasn't logged"
+            mock_handler.close()
+            assert False, "Expected request body wasn't logged"
+        return dict()
 
-    @pytest.mark.asyncio
+    @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
-    @SecretsPreparer()
+    @SecretsPreparer(logging_enable=False)
     @recorded_by_proxy_async
     async def test_logging_disabled(self, client, **kwargs):
         mock_handler = MockHandler()
-        kwargs.update({'logging_enable': False})
+        #kwargs.update({'logging_enable': False})
         logger = logging.getLogger("azure")
         logger.addHandler(mock_handler)
         logger.setLevel(logging.DEBUG)
 
-        secret_name = self.get_resource_name("secret-name")
-        await client.set_secret(secret_name, "secret-value")
 
-        for message in mock_handler.messages:
-            if message.levelname == "DEBUG" and message.funcName == "on_request":
-                # parts of the request are logged on new lines in a single message
-                if "'/n" in message.message:
+        secret_name = self.get_resource_name("secret-name")
+        async with client:
+            await client.set_secret(secret_name, "secret-value")
+
+            for message in mock_handler.messages:
+                if message.levelname == "DEBUG" and message.funcName == "on_request":
+                    # parts of the request are logged on new lines in a single message
                     request_sections = message.message.split("/n")
-                else:
-                    request_sections = message.message.split("\n")
-                for section in request_sections:
-                    try:
-                        # the body of the request should be JSON
-                        body = json.loads(section)
-                        if body["value"] == "secret-value":
-                            mock_handler.close()
-                            assert False, "Client request body was logged"
-                    except (ValueError, KeyError):
-                        # this means the message is not JSON or has no kty property
-                        pass
+                    for section in request_sections:
+                        try:
+                            # the body of the request should be JSON
+                            body = json.loads(section)
+                            if body["value"] == "secret-value":
+                                mock_handler.close()
+                                assert False, "Client request body was logged"
+                        except (ValueError, KeyError):
+                            # this means the message is not JSON or has no kty property
+                            pass
 
         mock_handler.close()
+        return dict()
 
 
 def test_service_headers_allowed_in_logs():

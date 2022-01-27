@@ -22,11 +22,14 @@ class AsyncSecretsTestCaseClientPrepaper(AzureRecordedTestCase):
     def __init__(self, **kwargs) -> None:
         self.azure_keyvault_url = os.getenv("AZURE_KEYVAULT_URL", "https://vaultname.vault.azure.net")
         self.is_async = kwargs.pop("is_async", False)
+        self.is_logging_enabled = kwargs.pop("logging_enable", True)
 
     def __call__(self, fn):
         async def _preparer(test_class, api_version, **kwargs):
             self._skip_if_not_configured(api_version)
-            client = self.create_client(self.azure_keyvault_url)
+            if not self.is_logging_enabled:
+                kwargs.update({'logging_enable':False})
+            client = self.create_client(self.azure_keyvault_url, api_version=api_version,**kwargs)
             await fn(test_class, client)
         return _preparer
 
