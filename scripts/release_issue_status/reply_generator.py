@@ -52,32 +52,17 @@ def get_latest_pr_from_readme(rest_repo, link_dict):
     return latest_pr_number_int[-1]
 
 
-def reply_owner(assigner_issue, reply_content):
-    assigner_issue.create_comment(reply_content)
-    user_tips = 'Tips: If you have special needs for release date or other things, please let us know. Otherwise we will release it ASAP after your check.'
-    assigner_issue.create_comment(user_tips)
-
-
-
-def get_reply_and_sdk_number_from_readme(rest_repo, link_dict, item):
-    pass
-
-
-def begin_reply_generate(item, rest_repo, readme_link, sdk_repo, pipeline_url, assigner_repo):
+def begin_reply_generate(item, rest_repo, readme_link, pipeline_url):
     global issue_object_rg
     issue_object_rg = item.issue_object
     link_dict = get_links(readme_link)
     labels = item.labels
     whether_change_readme = readme_comparison(rest_repo, link_dict, labels)
 
-    spec_readme = readme_link
-    print("************")
-    print(spec_readme)
-
     if not whether_change_readme:
         res_run = run_pipeline(issue_link=issue_object_rg.html_url,
                                pipeline_url=pipeline_url,
-                               spec_readme=spec_readme
+                               spec_readme=readme_link
                                )
         if res_run:
             logging.info(f'{issue_object_rg.number} run pipeline successfully')
