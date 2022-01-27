@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 
 import pytest
-
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents.aio import SearchClient
 from devtools_testutils.aio import recorded_by_proxy_async

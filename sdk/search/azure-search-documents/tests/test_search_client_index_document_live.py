@@ -6,12 +6,9 @@
 
 import pytest
 import time
-
 from azure.core.exceptions import HttpResponseError
 from azure.search.documents import SearchClient
-
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
-
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
 
 TIME_TO_SLEEP = 3
@@ -33,21 +30,21 @@ class TestSearchClientIndexDocument(AzureRecordedTestCase):
         doc_count = self._test_merge_or_upload_documents(client, doc_count)
 
     def _test_upload_documents_new(self, client, doc_count):
-        DOCUMENTS = [
+        docs = [
             {"hotelId": "1000", "rating": 5, "rooms": [], "hotelName": "Azure Inn"},
             {"hotelId": "1001", "rating": 4, "rooms": [], "hotelName": "Redmond Hotel"},
         ]
-        results = client.upload_documents(DOCUMENTS)
-        assert len(results) == len(DOCUMENTS)
+        results = client.upload_documents(docs)
+        assert len(results) == len(docs)
         assert set(x.status_code for x in results) == {201}
-        doc_count += len(DOCUMENTS)
+        doc_count += len(docs)
 
         # There can be some lag before a document is searchable
         if self.is_live:
             time.sleep(TIME_TO_SLEEP)
 
         assert client.get_document_count() == doc_count
-        for doc in DOCUMENTS:
+        for doc in docs:
             result = client.get_document(key=doc["hotelId"])
             assert result["hotelId"] == doc["hotelId"]
             assert result["hotelName"] == doc["hotelName"]
