@@ -180,7 +180,7 @@ class CosmosClient(object):
         return self.client_connection.pipeline_client.__exit__(*args)
 
     @classmethod
-    def from_connection_string(cls, conn_str, credential=None, consistency_level="Session", **kwargs):
+    def from_connection_string(cls, conn_str, credential=None, consistency_level=None, **kwargs):
         # type: (str, Optional[Any], str, Any) -> CosmosClient
         """Create a CosmosClient instance from a connection string.
 
@@ -191,8 +191,8 @@ class CosmosClient(object):
         :param credential: Alternative credentials to use instead of the key
             provided in the connection string.
         :type credential: str or dict(str, str)
-        :param str consistency_level:
-            Consistency level to use for the session. The default value is "Session".
+        :param Optional[str] consistency_level:
+            Consistency level to use for the session. The default value is None (Account level).
         """
         settings = _parse_connection_str(conn_str, credential)
         return cls(

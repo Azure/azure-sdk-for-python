@@ -140,7 +140,7 @@ class CosmosClient(object):
         await self.__aexit__()
 
     @classmethod
-    def from_connection_string(cls, conn_str, credential=None, consistency_level="Session", **kwargs):
+    def from_connection_string(cls, conn_str, credential=None, consistency_level=None, **kwargs):
         # type: (str, Optional[Union[str, Dict[str, str]]], str, Any) -> CosmosClient
         """Create a CosmosClient instance from a connection string.
 
@@ -154,8 +154,8 @@ class CosmosClient(object):
         :type credential: str or Dict[str, str]
         :param conn_str: The connection string.
         :type conn_str: str
-        :param consistency_level: Consistency level to use for the session. The default value is "Session".
-        :type consistency_level: str
+        :param consistency_level: Consistency level to use for the session. The default value is None (Account level).
+        :type consistency_level: Optional[str]
         """
         settings = _parse_connection_str(conn_str, credential)
         return cls(
