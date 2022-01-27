@@ -6,11 +6,10 @@
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "Content-Length": "226",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "41f8e818-7fa8-11ec-a0d9-74c63bed1137"
+        "x-ms-client-request-id": "c573f709-7fae-11ec-88e3-74c63bed1137"
       },
       "RequestBody": {
         "name": "create",
@@ -27,20 +26,20 @@
         "Cache-Control": "no-cache",
         "Content-Length": "400",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 19:35:16 GMT",
-        "elapsed-time": "38",
-        "ETag": "W/\u00220x8D9E1CC252B3698\u0022",
+        "Date": "Thu, 27 Jan 2022 20:21:56 GMT",
+        "elapsed-time": "35",
+        "ETag": "W/\u00220x8D9E1D2A9F06325\u0022",
         "Expires": "-1",
         "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027create\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "41f8e818-7fa8-11ec-a0d9-74c63bed1137",
+        "request-id": "c573f709-7fae-11ec-88e3-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#datasources/$entity",
-        "@odata.etag": "\u00220x8D9E1CC252B3698\u0022",
+        "@odata.etag": "\u00220x8D9E1D2A9F06325\u0022",
         "name": "create",
         "description": null,
         "type": "azureblob",
@@ -64,11 +63,10 @@
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "Content-Length": "226",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "42659d80-7fa8-11ec-9918-74c63bed1137"
+        "x-ms-client-request-id": "c5d2c381-7fae-11ec-87ca-74c63bed1137"
       },
       "RequestBody": {
         "name": "delete",
@@ -85,20 +83,20 @@
         "Cache-Control": "no-cache",
         "Content-Length": "400",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 19:35:16 GMT",
-        "elapsed-time": "55",
-        "ETag": "W/\u00220x8D9E1CC254DFBC4\u0022",
+        "Date": "Thu, 27 Jan 2022 20:21:56 GMT",
+        "elapsed-time": "35",
+        "ETag": "W/\u00220x8D9E1D2AA0965AC\u0022",
         "Expires": "-1",
         "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027delete\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "42659d80-7fa8-11ec-9918-74c63bed1137",
+        "request-id": "c5d2c381-7fae-11ec-87ca-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#datasources/$entity",
-        "@odata.etag": "\u00220x8D9E1CC254DFBC4\u0022",
+        "@odata.etag": "\u00220x8D9E1D2AA0965AC\u0022",
         "name": "delete",
         "description": null,
         "type": "azureblob",
@@ -122,9 +120,8 @@
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "42826a5b-7fa8-11ec-a4c3-74c63bed1137"
+        "x-ms-client-request-id": "c5e914d7-7fae-11ec-85ff-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -133,13 +130,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "710",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 19:35:16 GMT",
-        "elapsed-time": "28",
+        "Date": "Thu, 27 Jan 2022 20:21:56 GMT",
+        "elapsed-time": "17",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "42826a5b-7fa8-11ec-a4c3-74c63bed1137",
+        "request-id": "c5e914d7-7fae-11ec-85ff-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -147,7 +144,7 @@
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#datasources",
         "value": [
           {
-            "@odata.etag": "\u00220x8D9E1CC252B3698\u0022",
+            "@odata.etag": "\u00220x8D9E1D2A9F06325\u0022",
             "name": "create",
             "description": null,
             "type": "azureblob",
@@ -165,7 +162,7 @@
             "identity": null
           },
           {
-            "@odata.etag": "\u00220x8D9E1CC254DFBC4\u0022",
+            "@odata.etag": "\u00220x8D9E1D2AA0965AC\u0022",
             "name": "delete",
             "description": null,
             "type": "azureblob",
@@ -191,20 +188,19 @@
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "429a349b-7fa8-11ec-bd72-74c63bed1137"
+        "x-ms-client-request-id": "c5fd5dd7-7fae-11ec-a151-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Date": "Thu, 27 Jan 2022 19:35:16 GMT",
+        "Date": "Thu, 27 Jan 2022 20:21:56 GMT",
         "elapsed-time": "21",
         "Expires": "-1",
         "Pragma": "no-cache",
-        "request-id": "429a349b-7fa8-11ec-bd72-74c63bed1137",
+        "request-id": "c5fd5dd7-7fae-11ec-a151-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": null
@@ -215,9 +211,8 @@
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "42ae37ad-7fa8-11ec-a8ef-74c63bed1137"
+        "x-ms-client-request-id": "c610a044-7fae-11ec-ac0b-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -226,13 +221,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "404",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 19:35:16 GMT",
+        "Date": "Thu, 27 Jan 2022 20:21:56 GMT",
         "elapsed-time": "13",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "42ae37ad-7fa8-11ec-a8ef-74c63bed1137",
+        "request-id": "c610a044-7fae-11ec-ac0b-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -240,7 +235,7 @@
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#datasources",
         "value": [
           {
-            "@odata.etag": "\u00220x8D9E1CC252B3698\u0022",
+            "@odata.etag": "\u00220x8D9E1D2A9F06325\u0022",
             "name": "create",
             "description": null,
             "type": "azureblob",
@@ -266,11 +261,10 @@
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "Content-Length": "223",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "42c12159-7fa8-11ec-ad8e-74c63bed1137"
+        "x-ms-client-request-id": "c6224a3f-7fae-11ec-9c19-74c63bed1137"
       },
       "RequestBody": {
         "name": "get",
@@ -287,20 +281,20 @@
         "Cache-Control": "no-cache",
         "Content-Length": "397",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 19:35:16 GMT",
+        "Date": "Thu, 27 Jan 2022 20:21:56 GMT",
         "elapsed-time": "34",
-        "ETag": "W/\u00220x8D9E1CC25A3FE5D\u0022",
+        "ETag": "W/\u00220x8D9E1D2AA583D62\u0022",
         "Expires": "-1",
         "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027get\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "42c12159-7fa8-11ec-ad8e-74c63bed1137",
+        "request-id": "c6224a3f-7fae-11ec-9c19-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#datasources/$entity",
-        "@odata.etag": "\u00220x8D9E1CC25A3FE5D\u0022",
+        "@odata.etag": "\u00220x8D9E1D2AA583D62\u0022",
         "name": "get",
         "description": null,
         "type": "azureblob",
@@ -324,9 +318,8 @@
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "42d6fe1d-7fa8-11ec-a6cd-74c63bed1137"
+        "x-ms-client-request-id": "c637cea8-7fae-11ec-b34f-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -335,20 +328,20 @@
         "Content-Encoding": "gzip",
         "Content-Length": "397",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 19:35:16 GMT",
-        "elapsed-time": "11",
-        "ETag": "W/\u00220x8D9E1CC25A3FE5D\u0022",
+        "Date": "Thu, 27 Jan 2022 20:21:56 GMT",
+        "elapsed-time": "8",
+        "ETag": "W/\u00220x8D9E1D2AA583D62\u0022",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "42d6fe1d-7fa8-11ec-a6cd-74c63bed1137",
+        "request-id": "c637cea8-7fae-11ec-b34f-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#datasources/$entity",
-        "@odata.etag": "\u00220x8D9E1CC25A3FE5D\u0022",
+        "@odata.etag": "\u00220x8D9E1D2AA583D62\u0022",
         "name": "get",
         "description": null,
         "type": "azureblob",
@@ -372,11 +365,10 @@
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "Content-Length": "224",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "42e9633e-7fa8-11ec-ae55-74c63bed1137"
+        "x-ms-client-request-id": "c649d0fb-7fae-11ec-be14-74c63bed1137"
       },
       "RequestBody": {
         "name": "list",
@@ -393,20 +385,20 @@
         "Cache-Control": "no-cache",
         "Content-Length": "398",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 19:35:17 GMT",
-        "elapsed-time": "37",
-        "ETag": "W/\u00220x8D9E1CC25CC40F0\u0022",
+        "Date": "Thu, 27 Jan 2022 20:21:56 GMT",
+        "elapsed-time": "36",
+        "ETag": "W/\u00220x8D9E1D2AA7FBCBF\u0022",
         "Expires": "-1",
         "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027list\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "42e9633e-7fa8-11ec-ae55-74c63bed1137",
+        "request-id": "c649d0fb-7fae-11ec-be14-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#datasources/$entity",
-        "@odata.etag": "\u00220x8D9E1CC25CC40F0\u0022",
+        "@odata.etag": "\u00220x8D9E1D2AA7FBCBF\u0022",
         "name": "list",
         "description": null,
         "type": "azureblob",
@@ -430,11 +422,10 @@
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "Content-Length": "225",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "43000127-7fa8-11ec-9756-74c63bed1137"
+        "x-ms-client-request-id": "c65fb8e0-7fae-11ec-bfdd-74c63bed1137"
       },
       "RequestBody": {
         "name": "list2",
@@ -451,20 +442,20 @@
         "Cache-Control": "no-cache",
         "Content-Length": "399",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 19:35:17 GMT",
+        "Date": "Thu, 27 Jan 2022 20:21:57 GMT",
         "elapsed-time": "35",
-        "ETag": "W/\u00220x8D9E1CC25EAE800\u0022",
+        "ETag": "W/\u00220x8D9E1D2AA9C8F50\u0022",
         "Expires": "-1",
         "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027list2\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "43000127-7fa8-11ec-9756-74c63bed1137",
+        "request-id": "c65fb8e0-7fae-11ec-bfdd-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#datasources/$entity",
-        "@odata.etag": "\u00220x8D9E1CC25EAE800\u0022",
+        "@odata.etag": "\u00220x8D9E1D2AA9C8F50\u0022",
         "name": "list2",
         "description": null,
         "type": "azureblob",
@@ -488,9 +479,8 @@
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "431eb938-7fa8-11ec-a38a-74c63bed1137"
+        "x-ms-client-request-id": "c67c3393-7fae-11ec-9e52-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -499,13 +489,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "1316",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 19:35:17 GMT",
-        "elapsed-time": "30",
+        "Date": "Thu, 27 Jan 2022 20:21:57 GMT",
+        "elapsed-time": "28",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "431eb938-7fa8-11ec-a38a-74c63bed1137",
+        "request-id": "c67c3393-7fae-11ec-9e52-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -513,7 +503,7 @@
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#datasources",
         "value": [
           {
-            "@odata.etag": "\u00220x8D9E1CC252B3698\u0022",
+            "@odata.etag": "\u00220x8D9E1D2A9F06325\u0022",
             "name": "create",
             "description": null,
             "type": "azureblob",
@@ -531,7 +521,7 @@
             "identity": null
           },
           {
-            "@odata.etag": "\u00220x8D9E1CC25A3FE5D\u0022",
+            "@odata.etag": "\u00220x8D9E1D2AA583D62\u0022",
             "name": "get",
             "description": null,
             "type": "azureblob",
@@ -549,7 +539,7 @@
             "identity": null
           },
           {
-            "@odata.etag": "\u00220x8D9E1CC25CC40F0\u0022",
+            "@odata.etag": "\u00220x8D9E1D2AA7FBCBF\u0022",
             "name": "list",
             "description": null,
             "type": "azureblob",
@@ -567,7 +557,7 @@
             "identity": null
           },
           {
-            "@odata.etag": "\u00220x8D9E1CC25EAE800\u0022",
+            "@odata.etag": "\u00220x8D9E1D2AA9C8F50\u0022",
             "name": "list2",
             "description": null,
             "type": "azureblob",
@@ -593,11 +583,10 @@
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "Content-Length": "223",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "433573a4-7fa8-11ec-b28c-74c63bed1137"
+        "x-ms-client-request-id": "c691cf4c-7fae-11ec-b855-74c63bed1137"
       },
       "RequestBody": {
         "name": "cou",
@@ -614,20 +603,20 @@
         "Cache-Control": "no-cache",
         "Content-Length": "397",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 19:35:17 GMT",
-        "elapsed-time": "36",
-        "ETag": "W/\u00220x8D9E1CC261FABEA\u0022",
+        "Date": "Thu, 27 Jan 2022 20:21:57 GMT",
+        "elapsed-time": "37",
+        "ETag": "W/\u00220x8D9E1D2AACE6D6D\u0022",
         "Expires": "-1",
         "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027cou\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "433573a4-7fa8-11ec-b28c-74c63bed1137",
+        "request-id": "c691cf4c-7fae-11ec-b855-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#datasources/$entity",
-        "@odata.etag": "\u00220x8D9E1CC261FABEA\u0022",
+        "@odata.etag": "\u00220x8D9E1D2AACE6D6D\u0022",
         "name": "cou",
         "description": null,
         "type": "azureblob",
@@ -651,9 +640,8 @@
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "435342fa-7fa8-11ec-8a5f-74c63bed1137"
+        "x-ms-client-request-id": "c6adfbb7-7fae-11ec-abfd-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -662,13 +650,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "1619",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 19:35:17 GMT",
-        "elapsed-time": "31",
+        "Date": "Thu, 27 Jan 2022 20:21:57 GMT",
+        "elapsed-time": "34",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "435342fa-7fa8-11ec-8a5f-74c63bed1137",
+        "request-id": "c6adfbb7-7fae-11ec-abfd-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -676,7 +664,7 @@
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#datasources",
         "value": [
           {
-            "@odata.etag": "\u00220x8D9E1CC261FABEA\u0022",
+            "@odata.etag": "\u00220x8D9E1D2AACE6D6D\u0022",
             "name": "cou",
             "description": null,
             "type": "azureblob",
@@ -694,7 +682,7 @@
             "identity": null
           },
           {
-            "@odata.etag": "\u00220x8D9E1CC252B3698\u0022",
+            "@odata.etag": "\u00220x8D9E1D2A9F06325\u0022",
             "name": "create",
             "description": null,
             "type": "azureblob",
@@ -712,7 +700,7 @@
             "identity": null
           },
           {
-            "@odata.etag": "\u00220x8D9E1CC25A3FE5D\u0022",
+            "@odata.etag": "\u00220x8D9E1D2AA583D62\u0022",
             "name": "get",
             "description": null,
             "type": "azureblob",
@@ -730,7 +718,7 @@
             "identity": null
           },
           {
-            "@odata.etag": "\u00220x8D9E1CC25CC40F0\u0022",
+            "@odata.etag": "\u00220x8D9E1D2AA7FBCBF\u0022",
             "name": "list",
             "description": null,
             "type": "azureblob",
@@ -748,7 +736,7 @@
             "identity": null
           },
           {
-            "@odata.etag": "\u00220x8D9E1CC25EAE800\u0022",
+            "@odata.etag": "\u00220x8D9E1D2AA9C8F50\u0022",
             "name": "list2",
             "description": null,
             "type": "azureblob",
@@ -774,12 +762,11 @@
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "Content-Length": "249",
         "Content-Type": "application/json",
         "Prefer": "return=representation",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "436a3ec4-7fa8-11ec-92eb-74c63bed1137"
+        "x-ms-client-request-id": "c6c39b82-7fae-11ec-a0df-74c63bed1137"
       },
       "RequestBody": {
         "name": "cou",
@@ -798,20 +785,20 @@
         "Content-Encoding": "gzip",
         "Content-Length": "402",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 19:35:17 GMT",
-        "elapsed-time": "53",
-        "ETag": "W/\u00220x8D9E1CC2654E4E6\u0022",
+        "Date": "Thu, 27 Jan 2022 20:21:57 GMT",
+        "elapsed-time": "31",
+        "ETag": "W/\u00220x8D9E1D2AB00E7AA\u0022",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "436a3ec4-7fa8-11ec-92eb-74c63bed1137",
+        "request-id": "c6c39b82-7fae-11ec-a0df-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#datasources/$entity",
-        "@odata.etag": "\u00220x8D9E1CC2654E4E6\u0022",
+        "@odata.etag": "\u00220x8D9E1D2AB00E7AA\u0022",
         "name": "cou",
         "description": "updated",
         "type": "azureblob",
@@ -835,9 +822,8 @@
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "438b9ee2-7fa8-11ec-a189-74c63bed1137"
+        "x-ms-client-request-id": "c6e094dc-7fae-11ec-a765-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -846,13 +832,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "1624",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 19:35:18 GMT",
-        "elapsed-time": "32",
+        "Date": "Thu, 27 Jan 2022 20:21:57 GMT",
+        "elapsed-time": "31",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "438b9ee2-7fa8-11ec-a189-74c63bed1137",
+        "request-id": "c6e094dc-7fae-11ec-a765-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -860,7 +846,7 @@
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#datasources",
         "value": [
           {
-            "@odata.etag": "\u00220x8D9E1CC2654E4E6\u0022",
+            "@odata.etag": "\u00220x8D9E1D2AB00E7AA\u0022",
             "name": "cou",
             "description": "updated",
             "type": "azureblob",
@@ -878,7 +864,7 @@
             "identity": null
           },
           {
-            "@odata.etag": "\u00220x8D9E1CC252B3698\u0022",
+            "@odata.etag": "\u00220x8D9E1D2A9F06325\u0022",
             "name": "create",
             "description": null,
             "type": "azureblob",
@@ -896,7 +882,7 @@
             "identity": null
           },
           {
-            "@odata.etag": "\u00220x8D9E1CC25A3FE5D\u0022",
+            "@odata.etag": "\u00220x8D9E1D2AA583D62\u0022",
             "name": "get",
             "description": null,
             "type": "azureblob",
@@ -914,7 +900,7 @@
             "identity": null
           },
           {
-            "@odata.etag": "\u00220x8D9E1CC25CC40F0\u0022",
+            "@odata.etag": "\u00220x8D9E1D2AA7FBCBF\u0022",
             "name": "list",
             "description": null,
             "type": "azureblob",
@@ -932,7 +918,7 @@
             "identity": null
           },
           {
-            "@odata.etag": "\u00220x8D9E1CC25EAE800\u0022",
+            "@odata.etag": "\u00220x8D9E1D2AA9C8F50\u0022",
             "name": "list2",
             "description": null,
             "type": "azureblob",
@@ -958,9 +944,8 @@
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "43a3080f-7fa8-11ec-a00c-74c63bed1137"
+        "x-ms-client-request-id": "c6f5de91-7fae-11ec-81b1-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -969,20 +954,20 @@
         "Content-Encoding": "gzip",
         "Content-Length": "402",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 19:35:18 GMT",
-        "elapsed-time": "7",
-        "ETag": "W/\u00220x8D9E1CC2654E4E6\u0022",
+        "Date": "Thu, 27 Jan 2022 20:21:57 GMT",
+        "elapsed-time": "8",
+        "ETag": "W/\u00220x8D9E1D2AB00E7AA\u0022",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "43a3080f-7fa8-11ec-a00c-74c63bed1137",
+        "request-id": "c6f5de91-7fae-11ec-81b1-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#datasources/$entity",
-        "@odata.etag": "\u00220x8D9E1CC2654E4E6\u0022",
+        "@odata.etag": "\u00220x8D9E1D2AB00E7AA\u0022",
         "name": "cou",
         "description": "updated",
         "type": "azureblob",
@@ -1006,11 +991,10 @@
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "Content-Length": "227",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "43b60ccd-7fa8-11ec-9d87-74c63bed1137"
+        "x-ms-client-request-id": "c706e5bf-7fae-11ec-92eb-74c63bed1137"
       },
       "RequestBody": {
         "name": "couunch",
@@ -1027,20 +1011,20 @@
         "Cache-Control": "no-cache",
         "Content-Length": "401",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 19:35:18 GMT",
+        "Date": "Thu, 27 Jan 2022 20:21:58 GMT",
         "elapsed-time": "35",
-        "ETag": "W/\u00220x8D9E1CC269F7779\u0022",
+        "ETag": "W/\u00220x8D9E1D2AB3C8852\u0022",
         "Expires": "-1",
         "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027couunch\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "43b60ccd-7fa8-11ec-9d87-74c63bed1137",
+        "request-id": "c706e5bf-7fae-11ec-92eb-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#datasources/$entity",
-        "@odata.etag": "\u00220x8D9E1CC269F7779\u0022",
+        "@odata.etag": "\u00220x8D9E1D2AB3C8852\u0022",
         "name": "couunch",
         "description": null,
         "type": "azureblob",
@@ -1064,12 +1048,11 @@
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "Content-Length": "253",
         "Content-Type": "application/json",
         "Prefer": "return=representation",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "43d33a72-7fa8-11ec-9cda-74c63bed1137"
+        "x-ms-client-request-id": "c71c65f9-7fae-11ec-af34-74c63bed1137"
       },
       "RequestBody": {
         "name": "couunch",
@@ -1088,20 +1071,20 @@
         "Content-Encoding": "gzip",
         "Content-Length": "406",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 19:35:18 GMT",
-        "elapsed-time": "48",
-        "ETag": "W/\u00220x8D9E1CC26BEBAAF\u0022",
+        "Date": "Thu, 27 Jan 2022 20:21:58 GMT",
+        "elapsed-time": "33",
+        "ETag": "W/\u00220x8D9E1D2AB58E5C1\u0022",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "43d33a72-7fa8-11ec-9cda-74c63bed1137",
+        "request-id": "c71c65f9-7fae-11ec-af34-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#datasources/$entity",
-        "@odata.etag": "\u00220x8D9E1CC26BEBAAF\u0022",
+        "@odata.etag": "\u00220x8D9E1D2AB58E5C1\u0022",
         "name": "couunch",
         "description": "updated",
         "type": "azureblob",
@@ -1125,13 +1108,12 @@
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "Content-Length": "293",
         "Content-Type": "application/json",
-        "If-Match": "\u00220x8D9E1CC269F7779\u0022",
+        "If-Match": "\u00220x8D9E1D2AB3C8852\u0022",
         "Prefer": "return=representation",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "43f2b865-7fa8-11ec-8cec-74c63bed1137"
+        "x-ms-client-request-id": "c738a85a-7fae-11ec-8470-74c63bed1137"
       },
       "RequestBody": {
         "name": "couunch",
@@ -1143,7 +1125,7 @@
         "container": {
           "name": "searchcontainer"
         },
-        "@odata.etag": "\u00220x8D9E1CC269F7779\u0022"
+        "@odata.etag": "\u00220x8D9E1D2AB3C8852\u0022"
       },
       "StatusCode": 412,
       "ResponseHeaders": {
@@ -1151,13 +1133,13 @@
         "Content-Language": "en",
         "Content-Length": "160",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 19:35:18 GMT",
-        "elapsed-time": "10",
+        "Date": "Thu, 27 Jan 2022 20:21:58 GMT",
+        "elapsed-time": "8",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "43f2b865-7fa8-11ec-8cec-74c63bed1137",
+        "request-id": "c738a85a-7fae-11ec-8470-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": {
@@ -1173,11 +1155,10 @@
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "Content-Length": "227",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "4413c354-7fa8-11ec-a10d-74c63bed1137"
+        "x-ms-client-request-id": "c7521f01-7fae-11ec-a4dd-74c63bed1137"
       },
       "RequestBody": {
         "name": "delunch",
@@ -1194,20 +1175,20 @@
         "Cache-Control": "no-cache",
         "Content-Length": "401",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 19:35:18 GMT",
+        "Date": "Thu, 27 Jan 2022 20:21:58 GMT",
         "elapsed-time": "36",
-        "ETag": "W/\u00220x8D9E1CC26F6644F\u0022",
+        "ETag": "W/\u00220x8D9E1D2AB879006\u0022",
         "Expires": "-1",
         "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027delunch\u0027)?api-version=2021-04-30-Preview",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "4413c354-7fa8-11ec-a10d-74c63bed1137",
+        "request-id": "c7521f01-7fae-11ec-a4dd-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#datasources/$entity",
-        "@odata.etag": "\u00220x8D9E1CC26F6644F\u0022",
+        "@odata.etag": "\u00220x8D9E1D2AB879006\u0022",
         "name": "delunch",
         "description": null,
         "type": "azureblob",
@@ -1231,12 +1212,11 @@
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "Content-Length": "253",
         "Content-Type": "application/json",
         "Prefer": "return=representation",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "4429cd24-7fa8-11ec-80b1-74c63bed1137"
+        "x-ms-client-request-id": "c76758d8-7fae-11ec-89bf-74c63bed1137"
       },
       "RequestBody": {
         "name": "delunch",
@@ -1255,20 +1235,20 @@
         "Content-Encoding": "gzip",
         "Content-Length": "406",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 19:35:19 GMT",
-        "elapsed-time": "34",
-        "ETag": "W/\u00220x8D9E1CC270BE4F4\u0022",
+        "Date": "Thu, 27 Jan 2022 20:21:58 GMT",
+        "elapsed-time": "32",
+        "ETag": "W/\u00220x8D9E1D2AB9C9B8D\u0022",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "4429cd24-7fa8-11ec-80b1-74c63bed1137",
+        "request-id": "c76758d8-7fae-11ec-89bf-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
       "ResponseBody": {
         "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#datasources/$entity",
-        "@odata.etag": "\u00220x8D9E1CC270BE4F4\u0022",
+        "@odata.etag": "\u00220x8D9E1D2AB9C9B8D\u0022",
         "name": "delunch",
         "description": "updated",
         "type": "azureblob",
@@ -1292,11 +1272,10 @@
       "RequestHeaders": {
         "Accept": "application/json;odata.metadata=minimal",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "Content-Length": "0",
-        "If-Match": "\u00220x8D9E1CC26F6644F\u0022",
+        "If-Match": "\u00220x8D9E1D2AB879006\u0022",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "443fbd48-7fa8-11ec-a088-74c63bed1137"
+        "x-ms-client-request-id": "c77c3ade-7fae-11ec-a9fa-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 412,
@@ -1305,13 +1284,13 @@
         "Content-Language": "en",
         "Content-Length": "160",
         "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 19:35:19 GMT",
+        "Date": "Thu, 27 Jan 2022 20:21:58 GMT",
         "elapsed-time": "7",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "443fbd48-7fa8-11ec-a088-74c63bed1137",
+        "request-id": "c77c3ade-7fae-11ec-a9fa-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": {
@@ -1319,125 +1298,6 @@
           "code": "",
           "message": "The precondition given in one of the request headers evaluated to false. No change was made to the resource from this request."
         }
-      }
-    },
-    {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources?api-version=2021-04-30-Preview",
-      "RequestMethod": "POST",
-      "RequestHeaders": {
-        "Accept": "application/json;odata.metadata=minimal",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "Content-Length": "230",
-        "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "4452cf2e-7fa8-11ec-b5ec-74c63bed1137"
-      },
-      "RequestBody": {
-        "name": "delstrunch",
-        "type": "azureblob",
-        "credentials": {
-          "connectionString": "DefaultEndpointsProtocol=https;AccountName=fakestoragecs;AccountKey=FAKE;EndpointSuffix=core.windows.net"
-        },
-        "container": {
-          "name": "searchcontainer"
-        }
-      },
-      "StatusCode": 201,
-      "ResponseHeaders": {
-        "Cache-Control": "no-cache",
-        "Content-Length": "404",
-        "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 19:35:19 GMT",
-        "elapsed-time": "36",
-        "ETag": "W/\u00220x8D9E1CC27364A1C\u0022",
-        "Expires": "-1",
-        "Location": "https://fakesearchendpoint.search.windows.net/datasources(\u0027delstrunch\u0027)?api-version=2021-04-30-Preview",
-        "OData-Version": "4.0",
-        "Pragma": "no-cache",
-        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "4452cf2e-7fa8-11ec-b5ec-74c63bed1137",
-        "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
-      },
-      "ResponseBody": {
-        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#datasources/$entity",
-        "@odata.etag": "\u00220x8D9E1CC27364A1C\u0022",
-        "name": "delstrunch",
-        "description": null,
-        "type": "azureblob",
-        "subtype": null,
-        "credentials": {
-          "connectionString": null
-        },
-        "container": {
-          "name": "searchcontainer",
-          "query": null
-        },
-        "dataChangeDetectionPolicy": null,
-        "dataDeletionDetectionPolicy": null,
-        "encryptionKey": null,
-        "identity": null
-      }
-    },
-    {
-      "RequestUri": "https://fakesearchendpoint.search.windows.net/datasources(\u0027delstrunch\u0027)?api-version=2021-04-30-Preview",
-      "RequestMethod": "PUT",
-      "RequestHeaders": {
-        "Accept": "application/json;odata.metadata=minimal",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "Content-Length": "256",
-        "Content-Type": "application/json",
-        "Prefer": "return=representation",
-        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "446a24f7-7fa8-11ec-9b82-74c63bed1137"
-      },
-      "RequestBody": {
-        "name": "delstrunch",
-        "description": "updated",
-        "type": "azureblob",
-        "credentials": {
-          "connectionString": "DefaultEndpointsProtocol=https;AccountName=fakestoragecs;AccountKey=FAKE;EndpointSuffix=core.windows.net"
-        },
-        "container": {
-          "name": "searchcontainer"
-        }
-      },
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Cache-Control": "no-cache",
-        "Content-Encoding": "gzip",
-        "Content-Length": "409",
-        "Content-Type": "application/json; odata.metadata=minimal",
-        "Date": "Thu, 27 Jan 2022 19:35:19 GMT",
-        "elapsed-time": "35",
-        "ETag": "W/\u00220x8D9E1CC274CDC0F\u0022",
-        "Expires": "-1",
-        "OData-Version": "4.0",
-        "Pragma": "no-cache",
-        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "446a24f7-7fa8-11ec-9b82-74c63bed1137",
-        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "Vary": "Accept-Encoding"
-      },
-      "ResponseBody": {
-        "@odata.context": "https://fakesearchendpoint.search.windows.net/$metadata#datasources/$entity",
-        "@odata.etag": "\u00220x8D9E1CC274CDC0F\u0022",
-        "name": "delstrunch",
-        "description": "updated",
-        "type": "azureblob",
-        "subtype": null,
-        "credentials": {
-          "connectionString": null
-        },
-        "container": {
-          "name": "searchcontainer",
-          "query": null
-        },
-        "dataChangeDetectionPolicy": null,
-        "dataDeletionDetectionPolicy": null,
-        "encryptionKey": null,
-        "identity": null
       }
     }
   ],

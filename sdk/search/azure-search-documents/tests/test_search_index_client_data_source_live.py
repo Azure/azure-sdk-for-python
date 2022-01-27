@@ -32,7 +32,7 @@ class TestSearchClientDataSources(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
-    def test_datasource_crud(self, endpoint, api_key, **kwargs):
+    def test_data_source(self, endpoint, api_key, **kwargs):
         storage_cs = kwargs.get("search_storage_connection_string")
         client = SearchIndexerClient(endpoint, api_key)
         self._test_create_datasource(client, storage_cs)
@@ -56,7 +56,7 @@ class TestSearchClientDataSources(AzureRecordedTestCase):
     def _test_delete_datasource(self, client, storage_cs):
         ds_name = "delete"
         data_source_connection = self._create_data_source_connection(storage_cs, ds_name)
-        result = client.create_data_source_connection(data_source_connection)
+        client.create_data_source_connection(data_source_connection)
         expected_count = len(client.get_data_source_connections()) - 1
         client.delete_data_source_connection(ds_name)
         assert len(client.get_data_source_connections()) == expected_count
@@ -64,15 +64,15 @@ class TestSearchClientDataSources(AzureRecordedTestCase):
     def _test_get_datasource(self, client, storage_cs):
         ds_name = "get"
         data_source_connection = self._create_data_source_connection(storage_cs, ds_name)
-        created = client.create_data_source_connection(data_source_connection)
+        client.create_data_source_connection(data_source_connection)
         result = client.get_data_source_connection(ds_name)
         assert result.name == ds_name
 
     def _test_list_datasources(self, client, storage_cs):
         data_source_connection1 = self._create_data_source_connection(storage_cs, "list")
         data_source_connection2 = self._create_data_source_connection(storage_cs, "list2")
-        created1 = client.create_data_source_connection(data_source_connection1)
-        created2 = client.create_data_source_connection(data_source_connection2)
+        client.create_data_source_connection(data_source_connection1)
+        client.create_data_source_connection(data_source_connection2)
         result = client.get_data_source_connections()
         assert isinstance(result, list)
         assert set(x.name for x in result).intersection(set(["list", "list2"])) == set(["list", "list2"])
@@ -80,7 +80,7 @@ class TestSearchClientDataSources(AzureRecordedTestCase):
     def _test_create_or_update_datasource(self, client, storage_cs):
         ds_name = "cou"
         data_source_connection = self._create_data_source_connection(storage_cs, ds_name)
-        created = client.create_data_source_connection(data_source_connection)
+        client.create_data_source_connection(data_source_connection)
         expected_count = len(client.get_data_source_connections())
         data_source_connection.description = "updated"
         client.create_or_update_data_source_connection(data_source_connection)
