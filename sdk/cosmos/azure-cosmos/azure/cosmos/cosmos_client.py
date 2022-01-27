@@ -159,7 +159,7 @@ class CosmosClient(object):
             :name: create_client
     """
 
-    def __init__(self, url, credential, consistency_level="Session", **kwargs):
+    def __init__(self, url, credential, consistency_level=None, **kwargs):
         # type: (str, Any, str, Any) -> None
         """Instantiate a new CosmosClient."""
         auth = _build_auth(credential)

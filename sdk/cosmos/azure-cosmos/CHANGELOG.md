@@ -1,5 +1,11 @@
 ## Release History
 
+### 4.3.0b3 (Unreleased)
+
+### Other changes
+- Default consistency level for the sync and async clients is no longer "Session" and will instead be set to the 
+  consistency level of the cosmos account on initialization.
+
 ### 4.3.0b2 (2022-01-25)
 
 This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
