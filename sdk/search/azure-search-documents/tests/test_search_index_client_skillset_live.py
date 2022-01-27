@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-
 import pytest
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
@@ -138,7 +137,6 @@ class TestSearchSkillset(AzureRecordedTestCase):
                                    outputs=[OutputFieldMappingEntry(name="organizations", target_name="organizations")])
         skillset = SearchIndexerSkillset(name=name, skills=list([s]), description="desc")
         client.create_skillset(skillset)
-        result = client.get_skillset("test-ss-get")
         result = client.get_skillset(name)
         assert isinstance(result, SearchIndexerSkillset)
         assert result.name == name
