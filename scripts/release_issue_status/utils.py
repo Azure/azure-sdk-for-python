@@ -154,7 +154,9 @@ def run_pipeline(issue_link, pipeline_url, spec_readme):
         "resources": {
             "repositories": {
                 "self": {
-                    "refName": "refs/heads/main"
+                    #Just Debug
+                    "refName": "refs/heads/auto-release-debug"
+                    # "refName": "refs/heads/main"
                 }
             }
         },

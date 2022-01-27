@@ -60,22 +60,7 @@ def reply_owner(assigner_issue, reply_content):
 
 
 def get_reply_and_sdk_number_from_readme(rest_repo, link_dict, item):
-    commits = rest_repo.get_commits(path=link_dict['resource_manager'])
-    latest_commit = commits[0]
-    check_run_id = latest_commit.get_check_runs(check_name='SDK azure-sdk-for-python-track2')[0].id
-    latest_pr_number = latest_commit.get_pulls()[0].number
-    details = rest_repo.get_check_run(check_run_id).output.text
-    sdk_link_number = re.findall(r'/azure-sdk-for-python/pull/(\d*)">Release SDK Changes</a>', details)[0]
-    changelog = '<details open><summary><b> python-track2</b>' + \
-               re.search(rf'</code><b>track2_{item.package}(.)+?</pre></li>', details, re.DOTALL).group() \
-               + '</details>'
-    info_model = 'hi @{} Please check the package whether works well and the changelog info ' \
-                 'is as below:\n{}\n' \
-                 '\n* (If you are not a Python User, you can mainly check whether the changelog meets your requirements)\n' \
-                 '\n* (The version of the package is only a temporary version for testing)\n' \
-                 '\nhttps://github.com/Azure/azure-rest-api-specs/pull/{}\n' \
-        .format(issue_object_rg.user.login, changelog, str(latest_pr_number))
-    return info_model, sdk_link_number
+    pass
 
 
 def begin_reply_generate(item, rest_repo, readme_link, sdk_repo, pipeline_url, assigner_repo):
@@ -90,7 +75,6 @@ def begin_reply_generate(item, rest_repo, readme_link, sdk_repo, pipeline_url, a
     print(spec_readme)
 
     if not whether_change_readme:
-        reply_content, sdk_link_number = get_reply_and_sdk_number_from_readme(rest_repo, link_dict, item)
         res_run = run_pipeline(issue_link=issue_object_rg.html_url,
                                pipeline_url=pipeline_url,
                                spec_readme=spec_readme
@@ -99,8 +83,6 @@ def begin_reply_generate(item, rest_repo, readme_link, sdk_repo, pipeline_url, a
             logging.info(f'{issue_object_rg.number} run pipeline successfully')
         else:
             logging.info(f'{issue_object_rg.number} run pipeline fail')
-        assigner_issue = assigner_repo.get_issue(number=issue_object_rg.number)
-        reply_owner(assigner_issue, reply_content)
         issue_object_rg.add_to_labels('auto-ask-check')
     else:
         logging.info('issue {} need config readme'.format(issue_object_rg.number))
