@@ -4,6 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
+__path__ = __import__('pkgutil').extend_path(__path__, __name__)
+
 from ._phone_numbers_client import PhoneNumbersClient
 
 from ._generated.models import (
@@ -17,6 +19,9 @@ from ._generated.models import (
     PhoneNumberType,
 )
 
+from .siprouting._sip_routing_client import SipRoutingClient
+from .siprouting._generated.models import SipConfiguration, Trunk, TrunkRoute
+
 __all__ = [
     'PurchasedPhoneNumber',
     'PhoneNumberCapabilities',
@@ -27,4 +32,8 @@ __all__ = [
     'PhoneNumberCapabilityType',
     'PhoneNumberType',
     'PhoneNumbersClient',
+    'SipRoutingClient',
+    'SipConfiguration',
+    'Trunk',
+    'TrunkRoute'
 ]
