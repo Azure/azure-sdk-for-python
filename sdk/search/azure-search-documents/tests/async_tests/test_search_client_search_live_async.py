@@ -30,8 +30,6 @@ class TestClientTestAsync(AzureRecordedTestCase):
         self._test_get_search_facets_result(client)
         self._test_autocomplete(client)
         self._test_suggest(client)
-        # TODO: Workaround for #22787
-        return {}
 
     async def _test_get_search_simple(self, client):
         async with client:

@@ -20,9 +20,6 @@ class TestSearchClient(AzureRecordedTestCase):
     def test_get_document_count(self, endpoint, api_key, index_name):
         client = SearchClient(endpoint, index_name, api_key)
         assert client.get_document_count() == 10
-        # TODO: Workaround for #22787
-        return {}
-
 
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
@@ -35,8 +32,6 @@ class TestSearchClient(AzureRecordedTestCase):
             assert result.get("hotelId") == expected.get("hotelId")
             assert result.get("hotelName") == expected.get("hotelName")
             assert result.get("description") == expected.get("description")
-        # TODO: Workaround for #22787
-        return {}
 
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
@@ -45,5 +40,3 @@ class TestSearchClient(AzureRecordedTestCase):
         client = SearchClient(endpoint, index_name, api_key)
         with pytest.raises(HttpResponseError):
             client.get_document(key="1000")
-        # TODO: Workaround for #22787
-        return {}

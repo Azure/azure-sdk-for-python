@@ -43,8 +43,6 @@ class TestSearchClientDataSourcesAsync(AzureRecordedTestCase):
         await self._test_create_or_update_datasource(client, storage_cs)
         await self._test_create_or_update_datasource_if_unchanged(client, storage_cs)
         await self._test_delete_datasource_if_unchanged(client, storage_cs)
-        # TODO: Workaround for #22787
-        return {}
 
     async def _test_create_datasource(self, client, storage_cs):
         ds_name = "create"

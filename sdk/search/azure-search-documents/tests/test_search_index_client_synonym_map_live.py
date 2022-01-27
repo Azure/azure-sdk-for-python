@@ -28,8 +28,6 @@ class TestSearchClientSynonymMaps(AzureRecordedTestCase):
         self._test_get_synonym_map(client)
         self._test_get_synonym_maps(client)
         self._test_create_or_update_synonym_map(client)
-        # TODO: Workaround for #22787
-        return {}
 
     def _test_create_synonym_map(self, client):
         expected = len(client.get_synonym_maps()) + 1

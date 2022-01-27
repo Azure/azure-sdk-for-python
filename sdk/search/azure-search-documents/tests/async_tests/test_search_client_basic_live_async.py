@@ -22,8 +22,6 @@ class TestSearchClientAsync(AzureRecordedTestCase):
         client = SearchClient(endpoint, index_name, api_key)
         async with client:
             assert await client.get_document_count() == 10
-        # TODO: Workaround for #22787
-        return {}
 
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
@@ -37,8 +35,6 @@ class TestSearchClientAsync(AzureRecordedTestCase):
                 assert result.get("hotelId") == expected.get("hotelId")
                 assert result.get("hotelName") == expected.get("hotelName")
                 assert result.get("description") == expected.get("description")
-        # TODO: Workaround for #22787
-        return {}
 
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
@@ -48,5 +44,3 @@ class TestSearchClientAsync(AzureRecordedTestCase):
         async with client:
             with pytest.raises(HttpResponseError):
                 await client.get_document(key="1000")
-        # TODO: Workaround for #22787
-        return {}

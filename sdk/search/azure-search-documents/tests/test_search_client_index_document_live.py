@@ -31,8 +31,6 @@ class TestSearchClientIndexDocument(AzureRecordedTestCase):
         doc_count = self._test_merge_documents_existing(client, doc_count)
         doc_count = self._test_merge_documents_missing(client, doc_count)
         doc_count = self._test_merge_or_upload_documents(client, doc_count)
-        # TODO: Workaround for #22787
-        return {}
 
     def _test_upload_documents_new(self, client, doc_count):
         DOCUMENTS = [

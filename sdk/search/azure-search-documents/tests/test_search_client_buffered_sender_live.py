@@ -35,8 +35,6 @@ class TestSearchIndexingBufferedSender(AzureRecordedTestCase):
             doc_count = self._test_merge_documents_existing(client, batch_client, doc_count)
             doc_count = self._test_merge_documents_missing(client, batch_client, doc_count)
             doc_count = self._test_merge_or_upload_documents(client, batch_client, doc_count)
-            # TODO: Workaround for #22787
-            return {}
         finally:
             batch_client.close()
 

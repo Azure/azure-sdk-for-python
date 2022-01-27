@@ -29,8 +29,6 @@ class TestSearchClientSynonymMaps(AzureRecordedTestCase):
         await self._test_get_synonym_map(client)
         await self._test_get_synonym_maps(client)
         await self._test_create_or_update_synonym_map(client)
-        # TODO: Workaround for #22787
-        return {}
 
     async def _test_create_synonym_map(self, client):
         expected = len(await client.get_synonym_maps()) + 1

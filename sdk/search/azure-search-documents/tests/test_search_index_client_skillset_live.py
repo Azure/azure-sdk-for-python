@@ -42,8 +42,6 @@ class TestSearchSkillset(AzureRecordedTestCase):
         # TODO: Disabled due to service regression. See #22769
         #self._test_delete_skillset_if_unchanged(client)
         self._test_delete_skillset(client)
-        # TODO: Workaround for #22787
-        return {}
 
     def _test_create_skillset_validation(self):
         name = "test-ss-validation"

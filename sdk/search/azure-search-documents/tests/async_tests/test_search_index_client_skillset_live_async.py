@@ -41,8 +41,6 @@ class TestSearchClientSkillsets(AzureRecordedTestCase):
         # TODO: Disabled due to service regression. See #22769
         #await self._test_delete_skillset_if_unchanged(client)
         await self._test_delete_skillset(client)
-        # TODO: Workaround for #22787
-        return {}
 
     async def _test_create_skillset(self, client):
         name = "test-ss-create"

@@ -8,18 +8,18 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "c0faaa50-7eda-11ec-bd68-74c63bed1137"
+        "x-ms-client-request-id": "1bdb42ba-7faf-11ec-944d-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 404,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Wed, 26 Jan 2022 19:04:11 GMT",
-        "elapsed-time": "5",
+        "Date": "Thu, 27 Jan 2022 20:24:20 GMT",
+        "elapsed-time": "6",
         "Expires": "-1",
         "Pragma": "no-cache",
-        "request-id": "c0faaa50-7eda-11ec-bd68-74c63bed1137",
+        "request-id": "1bdb42ba-7faf-11ec-944d-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": null
