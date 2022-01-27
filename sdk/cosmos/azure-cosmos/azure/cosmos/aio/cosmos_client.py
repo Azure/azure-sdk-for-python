@@ -141,7 +141,7 @@ class CosmosClient(object):
 
     @classmethod
     def from_connection_string(cls, conn_str, credential=None, consistency_level=None, **kwargs):
-        # type: (str, Optional[Union[str, Dict[str, str]]], str, Any) -> CosmosClient
+        # type: (str, Optional[Union[str, Dict[str, str]]], Optional[str], Any) -> CosmosClient
         """Create a CosmosClient instance from a connection string.
 
         This can be retrieved from the Azure portal.For full list of optional
