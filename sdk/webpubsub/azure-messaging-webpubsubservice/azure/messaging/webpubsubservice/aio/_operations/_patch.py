@@ -27,8 +27,12 @@
 from typing import Optional, Any, Dict, List
 from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
-from ._operations import WebPubSubServiceClientOperationsMixinGenerated, JSONType
+from ._operations import (
+    WebPubSubServiceClientOperationsMixin as WebPubSubServiceClientOperationsMixinGenerated,
+    JSONType
+)
 from ..._operations._patch import get_token_by_key
+
 
 class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixinGenerated):
     @distributed_trace_async
@@ -72,9 +76,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         endpoint = self._config.endpoint.lower()
         if not endpoint.startswith("http://") and not endpoint.startswith("https://"):
             raise ValueError(
-                "Invalid endpoint: '{}' has unknown scheme - expected 'http://' or 'https://'".format(
-                    endpoint
-                )
+                "Invalid endpoint: '{}' has unknown scheme - expected 'http://' or 'https://'".format(endpoint)
             )
 
         # Ensure endpoint has no trailing slash
@@ -97,23 +99,23 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
             )
         else:
             access_token = await super().get_client_access_token(
-                user_id=user_id,
-                roles=roles,
-                minutes_to_expire=minutes_to_expire,
-                **kwargs
+                user_id=user_id, roles=roles, minutes_to_expire=minutes_to_expire, **kwargs
             )
-            token = access_token.get('token')
+            token = access_token.get("token")
 
         return {
             "baseUrl": client_url,
             "token": token,
             "url": "{}?access_token={}".format(client_url, token),
         }
-    get_client_access_token.metadata = {'url': '/api/hubs/{hub}/:generateToken'}  # type: ignore
+
+    get_client_access_token.metadata = {"url": "/api/hubs/{hub}/:generateToken"}  # type: ignore
+
 
 # This file is used for handwritten extensions to the generated code. Example:
 # https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md
 def patch_sdk():
     pass
+
 
 __all__ = ["WebPubSubServiceClientOperationsMixin"]

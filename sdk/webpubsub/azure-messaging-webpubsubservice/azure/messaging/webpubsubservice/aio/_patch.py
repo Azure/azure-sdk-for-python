@@ -26,13 +26,14 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
 from .._patch import _parse_connection_string, WebPubSubServiceClientBase
-from ._web_pub_sub_service_client import WebPubSubServiceClientGenerated
+from ._web_pub_sub_service_client import WebPubSubServiceClient as WebPubSubServiceClientGenerated
 
 from azure.core.credentials import AzureKeyCredential
 from typing import Any, Union
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
+
 
 class WebPubSubServiceClient(WebPubSubServiceClientBase, WebPubSubServiceClientGenerated):
     """WebPubSubServiceClient.
@@ -50,15 +51,9 @@ class WebPubSubServiceClient(WebPubSubServiceClientBase, WebPubSubServiceClientG
     """
 
     def __init__(
-        self,
-        endpoint: str,
-        hub: str,
-        credential: Union["AsyncTokenCredential", AzureKeyCredential],
-        **kwargs: Any
+        self, endpoint: str, hub: str, credential: Union["AsyncTokenCredential", AzureKeyCredential], **kwargs: Any
     ) -> None:
-        super().__init__(
-            hub=hub, endpoint=endpoint, credential=credential, **kwargs
-        )
+        super().__init__(hub=hub, endpoint=endpoint, credential=credential, **kwargs)
 
     @classmethod
     def from_connection_string(cls, connection_string: str, hub: str, **kwargs: Any) -> "WebPubSubServiceClient":
@@ -79,5 +74,6 @@ class WebPubSubServiceClient(WebPubSubServiceClientBase, WebPubSubServiceClientG
 
 def patch_sdk():
     pass
+
 
 __all__ = ["WebPubSubServiceClient"]

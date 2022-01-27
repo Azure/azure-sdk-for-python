@@ -6,11 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import WebPubSubServiceClientOperationsMixinGenerated as WebPubSubServiceClientOperationsMixin
+from ._operations import WebPubSubServiceClientOperationsMixin
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
+
 __all__ = [
-    'WebPubSubServiceClientOperationsMixin',
+    "WebPubSubServiceClientOperationsMixin",
 ]
 __all__.extend(_patch_all)

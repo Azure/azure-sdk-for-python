@@ -6,8 +6,6 @@
 # --------------------------------------------------------------------------
 
 
-
-
 def _format_url_section(template, **kwargs):
     components = template.split("/")
     while components:
@@ -15,7 +13,5 @@ def _format_url_section(template, **kwargs):
             return template.format(**kwargs)
         except KeyError as key:
             formatted_components = template.split("/")
-            components = [
-                c for c in formatted_components if "{}".format(key.args[0]) not in c
-            ]
+            components = [c for c in formatted_components if "{}".format(key.args[0]) not in c]
             template = "/".join(components)
