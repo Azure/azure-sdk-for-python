@@ -9,7 +9,7 @@
         "Content-Length": "217",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "f6f09170-7fb7-11ec-8bf3-74c63bed1137"
+        "x-ms-client-request-id": "adf43517-7fc3-11ec-83db-74c63bed1137"
       },
       "RequestBody": {
         "value": [
@@ -35,13 +35,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "143",
         "Content-Type": "application/json; odata.metadata=none",
-        "Date": "Thu, 27 Jan 2022 21:27:44 GMT",
-        "elapsed-time": "39",
+        "Date": "Thu, 27 Jan 2022 22:51:34 GMT",
+        "elapsed-time": "31",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "f6f09170-7fb7-11ec-8bf3-74c63bed1137",
+        "request-id": "adf43517-7fc3-11ec-83db-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -69,7 +69,7 @@
         "Accept": "application/json;odata.metadata=none",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "f922f413-7fb7-11ec-835e-74c63bed1137"
+        "x-ms-client-request-id": "b0245f20-7fc3-11ec-8c6c-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -78,13 +78,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "5",
         "Content-Type": "text/plain",
-        "Date": "Thu, 27 Jan 2022 21:27:46 GMT",
-        "elapsed-time": "6",
+        "Date": "Thu, 27 Jan 2022 22:51:38 GMT",
+        "elapsed-time": "7",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "f922f413-7fb7-11ec-835e-74c63bed1137",
+        "request-id": "b0245f20-7fc3-11ec-8c6c-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -97,7 +97,7 @@
         "Accept": "application/json;odata.metadata=none",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "f937daad-7fb7-11ec-9b0f-74c63bed1137"
+        "x-ms-client-request-id": "b039e305-7fc3-11ec-a050-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -106,13 +106,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "232",
         "Content-Type": "application/json; odata.metadata=none",
-        "Date": "Thu, 27 Jan 2022 21:27:47 GMT",
-        "elapsed-time": "10",
+        "Date": "Thu, 27 Jan 2022 22:51:38 GMT",
+        "elapsed-time": "14",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "f937daad-7fb7-11ec-9b0f-74c63bed1137",
+        "request-id": "b039e305-7fc3-11ec-a050-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -139,7 +139,7 @@
         "Accept": "application/json;odata.metadata=none",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "f94a1a9c-7fb7-11ec-ad56-74c63bed1137"
+        "x-ms-client-request-id": "b04e536c-7fc3-11ec-8919-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -148,13 +148,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "236",
         "Content-Type": "application/json; odata.metadata=none",
-        "Date": "Thu, 27 Jan 2022 21:27:47 GMT",
-        "elapsed-time": "6",
+        "Date": "Thu, 27 Jan 2022 22:51:38 GMT",
+        "elapsed-time": "7",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "f94a1a9c-7fb7-11ec-ad56-74c63bed1137",
+        "request-id": "b04e536c-7fc3-11ec-8919-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -183,7 +183,7 @@
         "Content-Length": "214",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "f95bcd66-7fb7-11ec-a60d-74c63bed1137"
+        "x-ms-client-request-id": "b060e8c6-7fc3-11ec-8f52-74c63bed1137"
       },
       "RequestBody": {
         "value": [
@@ -209,13 +209,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "140",
         "Content-Type": "application/json; odata.metadata=none",
-        "Date": "Thu, 27 Jan 2022 21:27:47 GMT",
-        "elapsed-time": "37",
+        "Date": "Thu, 27 Jan 2022 22:51:38 GMT",
+        "elapsed-time": "38",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "f95bcd66-7fb7-11ec-a60d-74c63bed1137",
+        "request-id": "b060e8c6-7fc3-11ec-8f52-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -245,7 +245,7 @@
         "Content-Length": "103",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "f9734e35-7fb7-11ec-b262-74c63bed1137"
+        "x-ms-client-request-id": "b077a2fa-7fc3-11ec-9adb-74c63bed1137"
       },
       "RequestBody": {
         "value": [
@@ -265,13 +265,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "137",
         "Content-Type": "application/json; odata.metadata=none",
-        "Date": "Thu, 27 Jan 2022 21:27:47 GMT",
+        "Date": "Thu, 27 Jan 2022 22:51:38 GMT",
         "elapsed-time": "30",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "f9734e35-7fb7-11ec-b262-74c63bed1137",
+        "request-id": "b077a2fa-7fc3-11ec-9adb-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -299,7 +299,7 @@
         "Accept": "application/json;odata.metadata=none",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "fb52ce7a-7fb7-11ec-b033-74c63bed1137"
+        "x-ms-client-request-id": "b2587725-7fc3-11ec-9b6a-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -308,13 +308,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "5",
         "Content-Type": "text/plain",
-        "Date": "Thu, 27 Jan 2022 21:27:51 GMT",
-        "elapsed-time": "7",
+        "Date": "Thu, 27 Jan 2022 22:51:42 GMT",
+        "elapsed-time": "6",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "fb52ce7a-7fb7-11ec-b033-74c63bed1137",
+        "request-id": "b2587725-7fc3-11ec-9b6a-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -327,18 +327,18 @@
         "Accept": "application/json;odata.metadata=none",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "fb64953f-7fb7-11ec-850f-74c63bed1137"
+        "x-ms-client-request-id": "b26d5855-7fc3-11ec-86af-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 404,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Thu, 27 Jan 2022 21:27:51 GMT",
+        "Date": "Thu, 27 Jan 2022 22:51:42 GMT",
         "elapsed-time": "5",
         "Expires": "-1",
         "Pragma": "no-cache",
-        "request-id": "fb64953f-7fb7-11ec-850f-74c63bed1137",
+        "request-id": "b26d5855-7fc3-11ec-86af-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": null
@@ -350,18 +350,18 @@
         "Accept": "application/json;odata.metadata=none",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "fb78716f-7fb7-11ec-912f-74c63bed1137"
+        "x-ms-client-request-id": "b2820119-7fc3-11ec-b9e7-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 404,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Thu, 27 Jan 2022 21:27:51 GMT",
+        "Date": "Thu, 27 Jan 2022 22:51:42 GMT",
         "elapsed-time": "5",
         "Expires": "-1",
         "Pragma": "no-cache",
-        "request-id": "fb78716f-7fb7-11ec-912f-74c63bed1137",
+        "request-id": "b2820119-7fc3-11ec-b9e7-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": null
@@ -375,7 +375,7 @@
         "Content-Length": "106",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "fb8aacb7-7fb7-11ec-8cd9-74c63bed1137"
+        "x-ms-client-request-id": "b2960bf5-7fc3-11ec-9afa-74c63bed1137"
       },
       "RequestBody": {
         "value": [
@@ -395,13 +395,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "140",
         "Content-Type": "application/json; odata.metadata=none",
-        "Date": "Thu, 27 Jan 2022 21:27:51 GMT",
-        "elapsed-time": "31",
+        "Date": "Thu, 27 Jan 2022 22:51:42 GMT",
+        "elapsed-time": "32",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "fb8aacb7-7fb7-11ec-8cd9-74c63bed1137",
+        "request-id": "b2960bf5-7fc3-11ec-9afa-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -429,7 +429,7 @@
         "Accept": "application/json;odata.metadata=none",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "fd6a22f4-7fb7-11ec-97e0-74c63bed1137"
+        "x-ms-client-request-id": "b4785d3b-7fc3-11ec-9c2a-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -438,13 +438,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "5",
         "Content-Type": "text/plain",
-        "Date": "Thu, 27 Jan 2022 21:27:54 GMT",
+        "Date": "Thu, 27 Jan 2022 22:51:46 GMT",
         "elapsed-time": "7",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "fd6a22f4-7fb7-11ec-97e0-74c63bed1137",
+        "request-id": "b4785d3b-7fc3-11ec-9c2a-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -457,18 +457,18 @@
         "Accept": "application/json;odata.metadata=none",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "fd7d2aa3-7fb7-11ec-8dec-74c63bed1137"
+        "x-ms-client-request-id": "b48bf1ee-7fc3-11ec-aad2-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 404,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Thu, 27 Jan 2022 21:27:54 GMT",
-        "elapsed-time": "5",
+        "Date": "Thu, 27 Jan 2022 22:51:46 GMT",
+        "elapsed-time": "4",
         "Expires": "-1",
         "Pragma": "no-cache",
-        "request-id": "fd7d2aa3-7fb7-11ec-8dec-74c63bed1137",
+        "request-id": "b48bf1ee-7fc3-11ec-aad2-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": null
@@ -480,18 +480,18 @@
         "Accept": "application/json;odata.metadata=none",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "fd900d0e-7fb7-11ec-8656-74c63bed1137"
+        "x-ms-client-request-id": "b49e8817-7fc3-11ec-ba2f-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 404,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Thu, 27 Jan 2022 21:27:54 GMT",
+        "Date": "Thu, 27 Jan 2022 22:51:46 GMT",
         "elapsed-time": "5",
         "Expires": "-1",
         "Pragma": "no-cache",
-        "request-id": "fd900d0e-7fb7-11ec-8656-74c63bed1137",
+        "request-id": "b49e8817-7fc3-11ec-ba2f-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": null
@@ -505,7 +505,7 @@
         "Content-Length": "127",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "fda232ff-7fb7-11ec-815b-74c63bed1137"
+        "x-ms-client-request-id": "b4b178e4-7fc3-11ec-a867-74c63bed1137"
       },
       "RequestBody": {
         "value": [
@@ -527,13 +527,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "137",
         "Content-Type": "application/json; odata.metadata=none",
-        "Date": "Thu, 27 Jan 2022 21:27:54 GMT",
-        "elapsed-time": "33",
+        "Date": "Thu, 27 Jan 2022 22:51:46 GMT",
+        "elapsed-time": "34",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "fda232ff-7fb7-11ec-815b-74c63bed1137",
+        "request-id": "b4b178e4-7fc3-11ec-a867-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -561,7 +561,7 @@
         "Accept": "application/json;odata.metadata=none",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "ff82a240-7fb7-11ec-bf29-74c63bed1137"
+        "x-ms-client-request-id": "b692e602-7fc3-11ec-8142-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -570,13 +570,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "5",
         "Content-Type": "text/plain",
-        "Date": "Thu, 27 Jan 2022 21:27:58 GMT",
+        "Date": "Thu, 27 Jan 2022 22:51:49 GMT",
         "elapsed-time": "11",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "ff82a240-7fb7-11ec-bf29-74c63bed1137",
+        "request-id": "b692e602-7fc3-11ec-8142-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -589,7 +589,7 @@
         "Accept": "application/json;odata.metadata=none",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "ff9731a9-7fb7-11ec-8ff4-74c63bed1137"
+        "x-ms-client-request-id": "b6a6ab1d-7fc3-11ec-b839-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -598,13 +598,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "418",
         "Content-Type": "application/json; odata.metadata=none",
-        "Date": "Thu, 27 Jan 2022 21:27:58 GMT",
+        "Date": "Thu, 27 Jan 2022 22:51:49 GMT",
         "elapsed-time": "7",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "ff9731a9-7fb7-11ec-8ff4-74c63bed1137",
+        "request-id": "b6a6ab1d-7fc3-11ec-b839-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -646,7 +646,7 @@
         "Accept": "application/json;odata.metadata=none",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "ffa8e020-7fb7-11ec-87d4-74c63bed1137"
+        "x-ms-client-request-id": "b6bb2f5c-7fc3-11ec-973e-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -655,13 +655,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "276",
         "Content-Type": "application/json; odata.metadata=none",
-        "Date": "Thu, 27 Jan 2022 21:27:58 GMT",
-        "elapsed-time": "18",
+        "Date": "Thu, 27 Jan 2022 22:51:49 GMT",
+        "elapsed-time": "6",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "ffa8e020-7fb7-11ec-87d4-74c63bed1137",
+        "request-id": "b6bb2f5c-7fc3-11ec-973e-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -690,7 +690,7 @@
         "Content-Length": "130",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "ffbc94b7-7fb7-11ec-9ea7-74c63bed1137"
+        "x-ms-client-request-id": "b6ce2e03-7fc3-11ec-b37a-74c63bed1137"
       },
       "RequestBody": {
         "value": [
@@ -712,13 +712,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "158",
         "Content-Type": "application/json; odata.metadata=none",
-        "Date": "Thu, 27 Jan 2022 21:27:58 GMT",
-        "elapsed-time": "35",
+        "Date": "Thu, 27 Jan 2022 22:51:49 GMT",
+        "elapsed-time": "30",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "ffbc94b7-7fb7-11ec-9ea7-74c63bed1137",
+        "request-id": "b6ce2e03-7fc3-11ec-b37a-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -746,7 +746,7 @@
         "Accept": "application/json;odata.metadata=none",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "019e8ca9-7fb8-11ec-8df9-74c63bed1137"
+        "x-ms-client-request-id": "b8b0d10b-7fc3-11ec-892e-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -755,13 +755,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "5",
         "Content-Type": "text/plain",
-        "Date": "Thu, 27 Jan 2022 21:28:01 GMT",
-        "elapsed-time": "7",
+        "Date": "Thu, 27 Jan 2022 22:51:52 GMT",
+        "elapsed-time": "6",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "019e8ca9-7fb8-11ec-8df9-74c63bed1137",
+        "request-id": "b8b0d10b-7fc3-11ec-892e-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -774,18 +774,18 @@
         "Accept": "application/json;odata.metadata=none",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "01b26edb-7fb8-11ec-aae5-74c63bed1137"
+        "x-ms-client-request-id": "b8c485b0-7fc3-11ec-9658-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 404,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Thu, 27 Jan 2022 21:28:01 GMT",
+        "Date": "Thu, 27 Jan 2022 22:51:52 GMT",
         "elapsed-time": "5",
         "Expires": "-1",
         "Pragma": "no-cache",
-        "request-id": "01b26edb-7fb8-11ec-aae5-74c63bed1137",
+        "request-id": "b8c485b0-7fc3-11ec-9658-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains"
       },
       "ResponseBody": null
@@ -797,7 +797,7 @@
         "Accept": "application/json;odata.metadata=none",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "01c67102-7fb8-11ec-8a19-74c63bed1137"
+        "x-ms-client-request-id": "b8d7f1f8-7fc3-11ec-9ae7-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -806,13 +806,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "1000",
         "Content-Type": "application/json; odata.metadata=none",
-        "Date": "Thu, 27 Jan 2022 21:28:01 GMT",
-        "elapsed-time": "7",
+        "Date": "Thu, 27 Jan 2022 22:51:52 GMT",
+        "elapsed-time": "6",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "01c67102-7fb8-11ec-8a19-74c63bed1137",
+        "request-id": "b8d7f1f8-7fc3-11ec-9ae7-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -858,7 +858,7 @@
         "Content-Length": "146",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "01d851cd-7fb8-11ec-b87c-74c63bed1137"
+        "x-ms-client-request-id": "b8eba8c0-7fc3-11ec-8bc1-74c63bed1137"
       },
       "RequestBody": {
         "value": [
@@ -880,13 +880,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "140",
         "Content-Type": "application/json; odata.metadata=none",
-        "Date": "Thu, 27 Jan 2022 21:28:01 GMT",
+        "Date": "Thu, 27 Jan 2022 22:51:52 GMT",
         "elapsed-time": "25",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "01d851cd-7fb8-11ec-b87c-74c63bed1137",
+        "request-id": "b8eba8c0-7fc3-11ec-8bc1-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -914,7 +914,7 @@
         "Accept": "application/json;odata.metadata=none",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "03b8169c-7fb8-11ec-950a-74c63bed1137"
+        "x-ms-client-request-id": "bacb05df-7fc3-11ec-a950-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -923,13 +923,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "5",
         "Content-Type": "text/plain",
-        "Date": "Thu, 27 Jan 2022 21:28:04 GMT",
-        "elapsed-time": "7",
+        "Date": "Thu, 27 Jan 2022 22:51:55 GMT",
+        "elapsed-time": "6",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "03b8169c-7fb8-11ec-950a-74c63bed1137",
+        "request-id": "bacb05df-7fc3-11ec-a950-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -942,7 +942,7 @@
         "Accept": "application/json;odata.metadata=none",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "03cacd7f-7fb8-11ec-937f-74c63bed1137"
+        "x-ms-client-request-id": "badf54a1-7fc3-11ec-a816-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -951,13 +951,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "225",
         "Content-Type": "application/json; odata.metadata=none",
-        "Date": "Thu, 27 Jan 2022 21:28:05 GMT",
+        "Date": "Thu, 27 Jan 2022 22:51:56 GMT",
         "elapsed-time": "6",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "03cacd7f-7fb8-11ec-937f-74c63bed1137",
+        "request-id": "badf54a1-7fc3-11ec-a816-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },
@@ -984,7 +984,7 @@
         "Accept": "application/json;odata.metadata=none",
         "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "03df451c-7fb8-11ec-9254-74c63bed1137"
+        "x-ms-client-request-id": "baf199d1-7fc3-11ec-bfef-74c63bed1137"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -993,13 +993,13 @@
         "Content-Encoding": "gzip",
         "Content-Length": "1000",
         "Content-Type": "application/json; odata.metadata=none",
-        "Date": "Thu, 27 Jan 2022 21:28:05 GMT",
+        "Date": "Thu, 27 Jan 2022 22:51:56 GMT",
         "elapsed-time": "6",
         "Expires": "-1",
         "OData-Version": "4.0",
         "Pragma": "no-cache",
         "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
-        "request-id": "03df451c-7fb8-11ec-9254-74c63bed1137",
+        "request-id": "baf199d1-7fc3-11ec-bfef-74c63bed1137",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Vary": "Accept-Encoding"
       },

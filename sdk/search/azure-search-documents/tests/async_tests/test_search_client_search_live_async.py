@@ -20,88 +20,85 @@ class TestClientTestAsync(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_search_client(self, endpoint, api_key, index_name):
         client = SearchClient(endpoint, index_name, api_key)
-        self._test_get_search_simple(client)
-        self._test_get_search_simple_with_top(client)
-        self._test_get_search_filter(client)
-        self._test_get_search_filter_array(client)
-        self._test_get_search_counts(client)
-        self._test_get_search_coverage(client)
-        self._test_get_search_facets_none(client)
-        self._test_get_search_facets_result(client)
-        self._test_autocomplete(client)
-        self._test_suggest(client)
+        async with client:
+            await self._test_get_search_simple(client)
+            await self._test_get_search_simple_with_top(client)
+            await self._test_get_search_filter(client)
+            await self._test_get_search_filter_array(client)
+            await self._test_get_search_counts(client)
+            await self._test_get_search_coverage(client)
+            await self._test_get_search_facets_none(client)
+            await self._test_get_search_facets_result(client)
+            await self._test_autocomplete(client)
+            await self._test_suggest(client)
 
     async def _test_get_search_simple(self, client):
-        async with client:
-            results = []
-            async for x in await client.search(search_text="hotel"):
-                results.append(x)
-            assert len(results) == 7
+        results = []
+        async for x in await client.search(search_text="hotel"):
+            results.append(x)
+        assert len(results) == 7
 
-            results = []
-            async for x in await client.search(search_text="motel"):
-                results.append(x)
-            assert len(results) == 2
+        results = []
+        async for x in await client.search(search_text="motel"):
+            results.append(x)
+        assert len(results) == 2
 
     async def _test_get_search_simple_with_top(self, client):
-        async with client:
-            results = []
-            async for x in await client.search(search_text="hotel", top=3):
-                results.append(x)
-            assert len(results) == 3
+        results = []
+        async for x in await client.search(search_text="hotel", top=3):
+            results.append(x)
+        assert len(results) == 3
 
-            results = []
-            async for x in await client.search(search_text="motel", top=3):
-                results.append(x)
-            assert len(results) == 2
+        results = []
+        async for x in await client.search(search_text="motel", top=3):
+            results.append(x)
+        assert len(results) == 2
 
     async def _test_get_search_filter(self, client):
-        async with client:
-            results = []
-            select = ["hotelName", "category", "description"]
-            async for x in await client.search(
-                    search_text="WiFi",
-                    filter="category eq 'Budget'",
-                    select=",".join(select),
-                    order_by="hotelName desc"
-            ):
-                results.append(x)
-            assert [x["hotelName"] for x in results] == sorted(
-                [x["hotelName"] for x in results], reverse=True
-            )
-            expected = {
-                "category",
-                "hotelName",
-                "description",
-                "@search.score",
-                "@search.highlights",
-            }
-            assert all(set(x) == expected for x in results)
-            assert all(x["category"] == "Budget" for x in results)
+        results = []
+        select = ["hotelName", "category", "description"]
+        async for x in await client.search(
+                search_text="WiFi",
+                filter="category eq 'Budget'",
+                select=",".join(select),
+                order_by="hotelName desc"
+        ):
+            results.append(x)
+        assert [x["hotelName"] for x in results] == sorted(
+            [x["hotelName"] for x in results], reverse=True
+        )
+        expected = {
+            "category",
+            "hotelName",
+            "description",
+            "@search.score",
+            "@search.highlights",
+        }
+        assert all(set(x) == expected for x in results)
+        assert all(x["category"] == "Budget" for x in results)
 
     async def _test_get_search_filter_array(self, client):
-        async with client:
-            results = []
-            select = ["hotelName", "category", "description"]
-            async for x in await client.search(
-                    search_text="WiFi",
-                    filter="category eq 'Budget'",
-                    select=select,
-                    order_by="hotelName desc"
-            ):
-                results.append(x)
-            assert [x["hotelName"] for x in results] == sorted(
-                [x["hotelName"] for x in results], reverse=True
-            )
-            expected = {
-                "category",
-                "hotelName",
-                "description",
-                "@search.score",
-                "@search.highlights",
-            }
-            assert all(set(x) == expected for x in results)
-            assert all(x["category"] == "Budget" for x in results)
+        results = []
+        select = ["hotelName", "category", "description"]
+        async for x in await client.search(
+                search_text="WiFi",
+                filter="category eq 'Budget'",
+                select=select,
+                order_by="hotelName desc"
+        ):
+            results.append(x)
+        assert [x["hotelName"] for x in results] == sorted(
+            [x["hotelName"] for x in results], reverse=True
+        )
+        expected = {
+            "category",
+            "hotelName",
+            "description",
+            "@search.score",
+            "@search.highlights",
+        }
+        assert all(set(x) == expected for x in results)
+        assert all(x["category"] == "Budget" for x in results)
 
     async def _test_get_search_counts(self, client):
         results = await client.search(search_text="hotel")
@@ -120,38 +117,34 @@ class TestClientTestAsync(AzureRecordedTestCase):
         assert cov >= 50.0
 
     async def _test_get_search_facets_none(self, client):
-        async with client:
-            select = ("hotelName", "category", "description")
-            results = await client.search(
-                search_text="WiFi",
-                select=",".join(select)
-            )
-            assert await results.get_facets() is None
+        select = ("hotelName", "category", "description")
+        results = await client.search(
+            search_text="WiFi",
+            select=",".join(select)
+        )
+        assert await results.get_facets() is None
 
     async def _test_get_search_facets_result(self, client):
-        async with client:
-            select = ("hotelName", "category", "description")
-            results = await client.search(
-                search_text="WiFi",
-                facets=["category"],
-                select=",".join(select)
-            )
-            assert await results.get_facets() == {
-                "category": [
-                    {"value": "Budget", "count": 4},
-                    {"value": "Luxury", "count": 1},
-                ]
-            }
+        select = ("hotelName", "category", "description")
+        results = await client.search(
+            search_text="WiFi",
+            facets=["category"],
+            select=",".join(select)
+        )
+        assert await results.get_facets() == {
+            "category": [
+                {"value": "Budget", "count": 4},
+                {"value": "Luxury", "count": 1},
+            ]
+        }
 
     async def _test_autocomplete(self, client):
-        async with client:
-            results = await client.autocomplete(search_text="mot", suggester_name="sg")
-            assert results == [{"text": "motel", "query_plus_text": "motel"}]
+        results = await client.autocomplete(search_text="mot", suggester_name="sg")
+        assert results == [{"text": "motel", "query_plus_text": "motel"}]
 
     async def _test_suggest(self, client):
-        async with client:
-            results = await client.suggest(search_text="mot", suggester_name="sg")
-            assert results == [
-                {"hotelId": "2", "text": "Cheapest hotel in town. Infact, a motel."},
-                {"hotelId": "9", "text": "Secret Point Motel"},
-            ]
+        results = await client.suggest(search_text="mot", suggester_name="sg")
+        assert results == [
+            {"hotelId": "2", "text": "Cheapest hotel in town. Infact, a motel."},
+            {"hotelId": "9", "text": "Secret Point Motel"},
+        ]

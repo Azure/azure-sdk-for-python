@@ -23,12 +23,13 @@ class TestSearchClientSynonymMaps(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_synonym_map(self, endpoint, api_key):
         client = SearchIndexClient(endpoint, api_key)
-        await self._test_create_synonym_map(client)
-        await self._test_delete_synonym_map(client)
-        await self._test_delete_synonym_map_if_unchanged(client)
-        await self._test_get_synonym_map(client)
-        await self._test_get_synonym_maps(client)
-        await self._test_create_or_update_synonym_map(client)
+        async with client:
+            await self._test_create_synonym_map(client)
+            await self._test_delete_synonym_map(client)
+            await self._test_delete_synonym_map_if_unchanged(client)
+            await self._test_get_synonym_map(client)
+            await self._test_get_synonym_maps(client)
+            await self._test_create_or_update_synonym_map(client)
 
     async def _test_create_synonym_map(self, client):
         expected = len(await client.get_synonym_maps()) + 1

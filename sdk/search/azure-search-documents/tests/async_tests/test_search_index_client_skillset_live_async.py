@@ -30,17 +30,18 @@ class TestSearchClientSkillsets(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_skillset_crud(self, api_key, endpoint):
         client = SearchIndexerClient(endpoint, api_key)
-        await self._test_create_skillset(client)
-        await self._test_get_skillset(client)
-        await self._test_get_skillsets(client)
-        # TODO: Disabled due to service regression. See #22769
-        #await self._test_create_or_update_skillset(client)
-        await self._test_create_or_update_skillset_if_unchanged(client)
-        # TODO: Disabled due to service regression. See #22769
-        #await self._test_create_or_update_skillset_inplace(client)
-        # TODO: Disabled due to service regression. See #22769
-        #await self._test_delete_skillset_if_unchanged(client)
-        await self._test_delete_skillset(client)
+        async with client:
+            await self._test_create_skillset(client)
+            await self._test_get_skillset(client)
+            await self._test_get_skillsets(client)
+            # TODO: Disabled due to service regression. See #22769
+            #await self._test_create_or_update_skillset(client)
+            await self._test_create_or_update_skillset_if_unchanged(client)
+            # TODO: Disabled due to service regression. See #22769
+            #await self._test_create_or_update_skillset_inplace(client)
+            # TODO: Disabled due to service regression. See #22769
+            #await self._test_delete_skillset_if_unchanged(client)
+            await self._test_delete_skillset(client)
 
     async def _test_create_skillset(self, client):
         name = "test-ss-create"

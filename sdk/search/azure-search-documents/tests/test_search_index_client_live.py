@@ -4,11 +4,9 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from operator import index
-from urllib.parse import non_hierarchical
 import pytest
+from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
-
 from azure.search.documents.indexes.models import(
     AnalyzeTextOptions,
     CorsOptions,
@@ -20,6 +18,7 @@ from azure.search.documents.indexes.models import(
 from azure.search.documents.indexes import SearchIndexClient
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
+
 
 class TestSearchIndexClient(AzureRecordedTestCase):
 

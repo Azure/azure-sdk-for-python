@@ -29,17 +29,18 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
     async def test_search_index_client(self, api_key, endpoint, index_name):
         client = SearchIndexClient(endpoint, api_key)
         index_name = "hotels"
-        await self._test_get_service_statistics(client)
-        await self._test_list_indexes_empty(client)
-        await self._test_create_index(client, index_name)
-        await self._test_list_indexes(client, index_name)
-        await self._test_get_index(client, index_name)
-        await self._test_get_index_statistics(client, index_name)
-        await self._test_delete_indexes_if_unchanged(client)
-        await self._test_create_or_update_index(client)
-        await self._test_create_or_update_indexes_if_unchanged(client)
-        await self._test_analyze_text(client, index_name)
-        await self._test_delete_indexes(client)
+        async with client:
+            await self._test_get_service_statistics(client)
+            await self._test_list_indexes_empty(client)
+            await self._test_create_index(client, index_name)
+            await self._test_list_indexes(client, index_name)
+            await self._test_get_index(client, index_name)
+            await self._test_get_index_statistics(client, index_name)
+            await self._test_delete_indexes_if_unchanged(client)
+            await self._test_create_or_update_index(client)
+            await self._test_create_or_update_indexes_if_unchanged(client)
+            await self._test_analyze_text(client, index_name)
+            await self._test_delete_indexes(client)
 
     async def _test_get_service_statistics(self, client):
         result = await client.get_service_statistics()
@@ -48,39 +49,36 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
 
     async def _test_list_indexes_empty(self, client):
         result = client.list_indexes()
-
         with pytest.raises(StopAsyncIteration):
             await result.__anext__()
 
     async def _test_create_index(self, client, index_name):
-            fields = fields = [
-                SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
-                SimpleField(name="baseRate", type=SearchFieldDataType.Double)
-            ]
+        fields = fields = [
+            SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
+            SimpleField(name="baseRate", type=SearchFieldDataType.Double)
+        ]
 
-            scoring_profile = ScoringProfile(
-                name="MyProfile"
-            )
-            scoring_profiles = []
-            scoring_profiles.append(scoring_profile)
-            cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
-            index = SearchIndex(
-                name=index_name,
-                fields=fields,
-                scoring_profiles=scoring_profiles,
-                cors_options=cors_options)
-            result = await client.create_index(index)
-            assert result.name == "hotels"
-            assert result.scoring_profiles[0].name == scoring_profile.name
-            assert result.cors_options.allowed_origins == cors_options.allowed_origins
-            assert result.cors_options.max_age_in_seconds == cors_options.max_age_in_seconds
+        scoring_profile = ScoringProfile(
+            name="MyProfile"
+        )
+        scoring_profiles = []
+        scoring_profiles.append(scoring_profile)
+        cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
+        index = SearchIndex(
+            name=index_name,
+            fields=fields,
+            scoring_profiles=scoring_profiles,
+            cors_options=cors_options)
+        result = await client.create_index(index)
+        assert result.name == "hotels"
+        assert result.scoring_profiles[0].name == scoring_profile.name
+        assert result.cors_options.allowed_origins == cors_options.allowed_origins
+        assert result.cors_options.max_age_in_seconds == cors_options.max_age_in_seconds
 
     async def _test_list_indexes(self, client, index_name):
         result = client.list_indexes()
-
         first = await result.__anext__()
         assert first.name == index_name
-
         with pytest.raises(StopAsyncIteration):
             await result.__anext__()
 

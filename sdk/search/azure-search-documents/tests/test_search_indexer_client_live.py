@@ -4,9 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import random
-import string
-
 import pytest
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
@@ -19,136 +16,117 @@ from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
 
 
-class TestSearchIndexersClient(AzureRecordedTestCase):
-
-    def _prepare_indexer(self, endpoint, api_key, storage_cs, container_name, indexer_name, datasource_name, index_name):
-        container = SearchIndexerDataContainer(name=container_name)
-        data_source_connection = SearchIndexerDataSourceConnection(
-            name=datasource_name,
-            type="azureblob",
-            connection_string=storage_cs,
-            container=container
-        )
-        client = SearchIndexerClient(endpoint, api_key)
-        ds = client.create_data_source_connection(data_source_connection)
-        fields = [{
-            "name": "hotelId",
-            "type": "Edm.String",
-            "key": True,
-            "searchable": False
-        }]
-        return SearchIndexer(name=indexer_name, data_source_name=ds.name, target_index_name=index_name)
-
-    def _parse_kwargs(self, **kwargs):
-        search_endpoint = kwargs.pop('endpoint')
-        search_api_key = kwargs.pop('api_key')
-        storage_cs = kwargs.pop('search_storage_connection_string')
-        container_name = kwargs.pop('search_storage_container_name')
-        index_name = kwargs.pop('index_name')
-        return (search_endpoint, search_api_key, storage_cs, container_name, index_name)
-
-    def _update_variables(self, variables, prefix_tag=""):
-        if self.is_live:
-            variables["indexer_name{}".format(prefix_tag)] = self._random_tag(prefix="sample-indexer-")
-            variables["datasource_name{}".format(prefix_tag)] = self._random_tag(prefix="sample-datasource-")
-        return variables
-
-    def _parse_variables(self, variables, prefix_tag=""):
-        return (
-            variables["indexer_name{}".format(prefix_tag)],
-            variables["datasource_name{}".format(prefix_tag)],
-        )
-
-    def _random_tag(self, prefix="", length=10):
-        allowed_chars = string.ascii_letters
-        random_tag = "".join(random.choice(allowed_chars) for x in range(length)).lower()
-        return "{}{}".format(prefix, random_tag)
+class TestSearchIndexerClientTest(AzureRecordedTestCase):
 
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
-    def test_indexer_crud(self, variables, **kwargs):
-        search_endpoint, search_api_key, storage_cs, container_name, index_name = self._parse_kwargs(**kwargs)
-        variables = self._update_variables(variables)
-        indexer_name, datasource_name = self._parse_variables(variables)
-        client = SearchIndexerClient(search_endpoint, search_api_key)
-        indexer_count = len(client.get_indexers())
+    def test_search_indexers(self, endpoint, api_key, **kwargs):
+        storage_cs = kwargs.get("search_storage_connection_string")
+        container_name = kwargs.get("search_storage_container_name")
+        client = SearchIndexerClient(endpoint, api_key)
+        index_client = SearchIndexClient(endpoint, api_key)
+        self._test_create_indexer(client, index_client, storage_cs, container_name)
+        self._test_delete_indexer(client, index_client, storage_cs, container_name)
+        self._test_get_indexer(client, index_client, storage_cs, container_name)
+        self._test_list_indexer(client, index_client, storage_cs, container_name)
+        self._test_create_or_update_indexer(client, index_client, storage_cs, container_name)
+        self._test_reset_indexer(client, index_client, storage_cs, container_name)
+        self._test_run_indexer(client, index_client, storage_cs, container_name)
+        self._test_get_indexer_status(client, index_client, storage_cs, container_name)
+        self._test_create_or_update_indexer_if_unchanged(client, index_client, storage_cs, container_name)
+        self._test_delete_indexer_if_unchanged(client, index_client, storage_cs, container_name)
 
-        # Create indexer
-        indexer = self._prepare_indexer(search_endpoint, search_api_key, storage_cs, container_name, indexer_name, datasource_name, index_name)
+    def _prepare_indexer(self, client, index_client, storage_cs, name, container_name):
+        data_source_connection = SearchIndexerDataSourceConnection(
+            name=f"{name}-ds",
+            type="azureblob",
+            connection_string=storage_cs,
+            container=SearchIndexerDataContainer(name=container_name)
+        )
+        ds = client.create_data_source_connection(data_source_connection)
+
+        fields = [
+        {
+          "name": "hotelId",
+          "type": "Edm.String",
+          "key": True,
+          "searchable": False
+        }]
+        index = SearchIndex(name=f"{name}-hotels", fields=fields)
+        ind = index_client.create_index(index)
+        return SearchIndexer(name=name, data_source_name=ds.name, target_index_name=ind.name)
+
+    def _test_create_indexer(self, client, index_client, storage_cs, container_name):
+        name = "create"
+        indexer = self._prepare_indexer(client, index_client, storage_cs, name, container_name)
         result = client.create_indexer(indexer)
-        assert result.name == indexer_name
-        assert result.target_index_name == index_name
-        assert result.data_source_name == datasource_name
+        assert result.name == name
+        assert result.target_index_name == f"{name}-hotels"
+        assert result.data_source_name == f"{name}-ds"
 
-        # Get indexer
-        result = client.get_indexer(indexer_name)
-        assert result.name == indexer_name
+    def _test_delete_indexer(self, client, index_client, storage_cs, container_name):
+        name = "delete"
+        indexer = self._prepare_indexer(client, index_client, storage_cs, name, container_name)
+        client.create_indexer(indexer)
+        expected = len(client.get_indexers()) - 1
+        client.delete_indexer(name)
+        assert len(client.get_indexers()) == expected
 
-        # Run indexer
-        client.run_indexer(indexer_name)
-        assert client.get_indexer_status(indexer_name).status == 'running'
+    def _test_get_indexer(self, client, index_client, storage_cs, container_name):
+        name = "get"
+        indexer = self._prepare_indexer(client, index_client, storage_cs, name, container_name)
+        client.create_indexer(indexer)
+        result = client.get_indexer(name)
+        assert result.name == name
 
-        # Reset indexer
-        client.reset_indexer(indexer_name)
-        assert client.get_indexer_status(indexer_name).last_result.status.lower() in ('inprogress', 'reset')
-
-        # Get indexer status
-        status = client.get_indexer_status(indexer_name)
-        assert status.status is not None
-
-        # List indexers
-        variables = self._update_variables(variables, prefix_tag="2")
-        indexer2_name, datasource2_name = self._parse_variables(variables, prefix_tag="2")
-        indexer2 = self._prepare_indexer(search_endpoint, search_api_key, storage_cs, container_name, indexer2_name, datasource2_name, index_name)
+    def _test_list_indexer(self, client, index_client, storage_cs, container_name):
+        name1 = "list1"
+        name2 = "list2"
+        indexer1 = self._prepare_indexer(client, index_client, storage_cs, name1, container_name)
+        indexer2 = self._prepare_indexer(client, index_client, storage_cs, name2, container_name)
+        client.create_indexer(indexer1)
         client.create_indexer(indexer2)
         result = client.get_indexers()
         assert isinstance(result, list)
-        assert len(result) == indexer_count + 2
-        indexer_count = len(result)
-        assert indexer_name in set(x.name for x in result)
-        assert indexer2_name in set(x.name for x in result)
+        assert set(x.name for x in result).intersection([name1, name2]) == set([name1, name2])
 
-        # Delete indexer
-        client.delete_indexer(indexer_name)
-        client.delete_indexer(indexer2_name)
-        assert len(client.get_indexers()) == indexer_count - 2
-
-        return variables
-
-    @SearchEnvVarPreparer()
-    @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
-    @recorded_by_proxy
-    def test_create_or_update_indexer(self, variables, **kwargs):
-        search_endpoint, search_api_key, storage_cs, container_name, index_name = self._parse_kwargs(**kwargs)
-        variables = self._update_variables(variables)
-        indexer_name, datasource_name = self._parse_variables(variables)
-        client = SearchIndexerClient(search_endpoint, search_api_key)
-        indexer = self._prepare_indexer(search_endpoint, search_api_key, storage_cs, container_name, indexer_name, datasource_name, index_name)
-
-        start_count = len(client.get_indexers())
+    def _test_create_or_update_indexer(self, client, index_client, storage_cs, container_name):
+        name = "cou"
+        indexer = self._prepare_indexer(client, index_client, storage_cs, name, container_name)
         client.create_indexer(indexer)
-        assert(len(client.get_indexers())) == start_count + 1
-        
+        expected = len(client.get_indexers())
         indexer.description = "updated"
         client.create_or_update_indexer(indexer)
-        assert len(client.get_indexers()) == start_count + 1
-
-        result = client.get_indexer(indexer_name)
-        assert result.name == indexer_name
+        assert len(client.get_indexers()) == expected
+        result = client.get_indexer(name)
+        assert result.name == name
         assert result.description == "updated"
-        return variables
 
-    @SearchEnvVarPreparer()
-    @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
-    @recorded_by_proxy
-    def test_create_or_update_indexer_if_unchanged(self, variables, **kwargs):
-        search_endpoint, search_api_key, storage_cs, container_name, index_name = self._parse_kwargs(**kwargs)
-        variables = self._update_variables(variables)
-        indexer_name, datasource_name = self._parse_variables(variables)
-        client = SearchIndexerClient(search_endpoint, search_api_key)
-        indexer = self._prepare_indexer(search_endpoint, search_api_key, storage_cs, container_name, indexer_name, datasource_name, index_name)
+    def _test_reset_indexer(self, client, index_client, storage_cs, container_name):
+        name = "reset"
+        indexer = self._prepare_indexer(client, index_client, storage_cs, name, container_name)
+        client.create_indexer(indexer)
+        client.reset_indexer(name)
+        assert (client.get_indexer_status(name)).last_result.status.lower() in ('inprogress', 'reset')
 
+    def _test_run_indexer(self, client, index_client, storage_cs, container_name):
+        name = "run"
+        indexer = self._prepare_indexer(client, index_client, storage_cs, name, container_name)
+        client.create_indexer(indexer)
+        client.run_indexer(name)
+        assert (client.get_indexer_status(name)).status == 'running'
+
+    def _test_get_indexer_status(self, client, index_client, storage_cs, container_name):
+        name = "get-status"
+        indexer = self._prepare_indexer(client, index_client, storage_cs, name, container_name)
+        client.create_indexer(indexer)
+        status = client.get_indexer_status(name)
+        assert status.status is not None
+
+    def _test_create_or_update_indexer_if_unchanged(self, client, index_client, storage_cs, container_name):
+        name = "couunch"
+        indexer = self._prepare_indexer(client, index_client, storage_cs, name, container_name)
         created = client.create_indexer(indexer)
         etag = created.e_tag
 
@@ -158,18 +136,10 @@ class TestSearchIndexersClient(AzureRecordedTestCase):
         indexer.e_tag = etag
         with pytest.raises(HttpResponseError):
             client.create_or_update_indexer(indexer, match_condition=MatchConditions.IfNotModified)
-        return variables
 
-    @SearchEnvVarPreparer()
-    @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
-    @recorded_by_proxy
-    def test_delete_indexer_if_unchanged(self, **kwargs):
-        search_endpoint, search_api_key, storage_cs, container_name, index_name = self._parse_kwargs(**kwargs)
-        variables = self._update_variables(kwargs.get("variables", {}))
-        indexer_name, datasource_name = self._parse_variables(variables)
-        client = SearchIndexerClient(search_endpoint, search_api_key)
-        indexer = self._prepare_indexer(search_endpoint, search_api_key, storage_cs, container_name, indexer_name, datasource_name, index_name)
-
+    def _test_delete_indexer_if_unchanged(self, client, index_client, storage_cs, container_name):
+        name = "delunch"
+        indexer = self._prepare_indexer(client, index_client, storage_cs, name, container_name)
         result = client.create_indexer(indexer)
         etag = result.e_tag
 
@@ -179,4 +149,3 @@ class TestSearchIndexersClient(AzureRecordedTestCase):
         indexer.e_tag = etag
         with pytest.raises(HttpResponseError):
             client.delete_indexer(indexer, match_condition=MatchConditions.IfNotModified)
-        return variables
