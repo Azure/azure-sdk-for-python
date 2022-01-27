@@ -117,7 +117,7 @@ def get_readme_and_output_folder(sdk_repo, rest_repo, issue_number):
 
 # Find package name and output folder from readme link
 def _find_package_name_and_output(rest_repo, readme_link):
-    readme_link_part = '/specification/' + readme_link.split('/specification')[-1]
+    readme_link_part = '/specification' + readme_link.split('/specification')[-1]
     readme_contents = str(rest_repo.get_contents(readme_link_part).decoded_content)
     pk_name = re.findall(r'package-name: (.*?)\\n', readme_contents)[0]
     out_folder = re.findall(r'\$\(python-sdks-folder\)/(.*?)/azure-', readme_contents)[0]
