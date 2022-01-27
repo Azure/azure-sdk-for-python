@@ -4,7 +4,7 @@
 
 ### Other changes
 - Default consistency level for the sync and async clients is no longer "Session" and will instead be set to the 
-  consistency level of the cosmos account on initialization.
+  consistency level of the user's cosmos account setting on initialization.
 
 ### 4.3.0b2 (2022-01-25)
 
