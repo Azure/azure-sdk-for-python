@@ -26,7 +26,7 @@
 """
 # https://github.com/PyCQA/pylint/issues/3112
 # Currently pylint is locked to 2.3.3 and this is fixed in 2.4.4
-from typing import Dict, Any, Optional # pylint: disable=unused-import
+from typing import Dict, Any, Optional, TypeVar  # pylint: disable=unused-import
 from urllib.parse import urlparse
 from urllib3.util.retry import Retry
 from azure.core.async_paging import AsyncItemPaged
@@ -59,6 +59,7 @@ from .. import _session
 from .. import _utils
 from ..partition_key import _Undefined, _Empty
 
+ClassType = TypeVar("ClassType")
 # pylint: disable=protected-access
 
 class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
@@ -90,7 +91,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         url_connection,  # type: str
         auth,  # type: Dict[str, Any]
         connection_policy=None,  # type: Optional[ConnectionPolicy]
-        consistency_level=documents.ConsistencyLevel.Session,  # type: str
+        consistency_level=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -137,19 +138,11 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             http_constants.HttpHeaders.IsContinuationExpected: False,
         }
 
-        if consistency_level is not None:
-            self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
+        self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
+        print("initial consistency level: {}".format(consistency_level))
 
         # Keeps the latest response headers from server.
         self.last_response_headers = None
-
-        if consistency_level == documents.ConsistencyLevel.Session:
-            # create a session - this is maintained only if the default consistency level
-            # on the client is set to session, or if the user explicitly sets it as a property
-            # via setter
-            self.session = _session.Session(self.url_connection)
-        else:
-            self.session = None  # type: ignore
 
         self._useMultipleWriteLocations = False
         self._global_endpoint_manager = global_endpoint_manager_async._GlobalEndpointManager(self)
@@ -232,10 +225,47 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return self._global_endpoint_manager.get_read_endpoint()
 
     async def _setup(self):
+        # Save the choice that was made (either None or some value) and branch to set or get the consistency
+        user_defined_consistency = self.default_headers[http_constants.HttpHeaders.ConsistencyLevel]
+        # Set default header setting to any consistency level for the first request to _GetDatabaseAccount below
+        if user_defined_consistency is None:
+            self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = documents.ConsistencyLevel.Strong
+
+        if user_defined_consistency == documents.ConsistencyLevel.Session:
+            # create a Session if the user wants Session consistency
+            self.session = _session.Session(self.url_connection)
+        else:
+            self.session = None  # type: ignore
+
         if 'database_account' not in self._setup_kwargs:
-            self._setup_kwargs['database_account'] = await self._global_endpoint_manager._GetDatabaseAccount(
+            database_account = await self._global_endpoint_manager._GetDatabaseAccount(
                 **self._setup_kwargs)
+            self._setup_kwargs['database_account'] = database_account
             await self._global_endpoint_manager.force_refresh(self._setup_kwargs['database_account'])
+            self._check_and_set_consistency_level(database_account, user_defined_consistency)
+
+    def _check_and_set_consistency_level(
+            self,
+            database_account: ClassType,
+            consistency_level: Optional[str] = None,
+    ) -> None:
+        """Checks if consistency level param was passed in by user and sets it to that value or to the account default.
+        :param database_account: The database account to be used to check consistency levels
+        :type database_account: ~azure.cosmos.documents.DatabaseAccount
+        :param consistency_level: The consistency level passed in by the user for the client
+        :type consistency_level: Optional[str]
+        :rtype: None
+        """
+        if consistency_level is None:
+            # If no consistency level was passed in by user, set to default level present in account
+            user_consistency_policy = database_account.ConsistencyPolicy
+            consistency_level = user_consistency_policy.get(constants._Constants.DefaultConsistencyLevel)
+            if consistency_level is documents.ConsistencyLevel.Session:
+                # If None was passed in but DatabaseAccount has Session consistency level, start a Session
+                self.session = _session.Session()
+        # Set header to be used as final consistency for client
+        self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
+
 
     def _GetDatabaseIdWithPathForUser(self, database_link, user):  # pylint: disable=no-self-use
         CosmosClientConnection.__ValidateResource(user)

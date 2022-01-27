@@ -45,7 +45,7 @@ from azure.core.pipeline.policies import (  # type: ignore
 
 from . import _base as base
 from . import documents
-from .documents import ConnectionPolicy, DatabaseAccount
+from .documents import ConnectionPolicy
 from . import _constants as constants
 from . import http_constants
 from . import _query_iterable as query_iterable

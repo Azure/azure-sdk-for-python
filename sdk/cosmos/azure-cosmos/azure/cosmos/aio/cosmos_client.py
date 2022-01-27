@@ -96,7 +96,7 @@ class CosmosClient(object):
     :param str url: The URL of the Cosmos DB account.
     :param credential: Can be the account key, or a dictionary of resource tokens.
     :type credential: str or dict[str, str]
-    :keyword str consistency_level: Consistency level to use for the session. The default value is "Session".
+    :param str consistency_level: Consistency level to use for the session. The default value is None (Account level).
 
     .. admonition:: Example:
 
@@ -109,11 +109,10 @@ class CosmosClient(object):
             :name: create_client
     """
 
-    def __init__(self, url, credential, **kwargs):
+    def __init__(self, url, credential, consistency_level=None, **kwargs):
         # type: (str, Any, str, Any) -> None
         """Instantiate a new CosmosClient."""
         auth = _build_auth(credential)
-        consistency_level = kwargs.get('consistency_level', 'Session')
         connection_policy = _build_connection_policy(kwargs)
         self.client_connection = CosmosClientConnection(
             url,

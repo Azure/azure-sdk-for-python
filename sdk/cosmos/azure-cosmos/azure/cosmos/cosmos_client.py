@@ -126,7 +126,7 @@ class CosmosClient(object):
     :param str url: The URL of the Cosmos DB account.
     :param credential: Can be the account key, or a dictionary of resource tokens.
     :type credential: str or dict[str, str]
-    :param str consistency_level: Consistency level to use for the session. The default value is "Session".
+    :param str consistency_level: Consistency level to use for the session. The default value is None (Account level).
     :keyword int timeout: An absolute timeout in seconds, for the combined HTTP request and response processing.
     :keyword int request_timeout: The HTTP request timeout in milliseconds.
     :keyword str connection_mode: The connection mode for the client - currently only supports 'Gateway'.
