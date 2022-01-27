@@ -154,9 +154,7 @@ def run_pipeline(issue_link, pipeline_url, spec_readme):
         "resources": {
             "repositories": {
                 "self": {
-                    #Just Debug
-                    "refName": "refs/heads/auto-release-debug"
-                    # "refName": "refs/heads/main"
+                    "refName": "refs/heads/main"
                 }
             }
         },
@@ -187,9 +185,7 @@ def run_pipeline(issue_link, pipeline_url, spec_readme):
     credentials = BasicAuthentication('', personal_access_token)
     run_parameters = models.RunPipelineParameters(**paramaters)
     client = PipelinesClient(base_url=organization_url, creds=credentials)
-    # just debug
-    result = client.run_pipeline(project='internal', pipeline_id=2384, run_parameters=run_parameters)
-    # result = client.run_pipeline(project='internal', pipeline_id=2500, run_parameters=run_parameters)
+    result = client.run_pipeline(project='internal', pipeline_id=2500, run_parameters=run_parameters)
     if result.state == 'inProgress':
         return True
     else:
