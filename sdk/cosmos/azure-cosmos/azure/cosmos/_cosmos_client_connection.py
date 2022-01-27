@@ -198,41 +198,34 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         # Routing map provider
         self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
 
-        # Set initial consistency for single _GetDatabaseAccount request
-        if consistency_level is not None:
-            self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
-            if consistency_level == documents.ConsistencyLevel.Session:
-                # create a session - this is maintained only if the default consistency level
-                # on the client is set to session, or if the user explicitly sets it as a property
-                # via setter
-                self.session = _session.Session(self.url_connection)
-            else:
-                self.session = None  # type: ignore
-        else:
-            # Set header setting to lowest latency consistency level for the first request to _GetDatabaseAccount
-            self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = documents.ConsistencyLevel.Eventual
+        # Set header setting to lowest latency consistency level for the first request to _GetDatabaseAccount
+        self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = documents.ConsistencyLevel.Eventual
 
         database_account = self._global_endpoint_manager._GetDatabaseAccount(**kwargs)
         self._global_endpoint_manager.force_refresh(database_account)
 
         # Use database_account if no consistency passed in to verify consistency level to be used
-        if consistency_level is None:
-            self._set_account_consistency_level(database_account)
+        self._set_client_consistency_level(database_account, consistency_level)
 
-    def _set_account_consistency_level(
+    def _set_client_consistency_level(
             self,
             database_account: ClassType,
+            consistency_level: Optional[str],
     ) -> None:
         """Checks if consistency level param was passed in by user and sets it to that value or to the account default.
 
         :param database_account: The database account to be used to check consistency levels
         :type database_account: ~azure.cosmos.documents.DatabaseAccount
+        :param consistency_level: The consistency level passed in by the user
+        :type consistency_level: Optional[str]
         :rtype: None
         """
-        # Set to default level present in account
-        user_consistency_policy = database_account.ConsistencyPolicy
-        consistency_level = user_consistency_policy.get(constants._Constants.DefaultConsistencyLevel)
+        if consistency_level is None:
+            # Set to default level present in account
+            user_consistency_policy = database_account.ConsistencyPolicy
+            consistency_level = user_consistency_policy.get(constants._Constants.DefaultConsistencyLevel)
 
+        # Set consistency level header to be used for the client
         self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
 
         if consistency_level == documents.ConsistencyLevel.Session:
