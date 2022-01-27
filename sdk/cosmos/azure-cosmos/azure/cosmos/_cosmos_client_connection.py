@@ -209,8 +209,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             else:
                 self.session = None  # type: ignore
         else:
-            # Set to an arbitrary consistency level to make request for account level consistency
-            self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = documents.ConsistencyLevel.Strong
+            # Set header setting to lowest latency consistency level for the first request to _GetDatabaseAccount
+            self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = documents.ConsistencyLevel.Eventual
 
         database_account = self._global_endpoint_manager._GetDatabaseAccount(**kwargs)
         self._global_endpoint_manager.force_refresh(database_account)

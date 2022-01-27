@@ -226,9 +226,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
     async def _setup(self):
         # Save the choice that was made (either None or some value) and branch to set or get the consistency
         user_defined_consistency = self.default_headers[http_constants.HttpHeaders.ConsistencyLevel]
-        # Set default header setting to any consistency level for the first request to _GetDatabaseAccount below
+        # Set header setting to lowest latency consistency level for the first request to _GetDatabaseAccount
         if user_defined_consistency is None:
-            self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = documents.ConsistencyLevel.Strong
+            self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = documents.ConsistencyLevel.Eventual
 
         if user_defined_consistency == documents.ConsistencyLevel.Session:
             # create a Session if the user wants Session consistency
