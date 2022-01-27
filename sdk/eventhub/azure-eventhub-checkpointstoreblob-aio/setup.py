@@ -56,6 +56,7 @@ setup(
         "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
         'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
@@ -64,7 +65,7 @@ setup(
     ],
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
-    python_requires=">=3.7",
+    python_requires=">=3.6",
     install_requires=[
         # dependencies for the vendored storage blob
         "azure-core<2.0.0,>=1.20.1",

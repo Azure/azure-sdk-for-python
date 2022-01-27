@@ -15,9 +15,9 @@ import msrest.serialization
 class ErrorResponseLinkedStorage(msrest.serialization.Model):
     """ErrorResponseLinkedStorage.
 
-    :param error: Error response indicates Insights service is not able to process the incoming
+    :ivar error: Error response indicates Insights service is not able to process the incoming
      request. The reason is provided in the error message.
-    :type error:
+    :vartype error:
      ~azure.mgmt.applicationinsights.v2020_06_02_preview.models.ErrorResponseLinkedStorageError
     """
 
@@ -31,6 +31,12 @@ class ErrorResponseLinkedStorage(msrest.serialization.Model):
         error: Optional["ErrorResponseLinkedStorageError"] = None,
         **kwargs
     ):
+        """
+        :keyword error: Error response indicates Insights service is not able to process the incoming
+         request. The reason is provided in the error message.
+        :paramtype error:
+         ~azure.mgmt.applicationinsights.v2020_06_02_preview.models.ErrorResponseLinkedStorageError
+        """
         super(ErrorResponseLinkedStorage, self).__init__(**kwargs)
         self.error = error
 
@@ -60,6 +66,8 @@ class ErrorResponseLinkedStorageError(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorResponseLinkedStorageError, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -86,6 +94,8 @@ class LiveTokenResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(LiveTokenResponse, self).__init__(**kwargs)
         self.live_token = None
 
@@ -93,14 +103,14 @@ class LiveTokenResponse(msrest.serialization.Model):
 class OperationInfo(msrest.serialization.Model):
     """Information about an operation.
 
-    :param provider: Name of the provider.
-    :type provider: str
-    :param resource: Name of the resource type.
-    :type resource: str
-    :param operation: Name of the operation.
-    :type operation: str
-    :param description: Description of the operation.
-    :type description: str
+    :ivar provider: Name of the provider.
+    :vartype provider: str
+    :ivar resource: Name of the resource type.
+    :vartype resource: str
+    :ivar operation: Name of the operation.
+    :vartype operation: str
+    :ivar description: Description of the operation.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -119,6 +129,16 @@ class OperationInfo(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: Name of the provider.
+        :paramtype provider: str
+        :keyword resource: Name of the resource type.
+        :paramtype resource: str
+        :keyword operation: Name of the operation.
+        :paramtype operation: str
+        :keyword description: Description of the operation.
+        :paramtype description: str
+        """
         super(OperationInfo, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
@@ -129,14 +149,14 @@ class OperationInfo(msrest.serialization.Model):
 class OperationLive(msrest.serialization.Model):
     """Represents an operation returned by the GetOperations request.
 
-    :param name: Name of the operation.
-    :type name: str
-    :param display: Display name of the operation.
-    :type display: ~azure.mgmt.applicationinsights.v2020_06_02_preview.models.OperationInfo
-    :param origin: Origin of the operation.
-    :type origin: str
-    :param properties: Properties of the operation.
-    :type properties: any
+    :ivar name: Name of the operation.
+    :vartype name: str
+    :ivar display: Display name of the operation.
+    :vartype display: ~azure.mgmt.applicationinsights.v2020_06_02_preview.models.OperationInfo
+    :ivar origin: Origin of the operation.
+    :vartype origin: str
+    :ivar properties: Properties of the operation.
+    :vartype properties: any
     """
 
     _attribute_map = {
@@ -155,6 +175,16 @@ class OperationLive(msrest.serialization.Model):
         properties: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of the operation.
+        :paramtype name: str
+        :keyword display: Display name of the operation.
+        :paramtype display: ~azure.mgmt.applicationinsights.v2020_06_02_preview.models.OperationInfo
+        :keyword origin: Origin of the operation.
+        :paramtype origin: str
+        :keyword properties: Properties of the operation.
+        :paramtype properties: any
+        """
         super(OperationLive, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -165,10 +195,10 @@ class OperationLive(msrest.serialization.Model):
 class OperationsListResult(msrest.serialization.Model):
     """Result of the List Operations operation.
 
-    :param value: A collection of operations.
-    :type value: list[~azure.mgmt.applicationinsights.v2020_06_02_preview.models.OperationLive]
-    :param next_link: URL to get the next set of operation list results if there are any.
-    :type next_link: str
+    :ivar value: A collection of operations.
+    :vartype value: list[~azure.mgmt.applicationinsights.v2020_06_02_preview.models.OperationLive]
+    :ivar next_link: URL to get the next set of operation list results if there are any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -183,6 +213,13 @@ class OperationsListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: A collection of operations.
+        :paramtype value:
+         list[~azure.mgmt.applicationinsights.v2020_06_02_preview.models.OperationLive]
+        :keyword next_link: URL to get the next set of operation list results if there are any.
+        :paramtype next_link: str
+        """
         super(OperationsListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link

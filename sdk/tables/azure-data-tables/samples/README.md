@@ -11,7 +11,6 @@ urlFragment: tables-samples
 # Samples for Azure Tables client library for Python
 
 These code samples show common scenario operations with the Azure Data Tables client library.
-The async versions of the samples require Python 3.5 or later.
 
 You can authenticate your client with a Tables API key:
 * See [sample_authentication.py][sample_authentication] and [sample_authentication_async.py][sample_authentication_async] for how to authenticate in the above cases.
@@ -29,7 +28,7 @@ These sample programs show common scenarios for the Tables client's offerings.
 
 
 ### Prerequisites
-* Python 2.7, or 3.5 or later is required to use this package.
+* Python 3.7 or later is required to use this package.
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and either an
 [Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) or an [Azure Cosmos Account](https://docs.microsoft.com/azure/cosmos-db/account-overview) to use this package.
 
