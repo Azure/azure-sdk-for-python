@@ -164,7 +164,7 @@ def run_pipeline(issue_link, pipeline_url, spec_readme):
                 "isSecret": False
             },
             "ISSUE_LINK": {
-                "value": issue_link",
+                "value": issue_link,
                 "isSecret": False
             },
             "PIPELINE_LINK": {
