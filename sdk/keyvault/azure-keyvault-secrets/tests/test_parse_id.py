@@ -3,8 +3,11 @@
 # Licensed under the MIT License.
 # -------------------------------------
 import functools
+from sys import api_version
 from azure.keyvault.secrets import KeyVaultSecretIdentifier
-from devtools_testutils import PowerShellPreparer, recorded_by_proxy
+from devtools_testutils import recorded_by_proxy
+from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
+import pytest
 
 from _shared.test_case import KeyVaultTestCase
 from _test_case import SecretsTestCaseClientPrepaper
@@ -12,10 +15,10 @@ from _test_case import SecretsTestCaseClientPrepaper
 SecretsPreparer = functools.partial(SecretsTestCaseClientPrepaper, is_async=False)
 
 class TestParseId(KeyVaultTestCase):
-    @PowerShellPreparer("keyvault", azure_keyvault_url="https://vaultname.vault.azure.net")
+    @pytest.mark.parametrize("api_version", [(DEFAULT_VERSION)])
+    @SecretsPreparer()
     @recorded_by_proxy
-    def test_parse_secret_id_with_version(self, azure_keyvault_url):
-        client = self.create_client(azure_keyvault_url)
+    def test_parse_secret_id_with_version(self, client, **kwargs):
         secret_name = self.get_resource_name("secret")
         secret_value = "secret_value"
         # create secret

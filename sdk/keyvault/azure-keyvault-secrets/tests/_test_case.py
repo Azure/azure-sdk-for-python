@@ -49,10 +49,10 @@ class SecretsTestCaseClientPrepaper(AzureRecordedTestCase):
 
     def __call__(self, fn):
         def _preparer(test_class, api_version, **kwargs):
-            #self._skip_if_not_configured(api_version)
+            self._skip_if_not_configured(api_version)
             if not self.is_logging_enabled:
                 kwargs.update({'logging_enable':False})
-            client = self.create_client(self.azure_keyvault_url, **kwargs)
+            client = self.create_client(self.azure_keyvault_url, **kwargs, api_version=api_version)
             fn(test_class, client)
         return _preparer
 
