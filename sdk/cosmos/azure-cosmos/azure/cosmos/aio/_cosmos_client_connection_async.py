@@ -236,15 +236,18 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         else:
             self.session = None  # type: ignore
 
+        database_account = None
         if 'database_account' not in self._setup_kwargs:
             database_account = await self._global_endpoint_manager._GetDatabaseAccount(
                 **self._setup_kwargs)
             self._setup_kwargs['database_account'] = database_account
             await self._global_endpoint_manager.force_refresh(self._setup_kwargs['database_account'])
+        else:
+            database_account = self._setup_kwargs.get('database_account')
 
-            # Use database_account if no consistency passed in to verify consistency level to be used
-            if user_defined_consistency is None:
-                self._set_account_consistency_level(database_account)
+        # Use database_account if no consistency passed in to verify consistency level to be used
+        if user_defined_consistency is None:
+            self._set_account_consistency_level(database_account)
 
     def _set_account_consistency_level(
             self,
