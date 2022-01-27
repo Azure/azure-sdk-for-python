@@ -172,7 +172,7 @@ def run_pipeline(issue_link, pipeline_url, spec_readme):
                 "isSecret": False
             },
             "SPEC_README":{
-                "value": f"{spec_readme}",
+                "value": spec_readme,
                 "isSecret": False
             }
         }
