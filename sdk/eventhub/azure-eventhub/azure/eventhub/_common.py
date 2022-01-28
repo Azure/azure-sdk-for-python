@@ -125,7 +125,8 @@ class EventData(object):
         body: Optional[Union[str, bytes, List[AnyStr]]]=None,
         *,
         data: bytes = None,
-        content_type: str = None
+        content_type: str = None,
+        **kwargs
     ) -> None:
         self._last_enqueued_event_properties = {}  # type: Dict[str, Any]
         self._sys_properties = None  # type: Optional[Dict[bytes, Any]]
