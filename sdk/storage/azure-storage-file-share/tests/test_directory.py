@@ -708,7 +708,7 @@ class StorageDirectoryTest(StorageTestCase):
         source_directory.create_directory()
 
         # Act
-        new_directory = source_directory.rename_directory('dir2')
+        new_directory = source_directory.rename_directory('dir2' + '?' + token)
 
         # Assert
         props = new_directory.get_directory_properties()
