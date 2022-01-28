@@ -10,6 +10,8 @@
     "en-gb"
   ],
   "ignorePaths": [
+    "eng/**",
+    "scripts/**",
     "**/tests/recordings/**",
     ".vscode/cspell.json",
     "*.parquet",
@@ -106,7 +108,8 @@
     "eng/**/*.json",
     "eng/*.txt",
     "eng/tox/tox.ini",
-    "./eng/tox/*.py"
+    "eng/common/docgeneration/Generate-DocIndex.ps1",
+    "eng/tox/*.py"
   ],
   "words": [
     "aad",
@@ -248,6 +251,9 @@
     "westcentralus",
     "westus",
     "wfile"
+    "westus",
+    "docfx",
+    "Docfx"
   ],
   "overrides": [
     {
