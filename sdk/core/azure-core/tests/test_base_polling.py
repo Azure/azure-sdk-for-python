@@ -51,6 +51,7 @@ from azure.core.polling.base_polling import LROBasePolling
 from azure.core.pipeline.policies._utils import _FixedOffset
 from utils import request_and_responses_product, REQUESTS_TRANSPORT_RESPONSES, create_transport_response, HTTP_REQUESTS
 from azure.core.pipeline._tools import is_rest
+from rest_client import TestRestClient
 
 class SimpleResource:
     """An implementation of Python 3 SimpleNamespace.
