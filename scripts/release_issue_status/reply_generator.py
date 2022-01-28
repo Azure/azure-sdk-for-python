@@ -6,6 +6,7 @@ issue_object_rg = None
 logging.basicConfig(level=logging.INFO,
                     format='[auto-reply  log] - %(funcName)s[line:%(lineno)d] - %(levelname)s: %(message)s')
 
+AUTO_ASK_FOR_CHECK = 'auto-ask-check'
 
 def readme_comparison(rest_repo, link_dict, labels):
     # to see whether need change readme
@@ -68,6 +69,6 @@ def begin_reply_generate(item, rest_repo, readme_link, pipeline_url):
             logging.info(f'{issue_object_rg.number} run pipeline successfully')
         else:
             logging.info(f'{issue_object_rg.number} run pipeline fail')
-        issue_object_rg.add_to_labels('auto-ask-check')
+        issue_object_rg.add_to_labels(AUTO_ASK_FOR_CHECK)
     else:
         logging.info('issue {} need config readme'.format(issue_object_rg.number))
