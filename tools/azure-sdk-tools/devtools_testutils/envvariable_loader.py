@@ -12,7 +12,7 @@ from dotenv import load_dotenv, find_dotenv
 from .sanitizers import add_general_regex_sanitizer
 
 
-class PowerShellPreparer(AzureMgmtPreparer):
+class EnvironmentVariableLoader(AzureMgmtPreparer):
     def __init__(
         self,
         directory,
@@ -24,7 +24,7 @@ class PowerShellPreparer(AzureMgmtPreparer):
         preparers=None,
         **kwargs
     ):
-        super(PowerShellPreparer, self).__init__(
+        super(EnvironmentVariableLoader, self).__init__(
             name_prefix,
             24,
             disable_recording=disable_recording,
@@ -81,13 +81,13 @@ class PowerShellPreparer(AzureMgmtPreparer):
                                 logger = logging.getLogger()
                                 logger.info(
                                     "This test class instance has no scrubber and a sanitizer could not be registered "
-                                    "with the test proxy, so the PowerShellPreparer will not scrub the value of {} in "
+                                    "with the test proxy, so the EnvironmentVariableLoader will not scrub the value of {} in "
                                     "recordings.".format(key)
                                 )
                     else:
                         template = 'To pass a live ID you must provide the scrubbed value for recordings to \
                             prevent secrets from being written to files. {} was not given. For example: \
-                                @PowerShellPreparer("schemaregistry", schemaregistry_endpoint="fake_endpoint.servicebus.windows.net")'
+                                @EnvironmentVariableLoader("schemaregistry", schemaregistry_endpoint="fake_endpoint.servicebus.windows.net")'
                         raise AzureTestError(template.format(key))
             except KeyError as key_error:
                 if not self._backup_preparers:
@@ -96,9 +96,9 @@ class PowerShellPreparer(AzureMgmtPreparer):
                 self.real_values = {}
                 create_kwargs = {}
                 for preparer in self._backup_preparers:
-                    resource_name, vals = preparer._prepare_create_resource(self.test_class_instance, **create_kwargs)
-                    # vals = preparer.create_resource(name, **create_kwargs)
-                    self.real_values.update(vals)
+                    resource_name, values = preparer._prepare_create_resource(self.test_class_instance, **create_kwargs)
+                    # values = preparer.create_resource(name, **create_kwargs)
+                    self.real_values.update(values)
                     if "resource_group" in self.real_values.keys():
                         create_kwargs["resource_group"] = self.real_values["resource_group"]
 

@@ -151,33 +151,33 @@ live-mode: true
 
 ## Create Live Test Resources
 The Azure Python SDK library has two ways of providing live resources to our tests:
-* Using an ArmTemplate and the PowerShellPreparer (we will demonstrate this one)
-    * [PowerShell preparer implementation](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/powershell_preparer.py)
+* Using an ArmTemplate and the EnvironmentVariableLoader (we will demonstrate this one)
+    * [EnvironmentVariableLoader implementation](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py)
     * [In line use](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/schemaregistry/azure-schemaregistry/tests/test_schema_registry.py#L30-L39) for the schemaregistry library
 * Using an individualized preparer such as the storage preparer
     * [Storage preparer implementation](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/storage_testcase.py)
     * [In line use](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob/tests/test_blob_client.py#L49-L61) for the blob client
 
-If your library has a management plane library, you can build a preparer specific to your service using the storage preparer as an example. It is recommended that you use a PowerShellPreparer for new libraries and those without management plane libraries. The `PowerShellPreparer` uses the `New-TestResources.ps1` script to deploy resources using an ARM Template. This script and information about running it can be found in the [`eng/common/TestResources`](https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/TestResources#live-test-resource-management) directory. For more information about the engineering systems in Azure SDK, check out their [wiki][engsys_wiki]
+If your library has a management plane library, you can build a preparer specific to your service using the storage preparer as an example. It is recommended that you use a EnvironmentVariableLoader for new libraries and those without management plane libraries. The `EnvironmentVariableLoader` is compatible with the `New-TestResources.ps1` script to deploy resources using an ARM Template. This script and information about running it can be found in the [`eng/common/TestResources`](https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/TestResources#live-test-resource-management) directory. For more information about the engineering systems in Azure SDK, check out their [wiki][engsys_wiki]
 
 1. Create an Azure Resource Management Template for your specific service and the configuration you need. This can be done in the portal by creating the resources and at the very last step (Review + Create) clicking "Download a template for automation". Save this template to a `test-resources.json` file under the directory that contains your library (`sdk/<my-library>/test-resources.json`).
 2. Use the [`New-TestResources.ps1`](https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/TestResources#on-the-desktop) script to deploy those resources.
 3. Set the environment variables returned from step 2 in your current shell or add them to your `.env` file at the root of the repo to save these secrets. If you choose the latter method, you will have to make sure all the key-value pairs are in the format `<key_name>=<value>`, rather than the  `${env:<key_name>} = '<value>'` formatting used in PowerShell. The names of the environment variables should be in all capital letters, snake case, and be prefixed with the library name. Ie. `TABLES_PRIMARY_KEY`, `FORMRECOGNIZER_ACCOUNT_URL`, `EVENTHUBS_SECRET_KEY`. If the name of the service is more than one word, like Form Recognizer, don't include an underscore between the words. Use `FORMRECOGNIZER_ACCOUNT_URL`, not `FORM_RECOGNIZER_ACCOUNT_URL`.
-4. Create a partial implementation of the PowerShellPreparer to pass in your specific environment variables. An example implementation is shown below for schemaregistry
+4. Create a partial implementation of the EnvironmentVariableLoader to pass in your specific environment variables. An example implementation is shown below for schemaregistry
 
 ```python
 import functools
-from devtools_testutils import PowerShellPreparer
+from devtools_testutils import EnvironmentVariableLoader
 
 MyServicePreparer = functools.partial(
-    PowerShellPreparer, "<my_service_directory>",
+    EnvironmentVariableLoader, "<my_service_directory>",
     schemaregistry_endpoint="fake_resource.servicebus.windows.net/",
     schemaregistry_group="fakegroup"
 )
 ```
 
 The parameters for the `functools.partial` method are:
-* The `PowerShellPreparer` class
+* The `EnvironmentVariableLoader` class
 * The library folder that holds your code (ie. `sdk/schemaregistry`). This value is used to search your environment variables for the appropriate values.
 * The remaining arguments are key-value kwargs, with the keys being the environment variables needed for the tests, and the value being a fake value for replacing the actual value in the recordings. The fake value in this implementation will replace the real value in the recording to make sure the secret keys are not committed to the recordings. These values should closely resemble the values because they are used in playback mode and will need to pass any client side validation. The fake value should also be a unique value to the other key-value pairs.
 
@@ -189,12 +189,12 @@ In the `tests` directory create a file with the naming pattern `test_<what_you_a
 import functools
 import pytest
 
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import AzureTestCase, EnvironmentVariableLoader
 
 from azure.schemaregistry import SchemaRegistryClient
 
 SchemaRegistryPreparer = functools.partial(
-    PowerShellPreparer, 'schemaregistry',
+    EnvironmentVariableLoader, 'schemaregistry',
     schemaregistry_endpoint="fake_resource.servicebus.windows.net/",
     schemaregistry_group="fakegroup"
 )
@@ -219,9 +219,9 @@ class TestSchemaRegistry(AzureTestCase):
 
 There's a lot going on in the example so we'll take this piece by piece:
 
-* Import everything you will need in your tests as normal, add to your imports the line `from devtools_testutils import AzureTestCase, PowerShellPreparer`. These two objects give our tests a lot of the desired powers.
+* Import everything you will need in your tests as normal, add to your imports the line `from devtools_testutils import AzureTestCase, EnvironmentVariableLoader`. These two objects give our tests a lot of the desired powers.
 * `AzureTestCase`: the test class should inherit from this object (`class TestSchemaRegistry(AzureTestCase)`), doing so sets up the recording infrastructure and the client creation methods.
-* `PowerShellPreparer`: this preparer serves two purposes.
+* `EnvironmentVariableLoader`: this loader serves two purposes.
     * First, it will provide the live keys we need to test our library against live resources.
     * Second, it will keep those same live keys out of our recordings to make sure that we are not leaking our secrets into the recordings.
 * At the top of your test class you should include any helper methods you will need. Most libraries will have a client creation method to eliminate repetitive code.
@@ -269,7 +269,7 @@ Your update should run smooth and have green dots representing passing tests. No
 
 ### Purging Secrets
 
-The `yaml` files created from running tests in live mode store the request and response interactions between the library and the service and this can include authorization, account names, shared access signatures, and other secrets. The recordings are included in our public GitHub repository, making it important for us to remove any secrets from these recordings before committing them to the repository. There are two easy ways to remove secrets. The first is the `PowerShellPreparer` implementation, discussed above. This method will automatically purge the keys with the provided fake values. The second way is to use the `self.scrubber.register_name_pair(key, fake_key)` method (This method is a function of the base `AzureTestCase` class), which is used when a secret is dynamically created during a test. For example, [Tables](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/tests/_shared/cosmos_testcase.py#L86-L89) uses this method to replace storage account names with standard names.
+The `yaml` files created from running tests in live mode store the request and response interactions between the library and the service and this can include authorization, account names, shared access signatures, and other secrets. The recordings are included in our public GitHub repository, making it important for us to remove any secrets from these recordings before committing them to the repository. There are two easy ways to remove secrets. The first is the `EnvironmentVariableLoader` implementation, discussed above. This method will automatically purge the keys with the provided fake values. The second way is to use the `self.scrubber.register_name_pair(key, fake_key)` method (This method is a function of the base `AzureTestCase` class), which is used when a secret is dynamically created during a test. For example, [Tables](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/tests/_shared/cosmos_testcase.py#L86-L89) uses this method to replace storage account names with standard names.
 
 #### Special Case: Shared Access Signature
 

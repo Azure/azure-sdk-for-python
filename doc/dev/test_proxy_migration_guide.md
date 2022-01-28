@@ -214,15 +214,15 @@ live pipeline testing, requests are made directly to the service instead of goin
 
 Fetching environment variables, passing them directly to tests, and sanitizing their real values can be done all at once
 by using the `devtools_testutils`
-[PowerShellPreparer](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/powershell_preparer.py).
+[EnvironmentVariableLoader](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py).
 
-The name "PowerShellPreparer" comes from its intended use with the PowerShell test resource management commands that are
+This loader is nice paired with the PowerShell test resource management commands that are
 documented in [/eng/common/TestResources][test_resources]. It's recommended that all test suites use these scripts for
 live test resource management.
 
-For an example of using the PowerShellPreparer with the test proxy, you can refer to the Tables SDK. The CosmosPreparer
+For an example of using the EnvironmentVariableLoader with the test proxy, you can refer to the Tables SDK. The CosmosPreparer
 and TablesPreparer defined in this [preparers.py][tables_preparers] file each define an instance of the
-PowerShellPreparer, which are used to fetch environment variables for Cosmos and Tables, respectively. These preparers
+EnvironmentVariableLoader, which are used to fetch environment variables for Cosmos and Tables, respectively. These preparers
 can be used to decorate test methods directly; for example:
 
 ```python
@@ -270,7 +270,7 @@ class TestExample(AzureRecordedTestCase):
         if self.is_live:
             table_name = "random-value"
             variables = {"table_name": table_name}
-        
+
         # use variables["table_name"] when using the table name throughout the test
         ...
 
