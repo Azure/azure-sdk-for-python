@@ -31,7 +31,7 @@ from .._constants import (
     SCHEMA_ID_LENGTH,
     DATA_START_INDEX,
     AVRO_MIME_TYPE,
-    RECORD_FORMAT_IDENTIFIER_LENGTH
+    RECORD_FORMAT_IDENTIFIER_LENGTH,
 )
 from .._message_protocol import MessageType, MessageCallbackType, MessageMetadataDict
 from .._apache_avro_encoder import ApacheAvroObjectEncoder as AvroObjectEncoder
@@ -60,16 +60,18 @@ class AvroEncoder(object):
         # type: (Any) -> None
         try:
             self._schema_group = kwargs.pop("group_name")
-            self._schema_registry_client = kwargs.pop("client") # type: "SchemaRegistryClient"
+            self._schema_registry_client = kwargs.pop(
+                "client"
+            )  # type: "SchemaRegistryClient"
         except KeyError as e:
             raise TypeError("'{}' is a required keyword.".format(e.args[0]))
         self._avro_encoder = AvroObjectEncoder(codec=kwargs.get("codec"))
         self._auto_register_schemas = kwargs.get("auto_register_schemas", False)
         self._auto_register_schema_func = (
-                self._schema_registry_client.register_schema
-                if self._auto_register_schemas
-                else self._schema_registry_client.get_schema_properties
-            )
+            self._schema_registry_client.register_schema
+            if self._auto_register_schemas
+            else self._schema_registry_client.get_schema_properties
+        )
 
     async def __aenter__(self):
         # type: () -> AvroEncoder
@@ -115,9 +117,7 @@ class AvroEncoder(object):
         :param str schema_id: Schema id
         :return: Schema definition
         """
-        schema = await self._schema_registry_client.get_schema(
-            schema_id, **kwargs
-        )
+        schema = await self._schema_registry_client.get_schema(schema_id, **kwargs)
         return schema.definition
 
     async def encode(
@@ -126,7 +126,7 @@ class AvroEncoder(object):
         *,
         schema: str,
         message_type: Optional[MessageCallbackType] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Union[MessageType, MessageMetadataDict]:
 
         """
@@ -157,17 +157,23 @@ class AvroEncoder(object):
         try:
             schema_fullname = self._avro_encoder.get_schema_fullname(raw_input_schema)
         except Exception as e:  # pylint:disable=broad-except
-            SchemaParseError(f"Cannot parse schema: {raw_input_schema}", error=e).raise_with_traceback()
+            SchemaParseError(
+                f"Cannot parse schema: {raw_input_schema}", error=e
+            ).raise_with_traceback()
 
-        schema_id = await self._get_schema_id(schema_fullname, raw_input_schema, **kwargs)
+        schema_id = await self._get_schema_id(
+            schema_fullname, raw_input_schema, **kwargs
+        )
         content_type = f"{AVRO_MIME_TYPE}+{schema_id}"
 
         try:
             data_bytes = self._avro_encoder.encode(value, raw_input_schema)
         except Exception as e:  # pylint:disable=broad-except
             SchemaEncodeError(
-                "Cannot encode value '{}' for schema: {}".format(value, raw_input_schema),
-                error=e
+                "Cannot encode value '{}' for schema: {}".format(
+                    value, raw_input_schema
+                ),
+                error=e,
             ).raise_with_traceback()
 
         stream = BytesIO()
@@ -199,7 +205,7 @@ class AvroEncoder(object):
         message: Optional[MessageType] = None,
         data: Optional[bytes] = None,
         content_type: Optional[str] = None,
-        **kwargs
+        **kwargs,
     ) -> Dict[str, Any]:
         """
         Decode bytes data using schema ID in the content type field. One of the following is required:
@@ -240,12 +246,9 @@ class AvroEncoder(object):
         schema_id = content_type.split("+")[1]
         schema_definition = await self._get_schema(schema_id, **kwargs)
         try:
-            dict_value = self._avro_encoder.decode(
-                data, schema_definition
-            )
+            dict_value = self._avro_encoder.decode(data, schema_definition)
         except Exception as e:  # pylint:disable=broad-except
             SchemaDecodeError(
-                f"Cannot decode value '{data}' for schema: {schema_definition}",
-                error=e
+                f"Cannot decode value '{data}' for schema: {schema_definition}", error=e
             ).raise_with_traceback()
         return dict_value

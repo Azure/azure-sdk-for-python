@@ -29,10 +29,11 @@ from ._version import VERSION
 __version__ = VERSION
 
 from ._schema_registry_avro_encoder import AvroEncoder
-from ._message_protocol import MessageType, MessageCallbackType
+from ._message_protocol import MessageType, MessageCallbackType, MessageMetadataDict
 
 __all__ = [
     "AvroEncoder",
     "MessageType",
-    "MessageCallbackType"
+    "MessageCallbackType",
+    "MessageMetadataDict"
 ]

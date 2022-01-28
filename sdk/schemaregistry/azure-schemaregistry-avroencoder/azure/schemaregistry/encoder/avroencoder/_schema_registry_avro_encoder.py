@@ -39,7 +39,7 @@ from ._constants import (
     SCHEMA_ID_LENGTH,
     DATA_START_INDEX,
     AVRO_MIME_TYPE,
-    RECORD_FORMAT_IDENTIFIER_LENGTH
+    RECORD_FORMAT_IDENTIFIER_LENGTH,
 )
 
 
@@ -130,7 +130,7 @@ class AvroEncoder(object):
         *,
         schema: str,
         message_type: Optional[MessageCallbackType] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Union[MessageType, MessageMetadataDict]:
         """
         Encode data with the given schema. Create content type value, which consists of the Avro Mime Type string
@@ -158,9 +158,7 @@ class AvroEncoder(object):
         raw_input_schema = schema
 
         try:
-            schema_fullname = self._avro_encoder.get_schema_fullname(
-                raw_input_schema
-            )
+            schema_fullname = self._avro_encoder.get_schema_fullname(raw_input_schema)
         except Exception as e:  # pylint:disable=broad-except
             SchemaParseError(
                 f"Cannot parse schema: {raw_input_schema}", error=e
@@ -209,7 +207,7 @@ class AvroEncoder(object):
         message: Optional[MessageType] = None,
         data: Optional[bytes] = None,
         content_type: Optional[str] = None,
-        **kwargs
+        **kwargs,
     ) -> Dict[str, Any]:
         """
         Decode bytes data using schema ID in the content type field. One of the following is required:
@@ -250,9 +248,7 @@ class AvroEncoder(object):
         schema_id = content_type.split("+")[1]
         schema_definition = self._get_schema(schema_id, **kwargs)
         try:
-            dict_value = self._avro_encoder.decode(
-                data, schema_definition
-            )
+            dict_value = self._avro_encoder.decode(data, schema_definition)
         except Exception as e:  # pylint:disable=broad-except
             SchemaDecodeError(
                 f"Cannot decode value '{data}' for schema: {schema_definition}",

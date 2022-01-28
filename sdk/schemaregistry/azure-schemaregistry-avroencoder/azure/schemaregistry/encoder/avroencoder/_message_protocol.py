@@ -12,6 +12,8 @@ except ImportError:
 ObjectType = TypeVar("ObjectType")
 
 class MessageType(Protocol):
+    """Message Types that set and get data and content type values internally.
+    """
 
     def __init__(self, *, data: bytes, content_type: str, **kwargs: Any) -> None:   # pylint: disable=super-init-not-called
         ...
@@ -23,10 +25,21 @@ class MessageType(Protocol):
         ...
 
 class MessageCallbackType(Protocol):
+    """Any Callable that requires the following keywords:
+         - `data`: bytes
+         - `content_type`: str
+        and accepts any keyword arguments:
+         - `**kwargs`: Any
+    """
 
     def __call__(self, *, data: bytes, content_type: str, **kwargs: Any) -> None:
         ...
 
 class MessageMetadataDict(TypedDict):
+    """A dict with required keys:
+        - `data`: bytes
+        - `content_type`: str
+    """
+
     data: bytes
     content_type: str
