@@ -7,3 +7,4 @@
 from .v2021_03_01.models import *
 from .v2021_07_01.models import *
 from .v2021_08_01.models import *
+from .v2021_11_01.models import *
