@@ -147,8 +147,8 @@ class AvroEncoder(object):
         :keyword schema: Required. The schema used to encode the data.
         :paramtype schema: str
         :keyword message_type: The callback function or message class to construct the message.
-        :paramtype message_type: Optional[MessageCallbackType]
-        :rtype: Union[MessageType, MessageMetadataDict]
+        :paramtype message_type: MessageCallbackType or MessageType or None
+        :rtype: MessageType or MessageMetadataDict
         :raises ~azure.schemaregistry.encoder.avroencoder.exceptions.SchemaParseError:
             Indicates an issue with parsing schema.
         :raises ~azure.schemaregistry.encoder.avroencoder.exceptions.SchemaEncodeError:
