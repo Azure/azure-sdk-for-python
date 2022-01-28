@@ -19,6 +19,7 @@ import uamqp.message
 from .constants import (
     _BATCH_MESSAGE_OVERHEAD_COST,
     ServiceBusReceiveMode,
+    ServiceBusMessageState,
     _X_OPT_ENQUEUED_TIME,
     _X_OPT_SEQUENCE_NUMBER,
     _X_OPT_ENQUEUE_SEQUENCE_NUMBER,
