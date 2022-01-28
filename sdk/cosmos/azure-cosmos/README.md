@@ -465,7 +465,7 @@ async def create_products():
     await client.close() # the async client must be closed manually if it's not initialized in a with statement
 ```
 
-However, instead of taking care of it manually with those extra lines, you can use the `async with` keywords. This creates a context manager that will warm up, initialize and later clean up and close the client once you're out of the statement. The example below shows how to start the client this way.
+Instead of manually opening and closing the client, you can use the `async with` keywords. This creates a context manager that will initialize and later close the client once you're out of the statement. The example below shows how to do so.
 
 ```Python
 from azure.cosmos.aio import CosmosClient
