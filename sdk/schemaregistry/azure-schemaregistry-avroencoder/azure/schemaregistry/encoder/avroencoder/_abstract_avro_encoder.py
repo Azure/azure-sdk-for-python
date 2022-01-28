@@ -39,7 +39,7 @@ class AbstractAvroObjectEncoder(object):
         """Convert the provided value to it's binary representation and write it to the stream.
         Schema must be a Avro RecordSchema:
         https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
-        :param data: An object to encode 
+        :param data: An object to encode
         :type data: ObjectType
         :param schema: An Avro RecordSchema
         :type schema: str

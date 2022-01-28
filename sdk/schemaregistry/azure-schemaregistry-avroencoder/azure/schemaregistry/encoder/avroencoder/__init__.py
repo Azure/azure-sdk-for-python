@@ -23,7 +23,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import imp
 from ._version import VERSION
 
 __version__ = VERSION

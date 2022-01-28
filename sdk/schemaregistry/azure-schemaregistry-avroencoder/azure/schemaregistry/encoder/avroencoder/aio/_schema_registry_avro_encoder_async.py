@@ -188,7 +188,7 @@ class AvroEncoder(object):
 
         return {"data": payload, "content_type": content_type}
 
-    def _convert_preamble_format(self, data, content_type):
+    def _convert_preamble_format(self, data, content_type):  # pylint: disable=no-self-use
         record_format_identifier = b"\0\0\0\0"
         if data[0:RECORD_FORMAT_IDENTIFIER_LENGTH] == record_format_identifier:
             schema_id = data[

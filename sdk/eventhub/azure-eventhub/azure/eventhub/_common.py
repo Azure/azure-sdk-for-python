@@ -122,7 +122,7 @@ class EventData(object):
 
     def __init__(
         self,
-        body: Optional[Union[str, bytes, List[AnyStr]]]=None,
+        body: Optional[Union[str, bytes, List[AnyStr]]] = None,
         *,
         data: bytes = None,
         content_type: str = None,
@@ -130,6 +130,9 @@ class EventData(object):
     ) -> None:
         self._last_enqueued_event_properties = {}  # type: Dict[str, Any]
         self._sys_properties = None  # type: Optional[Dict[bytes, Any]]
+
+        if kwargs:
+            raise TypeError(f"__init__() got an unexpected keyword argument '{list(kwargs.keys())[0]}'")
 
         if data:
             if body:
