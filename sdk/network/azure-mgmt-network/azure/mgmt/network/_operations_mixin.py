@@ -10,19 +10,13 @@
 # --------------------------------------------------------------------------
 from msrest import Serializer, Deserializer
 from typing import TYPE_CHECKING
-import warnings
-
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.paging import ItemPaged
-from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.mgmt.core.exceptions import ARMErrorFormat
-from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
+    from typing import Any, Iterable, Optional
+
+    from azure.core.paging import ItemPaged
+    from azure.core.polling import LROPoller
 
 
 class NetworkManagementClientOperationsMixin(object):
@@ -34,6 +28,7 @@ class NetworkManagementClientOperationsMixin(object):
         bsl_request,  # type: "_models.BastionShareableLinkListRequest"
         **kwargs  # type: Any
     ):
+        # type: (...) -> LROPoller[None]
         """Deletes the Bastion Shareable Links for all the VMs specified in the request.
 
         :param resource_group_name: The name of the resource group.
@@ -44,13 +39,15 @@ class NetworkManagementClientOperationsMixin(object):
         :type bsl_request: ~azure.mgmt.network.v2021_05_01.models.BastionShareableLinkListRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('begin_delete_bastion_shareable_link')
         if api_version == '2019-09-01':
@@ -94,6 +91,7 @@ class NetworkManagementClientOperationsMixin(object):
         vpn_client_params,  # type: "_models.VirtualWanVpnProfileParameters"
         **kwargs  # type: Any
     ):
+        # type: (...) -> LROPoller["_models.VpnProfileResponse"]
         """Generates a unique VPN profile for P2S clients for VirtualWan and associated
         VpnServerConfiguration combination in the specified resource group.
 
@@ -107,13 +105,17 @@ class NetworkManagementClientOperationsMixin(object):
         :type vpn_client_params: ~azure.mgmt.network.v2021_05_01.models.VirtualWanVpnProfileParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns either VpnProfileResponse or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.network.v2021_05_01.models.VpnProfileResponse]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either VpnProfileResponse or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.network.v2021_05_01.models.VpnProfileResponse]
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('begin_generatevirtualwanvpnserverconfigurationvpnprofile')
         if api_version == '2019-08-01':
@@ -158,6 +160,7 @@ class NetworkManagementClientOperationsMixin(object):
         bastion_host_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> LROPoller[ItemPaged["_models.BastionActiveSessionListResult"]]
         """Returns the list of currently active sessions on the Bastion.
 
         :param resource_group_name: The name of the resource group.
@@ -166,13 +169,17 @@ class NetworkManagementClientOperationsMixin(object):
         :type bastion_host_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns an iterator like instance of either BastionActiveSessionListResult or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[~azure.mgmt.network.v2021_05_01.models.BastionActiveSessionListResult]]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns an iterator like instance of either
+         BastionActiveSessionListResult or the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[~azure.mgmt.network.v2021_05_01.models.BastionActiveSessionListResult]]
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('begin_get_active_sessions')
         if api_version == '2019-09-01':
@@ -216,6 +223,7 @@ class NetworkManagementClientOperationsMixin(object):
         bsl_request,  # type: "_models.BastionShareableLinkListRequest"
         **kwargs  # type: Any
     ):
+        # type: (...) -> LROPoller[ItemPaged["_models.BastionShareableLinkListResult"]]
         """Creates a Bastion Shareable Links for all the VMs specified in the request.
 
         :param resource_group_name: The name of the resource group.
@@ -226,13 +234,17 @@ class NetworkManagementClientOperationsMixin(object):
         :type bsl_request: ~azure.mgmt.network.v2021_05_01.models.BastionShareableLinkListRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling.
-         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
-        :return: An instance of LROPoller that returns an iterator like instance of either BastionShareableLinkListResult or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[~azure.mgmt.network.v2021_05_01.models.BastionShareableLinkListResult]]
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns an iterator like instance of either
+         BastionShareableLinkListResult or the result of cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[~azure.mgmt.network.v2021_05_01.models.BastionShareableLinkListResult]]
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('begin_put_bastion_shareable_link')
         if api_version == '2019-09-01':
@@ -275,6 +287,7 @@ class NetworkManagementClientOperationsMixin(object):
         domain_name_label,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.DnsNameAvailabilityResult"
         """Checks whether a domain name in the cloudapp.azure.com zone is available for use.
 
         :param location: The location of the domain name.
@@ -369,6 +382,7 @@ class NetworkManagementClientOperationsMixin(object):
         session_ids,  # type: "_models.SessionIds"
         **kwargs  # type: Any
     ):
+        # type: (...) -> Iterable["_models.BastionSessionDeleteResult"]
         """Returns the list of currently active sessions on the Bastion.
 
         :param resource_group_name: The name of the resource group.
@@ -378,8 +392,10 @@ class NetworkManagementClientOperationsMixin(object):
         :param session_ids: The list of sessionids to disconnect.
         :type session_ids: ~azure.mgmt.network.v2021_05_01.models.SessionIds
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either BastionSessionDeleteResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2021_05_01.models.BastionSessionDeleteResult]
+        :return: An iterator like instance of either BastionSessionDeleteResult or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2021_05_01.models.BastionSessionDeleteResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('disconnect_active_sessions')
@@ -424,6 +440,7 @@ class NetworkManagementClientOperationsMixin(object):
         bsl_request,  # type: "_models.BastionShareableLinkListRequest"
         **kwargs  # type: Any
     ):
+        # type: (...) -> Iterable["_models.BastionShareableLinkListResult"]
         """Return the Bastion Shareable Links for all the VMs specified in the request.
 
         :param resource_group_name: The name of the resource group.
@@ -433,8 +450,10 @@ class NetworkManagementClientOperationsMixin(object):
         :param bsl_request: Post request for all the Bastion Shareable Link endpoints.
         :type bsl_request: ~azure.mgmt.network.v2021_05_01.models.BastionShareableLinkListRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either BastionShareableLinkListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2021_05_01.models.BastionShareableLinkListResult]
+        :return: An iterator like instance of either BastionShareableLinkListResult or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2021_05_01.models.BastionShareableLinkListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_bastion_shareable_link')
@@ -478,6 +497,7 @@ class NetworkManagementClientOperationsMixin(object):
         virtual_wan_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.VirtualWanSecurityProviders"
         """Gives the supported security providers for the virtual wan.
 
         :param resource_group_name: The resource group name.
