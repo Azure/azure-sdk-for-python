@@ -4,6 +4,7 @@
 # ------------------------------------
 
 import json
+import datetime
 from typing import Any, List, Union, TYPE_CHECKING, overload, Optional
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
@@ -315,7 +316,19 @@ class DocumentTranslationClient:
         self._client.document_translation.cancel_translation(translation_id, **kwargs)
 
     @distributed_trace
-    def list_translation_statuses(self, **kwargs: Any) -> ItemPaged[TranslationStatus]:
+    def list_translation_statuses(
+        self,
+        *,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        results_per_page: Optional[int] = None,
+        translation_ids: Optional[List[str]] = None,
+        statuses: Optional[List[str]] = None,
+        created_after: Optional[Union[str, datetime.datetime]] = None,
+        created_before: Optional[Union[str, datetime.datetime]] = None,
+        order_by: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> ItemPaged[TranslationStatus]:
         """List all the submitted translation operations under the Document Translation resource.
 
         :keyword int top: the total number of operations to return (across all pages) from all submitted translations.
@@ -348,16 +361,11 @@ class DocumentTranslationClient:
                 :caption: List all submitted translations under the resource.
         """
 
-        statuses = kwargs.pop("statuses", None)
         if statuses:
             statuses = [convert_status(status, ll=True) for status in statuses]
-        order_by = convert_order_by(kwargs.pop("order_by", None))
-        created_after = kwargs.pop("created_after", None)
-        created_before = kwargs.pop("created_before", None)
+        order_by = convert_order_by(order_by)
         created_after = convert_datetime(created_after) if created_after else None
         created_before = convert_datetime(created_before) if created_before else None
-        results_per_page = kwargs.pop("results_per_page", None)
-        translation_ids = kwargs.pop("translation_ids", None)
 
         def _convert_from_generated_model(
             generated_model,
@@ -381,11 +389,26 @@ class DocumentTranslationClient:
             ids=translation_ids,
             order_by=order_by,
             statuses=statuses,
+            top=top,
+            skip=skip,
             **kwargs
         )
 
     @distributed_trace
-    def list_document_statuses(self, translation_id: str, **kwargs: Any) -> ItemPaged[DocumentStatus]:
+    def list_document_statuses(
+        self,
+        translation_id: str,
+        *,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        results_per_page: Optional[int] = None,
+        document_ids: Optional[List[str]] = None,
+        statuses: Optional[List[str]] = None,
+        created_after: Optional[Union[str, datetime.datetime]] = None,
+        created_before: Optional[Union[str, datetime.datetime]] = None,
+        order_by: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> ItemPaged[DocumentStatus]:
         """List all the document statuses for a given translation operation.
 
         :param str translation_id: ID of translation operation to list documents for.
@@ -419,20 +442,15 @@ class DocumentTranslationClient:
                 :caption: List all the document statuses as they are being translated.
         """
 
-        statuses = kwargs.pop("statuses", None)
         if statuses:
             statuses = [convert_status(status, ll=True) for status in statuses]
-        order_by = convert_order_by(kwargs.pop("order_by", None))
-        created_after = kwargs.pop("created_after", None)
-        created_before = kwargs.pop("created_before", None)
+        order_by = convert_order_by(order_by)
         created_after = (
             convert_datetime(created_after) if created_after else None
         )
         created_before = (
             convert_datetime(created_before) if created_before else None
         )
-        results_per_page = kwargs.pop("results_per_page", None)
-        document_ids = kwargs.pop("document_ids", None)
 
         def _convert_from_generated_model(generated_model):
             return DocumentStatus._from_generated(  # pylint: disable=protected-access
@@ -455,6 +473,8 @@ class DocumentTranslationClient:
             ids=document_ids,
             order_by=order_by,
             statuses=statuses,
+            top=top,
+            skip=skip,
             **kwargs
         )
 
