@@ -31,9 +31,7 @@ import types
 import pickle
 import platform
 import six
-from tests.rest_client import TestRestClient
 
-from tests.utils import HTTP_REQUESTS
 try:
     from unittest import mock
 except ImportError:
@@ -47,11 +45,11 @@ from azure.core.polling import LROPoller
 from azure.core.exceptions import DecodeError, HttpResponseError
 from azure.core import PipelineClient
 from azure.core.pipeline import PipelineResponse, Pipeline, PipelineContext
-from azure.core.pipeline.transport import HttpTransport, RequestsTransport
+from azure.core.pipeline.transport import HttpTransport
 
 from azure.core.polling.base_polling import LROBasePolling
 from azure.core.pipeline.policies._utils import _FixedOffset
-from utils import request_and_responses_product, REQUESTS_TRANSPORT_RESPONSES, create_transport_response
+from utils import request_and_responses_product, REQUESTS_TRANSPORT_RESPONSES, create_transport_response, HTTP_REQUESTS
 from azure.core.pipeline._tools import is_rest
 
 class SimpleResource:
