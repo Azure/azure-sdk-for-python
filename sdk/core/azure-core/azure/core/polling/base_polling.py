@@ -193,7 +193,8 @@ class OperationResourcePolling(LongRunningOperation):
     """Implements a operation resource polling, typically from Operation-Location.
 
     :param str operation_location_header: Name of the header to return operation format (default 'operation-location')
-    :keyword dict[str, any] lro_options: Additional options for LRO
+    :keyword dict[str, any] lro_options: Additional options for LRO. For more information, see
+     https://aka.ms/azsdk/autorest/openapi/lro-options
     """
 
     def __init__(
