@@ -387,7 +387,8 @@ class EventData(object):
         """
         return self._raw_amqp_message.body_type
 
-    def body_as_str(self, encoding="UTF-8") -> str:
+    def body_as_str(self, encoding="UTF-8"):
+        # type: (str) -> str
         """The content of the event as a string, if the data is of a compatible type.
 
         :param encoding: The encoding to use for decoding event data.
@@ -395,7 +396,6 @@ class EventData(object):
         :rtype: str
         """
         data = self.body
-        encoding="UTF-8"
         try:
             if self.body_type != AmqpMessageBodyType.DATA:
                 return self._decode_non_data_body_as_str(encoding=encoding)
