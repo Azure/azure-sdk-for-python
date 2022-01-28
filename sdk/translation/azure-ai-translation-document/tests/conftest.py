@@ -26,6 +26,8 @@ if sys.version_info < (3, 5):
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
+    print("Entering session, setting general sanitizers")
+
     add_remove_header_sanitizer(headers="Ocp-Apim-Subscription-Key")
     add_remove_header_sanitizer(headers="Retry-After")
     add_general_regex_sanitizer(
@@ -41,6 +43,8 @@ def add_sanitizers(test_proxy):
     # run tests
     yield
 
+
+    print("Exiting Session Level translation conftest.py")
     # delete containers
     if is_live():
         client = BlobServiceClient(

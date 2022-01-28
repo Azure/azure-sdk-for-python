@@ -225,6 +225,8 @@ def _send_sanitizer_request(sanitizer, parameters):
     if is_live_and_not_recording():
         return
 
+    print("Sending sanitizer with parameters {}".format(parameters))
+
     requests.post(
         "{}/Admin/AddSanitizer".format(PROXY_URL),
         headers={"x-abstraction-identifier": sanitizer, "Content-Type": "application/json"},
