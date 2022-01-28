@@ -211,8 +211,8 @@ class EventData(object):
 
     def __data__(self) -> bytes:
         data = bytearray()
-        for d in self.body:
-            data += d
+        for d in self.body: # type: ignore
+            data += d   # type: ignore
         return bytes(data)
 
     def __content_type__(self) -> Optional[str]:

@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 from functools import lru_cache
 from io import BytesIO
-from typing import Any, Dict, Mapping, Optional, Union
+from typing import Any, Dict, Mapping, Optional, Union, Type
 
 from .exceptions import (
     SchemaParseError,
@@ -130,7 +130,7 @@ class AvroEncoder(object):
         value: Mapping[str, Any],
         *,
         schema: str,
-        message_type: Optional[MessageCallbackType] = None,
+        message_type: Optional[Union[MessageCallbackType, Type[MessageType]]] = None,
         **kwargs: Any,
     ) -> Union[MessageType, MessageMetadataDict]:
         """

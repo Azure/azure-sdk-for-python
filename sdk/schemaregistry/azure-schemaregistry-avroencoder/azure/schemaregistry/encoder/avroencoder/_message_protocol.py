@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from typing import Any, Optional, TypeVar
 try:
-    from typing import Protocol, _TypedDict as TypedDict
+    from typing import Protocol, TypedDict
 except ImportError:
     from typing_extensions import Protocol, TypedDict
 
@@ -30,9 +30,10 @@ class MessageCallbackType(Protocol):
          - `content_type`: str
         and accepts any keyword arguments:
          - `**kwargs`: Any
+        Should return object that is a subtype of MessageType.
     """
 
-    def __call__(self, *, data: bytes, content_type: str, **kwargs: Any) -> None:
+    def __call__(self, *, data: bytes, content_type: str, **kwargs: Any) -> MessageType:
         ...
 
 class MessageMetadataDict(TypedDict):

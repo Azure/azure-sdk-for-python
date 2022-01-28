@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 from io import BytesIO
-from typing import Any, Dict, Mapping, Union, Optional
+from typing import Any, Dict, Mapping, Union, Optional, Type
 from ._async_lru import alru_cache
 from .._utils import get_http_request_kwargs
 from .._constants import (
@@ -126,7 +126,7 @@ class AvroEncoder(object):
         value: Mapping[str, Any],
         *,
         schema: str,
-        message_type: Optional[MessageCallbackType] = None,
+        message_type: Optional[Union[MessageCallbackType, Type[MessageType]]] = None,
         **kwargs: Any,
     ) -> Union[MessageType, MessageMetadataDict]:
 
