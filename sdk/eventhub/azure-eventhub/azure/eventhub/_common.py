@@ -100,6 +100,10 @@ class EventData(object):
 
     :param body: The data to send in a single message. body can be type of str or bytes.
     :type body: str or bytes
+    :keyword data: The data to send in a single message. If set, will overwrite body argument.
+    :paramtype data: bytes or None
+    :keyword content_type: The content type descriptor.
+    :paramtype content_type: str or None
 
     .. admonition:: Example:
 
@@ -205,13 +209,13 @@ class EventData(object):
         event_str += " }"
         return event_str
 
-    def __data__(self):
+    def __data__(self) -> bytes:
         data = bytearray()
         for d in self.body:
             data += d
         return bytes(data)
 
-    def __content_type__(self):
+    def __content_type__(self) -> Optional[str]:
         return self.content_type
 
     @classmethod

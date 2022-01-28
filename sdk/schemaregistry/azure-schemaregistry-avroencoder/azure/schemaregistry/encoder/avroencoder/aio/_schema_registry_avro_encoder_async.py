@@ -26,6 +26,7 @@
 from io import BytesIO
 from typing import Any, Dict, Mapping, Union, Optional
 from ._async_lru import alru_cache
+from .._utils import get_http_request_kwargs
 from .._constants import (
     SCHEMA_ID_START_INDEX,
     SCHEMA_ID_LENGTH,
@@ -135,7 +136,8 @@ class AvroEncoder(object):
          pass encoded data and content type to create message object. If not provided, return the following dict:
          {"data": Avro encoded value, "content_type": Avro mime type string + schema ID}.
 
-        If `message` is set, then keyword arguments will be passed to the message function.
+        If `message_type` is set, then additional keyword arguments will be passed to the message callback
+         function provided.
 
         Schema must be an Avro RecordSchema:
         https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
@@ -145,6 +147,7 @@ class AvroEncoder(object):
         :keyword schema: Required. The schema used to encode the data.
         :paramtype schema: str
         :keyword message_type: The callback function or message class to construct the message.
+        :paramtype message_type: Optional[MessageCallbackType]
         :rtype: Union[MessageType, MessageMetadataDict]
         :raises ~azure.schemaregistry.encoder.avroencoder.exceptions.SchemaParseError:
             Indicates an issue with parsing schema.
@@ -161,9 +164,8 @@ class AvroEncoder(object):
                 f"Cannot parse schema: {raw_input_schema}", error=e
             ).raise_with_traceback()
 
-        schema_id = await self._get_schema_id(
-            schema_fullname, raw_input_schema, **kwargs
-        )
+        http_request_kwargs = get_http_request_kwargs(kwargs)
+        schema_id = await self._get_schema_id(schema_fullname, raw_input_schema, **http_request_kwargs)
         content_type = f"{AVRO_MIME_TYPE}+{schema_id}"
 
         try:
@@ -184,7 +186,14 @@ class AvroEncoder(object):
         payload = stream.getvalue()
         stream.close()
         if message_type:
-            return message_type(data=payload, content_type=content_type)
+            try:
+                return message_type(data=payload, content_type=content_type, **kwargs)
+            except TypeError as e:
+                SchemaEncodeError(
+                    f"""The data model {str(message_type)} does not support MessageCallbackType protocol.
+                        If using an Azure SDK model class, please check the README.md for the full list
+                        of supported Azure SDK models and their corresponding versions."""
+                ).raise_with_traceback()
 
         return {"data": payload, "content_type": content_type}
 
@@ -230,21 +239,27 @@ class AvroEncoder(object):
             Indicates an issue with decoding value.
         """
 
-        # try/except vs. if message:?
-        try:
-            data = message.__data__()
-            content_type = message.__content_type__()
-        except AttributeError:
-            if not data:
-                raise ValueError("'data' value cannot be None.")
+        if message:
+            try:
+                data = message.__data__()
+                content_type = message.__content_type__()
+            except AttributeError:
+                SchemaDecodeError(
+                    f"""The data model {str(message)} does not support MessageType protocol.
+                        If using an Azure SDK model class, please check the README.md for the full list
+                        of supported Azure SDK models and their corresponding versions."""
+                ).raise_with_traceback()
+        if not data:
+            raise ValueError("'data' value cannot be None.")
 
-            # include in first preview for back compatibility
-            data, content_type = self._convert_preamble_format(data, content_type)
-            if not content_type:
-                raise ValueError("'content' type cannot be None.")
+        # include in first preview for back compatibility
+        data, content_type = self._convert_preamble_format(data, content_type)
+        if not content_type:
+            raise ValueError("'content' type cannot be None.")
 
         schema_id = content_type.split("+")[1]
-        schema_definition = await self._get_schema(schema_id, **kwargs)
+        http_request_kwargs = get_http_request_kwargs(kwargs)
+        schema_definition = await self._get_schema(schema_id, **http_request_kwargs)
         try:
             dict_value = self._avro_encoder.decode(data, schema_definition)
         except Exception as e:  # pylint:disable=broad-except

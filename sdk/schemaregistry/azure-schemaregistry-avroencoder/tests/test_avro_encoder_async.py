@@ -36,7 +36,7 @@ from avro.errors import AvroTypeException
 
 from azure.schemaregistry.aio import SchemaRegistryClient
 from azure.schemaregistry.encoder.avroencoder.aio import AvroEncoder
-from azure.schemaregistry.encoder.avroencoder.exceptions import SchemaParseError
+from azure.schemaregistry.encoder.avroencoder.exceptions import SchemaParseError, SchemaEncodeError, SchemaDecodeError
 
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 
@@ -73,6 +73,47 @@ class AvroEncoderAsyncTests(AzureTestCase):
             assert decoded_data["name"] == u"Ben"
             assert decoded_data["favorite_number"] == 7
             assert decoded_data["favorite_color"] == u"red"
+
+            # check that AvroEncoder won't work with message types that don't follow protocols
+            class BadExample:
+                def __init__(self, not_data):
+                    self.not_data = not_data
+
+            with pytest.raises(SchemaEncodeError) as e:    # caught avro SchemaParseError
+                await sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_str, message_type=BadExample) 
+            assert "does not support" in (str(e.value))
+
+            bad_ex = BadExample('fake')
+            with pytest.raises(SchemaDecodeError) as e:    # caught avro SchemaParseError
+                await sr_avro_encoder.decode(message=bad_ex) 
+            assert "does not support" in (str(e.value))
+
+            # check that AvroEncoder will work with message types that follow protocols
+            class GoodExample:
+                def __init__(self, data: bytes, content_type: str, **kwargs):
+                    self.data = data
+                    self.content_type = content_type
+                    self.extra = kwargs.pop('extra', None)
+
+                def __data__(self):
+                    return self.data
+                def __content_type__(self):
+                    return self.content_type
+
+            def good_callback(data: bytes, content_type: str, **kwargs):
+                return GoodExample(data=data, content_type=content_type, **kwargs)
+                
+            good_ex_obj = await sr_avro_encoder.encode(dict_data, schema=schema_str, message_type=GoodExample, extra='val') 
+            good_ex_callback = await sr_avro_encoder.encode(dict_data, schema=schema_str, message_type=good_callback, extra='val')
+            decoded_data_obj = await sr_avro_encoder.decode(message=good_ex_obj)
+            decoded_data_callback = await sr_avro_encoder.decode(message=good_ex_callback)
+
+            assert decoded_data_obj["name"] == u"Ben"
+            assert decoded_data_obj["favorite_number"] == 7
+            assert decoded_data_obj["favorite_color"] == u"red"
+            assert decoded_data_callback["name"] == u"Ben"
+            assert decoded_data_callback["favorite_number"] == 7
+            assert decoded_data_callback["favorite_color"] == u"red"
 
     @pytest.mark.asyncio
     @SchemaRegistryPowerShellPreparer()

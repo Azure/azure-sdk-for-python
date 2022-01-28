@@ -17,7 +17,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 28 Jan 2022 03:05:40 GMT
+      date: Fri, 28 Jan 2022 20:51:01 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/null/versions/1?api-version=2021-10
       schema-group-name: swathip-test-schema
       schema-id: bdfae9660e504a13a524d5785901e9a8

@@ -66,6 +66,12 @@ encoder = AvroEncoder(client=schema_registry_client, group_name=group_name)
 Provides API to encode to and decode from Avro Binary Encoding plus a
 content type with schema ID. Uses [SchemaRegistryClient][schemaregistry_client] to get schema IDs from schema content or vice versa.
 
+### Supported message models
+
+Support has been added to certain Azure Messaging SDK model classes for interoperability with the `AvroEncoder`. These models are subtypes of the `MessageType` protocol defined under the `azure.schemaregistry.encoder.avroencoder` namespace. Currently, the supported model classes are:
+
+- `azure.eventhub.EventData` for `azure-eventhub>=5.9.0b1`
+
 ### Message format
 
 If a message type that follows the MessageType protocol is provided to the encoder, it will encode the corresponding data and content type properties as follows:

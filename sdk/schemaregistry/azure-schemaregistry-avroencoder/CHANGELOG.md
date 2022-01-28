@@ -17,3 +17,5 @@ This version and all future versions will require Python 3.6+. Python 2.7 is no 
 ### Other Changes
 
 - This beta release will be backward compatible for decoding data that was encoded with the AvroSerializer.
+- The `encode` and `decode` methods on `AvroEncoder` support the following message models:
+  - `azure.eventhub.EventData` in `azure-eventhub==5.9.0b1`

@@ -19,7 +19,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 28 Jan 2022 03:05:44 GMT
+      date: Fri, 28 Jan 2022 20:51:05 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/User.avro/versions/1?api-version=2021-10
       schema-group-name: swathip-test-schema
       schema-id: ea10fc27c7f34996b6a26a11f08124e4
@@ -47,7 +47,7 @@ interactions:
       string: '{"namespace":"thrownaway","name":"User.avro","type":"record","fields":[{"name":"name","type":"string"}]}'
     headers:
       content-type: application/json;serialization=Avro
-      date: Fri, 28 Jan 2022 03:05:44 GMT
+      date: Fri, 28 Jan 2022 20:51:05 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/User.avro/versions/1?api-version=2021-10
       schema-group-name: swathip-test-schema
       schema-id: ea10fc27c7f34996b6a26a11f08124e4
@@ -81,7 +81,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 28 Jan 2022 03:05:45 GMT
+      date: Fri, 28 Jan 2022 20:51:06 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/User/versions/1?api-version=2021-10
       schema-group-name: swathip-test-schema
       schema-id: de23e62d4e20433bbeac7badad5581a4
@@ -109,7 +109,7 @@ interactions:
       string: '{"name":"User","type":"record","fields":[{"name":"name","type":"string"}]}'
     headers:
       content-type: application/json;serialization=Avro
-      date: Fri, 28 Jan 2022 03:05:45 GMT
+      date: Fri, 28 Jan 2022 20:51:06 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/User/versions/1?api-version=2021-10
       schema-group-name: swathip-test-schema
       schema-id: de23e62d4e20433bbeac7badad5581a4

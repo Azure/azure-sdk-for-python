@@ -83,6 +83,7 @@
     "sdk/metricsadvisor/azure-ai-metricsadvisor/**",
     "sdk/purview/azure-purview-catalog/**",
     "sdk/remoterendering/azure-mixedreality-remoterendering/**",
+    "sdk/schemaregistry/ci.yml",
     "sdk/schemaregistry/azure-schemaregistry/**",
     "sdk/schemaregistry/azure-schemaregistry-avroencoder/**",
     "sdk/servicefabric/azure-servicefabric/**",

@@ -1,8 +1,10 @@
 # Release History
 
-## 5.7.1 (Unreleased)
+## 5.9.0b1 (Unreleased)
 
 ### Features Added
+
+- `EventData` constructor now takes `data` and `content_type` as keyword args for interoperability with the Schema Registry Avro Encoder library, where `body` will be set to `data` if passed in.
 
 ### Breaking Changes
 
