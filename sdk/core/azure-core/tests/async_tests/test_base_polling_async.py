@@ -42,7 +42,7 @@ from requests import Request, Response
 
 from msrest import Deserializer
 
-from azure.core.polling import async_poller
+from azure.core.polling import async_poller, AsyncLROPoller
 from azure.core.exceptions import DecodeError, HttpResponseError
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import PipelineResponse, AsyncPipeline, PipelineContext
@@ -52,6 +52,7 @@ from azure.core.polling.async_base_polling import (
     AsyncLROBasePolling,
 )
 from utils import ASYNCIO_REQUESTS_TRANSPORT_RESPONSES, request_and_responses_product, create_transport_response
+from rest_client_async import AsyncTestRestClient
 
 class SimpleResource:
     """An implementation of Python 3 SimpleNamespace.
@@ -851,3 +852,22 @@ async def test_post_final_state_via(async_pipeline_client_builder, deserializati
         AsyncLROBasePolling(0, lro_options={"final-state-via": "location"}))
     result = await poll
     assert result is None
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_final_get_via_location(port, http_request, deserialization_cb):
+    client = AsyncTestRestClient(port)
+    request = http_request(
+        "PUT",
+        "http://localhost:{}/polling/polling-with-options".format(port),
+    )
+    request.set_json_body({"hello": "world!"})
+    initial_response = await client._client._pipeline.run(request)
+    poller = AsyncLROPoller(
+        client._client,
+        initial_response,
+        deserialization_cb,
+        AsyncLROBasePolling(0, lro_options={"final-state-via": "location"}),
+    )
+    result = await poller.result()
+    assert result == {"returnedFrom": "locationHeaderUrl"}

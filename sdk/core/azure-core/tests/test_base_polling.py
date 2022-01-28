@@ -31,6 +31,9 @@ import types
 import pickle
 import platform
 import six
+from tests.rest_client import TestRestClient
+
+from tests.utils import HTTP_REQUESTS
 try:
     from unittest import mock
 except ImportError:
@@ -44,7 +47,7 @@ from azure.core.polling import LROPoller
 from azure.core.exceptions import DecodeError, HttpResponseError
 from azure.core import PipelineClient
 from azure.core.pipeline import PipelineResponse, Pipeline, PipelineContext
-from azure.core.pipeline.transport import HttpTransport
+from azure.core.pipeline.transport import HttpTransport, RequestsTransport
 
 from azure.core.polling.base_polling import LROBasePolling
 from azure.core.pipeline.policies._utils import _FixedOffset
@@ -859,3 +862,21 @@ class TestBasePolling(object):
             LROBasePolling(0, lro_options={"final-state-via": "location"}))
         result = poll.result()
         assert result is None
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_final_get_via_location(port, http_request, deserialization_cb):
+    client = TestRestClient(port)
+    request = http_request(
+        "PUT",
+        "http://localhost:{}/polling/polling-with-options".format(port),
+    )
+    request.set_json_body({"hello": "world!"})
+    initial_response = client._client._pipeline.run(request)
+    poller = LROPoller(
+        client._client,
+        initial_response,
+        deserialization_cb,
+        LROBasePolling(0, lro_options={"final-state-via": "location"}),
+    )
+    result = poller.result()
+    assert result == {"returnedFrom": "locationHeaderUrl"}
