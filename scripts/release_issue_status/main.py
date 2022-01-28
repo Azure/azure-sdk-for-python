@@ -170,10 +170,9 @@ def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python
             logging.info(e)
             raise
     try:
-        logging.info(python_piplines)
         pipeline_url = get_pipeline_url(python_piplines, output_folder)
         rg.begin_reply_generate(item=item, rest_repo=rest_repo, readme_link=readme_link,
-                                sdk_repo=sdk_repo, pipeline_url=pipeline_url, assigner_repo=assigner_repo)
+                                pipeline_url=pipeline_url)
         if 'Configured' in item.labels:
             item.issue_object.remove_from_labels('Configured')
     except Exception as e:
