@@ -203,7 +203,10 @@ class EventData(object):
         return event_str
 
     def __data__(self):
-        return bytes(self.body_as_str(), encoding='UTF-8')
+        data = bytearray()
+        for d in self.body:
+            data += d
+        return bytes(data)
 
     def __content_type__(self):
         return self.content_type
