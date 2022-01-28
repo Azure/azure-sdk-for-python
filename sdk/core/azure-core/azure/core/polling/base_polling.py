@@ -225,12 +225,16 @@ class OperationResourcePolling(LongRunningOperation):
         :rtype: str
         """
         if (
+            self._lro_options.get(_LroOption.FINAL_STATE_VIA) == _FinalStateViaOption.LOCATION_FINAL_STATE
+            and self._location_url
+        ):
+            return self._location_url
+        if (
             self._lro_options.get(_LroOption.FINAL_STATE_VIA)
             in [
                 _FinalStateViaOption.AZURE_ASYNC_OPERATION_FINAL_STATE,
                 _FinalStateViaOption.OPERATION_LOCATION_FINAL_STATE
             ]
-            and self._request.method == "POST"
         ):
             return None
         response = pipeline_response.http_response
