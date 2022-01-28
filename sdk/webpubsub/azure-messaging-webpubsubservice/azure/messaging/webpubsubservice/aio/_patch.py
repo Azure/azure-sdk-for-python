@@ -24,12 +24,12 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
+from typing import Any, Union, TYPE_CHECKING
+
+from azure.core.credentials import AzureKeyCredential
 from .._patch import _parse_connection_string, WebPubSubServiceClientBase
 from ._web_pub_sub_service_client import WebPubSubServiceClient as WebPubSubServiceClientGenerated
 
-from azure.core.credentials import AzureKeyCredential
-from typing import Any, Union
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential

@@ -101,8 +101,8 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         >>> get_client_access_token()
         {
             'baseUrl': 'wss://contoso.com/api/webpubsub/client/hubs/theHub',
-            'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ...',
-            'url': 'wss://contoso.com/api/webpubsub/client/hubs/theHub?access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ...'
+            'token': '<access-token>...',
+            'url': 'wss://contoso.com/api/webpubsub/client/hubs/theHub?access_token=<access-token>...'
         }
         """
         endpoint = self._config.endpoint.lower()

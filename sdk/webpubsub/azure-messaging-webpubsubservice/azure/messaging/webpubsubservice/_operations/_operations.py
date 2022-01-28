@@ -681,7 +681,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         return deserialized
 
     @distributed_trace
-    def close_all_connections(
+    def close_all_connections(  # pylint: disable=inconsistent-return-statements
         self, *, excluded: Optional[List[str]] = None, reason: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Close the connections in the hub.
@@ -726,7 +726,9 @@ class WebPubSubServiceClientOperationsMixin(object):
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def send_to_all(self, message: Union[IO, str], *, excluded: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def send_to_all(  # pylint: disable=inconsistent-return-statements
+        self, message: Union[IO, str], *, excluded: Optional[List[str]] = None, **kwargs: Any
+    ) -> None:
         """Broadcast content inside request body to all the connected client connections.
 
         Broadcast content inside request body to all the connected client connections.
@@ -828,7 +830,9 @@ class WebPubSubServiceClientOperationsMixin(object):
         return 200 <= response.status_code <= 299
 
     @distributed_trace
-    def close_connection(self, connection_id: str, *, reason: Optional[str] = None, **kwargs: Any) -> None:
+    def close_connection(  # pylint: disable=inconsistent-return-statements
+        self, connection_id: str, *, reason: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """Close the client connection.
 
         Close the client connection.
@@ -871,7 +875,9 @@ class WebPubSubServiceClientOperationsMixin(object):
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def send_to_connection(self, connection_id: str, message: Union[IO, str], **kwargs: Any) -> None:
+    def send_to_connection(  # pylint: disable=inconsistent-return-statements
+        self, connection_id: str, message: Union[IO, str], **kwargs: Any
+    ) -> None:
         """Send content inside request body to the specific connection.
 
         Send content inside request body to the specific connection.
@@ -973,7 +979,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         return 200 <= response.status_code <= 299
 
     @distributed_trace
-    def close_group_connections(
+    def close_group_connections(  # pylint: disable=inconsistent-return-statements
         self, group: str, *, excluded: Optional[List[str]] = None, reason: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Close connections in the specific group.
@@ -1021,7 +1027,7 @@ class WebPubSubServiceClientOperationsMixin(object):
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def send_to_group(
+    def send_to_group(  # pylint: disable=inconsistent-return-statements
         self, group: str, message: Union[IO, str], *, excluded: Optional[List[str]] = None, **kwargs: Any
     ) -> None:
         """Send content inside request body to a group of connections.
@@ -1087,7 +1093,9 @@ class WebPubSubServiceClientOperationsMixin(object):
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def add_connection_to_group(self, group: str, connection_id: str, **kwargs: Any) -> None:
+    def add_connection_to_group(  # pylint: disable=inconsistent-return-statements
+        self, group: str, connection_id: str, **kwargs: Any
+    ) -> None:
         """Add a connection to the target group.
 
         Add a connection to the target group.
@@ -1130,7 +1138,9 @@ class WebPubSubServiceClientOperationsMixin(object):
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def remove_connection_from_group(self, group: str, connection_id: str, **kwargs: Any) -> None:
+    def remove_connection_from_group(  # pylint: disable=inconsistent-return-statements
+        self, group: str, connection_id: str, **kwargs: Any
+    ) -> None:
         """Remove a connection from the target group.
 
         Remove a connection from the target group.
@@ -1214,7 +1224,7 @@ class WebPubSubServiceClientOperationsMixin(object):
         return 200 <= response.status_code <= 299
 
     @distributed_trace
-    def close_user_connections(
+    def close_user_connections(  # pylint: disable=inconsistent-return-statements
         self, user_id: str, *, excluded: Optional[List[str]] = None, reason: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Close connections for the specific user.
@@ -1262,7 +1272,9 @@ class WebPubSubServiceClientOperationsMixin(object):
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def send_to_user(self, user_id: str, message: Union[IO, str], **kwargs: Any) -> None:
+    def send_to_user(  # pylint: disable=inconsistent-return-statements
+        self, user_id: str, message: Union[IO, str], **kwargs: Any
+    ) -> None:
         """Send content inside request body to the specific user.
 
         Send content inside request body to the specific user.
@@ -1323,7 +1335,9 @@ class WebPubSubServiceClientOperationsMixin(object):
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def add_user_to_group(self, group: str, user_id: str, **kwargs: Any) -> None:
+    def add_user_to_group(  # pylint: disable=inconsistent-return-statements
+        self, group: str, user_id: str, **kwargs: Any
+    ) -> None:
         """Add a user to the target group.
 
         Add a user to the target group.
@@ -1366,7 +1380,9 @@ class WebPubSubServiceClientOperationsMixin(object):
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def remove_user_from_group(self, group: str, user_id: str, **kwargs: Any) -> None:
+    def remove_user_from_group(  # pylint: disable=inconsistent-return-statements
+        self, group: str, user_id: str, **kwargs: Any
+    ) -> None:
         """Remove a user from the target group.
 
         Remove a user from the target group.
@@ -1409,7 +1425,9 @@ class WebPubSubServiceClientOperationsMixin(object):
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def remove_user_from_all_groups(self, user_id: str, **kwargs: Any) -> None:
+    def remove_user_from_all_groups(  # pylint: disable=inconsistent-return-statements
+        self, user_id: str, **kwargs: Any
+    ) -> None:
         """Remove a user from all groups.
 
         Remove a user from all groups.
@@ -1449,7 +1467,7 @@ class WebPubSubServiceClientOperationsMixin(object):
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def grant_permission(
+    def grant_permission(  # pylint: disable=inconsistent-return-statements
         self, permission: str, connection_id: str, *, target_name: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Grant permission to the connection.
@@ -1499,7 +1517,7 @@ class WebPubSubServiceClientOperationsMixin(object):
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def revoke_permission(
+    def revoke_permission(  # pylint: disable=inconsistent-return-statements
         self, permission: str, connection_id: str, *, target_name: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Revoke permission for the connection.

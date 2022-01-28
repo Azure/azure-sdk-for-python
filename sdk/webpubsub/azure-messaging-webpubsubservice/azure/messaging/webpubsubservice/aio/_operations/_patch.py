@@ -29,14 +29,14 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._operations import (
     WebPubSubServiceClientOperationsMixin as WebPubSubServiceClientOperationsMixinGenerated,
-    JSONType
+    JSONType,
 )
 from ..._operations._patch import get_token_by_key
 
 
 class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixinGenerated):
     @distributed_trace_async
-    async def get_client_access_token(
+    async def get_client_access_token(  # pylint: disable=arguments-differ
         self,
         *,
         user_id: Optional[str] = None,
@@ -69,8 +69,8 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 >>> get_client_access_token()
                 {
                     'baseUrl': 'wss://contoso.com/api/webpubsub/client/hubs/theHub',
-                    'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ...',
-                    'url': 'wss://contoso.com/api/webpubsub/client/hubs/theHub?access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ...'
+                    'token': '<access-token>...',
+                    'url': 'wss://contoso.com/api/webpubsub/client/hubs/theHub?access_token=<access-token>...'
                 }
         """
         endpoint = self._config.endpoint.lower()

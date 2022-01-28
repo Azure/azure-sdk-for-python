@@ -24,18 +24,17 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Awaitable, Optional, Union
+from typing import Any, Awaitable, Optional, Union, TYPE_CHECKING
+from datetime import datetime, timedelta
+
 import jwt
 import six
-from datetime import datetime, timedelta
-from typing import TYPE_CHECKING
-
-from ._web_pub_sub_service_client import WebPubSubServiceClient as WebPubSubServiceClientGenerated
-from ._operations._patch import _UTC_TZ
-
 from azure.core.pipeline.policies import SansIOHTTPPolicy, ProxyPolicy
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import PipelineRequest
+
+from ._web_pub_sub_service_client import WebPubSubServiceClient as WebPubSubServiceClientGenerated
+from ._operations._patch import _UTC_TZ
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
