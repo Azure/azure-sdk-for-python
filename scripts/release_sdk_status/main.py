@@ -121,7 +121,7 @@ class PyPIClient:
             self.bot_analysis()
             return '{package_name},{pypi_link},{track1_latest_version},{track1_latest_release_date},' \
                    '{track1_ga_version},{track2_latest_version},{track2_latest_release_date},{track2_ga_version},' \
-                   '{cli_version},{track_config},{bot},{readme_link},{multiapi},{whl_size}'.format(
+                   '{cli_version},{track_config},{bot},{readme_link},{multiapi},{whl_size},'.format(
                         package_name=self._package_name,
                         pypi_link=self.pypi_link,
                         track1_latest_version=self.track1_latest_version,
@@ -303,8 +303,8 @@ def write_to_csv(sdk_status_list, csv_name):
                        'readme config,'
                        'bot advice,'
                        'readme link,'
-                       'multi api(MB),'
-                       'whl size,'
+                       'multi api,'
+                       'whl size(MB),'
                        'test coverage,'
                        'passed,'
                        'failed,'
