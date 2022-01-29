@@ -9,7 +9,6 @@ from typing import TYPE_CHECKING
 
 from .config import PROXY_URL
 from .helpers import is_live_and_not_recording
-from .proxy_testcase import get_recording_id
 
 if TYPE_CHECKING:
     from typing import Any, Dict
@@ -18,6 +17,7 @@ if TYPE_CHECKING:
 # also defined in this module
 this = sys.modules[__name__]
 this.global_sanitizers = []
+this.global_matchers = []
 
 def set_bodiless_matcher(recording_id=None):
     # type: (str) -> None
@@ -27,11 +27,12 @@ def set_bodiless_matcher(recording_id=None):
         from currently running test.
     """
 
-    if not recording_id:
-        x_recording_id = get_recording_id()
+    if recording_id:
+        _send_matcher_request("BodilessMatcher", {"x-recording-id": recording_id})
     else:
-        x_recording_id = recording_id
-    _send_matcher_request("BodilessMatcher", {"x-recording-id": x_recording_id})
+        this.global_matchers.append(("BodilessMatcher", {}))
+
+    
 
 
 def add_body_key_sanitizer(recording_id=None, **kwargs):
@@ -79,8 +80,6 @@ def add_body_regex_sanitizer(recording_id=None, **kwargs):
         _send_sanitizer_request("BodyRegexSanitizer", recording_id, request_args)    
     else:
         this.global_sanitizers.append(("BodyRegexSanitizer", request_args)    )
-
-    
 
 
 def add_continuation_sanitizer(recording_id=None, **kwargs):
@@ -223,13 +222,17 @@ def add_uri_regex_sanitizer(recording_id=None, **kwargs):
 
 def set_recording_settings(recording_id):
     _send_deferred_sanitizers(recording_id)
-    # _send_deferred_matchers(recording_id) does not currently exist, add when necessary.
-    # _send_deferred_transforms(recording_id)
+    _send_deferred_matchers(recording_id)
 
 
 def _send_deferred_sanitizers(recording_id):
     for deferred_sanitizer_tuple in this.global_sanitizers:
         _send_sanitizer_request(deferred_sanitizer_tuple[0], recording_id, deferred_sanitizer_tuple[1])
+
+
+def _send_deferred_matchers(recording_id):
+    for deferred_matcher_tuple in this.global_matchers:
+        _send_matcher_request(deferred_matcher_tuple[0], recording_id, deferred_matcher_tuple[1])
 
 
 def _get_request_args(**kwargs):
@@ -299,14 +302,14 @@ def _send_sanitizer_request(sanitizer, recording_id, parameters):
         return
 
 
-    headers={"x-abstraction-identifier": sanitizer, "Content-Type": "application/json"},
+    headers_to_send = {"x-abstraction-identifier": sanitizer, "Content-Type": "application/json"}
     if recording_id:
-        headers["recording_id"] = recording_id
+        headers_to_send["x-recording-id"] = recording_id
 
     print("Sending sanitizer with parameters {}".format(parameters))
 
     requests.post(
         "{}/Admin/AddSanitizer".format(PROXY_URL),
-        headers=headers,
+        headers=headers_to_send,
         json=parameters
     )

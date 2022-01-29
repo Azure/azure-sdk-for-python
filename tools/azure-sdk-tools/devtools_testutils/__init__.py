@@ -29,6 +29,7 @@ from .sanitizers import (
     add_request_subscription_id_sanitizer,
     add_uri_regex_sanitizer,
     set_bodiless_matcher,
+    set_recording_settings
 )
 from .helpers import ResponseCallback, RetryCounter
 from .fake_credential import FakeTokenCredential, ACCOUNT_FAKE_KEY
@@ -68,5 +69,6 @@ __all__ = [
     "ResponseCallback",
     "RetryCounter",
     "FakeTokenCredential",
-    "ACCOUNT_FAKE_KEY"
+    "ACCOUNT_FAKE_KEY",
+    "set_recording_settings"
 ]
