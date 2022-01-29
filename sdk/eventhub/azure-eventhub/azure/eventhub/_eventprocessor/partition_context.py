@@ -53,7 +53,7 @@ class PartitionContext(object):
             - `enqueued_time` (UTC datetime.datetime)
             - `retrieval_time` (UTC datetime.datetime)
 
-        :rtype: dict or None
+        :rtype: Dict[str, Any] or None
         """
         if self._last_received_event:
             return get_last_enqueued_event_properties(self._last_received_event)

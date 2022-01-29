@@ -4,15 +4,15 @@
 # license information.
 # --------------------------------------------------------------------------
 from threading import Lock, Condition
-from datetime import datetime, timedelta
+from datetime import timedelta
 from typing import ( # pylint: disable=unused-import
     cast,
     Tuple,
 )
 
-from msrest.serialization import TZ_UTC
-
+from .utils import get_current_utc_as_int
 from .user_token_refresh_options import CommunicationTokenRefreshOptions
+
 
 class CommunicationTokenCredential(object):
     """Credential type used for authenticating to an Azure Communication service.
@@ -24,9 +24,9 @@ class CommunicationTokenCredential(object):
     _ON_DEMAND_REFRESHING_INTERVAL_MINUTES = 2
 
     def __init__(self,
-            token, # type: str
-            **kwargs
-        ):
+                 token,  # type: str
+                 **kwargs
+                 ):
         token_refresher = kwargs.pop('token_refresher', None)
         communication_token_refresh_options = CommunicationTokenRefreshOptions(token=token,
                                                                                token_refresher=token_refresher)
@@ -35,8 +35,8 @@ class CommunicationTokenCredential(object):
         self._lock = Condition(Lock())
         self._some_thread_refreshing = False
 
-    def get_token(self):
-        # type () -> ~azure.core.credentials.AccessToken
+    def get_token(self, *scopes, **kwargs):  # pylint: disable=unused-argument
+        # type (*str, **Any) -> AccessToken
         """The value of the configured token.
         :rtype: ~azure.core.credentials.AccessToken
         """
@@ -79,12 +79,8 @@ class CommunicationTokenCredential(object):
         self._lock.acquire()
 
     def _token_expiring(self):
-        return self._token.expires_on - self._get_utc_now() <\
-            timedelta(minutes=self._ON_DEMAND_REFRESHING_INTERVAL_MINUTES)
+        return self._token.expires_on - get_current_utc_as_int() <\
+            timedelta(minutes=self._ON_DEMAND_REFRESHING_INTERVAL_MINUTES).total_seconds()
 
     def _is_currenttoken_valid(self):
-        return self._get_utc_now() < self._token.expires_on
-
-    @classmethod
-    def _get_utc_now(cls):
-        return datetime.now().replace(tzinfo=TZ_UTC)
+        return get_current_utc_as_int() < self._token.expires_on

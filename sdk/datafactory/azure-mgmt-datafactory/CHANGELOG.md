@@ -1,5 +1,18 @@
 # Release History
 
+## 2.2.0 (2022-01-06)
+
+**Features**
+
+  - Model AzureBlobFSLinkedService has a new parameter service_principal_credential
+  - Model AzureBlobFSLinkedService has a new parameter service_principal_credential_type
+  - Model AzureDatabricksDeltaLakeLinkedService has a new parameter credential
+  - Model AzureDatabricksDeltaLakeLinkedService has a new parameter workspace_resource_id
+  - Model CosmosDbLinkedService has a new parameter credential
+  - Model DynamicsLinkedService has a new parameter credential
+  - Model GoogleAdWordsLinkedService has a new parameter connection_properties
+  - Model LinkedIntegrationRuntimeRbacAuthorization has a new parameter credential
+
 ## 2.1.0 (2021-11-20)
 
 **Features**
