@@ -57,16 +57,17 @@ class PyPIClient:
         self.cli_version = cli_version
         self.bot_warning = ''
         self.multi_api = multi_api
+        self.package_size = ''  # Byte
 
     def get_package_name(self):
         return self._package_name
 
-    def project_html(self):
+    def project_html(self, folder: str):
         self.pypi_link = "{host}/pypi/{project_name}".format(
             host=self._host,
             project_name=self._package_name
         )
-        response = self._session.get(self.pypi_link + "/#history")
+        response = self._session.get(self.pypi_link + folder)
 
         return response
 
@@ -87,6 +88,16 @@ class PyPIClient:
 
         return strip_info
 
+    def get_latest_package_size(self):
+        response = self.project_html("/json")
+        try:
+            response.raise_for_status()
+            result = response.json()
+            version = self.track2_latest_version if self.track2_latest_version != 'NA' else self.track1_latest_version
+            self.package_size = result['releases'][version][0]['size']
+        except:
+            self.package_size = 'failed'
+
     def get_release_dict(self, response):
         version_list = self.get_release_info(response, xpath='//p[@class="release__version"]/text()', type='version')
         self.version_handler(version_list)
@@ -95,14 +106,22 @@ class PyPIClient:
         self.version_date_dict = dict(zip(version_list, data_list))
         self.version_date_dict['NA'] = 'NA'
 
+        self.get_latest_package_size()
+
+    def output_package_size(self) -> str:
+        if isinstance(self.package_size, int):
+            return '%.3f' % float(self.package_size / 1024 / 1024)
+        else:
+            return self.package_size
+
     def write_to_list(self):
-        response = self.project_html()
+        response = self.project_html("/#history")
         if 199 < response.status_code < 400:
             self.get_release_dict(response)
             self.bot_analysis()
             return '{package_name},{pypi_link},{track1_latest_version},{track1_latest_release_date},' \
                    '{track1_ga_version},{track2_latest_version},{track2_latest_release_date},{track2_ga_version},' \
-                   '{cli_version},{track_config},{bot},{readme_link},{multiapi},'.format(
+                   '{cli_version},{track_config},{bot},{readme_link},{multiapi},{whl_size}'.format(
                         package_name=self._package_name,
                         pypi_link=self.pypi_link,
                         track1_latest_version=self.track1_latest_version,
@@ -115,7 +134,8 @@ class PyPIClient:
                         track_config=self.track_config,
                         bot=self.bot_warning,
                         readme_link=self.rm_link,
-                        multiapi=self.multi_api)
+                        multiapi=self.multi_api,
+                        whl_size=self.output_package_size())
         else:
             self.pypi_link = 'NA'
         return
@@ -283,7 +303,8 @@ def write_to_csv(sdk_status_list, csv_name):
                        'readme config,'
                        'bot advice,'
                        'readme link,'
-                       'multi api,'
+                       'multi api(MB),'
+                       'whl size,'
                        'test coverage,'
                        'passed,'
                        'failed,'
