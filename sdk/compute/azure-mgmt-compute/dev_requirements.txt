@@ -5,3 +5,4 @@
 aiohttp>=3.0; python_version >= '3.5'
 -e ../../../tools/azure-devtools
 ../../identity/azure-identity
+azure-storage-blob==12.9.0

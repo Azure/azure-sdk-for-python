@@ -4,13 +4,15 @@
 
 ### Features Added
 
+- Added models: `AmlSkill`
+
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
 
-- Python 2.7 and 3.6 are no longer supported. Please use Python version 3.7 or later.
+- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
 
 ## 11.3.0b6 (2021-11-19)
 

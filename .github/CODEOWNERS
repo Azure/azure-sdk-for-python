@@ -42,6 +42,7 @@
 /sdk/communication/azure-communication-phonenumbers/                 @RoyHerrod @danielav7 @whisper6284 @AlonsoMondal
 /sdk/communication/azure-communication-sms/                          @RoyHerrod @arifibrahim4
 /sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk
+/sdk/communication/**/_shared/                                       @Azure/acs-identity-sdk
 
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @mccoyp @YalinLi0312
@@ -75,6 +76,9 @@
 /sdk/datafactory/                                                    @hvermis
 /sdk/datalake/                                                       @ro-joowan
 /sdk/datadatamigration/                                              @vchske
+
+# ServiceLabel: %Device Update for IoT Hub %Service Attention
+/sdk/deviceupdate/                                                   @dpokluda @sedols
 
 # PRLabel: %Event Grid
 /sdk/eventgrid/                                                      @lmazuel @yunhaoling @swathipil @rakshith91
@@ -120,6 +124,9 @@
 
 # PRLabel: %Cognitive - Metrics Advisor
 /sdk/metricsadvisor/                                                 @xiangyan99 @kristapratico
+
+# PRLabel: %Cognitive - Anomaly Detector
+/sdk/anomalydetector/                                                @conhua @mengaims @juaduan @moreOver0
 
 # PRLabel: %Cognitive - Translator
 /sdk/translation/                                                    @kristapratico @mohamedshabanofficial
@@ -732,7 +739,7 @@
 
 
 # Management Plane
-/**/*mgmt*/                                                          @RAY-316 @msyyc
+/**/*mgmt*/                                                          @BigCat20196	 @msyyc
 
 
 ###########
