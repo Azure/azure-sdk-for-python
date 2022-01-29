@@ -1235,15 +1235,16 @@ class TestAnalyze(TextAnalyticsTest):
     @TextAnalyticsCustomPreparer()
     def test_generic_action_error_no_target(
         self,
-        textanalytics_custom_text_endpoint,
-        textanalytics_custom_text_key,
-        textanalytics_single_category_classify_project_name,
-        textanalytics_single_category_classify_deployment_name,
-        textanalytics_multi_category_classify_project_name,
-        textanalytics_multi_category_classify_deployment_name,
-        textanalytics_custom_entities_project_name,
-        textanalytics_custom_entities_deployment_name
+        **kwargs
     ):
+        textanalytics_custom_text_endpoint = kwargs.pop("textanalytics_custom_text_endpoint")
+        textanalytics_custom_text_key = kwargs.pop("textanalytics_custom_text_key")
+        textanalytics_single_category_classify_project_name = kwargs.pop("textanalytics_single_category_classify_project_name")
+        textanalytics_single_category_classify_deployment_name = kwargs.pop("textanalytics_single_category_classify_deployment_name")
+        textanalytics_multi_category_classify_project_name = kwargs.pop("textanalytics_multi_category_classify_project_name")
+        textanalytics_multi_category_classify_deployment_name = kwargs.pop("textanalytics_multi_category_classify_deployment_name")
+        textanalytics_custom_entities_project_name = kwargs.pop("textanalytics_custom_entities_project_name")
+        textanalytics_custom_entities_deployment_name = kwargs.pop("textanalytics_custom_entities_deployment_name")
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": ""},
@@ -1296,15 +1297,16 @@ class TestAnalyze(TextAnalyticsTest):
     @TextAnalyticsCustomPreparer()
     def test_action_errors_with_targets(
         self,
-        textanalytics_custom_text_endpoint,
-        textanalytics_custom_text_key,
-        textanalytics_single_category_classify_project_name,
-        textanalytics_single_category_classify_deployment_name,
-        textanalytics_multi_category_classify_project_name,
-        textanalytics_multi_category_classify_deployment_name,
-        textanalytics_custom_entities_project_name,
-        textanalytics_custom_entities_deployment_name
+        **kwargs
     ):
+        textanalytics_custom_text_endpoint = kwargs.pop("textanalytics_custom_text_endpoint")
+        textanalytics_custom_text_key = kwargs.pop("textanalytics_custom_text_key")
+        textanalytics_single_category_classify_project_name = kwargs.pop("textanalytics_single_category_classify_project_name")
+        textanalytics_single_category_classify_deployment_name = kwargs.pop("textanalytics_single_category_classify_deployment_name")
+        textanalytics_multi_category_classify_project_name = kwargs.pop("textanalytics_multi_category_classify_project_name")
+        textanalytics_multi_category_classify_deployment_name = kwargs.pop("textanalytics_multi_category_classify_deployment_name")
+        textanalytics_custom_entities_project_name = kwargs.pop("textanalytics_custom_entities_project_name")
+        textanalytics_custom_entities_deployment_name = kwargs.pop("textanalytics_custom_entities_deployment_name")
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": ""},
@@ -1387,11 +1389,12 @@ class TestAnalyze(TextAnalyticsTest):
     @TextAnalyticsCustomPreparer()
     def test_action_job_failure(
             self,
-            textanalytics_custom_text_endpoint,
-            textanalytics_custom_text_key,
-            textanalytics_custom_entities_project_name,
-            textanalytics_custom_entities_deployment_name
+            **kwargs
     ):
+        textanalytics_custom_text_endpoint = kwargs.pop("textanalytics_custom_text_endpoint")
+        textanalytics_custom_text_key = kwargs.pop("textanalytics_custom_text_key")
+        textanalytics_custom_entities_project_name = kwargs.pop("textanalytics_custom_entities_project_name")
+        textanalytics_custom_entities_deployment_name = kwargs.pop("textanalytics_custom_entities_deployment_name")
         docs = [
             {"id": "1", "language": "en",
              "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},

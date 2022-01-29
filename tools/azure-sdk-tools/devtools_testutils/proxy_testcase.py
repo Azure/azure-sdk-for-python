@@ -94,7 +94,7 @@ def start_record_or_playback(test_id):
     if is_live():
         result = requests.post(
             RECORDING_START_URL,
-            headers={"x-recording-file": test_id, "x-recording-sha": current_sha},
+            json={"x-recording-file": test_id},
         )
         if result.status_code != 200:
             message = six.ensure_str(result._content)
@@ -104,7 +104,7 @@ def start_record_or_playback(test_id):
     else:
         result = requests.post(
             PLAYBACK_START_URL,
-            headers={"x-recording-file": test_id, "x-recording-sha": current_sha},
+            json={"x-recording-file": test_id},
         )
         if result.status_code != 200:
             message = six.ensure_str(result._content)
@@ -138,12 +138,12 @@ def stop_record_or_playback(test_id, recording_id, test_output):
                 "x-recording-save": "true",
                 "Content-Type": "application/json"
             },
-            json=test_output
+            json=test_output or {}  # tests don't record successfully unless test_output is a dictionary
         )
     else:
         requests.post(
             PLAYBACK_STOP_URL,
-            headers={"x-recording-file": test_id, "x-recording-id": recording_id},
+            headers={"x-recording-id": recording_id},
         )
 
 
