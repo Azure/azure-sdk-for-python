@@ -979,6 +979,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         Soft deleted blobs or snapshots are accessible through :func:`list_blobs()` specifying `include=["deleted"]`
         Soft-deleted blobs or snapshots can be restored using :func:`~BlobClient.undelete()`
 
+        The maximum number of blobs that can be deleted in a single request is 256.
+
         :param blobs:
             The blobs to delete. This can be a single blob, or multiple values can
             be supplied, where each value is either the name of the blob (str) or BlobProperties.
@@ -1065,6 +1067,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         A block blob's tier determines Hot/Cool/Archive storage type.
         This operation does not update the blob's ETag.
 
+        The maximum number of blobs that can be updated in a single request is 256.
+
         :param standard_blob_tier:
             Indicates the tier to be set on all blobs. Options include 'Hot', 'Cool',
             'Archive'. The hot tier is optimized for storing data that is accessed
@@ -1127,6 +1131,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         **kwargs
     ) -> AsyncIterator[AsyncHttpResponse]:
         """Sets the page blob tiers on the blobs. This API is only supported for page blobs on premium accounts.
+
+        The maximum number of blobs that can be updated in a single request is 256.
 
         :param premium_page_blob_tier:
             A page blob tier value to set on all blobs to. The tier correlates to the size of the
