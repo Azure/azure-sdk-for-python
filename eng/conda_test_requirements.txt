@@ -1,4 +1,5 @@
 # install from root of repo
+azure-mgmt-resource==20.0.0
 aiohttp>=3.0; python_version >= '3.5'
 tools/azure-devtools
 tools/azure-sdk-tools
