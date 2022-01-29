@@ -71,6 +71,10 @@ way as `recorded_by_proxy`.
 > with "Test" in order to be properly collected by pytest by default. For more information, please refer to
 > [pytest's documentation][pytest_collection].
 
+> **Note:** pure-`pytest` test cases aren't allowed to use an `__init__` constructor. Test classes should instead use
+> other methods of persisting state during a test run; for some `pytest` built-in options, please refer to
+> [pytest's documentation][pytest_setup].
+
 ### Using resource preparers
 
 Test suites that haven't fully migrated to using a `test-resources.json` file for test resource deployment might use
@@ -228,16 +232,17 @@ live pipeline testing, requests are made directly to the service instead of goin
 
 Fetching environment variables, passing them directly to tests, and sanitizing their real values can be done all at once
 by using the `devtools_testutils`
-[EnvironmentVariableLoader](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py).
+[EnvironmentVariableLoader](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py)
+(formerly known, and sometimes referred to, as the PowerShellPreparer).
 
-This loader is nice paired with the PowerShell test resource management commands that are
-documented in [/eng/common/TestResources][test_resources]. It's recommended that all test suites use these scripts for
-live test resource management.
+This loader is meant to be paired with the PowerShell test resource management commands that are documented in
+[/eng/common/TestResources][test_resources]. It's recommended that all test suites use these scripts for live test
+resource management.
 
-For an example of using the EnvironmentVariableLoader with the test proxy, you can refer to the Tables SDK. The CosmosPreparer
-and TablesPreparer defined in this [preparers.py][tables_preparers] file each define an instance of the
-EnvironmentVariableLoader, which are used to fetch environment variables for Cosmos and Tables, respectively. These preparers
-can be used to decorate test methods directly; for example:
+For an example of using the EnvironmentVariableLoader with the test proxy, you can refer to the Tables SDK. The
+CosmosPreparer and TablesPreparer defined in this [preparers.py][tables_preparers] file each define an instance of the
+EnvironmentVariableLoader, which are used to fetch environment variables for Cosmos and Tables, respectively. These
+preparers can be used to decorate test methods directly; for example:
 
 ```python
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
@@ -261,7 +266,7 @@ Decorated test methods will have the values of environment variables passed to t
 values will automatically have sanitizers registered with the test proxy.
 
 > **Note:** For tests that are decorated by `@recorded_by_proxy` or `@recorded_by_proxy_async`, the keyword arguments
-> passed by PowerShellPreparer can be listed as positional arguments instead of using `**kwargs`. However, tests
+> passed by EnvironmentVariableLoader can be listed as positional arguments instead of using `**kwargs`. However, tests
 > without these decorators can only accept arguments through `**kwargs`. It's therefore recommended that you use
 > `**kwargs` in all cases so that tests run successfully with or without `@recorded_by_proxy` decorators.
 
@@ -398,6 +403,7 @@ For more details on proxy startup, please refer to the [proxy documentation][det
 [py_sanitizers]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/sanitizers.py
 [pytest_collection]: https://docs.pytest.org/latest/goodpractices.html#test-discovery
 [pytest_fixtures]: https://docs.pytest.org/latest/fixture.html#scope-sharing-fixtures-across-classes-modules-packages-or-session
+[pytest_setup]: https://docs.pytest.org/xunit_setup.html
 [sanitizers]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md#session-and-test-level-transforms-sanitiziers-and-matchers
 [tables_preparers]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/tests/preparers.py
 [test_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/TestResources#readme
