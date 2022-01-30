@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added support for `ServiceBusMessageState` in `ServiceBusReceivedMessage`.
+
 ### Breaking Changes
 
 ### Bugs Fixed

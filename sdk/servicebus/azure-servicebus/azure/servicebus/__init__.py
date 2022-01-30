@@ -36,6 +36,7 @@ TransportType = constants.TransportType
 __all__ = [
     "ServiceBusMessage",
     "ServiceBusMessageBatch",
+    "ServiceBusMessageState",
     "ServiceBusReceivedMessage",
     "NEXT_AVAILABLE_SESSION",
     "ServiceBusSubQueue",
