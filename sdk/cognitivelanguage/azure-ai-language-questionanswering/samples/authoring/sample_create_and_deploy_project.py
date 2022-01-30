@@ -46,18 +46,18 @@ def sample_create_and_deploy_project():
             })
 
         print("view created project info:")
-        print(u"\tname: {}".format(project["projectName"]))
-        print(u"\tlanguage: {}".format(project["language"]))
-        print(u"\tdescription: {}".format(project["description"]))
+        print("\tname: {}".format(project["projectName"]))
+        print("\tlanguage: {}".format(project["language"]))
+        print("\tdescription: {}".format(project["description"]))
 
         # list projects
         print("find created project ..")
         qna_projects = client.list_projects()
         for p in qna_projects:
             if p["projectName"] == project_name:
-                print(u"project: {}".format(p["projectName"]))
-                print(u"\tlanguage: {}".format(p["language"]))
-                print(u"\tdescription: {}".format(p["description"]))
+                print("project: {}".format(p["projectName"]))
+                print("\tlanguage: {}".format(p["language"]))
+                print("\tdescription: {}".format(p["description"]))
 
         # update sources (REQUIRED TO DEPLOY PROJECT)
         update_sources_poller = client.begin_update_sources(
@@ -81,10 +81,10 @@ def sample_create_and_deploy_project():
             project_name=project_name
         )
         for source in sources:
-            print(u"project: {}".format(source["displayName"]))
-            print(u"\tsource: {}".format(source["source"]))
-            print(u"\tsource Uri: {}".format(source["sourceUri"]))
-            print(u"\tsource kind: {}".format(source["sourceKind"]))
+            print("project: {}".format(source["displayName"]))
+            print("\tsource: {}".format(source["source"]))
+            print("\tsource Uri: {}".format(source["sourceUri"]))
+            print("\tsource kind: {}".format(source["sourceKind"]))
 
         # deploy project
         deployment_poller = client.begin_deploy_project(
