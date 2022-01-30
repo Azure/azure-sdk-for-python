@@ -1,6 +1,7 @@
 #!/bin/bash
 
-echo "$TMPDIR"
+TMPDIR="$(dirname $(dirname $(readlink -f "$0")))/venv"
+export TMPDIR
 VIRTUAL_ENV=$TMPDIR/venv-sdk
 echo "$VIRTUAL_ENV"
 export VIRTUAL_ENV
@@ -10,7 +11,8 @@ export PATH
 # node version degrade
 sudo npm install -g n
 sudo n 14.15.0
-export PATH=/usr/local/n/versions/node/14.15.0/bin:$PATH
+echo "$PATH"
+export PATH="/usr/local/n/versions/node/14.15.0/bin:$PATH"
 
 TEMP_FILE="$TMPDIR/venv-sdk/auto_temp.json"
 # generate code
