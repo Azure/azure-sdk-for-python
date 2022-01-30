@@ -66,10 +66,10 @@ def sample_update_knowledge_sources():
             project_name=project_name
         )
         for item in sources:
-            print(u"source name: {}".format(item["displayName"]))
-            print(u"\tsource: {}".format(item["source"]))
-            print(u"\tsource uri: {}".format(item["sourceUri"]))
-            print(u"\tsource kind: {}".format(item["sourceKind"]))
+            print("source name: {}".format(item["displayName"]))
+            print("\tsource: {}".format(item["source"]))
+            print("\tsource uri: {}".format(item["sourceUri"]))
+            print("\tsource kind: {}".format(item["sourceKind"]))
 
         # qnas
         qna_poller = client.begin_update_qnas(
@@ -90,11 +90,11 @@ def sample_update_knowledge_sources():
             project_name=project_name
         )
         for item in qnas:
-            print(u"qna: {}".format(item["id"]))
+            print("qna: {}".format(item["id"]))
             print("\tquestions:")
             for question in item["questions"]:
-                print(u"\t\t{}".format(question))
-            print(u"\tanswer: {}".format(item["answer"]))
+                print("\t\t{}".format(question))
+            print("\tanswer: {}".format(item["answer"]))
 
         # synonyms
         client.update_synonyms(
@@ -123,7 +123,7 @@ def sample_update_knowledge_sources():
             print("synonyms:")
             print("\talterations:")
             for alt in item["alterations"]:
-                print(u"\t\t{}".format(alt))
+                print("\t\t{}".format(alt))
             print('')
 
     # [END update_knowledge_sources]

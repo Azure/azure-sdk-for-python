@@ -177,9 +177,9 @@ with client:
         })
 
     print("view created project info:")
-    print(u"\tname: {}".format(project["projectName"]))
-    print(u"\tlanguage: {}".format(project["language"]))
-    print(u"\tdescription: {}".format(project["description"]))
+    print("\tname: {}".format(project["projectName"]))
+    print("\tlanguage: {}".format(project["language"]))
+    print("\tdescription: {}".format(project["description"]))
 ```
 
 #### Add a knowledge source
@@ -206,10 +206,10 @@ sources = client.list_sources(
     project_name=project_name
 )
 for source in sources:
-    print(u"project: {}".format(source["displayName"]))
-    print(u"\tsource: {}".format(source["source"]))
-    print(u"\tsource Uri: {}".format(source["sourceUri"]))
-    print(u"\tsource kind: {}".format(source["sourceKind"]))
+    print("project: {}".format(source["displayName"]))
+    print("\tsource: {}".format(source["source"]))
+    print("\tsource Uri: {}".format(source["sourceUri"]))
+    print("\tsource kind: {}".format(source["sourceKind"]))
 ```
 
 #### Deploy your project
