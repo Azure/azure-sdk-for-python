@@ -50,10 +50,9 @@ class SourcesQnasSynonymsTests(QuestionAnsweringTest):
         )
         source_added = False
         for s in sources:
-            if s["displayName"] == source_display_name:
+            if ("displayName" in s) and s["displayName"] == source_display_name:
                 source_added = True
         assert source_added
-
 
     @GlobalQuestionAnsweringAccountPreparer()
     def test_add_qna(self, qna_account, qna_key):
@@ -86,7 +85,7 @@ class SourcesQnasSynonymsTests(QuestionAnsweringTest):
         )
         qna_added = False
         for qna in qnas:
-            if qna["answer"] == answer and question in qna["questions"]:
+            if ("answer" in qna and "questions" in qna) and (qna["answer"] == answer and question in qna["questions"]):
                 qna_added = True
         assert qna_added
 
@@ -119,6 +118,6 @@ class SourcesQnasSynonymsTests(QuestionAnsweringTest):
             project_name=project_name
         )
         for s in synonyms:
-            if "qnamaker" in s["alterations"] and "qna maker" in s["alterations"]:
+            if ("alterations" in s) and ("qnamaker" in s["alterations"] and "qna maker" in s["alterations"]):
                 synonym_added = True
         assert synonym_added

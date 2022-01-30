@@ -30,7 +30,7 @@ class CreateAndDeployTests(QuestionAnsweringTest):
         qna_projects = client.list_projects()
         found = False
         for p in qna_projects:
-            if p["projectName"] == project_name:
+            if ("projectName" in p) and p["projectName"] == project_name:
                 found = True
         assert found
 
@@ -52,17 +52,14 @@ class CreateAndDeployTests(QuestionAnsweringTest):
         deployment_poller.result()
 
         # assert
-        '''
         deployments = client.list_deployments(
             project_name=project_name
         )
         deployment_found = False
         for d in deployments:
-            if d["deploymentName"] == deployment_name:
+            if ("deploymentName" in d) and d["deploymentName"] == deployment_name:
                 deployment_found = True
         assert deployment_found
-        '''
-
             
 
 

@@ -66,6 +66,6 @@ class ExportAndImportTests(QuestionAnsweringTest):
         project_found = False
         projects = client.list_projects()
         for p in projects:
-            if p["projectName"] == project_name:
+            if ("projectName" in p) and p["projectName"] == project_name:
                 project_found = True
         assert project_found
