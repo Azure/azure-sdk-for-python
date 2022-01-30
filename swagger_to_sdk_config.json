@@ -13,7 +13,7 @@
 
   "generateOptions": {
     "generateScript": {
-      "path": "sh scripts/automation_generate_swagger.sh",
+      "path": "sh scripts/automation_generate.sh",
       "stderr": {
         "showInComment": true
       },

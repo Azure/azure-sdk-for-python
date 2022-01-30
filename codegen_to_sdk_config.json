@@ -7,7 +7,7 @@
   
     "generateAndBuild": {
       "generateAndBuildScript": {
-        "path": ".scripts/automation_generate_codegen.sh",
+        "path": ".scripts/automation_generate_for_sdk_generator.sh",
         "stderr": {
           "storeAllLog": true
         },

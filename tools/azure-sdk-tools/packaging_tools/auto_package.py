@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 
 from azure_devtools.ci_tools.git_tools import get_diff_file_list
-from .common_utils import create_package, change_log_generate, extract_breaking_change
+from .auto_common_utils import create_package, change_log_generate, extract_breaking_change
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -29,6 +29,7 @@ def main(generate_input, generate_output):
             "hasBreakingChange": "Breaking changes" in md_output,
             "breakingChangeItems": extract_breaking_change(md_output),
         }
+        package["version"] = last_version[-1]
 
         _LOGGER.info(f"[PACKAGE]({package_name})[CHANGELOG]:{md_output}")
         # Built package
@@ -36,10 +37,13 @@ def main(generate_input, generate_output):
         folder_name = package["path"][0]
         dist_path = Path(sdk_folder, folder_name, package_name, "dist")
         package["artifacts"] = [str(dist_path / package_file) for package_file in os.listdir(dist_path)]
-        package["result"] = "succeeded"
+        # Installation package
+        package["installInstructions"] = {
+            "full": "You can install the use using pip install of the artificats.",
+            "lite": f"pip install {package_name}",
+        }
         # to distinguish with track1
         package["packageName"] = "track2_" + package["packageName"]
-        package["packageFolder"] = package["path"][0]
         result["packages"].append(package)
 
     with open(generate_output, "w") as writer:

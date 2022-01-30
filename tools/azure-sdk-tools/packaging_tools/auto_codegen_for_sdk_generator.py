@@ -6,7 +6,7 @@ from subprocess import check_call
 
 from .swaggertosdk.SwaggerToSdkCore import (CONFIG_FILE)
 from .generate_sdk import generate
-from .common_utils import get_package_names, init_new_service, update_servicemetadata
+from .auto_common_utils import get_package_names, init_new_service, update_servicemetadata
 
 _LOGGER = logging.getLogger(__name__)
 
