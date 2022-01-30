@@ -21,6 +21,7 @@ from ._common.message import (
 from ._common.constants import (
     ServiceBusReceiveMode,
     ServiceBusSubQueue,
+    ServiceBusMessageState,
     ServiceBusSessionFilter,
     NEXT_AVAILABLE_SESSION,
 )

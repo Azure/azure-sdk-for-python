@@ -36,6 +36,7 @@ from .constants import (
     MESSAGE_PROPERTY_MAX_LENGTH,
     MAX_ABSOLUTE_EXPIRY_TIME,
     MAX_DURATION_VALUE,
+    MESSAGE_STATE_NAME
 )
 from ..amqp import (
     AmqpAnnotatedMessage,
@@ -963,6 +964,27 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             try:
                 return self._raw_amqp_message.annotations.get(_X_OPT_DEAD_LETTER_SOURCE).decode(  # type: ignore
                     "UTF-8"
+                )
+            except AttributeError:
+                pass
+        return None
+
+    @property
+    def message_state(self):
+        # type: () -> Optional[str]
+        """
+        Defaults to Active. Represents the message state of the message. Can be Active, Deferred.
+        or Scheduled.
+
+        :rtype: ~azure.servicebus.ServiceBusMessageState
+        """
+        if self._raw_amqp_message.annotations:
+            try:
+                message_state = self._raw_amqp_message.annotations.get(MESSAGE_STATE_NAME)
+                return (
+                    ServiceBusMessageState.DEFERRED if message_state == 1
+                    else ServiceBusMessageState.SCHEDULED if message_state == 2
+                    else ServiceBusMessageState.ACTIVE
                 )
             except AttributeError:
                 pass
