@@ -1,0 +1,51 @@
+
+trigger:
+  branches:
+    exclude:
+    - '*'
+
+# avoid being triggered as part of CI check
+pr:
+  branches:
+    exclude:
+    - '*'
+
+
+variables:
+  - group: Azure SDK Auto Release Pipeline Secrets
+  - group: SDK Release Helper
+
+jobs:
+- job: CollectApiVersion
+  displayName: CollectApiVersion
+  timeoutInMinutes: 30
+  strategy:
+    maxParallel: 1
+  pool:
+    vmImage: 'ubuntu-20.04'
+  steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.8'
+        addToPath: true
+        architecture: 'x64'
+    - bash: |
+        script_path=$(pwd)/scripts/collect_api_version_for_multi_api_sdk
+        cd ..
+        git config --global user.email "PythonSdkPipelines"
+        git config --global user.name "PythonSdkPipelines"
+        mkdir file-storage
+        git clone ${FILE_REPO:0:8}$(USR_NAME):$(Yuchao-GitToken)@${FILE_REPO:8} $(pwd)/file-storage
+
+        # import env variable
+        export TOKEN=$(Yuchao-GitToken)
+
+        # create virtual env
+        python -m venv venv-sdk
+        source venv-sdk/bin/activate
+        pip install -r $script_path/requirement.txt
+
+        # run
+        cd file-storage
+        git checkout collect-api-version
+        python $script_path/main.py
