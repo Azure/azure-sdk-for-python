@@ -1,13 +1,13 @@
 {
     "init": {
       "initScript": {
-        "path": ".scripts/automation_init.sh"
+        "path": ".scripts/sdk_init.sh"
       }
     },
   
     "generateAndBuild": {
       "generateAndBuildScript": {
-        "path": ".scripts/automation_generate_for_sdk_generator.sh",
+        "path": ".scripts/sdk_generate.sh",
         "stderr": {
           "storeAllLog": true
         },

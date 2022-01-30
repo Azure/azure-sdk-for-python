@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 
 from azure_devtools.ci_tools.git_tools import get_diff_file_list
-from .auto_common_utils import create_package, change_log_generate, extract_breaking_change
+from .package_utils import create_package, change_log_generate, extract_breaking_change
 
 _LOGGER = logging.getLogger(__name__)
 

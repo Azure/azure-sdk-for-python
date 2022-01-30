@@ -1,4 +1,3 @@
-import glob
 import json
 import logging
 import os
@@ -8,7 +7,6 @@ from azure_devtools.ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
 from subprocess import check_call
 
-from .change_log import main as change_log_main
 from .swaggertosdk.autorest_tools import build_autorest_options
 
 _LOGGER = logging.getLogger(__name__)
@@ -88,37 +86,3 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
     if write_flag:
         with open(manifest_file, "w") as f:
             f.write("".join(includes))
-
-
-def create_package(name, dest_folder=DEFAULT_DEST_FOLDER):
-    # a package will exist in either one, or the other folder. this is why we can resolve both at the same time.
-    absdirs = [
-        os.path.dirname(package)
-        for package in (glob.glob("{}/setup.py".format(name)) + glob.glob("sdk/*/{}/setup.py".format(name)))
-    ]
-
-    absdirpath = os.path.abspath(absdirs[0])
-    check_call(["python", "setup.py", "bdist_wheel", "-d", dest_folder], cwd=absdirpath)
-    check_call(["python", "setup.py", "sdist", "--format", "zip", "-d", dest_folder], cwd=absdirpath)
-
-
-def change_log_generate(package_name, last_version):
-    from pypi_tools.pypi import PyPIClient
-
-    client = PyPIClient()
-    try:
-        last_version[-1] = str(client.get_ordered_versions(package_name)[-1])
-    except:
-        return "  - Initial Release"
-    else:
-        return change_log_main(f"{package_name}:pypi", f"{package_name}:latest")
-
-
-def extract_breaking_change(changelog):
-    log = changelog.split("\n")
-    breaking_change = []
-    for i in range(0, len(log)):
-        if log[i].find("Breaking changes") > -1:
-            breaking_change = log[min(i + 2, len(log) - 1) :]
-            break
-    return sorted([x.replace("  - ", "") for x in breaking_change])
