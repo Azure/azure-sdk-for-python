@@ -78,10 +78,9 @@ way as `recorded_by_proxy`.
 ### Using resource preparers
 
 Test suites that haven't fully migrated to using a `test-resources.json` file for test resource deployment might use
-resource preparers, such as
-[ResourceGroupPreparer](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/resource_testcase.py).
-Migrating to [PowerShell test resource deployment][test_resources] is recommended (and test proxy migration might be a
-good opportunity to look into this), but the test proxy can work with resource preparers.
+resource preparers, such as [ResourceGroupPreparer][rg_preparer]. Migrating to
+[PowerShell test resource deployment][test_resources] is recommended (and test proxy migration might be a good
+opportunity to look into this), but the test proxy can work with resource preparers.
 
 Resource preparers need a management client to function, so test classes that use them will need to inherit from
 [AzureMgmtRecordedTestCase][mgmt_recorded_test_case] instead of AzureRecordedTestCase.
@@ -90,11 +89,9 @@ Resource preparers need a management client to function, so test classes that us
 
 ### Perform one-time setup
 
-Docker is a requirement for using the test proxy. You can install Docker from
-[docs.docker.com](https://docs.docker.com/get-docker/). After installing, make sure Docker is running and is using
-Linux containers before running tests.
-
-Follow the instructions [here][proxy_cert_docs] to complete setup. You need to trust a certificate on your machine in
+1. Docker is a requirement for using the test proxy. You can install Docker from [docs.docker.com][docker_install].
+2. After installing, make sure Docker is running and is using Linux containers before running tests.
+3. Follow the instructions [here][proxy_cert_docs] to complete setup. You need to trust a certificate on your machine in
 order to communicate with the test proxy over a secure connection.
 
 ### Start the proxy server
@@ -231,9 +228,8 @@ live pipeline testing, requests are made directly to the service instead of goin
 ### Fetch environment variables
 
 Fetching environment variables, passing them directly to tests, and sanitizing their real values can be done all at once
-by using the `devtools_testutils`
-[EnvironmentVariableLoader](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py)
-(formerly known, and sometimes referred to, as the PowerShellPreparer).
+by using the `devtools_testutils` [EnvironmentVariableLoader][env_var_loader] (formerly known, and sometimes referred
+to, as the PowerShellPreparer).
 
 This loader is meant to be paired with the PowerShell test resource management commands that are documented in
 [/eng/common/TestResources][test_resources]. It's recommended that all test suites use these scripts for live test
@@ -273,9 +269,8 @@ values will automatically have sanitizers registered with the test proxy.
 ### Record test variables
 
 To run recorded tests successfully when there's an element of non-secret randomness to them, the test proxy provides a
-[`variables` API](https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy#storing-variables).
-This makes it possible for a test to record the values of variables that were used during recording and use the same
-values in playback mode without a sanitizer.
+[`variables` API][variables_api]. This makes it possible for a test to record the values of variables that were used
+during recording and use the same values in playback mode without a sanitizer.
 
 For example, imagine that a test uses a randomized `table_name` variable when creating resources. The same random value
 for `table_name` can be used in playback mode by using this `variables` API.
@@ -386,17 +381,17 @@ of `"start"`.
 
 #### Python
 
-There are two methods in `devtools_testutils`,
-[start_test_proxy](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/proxy_docker_startup.py#L97)
-and
-[stop_test_proxy](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/proxy_docker_startup.py#L135),
-that can be used to manually start and stop the test proxy. Like `docker-start-proxy.ps1`, `start_test_proxy` will
-automatically fetch the proxy Docker image for you and start the container if it's not already running.
+There are two methods in `devtools_testutils`, [start_test_proxy][start_test_proxy] and
+[stop_test_proxy][stop_test_proxy], that can be used to manually start and stop the test proxy. Like
+`docker-start-proxy.ps1`, `start_test_proxy` will automatically fetch the proxy Docker image for you and start the
+container if it's not already running.
 
 For more details on proxy startup, please refer to the [proxy documentation][detailed_docs].
 
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
+[docker_install]: https://docs.docker.com/get-docker/
 [docker_start_proxy]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/common/testproxy/docker-start-proxy.ps1
+[env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
 [general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/README.md
 [mgmt_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_recorded_testcase.py
 [proxy_cert_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/trusting-cert-per-language.md
@@ -404,8 +399,12 @@ For more details on proxy startup, please refer to the [proxy documentation][det
 [pytest_collection]: https://docs.pytest.org/latest/goodpractices.html#test-discovery
 [pytest_fixtures]: https://docs.pytest.org/latest/fixture.html#scope-sharing-fixtures-across-classes-modules-packages-or-session
 [pytest_setup]: https://docs.pytest.org/xunit_setup.html
+[rg_preparer]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/resource_testcase.py
 [sanitizers]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md#session-and-test-level-transforms-sanitiziers-and-matchers
+[start_test_proxy]: https://github.com/Azure/azure-sdk-for-python/blob/63a35890a0188dfcac094aa7dc1ec7cc730945cd/tools/azure-sdk-tools/devtools_testutils/proxy_docker_startup.py#L111
+[stop_test_proxy]: https://github.com/Azure/azure-sdk-for-python/blob/63a35890a0188dfcac094aa7dc1ec7cc730945cd/tools/azure-sdk-tools/devtools_testutils/proxy_docker_startup.py#L149
 [tables_preparers]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/tests/preparers.py
 [test_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/TestResources#readme
 [troubleshooting]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_troubleshooting.md
+[variables_api]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy#storing-variables
 [vcrpy]: https://vcrpy.readthedocs.io
