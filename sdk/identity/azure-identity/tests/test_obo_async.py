@@ -62,34 +62,34 @@ class TestOboAsync(RecordedTestCase):
     @pytest.mark.skipif(any(missing_variables), reason="No value for environment variables")
     @RecordedTestCase.await_prepared_test
     @recorded_by_proxy_async
-    async def test_obo(self, obo_settings):
+    async def test_obo(self):
         self.load_settings()
-        client_id = obo_settings["client_id"]
-        client_secret = obo_settings["client_secret"]
-        tenant_id = obo_settings["tenant_id"]
+        client_id = self.obo_settings["client_id"]
+        client_secret = self.obo_settings["client_secret"]
+        tenant_id = self.obo_settings["tenant_id"]
 
         user_credential = UsernamePasswordCredential(
-            client_id, obo_settings["username"], obo_settings["password"], tenant_id=tenant_id
+            client_id, self.obo_settings["username"], self.obo_settings["password"], tenant_id=tenant_id
         )
-        assertion = user_credential.get_token(obo_settings["scope"]).token
+        assertion = user_credential.get_token(self.obo_settings["scope"]).token
         credential = OnBehalfOfCredential(tenant_id, client_id, client_secret=client_secret, user_assertion=assertion)
-        await credential.get_token(obo_settings["scope"])
+        await credential.get_token(self.obo_settings["scope"])
 
     @pytest.mark.manual
     @pytest.mark.skipif(any(missing_variables), reason="No value for environment variables")
     @RecordedTestCase.await_prepared_test
     @recorded_by_proxy_async
-    async def test_obo_cert(self, obo_settings):
+    async def test_obo_cert(self):
         self.load_settings()
-        client_id = obo_settings["client_id"]
-        tenant_id = obo_settings["tenant_id"]
+        client_id = self.obo_settings["client_id"]
+        tenant_id = self.obo_settings["tenant_id"]
 
         user_credential = UsernamePasswordCredential(
-            client_id, obo_settings["username"], obo_settings["password"], tenant_id=tenant_id
+            client_id, self.obo_settings["username"], self.obo_settings["password"], tenant_id=tenant_id
         )
-        assertion = user_credential.get_token(obo_settings["scope"]).token
-        credential = OnBehalfOfCredential(tenant_id, client_id, client_certificate=obo_settings["cert_bytes"], user_assertion=assertion)
-        await credential.get_token(obo_settings["scope"])
+        assertion = user_credential.get_token(self.obo_settings["scope"]).token
+        credential = OnBehalfOfCredential(tenant_id, client_id, client_certificate=self.obo_settings["cert_bytes"], user_assertion=assertion)
+        await credential.get_token(self.obo_settings["scope"])
 
 
 @pytest.mark.asyncio
