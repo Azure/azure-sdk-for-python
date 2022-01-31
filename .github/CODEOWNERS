@@ -77,6 +77,9 @@
 /sdk/datalake/                                                       @ro-joowan
 /sdk/datadatamigration/                                              @vchske
 
+# ServiceLabel: %Device Update for IoT Hub %Service Attention
+/sdk/deviceupdate/                                                   @dpokluda @sedols
+
 # PRLabel: %Event Grid
 /sdk/eventgrid/                                                      @lmazuel @yunhaoling @swathipil @rakshith91
 
@@ -122,6 +125,9 @@
 # PRLabel: %Cognitive - Metrics Advisor
 /sdk/metricsadvisor/                                                 @xiangyan99 @kristapratico
 
+# PRLabel: %Cognitive - Anomaly Detector
+/sdk/anomalydetector/                                                @conhua @mengaims @juaduan @moreOver0
+
 # PRLabel: %Cognitive - Translator
 /sdk/translation/                                                    @kristapratico @mohamedshabanofficial
 
@@ -135,7 +141,7 @@
 /sdk/containerregistry/                                              @YalinLi0312
 
 # PRLabel: %Digital Twins
-/sdk/digitaltwins/                                                   @johngallardo
+/sdk/digitaltwins/                                                   @johngallardo @Aashish93-stack
 
 # PRLabel: %VideoAnalyzer
 /sdk/videoanalyzer/                                                  @hivyas

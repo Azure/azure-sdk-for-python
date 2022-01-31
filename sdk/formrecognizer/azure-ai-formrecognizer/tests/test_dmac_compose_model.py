@@ -84,8 +84,9 @@ class TestTraining(FormRecognizerTest):
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    def test_compose_continuation_token(self, client, formrecognizer_storage_container_sas_url):
-
+    def test_compose_continuation_token(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
         model_1 = poller.result()
 
