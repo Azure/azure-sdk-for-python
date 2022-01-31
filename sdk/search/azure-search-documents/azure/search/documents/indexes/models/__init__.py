@@ -34,7 +34,7 @@ from ._index import (
 from . import _edm as SearchFieldDataType
 from ..._generated.models import SuggestOptions
 from .._generated.models import (
-    AmlSkill,
+    AzureMachineLearningSkill,
     AnalyzeResult,
     AnalyzedTokenInfo,
     AsciiFoldingTokenFilter,
