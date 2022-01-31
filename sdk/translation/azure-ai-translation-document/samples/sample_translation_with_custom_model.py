@@ -49,23 +49,22 @@ def sample_translation_with_custom_model():
     )
     result = poller.result()
 
-    print(f"Operation status: {result.status}")
-    print(f"Operation created on: {result.created_on}")
-    print(f"Operation last updated on: {result.last_updated_on}")
-    print(f"Total number of translations on documents: {result.documents_total_count}")
+    print(f"Operation status: {poller.details.status}")
+    print(f"Operation created on: {poller.details.created_on}")
+    print(f"Operation last updated on: {poller.details.last_updated_on}")
+    print(f"Total number of translations on documents: {poller.details.documents_total_count}")
 
     print("\nOf total documents...")
-    print(f"{result.documents_failed_count} failed")
-    print(f"{result.documents_succeeded_count} succeeded")
+    print(f"{poller.details.documents_failed_count} failed")
+    print(f"{poller.details.documents_succeeded_count} succeeded")
 
-    doc_results = client.list_document_statuses(result.id)
-    for document in doc_results:
+    for document in result:
         print(f"Document ID: {document.id}")
         print(f"Document status: {document.status}")
         if document.status == "Succeeded":
             print(f"Source document location: {document.source_document_url}")
             print(f"Translated document location: {document.translated_document_url}")
-            print(f"Translated to language: {document.translate_to}\n")
+            print(f"Translated to language: {document.translated_to}\n")
         else:
             print(f"Error Code: {document.error.code}, Message: {document.error.message}\n")
 
