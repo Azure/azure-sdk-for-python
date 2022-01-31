@@ -64,13 +64,9 @@ def patch_async_sleep():
     if not is_live():
         yield mock.patch("asyncio.sleep", immediate_return)
 
-    yield
-
 @pytest.fixture(scope="session", autouse=True)
 def patch_sleep():
     async def immediate_return(_):
         return
     if not is_live():
         yield mock.patch("time.sleep", immediate_return)
-
-    yield

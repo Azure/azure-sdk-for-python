@@ -11,11 +11,11 @@ from aiohttp import client
 from azure.keyvault.secrets import ApiVersion
 from azure.keyvault.secrets._shared import HttpChallengeCache
 from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
-from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, is_live
+from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, is_live
 import pytest
 
 
-KeyVaultSecretsPreparer = functools.partial(PowerShellPreparer, "keyvault", azure_keyvault_url="https://vaultname.vault.azure.net")
+KeyVaultSecretsPreparer = functools.partial(EnvironmentVariableLoader, "keyvault", azure_keyvault_url="https://vaultname.vault.azure.net")
 
 
 class AsyncSecretsTestCaseClientPrepaper(AzureRecordedTestCase):
