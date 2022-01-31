@@ -109,7 +109,7 @@
     "eng/*.txt",
     "eng/tox/tox.ini",
     "eng/common/docgeneration/Generate-DocIndex.ps1",
-    "eng/tox/*.py"
+    "eng/**/*.py"
   ],
   "words": [
     "aad",
