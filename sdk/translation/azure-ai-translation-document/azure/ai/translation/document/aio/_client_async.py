@@ -353,9 +353,9 @@ class DocumentTranslationClient:
             'NotStarted', 'Running', 'Succeeded', 'Failed', 'Canceled', 'Canceling',
             and 'ValidationFailed'.
         :keyword created_after: get operations created after certain datetime.
-        :paramtype created_after: Union[str, datetime.datetime]
+        :paramtype created_after: str or ~datetime.datetime
         :keyword created_before: get operations created before certain datetime.
-        :paramtype created_before: Union[str, datetime.datetime]
+        :paramtype created_before: str or ~datetime.datetime
         :keyword list[str] order_by: the sorting query for the operations returned. Currently only
             'created_on' supported.
             format: ["param1 asc/desc", "param2 asc/desc", ...]
@@ -431,9 +431,9 @@ class DocumentTranslationClient:
             'NotStarted', 'Running', 'Succeeded', 'Failed', 'Canceled', 'Canceling',
             and 'ValidationFailed'.
         :keyword created_after: get document created after certain datetime.
-        :paramtype created_after: Union[str, datetime.datetime]
+        :paramtype created_after: str or ~datetime.datetime
         :keyword created_before: get document created before certain datetime.
-        :paramtype created_before: Union[str, datetime.datetime]
+        :paramtype created_before: str or ~datetime.datetime
         :keyword list[str] order_by: the sorting query for the documents. Currently only
             'created_on' is supported.
             format: ["param1 asc/desc", "param2 asc/desc", ...]
