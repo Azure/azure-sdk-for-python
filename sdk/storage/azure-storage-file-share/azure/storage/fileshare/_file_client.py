@@ -40,7 +40,7 @@ from ._serialize import (
     get_rename_smb_properties,
     get_smb_properties,
     get_source_conditions,
-    get_source_access_conditions) 
+    get_source_access_conditions)
 from ._deserialize import deserialize_file_properties, deserialize_file_stream, get_file_ranges_result
 from ._models import HandlesPaged, NTFSAttributes  # pylint: disable=unused-import
 from ._download import StorageStreamDownloader
