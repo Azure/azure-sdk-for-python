@@ -20,7 +20,7 @@ autorest
 ### Settings
 
 ```yaml
-input-file: https://raw.githubusercontent.com/mshaban-msft/azure-rest-api-specs/mshaban/qna/export_fix/specification/cognitiveservices/data-plane/Language/stable/2021-10-01/questionanswering-authoring.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/Language/stable/2021-10-01/questionanswering-authoring.json
 output-folder: ../../azure/ai/language/questionanswering/projects
 namespace: azure.ai.language.questionanswering.projects
 package-name: azure-ai-language-questionanswering
