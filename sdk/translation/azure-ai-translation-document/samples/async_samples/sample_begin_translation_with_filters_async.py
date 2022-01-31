@@ -47,14 +47,14 @@ async def sample_translation_under_folder_async():
         result = await poller.result()
 
         async for document in result:
-            print("Document ID: {}".format(document.id))
-            print("Document status: {}".format(document.status))
+            print(f"Document ID: {document.id}")
+            print(f"Document status: {document.status}")
             if document.status == "Succeeded":
-                print("Source document location: {}".format(document.source_document_url))
-                print("Translated document location: {}".format(document.translated_document_url))
-                print("Translated to language: {}\n".format(document.translated_to))
+                print(f"Source document location: {document.source_document_url}")
+                print(f"Translated document location: {document.translated_document_url}")
+                print(f"Translated to language: {document.translated_to}\n")
             else:
-                print("Error Code: {}, Message: {}\n".format(document.error.code, document.error.message))
+                print(f"Error Code: {document.error.code}, Message: {document.error.message}\n")
 
 
 async def sample_translation_specific_document_async():
@@ -73,14 +73,14 @@ async def sample_translation_specific_document_async():
         result = await poller.result()
 
         async for document in result:
-            print("Document ID: {}".format(document.id))
-            print("Document status: {}".format(document.status))
+            print(f"Document ID: {document.id}")
+            print(f"Document status: {document.status}")
             if document.status == "Succeeded":
-                print("Source document location: {}".format(document.source_document_url))
-                print("Translated document location: {}".format(document.translated_document_url))
-                print("Translated to language: {}\n".format(document.translated_to))
+                print(f"Source document location: {document.source_document_url}")
+                print(f"Translated document location: {document.translated_document_url}")
+                print(f"Translated to language: {document.translated_to}\n")
             else:
-                print("Error Code: {}, Message: {}\n".format(document.error.code, document.error.message))
+                print(f"Error Code: {document.error.code}, Message: {document.error.message}\n")
 
 
 async def main():
