@@ -24,7 +24,16 @@ class CreateAndDeployTests(QuestionAnsweringTest):
 
         # create project
         project_name = "IssacNewton"
-        QnaAuthoringHelper.create_test_project(client, project_name=project_name)
+        client.create_project(
+            project_name=project_name,
+            options={
+                "description": "biography of Sir Issac Newton",
+                "language": "en",
+                "multilingualResource": True,
+                "settings": {
+                    "defaultAnswer": "no answer"
+                }
+            })
 
         # list projects
         qna_projects = client.list_projects()
