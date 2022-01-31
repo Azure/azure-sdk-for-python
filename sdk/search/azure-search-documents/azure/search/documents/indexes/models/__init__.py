@@ -184,7 +184,7 @@ from ._models import (
 
 
 __all__ = (
-    "AmlSkill",
+    "AzureMachineLearningSkill",
     "AnalyzeTextOptions",
     "AnalyzeResult",
     "AnalyzedTokenInfo",
