@@ -15,11 +15,10 @@ In this document we will provide the introduction to the testing framework by:
 
 ## Setup your development environment
 
-The Azure SDK Python team creates libraries that are compatible with Python 2.7 and 3.5 and up. We will set up working Python virtual environments for Python 2.7, 3.5, and 3.9. It is recommended to do your development work in Python3, however it is helpful to have virtual environments for other versions to make debugging PRs easier locally.
+The Azure SDK Python team creates libraries that are compatible with Python 3.6 and up. We will set up working Python virtual environments for Python 3.6, and 3.9. It is recommended to do your development work in Python3, however it is helpful to have virtual environments for other versions to make debugging PRs easier locally.
 
 * Python 3.9: Use the [python website](https://www.python.org/downloads/) or the one-click experience from the [Windows store](https://www.microsoft.com/p/python-39/9p7qfqmjrfp7) (Windows only).
-* Python 3.5: Use the [python website](https://www.python.org/downloads/release/python-3510/)
-* Python 2.7: Use the [python website](https://www.python.org/downloads/release/python-2718/)
+* Python 3.6: Use the [python website](https://www.python.org/downloads/release/python-3614/)
 ```cmd
 C:\Users> python -m venv env
 C:\Users> env\scripts\activate       # PowerShell only
@@ -29,8 +28,7 @@ C:\Users> env\scripts\activate.bat   # Windows CMD only
 ```
 To create virtual environment for different versions of Python use the `-p` flag to pass the specific Python executable you want to use
 ```cmd
-C:\Users> python -m venv -p <path/to/Python/Python35/python.exe> py35_venv
-C:\Users> python -m venv -p <path/to/Python/Python27/python.exe> py27_venv
+C:\Users> python -m venv -p <path/to/Python/Python36/python.exe> py36_venv
 ```
 
 ### SDK root directory
@@ -128,8 +126,11 @@ A quick description of the five commands above:
 ## `devtools_testutils` Package
 The Azure SDK team has created some in house tools to help with easier testing. These additional tools are located in the `devtools_testutils` package that was installed with your `dev_requirements.txt`. In this package is the [`AzureTestCase`](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/azure_testcase.py#L99-L350) object which every test case object should inherit from. This management object takes care of creating and scrubbing recordings to make sure secrets are not added to the recordings files (and subsequently to the git history) and authenticating clients for test methods.
 
+
 ## Writing New Tests
-SDK tests are based on the `scenario_tests` subpackage located in [`azure-sdk-for-python/tools/azure-devtools/src/azure_devtools`](https://pypi.org/project/azure-devtools/). `scenario_tests` is a general, mostly abstracted framework which provides several useful features for writing SDK tests, ie:
+Newer SDK tests utilize the test proxy service to record and playback HTTP interactions. See [Azure SDK Tools Test Proxy](https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md)
+
+Older SDK tests are based on the `scenario_tests` subpackage located in [`azure-sdk-for-python/tools/azure-devtools/src/azure_devtools`](https://pypi.org/project/azure-devtools/). `scenario_tests` is a general, mostly abstracted framework which provides several useful features for writing SDK tests, ie:
 * HTTP interaction recording and playback using [vcrpy](https://pypi.python.org/pypi/vcrpy)
 * Creation and cleanup of helper resources, such as resource groups, storage accounts, etc. which can be used in order to test services
 * Processors for modifying requests and responses when writing or reading recordings (for example, to to avoid recording credential information)
