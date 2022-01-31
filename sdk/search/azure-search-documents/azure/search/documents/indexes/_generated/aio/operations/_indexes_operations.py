@@ -203,6 +203,7 @@ class IndexesOperations:
         )
     list.metadata = {'url': '/indexes'}  # type: ignore
 
+
     @distributed_trace_async
     async def create_or_update(
         self,

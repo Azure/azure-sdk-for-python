@@ -480,6 +480,7 @@ class IndexesOperations(object):
         )
     list.metadata = {'url': '/indexes'}  # type: ignore
 
+
     @distributed_trace
     def create_or_update(
         self,
