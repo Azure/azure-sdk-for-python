@@ -12,7 +12,7 @@ import json
 import requests
 import wrapt
 
-from devtools_testutils import PowerShellPreparer
+from devtools_testutils import EnvironmentVariableLoader
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
 from azure.core.credentials import AzureKeyCredential
@@ -24,7 +24,7 @@ TIME_TO_SLEEP = 3
 
 
 SearchEnvVarPreparer = functools.partial(
-    PowerShellPreparer,
+    EnvironmentVariableLoader,
     "search",
     search_service_endpoint="https://fakesearchendpoint.search.windows.net",
     search_service_api_key="fakesearchapikey",
