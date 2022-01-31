@@ -141,9 +141,9 @@ def stop_record_or_playback(test_id, recording_id, test_output):
                 "x-recording-file": test_id,
                 "x-recording-id": recording_id,
                 "x-recording-save": "true",
-                "Content-Type": "application/json",
+                "Content-Type": "application/json"
             },
-            json=test_output or {},  # tests don't record successfully unless test_output is a dictionary
+            json=test_output or {} # tests don't record successfully unless test_output is a dictionary
         )
     else:
         requests.post(
