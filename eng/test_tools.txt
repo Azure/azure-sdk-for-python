@@ -15,7 +15,6 @@ pytest-xdist==1.32.0
 coverage==4.5.4
 bandit==1.6.2
 protobuf==3.17.3; python_version == '2.7'
-wrapt<=1.12.1; python_version == '2.7'
 chardet>=2.0,<5.0
 
 # locking packages defined as deps from azure-sdk-tools or azure-devtools
