@@ -210,7 +210,7 @@ The following section provides several code snippets covering some of the most c
 * [List translation operations](#list-translation-operations "List Translation Operations")
 
 ### Translate your documents
-Translate the documents in your source container to the target container.
+Translate all the documents in your source container to the target container. To translate documents under a folder, or only translate certain documents, see [sample_begin_translation_with_filters.py][sample_begin_translation_with_filters].
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -385,6 +385,7 @@ describes available configurations for retries, logging, transport protocols, an
 ## Next steps
 
 The following section provides several code snippets illustrating common patterns used in the Document Translation Python client library.
+More samples can be found under the [samples][samples] directory.
 
 ### More sample code
 
@@ -459,6 +460,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [managed_identity]: https://aka.ms/azsdk/documenttranslation/managed-identity
 [sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
 
+[samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples
 [sample_authentication]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_authentication.py
 [sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_authentication_async.py
 [sample_begin_translation]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_begin_translation.py
@@ -475,6 +477,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [sample_translation_with_azure_blob_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_translation_with_azure_blob_async.py
 [sample_translation_with_custom_model]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_translation_with_custom_model.py
 [sample_translation_with_custom_model_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/async_samples/sample_translation_with_custom_model_async.py
+[sample_begin_translation_with_filters]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-document/samples/sample_begin_translation_with_filters.py
 
 [supported_glossary_formats]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview#supported-glossary-formats
 [custom_translation_article]: https://docs.microsoft.com/azure/cognitive-services/translator/custom-translator/quickstart-build-deploy-custom-model
