@@ -549,6 +549,6 @@ class TestTranslation(DocumentTranslationTest):
 
         with open(document, "rb") as fd:
             translated = fd.readline()
-        # cSpell:ignore essai
+
         assert b'essai' in translated  # glossary worked
         os.remove(document)
