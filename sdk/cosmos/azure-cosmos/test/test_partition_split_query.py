@@ -47,7 +47,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
         cls.container = test_config._test_config.create_collection_if_not_exist_no_custom_throughput(cls.client)
 
     def test_partition_split_query(self):
-        for i in range(1000):
+        for i in range(500):
             body = self.get_test_item()
             self.container.create_item(body=body)
 
@@ -58,7 +58,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
         print("--------------------------------")
         print("now starting queries")
 
-        self.run_queries(self.container, 1000)  # initial check for queries before partition split
+        self.run_queries(self.container, 500)  # initial check for queries before partition split
         print("initial check succeeded, now reading offer until replacing is done")
         offer = self.database.read_offer()
         while True:
@@ -67,10 +67,10 @@ class TestPartitionSplitQuery(unittest.TestCase):
                 offer = self.database.read_offer()
             else:
                 print("offer replaced successfully, took around {} seconds".format(time.time() - offer_time))
-                self.run_queries(self.container, 1000)  # check queries work post partition split
+                self.run_queries(self.container, 500)  # check queries work post partition split
                 print("test over")
                 self.assertTrue(offer.offer_throughput > self.throughput)
-                self.client.delete_database(self.configs.TEST_DATABASE_ID)
+                self.client.delete_database(self.configs.TEST_THROUGHPUT_DATABASE_ID)
                 return
 
     def run_queries(self, container, iterations):
