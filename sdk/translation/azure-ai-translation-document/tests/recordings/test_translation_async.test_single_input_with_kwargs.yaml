@@ -11,13 +11,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.9.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.10.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 16 Jul 2021 17:55:09 GMT
+      - Tue, 01 Feb 2022 19:14:50 GMT
       x-ms-version:
-      - '2020-08-04'
+      - '2021-02-12'
     method: PUT
-    uri: https://redacted.blob.core.windows.net/srcb42e0c5f-1777-4443-a286-e51746991e8d?restype=container
+    uri: https://redacted.blob.core.windows.net/src2594245d-b2f8-45bd-ad3c-15f186f39311?restype=container
   response:
     body:
       string: ''
@@ -25,15 +25,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 16 Jul 2021 17:55:09 GMT
+      - Tue, 01 Feb 2022 19:14:50 GMT
       etag:
-      - '"0x8D94882DAADEE20"'
+      - '"0x8D9E5B71F05BA6C"'
       last-modified:
-      - Fri, 16 Jul 2021 17:55:10 GMT
+      - Tue, 01 Feb 2022 19:14:51 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2020-08-04'
+      - '2021-02-12'
     status:
       code: 201
       message: Created
@@ -53,15 +53,15 @@ interactions:
       If-None-Match:
       - '*'
       User-Agent:
-      - azsdk-python-storage-blob/12.9.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.10.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Fri, 16 Jul 2021 17:55:10 GMT
+      - Tue, 01 Feb 2022 19:14:51 GMT
       x-ms-version:
-      - '2020-08-04'
+      - '2021-02-12'
     method: PUT
-    uri: https://redacted.blob.core.windows.net/srcb42e0c5f-1777-4443-a286-e51746991e8d/2d36efba-2cf1-409b-a8bf-897ab0a85b63.txt
+    uri: https://redacted.blob.core.windows.net/src2594245d-b2f8-45bd-ad3c-15f186f39311/4ac3ec54-31b6-4a62-b513-96fe6cc4c062.txt
   response:
     body:
       string: ''
@@ -71,11 +71,11 @@ interactions:
       content-md5:
       - XrY7u+Ae7tCTyyK7j1rNww==
       date:
-      - Fri, 16 Jul 2021 17:55:09 GMT
+      - Tue, 01 Feb 2022 19:14:50 GMT
       etag:
-      - '"0x8D94882DAB68124"'
+      - '"0x8D9E5B71F0D5E6C"'
       last-modified:
-      - Fri, 16 Jul 2021 17:55:10 GMT
+      - Tue, 01 Feb 2022 19:14:51 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -83,7 +83,7 @@ interactions:
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2020-08-04'
+      - '2021-02-12'
     status:
       code: 201
       message: Created
@@ -99,13 +99,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.9.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.10.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Fri, 16 Jul 2021 17:55:10 GMT
+      - Tue, 01 Feb 2022 19:14:51 GMT
       x-ms-version:
-      - '2020-08-04'
+      - '2021-02-12'
     method: PUT
-    uri: https://redacted.blob.core.windows.net/targetb2edd1b6-5860-43fa-8522-939952bb3d42?restype=container
+    uri: https://redacted.blob.core.windows.net/targetcada0369-4db6-427c-89c0-465695dbf808?restype=container
   response:
     body:
       string: ''
@@ -113,33 +113,33 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 16 Jul 2021 17:55:10 GMT
+      - Tue, 01 Feb 2022 19:14:50 GMT
       etag:
-      - '"0x8D94882DAD1E931"'
+      - '"0x8D9E5B71F2A16D4"'
       last-modified:
-      - Fri, 16 Jul 2021 17:55:10 GMT
+      - Tue, 01 Feb 2022 19:14:51 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2020-08-04'
+      - '2021-02-12'
     status:
       code: 201
       message: Created
 - request:
-    body: '{"inputs": [{"source": {"sourceUrl": "https://redacted.blob.core.windows.net/srcb42e0c5f-1777-4443-a286-e51746991e8d?se=end&sp=rl&sv=2020-08-04&sr=c&sig=fake_token_value",
-      "filter": {"prefix": "", "suffix": ".txt"}, "language": "en", "storageSource":
-      "AzureBlob"}, "targets": [{"targetUrl": "https://redacted.blob.core.windows.net/targetb2edd1b6-5860-43fa-8522-939952bb3d42?se=end&sp=rw&sv=2020-08-04&sr=c&sig=fake_token_value",
+    body: '{"inputs": [{"source": {"sourceUrl": "https://redacted.blob.core.windows.net/src2594245d-b2f8-45bd-ad3c-15f186f39311?se=end&sp=rl&sv=2021-02-12&sr=c&sig=fake_token_value",
+      "filter": {"prefix": "", "suffix": ".txt"}, "language": "en"}, "targets": [{"targetUrl":
+      "https://redacted.blob.core.windows.net/targetcada0369-4db6-427c-89c0-465695dbf808?se=end&sp=wl&sv=2021-02-12&sr=c&sig=fake_token_value",
       "category": "fake", "language": "es", "glossaries": [{"glossaryUrl": "https://glossaryfile.txt",
-      "format": "txt"}], "storageSource": "AzureBlob"}], "storageType": "File"}]}'
+      "format": "txt"}]}], "storageType": "File"}]}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '713'
+      - '651'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-translation-document/1.0.0b4 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-translation-document/1.0.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0/batches
   response:
@@ -148,15 +148,15 @@ interactions:
         is invalid.","target":"Category","innerError":{"code":"InvalidCategory","message":"The
         category parameter is invalid."}}}'
     headers:
-      apim-request-id: c0f5cf87-17c4-40a1-9ef6-5bace6b4a2ee
+      apim-request-id: 624f2d50-c186-4c73-8f7f-8832148e9164
       content-type: application/json; charset=utf-8
-      date: Fri, 16 Jul 2021 17:55:10 GMT
-      set-cookie: ARRAffinitySameSite=d5311be9a7eee70fefb806f1e2337cdd19ccc651d9ba4b6954f0949b8feead5f;Path=/;HttpOnly;SameSite=None;Secure;Domain=mtbatch.nam.microsofttranslator.com
+      date: Tue, 01 Feb 2022 19:14:50 GMT
+      set-cookie: ARRAffinitySameSite=b43e80ef1fbcb9f9d446cbc61b366e02dafefc2a9addab525b1fc3eda44b27b2;Path=/;HttpOnly;SameSite=None;Secure;Domain=mtbatch.nam.microsofttranslator.com
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       transfer-encoding: chunked
       x-content-type-options: nosniff
       x-powered-by: ASP.NET
-      x-requestid: c0f5cf87-17c4-40a1-9ef6-5bace6b4a2ee
+      x-requestid: 624f2d50-c186-4c73-8f7f-8832148e9164
     status:
       code: 400
       message: Bad Request

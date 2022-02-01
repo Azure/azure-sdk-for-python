@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -19,7 +18,7 @@ from azure.storage.blob import generate_container_sas, ContainerClient
 from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
 
 
-class Document(object):
+class Document:
     """Represents a document to be uploaded to source/target container"""
     def __init__(self, **kwargs):
         self.name = kwargs.get("name", str(uuid.uuid4()))
@@ -65,7 +64,7 @@ class DocumentTranslationTest(AzureTestCase):
     FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['Ocp-Apim-Subscription-Key']
 
     def __init__(self, method_name):
-        super(DocumentTranslationTest, self).__init__(method_name)
+        super().__init__(method_name)
         self.vcr.match_on = ["path", "method", "query"]
         self.recording_processors.append(OperationLocationReplacer())
         self.storage_name = os.getenv("TRANSLATION_DOCUMENT_STORAGE_NAME", "redacted")

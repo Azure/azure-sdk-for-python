@@ -227,24 +227,24 @@ poller = document_translation_client.begin_translation(source_container_sas_url_
 
 result = poller.result()
 
-print("Status: {}".format(poller.status()))
-print("Created on: {}".format(poller.details.created_on))
-print("Last updated on: {}".format(poller.details.last_updated_on))
-print("Total number of translations on documents: {}".format(poller.details.documents_total_count))
+print(f"Status: {poller.status()}")
+print(f"Created on: {poller.details.created_on}")
+print(f"Last updated on: {poller.details.last_updated_on}")
+print(f"Total number of translations on documents: {poller.details.documents_total_count}")
 
 print("\nOf total documents...")
-print("{} failed".format(poller.details.documents_failed_count))
-print("{} succeeded".format(poller.details.documents_succeeded_count))
+print(f"{poller.details.documents_failed_count} failed")
+print(f"{poller.details.documents_succeeded_count} succeeded")
 
 for document in result:
-    print("Document ID: {}".format(document.id))
-    print("Document status: {}".format(document.status))
+    print(f"Document ID: {document.id}")
+    print(f"Document status: {document.status}")
     if document.status == "Succeeded":
-        print("Source document location: {}".format(document.source_document_url))
-        print("Translated document location: {}".format(document.translated_document_url))
-        print("Translated to language: {}\n".format(document.translated_to))
+        print(f"Source document location: {document.source_document_url}")
+        print(f"Translated document location: {document.translated_document_url}")
+        print(f"Translated to language: {document.translated_to}\n")
     else:
-        print("Error Code: {}, Message: {}\n".format(document.error.code, document.error.message))
+        print(f"Error Code: {document.error.code}, Message: {document.error.message}\n")
 ```
 
 ### Translate multiple inputs
@@ -285,14 +285,14 @@ poller = document_translation_client.begin_translation(
 result = poller.result()
 
 for document in result:
-    print("Document ID: {}".format(document.id))
-    print("Document status: {}".format(document.status))
+    print(f"Document ID: {document.id}")
+    print(f"Document status: {document.status}")
     if document.status == "Succeeded":
-        print("Source document location: {}".format(document.source_document_url))
-        print("Translated document location: {}".format(document.translated_document_url))
-        print("Translated to language: {}\n".format(document.translated_to))
+        print(f"Source document location: {document.source_document_url}")
+        print(f"Translated document location: {document.translated_document_url}")
+        print(f"Translated to language: {document.translated_to}\n")
     else:
-        print("Error Code: {}, Message: {}\n".format(document.error.code, document.error.message))
+        print(f"Error Code: {document.error.code}, Message: {document.error.message}\n")
 ```
 
 ### List translation operations
@@ -310,17 +310,17 @@ document_translation_client = DocumentTranslationClient(endpoint, credential)
 operations = document_translation_client.list_translation_statuses()  # type: ItemPaged[TranslationStatus]
 
 for operation in operations:
-    print("\nID: {}".format(operation.id))
-    print("Status: {}".format(operation.status))
-    print("Created on: {}".format(operation.created_on))
-    print("Last updated on: {}".format(operation.last_updated_on))
-    print("Total number of translations on documents: {}".format(operation.documents_total_count))
-    print("Total number of characters charged: {}".format(operation.total_characters_charged))
+    print(f"\nID: {operation.id}")
+    print(f"Status: {operation.status}")
+    print(f"Created on: {operation.created_on}")
+    print(f"Last updated on: {operation.last_updated_on}")
+    print(f"Total number of translations on documents: {operation.documents_total_count}")
+    print(f"Total number of characters charged: {operation.total_characters_charged}")
 
     print("Of total documents...")
-    print("{} failed".format(operation.documents_failed_count))
-    print("{} succeeded".format(operation.documents_succeeded_count))
-    print("{} canceled".format(operation.documents_canceled_count))
+    print(f"{operation.documents_failed_count} failed")
+    print(f"{operation.documents_succeeded_count} succeeded")
+    print(f"{operation.documents_canceled_count} canceled")
 ```
 
 To see how to use the Document Translation client library with Azure Storage Blob to upload documents, create SAS tokens
