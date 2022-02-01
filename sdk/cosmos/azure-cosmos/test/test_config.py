@@ -130,12 +130,12 @@ class _test_config(object):
         return cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK
 
     @classmethod
-    def create_collection_no_custom_throughput(cls, client):
+    def create_collection_if_not_exist_no_custom_throughput(cls, client):
         # type: (CosmosClient) -> Container
         database = cls.create_database_if_not_exist(client)
         collection_id = cls.TEST_COLLECTION_SINGLE_PARTITION_ID
 
-        document_collection = database.create_container(
+        document_collection = database.create_container_if_not_exists(
             id=collection_id,
             partition_key=PartitionKey(path="/id"))
         return document_collection
