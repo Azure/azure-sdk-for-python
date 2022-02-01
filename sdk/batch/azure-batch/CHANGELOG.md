@@ -1,13 +1,13 @@
 # Release History
 
-## 12.0.0 (2022-01-15)
+## 12.0.0 (2022-02-01)
 
 ### Features
 
 - Added property uploadHeaders to `OutputFileBlobContainerDestination`.
   - Allows users to set custom HTTP headers on resource file uploads.
   - Array of type HttpHeader (also being added).
-- Added boolean property `allowTaskPreemption` to `JobSpecification`, `CloudJob`, `JobAddParameter`, `JobPatchParameter`, `JobUpdateParameter`
+- Added boolean property `allow_task_preemption` to `JobSpecification`, `CloudJob`, `JobAddParameter`, `JobPatchParameter`, `JobUpdateParameter`
   - Mark Tasks as preemptible for higher priority Tasks (requires Comms-Enabled or Single Tenant Pool).
 - Replaced comment (title, description, etc.) references of "low-priority" with "Spot/Low-Priority", to reflect new service behavior.
   - No API change required.
@@ -17,7 +17,6 @@
       https://docs.microsoft.com/azure/batch/nodes-and-pools
     - https://docs.microsoft.com/azure/batch/batch-spot-vms
 
-## 11.0.1 (Unreleased)
 
 ### Features Added
 
