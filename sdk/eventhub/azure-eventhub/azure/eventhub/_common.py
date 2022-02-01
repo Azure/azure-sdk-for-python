@@ -117,7 +117,7 @@ class EventData(object):
     """
 
     @overload
-    def __init__(self, *, data: bytes, content_type: str, **kwargs):
+    def __init__(self, *, data: bytes, content_type: str):
         ...
 
     @overload
@@ -129,18 +129,13 @@ class EventData(object):
         body: Optional[Union[str, bytes, List[AnyStr]]] = None,
         *,
         data: bytes = None,
-        content_type: str = None,
-        **kwargs
+        content_type: str = None
     ) -> None:
         self._last_enqueued_event_properties = {}  # type: Dict[str, Any]
         self._sys_properties = None  # type: Optional[Dict[bytes, Any]]
 
-        if kwargs:
-            raise TypeError(f"__init__() got an unexpected keyword argument '{list(kwargs.keys())[0]}'")
-
-        if data:
-            if body:
-                warnings.warn("`data` and `body` passed in. `body` will be overwritten by `data`.")
+        if data and body:
+            warnings.warn("`data` and `body` passed in. `body` will be overwritten by `data`.")
             body = data
 
         if body is None:
@@ -210,6 +205,8 @@ class EventData(object):
         return event_str
 
     def __data__(self) -> bytes:
+        if self.body_type!=AmqpMessageBodyType.DATA:
+            raise TypeError('`body_type` must be `AmqpMessageBodyType.DATA`.')
         data = bytearray()
         for d in self.body: # type: ignore
             data += d   # type: ignore

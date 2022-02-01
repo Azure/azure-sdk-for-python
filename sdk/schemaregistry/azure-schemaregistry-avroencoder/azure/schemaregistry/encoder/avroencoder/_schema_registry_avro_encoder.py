@@ -229,7 +229,6 @@ class AvroEncoder(object):
         Data must follow format of associated Avro RecordSchema:
         https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
 
-        :param bytes value: The bytes data needs to be decoded.
         :keyword message: The message object which holds the data to be decoded and content type
          containing the schema ID. If not set, both `data` and `content_type` must be set.
         :paramtype message: MessageType or None
@@ -261,7 +260,7 @@ class AvroEncoder(object):
         # include in first preview for back compatibility
         data, content_type = self._convert_preamble_format(data, content_type)
         if not content_type:
-            raise ValueError("'content' type cannot be None.")
+            raise ValueError("'content_type' cannot be None.")
 
         schema_id = content_type.split("+")[1]
         http_request_kwargs = get_http_request_kwargs(kwargs)

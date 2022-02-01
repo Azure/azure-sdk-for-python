@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- `EventData` constructor now takes `data` and `content_type` as keyword args for interoperability with the Schema Registry Avro Encoder library, where `body` will be set to `data` if passed in.
+- `EventData` constructor has been overloaded to take (`data`, `content_type`) as keyword args for interoperability with the Schema Registry Avro Encoder library, where `body` will be set to `data` if passed in.
 
 ### Breaking Changes
 
