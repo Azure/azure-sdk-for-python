@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Add support for `final-state-via` LRO option in core.  #22713
+
 ### Breaking Changes
 
 ### Bugs Fixed
