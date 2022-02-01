@@ -252,7 +252,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
 
         :keyword int top: the total number of operations to return (across all pages) from all submitted translations.
         :keyword int skip: the number of operations to skip (from beginning of all submitted operations).
-            By default, we sort by all submitted operations descendingly by start time.
+            By default, we sort by all submitted operations in descending order by start time.
         :keyword int results_per_page: is the number of operations returned per page.
         :keyword list[str] translation_ids: translation operations ids to filter by.
         :keyword list[str] statuses: translation operation statuses to filter by. Options include
@@ -324,7 +324,7 @@ class DocumentTranslationClient(object):  # pylint: disable=r0205
         :param str translation_id: ID of translation operation to list documents for.
         :keyword int top: the total number of documents to return (across all pages).
         :keyword int skip: the number of documents to skip (from beginning).
-            By default, we sort by all documents descendingly by start time.
+            By default, we sort by all documents in descending order by start time.
         :keyword int results_per_page: is the number of documents returned per page.
         :keyword list[str] document_ids: document IDs to filter by.
         :keyword list[str] statuses: document statuses to filter by. Options include

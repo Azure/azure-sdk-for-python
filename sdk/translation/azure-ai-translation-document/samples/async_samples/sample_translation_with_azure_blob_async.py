@@ -30,7 +30,7 @@ USAGE:
     6) AZURE_STORAGE_SOURCE_CONTAINER_NAME - the name of your source container
     7) AZURE_STORAGE_TARGET_CONTAINER_NAME - the name of your target container
     8) AZURE_DOCUMENT_NAME - the name and file extension of your document in this directory
-        e.g. "mydocument.txt"
+        e.g. "document.txt"
 """
 
 import os
