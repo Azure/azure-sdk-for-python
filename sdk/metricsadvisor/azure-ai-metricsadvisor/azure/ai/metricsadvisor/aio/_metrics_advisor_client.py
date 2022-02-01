@@ -15,49 +15,40 @@ from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import MetricsAdvisorClientConfiguration
-from .operations import MetricsAdvisorClientOperationsMixin
+from ._operations import MetricsAdvisorClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class MetricsAdvisorClientGenerated(MetricsAdvisorClientOperationsMixin):
+
+class MetricsAdvisorClient(MetricsAdvisorClientOperationsMixin):
     """Microsoft Azure Metrics Advisor REST API (OpenAPI v2).
 
-    :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
      https://:code:`<resource-name>`.cognitiveservices.azure.com).
     :type endpoint: str
+    :param credential: Credential needed for the client to connect to Azure.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     """
 
-    def __init__(
-        self,
-        credential: "AsyncTokenCredential",
-        endpoint: str,
-        **kwargs: Any
-    ) -> None:
-        _base_url = '{endpoint}/metricsadvisor/v1.0'
-        self._config = MetricsAdvisorClientConfiguration(credential=credential, endpoint=endpoint, **kwargs)
-        self._client = AsyncPipelineClient(base_url=_base_url, config=self._config, **kwargs)
+    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+        _endpoint = "{endpoint}/metricsadvisor/v1.0"
+        self._config = MetricsAdvisorClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = await client._send_request(request)
+        >>> response = await client.send_request(request)
         <AsyncHttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
@@ -71,7 +62,7 @@ class MetricsAdvisorClientGenerated(MetricsAdvisorClientOperationsMixin):
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

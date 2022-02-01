@@ -6,163 +6,163 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models_py3 import AlertResultListGenerated as AlertResultList
-from ._models_py3 import AlertingResultQueryGenerated as AlertingResultQuery
-from ._models_py3 import AnomalyAlertGenerated as AnomalyAlert
-from ._models_py3 import AnomalyAlertConfigurationGenerated as AnomalyAlertConfiguration
-from ._models_py3 import AnomalyAlertingConfigurationListGenerated as AnomalyAlertingConfigurationList
-from ._models_py3 import AnomalyAlertingConfigurationPatchGenerated as AnomalyAlertingConfigurationPatch
-from ._models_py3 import AnomalyDetectionConfigurationGenerated as AnomalyDetectionConfiguration
-from ._models_py3 import AnomalyDetectionConfigurationListGenerated as AnomalyDetectionConfigurationList
-from ._models_py3 import AnomalyDetectionConfigurationPatchGenerated as AnomalyDetectionConfigurationPatch
-from ._models_py3 import AnomalyDimensionListGenerated as AnomalyDimensionList
-from ._models_py3 import AnomalyDimensionQueryGenerated as AnomalyDimensionQuery
-from ._models_py3 import AnomalyFeedbackGenerated as AnomalyFeedback
-from ._models_py3 import AnomalyFeedbackValueGenerated as AnomalyFeedbackValue
-from ._models_py3 import AnomalyIncidentGenerated as AnomalyIncident
-from ._models_py3 import AnomalyPropertyGenerated as AnomalyProperty
-from ._models_py3 import AnomalyResultListGenerated as AnomalyResultList
-from ._models_py3 import AzureApplicationInsightsDataFeedPatchGenerated as AzureApplicationInsightsDataFeedPatch
-from ._models_py3 import AzureApplicationInsightsDataFeedSourceGenerated as AzureApplicationInsightsDataFeedSource
-from ._models_py3 import AzureApplicationInsightsParameterGenerated as AzureApplicationInsightsParameter
-from ._models_py3 import AzureApplicationInsightsParameterPatchGenerated as AzureApplicationInsightsParameterPatch
-from ._models_py3 import AzureBlobDataFeedPatchGenerated as AzureBlobDataFeedPatch
-from ._models_py3 import AzureBlobDataFeedSourceGenerated as AzureBlobDataFeedSource
-from ._models_py3 import AzureBlobParameterGenerated as AzureBlobParameter
-from ._models_py3 import AzureBlobParameterPatchGenerated as AzureBlobParameterPatch
-from ._models_py3 import AzureCosmosDBDataFeedPatchGenerated as AzureCosmosDBDataFeedPatch
-from ._models_py3 import AzureCosmosDBParameterGenerated as AzureCosmosDBParameter
-from ._models_py3 import AzureCosmosDBParameterPatchGenerated as AzureCosmosDBParameterPatch
-from ._models_py3 import AzureCosmosDbDataFeedSourceGenerated as AzureCosmosDbDataFeedSource
-from ._models_py3 import AzureDataExplorerDataFeedPatchGenerated as AzureDataExplorerDataFeedPatch
-from ._models_py3 import AzureDataExplorerDataFeedSourceGenerated as AzureDataExplorerDataFeedSource
-from ._models_py3 import AzureDataLakeStorageGen2DataFeedPatchGenerated as AzureDataLakeStorageGen2DataFeedPatch
-from ._models_py3 import AzureDataLakeStorageGen2DataFeedSourceGenerated as AzureDataLakeStorageGen2DataFeedSource
-from ._models_py3 import AzureDataLakeStorageGen2ParameterGenerated as AzureDataLakeStorageGen2Parameter
-from ._models_py3 import AzureDataLakeStorageGen2ParameterPatchGenerated as AzureDataLakeStorageGen2ParameterPatch
-from ._models_py3 import AzureEventHubsDataFeedPatchGenerated as AzureEventHubsDataFeedPatch
-from ._models_py3 import AzureEventHubsDataFeedSourceGenerated as AzureEventHubsDataFeedSource
-from ._models_py3 import AzureEventHubsParameterGenerated as AzureEventHubsParameter
-from ._models_py3 import AzureEventHubsParameterPatchGenerated as AzureEventHubsParameterPatch
-from ._models_py3 import AzureLogAnalyticsDataFeedPatchGenerated as AzureLogAnalyticsDataFeedPatch
-from ._models_py3 import AzureLogAnalyticsDataFeedSourceGenerated as AzureLogAnalyticsDataFeedSource
-from ._models_py3 import AzureLogAnalyticsParameterGenerated as AzureLogAnalyticsParameter
-from ._models_py3 import AzureLogAnalyticsParameterPatchGenerated as AzureLogAnalyticsParameterPatch
-from ._models_py3 import AzureSQLConnectionStringCredentialPatchGenerated as AzureSQLConnectionStringCredentialPatch
-from ._models_py3 import AzureSQLConnectionStringParamGenerated as AzureSQLConnectionStringParam
-from ._models_py3 import AzureSQLConnectionStringParamPatchGenerated as AzureSQLConnectionStringParamPatch
-from ._models_py3 import AzureTableDataFeedPatchGenerated as AzureTableDataFeedPatch
-from ._models_py3 import AzureTableDataFeedSourceGenerated as AzureTableDataFeedSource
-from ._models_py3 import AzureTableParameterGenerated as AzureTableParameter
-from ._models_py3 import AzureTableParameterPatchGenerated as AzureTableParameterPatch
-from ._models_py3 import ChangePointFeedbackGenerated as ChangePointFeedback
-from ._models_py3 import ChangePointFeedbackValueGenerated as ChangePointFeedbackValue
-from ._models_py3 import ChangeThresholdConditionGenerated as ChangeThresholdCondition
-from ._models_py3 import ChangeThresholdConditionPatchGenerated as ChangeThresholdConditionPatch
-from ._models_py3 import CommentFeedbackGenerated as CommentFeedback
-from ._models_py3 import CommentFeedbackValueGenerated as CommentFeedbackValue
-from ._models_py3 import DataFeedGenerated as DataFeed
-from ._models_py3 import DataFeedDetailPatchGenerated as DataFeedDetailPatch
-from ._models_py3 import DataFeedDimensionGenerated as DataFeedDimension
-from ._models_py3 import DataFeedIngestionProgressGenerated as DataFeedIngestionProgress
-from ._models_py3 import DataFeedIngestionStatusGenerated as DataFeedIngestionStatus
-from ._models_py3 import DataFeedListGenerated as DataFeedList
-from ._models_py3 import DataFeedMetricGenerated as DataFeedMetric
-from ._models_py3 import DataLakeGen2SharedKeyCredentialPatchGenerated as DataLakeGen2SharedKeyCredentialPatch
-from ._models_py3 import DataLakeGen2SharedKeyParamGenerated as DataLakeGen2SharedKeyParam
-from ._models_py3 import DataLakeGen2SharedKeyParamPatchGenerated as DataLakeGen2SharedKeyParamPatch
-from ._models_py3 import DataPointAnomalyGenerated as DataPointAnomaly
-from ._models_py3 import DataSourceCredentialGenerated as DataSourceCredential
-from ._models_py3 import DataSourceCredentialListGenerated as DataSourceCredentialList
-from ._models_py3 import DataSourceCredentialPatchGenerated as DataSourceCredentialPatch
-from ._models_py3 import DatasourceDataLakeGen2SharedKeyGenerated as DatasourceDataLakeGen2SharedKey
-from ._models_py3 import DatasourceServicePrincipalGenerated as DatasourceServicePrincipal
-from ._models_py3 import DatasourceServicePrincipalInKeyVaultGenerated as DatasourceServicePrincipalInKeyVault
-from ._models_py3 import DatasourceSqlConnectionStringGenerated as DatasourceSqlConnectionString
-from ._models_py3 import DetectionAnomalyFilterConditionGenerated as DetectionAnomalyFilterCondition
-from ._models_py3 import DetectionAnomalyResultQueryGenerated as DetectionAnomalyResultQuery
-from ._models_py3 import DetectionIncidentFilterConditionGenerated as DetectionIncidentFilterCondition
-from ._models_py3 import DetectionIncidentResultQueryGenerated as DetectionIncidentResultQuery
-from ._models_py3 import DetectionSeriesQueryGenerated as DetectionSeriesQuery
-from ._models_py3 import DimensionGroupIdentityGenerated as DimensionGroupIdentity
-from ._models_py3 import EmailHookInfoPatchGenerated as EmailHookInfoPatch
-from ._models_py3 import EmailHookParameterGenerated as EmailHookParameter
-from ._models_py3 import EmailHookParameterPatchGenerated as EmailHookParameterPatch
-from ._models_py3 import EmailNotificationHookGenerated as EmailNotificationHook
-from ._models_py3 import EnrichmentStatusGenerated as EnrichmentStatus
-from ._models_py3 import EnrichmentStatusListGenerated as EnrichmentStatusList
-from ._models_py3 import EnrichmentStatusQueryOptionGenerated as EnrichmentStatusQueryOption
-from ._models_py3 import ErrorCodeGenerated as ErrorCode
-from ._models_py3 import FeedbackDimensionFilterGenerated as FeedbackDimensionFilter
-from ._models_py3 import HardThresholdConditionGenerated as HardThresholdCondition
-from ._models_py3 import HardThresholdConditionPatchGenerated as HardThresholdConditionPatch
-from ._models_py3 import HookInfoPatchGenerated as HookInfoPatch
-from ._models_py3 import HookListGenerated as HookList
-from ._models_py3 import IncidentPropertyGenerated as IncidentProperty
-from ._models_py3 import IncidentResultListGenerated as IncidentResultList
-from ._models_py3 import IncidentRootCauseGenerated as IncidentRootCause
-from ._models_py3 import InfluxDBDataFeedPatchGenerated as InfluxDBDataFeedPatch
-from ._models_py3 import InfluxDBParameterGenerated as InfluxDBParameter
-from ._models_py3 import InfluxDBParameterPatchGenerated as InfluxDBParameterPatch
-from ._models_py3 import InfluxDbDataFeedSourceGenerated as InfluxDbDataFeedSource
-from ._models_py3 import IngestionProgressResetOptionsGenerated as IngestionProgressResetOptions
-from ._models_py3 import IngestionStatusListGenerated as IngestionStatusList
-from ._models_py3 import IngestionStatusQueryOptionsGenerated as IngestionStatusQueryOptions
-from ._models_py3 import MetricAlertConfigurationGenerated as MetricAlertConfiguration
-from ._models_py3 import MetricAnomalyAlertSnoozeConditionGenerated as MetricAnomalyAlertSnoozeCondition
-from ._models_py3 import MetricDataItemGenerated as MetricDataItem
-from ._models_py3 import MetricDataListGenerated as MetricDataList
-from ._models_py3 import MetricDataQueryOptionsGenerated as MetricDataQueryOptions
-from ._models_py3 import MetricDetectionConditionGenerated as MetricDetectionCondition
-from ._models_py3 import MetricDimensionListGenerated as MetricDimensionList
-from ._models_py3 import MetricDimensionQueryOptionsGenerated as MetricDimensionQueryOptions
-from ._models_py3 import MetricEnrichedSeriesDataGenerated as MetricEnrichedSeriesData
-from ._models_py3 import MetricFeedbackGenerated as MetricFeedback
-from ._models_py3 import MetricFeedbackFilterGenerated as MetricFeedbackFilter
-from ._models_py3 import MetricFeedbackListGenerated as MetricFeedbackList
-from ._models_py3 import MetricSeriesDefinitionGenerated as MetricSeriesDefinition
-from ._models_py3 import MetricSeriesGroupDetectionConditionGenerated as MetricSeriesGroupDetectionCondition
-from ._models_py3 import MetricSeriesListGenerated as MetricSeriesList
-from ._models_py3 import MetricSeriesQueryOptionsGenerated as MetricSeriesQueryOptions
-from ._models_py3 import MetricSingleSeriesDetectionConditionGenerated as MetricSingleSeriesDetectionCondition
-from ._models_py3 import MongoDBDataFeedPatchGenerated as MongoDBDataFeedPatch
-from ._models_py3 import MongoDBParameterGenerated as MongoDBParameter
-from ._models_py3 import MongoDBParameterPatchGenerated as MongoDBParameterPatch
-from ._models_py3 import MongoDbDataFeedSourceGenerated as MongoDbDataFeedSource
-from ._models_py3 import MySqlDataFeedPatchGenerated as MySqlDataFeedPatch
-from ._models_py3 import MySqlDataFeedSourceGenerated as MySqlDataFeedSource
-from ._models_py3 import NotificationHookGenerated as NotificationHook
-from ._models_py3 import PeriodFeedbackGenerated as PeriodFeedback
-from ._models_py3 import PeriodFeedbackValueGenerated as PeriodFeedbackValue
-from ._models_py3 import PostgreSqlDataFeedPatchGenerated as PostgreSqlDataFeedPatch
-from ._models_py3 import PostgreSqlDataFeedSourceGenerated as PostgreSqlDataFeedSource
-from ._models_py3 import RootCauseListGenerated as RootCauseList
-from ._models_py3 import SQLServerDataFeedPatchGenerated as SQLServerDataFeedPatch
-from ._models_py3 import SQLSourceParameterPatchGenerated as SQLSourceParameterPatch
-from ._models_py3 import SeriesIdentityGenerated as SeriesIdentity
-from ._models_py3 import SeriesResultListGenerated as SeriesResultList
-from ._models_py3 import ServicePrincipalCredentialPatchGenerated as ServicePrincipalCredentialPatch
-from ._models_py3 import ServicePrincipalInKVCredentialPatchGenerated as ServicePrincipalInKVCredentialPatch
-from ._models_py3 import ServicePrincipalInKVParamGenerated as ServicePrincipalInKVParam
-from ._models_py3 import ServicePrincipalInKVParamPatchGenerated as ServicePrincipalInKVParamPatch
-from ._models_py3 import ServicePrincipalParamGenerated as ServicePrincipalParam
-from ._models_py3 import ServicePrincipalParamPatchGenerated as ServicePrincipalParamPatch
-from ._models_py3 import SeverityConditionGenerated as SeverityCondition
-from ._models_py3 import SeverityFilterConditionGenerated as SeverityFilterCondition
-from ._models_py3 import SmartDetectionConditionGenerated as SmartDetectionCondition
-from ._models_py3 import SmartDetectionConditionPatchGenerated as SmartDetectionConditionPatch
-from ._models_py3 import SqlServerDataFeedSourceGenerated as SqlServerDataFeedSource
-from ._models_py3 import SqlSourceParameterGenerated as SqlSourceParameter
-from ._models_py3 import SuppressConditionGenerated as SuppressCondition
-from ._models_py3 import SuppressConditionPatchGenerated as SuppressConditionPatch
-from ._models_py3 import TopNGroupScopeGenerated as TopNGroupScope
-from ._models_py3 import UsageStatsGenerated as UsageStats
-from ._models_py3 import ValueConditionGenerated as ValueCondition
-from ._models_py3 import WebNotificationHookGenerated as WebNotificationHook
-from ._models_py3 import WebhookHookInfoPatchGenerated as WebhookHookInfoPatch
-from ._models_py3 import WebhookHookParameterGenerated as WebhookHookParameter
-from ._models_py3 import WebhookHookParameterPatchGenerated as WebhookHookParameterPatch
-from ._models_py3 import WholeMetricConfigurationPatchGenerated as WholeMetricConfigurationPatch
+from ._models_py3 import AlertResultList
+from ._models_py3 import AlertingResultQuery
+from ._models_py3 import AnomalyAlert
+from ._models_py3 import AnomalyAlertConfiguration
+from ._models_py3 import AnomalyAlertingConfigurationList
+from ._models_py3 import AnomalyAlertingConfigurationPatch
+from ._models_py3 import AnomalyDetectionConfiguration
+from ._models_py3 import AnomalyDetectionConfigurationList
+from ._models_py3 import AnomalyDetectionConfigurationPatch
+from ._models_py3 import AnomalyDimensionList
+from ._models_py3 import AnomalyDimensionQuery
+from ._models_py3 import AnomalyFeedback
+from ._models_py3 import AnomalyFeedbackValue
+from ._models_py3 import AnomalyIncident
+from ._models_py3 import AnomalyProperty
+from ._models_py3 import AnomalyResultList
+from ._models_py3 import AzureApplicationInsightsDataFeedPatch
+from ._models_py3 import AzureApplicationInsightsDataFeedSource
+from ._models_py3 import AzureApplicationInsightsParameter
+from ._models_py3 import AzureApplicationInsightsParameterPatch
+from ._models_py3 import AzureBlobDataFeedPatch
+from ._models_py3 import AzureBlobDataFeedSource
+from ._models_py3 import AzureBlobParameter
+from ._models_py3 import AzureBlobParameterPatch
+from ._models_py3 import AzureCosmosDBDataFeedPatch
+from ._models_py3 import AzureCosmosDBParameter
+from ._models_py3 import AzureCosmosDBParameterPatch
+from ._models_py3 import AzureCosmosDbDataFeedSource
+from ._models_py3 import AzureDataExplorerDataFeedPatch
+from ._models_py3 import AzureDataExplorerDataFeedSource
+from ._models_py3 import AzureDataLakeStorageGen2DataFeedPatch
+from ._models_py3 import AzureDataLakeStorageGen2DataFeedSource
+from ._models_py3 import AzureDataLakeStorageGen2Parameter
+from ._models_py3 import AzureDataLakeStorageGen2ParameterPatch
+from ._models_py3 import AzureEventHubsDataFeedPatch
+from ._models_py3 import AzureEventHubsDataFeedSource
+from ._models_py3 import AzureEventHubsParameter
+from ._models_py3 import AzureEventHubsParameterPatch
+from ._models_py3 import AzureLogAnalyticsDataFeedPatch
+from ._models_py3 import AzureLogAnalyticsDataFeedSource
+from ._models_py3 import AzureLogAnalyticsParameter
+from ._models_py3 import AzureLogAnalyticsParameterPatch
+from ._models_py3 import AzureSQLConnectionStringCredentialPatch
+from ._models_py3 import AzureSQLConnectionStringParam
+from ._models_py3 import AzureSQLConnectionStringParamPatch
+from ._models_py3 import AzureTableDataFeedPatch
+from ._models_py3 import AzureTableDataFeedSource
+from ._models_py3 import AzureTableParameter
+from ._models_py3 import AzureTableParameterPatch
+from ._models_py3 import ChangePointFeedback
+from ._models_py3 import ChangePointFeedbackValue
+from ._models_py3 import ChangeThresholdCondition
+from ._models_py3 import ChangeThresholdConditionPatch
+from ._models_py3 import CommentFeedback
+from ._models_py3 import CommentFeedbackValue
+from ._models_py3 import DataFeed
+from ._models_py3 import DataFeedDetailPatch
+from ._models_py3 import DataFeedDimension
+from ._models_py3 import DataFeedIngestionProgress
+from ._models_py3 import DataFeedIngestionStatus
+from ._models_py3 import DataFeedList
+from ._models_py3 import DataFeedMetric
+from ._models_py3 import DataLakeGen2SharedKeyCredentialPatch
+from ._models_py3 import DataLakeGen2SharedKeyParam
+from ._models_py3 import DataLakeGen2SharedKeyParamPatch
+from ._models_py3 import DataPointAnomaly
+from ._models_py3 import DataSourceCredential
+from ._models_py3 import DataSourceCredentialList
+from ._models_py3 import DataSourceCredentialPatch
+from ._models_py3 import DatasourceDataLakeGen2SharedKey
+from ._models_py3 import DatasourceServicePrincipal
+from ._models_py3 import DatasourceServicePrincipalInKeyVault
+from ._models_py3 import DatasourceSqlConnectionString
+from ._models_py3 import DetectionAnomalyFilterCondition
+from ._models_py3 import DetectionAnomalyResultQuery
+from ._models_py3 import DetectionIncidentFilterCondition
+from ._models_py3 import DetectionIncidentResultQuery
+from ._models_py3 import DetectionSeriesQuery
+from ._models_py3 import DimensionGroupIdentity
+from ._models_py3 import EmailHookInfoPatch
+from ._models_py3 import EmailHookParameter
+from ._models_py3 import EmailHookParameterPatch
+from ._models_py3 import EmailNotificationHook
+from ._models_py3 import EnrichmentStatus
+from ._models_py3 import EnrichmentStatusList
+from ._models_py3 import EnrichmentStatusQueryOption
+from ._models_py3 import ErrorCode
+from ._models_py3 import FeedbackDimensionFilter
+from ._models_py3 import HardThresholdCondition
+from ._models_py3 import HardThresholdConditionPatch
+from ._models_py3 import HookInfoPatch
+from ._models_py3 import HookList
+from ._models_py3 import IncidentProperty
+from ._models_py3 import IncidentResultList
+from ._models_py3 import IncidentRootCause
+from ._models_py3 import InfluxDBDataFeedPatch
+from ._models_py3 import InfluxDBParameter
+from ._models_py3 import InfluxDBParameterPatch
+from ._models_py3 import InfluxDbDataFeedSource
+from ._models_py3 import IngestionProgressResetOptions
+from ._models_py3 import IngestionStatusList
+from ._models_py3 import IngestionStatusQueryOptions
+from ._models_py3 import MetricAlertConfiguration
+from ._models_py3 import MetricAnomalyAlertSnoozeCondition
+from ._models_py3 import MetricDataItem
+from ._models_py3 import MetricDataList
+from ._models_py3 import MetricDataQueryOptions
+from ._models_py3 import MetricDetectionCondition
+from ._models_py3 import MetricDimensionList
+from ._models_py3 import MetricDimensionQueryOptions
+from ._models_py3 import MetricEnrichedSeriesData
+from ._models_py3 import MetricFeedback
+from ._models_py3 import MetricFeedbackFilter
+from ._models_py3 import MetricFeedbackList
+from ._models_py3 import MetricSeriesDefinition
+from ._models_py3 import MetricSeriesGroupDetectionCondition
+from ._models_py3 import MetricSeriesList
+from ._models_py3 import MetricSeriesQueryOptions
+from ._models_py3 import MetricSingleSeriesDetectionCondition
+from ._models_py3 import MongoDBDataFeedPatch
+from ._models_py3 import MongoDBParameter
+from ._models_py3 import MongoDBParameterPatch
+from ._models_py3 import MongoDbDataFeedSource
+from ._models_py3 import MySqlDataFeedPatch
+from ._models_py3 import MySqlDataFeedSource
+from ._models_py3 import NotificationHook
+from ._models_py3 import PeriodFeedback
+from ._models_py3 import PeriodFeedbackValue
+from ._models_py3 import PostgreSqlDataFeedPatch
+from ._models_py3 import PostgreSqlDataFeedSource
+from ._models_py3 import RootCauseList
+from ._models_py3 import SQLServerDataFeedPatch
+from ._models_py3 import SQLSourceParameterPatch
+from ._models_py3 import SeriesIdentity
+from ._models_py3 import SeriesResultList
+from ._models_py3 import ServicePrincipalCredentialPatch
+from ._models_py3 import ServicePrincipalInKVCredentialPatch
+from ._models_py3 import ServicePrincipalInKVParam
+from ._models_py3 import ServicePrincipalInKVParamPatch
+from ._models_py3 import ServicePrincipalParam
+from ._models_py3 import ServicePrincipalParamPatch
+from ._models_py3 import SeverityCondition
+from ._models_py3 import SeverityFilterCondition
+from ._models_py3 import SmartDetectionCondition
+from ._models_py3 import SmartDetectionConditionPatch
+from ._models_py3 import SqlServerDataFeedSource
+from ._models_py3 import SqlSourceParameter
+from ._models_py3 import SuppressCondition
+from ._models_py3 import SuppressConditionPatch
+from ._models_py3 import TopNGroupScope
+from ._models_py3 import UsageStats
+from ._models_py3 import ValueCondition
+from ._models_py3 import WebNotificationHook
+from ._models_py3 import WebhookHookInfoPatch
+from ._models_py3 import WebhookHookParameter
+from ._models_py3 import WebhookHookParameterPatch
+from ._models_py3 import WholeMetricConfigurationPatch
 
 
 from ._metrics_advisor_client_enums import (
@@ -198,192 +198,193 @@ from ._metrics_advisor_client_enums import (
 )
 from ._patch import __all__ as _patch_all
 from ._patch import *
+
 __all__ = [
-    'AlertResultList',
-    'AlertingResultQuery',
-    'AnomalyAlert',
-    'AnomalyAlertConfiguration',
-    'AnomalyAlertingConfigurationList',
-    'AnomalyAlertingConfigurationPatch',
-    'AnomalyDetectionConfiguration',
-    'AnomalyDetectionConfigurationList',
-    'AnomalyDetectionConfigurationPatch',
-    'AnomalyDimensionList',
-    'AnomalyDimensionQuery',
-    'AnomalyFeedback',
-    'AnomalyFeedbackValue',
-    'AnomalyIncident',
-    'AnomalyProperty',
-    'AnomalyResultList',
-    'AzureApplicationInsightsDataFeedPatch',
-    'AzureApplicationInsightsDataFeedSource',
-    'AzureApplicationInsightsParameter',
-    'AzureApplicationInsightsParameterPatch',
-    'AzureBlobDataFeedPatch',
-    'AzureBlobDataFeedSource',
-    'AzureBlobParameter',
-    'AzureBlobParameterPatch',
-    'AzureCosmosDBDataFeedPatch',
-    'AzureCosmosDBParameter',
-    'AzureCosmosDBParameterPatch',
-    'AzureCosmosDbDataFeedSource',
-    'AzureDataExplorerDataFeedPatch',
-    'AzureDataExplorerDataFeedSource',
-    'AzureDataLakeStorageGen2DataFeedPatch',
-    'AzureDataLakeStorageGen2DataFeedSource',
-    'AzureDataLakeStorageGen2Parameter',
-    'AzureDataLakeStorageGen2ParameterPatch',
-    'AzureEventHubsDataFeedPatch',
-    'AzureEventHubsDataFeedSource',
-    'AzureEventHubsParameter',
-    'AzureEventHubsParameterPatch',
-    'AzureLogAnalyticsDataFeedPatch',
-    'AzureLogAnalyticsDataFeedSource',
-    'AzureLogAnalyticsParameter',
-    'AzureLogAnalyticsParameterPatch',
-    'AzureSQLConnectionStringCredentialPatch',
-    'AzureSQLConnectionStringParam',
-    'AzureSQLConnectionStringParamPatch',
-    'AzureTableDataFeedPatch',
-    'AzureTableDataFeedSource',
-    'AzureTableParameter',
-    'AzureTableParameterPatch',
-    'ChangePointFeedback',
-    'ChangePointFeedbackValue',
-    'ChangeThresholdCondition',
-    'ChangeThresholdConditionPatch',
-    'CommentFeedback',
-    'CommentFeedbackValue',
-    'DataFeed',
-    'DataFeedDetailPatch',
-    'DataFeedDimension',
-    'DataFeedIngestionProgress',
-    'DataFeedIngestionStatus',
-    'DataFeedList',
-    'DataFeedMetric',
-    'DataLakeGen2SharedKeyCredentialPatch',
-    'DataLakeGen2SharedKeyParam',
-    'DataLakeGen2SharedKeyParamPatch',
-    'DataPointAnomaly',
-    'DataSourceCredential',
-    'DataSourceCredentialList',
-    'DataSourceCredentialPatch',
-    'DatasourceDataLakeGen2SharedKey',
-    'DatasourceServicePrincipal',
-    'DatasourceServicePrincipalInKeyVault',
-    'DatasourceSqlConnectionString',
-    'DetectionAnomalyFilterCondition',
-    'DetectionAnomalyResultQuery',
-    'DetectionIncidentFilterCondition',
-    'DetectionIncidentResultQuery',
-    'DetectionSeriesQuery',
-    'DimensionGroupIdentity',
-    'EmailHookInfoPatch',
-    'EmailHookParameter',
-    'EmailHookParameterPatch',
-    'EmailNotificationHook',
-    'EnrichmentStatus',
-    'EnrichmentStatusList',
-    'EnrichmentStatusQueryOption',
-    'ErrorCode',
-    'FeedbackDimensionFilter',
-    'HardThresholdCondition',
-    'HardThresholdConditionPatch',
-    'HookInfoPatch',
-    'HookList',
-    'IncidentProperty',
-    'IncidentResultList',
-    'IncidentRootCause',
-    'InfluxDBDataFeedPatch',
-    'InfluxDBParameter',
-    'InfluxDBParameterPatch',
-    'InfluxDbDataFeedSource',
-    'IngestionProgressResetOptions',
-    'IngestionStatusList',
-    'IngestionStatusQueryOptions',
-    'MetricAlertConfiguration',
-    'MetricAnomalyAlertSnoozeCondition',
-    'MetricDataItem',
-    'MetricDataList',
-    'MetricDataQueryOptions',
-    'MetricDetectionCondition',
-    'MetricDimensionList',
-    'MetricDimensionQueryOptions',
-    'MetricEnrichedSeriesData',
-    'MetricFeedback',
-    'MetricFeedbackFilter',
-    'MetricFeedbackList',
-    'MetricSeriesDefinition',
-    'MetricSeriesGroupDetectionCondition',
-    'MetricSeriesList',
-    'MetricSeriesQueryOptions',
-    'MetricSingleSeriesDetectionCondition',
-    'MongoDBDataFeedPatch',
-    'MongoDBParameter',
-    'MongoDBParameterPatch',
-    'MongoDbDataFeedSource',
-    'MySqlDataFeedPatch',
-    'MySqlDataFeedSource',
-    'NotificationHook',
-    'PeriodFeedback',
-    'PeriodFeedbackValue',
-    'PostgreSqlDataFeedPatch',
-    'PostgreSqlDataFeedSource',
-    'RootCauseList',
-    'SQLServerDataFeedPatch',
-    'SQLSourceParameterPatch',
-    'SeriesIdentity',
-    'SeriesResultList',
-    'ServicePrincipalCredentialPatch',
-    'ServicePrincipalInKVCredentialPatch',
-    'ServicePrincipalInKVParam',
-    'ServicePrincipalInKVParamPatch',
-    'ServicePrincipalParam',
-    'ServicePrincipalParamPatch',
-    'SeverityCondition',
-    'SeverityFilterCondition',
-    'SmartDetectionCondition',
-    'SmartDetectionConditionPatch',
-    'SqlServerDataFeedSource',
-    'SqlSourceParameter',
-    'SuppressCondition',
-    'SuppressConditionPatch',
-    'TopNGroupScope',
-    'UsageStats',
-    'ValueCondition',
-    'WebNotificationHook',
-    'WebhookHookInfoPatch',
-    'WebhookHookParameter',
-    'WebhookHookParameterPatch',
-    'WholeMetricConfigurationPatch',
-    'AlertQueryTimeMode',
-    'AnomalyAlertingConfigurationLogicType',
-    'AnomalyDetectionConfigurationLogicType',
-    'AnomalyDetectorDirection',
-    'AnomalyIncidentStatus',
-    'AnomalySeverity',
-    'AnomalyStatus',
-    'AnomalyValue',
-    'ChangePointValue',
-    'DataFeedAccessMode',
-    'DataFeedAutoRollupMethod',
-    'DataFeedGranularityType',
-    'DataFeedStatus',
-    'DataSourceType',
-    'DatasourceAuthenticationType',
-    'DatasourceCredentialType',
-    'DatasourceMissingDataPointFillType',
-    'DatasourceType',
-    'Direction',
-    'FeedbackQueryTimeMode',
-    'FeedbackType',
-    'Granularity',
-    'HookType',
-    'IngestionStatusType',
-    'MetricAnomalyAlertScopeType',
-    'NeedRollupEnum',
-    'PeriodType',
-    'SnoozeScope',
-    'ValueType',
+    "AlertResultList",
+    "AlertingResultQuery",
+    "AnomalyAlert",
+    "AnomalyAlertConfiguration",
+    "AnomalyAlertingConfigurationList",
+    "AnomalyAlertingConfigurationPatch",
+    "AnomalyDetectionConfiguration",
+    "AnomalyDetectionConfigurationList",
+    "AnomalyDetectionConfigurationPatch",
+    "AnomalyDimensionList",
+    "AnomalyDimensionQuery",
+    "AnomalyFeedback",
+    "AnomalyFeedbackValue",
+    "AnomalyIncident",
+    "AnomalyProperty",
+    "AnomalyResultList",
+    "AzureApplicationInsightsDataFeedPatch",
+    "AzureApplicationInsightsDataFeedSource",
+    "AzureApplicationInsightsParameter",
+    "AzureApplicationInsightsParameterPatch",
+    "AzureBlobDataFeedPatch",
+    "AzureBlobDataFeedSource",
+    "AzureBlobParameter",
+    "AzureBlobParameterPatch",
+    "AzureCosmosDBDataFeedPatch",
+    "AzureCosmosDBParameter",
+    "AzureCosmosDBParameterPatch",
+    "AzureCosmosDbDataFeedSource",
+    "AzureDataExplorerDataFeedPatch",
+    "AzureDataExplorerDataFeedSource",
+    "AzureDataLakeStorageGen2DataFeedPatch",
+    "AzureDataLakeStorageGen2DataFeedSource",
+    "AzureDataLakeStorageGen2Parameter",
+    "AzureDataLakeStorageGen2ParameterPatch",
+    "AzureEventHubsDataFeedPatch",
+    "AzureEventHubsDataFeedSource",
+    "AzureEventHubsParameter",
+    "AzureEventHubsParameterPatch",
+    "AzureLogAnalyticsDataFeedPatch",
+    "AzureLogAnalyticsDataFeedSource",
+    "AzureLogAnalyticsParameter",
+    "AzureLogAnalyticsParameterPatch",
+    "AzureSQLConnectionStringCredentialPatch",
+    "AzureSQLConnectionStringParam",
+    "AzureSQLConnectionStringParamPatch",
+    "AzureTableDataFeedPatch",
+    "AzureTableDataFeedSource",
+    "AzureTableParameter",
+    "AzureTableParameterPatch",
+    "ChangePointFeedback",
+    "ChangePointFeedbackValue",
+    "ChangeThresholdCondition",
+    "ChangeThresholdConditionPatch",
+    "CommentFeedback",
+    "CommentFeedbackValue",
+    "DataFeed",
+    "DataFeedDetailPatch",
+    "DataFeedDimension",
+    "DataFeedIngestionProgress",
+    "DataFeedIngestionStatus",
+    "DataFeedList",
+    "DataFeedMetric",
+    "DataLakeGen2SharedKeyCredentialPatch",
+    "DataLakeGen2SharedKeyParam",
+    "DataLakeGen2SharedKeyParamPatch",
+    "DataPointAnomaly",
+    "DataSourceCredential",
+    "DataSourceCredentialList",
+    "DataSourceCredentialPatch",
+    "DatasourceDataLakeGen2SharedKey",
+    "DatasourceServicePrincipal",
+    "DatasourceServicePrincipalInKeyVault",
+    "DatasourceSqlConnectionString",
+    "DetectionAnomalyFilterCondition",
+    "DetectionAnomalyResultQuery",
+    "DetectionIncidentFilterCondition",
+    "DetectionIncidentResultQuery",
+    "DetectionSeriesQuery",
+    "DimensionGroupIdentity",
+    "EmailHookInfoPatch",
+    "EmailHookParameter",
+    "EmailHookParameterPatch",
+    "EmailNotificationHook",
+    "EnrichmentStatus",
+    "EnrichmentStatusList",
+    "EnrichmentStatusQueryOption",
+    "ErrorCode",
+    "FeedbackDimensionFilter",
+    "HardThresholdCondition",
+    "HardThresholdConditionPatch",
+    "HookInfoPatch",
+    "HookList",
+    "IncidentProperty",
+    "IncidentResultList",
+    "IncidentRootCause",
+    "InfluxDBDataFeedPatch",
+    "InfluxDBParameter",
+    "InfluxDBParameterPatch",
+    "InfluxDbDataFeedSource",
+    "IngestionProgressResetOptions",
+    "IngestionStatusList",
+    "IngestionStatusQueryOptions",
+    "MetricAlertConfiguration",
+    "MetricAnomalyAlertSnoozeCondition",
+    "MetricDataItem",
+    "MetricDataList",
+    "MetricDataQueryOptions",
+    "MetricDetectionCondition",
+    "MetricDimensionList",
+    "MetricDimensionQueryOptions",
+    "MetricEnrichedSeriesData",
+    "MetricFeedback",
+    "MetricFeedbackFilter",
+    "MetricFeedbackList",
+    "MetricSeriesDefinition",
+    "MetricSeriesGroupDetectionCondition",
+    "MetricSeriesList",
+    "MetricSeriesQueryOptions",
+    "MetricSingleSeriesDetectionCondition",
+    "MongoDBDataFeedPatch",
+    "MongoDBParameter",
+    "MongoDBParameterPatch",
+    "MongoDbDataFeedSource",
+    "MySqlDataFeedPatch",
+    "MySqlDataFeedSource",
+    "NotificationHook",
+    "PeriodFeedback",
+    "PeriodFeedbackValue",
+    "PostgreSqlDataFeedPatch",
+    "PostgreSqlDataFeedSource",
+    "RootCauseList",
+    "SQLServerDataFeedPatch",
+    "SQLSourceParameterPatch",
+    "SeriesIdentity",
+    "SeriesResultList",
+    "ServicePrincipalCredentialPatch",
+    "ServicePrincipalInKVCredentialPatch",
+    "ServicePrincipalInKVParam",
+    "ServicePrincipalInKVParamPatch",
+    "ServicePrincipalParam",
+    "ServicePrincipalParamPatch",
+    "SeverityCondition",
+    "SeverityFilterCondition",
+    "SmartDetectionCondition",
+    "SmartDetectionConditionPatch",
+    "SqlServerDataFeedSource",
+    "SqlSourceParameter",
+    "SuppressCondition",
+    "SuppressConditionPatch",
+    "TopNGroupScope",
+    "UsageStats",
+    "ValueCondition",
+    "WebNotificationHook",
+    "WebhookHookInfoPatch",
+    "WebhookHookParameter",
+    "WebhookHookParameterPatch",
+    "WholeMetricConfigurationPatch",
+    "AlertQueryTimeMode",
+    "AnomalyAlertingConfigurationLogicType",
+    "AnomalyDetectionConfigurationLogicType",
+    "AnomalyDetectorDirection",
+    "AnomalyIncidentStatus",
+    "AnomalySeverity",
+    "AnomalyStatus",
+    "AnomalyValue",
+    "ChangePointValue",
+    "DataFeedAccessMode",
+    "DataFeedAutoRollupMethod",
+    "DataFeedGranularityType",
+    "DataFeedStatus",
+    "DataSourceType",
+    "DatasourceAuthenticationType",
+    "DatasourceCredentialType",
+    "DatasourceMissingDataPointFillType",
+    "DatasourceType",
+    "Direction",
+    "FeedbackQueryTimeMode",
+    "FeedbackType",
+    "Granularity",
+    "HookType",
+    "IngestionStatusType",
+    "MetricAnomalyAlertScopeType",
+    "NeedRollupEnum",
+    "PeriodType",
+    "SnoozeScope",
+    "ValueType",
 ]
 __all__.extend(_patch_all)

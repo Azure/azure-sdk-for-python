@@ -12,63 +12,66 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AlertQueryTimeMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """time mode
-    """
+    """time mode"""
 
     ANOMALY_TIME = "AnomalyTime"
     CREATED_TIME = "CreatedTime"
     MODIFIED_TIME = "ModifiedTime"
 
+
 class AnomalyAlertingConfigurationLogicType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """cross metrics operator
-    """
+    """cross metrics operator"""
 
     AND_ENUM = "AND"
     OR_ENUM = "OR"
     XOR = "XOR"
 
+
 class AnomalyDetectionConfigurationLogicType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """condition operator
-    
+
     should be specified when combining multiple detection conditions
     """
 
     AND_ENUM = "AND"
     OR_ENUM = "OR"
 
+
 class AnomalyDetectorDirection(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """detection direction
-    """
+    """detection direction"""
 
     BOTH = "Both"
     DOWN = "Down"
     UP = "Up"
 
+
 class AnomalyIncidentStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """incident status
-    
+
     only return for alerting incident result
     """
 
     ACTIVE = "Active"
     RESOLVED = "Resolved"
 
+
 class AnomalySeverity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """min alert severity
-    """
+    """min alert severity"""
 
     LOW = "Low"
     MEDIUM = "Medium"
     HIGH = "High"
 
+
 class AnomalyStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """anomaly status
-    
+
     only return for alerting anomaly result
     """
 
     ACTIVE = "Active"
     RESOLVED = "Resolved"
+
 
 class AnomalyValue(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -76,22 +79,23 @@ class AnomalyValue(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ANOMALY = "Anomaly"
     NOT_ANOMALY = "NotAnomaly"
 
+
 class ChangePointValue(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     AUTO_DETECT = "AutoDetect"
     CHANGE_POINT = "ChangePoint"
     NOT_CHANGE_POINT = "NotChangePoint"
 
+
 class DataFeedAccessMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """data feed access mode, default is Private
-    """
+    """data feed access mode, default is Private"""
 
     PRIVATE = "Private"
     PUBLIC = "Public"
 
+
 class DataFeedAutoRollupMethod(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """roll up method
-    """
+    """roll up method"""
 
     NONE = "None"
     SUM = "Sum"
@@ -99,6 +103,7 @@ class DataFeedAutoRollupMethod(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     MIN = "Min"
     AVG = "Avg"
     COUNT = "Count"
+
 
 class DataFeedGranularityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -110,16 +115,16 @@ class DataFeedGranularityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
     MINUTELY = "Minutely"
     CUSTOM = "Custom"
 
+
 class DataFeedStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """data feed status
-    """
+    """data feed status"""
 
     ACTIVE = "Active"
     PAUSED = "Paused"
 
+
 class DatasourceAuthenticationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """authentication type for corresponding data source
-    """
+    """authentication type for corresponding data source"""
 
     BASIC = "Basic"
     MANAGED_IDENTITY = "ManagedIdentity"
@@ -128,27 +133,27 @@ class DatasourceAuthenticationType(with_metaclass(CaseInsensitiveEnumMeta, str, 
     SERVICE_PRINCIPAL = "ServicePrincipal"
     SERVICE_PRINCIPAL_IN_KV = "ServicePrincipalInKV"
 
+
 class DatasourceCredentialType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of data source credential
-    """
+    """Type of data source credential"""
 
     AZURE_SQL_CONNECTION_STRING = "AzureSQLConnectionString"
     DATA_LAKE_GEN2_SHARED_KEY = "DataLakeGen2SharedKey"
     SERVICE_PRINCIPAL = "ServicePrincipal"
     SERVICE_PRINCIPAL_IN_KV = "ServicePrincipalInKV"
 
+
 class DatasourceMissingDataPointFillType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """the type of fill missing point for anomaly detection
-    """
+    """the type of fill missing point for anomaly detection"""
 
     SMART_FILLING = "SmartFilling"
     PREVIOUS_VALUE = "PreviousValue"
     CUSTOM_VALUE = "CustomValue"
     NO_FILLING = "NoFilling"
 
+
 class DatasourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """data source type
-    """
+    """data source type"""
 
     AZURE_APPLICATION_INSIGHTS = "AzureApplicationInsights"
     AZURE_BLOB = "AzureBlob"
@@ -163,6 +168,7 @@ class DatasourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MY_SQL = "MySql"
     POSTGRE_SQL = "PostgreSql"
     SQL_SERVER = "SqlServer"
+
 
 class DataSourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -180,33 +186,33 @@ class DataSourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     POSTGRE_SQL = "PostgreSql"
     SQL_SERVER = "SqlServer"
 
+
 class Direction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """value filter direction
-    """
+    """value filter direction"""
 
     BOTH = "Both"
     DOWN = "Down"
     UP = "Up"
 
+
 class FeedbackQueryTimeMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """time mode to filter feedback
-    """
+    """time mode to filter feedback"""
 
     METRIC_TIMESTAMP = "MetricTimestamp"
     FEEDBACK_CREATED_TIME = "FeedbackCreatedTime"
 
+
 class FeedbackType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """feedback type
-    """
+    """feedback type"""
 
     ANOMALY = "Anomaly"
     CHANGE_POINT = "ChangePoint"
     PERIOD = "Period"
     COMMENT = "Comment"
 
+
 class Granularity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """granularity of the time series
-    """
+    """granularity of the time series"""
 
     YEARLY = "Yearly"
     MONTHLY = "Monthly"
@@ -216,16 +222,16 @@ class Granularity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MINUTELY = "Minutely"
     CUSTOM = "Custom"
 
+
 class HookType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """hook type
-    """
+    """hook type"""
 
     WEBHOOK = "Webhook"
     EMAIL = "Email"
 
+
 class IngestionStatusType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """latest ingestion task status for this data slice.
-    """
+    """latest ingestion task status for this data slice."""
 
     NOT_STARTED = "NotStarted"
     SCHEDULED = "Scheduled"
@@ -236,39 +242,39 @@ class IngestionStatusType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ERROR = "Error"
     PAUSED = "Paused"
 
+
 class MetricAnomalyAlertScopeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Anomaly scope
-    """
+    """Anomaly scope"""
 
     WHOLE_SERIES = "WholeSeries"
     SERIES_GROUP = "SeriesGroup"
     TOP_N = "TopN"
 
+
 class NeedRollupEnum(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """mark if the data feed need rollup
-    """
+    """mark if the data feed need rollup"""
 
     NO_ROLLUP = "NoRollup"
     NEED_ROLLUP = "NeedRollup"
     ALREADY_ROLLUP = "AlreadyRollup"
 
+
 class PeriodType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """the type of setting period
-    """
+    """the type of setting period"""
 
     AUTO_DETECT = "AutoDetect"
     ASSIGN_VALUE = "AssignValue"
 
+
 class SnoozeScope(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """snooze scope
-    """
+    """snooze scope"""
 
     METRIC = "Metric"
     SERIES = "Series"
 
+
 class ValueType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """data used to implement value filter
-    """
+    """data used to implement value filter"""
 
     VALUE = "Value"
     MEAN = "Mean"

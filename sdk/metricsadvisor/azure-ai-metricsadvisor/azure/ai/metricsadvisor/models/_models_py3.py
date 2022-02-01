@@ -16,10 +16,81 @@ from ._metrics_advisor_client_enums import *
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from . import AnomalyAlert, AnomalyDetectionConfiguration, AnomalyFeedbackValue, AnomalyIncident, AnomalyProperty, AzureApplicationInsightsParameter, AzureApplicationInsightsParameterPatch, AzureBlobParameter, AzureBlobParameterPatch, AzureCosmosDBParameter, AzureCosmosDBParameterPatch, AzureDataLakeStorageGen2Parameter, AzureDataLakeStorageGen2ParameterPatch, AzureEventHubsParameter, AzureEventHubsParameterPatch, AzureLogAnalyticsParameter, AzureLogAnalyticsParameterPatch, AzureSQLConnectionStringParam, AzureSQLConnectionStringParamPatch, AzureTableParameter, AzureTableParameterPatch, ChangePointFeedbackValue, ChangeThresholdCondition, ChangeThresholdConditionPatch, CommentFeedbackValue, DataFeedDimension, DataFeedMetric, DataLakeGen2SharedKeyParam, DataLakeGen2SharedKeyParamPatch, DataPointAnomaly, DetectionAnomalyFilterCondition, DetectionIncidentFilterCondition, DimensionGroupIdentity, EmailHookParameter, EmailHookParameterPatch, FeedbackDimensionFilter, HardThresholdCondition, HardThresholdConditionPatch, IncidentProperty, IncidentRootCause, InfluxDBParameter, InfluxDBParameterPatch, MetricAlertConfiguration, MetricAnomalyAlertSnoozeCondition, MetricDetectionCondition, MetricEnrichedSeriesData, MetricSeriesDefinition, MetricSeriesGroupDetectionCondition, MetricSingleSeriesDetectionCondition, MongoDBParameter, MongoDBParameterPatch, PeriodFeedbackValue, SQLSourceParameterPatch, SeriesIdentity, ServicePrincipalInKVParam, ServicePrincipalInKVParamPatch, ServicePrincipalParam, ServicePrincipalParamPatch, SeverityCondition, SeverityFilterCondition, SmartDetectionCondition, SmartDetectionConditionPatch, SqlSourceParameter, SuppressCondition, SuppressConditionPatch, TopNGroupScope, ValueCondition, WebhookHookParameter, WebhookHookParameterPatch, WholeMetricConfigurationPatch
+    from . import (
+        AnomalyAlert,
+        AnomalyDetectionConfiguration,
+        AnomalyFeedbackValue,
+        AnomalyIncident,
+        AnomalyProperty,
+        AzureApplicationInsightsParameter,
+        AzureApplicationInsightsParameterPatch,
+        AzureBlobParameter,
+        AzureBlobParameterPatch,
+        AzureCosmosDBParameter,
+        AzureCosmosDBParameterPatch,
+        AzureDataLakeStorageGen2Parameter,
+        AzureDataLakeStorageGen2ParameterPatch,
+        AzureEventHubsParameter,
+        AzureEventHubsParameterPatch,
+        AzureLogAnalyticsParameter,
+        AzureLogAnalyticsParameterPatch,
+        AzureSQLConnectionStringParam,
+        AzureSQLConnectionStringParamPatch,
+        AzureTableParameter,
+        AzureTableParameterPatch,
+        ChangePointFeedbackValue,
+        ChangeThresholdCondition,
+        ChangeThresholdConditionPatch,
+        CommentFeedbackValue,
+        DataFeedDimension,
+        DataFeedMetric,
+        DataLakeGen2SharedKeyParam,
+        DataLakeGen2SharedKeyParamPatch,
+        DataPointAnomaly,
+        DetectionAnomalyFilterCondition,
+        DetectionIncidentFilterCondition,
+        DimensionGroupIdentity,
+        EmailHookParameter,
+        EmailHookParameterPatch,
+        FeedbackDimensionFilter,
+        HardThresholdCondition,
+        HardThresholdConditionPatch,
+        IncidentProperty,
+        IncidentRootCause,
+        InfluxDBParameter,
+        InfluxDBParameterPatch,
+        MetricAlertConfiguration,
+        MetricAnomalyAlertSnoozeCondition,
+        MetricDetectionCondition,
+        MetricEnrichedSeriesData,
+        MetricSeriesDefinition,
+        MetricSeriesGroupDetectionCondition,
+        MetricSingleSeriesDetectionCondition,
+        MongoDBParameter,
+        MongoDBParameterPatch,
+        PeriodFeedbackValue,
+        SQLSourceParameterPatch,
+        SeriesIdentity,
+        ServicePrincipalInKVParam,
+        ServicePrincipalInKVParamPatch,
+        ServicePrincipalParam,
+        ServicePrincipalParamPatch,
+        SeverityCondition,
+        SeverityFilterCondition,
+        SmartDetectionCondition,
+        SmartDetectionConditionPatch,
+        SqlSourceParameter,
+        SuppressCondition,
+        SuppressConditionPatch,
+        TopNGroupScope,
+        ValueCondition,
+        WebhookHookParameter,
+        WebhookHookParameterPatch,
+        WholeMetricConfigurationPatch,
+    )
 
 
-class AlertingResultQueryGenerated(msrest.serialization.Model):
+class AlertingResultQuery(msrest.serialization.Model):
     """AlertingResultQuery.
 
     All required parameters must be populated in order to send to Azure.
@@ -34,15 +105,15 @@ class AlertingResultQueryGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'start_time': {'required': True},
-        'end_time': {'required': True},
-        'time_mode': {'required': True},
+        "start_time": {"required": True},
+        "end_time": {"required": True},
+        "time_mode": {"required": True},
     }
 
     _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'time_mode': {'key': 'timeMode', 'type': 'str'},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "time_mode": {"key": "timeMode", "type": "str"},
     }
 
     def __init__(
@@ -62,13 +133,13 @@ class AlertingResultQueryGenerated(msrest.serialization.Model):
          "ModifiedTime".
         :paramtype time_mode: str or ~azure.ai.metricsadvisor.models.AlertQueryTimeMode
         """
-        super(AlertingResultQueryGenerated, self).__init__(**kwargs)
+        super(AlertingResultQuery, self).__init__(**kwargs)
         self.start_time = start_time
         self.end_time = end_time
         self.time_mode = time_mode
 
 
-class AlertResultListGenerated(msrest.serialization.Model):
+class AlertResultList(msrest.serialization.Model):
     """AlertResultList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -82,31 +153,26 @@ class AlertResultListGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
-        'value': {'required': True},
+        "next_link": {"readonly": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': '@nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[AnomalyAlert]'},
+        "next_link": {"key": "@nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[AnomalyAlert]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["AnomalyAlert"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["AnomalyAlert"], **kwargs):
         """
         :keyword value: Required.
         :paramtype value: list[~azure.ai.metricsadvisor.models.AnomalyAlert]
         """
-        super(AlertResultListGenerated, self).__init__(**kwargs)
+        super(AlertResultList, self).__init__(**kwargs)
         self.next_link = None
         self.value = value
 
 
-class AnomalyAlertGenerated(msrest.serialization.Model):
+class AnomalyAlert(msrest.serialization.Model):
     """AnomalyAlert.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -122,76 +188,72 @@ class AnomalyAlertGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'alert_id': {'readonly': True},
-        'timestamp': {'readonly': True},
-        'created_time': {'readonly': True},
-        'modified_time': {'readonly': True},
+        "alert_id": {"readonly": True},
+        "timestamp": {"readonly": True},
+        "created_time": {"readonly": True},
+        "modified_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'alert_id': {'key': 'alertId', 'type': 'str'},
-        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'modified_time': {'key': 'modifiedTime', 'type': 'iso-8601'},
+        "alert_id": {"key": "alertId", "type": "str"},
+        "timestamp": {"key": "timestamp", "type": "iso-8601"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "modified_time": {"key": "modifiedTime", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(AnomalyAlertGenerated, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super(AnomalyAlert, self).__init__(**kwargs)
         self.alert_id = None
         self.timestamp = None
         self.created_time = None
         self.modified_time = None
 
 
-class AnomalyAlertConfigurationGenerated(msrest.serialization.Model):
+class AnomalyAlertConfiguration(msrest.serialization.Model):
     """AnomalyAlertConfiguration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar anomaly_alerting_configuration_id: anomaly alerting configuration unique id.
-    :vartype anomaly_alerting_configuration_id: str
     :ivar name: Required. anomaly alerting configuration name.
     :vartype name: str
     :ivar description: anomaly alerting configuration description.
     :vartype description: str
     :ivar cross_metrics_operator: cross metrics operator
-    
+
      should be specified when setting up multiple metric alerting configurations. Possible values
      include: "AND", "OR", "XOR".
     :vartype cross_metrics_operator: str or
      ~azure.ai.metricsadvisor.models.AnomalyAlertingConfigurationLogicType
-    :ivar split_alert_by_dimensions: dimensions used to split alert.
-    :vartype split_alert_by_dimensions: list[str]
     :ivar hook_ids: Required. hook unique ids.
     :vartype hook_ids: list[str]
-    :ivar metric_alerting_configurations: Required. Anomaly alerting configurations.
-    :vartype metric_alerting_configurations:
+    :ivar id: anomaly alerting configuration unique id.
+    :vartype id: str
+    :ivar metric_alert_configurations: Anomaly alerting configurations.
+    :vartype metric_alert_configurations:
      list[~azure.ai.metricsadvisor.models.MetricAlertConfiguration]
+    :ivar dimensions_to_split_alert: dimensions used to split alert.
+    :vartype dimensions_to_split_alert: list[str]
     """
 
     _validation = {
-        'anomaly_alerting_configuration_id': {'readonly': True},
-        'name': {'required': True},
-        'split_alert_by_dimensions': {'unique': True},
-        'hook_ids': {'required': True, 'unique': True},
-        'metric_alerting_configurations': {'required': True, 'unique': True},
+        "name": {"required": True},
+        "hook_ids": {"required": True, "unique": True},
+        "id": {"readonly": True},
+        "metric_alert_configurations": {"unique": True},
+        "dimensions_to_split_alert": {"unique": True},
     }
 
     _attribute_map = {
-        'anomaly_alerting_configuration_id': {'key': 'anomalyAlertingConfigurationId', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'cross_metrics_operator': {'key': 'crossMetricsOperator', 'type': 'str'},
-        'split_alert_by_dimensions': {'key': 'splitAlertByDimensions', 'type': '[str]'},
-        'hook_ids': {'key': 'hookIds', 'type': '[str]'},
-        'metric_alerting_configurations': {'key': 'metricAlertingConfigurations', 'type': '[MetricAlertConfiguration]'},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "cross_metrics_operator": {"key": "crossMetricsOperator", "type": "str"},
+        "hook_ids": {"key": "hookIds", "type": "[str]"},
+        "id": {"key": "id", "type": "str"},
+        "metric_alert_configurations": {"key": "metricAlertConfigurations", "type": "[MetricAlertConfiguration]"},
+        "dimensions_to_split_alert": {"key": "dimensionsToSplitAlert", "type": "[str]"},
     }
 
     def __init__(
@@ -199,10 +261,10 @@ class AnomalyAlertConfigurationGenerated(msrest.serialization.Model):
         *,
         name: str,
         hook_ids: List[str],
-        metric_alerting_configurations: List["MetricAlertConfiguration"],
         description: Optional[str] = "",
         cross_metrics_operator: Optional[Union[str, "AnomalyAlertingConfigurationLogicType"]] = None,
-        split_alert_by_dimensions: Optional[List[str]] = None,
+        metric_alert_configurations: Optional[List["MetricAlertConfiguration"]] = None,
+        dimensions_to_split_alert: Optional[List[str]] = None,
         **kwargs
     ):
         """
@@ -211,30 +273,30 @@ class AnomalyAlertConfigurationGenerated(msrest.serialization.Model):
         :keyword description: anomaly alerting configuration description.
         :paramtype description: str
         :keyword cross_metrics_operator: cross metrics operator
-        
+
          should be specified when setting up multiple metric alerting configurations. Possible values
          include: "AND", "OR", "XOR".
         :paramtype cross_metrics_operator: str or
          ~azure.ai.metricsadvisor.models.AnomalyAlertingConfigurationLogicType
-        :keyword split_alert_by_dimensions: dimensions used to split alert.
-        :paramtype split_alert_by_dimensions: list[str]
         :keyword hook_ids: Required. hook unique ids.
         :paramtype hook_ids: list[str]
-        :keyword metric_alerting_configurations: Required. Anomaly alerting configurations.
-        :paramtype metric_alerting_configurations:
+        :keyword metric_alert_configurations: Anomaly alerting configurations.
+        :paramtype metric_alert_configurations:
          list[~azure.ai.metricsadvisor.models.MetricAlertConfiguration]
+        :keyword dimensions_to_split_alert: dimensions used to split alert.
+        :paramtype dimensions_to_split_alert: list[str]
         """
-        super(AnomalyAlertConfigurationGenerated, self).__init__(**kwargs)
-        self.anomaly_alerting_configuration_id = None
+        super(AnomalyAlertConfiguration, self).__init__(**kwargs)
         self.name = name
         self.description = description
         self.cross_metrics_operator = cross_metrics_operator
-        self.split_alert_by_dimensions = split_alert_by_dimensions
         self.hook_ids = hook_ids
-        self.metric_alerting_configurations = metric_alerting_configurations
+        self.id = None
+        self.metric_alert_configurations = metric_alert_configurations
+        self.dimensions_to_split_alert = dimensions_to_split_alert
 
 
-class AnomalyAlertingConfigurationListGenerated(msrest.serialization.Model):
+class AnomalyAlertingConfigurationList(msrest.serialization.Model):
     """AnomalyAlertingConfigurationList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -246,27 +308,23 @@ class AnomalyAlertingConfigurationListGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AnomalyAlertConfiguration]'},
-        'next_link': {'key': '@nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AnomalyAlertConfiguration]"},
+        "next_link": {"key": "@nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(AnomalyAlertingConfigurationListGenerated, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super(AnomalyAlertingConfigurationList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class AnomalyAlertingConfigurationPatchGenerated(msrest.serialization.Model):
+class AnomalyAlertingConfigurationPatch(msrest.serialization.Model):
     """AnomalyAlertingConfigurationPatch.
 
     :ivar name: Anomaly alerting configuration name.
@@ -287,18 +345,18 @@ class AnomalyAlertingConfigurationPatchGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'split_alert_by_dimensions': {'unique': True},
-        'hook_ids': {'unique': True},
-        'metric_alerting_configurations': {'unique': True},
+        "split_alert_by_dimensions": {"unique": True},
+        "hook_ids": {"unique": True},
+        "metric_alerting_configurations": {"unique": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'cross_metrics_operator': {'key': 'crossMetricsOperator', 'type': 'str'},
-        'split_alert_by_dimensions': {'key': 'splitAlertByDimensions', 'type': '[str]'},
-        'hook_ids': {'key': 'hookIds', 'type': '[str]'},
-        'metric_alerting_configurations': {'key': 'metricAlertingConfigurations', 'type': '[MetricAlertConfiguration]'},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "cross_metrics_operator": {"key": "crossMetricsOperator", "type": "str"},
+        "split_alert_by_dimensions": {"key": "splitAlertByDimensions", "type": "[str]"},
+        "hook_ids": {"key": "hookIds", "type": "[str]"},
+        "metric_alerting_configurations": {"key": "metricAlertingConfigurations", "type": "[MetricAlertConfiguration]"},
     }
 
     def __init__(
@@ -329,7 +387,7 @@ class AnomalyAlertingConfigurationPatchGenerated(msrest.serialization.Model):
         :paramtype metric_alerting_configurations:
          list[~azure.ai.metricsadvisor.models.MetricAlertConfiguration]
         """
-        super(AnomalyAlertingConfigurationPatchGenerated, self).__init__(**kwargs)
+        super(AnomalyAlertingConfigurationPatch, self).__init__(**kwargs)
         self.name = name
         self.description = description
         self.cross_metrics_operator = cross_metrics_operator
@@ -338,7 +396,7 @@ class AnomalyAlertingConfigurationPatchGenerated(msrest.serialization.Model):
         self.metric_alerting_configurations = metric_alerting_configurations
 
 
-class AnomalyDetectionConfigurationGenerated(msrest.serialization.Model):
+class AnomalyDetectionConfiguration(msrest.serialization.Model):
     """AnomalyDetectionConfiguration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -364,22 +422,28 @@ class AnomalyDetectionConfigurationGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'anomaly_detection_configuration_id': {'readonly': True},
-        'name': {'required': True},
-        'metric_id': {'required': True},
-        'whole_metric_configuration': {'required': True},
-        'dimension_group_override_configurations': {'unique': True},
-        'series_override_configurations': {'unique': True},
+        "anomaly_detection_configuration_id": {"readonly": True},
+        "name": {"required": True},
+        "metric_id": {"required": True},
+        "whole_metric_configuration": {"required": True},
+        "dimension_group_override_configurations": {"unique": True},
+        "series_override_configurations": {"unique": True},
     }
 
     _attribute_map = {
-        'anomaly_detection_configuration_id': {'key': 'anomalyDetectionConfigurationId', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'metric_id': {'key': 'metricId', 'type': 'str'},
-        'whole_metric_configuration': {'key': 'wholeMetricConfiguration', 'type': 'MetricDetectionCondition'},
-        'dimension_group_override_configurations': {'key': 'dimensionGroupOverrideConfigurations', 'type': '[MetricSeriesGroupDetectionCondition]'},
-        'series_override_configurations': {'key': 'seriesOverrideConfigurations', 'type': '[MetricSingleSeriesDetectionCondition]'},
+        "anomaly_detection_configuration_id": {"key": "anomalyDetectionConfigurationId", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "metric_id": {"key": "metricId", "type": "str"},
+        "whole_metric_configuration": {"key": "wholeMetricConfiguration", "type": "MetricDetectionCondition"},
+        "dimension_group_override_configurations": {
+            "key": "dimensionGroupOverrideConfigurations",
+            "type": "[MetricSeriesGroupDetectionCondition]",
+        },
+        "series_override_configurations": {
+            "key": "seriesOverrideConfigurations",
+            "type": "[MetricSingleSeriesDetectionCondition]",
+        },
     }
 
     def __init__(
@@ -409,7 +473,7 @@ class AnomalyDetectionConfigurationGenerated(msrest.serialization.Model):
         :paramtype series_override_configurations:
          list[~azure.ai.metricsadvisor.models.MetricSingleSeriesDetectionCondition]
         """
-        super(AnomalyDetectionConfigurationGenerated, self).__init__(**kwargs)
+        super(AnomalyDetectionConfiguration, self).__init__(**kwargs)
         self.anomaly_detection_configuration_id = None
         self.name = name
         self.description = description
@@ -419,7 +483,7 @@ class AnomalyDetectionConfigurationGenerated(msrest.serialization.Model):
         self.series_override_configurations = series_override_configurations
 
 
-class AnomalyDetectionConfigurationListGenerated(msrest.serialization.Model):
+class AnomalyDetectionConfigurationList(msrest.serialization.Model):
     """AnomalyDetectionConfigurationList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -431,27 +495,23 @@ class AnomalyDetectionConfigurationListGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AnomalyDetectionConfiguration]'},
-        'next_link': {'key': '@nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AnomalyDetectionConfiguration]"},
+        "next_link": {"key": "@nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(AnomalyDetectionConfigurationListGenerated, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super(AnomalyDetectionConfigurationList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class AnomalyDetectionConfigurationPatchGenerated(msrest.serialization.Model):
+class AnomalyDetectionConfigurationPatch(msrest.serialization.Model):
     """AnomalyDetectionConfigurationPatch.
 
     :ivar name: anomaly detection configuration name.
@@ -470,16 +530,22 @@ class AnomalyDetectionConfigurationPatchGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'dimension_group_override_configurations': {'unique': True},
-        'series_override_configurations': {'unique': True},
+        "dimension_group_override_configurations": {"unique": True},
+        "series_override_configurations": {"unique": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'whole_metric_configuration': {'key': 'wholeMetricConfiguration', 'type': 'WholeMetricConfigurationPatch'},
-        'dimension_group_override_configurations': {'key': 'dimensionGroupOverrideConfigurations', 'type': '[MetricSeriesGroupDetectionCondition]'},
-        'series_override_configurations': {'key': 'seriesOverrideConfigurations', 'type': '[MetricSingleSeriesDetectionCondition]'},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "whole_metric_configuration": {"key": "wholeMetricConfiguration", "type": "WholeMetricConfigurationPatch"},
+        "dimension_group_override_configurations": {
+            "key": "dimensionGroupOverrideConfigurations",
+            "type": "[MetricSeriesGroupDetectionCondition]",
+        },
+        "series_override_configurations": {
+            "key": "seriesOverrideConfigurations",
+            "type": "[MetricSingleSeriesDetectionCondition]",
+        },
     }
 
     def __init__(
@@ -507,7 +573,7 @@ class AnomalyDetectionConfigurationPatchGenerated(msrest.serialization.Model):
         :paramtype series_override_configurations:
          list[~azure.ai.metricsadvisor.models.MetricSingleSeriesDetectionCondition]
         """
-        super(AnomalyDetectionConfigurationPatchGenerated, self).__init__(**kwargs)
+        super(AnomalyDetectionConfigurationPatch, self).__init__(**kwargs)
         self.name = name
         self.description = description
         self.whole_metric_configuration = whole_metric_configuration
@@ -515,7 +581,7 @@ class AnomalyDetectionConfigurationPatchGenerated(msrest.serialization.Model):
         self.series_override_configurations = series_override_configurations
 
 
-class AnomalyDimensionListGenerated(msrest.serialization.Model):
+class AnomalyDimensionList(msrest.serialization.Model):
     """AnomalyDimensionList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -529,31 +595,26 @@ class AnomalyDimensionListGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
-        'value': {'required': True},
+        "next_link": {"readonly": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': '@nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[str]'},
+        "next_link": {"key": "@nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List[str],
-        **kwargs
-    ):
+    def __init__(self, *, value: List[str], **kwargs):
         """
         :keyword value: Required.
         :paramtype value: list[str]
         """
-        super(AnomalyDimensionListGenerated, self).__init__(**kwargs)
+        super(AnomalyDimensionList, self).__init__(**kwargs)
         self.next_link = None
         self.value = value
 
 
-class AnomalyDimensionQueryGenerated(msrest.serialization.Model):
+class AnomalyDimensionQuery(msrest.serialization.Model):
     """AnomalyDimensionQuery.
 
     All required parameters must be populated in order to send to Azure.
@@ -569,16 +630,16 @@ class AnomalyDimensionQueryGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'start_time': {'required': True},
-        'end_time': {'required': True},
-        'dimension_name': {'required': True},
+        "start_time": {"required": True},
+        "end_time": {"required": True},
+        "dimension_name": {"required": True},
     }
 
     _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'dimension_name': {'key': 'dimensionName', 'type': 'str'},
-        'dimension_filter': {'key': 'dimensionFilter', 'type': 'DimensionGroupIdentity'},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "dimension_name": {"key": "dimensionName", "type": "str"},
+        "dimension_filter": {"key": "dimensionFilter", "type": "DimensionGroupIdentity"},
     }
 
     def __init__(
@@ -600,14 +661,14 @@ class AnomalyDimensionQueryGenerated(msrest.serialization.Model):
         :keyword dimension_filter:
         :paramtype dimension_filter: ~azure.ai.metricsadvisor.models.DimensionGroupIdentity
         """
-        super(AnomalyDimensionQueryGenerated, self).__init__(**kwargs)
+        super(AnomalyDimensionQuery, self).__init__(**kwargs)
         self.start_time = start_time
         self.end_time = end_time
         self.dimension_name = dimension_name
         self.dimension_filter = dimension_filter
 
 
-class MetricFeedbackGenerated(msrest.serialization.Model):
+class MetricFeedback(msrest.serialization.Model):
     """MetricFeedback.
 
     You probably want to use the sub-classes and not this class directly. Known
@@ -633,41 +694,40 @@ class MetricFeedbackGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'feedback_type': {'required': True},
-        'feedback_id': {'readonly': True},
-        'created_time': {'readonly': True},
-        'user_principal': {'readonly': True},
-        'metric_id': {'required': True},
-        'dimension_filter': {'required': True},
+        "feedback_type": {"required": True},
+        "feedback_id": {"readonly": True},
+        "created_time": {"readonly": True},
+        "user_principal": {"readonly": True},
+        "metric_id": {"required": True},
+        "dimension_filter": {"required": True},
     }
 
     _attribute_map = {
-        'feedback_type': {'key': 'feedbackType', 'type': 'str'},
-        'feedback_id': {'key': 'feedbackId', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'user_principal': {'key': 'userPrincipal', 'type': 'str'},
-        'metric_id': {'key': 'metricId', 'type': 'str'},
-        'dimension_filter': {'key': 'dimensionFilter', 'type': 'FeedbackDimensionFilter'},
+        "feedback_type": {"key": "feedbackType", "type": "str"},
+        "feedback_id": {"key": "feedbackId", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "user_principal": {"key": "userPrincipal", "type": "str"},
+        "metric_id": {"key": "metricId", "type": "str"},
+        "dimension_filter": {"key": "dimensionFilter", "type": "FeedbackDimensionFilter"},
     }
 
     _subtype_map = {
-        'feedback_type': {'Anomaly': 'AnomalyFeedback', 'ChangePoint': 'ChangePointFeedback', 'Comment': 'CommentFeedback', 'Period': 'PeriodFeedback'}
+        "feedback_type": {
+            "Anomaly": "AnomalyFeedback",
+            "ChangePoint": "ChangePointFeedback",
+            "Comment": "CommentFeedback",
+            "Period": "PeriodFeedback",
+        }
     }
 
-    def __init__(
-        self,
-        *,
-        metric_id: str,
-        dimension_filter: "FeedbackDimensionFilter",
-        **kwargs
-    ):
+    def __init__(self, *, metric_id: str, dimension_filter: "FeedbackDimensionFilter", **kwargs):
         """
         :keyword metric_id: Required. metric unique id.
         :paramtype metric_id: str
         :keyword dimension_filter: Required.
         :paramtype dimension_filter: ~azure.ai.metricsadvisor.models.FeedbackDimensionFilter
         """
-        super(MetricFeedbackGenerated, self).__init__(**kwargs)
+        super(MetricFeedback, self).__init__(**kwargs)
         self.feedback_type = None  # type: Optional[str]
         self.feedback_id = None
         self.created_time = None
@@ -676,7 +736,7 @@ class MetricFeedbackGenerated(msrest.serialization.Model):
         self.dimension_filter = dimension_filter
 
 
-class AnomalyFeedbackGenerated(MetricFeedbackGenerated):
+class AnomalyFeedback(MetricFeedback):
     """AnomalyFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -712,29 +772,32 @@ class AnomalyFeedbackGenerated(MetricFeedbackGenerated):
     """
 
     _validation = {
-        'feedback_type': {'required': True},
-        'feedback_id': {'readonly': True},
-        'created_time': {'readonly': True},
-        'user_principal': {'readonly': True},
-        'metric_id': {'required': True},
-        'dimension_filter': {'required': True},
-        'start_time': {'required': True},
-        'end_time': {'required': True},
-        'value': {'required': True},
+        "feedback_type": {"required": True},
+        "feedback_id": {"readonly": True},
+        "created_time": {"readonly": True},
+        "user_principal": {"readonly": True},
+        "metric_id": {"required": True},
+        "dimension_filter": {"required": True},
+        "start_time": {"required": True},
+        "end_time": {"required": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'feedback_type': {'key': 'feedbackType', 'type': 'str'},
-        'feedback_id': {'key': 'feedbackId', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'user_principal': {'key': 'userPrincipal', 'type': 'str'},
-        'metric_id': {'key': 'metricId', 'type': 'str'},
-        'dimension_filter': {'key': 'dimensionFilter', 'type': 'FeedbackDimensionFilter'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'value': {'key': 'value', 'type': 'AnomalyFeedbackValue'},
-        'anomaly_detection_configuration_id': {'key': 'anomalyDetectionConfigurationId', 'type': 'str'},
-        'anomaly_detection_configuration_snapshot': {'key': 'anomalyDetectionConfigurationSnapshot', 'type': 'AnomalyDetectionConfiguration'},
+        "feedback_type": {"key": "feedbackType", "type": "str"},
+        "feedback_id": {"key": "feedbackId", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "user_principal": {"key": "userPrincipal", "type": "str"},
+        "metric_id": {"key": "metricId", "type": "str"},
+        "dimension_filter": {"key": "dimensionFilter", "type": "FeedbackDimensionFilter"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "value": {"key": "value", "type": "AnomalyFeedbackValue"},
+        "anomaly_detection_configuration_id": {"key": "anomalyDetectionConfigurationId", "type": "str"},
+        "anomaly_detection_configuration_snapshot": {
+            "key": "anomalyDetectionConfigurationSnapshot",
+            "type": "AnomalyDetectionConfiguration",
+        },
     }
 
     def __init__(
@@ -768,8 +831,8 @@ class AnomalyFeedbackGenerated(MetricFeedbackGenerated):
         :paramtype anomaly_detection_configuration_snapshot:
          ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
         """
-        super(AnomalyFeedbackGenerated, self).__init__(metric_id=metric_id, dimension_filter=dimension_filter, **kwargs)
-        self.feedback_type = 'Anomaly'  # type: str
+        super(AnomalyFeedback, self).__init__(metric_id=metric_id, dimension_filter=dimension_filter, **kwargs)
+        self.feedback_type = "Anomaly"  # type: str
         self.start_time = start_time
         self.end_time = end_time
         self.value = value
@@ -777,7 +840,7 @@ class AnomalyFeedbackGenerated(MetricFeedbackGenerated):
         self.anomaly_detection_configuration_snapshot = anomaly_detection_configuration_snapshot
 
 
-class AnomalyFeedbackValueGenerated(msrest.serialization.Model):
+class AnomalyFeedbackValue(msrest.serialization.Model):
     """AnomalyFeedbackValue.
 
     All required parameters must be populated in order to send to Azure.
@@ -787,29 +850,24 @@ class AnomalyFeedbackValueGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'anomaly_value': {'required': True},
+        "anomaly_value": {"required": True},
     }
 
     _attribute_map = {
-        'anomaly_value': {'key': 'anomalyValue', 'type': 'str'},
+        "anomaly_value": {"key": "anomalyValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        anomaly_value: Union[str, "AnomalyValue"],
-        **kwargs
-    ):
+    def __init__(self, *, anomaly_value: Union[str, "AnomalyValue"], **kwargs):
         """
         :keyword anomaly_value: Required. Possible values include: "AutoDetect", "Anomaly",
          "NotAnomaly".
         :paramtype anomaly_value: str or ~azure.ai.metricsadvisor.models.AnomalyValue
         """
-        super(AnomalyFeedbackValueGenerated, self).__init__(**kwargs)
+        super(AnomalyFeedbackValue, self).__init__(**kwargs)
         self.anomaly_value = anomaly_value
 
 
-class AnomalyIncidentGenerated(msrest.serialization.Model):
+class AnomalyIncident(msrest.serialization.Model):
     """AnomalyIncident.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -817,15 +875,15 @@ class AnomalyIncidentGenerated(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar data_feed_id: data feed unique id
-    
+
      only return for alerting anomaly result.
     :vartype data_feed_id: str
     :ivar metric_id: metric unique id
-    
+
      only return for alerting incident result.
     :vartype metric_id: str
     :ivar anomaly_detection_configuration_id: anomaly detection configuration unique id
-    
+
      only return for alerting incident result.
     :vartype anomaly_detection_configuration_id: str
     :ivar incident_id: Required. incident id.
@@ -841,25 +899,25 @@ class AnomalyIncidentGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'data_feed_id': {'readonly': True},
-        'metric_id': {'readonly': True},
-        'anomaly_detection_configuration_id': {'readonly': True},
-        'incident_id': {'required': True},
-        'start_time': {'required': True},
-        'last_time': {'required': True},
-        'root_node': {'required': True},
-        'property': {'required': True},
+        "data_feed_id": {"readonly": True},
+        "metric_id": {"readonly": True},
+        "anomaly_detection_configuration_id": {"readonly": True},
+        "incident_id": {"required": True},
+        "start_time": {"required": True},
+        "last_time": {"required": True},
+        "root_node": {"required": True},
+        "property": {"required": True},
     }
 
     _attribute_map = {
-        'data_feed_id': {'key': 'dataFeedId', 'type': 'str'},
-        'metric_id': {'key': 'metricId', 'type': 'str'},
-        'anomaly_detection_configuration_id': {'key': 'anomalyDetectionConfigurationId', 'type': 'str'},
-        'incident_id': {'key': 'incidentId', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'last_time': {'key': 'lastTime', 'type': 'iso-8601'},
-        'root_node': {'key': 'rootNode', 'type': 'SeriesIdentity'},
-        'property': {'key': 'property', 'type': 'IncidentProperty'},
+        "data_feed_id": {"key": "dataFeedId", "type": "str"},
+        "metric_id": {"key": "metricId", "type": "str"},
+        "anomaly_detection_configuration_id": {"key": "anomalyDetectionConfigurationId", "type": "str"},
+        "incident_id": {"key": "incidentId", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "last_time": {"key": "lastTime", "type": "iso-8601"},
+        "root_node": {"key": "rootNode", "type": "SeriesIdentity"},
+        "property": {"key": "property", "type": "IncidentProperty"},
     }
 
     def __init__(
@@ -884,7 +942,7 @@ class AnomalyIncidentGenerated(msrest.serialization.Model):
         :keyword property: Required.
         :paramtype property: ~azure.ai.metricsadvisor.models.IncidentProperty
         """
-        super(AnomalyIncidentGenerated, self).__init__(**kwargs)
+        super(AnomalyIncident, self).__init__(**kwargs)
         self.data_feed_id = None
         self.metric_id = None
         self.anomaly_detection_configuration_id = None
@@ -895,7 +953,7 @@ class AnomalyIncidentGenerated(msrest.serialization.Model):
         self.property = property
 
 
-class AnomalyPropertyGenerated(msrest.serialization.Model):
+class AnomalyProperty(msrest.serialization.Model):
     """AnomalyProperty.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -906,7 +964,7 @@ class AnomalyPropertyGenerated(msrest.serialization.Model):
      "High".
     :vartype anomaly_severity: str or ~azure.ai.metricsadvisor.models.AnomalySeverity
     :ivar anomaly_status: anomaly status
-    
+
      only return for alerting anomaly result. Possible values include: "Active", "Resolved".
     :vartype anomaly_status: str or ~azure.ai.metricsadvisor.models.AnomalyStatus
     :ivar value: value of the anomaly.
@@ -916,38 +974,33 @@ class AnomalyPropertyGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'anomaly_severity': {'required': True},
-        'anomaly_status': {'readonly': True},
-        'value': {'readonly': True},
-        'expected_value': {'readonly': True},
+        "anomaly_severity": {"required": True},
+        "anomaly_status": {"readonly": True},
+        "value": {"readonly": True},
+        "expected_value": {"readonly": True},
     }
 
     _attribute_map = {
-        'anomaly_severity': {'key': 'anomalySeverity', 'type': 'str'},
-        'anomaly_status': {'key': 'anomalyStatus', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'float'},
-        'expected_value': {'key': 'expectedValue', 'type': 'float'},
+        "anomaly_severity": {"key": "anomalySeverity", "type": "str"},
+        "anomaly_status": {"key": "anomalyStatus", "type": "str"},
+        "value": {"key": "value", "type": "float"},
+        "expected_value": {"key": "expectedValue", "type": "float"},
     }
 
-    def __init__(
-        self,
-        *,
-        anomaly_severity: Union[str, "AnomalySeverity"],
-        **kwargs
-    ):
+    def __init__(self, *, anomaly_severity: Union[str, "AnomalySeverity"], **kwargs):
         """
         :keyword anomaly_severity: Required. anomaly severity. Possible values include: "Low",
          "Medium", "High".
         :paramtype anomaly_severity: str or ~azure.ai.metricsadvisor.models.AnomalySeverity
         """
-        super(AnomalyPropertyGenerated, self).__init__(**kwargs)
+        super(AnomalyProperty, self).__init__(**kwargs)
         self.anomaly_severity = anomaly_severity
         self.anomaly_status = None
         self.value = None
         self.expected_value = None
 
 
-class AnomalyResultListGenerated(msrest.serialization.Model):
+class AnomalyResultList(msrest.serialization.Model):
     """AnomalyResultList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -961,31 +1014,26 @@ class AnomalyResultListGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
-        'value': {'required': True},
+        "next_link": {"readonly": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': '@nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[DataPointAnomaly]'},
+        "next_link": {"key": "@nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[DataPointAnomaly]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["DataPointAnomaly"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["DataPointAnomaly"], **kwargs):
         """
         :keyword value: Required.
         :paramtype value: list[~azure.ai.metricsadvisor.models.DataPointAnomaly]
         """
-        super(AnomalyResultListGenerated, self).__init__(**kwargs)
+        super(AnomalyResultList, self).__init__(**kwargs)
         self.next_link = None
         self.value = value
 
 
-class DataFeedDetailPatchGenerated(msrest.serialization.Model):
+class DataFeedDetailPatch(msrest.serialization.Model):
     """DataFeedDetailPatch.
 
     You probably want to use the sub-classes and not this class directly. Known
@@ -1055,39 +1103,53 @@ class DataFeedDetailPatchGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
+        "data_source_type": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'status': {'key': 'status', 'type': 'str'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "status": {"key": "status", "type": "str"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
     }
 
     _subtype_map = {
-        'data_source_type': {'AzureApplicationInsights': 'AzureApplicationInsightsDataFeedPatch', 'AzureBlob': 'AzureBlobDataFeedPatch', 'AzureCosmosDB': 'AzureCosmosDBDataFeedPatch', 'AzureDataExplorer': 'AzureDataExplorerDataFeedPatch', 'AzureDataLakeStorageGen2': 'AzureDataLakeStorageGen2DataFeedPatch', 'AzureEventHubs': 'AzureEventHubsDataFeedPatch', 'AzureLogAnalytics': 'AzureLogAnalyticsDataFeedPatch', 'AzureTable': 'AzureTableDataFeedPatch', 'InfluxDB': 'InfluxDBDataFeedPatch', 'MongoDB': 'MongoDBDataFeedPatch', 'MySql': 'MySqlDataFeedPatch', 'PostgreSql': 'PostgreSqlDataFeedPatch', 'SqlServer': 'SQLServerDataFeedPatch'}
+        "data_source_type": {
+            "AzureApplicationInsights": "AzureApplicationInsightsDataFeedPatch",
+            "AzureBlob": "AzureBlobDataFeedPatch",
+            "AzureCosmosDB": "AzureCosmosDBDataFeedPatch",
+            "AzureDataExplorer": "AzureDataExplorerDataFeedPatch",
+            "AzureDataLakeStorageGen2": "AzureDataLakeStorageGen2DataFeedPatch",
+            "AzureEventHubs": "AzureEventHubsDataFeedPatch",
+            "AzureLogAnalytics": "AzureLogAnalyticsDataFeedPatch",
+            "AzureTable": "AzureTableDataFeedPatch",
+            "InfluxDB": "InfluxDBDataFeedPatch",
+            "MongoDB": "MongoDBDataFeedPatch",
+            "MySql": "MySqlDataFeedPatch",
+            "PostgreSql": "PostgreSqlDataFeedPatch",
+            "SqlServer": "SQLServerDataFeedPatch",
+        }
     }
 
     def __init__(
@@ -1173,7 +1235,7 @@ class DataFeedDetailPatchGenerated(msrest.serialization.Model):
         :keyword credential_id: The credential entity id.
         :paramtype credential_id: str
         """
-        super(DataFeedDetailPatchGenerated, self).__init__(**kwargs)
+        super(DataFeedDetailPatch, self).__init__(**kwargs)
         self.data_source_type = None  # type: Optional[str]
         self.data_feed_name = data_feed_name
         self.data_feed_description = data_feed_description
@@ -1198,7 +1260,7 @@ class DataFeedDetailPatchGenerated(msrest.serialization.Model):
         self.credential_id = credential_id
 
 
-class AzureApplicationInsightsDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
+class AzureApplicationInsightsDataFeedPatch(DataFeedDetailPatch):
     """AzureApplicationInsightsDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -1268,36 +1330,36 @@ class AzureApplicationInsightsDataFeedPatchGenerated(DataFeedDetailPatchGenerate
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
+        "data_source_type": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'status': {'key': 'status', 'type': 'str'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureApplicationInsightsParameterPatch'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "status": {"key": "status", "type": "str"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
+        "data_source_parameter": {"key": "dataSourceParameter", "type": "AzureApplicationInsightsParameterPatch"},
     }
 
     def __init__(
@@ -1387,12 +1449,35 @@ class AzureApplicationInsightsDataFeedPatchGenerated(DataFeedDetailPatchGenerate
         :paramtype data_source_parameter:
          ~azure.ai.metricsadvisor.models.AzureApplicationInsightsParameterPatch
         """
-        super(AzureApplicationInsightsDataFeedPatchGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, status=status, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
-        self.data_source_type = 'AzureApplicationInsights'  # type: str
+        super(AzureApplicationInsightsDataFeedPatch, self).__init__(
+            data_feed_name=data_feed_name,
+            data_feed_description=data_feed_description,
+            timestamp_column=timestamp_column,
+            data_start_from=data_start_from,
+            start_offset_in_seconds=start_offset_in_seconds,
+            max_concurrency=max_concurrency,
+            min_retry_interval_in_seconds=min_retry_interval_in_seconds,
+            stop_retry_after_in_seconds=stop_retry_after_in_seconds,
+            need_rollup=need_rollup,
+            roll_up_method=roll_up_method,
+            roll_up_columns=roll_up_columns,
+            all_up_identification=all_up_identification,
+            fill_missing_point_type=fill_missing_point_type,
+            fill_missing_point_value=fill_missing_point_value,
+            view_mode=view_mode,
+            admins=admins,
+            viewers=viewers,
+            status=status,
+            action_link_template=action_link_template,
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
+        self.data_source_type = "AzureApplicationInsights"  # type: str
         self.data_source_parameter = data_source_parameter
 
 
-class DataFeedGenerated(msrest.serialization.Model):
+class DataFeed(msrest.serialization.Model):
     """DataFeed.
 
     You probably want to use the sub-classes and not this class directly. Known
@@ -1481,57 +1566,71 @@ class DataFeedGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'data_feed_id': {'readonly': True},
-        'data_feed_name': {'required': True},
-        'granularity_name': {'required': True},
-        'metrics': {'required': True, 'unique': True},
-        'dimension': {'unique': True},
-        'data_start_from': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
-        'is_admin': {'readonly': True},
-        'creator': {'readonly': True},
-        'status': {'readonly': True},
-        'created_time': {'readonly': True},
+        "data_source_type": {"required": True},
+        "data_feed_id": {"readonly": True},
+        "data_feed_name": {"required": True},
+        "granularity_name": {"required": True},
+        "metrics": {"required": True, "unique": True},
+        "dimension": {"unique": True},
+        "data_start_from": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
+        "is_admin": {"readonly": True},
+        "creator": {"readonly": True},
+        "status": {"readonly": True},
+        "created_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_id': {'key': 'dataFeedId', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'granularity_name': {'key': 'granularityName', 'type': 'str'},
-        'granularity_amount': {'key': 'granularityAmount', 'type': 'int'},
-        'metrics': {'key': 'metrics', 'type': '[DataFeedMetric]'},
-        'dimension': {'key': 'dimension', 'type': '[DataFeedDimension]'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'is_admin': {'key': 'isAdmin', 'type': 'bool'},
-        'creator': {'key': 'creator', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_id": {"key": "dataFeedId", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "granularity_name": {"key": "granularityName", "type": "str"},
+        "granularity_amount": {"key": "granularityAmount", "type": "int"},
+        "metrics": {"key": "metrics", "type": "[DataFeedMetric]"},
+        "dimension": {"key": "dimension", "type": "[DataFeedDimension]"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "is_admin": {"key": "isAdmin", "type": "bool"},
+        "creator": {"key": "creator", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
     }
 
     _subtype_map = {
-        'data_source_type': {'AzureApplicationInsights': 'AzureApplicationInsightsDataFeedSource', 'AzureBlob': 'AzureBlobDataFeedSource', 'AzureCosmosDB': 'AzureCosmosDbDataFeedSource', 'AzureDataExplorer': 'AzureDataExplorerDataFeedSource', 'AzureDataLakeStorageGen2': 'AzureDataLakeStorageGen2DataFeedSource', 'AzureEventHubs': 'AzureEventHubsDataFeedSource', 'AzureLogAnalytics': 'AzureLogAnalyticsDataFeedSource', 'AzureTable': 'AzureTableDataFeedSource', 'InfluxDB': 'InfluxDbDataFeedSource', 'MongoDB': 'MongoDbDataFeedSource', 'MySql': 'MySqlDataFeedSource', 'PostgreSql': 'PostgreSqlDataFeedSource', 'SqlServer': 'SqlServerDataFeedSource'}
+        "data_source_type": {
+            "AzureApplicationInsights": "AzureApplicationInsightsDataFeedSource",
+            "AzureBlob": "AzureBlobDataFeedSource",
+            "AzureCosmosDB": "AzureCosmosDbDataFeedSource",
+            "AzureDataExplorer": "AzureDataExplorerDataFeedSource",
+            "AzureDataLakeStorageGen2": "AzureDataLakeStorageGen2DataFeedSource",
+            "AzureEventHubs": "AzureEventHubsDataFeedSource",
+            "AzureLogAnalytics": "AzureLogAnalyticsDataFeedSource",
+            "AzureTable": "AzureTableDataFeedSource",
+            "InfluxDB": "InfluxDbDataFeedSource",
+            "MongoDB": "MongoDbDataFeedSource",
+            "MySql": "MySqlDataFeedSource",
+            "PostgreSql": "PostgreSqlDataFeedSource",
+            "SqlServer": "SqlServerDataFeedSource",
+        }
     }
 
     def __init__(
@@ -1627,7 +1726,7 @@ class DataFeedGenerated(msrest.serialization.Model):
         :keyword credential_id: The credential entity id.
         :paramtype credential_id: str
         """
-        super(DataFeedGenerated, self).__init__(**kwargs)
+        super(DataFeed, self).__init__(**kwargs)
         self.data_source_type = None  # type: Optional[str]
         self.data_feed_id = None
         self.data_feed_name = data_feed_name
@@ -1660,7 +1759,7 @@ class DataFeedGenerated(msrest.serialization.Model):
         self.credential_id = credential_id
 
 
-class AzureApplicationInsightsDataFeedSourceGenerated(DataFeedGenerated):
+class AzureApplicationInsightsDataFeedSource(DataFeed):
     """AzureApplicationInsightsDataFeedSource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1749,55 +1848,55 @@ class AzureApplicationInsightsDataFeedSourceGenerated(DataFeedGenerated):
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'data_feed_id': {'readonly': True},
-        'data_feed_name': {'required': True},
-        'granularity_name': {'required': True},
-        'metrics': {'required': True, 'unique': True},
-        'dimension': {'unique': True},
-        'data_start_from': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
-        'is_admin': {'readonly': True},
-        'creator': {'readonly': True},
-        'status': {'readonly': True},
-        'created_time': {'readonly': True},
-        'data_source_parameter': {'required': True},
+        "data_source_type": {"required": True},
+        "data_feed_id": {"readonly": True},
+        "data_feed_name": {"required": True},
+        "granularity_name": {"required": True},
+        "metrics": {"required": True, "unique": True},
+        "dimension": {"unique": True},
+        "data_start_from": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
+        "is_admin": {"readonly": True},
+        "creator": {"readonly": True},
+        "status": {"readonly": True},
+        "created_time": {"readonly": True},
+        "data_source_parameter": {"required": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_id': {'key': 'dataFeedId', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'granularity_name': {'key': 'granularityName', 'type': 'str'},
-        'granularity_amount': {'key': 'granularityAmount', 'type': 'int'},
-        'metrics': {'key': 'metrics', 'type': '[DataFeedMetric]'},
-        'dimension': {'key': 'dimension', 'type': '[DataFeedDimension]'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'is_admin': {'key': 'isAdmin', 'type': 'bool'},
-        'creator': {'key': 'creator', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureApplicationInsightsParameter'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_id": {"key": "dataFeedId", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "granularity_name": {"key": "granularityName", "type": "str"},
+        "granularity_amount": {"key": "granularityAmount", "type": "int"},
+        "metrics": {"key": "metrics", "type": "[DataFeedMetric]"},
+        "dimension": {"key": "dimension", "type": "[DataFeedDimension]"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "is_admin": {"key": "isAdmin", "type": "bool"},
+        "creator": {"key": "creator", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
+        "data_source_parameter": {"key": "dataSourceParameter", "type": "AzureApplicationInsightsParameter"},
     }
 
     def __init__(
@@ -1897,12 +1996,38 @@ class AzureApplicationInsightsDataFeedSourceGenerated(DataFeedGenerated):
         :paramtype data_source_parameter:
          ~azure.ai.metricsadvisor.models.AzureApplicationInsightsParameter
         """
-        super(AzureApplicationInsightsDataFeedSourceGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, granularity_name=granularity_name, granularity_amount=granularity_amount, metrics=metrics, dimension=dimension, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
-        self.data_source_type = 'AzureApplicationInsights'  # type: str
+        super(AzureApplicationInsightsDataFeedSource, self).__init__(
+            data_feed_name=data_feed_name,
+            data_feed_description=data_feed_description,
+            granularity_name=granularity_name,
+            granularity_amount=granularity_amount,
+            metrics=metrics,
+            dimension=dimension,
+            timestamp_column=timestamp_column,
+            data_start_from=data_start_from,
+            start_offset_in_seconds=start_offset_in_seconds,
+            max_concurrency=max_concurrency,
+            min_retry_interval_in_seconds=min_retry_interval_in_seconds,
+            stop_retry_after_in_seconds=stop_retry_after_in_seconds,
+            need_rollup=need_rollup,
+            roll_up_method=roll_up_method,
+            roll_up_columns=roll_up_columns,
+            all_up_identification=all_up_identification,
+            fill_missing_point_type=fill_missing_point_type,
+            fill_missing_point_value=fill_missing_point_value,
+            view_mode=view_mode,
+            admins=admins,
+            viewers=viewers,
+            action_link_template=action_link_template,
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
+        self.data_source_type = "AzureApplicationInsights"  # type: str
         self.data_source_parameter = data_source_parameter
 
 
-class AzureApplicationInsightsParameterGenerated(msrest.serialization.Model):
+class AzureApplicationInsightsParameter(msrest.serialization.Model):
     """AzureApplicationInsightsParameter.
 
     All required parameters must be populated in order to send to Azure.
@@ -1918,14 +2043,14 @@ class AzureApplicationInsightsParameterGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'query': {'required': True},
+        "query": {"required": True},
     }
 
     _attribute_map = {
-        'azure_cloud': {'key': 'azureCloud', 'type': 'str'},
-        'application_id': {'key': 'applicationId', 'type': 'str'},
-        'api_key': {'key': 'apiKey', 'type': 'str'},
-        'query': {'key': 'query', 'type': 'str'},
+        "azure_cloud": {"key": "azureCloud", "type": "str"},
+        "application_id": {"key": "applicationId", "type": "str"},
+        "api_key": {"key": "apiKey", "type": "str"},
+        "query": {"key": "query", "type": "str"},
     }
 
     def __init__(
@@ -1947,14 +2072,14 @@ class AzureApplicationInsightsParameterGenerated(msrest.serialization.Model):
         :keyword query: Required. The statement to query this Azure Application Insights.
         :paramtype query: str
         """
-        super(AzureApplicationInsightsParameterGenerated, self).__init__(**kwargs)
+        super(AzureApplicationInsightsParameter, self).__init__(**kwargs)
         self.azure_cloud = azure_cloud
         self.application_id = application_id
         self.api_key = api_key
         self.query = query
 
 
-class AzureApplicationInsightsParameterPatchGenerated(msrest.serialization.Model):
+class AzureApplicationInsightsParameterPatch(msrest.serialization.Model):
     """AzureApplicationInsightsParameterPatch.
 
     :ivar azure_cloud: The Azure cloud that this Azure Application Insights in.
@@ -1968,10 +2093,10 @@ class AzureApplicationInsightsParameterPatchGenerated(msrest.serialization.Model
     """
 
     _attribute_map = {
-        'azure_cloud': {'key': 'azureCloud', 'type': 'str'},
-        'application_id': {'key': 'applicationId', 'type': 'str'},
-        'api_key': {'key': 'apiKey', 'type': 'str'},
-        'query': {'key': 'query', 'type': 'str'},
+        "azure_cloud": {"key": "azureCloud", "type": "str"},
+        "application_id": {"key": "applicationId", "type": "str"},
+        "api_key": {"key": "apiKey", "type": "str"},
+        "query": {"key": "query", "type": "str"},
     }
 
     def __init__(
@@ -1993,14 +2118,14 @@ class AzureApplicationInsightsParameterPatchGenerated(msrest.serialization.Model
         :keyword query: The statement to query this Azure Application Insights.
         :paramtype query: str
         """
-        super(AzureApplicationInsightsParameterPatchGenerated, self).__init__(**kwargs)
+        super(AzureApplicationInsightsParameterPatch, self).__init__(**kwargs)
         self.azure_cloud = azure_cloud
         self.application_id = application_id
         self.api_key = api_key
         self.query = query
 
 
-class AzureBlobDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
+class AzureBlobDataFeedPatch(DataFeedDetailPatch):
     """AzureBlobDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -2069,36 +2194,36 @@ class AzureBlobDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
+        "data_source_type": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'status': {'key': 'status', 'type': 'str'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureBlobParameterPatch'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "status": {"key": "status", "type": "str"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
+        "data_source_parameter": {"key": "dataSourceParameter", "type": "AzureBlobParameterPatch"},
     }
 
     def __init__(
@@ -2187,12 +2312,35 @@ class AzureBlobDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.AzureBlobParameterPatch
         """
-        super(AzureBlobDataFeedPatchGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, status=status, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
-        self.data_source_type = 'AzureBlob'  # type: str
+        super(AzureBlobDataFeedPatch, self).__init__(
+            data_feed_name=data_feed_name,
+            data_feed_description=data_feed_description,
+            timestamp_column=timestamp_column,
+            data_start_from=data_start_from,
+            start_offset_in_seconds=start_offset_in_seconds,
+            max_concurrency=max_concurrency,
+            min_retry_interval_in_seconds=min_retry_interval_in_seconds,
+            stop_retry_after_in_seconds=stop_retry_after_in_seconds,
+            need_rollup=need_rollup,
+            roll_up_method=roll_up_method,
+            roll_up_columns=roll_up_columns,
+            all_up_identification=all_up_identification,
+            fill_missing_point_type=fill_missing_point_type,
+            fill_missing_point_value=fill_missing_point_value,
+            view_mode=view_mode,
+            admins=admins,
+            viewers=viewers,
+            status=status,
+            action_link_template=action_link_template,
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
+        self.data_source_type = "AzureBlob"  # type: str
         self.data_source_parameter = data_source_parameter
 
 
-class AzureBlobDataFeedSourceGenerated(DataFeedGenerated):
+class AzureBlobDataFeedSource(DataFeed):
     """AzureBlobDataFeedSource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2280,55 +2428,55 @@ class AzureBlobDataFeedSourceGenerated(DataFeedGenerated):
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'data_feed_id': {'readonly': True},
-        'data_feed_name': {'required': True},
-        'granularity_name': {'required': True},
-        'metrics': {'required': True, 'unique': True},
-        'dimension': {'unique': True},
-        'data_start_from': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
-        'is_admin': {'readonly': True},
-        'creator': {'readonly': True},
-        'status': {'readonly': True},
-        'created_time': {'readonly': True},
-        'data_source_parameter': {'required': True},
+        "data_source_type": {"required": True},
+        "data_feed_id": {"readonly": True},
+        "data_feed_name": {"required": True},
+        "granularity_name": {"required": True},
+        "metrics": {"required": True, "unique": True},
+        "dimension": {"unique": True},
+        "data_start_from": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
+        "is_admin": {"readonly": True},
+        "creator": {"readonly": True},
+        "status": {"readonly": True},
+        "created_time": {"readonly": True},
+        "data_source_parameter": {"required": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_id': {'key': 'dataFeedId', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'granularity_name': {'key': 'granularityName', 'type': 'str'},
-        'granularity_amount': {'key': 'granularityAmount', 'type': 'int'},
-        'metrics': {'key': 'metrics', 'type': '[DataFeedMetric]'},
-        'dimension': {'key': 'dimension', 'type': '[DataFeedDimension]'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'is_admin': {'key': 'isAdmin', 'type': 'bool'},
-        'creator': {'key': 'creator', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureBlobParameter'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_id": {"key": "dataFeedId", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "granularity_name": {"key": "granularityName", "type": "str"},
+        "granularity_amount": {"key": "granularityAmount", "type": "int"},
+        "metrics": {"key": "metrics", "type": "[DataFeedMetric]"},
+        "dimension": {"key": "dimension", "type": "[DataFeedDimension]"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "is_admin": {"key": "isAdmin", "type": "bool"},
+        "creator": {"key": "creator", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
+        "data_source_parameter": {"key": "dataSourceParameter", "type": "AzureBlobParameter"},
     }
 
     def __init__(
@@ -2427,12 +2575,38 @@ class AzureBlobDataFeedSourceGenerated(DataFeedGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.AzureBlobParameter
         """
-        super(AzureBlobDataFeedSourceGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, granularity_name=granularity_name, granularity_amount=granularity_amount, metrics=metrics, dimension=dimension, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
-        self.data_source_type = 'AzureBlob'  # type: str
+        super(AzureBlobDataFeedSource, self).__init__(
+            data_feed_name=data_feed_name,
+            data_feed_description=data_feed_description,
+            granularity_name=granularity_name,
+            granularity_amount=granularity_amount,
+            metrics=metrics,
+            dimension=dimension,
+            timestamp_column=timestamp_column,
+            data_start_from=data_start_from,
+            start_offset_in_seconds=start_offset_in_seconds,
+            max_concurrency=max_concurrency,
+            min_retry_interval_in_seconds=min_retry_interval_in_seconds,
+            stop_retry_after_in_seconds=stop_retry_after_in_seconds,
+            need_rollup=need_rollup,
+            roll_up_method=roll_up_method,
+            roll_up_columns=roll_up_columns,
+            all_up_identification=all_up_identification,
+            fill_missing_point_type=fill_missing_point_type,
+            fill_missing_point_value=fill_missing_point_value,
+            view_mode=view_mode,
+            admins=admins,
+            viewers=viewers,
+            action_link_template=action_link_template,
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
+        self.data_source_type = "AzureBlob"  # type: str
         self.data_source_parameter = data_source_parameter
 
 
-class AzureBlobParameterGenerated(msrest.serialization.Model):
+class AzureBlobParameter(msrest.serialization.Model):
     """AzureBlobParameter.
 
     All required parameters must be populated in order to send to Azure.
@@ -2446,24 +2620,17 @@ class AzureBlobParameterGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'container': {'required': True},
-        'blob_template': {'required': True},
+        "container": {"required": True},
+        "blob_template": {"required": True},
     }
 
     _attribute_map = {
-        'connection_string': {'key': 'connectionString', 'type': 'str'},
-        'container': {'key': 'container', 'type': 'str'},
-        'blob_template': {'key': 'blobTemplate', 'type': 'str'},
+        "connection_string": {"key": "connectionString", "type": "str"},
+        "container": {"key": "container", "type": "str"},
+        "blob_template": {"key": "blobTemplate", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        container: str,
-        blob_template: str,
-        connection_string: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, container: str, blob_template: str, connection_string: Optional[str] = None, **kwargs):
         """
         :keyword connection_string: The connection string of this Azure Blob.
         :paramtype connection_string: str
@@ -2472,13 +2639,13 @@ class AzureBlobParameterGenerated(msrest.serialization.Model):
         :keyword blob_template: Required. The path template in this container.
         :paramtype blob_template: str
         """
-        super(AzureBlobParameterGenerated, self).__init__(**kwargs)
+        super(AzureBlobParameter, self).__init__(**kwargs)
         self.connection_string = connection_string
         self.container = container
         self.blob_template = blob_template
 
 
-class AzureBlobParameterPatchGenerated(msrest.serialization.Model):
+class AzureBlobParameterPatch(msrest.serialization.Model):
     """AzureBlobParameterPatch.
 
     :ivar connection_string: The connection string of this Azure Blob.
@@ -2490,9 +2657,9 @@ class AzureBlobParameterPatchGenerated(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'connection_string': {'key': 'connectionString', 'type': 'str'},
-        'container': {'key': 'container', 'type': 'str'},
-        'blob_template': {'key': 'blobTemplate', 'type': 'str'},
+        "connection_string": {"key": "connectionString", "type": "str"},
+        "container": {"key": "container", "type": "str"},
+        "blob_template": {"key": "blobTemplate", "type": "str"},
     }
 
     def __init__(
@@ -2511,13 +2678,13 @@ class AzureBlobParameterPatchGenerated(msrest.serialization.Model):
         :keyword blob_template: The path template in this container.
         :paramtype blob_template: str
         """
-        super(AzureBlobParameterPatchGenerated, self).__init__(**kwargs)
+        super(AzureBlobParameterPatch, self).__init__(**kwargs)
         self.connection_string = connection_string
         self.container = container
         self.blob_template = blob_template
 
 
-class AzureCosmosDBDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
+class AzureCosmosDBDataFeedPatch(DataFeedDetailPatch):
     """AzureCosmosDBDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -2586,36 +2753,36 @@ class AzureCosmosDBDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
+        "data_source_type": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'status': {'key': 'status', 'type': 'str'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureCosmosDBParameterPatch'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "status": {"key": "status", "type": "str"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
+        "data_source_parameter": {"key": "dataSourceParameter", "type": "AzureCosmosDBParameterPatch"},
     }
 
     def __init__(
@@ -2704,12 +2871,35 @@ class AzureCosmosDBDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.AzureCosmosDBParameterPatch
         """
-        super(AzureCosmosDBDataFeedPatchGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, status=status, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
-        self.data_source_type = 'AzureCosmosDB'  # type: str
+        super(AzureCosmosDBDataFeedPatch, self).__init__(
+            data_feed_name=data_feed_name,
+            data_feed_description=data_feed_description,
+            timestamp_column=timestamp_column,
+            data_start_from=data_start_from,
+            start_offset_in_seconds=start_offset_in_seconds,
+            max_concurrency=max_concurrency,
+            min_retry_interval_in_seconds=min_retry_interval_in_seconds,
+            stop_retry_after_in_seconds=stop_retry_after_in_seconds,
+            need_rollup=need_rollup,
+            roll_up_method=roll_up_method,
+            roll_up_columns=roll_up_columns,
+            all_up_identification=all_up_identification,
+            fill_missing_point_type=fill_missing_point_type,
+            fill_missing_point_value=fill_missing_point_value,
+            view_mode=view_mode,
+            admins=admins,
+            viewers=viewers,
+            status=status,
+            action_link_template=action_link_template,
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
+        self.data_source_type = "AzureCosmosDB"  # type: str
         self.data_source_parameter = data_source_parameter
 
 
-class AzureCosmosDbDataFeedSourceGenerated(DataFeedGenerated):
+class AzureCosmosDbDataFeedSource(DataFeed):
     """AzureCosmosDbDataFeedSource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2797,55 +2987,55 @@ class AzureCosmosDbDataFeedSourceGenerated(DataFeedGenerated):
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'data_feed_id': {'readonly': True},
-        'data_feed_name': {'required': True},
-        'granularity_name': {'required': True},
-        'metrics': {'required': True, 'unique': True},
-        'dimension': {'unique': True},
-        'data_start_from': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
-        'is_admin': {'readonly': True},
-        'creator': {'readonly': True},
-        'status': {'readonly': True},
-        'created_time': {'readonly': True},
-        'data_source_parameter': {'required': True},
+        "data_source_type": {"required": True},
+        "data_feed_id": {"readonly": True},
+        "data_feed_name": {"required": True},
+        "granularity_name": {"required": True},
+        "metrics": {"required": True, "unique": True},
+        "dimension": {"unique": True},
+        "data_start_from": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
+        "is_admin": {"readonly": True},
+        "creator": {"readonly": True},
+        "status": {"readonly": True},
+        "created_time": {"readonly": True},
+        "data_source_parameter": {"required": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_id': {'key': 'dataFeedId', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'granularity_name': {'key': 'granularityName', 'type': 'str'},
-        'granularity_amount': {'key': 'granularityAmount', 'type': 'int'},
-        'metrics': {'key': 'metrics', 'type': '[DataFeedMetric]'},
-        'dimension': {'key': 'dimension', 'type': '[DataFeedDimension]'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'is_admin': {'key': 'isAdmin', 'type': 'bool'},
-        'creator': {'key': 'creator', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureCosmosDBParameter'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_id": {"key": "dataFeedId", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "granularity_name": {"key": "granularityName", "type": "str"},
+        "granularity_amount": {"key": "granularityAmount", "type": "int"},
+        "metrics": {"key": "metrics", "type": "[DataFeedMetric]"},
+        "dimension": {"key": "dimension", "type": "[DataFeedDimension]"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "is_admin": {"key": "isAdmin", "type": "bool"},
+        "creator": {"key": "creator", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
+        "data_source_parameter": {"key": "dataSourceParameter", "type": "AzureCosmosDBParameter"},
     }
 
     def __init__(
@@ -2944,12 +3134,38 @@ class AzureCosmosDbDataFeedSourceGenerated(DataFeedGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.AzureCosmosDBParameter
         """
-        super(AzureCosmosDbDataFeedSourceGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, granularity_name=granularity_name, granularity_amount=granularity_amount, metrics=metrics, dimension=dimension, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
-        self.data_source_type = 'AzureCosmosDB'  # type: str
+        super(AzureCosmosDbDataFeedSource, self).__init__(
+            data_feed_name=data_feed_name,
+            data_feed_description=data_feed_description,
+            granularity_name=granularity_name,
+            granularity_amount=granularity_amount,
+            metrics=metrics,
+            dimension=dimension,
+            timestamp_column=timestamp_column,
+            data_start_from=data_start_from,
+            start_offset_in_seconds=start_offset_in_seconds,
+            max_concurrency=max_concurrency,
+            min_retry_interval_in_seconds=min_retry_interval_in_seconds,
+            stop_retry_after_in_seconds=stop_retry_after_in_seconds,
+            need_rollup=need_rollup,
+            roll_up_method=roll_up_method,
+            roll_up_columns=roll_up_columns,
+            all_up_identification=all_up_identification,
+            fill_missing_point_type=fill_missing_point_type,
+            fill_missing_point_value=fill_missing_point_value,
+            view_mode=view_mode,
+            admins=admins,
+            viewers=viewers,
+            action_link_template=action_link_template,
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
+        self.data_source_type = "AzureCosmosDB"  # type: str
         self.data_source_parameter = data_source_parameter
 
 
-class AzureCosmosDBParameterGenerated(msrest.serialization.Model):
+class AzureCosmosDBParameter(msrest.serialization.Model):
     """AzureCosmosDBParameter.
 
     All required parameters must be populated in order to send to Azure.
@@ -2965,26 +3181,20 @@ class AzureCosmosDBParameterGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'sql_query': {'required': True},
-        'database': {'required': True},
-        'collection_id': {'required': True},
+        "sql_query": {"required": True},
+        "database": {"required": True},
+        "collection_id": {"required": True},
     }
 
     _attribute_map = {
-        'connection_string': {'key': 'connectionString', 'type': 'str'},
-        'sql_query': {'key': 'sqlQuery', 'type': 'str'},
-        'database': {'key': 'database', 'type': 'str'},
-        'collection_id': {'key': 'collectionId', 'type': 'str'},
+        "connection_string": {"key": "connectionString", "type": "str"},
+        "sql_query": {"key": "sqlQuery", "type": "str"},
+        "database": {"key": "database", "type": "str"},
+        "collection_id": {"key": "collectionId", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        sql_query: str,
-        database: str,
-        collection_id: str,
-        connection_string: Optional[str] = None,
-        **kwargs
+        self, *, sql_query: str, database: str, collection_id: str, connection_string: Optional[str] = None, **kwargs
     ):
         """
         :keyword connection_string: The connection string of this Azure CosmosDB.
@@ -2996,14 +3206,14 @@ class AzureCosmosDBParameterGenerated(msrest.serialization.Model):
         :keyword collection_id: Required. A collection id in this database.
         :paramtype collection_id: str
         """
-        super(AzureCosmosDBParameterGenerated, self).__init__(**kwargs)
+        super(AzureCosmosDBParameter, self).__init__(**kwargs)
         self.connection_string = connection_string
         self.sql_query = sql_query
         self.database = database
         self.collection_id = collection_id
 
 
-class AzureCosmosDBParameterPatchGenerated(msrest.serialization.Model):
+class AzureCosmosDBParameterPatch(msrest.serialization.Model):
     """AzureCosmosDBParameterPatch.
 
     :ivar connection_string: The connection string of this Azure CosmosDB.
@@ -3017,10 +3227,10 @@ class AzureCosmosDBParameterPatchGenerated(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'connection_string': {'key': 'connectionString', 'type': 'str'},
-        'sql_query': {'key': 'sqlQuery', 'type': 'str'},
-        'database': {'key': 'database', 'type': 'str'},
-        'collection_id': {'key': 'collectionId', 'type': 'str'},
+        "connection_string": {"key": "connectionString", "type": "str"},
+        "sql_query": {"key": "sqlQuery", "type": "str"},
+        "database": {"key": "database", "type": "str"},
+        "collection_id": {"key": "collectionId", "type": "str"},
     }
 
     def __init__(
@@ -3042,14 +3252,14 @@ class AzureCosmosDBParameterPatchGenerated(msrest.serialization.Model):
         :keyword collection_id: A collection id in this database.
         :paramtype collection_id: str
         """
-        super(AzureCosmosDBParameterPatchGenerated, self).__init__(**kwargs)
+        super(AzureCosmosDBParameterPatch, self).__init__(**kwargs)
         self.connection_string = connection_string
         self.sql_query = sql_query
         self.database = database
         self.collection_id = collection_id
 
 
-class AzureDataExplorerDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
+class AzureDataExplorerDataFeedPatch(DataFeedDetailPatch):
     """AzureDataExplorerDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -3118,36 +3328,36 @@ class AzureDataExplorerDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
+        "data_source_type": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'status': {'key': 'status', 'type': 'str'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'SQLSourceParameterPatch'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "status": {"key": "status", "type": "str"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
+        "data_source_parameter": {"key": "dataSourceParameter", "type": "SQLSourceParameterPatch"},
     }
 
     def __init__(
@@ -3236,12 +3446,35 @@ class AzureDataExplorerDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.SQLSourceParameterPatch
         """
-        super(AzureDataExplorerDataFeedPatchGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, status=status, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
-        self.data_source_type = 'AzureDataExplorer'  # type: str
+        super(AzureDataExplorerDataFeedPatch, self).__init__(
+            data_feed_name=data_feed_name,
+            data_feed_description=data_feed_description,
+            timestamp_column=timestamp_column,
+            data_start_from=data_start_from,
+            start_offset_in_seconds=start_offset_in_seconds,
+            max_concurrency=max_concurrency,
+            min_retry_interval_in_seconds=min_retry_interval_in_seconds,
+            stop_retry_after_in_seconds=stop_retry_after_in_seconds,
+            need_rollup=need_rollup,
+            roll_up_method=roll_up_method,
+            roll_up_columns=roll_up_columns,
+            all_up_identification=all_up_identification,
+            fill_missing_point_type=fill_missing_point_type,
+            fill_missing_point_value=fill_missing_point_value,
+            view_mode=view_mode,
+            admins=admins,
+            viewers=viewers,
+            status=status,
+            action_link_template=action_link_template,
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
+        self.data_source_type = "AzureDataExplorer"  # type: str
         self.data_source_parameter = data_source_parameter
 
 
-class AzureDataExplorerDataFeedSourceGenerated(DataFeedGenerated):
+class AzureDataExplorerDataFeedSource(DataFeed):
     """AzureDataExplorerDataFeedSource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3329,55 +3562,55 @@ class AzureDataExplorerDataFeedSourceGenerated(DataFeedGenerated):
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'data_feed_id': {'readonly': True},
-        'data_feed_name': {'required': True},
-        'granularity_name': {'required': True},
-        'metrics': {'required': True, 'unique': True},
-        'dimension': {'unique': True},
-        'data_start_from': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
-        'is_admin': {'readonly': True},
-        'creator': {'readonly': True},
-        'status': {'readonly': True},
-        'created_time': {'readonly': True},
-        'data_source_parameter': {'required': True},
+        "data_source_type": {"required": True},
+        "data_feed_id": {"readonly": True},
+        "data_feed_name": {"required": True},
+        "granularity_name": {"required": True},
+        "metrics": {"required": True, "unique": True},
+        "dimension": {"unique": True},
+        "data_start_from": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
+        "is_admin": {"readonly": True},
+        "creator": {"readonly": True},
+        "status": {"readonly": True},
+        "created_time": {"readonly": True},
+        "data_source_parameter": {"required": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_id': {'key': 'dataFeedId', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'granularity_name': {'key': 'granularityName', 'type': 'str'},
-        'granularity_amount': {'key': 'granularityAmount', 'type': 'int'},
-        'metrics': {'key': 'metrics', 'type': '[DataFeedMetric]'},
-        'dimension': {'key': 'dimension', 'type': '[DataFeedDimension]'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'is_admin': {'key': 'isAdmin', 'type': 'bool'},
-        'creator': {'key': 'creator', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'SqlSourceParameter'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_id": {"key": "dataFeedId", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "granularity_name": {"key": "granularityName", "type": "str"},
+        "granularity_amount": {"key": "granularityAmount", "type": "int"},
+        "metrics": {"key": "metrics", "type": "[DataFeedMetric]"},
+        "dimension": {"key": "dimension", "type": "[DataFeedDimension]"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "is_admin": {"key": "isAdmin", "type": "bool"},
+        "creator": {"key": "creator", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
+        "data_source_parameter": {"key": "dataSourceParameter", "type": "SqlSourceParameter"},
     }
 
     def __init__(
@@ -3476,12 +3709,38 @@ class AzureDataExplorerDataFeedSourceGenerated(DataFeedGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.SqlSourceParameter
         """
-        super(AzureDataExplorerDataFeedSourceGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, granularity_name=granularity_name, granularity_amount=granularity_amount, metrics=metrics, dimension=dimension, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
-        self.data_source_type = 'AzureDataExplorer'  # type: str
+        super(AzureDataExplorerDataFeedSource, self).__init__(
+            data_feed_name=data_feed_name,
+            data_feed_description=data_feed_description,
+            granularity_name=granularity_name,
+            granularity_amount=granularity_amount,
+            metrics=metrics,
+            dimension=dimension,
+            timestamp_column=timestamp_column,
+            data_start_from=data_start_from,
+            start_offset_in_seconds=start_offset_in_seconds,
+            max_concurrency=max_concurrency,
+            min_retry_interval_in_seconds=min_retry_interval_in_seconds,
+            stop_retry_after_in_seconds=stop_retry_after_in_seconds,
+            need_rollup=need_rollup,
+            roll_up_method=roll_up_method,
+            roll_up_columns=roll_up_columns,
+            all_up_identification=all_up_identification,
+            fill_missing_point_type=fill_missing_point_type,
+            fill_missing_point_value=fill_missing_point_value,
+            view_mode=view_mode,
+            admins=admins,
+            viewers=viewers,
+            action_link_template=action_link_template,
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
+        self.data_source_type = "AzureDataExplorer"  # type: str
         self.data_source_parameter = data_source_parameter
 
 
-class AzureDataLakeStorageGen2DataFeedPatchGenerated(DataFeedDetailPatchGenerated):
+class AzureDataLakeStorageGen2DataFeedPatch(DataFeedDetailPatch):
     """AzureDataLakeStorageGen2DataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -3551,36 +3810,36 @@ class AzureDataLakeStorageGen2DataFeedPatchGenerated(DataFeedDetailPatchGenerate
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
+        "data_source_type": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'status': {'key': 'status', 'type': 'str'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureDataLakeStorageGen2ParameterPatch'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "status": {"key": "status", "type": "str"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
+        "data_source_parameter": {"key": "dataSourceParameter", "type": "AzureDataLakeStorageGen2ParameterPatch"},
     }
 
     def __init__(
@@ -3670,12 +3929,35 @@ class AzureDataLakeStorageGen2DataFeedPatchGenerated(DataFeedDetailPatchGenerate
         :paramtype data_source_parameter:
          ~azure.ai.metricsadvisor.models.AzureDataLakeStorageGen2ParameterPatch
         """
-        super(AzureDataLakeStorageGen2DataFeedPatchGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, status=status, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
-        self.data_source_type = 'AzureDataLakeStorageGen2'  # type: str
+        super(AzureDataLakeStorageGen2DataFeedPatch, self).__init__(
+            data_feed_name=data_feed_name,
+            data_feed_description=data_feed_description,
+            timestamp_column=timestamp_column,
+            data_start_from=data_start_from,
+            start_offset_in_seconds=start_offset_in_seconds,
+            max_concurrency=max_concurrency,
+            min_retry_interval_in_seconds=min_retry_interval_in_seconds,
+            stop_retry_after_in_seconds=stop_retry_after_in_seconds,
+            need_rollup=need_rollup,
+            roll_up_method=roll_up_method,
+            roll_up_columns=roll_up_columns,
+            all_up_identification=all_up_identification,
+            fill_missing_point_type=fill_missing_point_type,
+            fill_missing_point_value=fill_missing_point_value,
+            view_mode=view_mode,
+            admins=admins,
+            viewers=viewers,
+            status=status,
+            action_link_template=action_link_template,
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
+        self.data_source_type = "AzureDataLakeStorageGen2"  # type: str
         self.data_source_parameter = data_source_parameter
 
 
-class AzureDataLakeStorageGen2DataFeedSourceGenerated(DataFeedGenerated):
+class AzureDataLakeStorageGen2DataFeedSource(DataFeed):
     """AzureDataLakeStorageGen2DataFeedSource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3764,55 +4046,55 @@ class AzureDataLakeStorageGen2DataFeedSourceGenerated(DataFeedGenerated):
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'data_feed_id': {'readonly': True},
-        'data_feed_name': {'required': True},
-        'granularity_name': {'required': True},
-        'metrics': {'required': True, 'unique': True},
-        'dimension': {'unique': True},
-        'data_start_from': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
-        'is_admin': {'readonly': True},
-        'creator': {'readonly': True},
-        'status': {'readonly': True},
-        'created_time': {'readonly': True},
-        'data_source_parameter': {'required': True},
+        "data_source_type": {"required": True},
+        "data_feed_id": {"readonly": True},
+        "data_feed_name": {"required": True},
+        "granularity_name": {"required": True},
+        "metrics": {"required": True, "unique": True},
+        "dimension": {"unique": True},
+        "data_start_from": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
+        "is_admin": {"readonly": True},
+        "creator": {"readonly": True},
+        "status": {"readonly": True},
+        "created_time": {"readonly": True},
+        "data_source_parameter": {"required": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_id': {'key': 'dataFeedId', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'granularity_name': {'key': 'granularityName', 'type': 'str'},
-        'granularity_amount': {'key': 'granularityAmount', 'type': 'int'},
-        'metrics': {'key': 'metrics', 'type': '[DataFeedMetric]'},
-        'dimension': {'key': 'dimension', 'type': '[DataFeedDimension]'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'is_admin': {'key': 'isAdmin', 'type': 'bool'},
-        'creator': {'key': 'creator', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureDataLakeStorageGen2Parameter'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_id": {"key": "dataFeedId", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "granularity_name": {"key": "granularityName", "type": "str"},
+        "granularity_amount": {"key": "granularityAmount", "type": "int"},
+        "metrics": {"key": "metrics", "type": "[DataFeedMetric]"},
+        "dimension": {"key": "dimension", "type": "[DataFeedDimension]"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "is_admin": {"key": "isAdmin", "type": "bool"},
+        "creator": {"key": "creator", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
+        "data_source_parameter": {"key": "dataSourceParameter", "type": "AzureDataLakeStorageGen2Parameter"},
     }
 
     def __init__(
@@ -3912,12 +4194,38 @@ class AzureDataLakeStorageGen2DataFeedSourceGenerated(DataFeedGenerated):
         :paramtype data_source_parameter:
          ~azure.ai.metricsadvisor.models.AzureDataLakeStorageGen2Parameter
         """
-        super(AzureDataLakeStorageGen2DataFeedSourceGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, granularity_name=granularity_name, granularity_amount=granularity_amount, metrics=metrics, dimension=dimension, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
-        self.data_source_type = 'AzureDataLakeStorageGen2'  # type: str
+        super(AzureDataLakeStorageGen2DataFeedSource, self).__init__(
+            data_feed_name=data_feed_name,
+            data_feed_description=data_feed_description,
+            granularity_name=granularity_name,
+            granularity_amount=granularity_amount,
+            metrics=metrics,
+            dimension=dimension,
+            timestamp_column=timestamp_column,
+            data_start_from=data_start_from,
+            start_offset_in_seconds=start_offset_in_seconds,
+            max_concurrency=max_concurrency,
+            min_retry_interval_in_seconds=min_retry_interval_in_seconds,
+            stop_retry_after_in_seconds=stop_retry_after_in_seconds,
+            need_rollup=need_rollup,
+            roll_up_method=roll_up_method,
+            roll_up_columns=roll_up_columns,
+            all_up_identification=all_up_identification,
+            fill_missing_point_type=fill_missing_point_type,
+            fill_missing_point_value=fill_missing_point_value,
+            view_mode=view_mode,
+            admins=admins,
+            viewers=viewers,
+            action_link_template=action_link_template,
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
+        self.data_source_type = "AzureDataLakeStorageGen2"  # type: str
         self.data_source_parameter = data_source_parameter
 
 
-class AzureDataLakeStorageGen2ParameterGenerated(msrest.serialization.Model):
+class AzureDataLakeStorageGen2Parameter(msrest.serialization.Model):
     """AzureDataLakeStorageGen2Parameter.
 
     All required parameters must be populated in order to send to Azure.
@@ -3935,17 +4243,17 @@ class AzureDataLakeStorageGen2ParameterGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'file_system_name': {'required': True},
-        'directory_template': {'required': True},
-        'file_template': {'required': True},
+        "file_system_name": {"required": True},
+        "directory_template": {"required": True},
+        "file_template": {"required": True},
     }
 
     _attribute_map = {
-        'account_name': {'key': 'accountName', 'type': 'str'},
-        'account_key': {'key': 'accountKey', 'type': 'str'},
-        'file_system_name': {'key': 'fileSystemName', 'type': 'str'},
-        'directory_template': {'key': 'directoryTemplate', 'type': 'str'},
-        'file_template': {'key': 'fileTemplate', 'type': 'str'},
+        "account_name": {"key": "accountName", "type": "str"},
+        "account_key": {"key": "accountKey", "type": "str"},
+        "file_system_name": {"key": "fileSystemName", "type": "str"},
+        "directory_template": {"key": "directoryTemplate", "type": "str"},
+        "file_template": {"key": "fileTemplate", "type": "str"},
     }
 
     def __init__(
@@ -3970,7 +4278,7 @@ class AzureDataLakeStorageGen2ParameterGenerated(msrest.serialization.Model):
         :keyword file_template: Required. The file template.
         :paramtype file_template: str
         """
-        super(AzureDataLakeStorageGen2ParameterGenerated, self).__init__(**kwargs)
+        super(AzureDataLakeStorageGen2Parameter, self).__init__(**kwargs)
         self.account_name = account_name
         self.account_key = account_key
         self.file_system_name = file_system_name
@@ -3978,7 +4286,7 @@ class AzureDataLakeStorageGen2ParameterGenerated(msrest.serialization.Model):
         self.file_template = file_template
 
 
-class AzureDataLakeStorageGen2ParameterPatchGenerated(msrest.serialization.Model):
+class AzureDataLakeStorageGen2ParameterPatch(msrest.serialization.Model):
     """AzureDataLakeStorageGen2ParameterPatch.
 
     :ivar account_name: The account name of this Azure Data Lake.
@@ -3994,11 +4302,11 @@ class AzureDataLakeStorageGen2ParameterPatchGenerated(msrest.serialization.Model
     """
 
     _attribute_map = {
-        'account_name': {'key': 'accountName', 'type': 'str'},
-        'account_key': {'key': 'accountKey', 'type': 'str'},
-        'file_system_name': {'key': 'fileSystemName', 'type': 'str'},
-        'directory_template': {'key': 'directoryTemplate', 'type': 'str'},
-        'file_template': {'key': 'fileTemplate', 'type': 'str'},
+        "account_name": {"key": "accountName", "type": "str"},
+        "account_key": {"key": "accountKey", "type": "str"},
+        "file_system_name": {"key": "fileSystemName", "type": "str"},
+        "directory_template": {"key": "directoryTemplate", "type": "str"},
+        "file_template": {"key": "fileTemplate", "type": "str"},
     }
 
     def __init__(
@@ -4023,7 +4331,7 @@ class AzureDataLakeStorageGen2ParameterPatchGenerated(msrest.serialization.Model
         :keyword file_template: The file template.
         :paramtype file_template: str
         """
-        super(AzureDataLakeStorageGen2ParameterPatchGenerated, self).__init__(**kwargs)
+        super(AzureDataLakeStorageGen2ParameterPatch, self).__init__(**kwargs)
         self.account_name = account_name
         self.account_key = account_key
         self.file_system_name = file_system_name
@@ -4031,7 +4339,7 @@ class AzureDataLakeStorageGen2ParameterPatchGenerated(msrest.serialization.Model
         self.file_template = file_template
 
 
-class AzureEventHubsDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
+class AzureEventHubsDataFeedPatch(DataFeedDetailPatch):
     """AzureEventHubsDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -4100,36 +4408,36 @@ class AzureEventHubsDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
+        "data_source_type": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'status': {'key': 'status', 'type': 'str'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureEventHubsParameterPatch'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "status": {"key": "status", "type": "str"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
+        "data_source_parameter": {"key": "dataSourceParameter", "type": "AzureEventHubsParameterPatch"},
     }
 
     def __init__(
@@ -4218,12 +4526,35 @@ class AzureEventHubsDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.AzureEventHubsParameterPatch
         """
-        super(AzureEventHubsDataFeedPatchGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, status=status, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
-        self.data_source_type = 'AzureEventHubs'  # type: str
+        super(AzureEventHubsDataFeedPatch, self).__init__(
+            data_feed_name=data_feed_name,
+            data_feed_description=data_feed_description,
+            timestamp_column=timestamp_column,
+            data_start_from=data_start_from,
+            start_offset_in_seconds=start_offset_in_seconds,
+            max_concurrency=max_concurrency,
+            min_retry_interval_in_seconds=min_retry_interval_in_seconds,
+            stop_retry_after_in_seconds=stop_retry_after_in_seconds,
+            need_rollup=need_rollup,
+            roll_up_method=roll_up_method,
+            roll_up_columns=roll_up_columns,
+            all_up_identification=all_up_identification,
+            fill_missing_point_type=fill_missing_point_type,
+            fill_missing_point_value=fill_missing_point_value,
+            view_mode=view_mode,
+            admins=admins,
+            viewers=viewers,
+            status=status,
+            action_link_template=action_link_template,
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
+        self.data_source_type = "AzureEventHubs"  # type: str
         self.data_source_parameter = data_source_parameter
 
 
-class AzureEventHubsDataFeedSourceGenerated(DataFeedGenerated):
+class AzureEventHubsDataFeedSource(DataFeed):
     """AzureEventHubsDataFeedSource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4311,55 +4642,55 @@ class AzureEventHubsDataFeedSourceGenerated(DataFeedGenerated):
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'data_feed_id': {'readonly': True},
-        'data_feed_name': {'required': True},
-        'granularity_name': {'required': True},
-        'metrics': {'required': True, 'unique': True},
-        'dimension': {'unique': True},
-        'data_start_from': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
-        'is_admin': {'readonly': True},
-        'creator': {'readonly': True},
-        'status': {'readonly': True},
-        'created_time': {'readonly': True},
-        'data_source_parameter': {'required': True},
+        "data_source_type": {"required": True},
+        "data_feed_id": {"readonly": True},
+        "data_feed_name": {"required": True},
+        "granularity_name": {"required": True},
+        "metrics": {"required": True, "unique": True},
+        "dimension": {"unique": True},
+        "data_start_from": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
+        "is_admin": {"readonly": True},
+        "creator": {"readonly": True},
+        "status": {"readonly": True},
+        "created_time": {"readonly": True},
+        "data_source_parameter": {"required": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_id': {'key': 'dataFeedId', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'granularity_name': {'key': 'granularityName', 'type': 'str'},
-        'granularity_amount': {'key': 'granularityAmount', 'type': 'int'},
-        'metrics': {'key': 'metrics', 'type': '[DataFeedMetric]'},
-        'dimension': {'key': 'dimension', 'type': '[DataFeedDimension]'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'is_admin': {'key': 'isAdmin', 'type': 'bool'},
-        'creator': {'key': 'creator', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureEventHubsParameter'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_id": {"key": "dataFeedId", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "granularity_name": {"key": "granularityName", "type": "str"},
+        "granularity_amount": {"key": "granularityAmount", "type": "int"},
+        "metrics": {"key": "metrics", "type": "[DataFeedMetric]"},
+        "dimension": {"key": "dimension", "type": "[DataFeedDimension]"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "is_admin": {"key": "isAdmin", "type": "bool"},
+        "creator": {"key": "creator", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
+        "data_source_parameter": {"key": "dataSourceParameter", "type": "AzureEventHubsParameter"},
     }
 
     def __init__(
@@ -4458,12 +4789,38 @@ class AzureEventHubsDataFeedSourceGenerated(DataFeedGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.AzureEventHubsParameter
         """
-        super(AzureEventHubsDataFeedSourceGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, granularity_name=granularity_name, granularity_amount=granularity_amount, metrics=metrics, dimension=dimension, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
-        self.data_source_type = 'AzureEventHubs'  # type: str
+        super(AzureEventHubsDataFeedSource, self).__init__(
+            data_feed_name=data_feed_name,
+            data_feed_description=data_feed_description,
+            granularity_name=granularity_name,
+            granularity_amount=granularity_amount,
+            metrics=metrics,
+            dimension=dimension,
+            timestamp_column=timestamp_column,
+            data_start_from=data_start_from,
+            start_offset_in_seconds=start_offset_in_seconds,
+            max_concurrency=max_concurrency,
+            min_retry_interval_in_seconds=min_retry_interval_in_seconds,
+            stop_retry_after_in_seconds=stop_retry_after_in_seconds,
+            need_rollup=need_rollup,
+            roll_up_method=roll_up_method,
+            roll_up_columns=roll_up_columns,
+            all_up_identification=all_up_identification,
+            fill_missing_point_type=fill_missing_point_type,
+            fill_missing_point_value=fill_missing_point_value,
+            view_mode=view_mode,
+            admins=admins,
+            viewers=viewers,
+            action_link_template=action_link_template,
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
+        self.data_source_type = "AzureEventHubs"  # type: str
         self.data_source_parameter = data_source_parameter
 
 
-class AzureEventHubsParameterGenerated(msrest.serialization.Model):
+class AzureEventHubsParameter(msrest.serialization.Model):
     """AzureEventHubsParameter.
 
     All required parameters must be populated in order to send to Azure.
@@ -4475,33 +4832,27 @@ class AzureEventHubsParameterGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'consumer_group': {'required': True},
+        "consumer_group": {"required": True},
     }
 
     _attribute_map = {
-        'connection_string': {'key': 'connectionString', 'type': 'str'},
-        'consumer_group': {'key': 'consumerGroup', 'type': 'str'},
+        "connection_string": {"key": "connectionString", "type": "str"},
+        "consumer_group": {"key": "consumerGroup", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        consumer_group: str,
-        connection_string: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, consumer_group: str, connection_string: Optional[str] = None, **kwargs):
         """
         :keyword connection_string: The connection string of this Azure Event Hubs.
         :paramtype connection_string: str
         :keyword consumer_group: Required. The consumer group to be used in this data feed.
         :paramtype consumer_group: str
         """
-        super(AzureEventHubsParameterGenerated, self).__init__(**kwargs)
+        super(AzureEventHubsParameter, self).__init__(**kwargs)
         self.connection_string = connection_string
         self.consumer_group = consumer_group
 
 
-class AzureEventHubsParameterPatchGenerated(msrest.serialization.Model):
+class AzureEventHubsParameterPatch(msrest.serialization.Model):
     """AzureEventHubsParameterPatch.
 
     :ivar connection_string: The connection string of this Azure Event Hubs.
@@ -4511,29 +4862,23 @@ class AzureEventHubsParameterPatchGenerated(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'connection_string': {'key': 'connectionString', 'type': 'str'},
-        'consumer_group': {'key': 'consumerGroup', 'type': 'str'},
+        "connection_string": {"key": "connectionString", "type": "str"},
+        "consumer_group": {"key": "consumerGroup", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        connection_string: Optional[str] = None,
-        consumer_group: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, connection_string: Optional[str] = None, consumer_group: Optional[str] = None, **kwargs):
         """
         :keyword connection_string: The connection string of this Azure Event Hubs.
         :paramtype connection_string: str
         :keyword consumer_group: The consumer group to be used in this data feed.
         :paramtype consumer_group: str
         """
-        super(AzureEventHubsParameterPatchGenerated, self).__init__(**kwargs)
+        super(AzureEventHubsParameterPatch, self).__init__(**kwargs)
         self.connection_string = connection_string
         self.consumer_group = consumer_group
 
 
-class AzureLogAnalyticsDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
+class AzureLogAnalyticsDataFeedPatch(DataFeedDetailPatch):
     """AzureLogAnalyticsDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -4602,36 +4947,36 @@ class AzureLogAnalyticsDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
+        "data_source_type": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'status': {'key': 'status', 'type': 'str'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureLogAnalyticsParameterPatch'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "status": {"key": "status", "type": "str"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
+        "data_source_parameter": {"key": "dataSourceParameter", "type": "AzureLogAnalyticsParameterPatch"},
     }
 
     def __init__(
@@ -4721,12 +5066,35 @@ class AzureLogAnalyticsDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         :paramtype data_source_parameter:
          ~azure.ai.metricsadvisor.models.AzureLogAnalyticsParameterPatch
         """
-        super(AzureLogAnalyticsDataFeedPatchGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, status=status, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
-        self.data_source_type = 'AzureLogAnalytics'  # type: str
+        super(AzureLogAnalyticsDataFeedPatch, self).__init__(
+            data_feed_name=data_feed_name,
+            data_feed_description=data_feed_description,
+            timestamp_column=timestamp_column,
+            data_start_from=data_start_from,
+            start_offset_in_seconds=start_offset_in_seconds,
+            max_concurrency=max_concurrency,
+            min_retry_interval_in_seconds=min_retry_interval_in_seconds,
+            stop_retry_after_in_seconds=stop_retry_after_in_seconds,
+            need_rollup=need_rollup,
+            roll_up_method=roll_up_method,
+            roll_up_columns=roll_up_columns,
+            all_up_identification=all_up_identification,
+            fill_missing_point_type=fill_missing_point_type,
+            fill_missing_point_value=fill_missing_point_value,
+            view_mode=view_mode,
+            admins=admins,
+            viewers=viewers,
+            status=status,
+            action_link_template=action_link_template,
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
+        self.data_source_type = "AzureLogAnalytics"  # type: str
         self.data_source_parameter = data_source_parameter
 
 
-class AzureLogAnalyticsDataFeedSourceGenerated(DataFeedGenerated):
+class AzureLogAnalyticsDataFeedSource(DataFeed):
     """AzureLogAnalyticsDataFeedSource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4814,55 +5182,55 @@ class AzureLogAnalyticsDataFeedSourceGenerated(DataFeedGenerated):
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'data_feed_id': {'readonly': True},
-        'data_feed_name': {'required': True},
-        'granularity_name': {'required': True},
-        'metrics': {'required': True, 'unique': True},
-        'dimension': {'unique': True},
-        'data_start_from': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
-        'is_admin': {'readonly': True},
-        'creator': {'readonly': True},
-        'status': {'readonly': True},
-        'created_time': {'readonly': True},
-        'data_source_parameter': {'required': True},
+        "data_source_type": {"required": True},
+        "data_feed_id": {"readonly": True},
+        "data_feed_name": {"required": True},
+        "granularity_name": {"required": True},
+        "metrics": {"required": True, "unique": True},
+        "dimension": {"unique": True},
+        "data_start_from": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
+        "is_admin": {"readonly": True},
+        "creator": {"readonly": True},
+        "status": {"readonly": True},
+        "created_time": {"readonly": True},
+        "data_source_parameter": {"required": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_id': {'key': 'dataFeedId', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'granularity_name': {'key': 'granularityName', 'type': 'str'},
-        'granularity_amount': {'key': 'granularityAmount', 'type': 'int'},
-        'metrics': {'key': 'metrics', 'type': '[DataFeedMetric]'},
-        'dimension': {'key': 'dimension', 'type': '[DataFeedDimension]'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'is_admin': {'key': 'isAdmin', 'type': 'bool'},
-        'creator': {'key': 'creator', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureLogAnalyticsParameter'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_id": {"key": "dataFeedId", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "granularity_name": {"key": "granularityName", "type": "str"},
+        "granularity_amount": {"key": "granularityAmount", "type": "int"},
+        "metrics": {"key": "metrics", "type": "[DataFeedMetric]"},
+        "dimension": {"key": "dimension", "type": "[DataFeedDimension]"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "is_admin": {"key": "isAdmin", "type": "bool"},
+        "creator": {"key": "creator", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
+        "data_source_parameter": {"key": "dataSourceParameter", "type": "AzureLogAnalyticsParameter"},
     }
 
     def __init__(
@@ -4961,12 +5329,38 @@ class AzureLogAnalyticsDataFeedSourceGenerated(DataFeedGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.AzureLogAnalyticsParameter
         """
-        super(AzureLogAnalyticsDataFeedSourceGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, granularity_name=granularity_name, granularity_amount=granularity_amount, metrics=metrics, dimension=dimension, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
-        self.data_source_type = 'AzureLogAnalytics'  # type: str
+        super(AzureLogAnalyticsDataFeedSource, self).__init__(
+            data_feed_name=data_feed_name,
+            data_feed_description=data_feed_description,
+            granularity_name=granularity_name,
+            granularity_amount=granularity_amount,
+            metrics=metrics,
+            dimension=dimension,
+            timestamp_column=timestamp_column,
+            data_start_from=data_start_from,
+            start_offset_in_seconds=start_offset_in_seconds,
+            max_concurrency=max_concurrency,
+            min_retry_interval_in_seconds=min_retry_interval_in_seconds,
+            stop_retry_after_in_seconds=stop_retry_after_in_seconds,
+            need_rollup=need_rollup,
+            roll_up_method=roll_up_method,
+            roll_up_columns=roll_up_columns,
+            all_up_identification=all_up_identification,
+            fill_missing_point_type=fill_missing_point_type,
+            fill_missing_point_value=fill_missing_point_value,
+            view_mode=view_mode,
+            admins=admins,
+            viewers=viewers,
+            action_link_template=action_link_template,
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
+        self.data_source_type = "AzureLogAnalytics"  # type: str
         self.data_source_parameter = data_source_parameter
 
 
-class AzureLogAnalyticsParameterGenerated(msrest.serialization.Model):
+class AzureLogAnalyticsParameter(msrest.serialization.Model):
     """AzureLogAnalyticsParameter.
 
     All required parameters must be populated in order to send to Azure.
@@ -4986,16 +5380,16 @@ class AzureLogAnalyticsParameterGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'workspace_id': {'required': True},
-        'query': {'required': True},
+        "workspace_id": {"required": True},
+        "query": {"required": True},
     }
 
     _attribute_map = {
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
-        'client_secret': {'key': 'clientSecret', 'type': 'str'},
-        'workspace_id': {'key': 'workspaceId', 'type': 'str'},
-        'query': {'key': 'query', 'type': 'str'},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+        "client_secret": {"key": "clientSecret", "type": "str"},
+        "workspace_id": {"key": "workspaceId", "type": "str"},
+        "query": {"key": "query", "type": "str"},
     }
 
     def __init__(
@@ -5022,7 +5416,7 @@ class AzureLogAnalyticsParameterGenerated(msrest.serialization.Model):
          Analytics.
         :paramtype query: str
         """
-        super(AzureLogAnalyticsParameterGenerated, self).__init__(**kwargs)
+        super(AzureLogAnalyticsParameter, self).__init__(**kwargs)
         self.tenant_id = tenant_id
         self.client_id = client_id
         self.client_secret = client_secret
@@ -5030,7 +5424,7 @@ class AzureLogAnalyticsParameterGenerated(msrest.serialization.Model):
         self.query = query
 
 
-class AzureLogAnalyticsParameterPatchGenerated(msrest.serialization.Model):
+class AzureLogAnalyticsParameterPatch(msrest.serialization.Model):
     """AzureLogAnalyticsParameterPatch.
 
     :ivar tenant_id: The tenant id of service principal that have access to this Log Analytics.
@@ -5047,11 +5441,11 @@ class AzureLogAnalyticsParameterPatchGenerated(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
-        'client_secret': {'key': 'clientSecret', 'type': 'str'},
-        'workspace_id': {'key': 'workspaceId', 'type': 'str'},
-        'query': {'key': 'query', 'type': 'str'},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+        "client_secret": {"key": "clientSecret", "type": "str"},
+        "workspace_id": {"key": "workspaceId", "type": "str"},
+        "query": {"key": "query", "type": "str"},
     }
 
     def __init__(
@@ -5077,7 +5471,7 @@ class AzureLogAnalyticsParameterPatchGenerated(msrest.serialization.Model):
         :keyword query: The KQL (Kusto Query Language) query to fetch data from this Log Analytics.
         :paramtype query: str
         """
-        super(AzureLogAnalyticsParameterPatchGenerated, self).__init__(**kwargs)
+        super(AzureLogAnalyticsParameterPatch, self).__init__(**kwargs)
         self.tenant_id = tenant_id
         self.client_id = client_id
         self.client_secret = client_secret
@@ -5085,7 +5479,7 @@ class AzureLogAnalyticsParameterPatchGenerated(msrest.serialization.Model):
         self.query = query
 
 
-class DataSourceCredentialPatchGenerated(msrest.serialization.Model):
+class DataSourceCredentialPatch(msrest.serialization.Model):
     """DataSourceCredentialPatch.
 
     You probably want to use the sub-classes and not this class directly. Known
@@ -5105,17 +5499,22 @@ class DataSourceCredentialPatchGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'data_source_credential_type': {'required': True},
+        "data_source_credential_type": {"required": True},
     }
 
     _attribute_map = {
-        'data_source_credential_type': {'key': 'dataSourceCredentialType', 'type': 'str'},
-        'data_source_credential_name': {'key': 'dataSourceCredentialName', 'type': 'str'},
-        'data_source_credential_description': {'key': 'dataSourceCredentialDescription', 'type': 'str'},
+        "data_source_credential_type": {"key": "dataSourceCredentialType", "type": "str"},
+        "data_source_credential_name": {"key": "dataSourceCredentialName", "type": "str"},
+        "data_source_credential_description": {"key": "dataSourceCredentialDescription", "type": "str"},
     }
 
     _subtype_map = {
-        'data_source_credential_type': {'AzureSQLConnectionString': 'AzureSQLConnectionStringCredentialPatch', 'DataLakeGen2SharedKey': 'DataLakeGen2SharedKeyCredentialPatch', 'ServicePrincipal': 'ServicePrincipalCredentialPatch', 'ServicePrincipalInKV': 'ServicePrincipalInKVCredentialPatch'}
+        "data_source_credential_type": {
+            "AzureSQLConnectionString": "AzureSQLConnectionStringCredentialPatch",
+            "DataLakeGen2SharedKey": "DataLakeGen2SharedKeyCredentialPatch",
+            "ServicePrincipal": "ServicePrincipalCredentialPatch",
+            "ServicePrincipalInKV": "ServicePrincipalInKVCredentialPatch",
+        }
     }
 
     def __init__(
@@ -5131,13 +5530,13 @@ class DataSourceCredentialPatchGenerated(msrest.serialization.Model):
         :keyword data_source_credential_description: Description of data source credential.
         :paramtype data_source_credential_description: str
         """
-        super(DataSourceCredentialPatchGenerated, self).__init__(**kwargs)
+        super(DataSourceCredentialPatch, self).__init__(**kwargs)
         self.data_source_credential_type = None  # type: Optional[str]
         self.data_source_credential_name = data_source_credential_name
         self.data_source_credential_description = data_source_credential_description
 
 
-class AzureSQLConnectionStringCredentialPatchGenerated(DataSourceCredentialPatchGenerated):
+class AzureSQLConnectionStringCredentialPatch(DataSourceCredentialPatch):
     """AzureSQLConnectionStringCredentialPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -5156,14 +5555,14 @@ class AzureSQLConnectionStringCredentialPatchGenerated(DataSourceCredentialPatch
     """
 
     _validation = {
-        'data_source_credential_type': {'required': True},
+        "data_source_credential_type": {"required": True},
     }
 
     _attribute_map = {
-        'data_source_credential_type': {'key': 'dataSourceCredentialType', 'type': 'str'},
-        'data_source_credential_name': {'key': 'dataSourceCredentialName', 'type': 'str'},
-        'data_source_credential_description': {'key': 'dataSourceCredentialDescription', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'AzureSQLConnectionStringParamPatch'},
+        "data_source_credential_type": {"key": "dataSourceCredentialType", "type": "str"},
+        "data_source_credential_name": {"key": "dataSourceCredentialName", "type": "str"},
+        "data_source_credential_description": {"key": "dataSourceCredentialDescription", "type": "str"},
+        "parameters": {"key": "parameters", "type": "AzureSQLConnectionStringParamPatch"},
     }
 
     def __init__(
@@ -5182,12 +5581,16 @@ class AzureSQLConnectionStringCredentialPatchGenerated(DataSourceCredentialPatch
         :keyword parameters:
         :paramtype parameters: ~azure.ai.metricsadvisor.models.AzureSQLConnectionStringParamPatch
         """
-        super(AzureSQLConnectionStringCredentialPatchGenerated, self).__init__(data_source_credential_name=data_source_credential_name, data_source_credential_description=data_source_credential_description, **kwargs)
-        self.data_source_credential_type = 'AzureSQLConnectionString'  # type: str
+        super(AzureSQLConnectionStringCredentialPatch, self).__init__(
+            data_source_credential_name=data_source_credential_name,
+            data_source_credential_description=data_source_credential_description,
+            **kwargs
+        )
+        self.data_source_credential_type = "AzureSQLConnectionString"  # type: str
         self.parameters = parameters
 
 
-class AzureSQLConnectionStringParamGenerated(msrest.serialization.Model):
+class AzureSQLConnectionStringParam(msrest.serialization.Model):
     """AzureSQLConnectionStringParam.
 
     :ivar connection_string: The connection string to access the Azure SQL.
@@ -5195,24 +5598,19 @@ class AzureSQLConnectionStringParamGenerated(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'connection_string': {'key': 'connectionString', 'type': 'str'},
+        "connection_string": {"key": "connectionString", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        connection_string: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, connection_string: Optional[str] = None, **kwargs):
         """
         :keyword connection_string: The connection string to access the Azure SQL.
         :paramtype connection_string: str
         """
-        super(AzureSQLConnectionStringParamGenerated, self).__init__(**kwargs)
+        super(AzureSQLConnectionStringParam, self).__init__(**kwargs)
         self.connection_string = connection_string
 
 
-class AzureSQLConnectionStringParamPatchGenerated(msrest.serialization.Model):
+class AzureSQLConnectionStringParamPatch(msrest.serialization.Model):
     """AzureSQLConnectionStringParamPatch.
 
     :ivar connection_string: The connection string to access the Azure SQL.
@@ -5220,24 +5618,19 @@ class AzureSQLConnectionStringParamPatchGenerated(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'connection_string': {'key': 'connectionString', 'type': 'str'},
+        "connection_string": {"key": "connectionString", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        connection_string: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, connection_string: Optional[str] = None, **kwargs):
         """
         :keyword connection_string: The connection string to access the Azure SQL.
         :paramtype connection_string: str
         """
-        super(AzureSQLConnectionStringParamPatchGenerated, self).__init__(**kwargs)
+        super(AzureSQLConnectionStringParamPatch, self).__init__(**kwargs)
         self.connection_string = connection_string
 
 
-class AzureTableDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
+class AzureTableDataFeedPatch(DataFeedDetailPatch):
     """AzureTableDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -5306,36 +5699,36 @@ class AzureTableDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
+        "data_source_type": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'status': {'key': 'status', 'type': 'str'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureTableParameterPatch'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "status": {"key": "status", "type": "str"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
+        "data_source_parameter": {"key": "dataSourceParameter", "type": "AzureTableParameterPatch"},
     }
 
     def __init__(
@@ -5424,12 +5817,35 @@ class AzureTableDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.AzureTableParameterPatch
         """
-        super(AzureTableDataFeedPatchGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, status=status, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
-        self.data_source_type = 'AzureTable'  # type: str
+        super(AzureTableDataFeedPatch, self).__init__(
+            data_feed_name=data_feed_name,
+            data_feed_description=data_feed_description,
+            timestamp_column=timestamp_column,
+            data_start_from=data_start_from,
+            start_offset_in_seconds=start_offset_in_seconds,
+            max_concurrency=max_concurrency,
+            min_retry_interval_in_seconds=min_retry_interval_in_seconds,
+            stop_retry_after_in_seconds=stop_retry_after_in_seconds,
+            need_rollup=need_rollup,
+            roll_up_method=roll_up_method,
+            roll_up_columns=roll_up_columns,
+            all_up_identification=all_up_identification,
+            fill_missing_point_type=fill_missing_point_type,
+            fill_missing_point_value=fill_missing_point_value,
+            view_mode=view_mode,
+            admins=admins,
+            viewers=viewers,
+            status=status,
+            action_link_template=action_link_template,
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
+        self.data_source_type = "AzureTable"  # type: str
         self.data_source_parameter = data_source_parameter
 
 
-class AzureTableDataFeedSourceGenerated(DataFeedGenerated):
+class AzureTableDataFeedSource(DataFeed):
     """AzureTableDataFeedSource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5517,55 +5933,55 @@ class AzureTableDataFeedSourceGenerated(DataFeedGenerated):
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'data_feed_id': {'readonly': True},
-        'data_feed_name': {'required': True},
-        'granularity_name': {'required': True},
-        'metrics': {'required': True, 'unique': True},
-        'dimension': {'unique': True},
-        'data_start_from': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
-        'is_admin': {'readonly': True},
-        'creator': {'readonly': True},
-        'status': {'readonly': True},
-        'created_time': {'readonly': True},
-        'data_source_parameter': {'required': True},
+        "data_source_type": {"required": True},
+        "data_feed_id": {"readonly": True},
+        "data_feed_name": {"required": True},
+        "granularity_name": {"required": True},
+        "metrics": {"required": True, "unique": True},
+        "dimension": {"unique": True},
+        "data_start_from": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
+        "is_admin": {"readonly": True},
+        "creator": {"readonly": True},
+        "status": {"readonly": True},
+        "created_time": {"readonly": True},
+        "data_source_parameter": {"required": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_id': {'key': 'dataFeedId', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'granularity_name': {'key': 'granularityName', 'type': 'str'},
-        'granularity_amount': {'key': 'granularityAmount', 'type': 'int'},
-        'metrics': {'key': 'metrics', 'type': '[DataFeedMetric]'},
-        'dimension': {'key': 'dimension', 'type': '[DataFeedDimension]'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'is_admin': {'key': 'isAdmin', 'type': 'bool'},
-        'creator': {'key': 'creator', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'AzureTableParameter'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_id": {"key": "dataFeedId", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "granularity_name": {"key": "granularityName", "type": "str"},
+        "granularity_amount": {"key": "granularityAmount", "type": "int"},
+        "metrics": {"key": "metrics", "type": "[DataFeedMetric]"},
+        "dimension": {"key": "dimension", "type": "[DataFeedDimension]"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "is_admin": {"key": "isAdmin", "type": "bool"},
+        "creator": {"key": "creator", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
+        "data_source_parameter": {"key": "dataSourceParameter", "type": "AzureTableParameter"},
     }
 
     def __init__(
@@ -5664,12 +6080,38 @@ class AzureTableDataFeedSourceGenerated(DataFeedGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.AzureTableParameter
         """
-        super(AzureTableDataFeedSourceGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, granularity_name=granularity_name, granularity_amount=granularity_amount, metrics=metrics, dimension=dimension, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
-        self.data_source_type = 'AzureTable'  # type: str
+        super(AzureTableDataFeedSource, self).__init__(
+            data_feed_name=data_feed_name,
+            data_feed_description=data_feed_description,
+            granularity_name=granularity_name,
+            granularity_amount=granularity_amount,
+            metrics=metrics,
+            dimension=dimension,
+            timestamp_column=timestamp_column,
+            data_start_from=data_start_from,
+            start_offset_in_seconds=start_offset_in_seconds,
+            max_concurrency=max_concurrency,
+            min_retry_interval_in_seconds=min_retry_interval_in_seconds,
+            stop_retry_after_in_seconds=stop_retry_after_in_seconds,
+            need_rollup=need_rollup,
+            roll_up_method=roll_up_method,
+            roll_up_columns=roll_up_columns,
+            all_up_identification=all_up_identification,
+            fill_missing_point_type=fill_missing_point_type,
+            fill_missing_point_value=fill_missing_point_value,
+            view_mode=view_mode,
+            admins=admins,
+            viewers=viewers,
+            action_link_template=action_link_template,
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
+        self.data_source_type = "AzureTable"  # type: str
         self.data_source_parameter = data_source_parameter
 
 
-class AzureTableParameterGenerated(msrest.serialization.Model):
+class AzureTableParameter(msrest.serialization.Model):
     """AzureTableParameter.
 
     All required parameters must be populated in order to send to Azure.
@@ -5684,24 +6126,17 @@ class AzureTableParameterGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'table': {'required': True},
-        'query': {'required': True},
+        "table": {"required": True},
+        "query": {"required": True},
     }
 
     _attribute_map = {
-        'connection_string': {'key': 'connectionString', 'type': 'str'},
-        'table': {'key': 'table', 'type': 'str'},
-        'query': {'key': 'query', 'type': 'str'},
+        "connection_string": {"key": "connectionString", "type": "str"},
+        "table": {"key": "table", "type": "str"},
+        "query": {"key": "query", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        table: str,
-        query: str,
-        connection_string: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, table: str, query: str, connection_string: Optional[str] = None, **kwargs):
         """
         :keyword connection_string: The connection string of this Azure Table.
         :paramtype connection_string: str
@@ -5711,13 +6146,13 @@ class AzureTableParameterGenerated(msrest.serialization.Model):
          from Azure Table documents.
         :paramtype query: str
         """
-        super(AzureTableParameterGenerated, self).__init__(**kwargs)
+        super(AzureTableParameter, self).__init__(**kwargs)
         self.connection_string = connection_string
         self.table = table
         self.query = query
 
 
-class AzureTableParameterPatchGenerated(msrest.serialization.Model):
+class AzureTableParameterPatch(msrest.serialization.Model):
     """AzureTableParameterPatch.
 
     :ivar connection_string: The connection string of this Azure Table.
@@ -5730,9 +6165,9 @@ class AzureTableParameterPatchGenerated(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'connection_string': {'key': 'connectionString', 'type': 'str'},
-        'table': {'key': 'table', 'type': 'str'},
-        'query': {'key': 'query', 'type': 'str'},
+        "connection_string": {"key": "connectionString", "type": "str"},
+        "table": {"key": "table", "type": "str"},
+        "query": {"key": "query", "type": "str"},
     }
 
     def __init__(
@@ -5752,13 +6187,13 @@ class AzureTableParameterPatchGenerated(msrest.serialization.Model):
          Table documents.
         :paramtype query: str
         """
-        super(AzureTableParameterPatchGenerated, self).__init__(**kwargs)
+        super(AzureTableParameterPatch, self).__init__(**kwargs)
         self.connection_string = connection_string
         self.table = table
         self.query = query
 
 
-class ChangePointFeedbackGenerated(MetricFeedbackGenerated):
+class ChangePointFeedback(MetricFeedback):
     """ChangePointFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5788,27 +6223,27 @@ class ChangePointFeedbackGenerated(MetricFeedbackGenerated):
     """
 
     _validation = {
-        'feedback_type': {'required': True},
-        'feedback_id': {'readonly': True},
-        'created_time': {'readonly': True},
-        'user_principal': {'readonly': True},
-        'metric_id': {'required': True},
-        'dimension_filter': {'required': True},
-        'start_time': {'required': True},
-        'end_time': {'required': True},
-        'value': {'required': True},
+        "feedback_type": {"required": True},
+        "feedback_id": {"readonly": True},
+        "created_time": {"readonly": True},
+        "user_principal": {"readonly": True},
+        "metric_id": {"required": True},
+        "dimension_filter": {"required": True},
+        "start_time": {"required": True},
+        "end_time": {"required": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'feedback_type': {'key': 'feedbackType', 'type': 'str'},
-        'feedback_id': {'key': 'feedbackId', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'user_principal': {'key': 'userPrincipal', 'type': 'str'},
-        'metric_id': {'key': 'metricId', 'type': 'str'},
-        'dimension_filter': {'key': 'dimensionFilter', 'type': 'FeedbackDimensionFilter'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'value': {'key': 'value', 'type': 'ChangePointFeedbackValue'},
+        "feedback_type": {"key": "feedbackType", "type": "str"},
+        "feedback_id": {"key": "feedbackId", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "user_principal": {"key": "userPrincipal", "type": "str"},
+        "metric_id": {"key": "metricId", "type": "str"},
+        "dimension_filter": {"key": "dimensionFilter", "type": "FeedbackDimensionFilter"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "value": {"key": "value", "type": "ChangePointFeedbackValue"},
     }
 
     def __init__(
@@ -5834,14 +6269,14 @@ class ChangePointFeedbackGenerated(MetricFeedbackGenerated):
         :keyword value: Required.
         :paramtype value: ~azure.ai.metricsadvisor.models.ChangePointFeedbackValue
         """
-        super(ChangePointFeedbackGenerated, self).__init__(metric_id=metric_id, dimension_filter=dimension_filter, **kwargs)
-        self.feedback_type = 'ChangePoint'  # type: str
+        super(ChangePointFeedback, self).__init__(metric_id=metric_id, dimension_filter=dimension_filter, **kwargs)
+        self.feedback_type = "ChangePoint"  # type: str
         self.start_time = start_time
         self.end_time = end_time
         self.value = value
 
 
-class ChangePointFeedbackValueGenerated(msrest.serialization.Model):
+class ChangePointFeedbackValue(msrest.serialization.Model):
     """ChangePointFeedbackValue.
 
     All required parameters must be populated in order to send to Azure.
@@ -5852,29 +6287,24 @@ class ChangePointFeedbackValueGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'change_point_value': {'required': True},
+        "change_point_value": {"required": True},
     }
 
     _attribute_map = {
-        'change_point_value': {'key': 'changePointValue', 'type': 'str'},
+        "change_point_value": {"key": "changePointValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        change_point_value: Union[str, "ChangePointValue"],
-        **kwargs
-    ):
+    def __init__(self, *, change_point_value: Union[str, "ChangePointValue"], **kwargs):
         """
         :keyword change_point_value: Required. Possible values include: "AutoDetect", "ChangePoint",
          "NotChangePoint".
         :paramtype change_point_value: str or ~azure.ai.metricsadvisor.models.ChangePointValue
         """
-        super(ChangePointFeedbackValueGenerated, self).__init__(**kwargs)
+        super(ChangePointFeedbackValue, self).__init__(**kwargs)
         self.change_point_value = change_point_value
 
 
-class ChangeThresholdConditionGenerated(msrest.serialization.Model):
+class ChangeThresholdCondition(msrest.serialization.Model):
     """ChangeThresholdCondition.
 
     All required parameters must be populated in order to send to Azure.
@@ -5896,19 +6326,19 @@ class ChangeThresholdConditionGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'change_percentage': {'required': True},
-        'shift_point': {'required': True},
-        'within_range': {'required': True},
-        'anomaly_detector_direction': {'required': True},
-        'suppress_condition': {'required': True},
+        "change_percentage": {"required": True},
+        "shift_point": {"required": True},
+        "within_range": {"required": True},
+        "anomaly_detector_direction": {"required": True},
+        "suppress_condition": {"required": True},
     }
 
     _attribute_map = {
-        'change_percentage': {'key': 'changePercentage', 'type': 'float'},
-        'shift_point': {'key': 'shiftPoint', 'type': 'int'},
-        'within_range': {'key': 'withinRange', 'type': 'bool'},
-        'anomaly_detector_direction': {'key': 'anomalyDetectorDirection', 'type': 'str'},
-        'suppress_condition': {'key': 'suppressCondition', 'type': 'SuppressCondition'},
+        "change_percentage": {"key": "changePercentage", "type": "float"},
+        "shift_point": {"key": "shiftPoint", "type": "int"},
+        "within_range": {"key": "withinRange", "type": "bool"},
+        "anomaly_detector_direction": {"key": "anomalyDetectorDirection", "type": "str"},
+        "suppress_condition": {"key": "suppressCondition", "type": "SuppressCondition"},
     }
 
     def __init__(
@@ -5937,7 +6367,7 @@ class ChangeThresholdConditionGenerated(msrest.serialization.Model):
         :keyword suppress_condition: Required.
         :paramtype suppress_condition: ~azure.ai.metricsadvisor.models.SuppressCondition
         """
-        super(ChangeThresholdConditionGenerated, self).__init__(**kwargs)
+        super(ChangeThresholdCondition, self).__init__(**kwargs)
         self.change_percentage = change_percentage
         self.shift_point = shift_point
         self.within_range = within_range
@@ -5945,7 +6375,7 @@ class ChangeThresholdConditionGenerated(msrest.serialization.Model):
         self.suppress_condition = suppress_condition
 
 
-class ChangeThresholdConditionPatchGenerated(msrest.serialization.Model):
+class ChangeThresholdConditionPatch(msrest.serialization.Model):
     """ChangeThresholdConditionPatch.
 
     :ivar change_percentage: change percentage, value range : [0, +∞).
@@ -5965,11 +6395,11 @@ class ChangeThresholdConditionPatchGenerated(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'change_percentage': {'key': 'changePercentage', 'type': 'float'},
-        'shift_point': {'key': 'shiftPoint', 'type': 'int'},
-        'within_range': {'key': 'withinRange', 'type': 'bool'},
-        'anomaly_detector_direction': {'key': 'anomalyDetectorDirection', 'type': 'str'},
-        'suppress_condition': {'key': 'suppressCondition', 'type': 'SuppressConditionPatch'},
+        "change_percentage": {"key": "changePercentage", "type": "float"},
+        "shift_point": {"key": "shiftPoint", "type": "int"},
+        "within_range": {"key": "withinRange", "type": "bool"},
+        "anomaly_detector_direction": {"key": "anomalyDetectorDirection", "type": "str"},
+        "suppress_condition": {"key": "suppressCondition", "type": "SuppressConditionPatch"},
     }
 
     def __init__(
@@ -5998,7 +6428,7 @@ class ChangeThresholdConditionPatchGenerated(msrest.serialization.Model):
         :keyword suppress_condition:
         :paramtype suppress_condition: ~azure.ai.metricsadvisor.models.SuppressConditionPatch
         """
-        super(ChangeThresholdConditionPatchGenerated, self).__init__(**kwargs)
+        super(ChangeThresholdConditionPatch, self).__init__(**kwargs)
         self.change_percentage = change_percentage
         self.shift_point = shift_point
         self.within_range = within_range
@@ -6006,7 +6436,7 @@ class ChangeThresholdConditionPatchGenerated(msrest.serialization.Model):
         self.suppress_condition = suppress_condition
 
 
-class CommentFeedbackGenerated(MetricFeedbackGenerated):
+class CommentFeedback(MetricFeedback):
     """CommentFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6036,25 +6466,25 @@ class CommentFeedbackGenerated(MetricFeedbackGenerated):
     """
 
     _validation = {
-        'feedback_type': {'required': True},
-        'feedback_id': {'readonly': True},
-        'created_time': {'readonly': True},
-        'user_principal': {'readonly': True},
-        'metric_id': {'required': True},
-        'dimension_filter': {'required': True},
-        'value': {'required': True},
+        "feedback_type": {"required": True},
+        "feedback_id": {"readonly": True},
+        "created_time": {"readonly": True},
+        "user_principal": {"readonly": True},
+        "metric_id": {"required": True},
+        "dimension_filter": {"required": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'feedback_type': {'key': 'feedbackType', 'type': 'str'},
-        'feedback_id': {'key': 'feedbackId', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'user_principal': {'key': 'userPrincipal', 'type': 'str'},
-        'metric_id': {'key': 'metricId', 'type': 'str'},
-        'dimension_filter': {'key': 'dimensionFilter', 'type': 'FeedbackDimensionFilter'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'value': {'key': 'value', 'type': 'CommentFeedbackValue'},
+        "feedback_type": {"key": "feedbackType", "type": "str"},
+        "feedback_id": {"key": "feedbackId", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "user_principal": {"key": "userPrincipal", "type": "str"},
+        "metric_id": {"key": "metricId", "type": "str"},
+        "dimension_filter": {"key": "dimensionFilter", "type": "FeedbackDimensionFilter"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "value": {"key": "value", "type": "CommentFeedbackValue"},
     }
 
     def __init__(
@@ -6080,14 +6510,14 @@ class CommentFeedbackGenerated(MetricFeedbackGenerated):
         :keyword value: Required.
         :paramtype value: ~azure.ai.metricsadvisor.models.CommentFeedbackValue
         """
-        super(CommentFeedbackGenerated, self).__init__(metric_id=metric_id, dimension_filter=dimension_filter, **kwargs)
-        self.feedback_type = 'Comment'  # type: str
+        super(CommentFeedback, self).__init__(metric_id=metric_id, dimension_filter=dimension_filter, **kwargs)
+        self.feedback_type = "Comment"  # type: str
         self.start_time = start_time
         self.end_time = end_time
         self.value = value
 
 
-class CommentFeedbackValueGenerated(msrest.serialization.Model):
+class CommentFeedbackValue(msrest.serialization.Model):
     """CommentFeedbackValue.
 
     All required parameters must be populated in order to send to Azure.
@@ -6097,28 +6527,23 @@ class CommentFeedbackValueGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'comment_value': {'required': True},
+        "comment_value": {"required": True},
     }
 
     _attribute_map = {
-        'comment_value': {'key': 'commentValue', 'type': 'str'},
+        "comment_value": {"key": "commentValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        comment_value: str,
-        **kwargs
-    ):
+    def __init__(self, *, comment_value: str, **kwargs):
         """
         :keyword comment_value: Required. the comment string.
         :paramtype comment_value: str
         """
-        super(CommentFeedbackValueGenerated, self).__init__(**kwargs)
+        super(CommentFeedbackValue, self).__init__(**kwargs)
         self.comment_value = comment_value
 
 
-class DataFeedDimensionGenerated(msrest.serialization.Model):
+class DataFeedDimension(msrest.serialization.Model):
     """DataFeedDimension.
 
     All required parameters must be populated in order to send to Azure.
@@ -6130,34 +6555,28 @@ class DataFeedDimensionGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'dimension_name': {'required': True},
-        'dimension_display_name': {'pattern': r'[.a-zA-Z0-9_-]+'},
+        "dimension_name": {"required": True},
+        "dimension_display_name": {"pattern": r"[.a-zA-Z0-9_-]+"},
     }
 
     _attribute_map = {
-        'dimension_name': {'key': 'dimensionName', 'type': 'str'},
-        'dimension_display_name': {'key': 'dimensionDisplayName', 'type': 'str'},
+        "dimension_name": {"key": "dimensionName", "type": "str"},
+        "dimension_display_name": {"key": "dimensionDisplayName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        dimension_name: str,
-        dimension_display_name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, dimension_name: str, dimension_display_name: Optional[str] = None, **kwargs):
         """
         :keyword dimension_name: Required. dimension name.
         :paramtype dimension_name: str
         :keyword dimension_display_name: dimension display name.
         :paramtype dimension_display_name: str
         """
-        super(DataFeedDimensionGenerated, self).__init__(**kwargs)
+        super(DataFeedDimension, self).__init__(**kwargs)
         self.dimension_name = dimension_name
         self.dimension_display_name = dimension_display_name
 
 
-class DataFeedIngestionProgressGenerated(msrest.serialization.Model):
+class DataFeedIngestionProgress(msrest.serialization.Model):
     """DataFeedIngestionProgress.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6171,27 +6590,23 @@ class DataFeedIngestionProgressGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'latest_success_timestamp': {'readonly': True},
-        'latest_active_timestamp': {'readonly': True},
+        "latest_success_timestamp": {"readonly": True},
+        "latest_active_timestamp": {"readonly": True},
     }
 
     _attribute_map = {
-        'latest_success_timestamp': {'key': 'latestSuccessTimestamp', 'type': 'iso-8601'},
-        'latest_active_timestamp': {'key': 'latestActiveTimestamp', 'type': 'iso-8601'},
+        "latest_success_timestamp": {"key": "latestSuccessTimestamp", "type": "iso-8601"},
+        "latest_active_timestamp": {"key": "latestActiveTimestamp", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(DataFeedIngestionProgressGenerated, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super(DataFeedIngestionProgress, self).__init__(**kwargs)
         self.latest_success_timestamp = None
         self.latest_active_timestamp = None
 
 
-class DataFeedIngestionStatusGenerated(msrest.serialization.Model):
+class DataFeedIngestionStatus(msrest.serialization.Model):
     """DataFeedIngestionStatus.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6206,30 +6621,26 @@ class DataFeedIngestionStatusGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'timestamp': {'readonly': True},
-        'status': {'readonly': True},
-        'message': {'readonly': True},
+        "timestamp": {"readonly": True},
+        "status": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'status': {'key': 'status', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "timestamp": {"key": "timestamp", "type": "iso-8601"},
+        "status": {"key": "status", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(DataFeedIngestionStatusGenerated, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super(DataFeedIngestionStatus, self).__init__(**kwargs)
         self.timestamp = None
         self.status = None
         self.message = None
 
 
-class DataFeedListGenerated(msrest.serialization.Model):
+class DataFeedList(msrest.serialization.Model):
     """DataFeedList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6241,27 +6652,23 @@ class DataFeedListGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
-        'value': {'readonly': True},
+        "next_link": {"readonly": True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': '@nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[DataFeed]'},
+        "next_link": {"key": "@nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[DataFeed]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(DataFeedListGenerated, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super(DataFeedList, self).__init__(**kwargs)
         self.next_link = None
         self.value = None
 
 
-class DataFeedMetricGenerated(msrest.serialization.Model):
+class DataFeedMetric(msrest.serialization.Model):
     """DataFeedMetric.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6279,16 +6686,16 @@ class DataFeedMetricGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'metric_id': {'readonly': True},
-        'metric_name': {'required': True},
-        'metric_display_name': {'pattern': r'[.a-zA-Z0-9_-]+'},
+        "metric_id": {"readonly": True},
+        "metric_name": {"required": True},
+        "metric_display_name": {"pattern": r"[.a-zA-Z0-9_-]+"},
     }
 
     _attribute_map = {
-        'metric_id': {'key': 'metricId', 'type': 'str'},
-        'metric_name': {'key': 'metricName', 'type': 'str'},
-        'metric_display_name': {'key': 'metricDisplayName', 'type': 'str'},
-        'metric_description': {'key': 'metricDescription', 'type': 'str'},
+        "metric_id": {"key": "metricId", "type": "str"},
+        "metric_name": {"key": "metricName", "type": "str"},
+        "metric_display_name": {"key": "metricDisplayName", "type": "str"},
+        "metric_description": {"key": "metricDescription", "type": "str"},
     }
 
     def __init__(
@@ -6307,14 +6714,14 @@ class DataFeedMetricGenerated(msrest.serialization.Model):
         :keyword metric_description: metric description.
         :paramtype metric_description: str
         """
-        super(DataFeedMetricGenerated, self).__init__(**kwargs)
+        super(DataFeedMetric, self).__init__(**kwargs)
         self.metric_id = None
         self.metric_name = metric_name
         self.metric_display_name = metric_display_name
         self.metric_description = metric_description
 
 
-class DataLakeGen2SharedKeyCredentialPatchGenerated(DataSourceCredentialPatchGenerated):
+class DataLakeGen2SharedKeyCredentialPatch(DataSourceCredentialPatch):
     """DataLakeGen2SharedKeyCredentialPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -6333,14 +6740,14 @@ class DataLakeGen2SharedKeyCredentialPatchGenerated(DataSourceCredentialPatchGen
     """
 
     _validation = {
-        'data_source_credential_type': {'required': True},
+        "data_source_credential_type": {"required": True},
     }
 
     _attribute_map = {
-        'data_source_credential_type': {'key': 'dataSourceCredentialType', 'type': 'str'},
-        'data_source_credential_name': {'key': 'dataSourceCredentialName', 'type': 'str'},
-        'data_source_credential_description': {'key': 'dataSourceCredentialDescription', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'DataLakeGen2SharedKeyParamPatch'},
+        "data_source_credential_type": {"key": "dataSourceCredentialType", "type": "str"},
+        "data_source_credential_name": {"key": "dataSourceCredentialName", "type": "str"},
+        "data_source_credential_description": {"key": "dataSourceCredentialDescription", "type": "str"},
+        "parameters": {"key": "parameters", "type": "DataLakeGen2SharedKeyParamPatch"},
     }
 
     def __init__(
@@ -6359,12 +6766,16 @@ class DataLakeGen2SharedKeyCredentialPatchGenerated(DataSourceCredentialPatchGen
         :keyword parameters:
         :paramtype parameters: ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyParamPatch
         """
-        super(DataLakeGen2SharedKeyCredentialPatchGenerated, self).__init__(data_source_credential_name=data_source_credential_name, data_source_credential_description=data_source_credential_description, **kwargs)
-        self.data_source_credential_type = 'DataLakeGen2SharedKey'  # type: str
+        super(DataLakeGen2SharedKeyCredentialPatch, self).__init__(
+            data_source_credential_name=data_source_credential_name,
+            data_source_credential_description=data_source_credential_description,
+            **kwargs
+        )
+        self.data_source_credential_type = "DataLakeGen2SharedKey"  # type: str
         self.parameters = parameters
 
 
-class DataLakeGen2SharedKeyParamGenerated(msrest.serialization.Model):
+class DataLakeGen2SharedKeyParam(msrest.serialization.Model):
     """DataLakeGen2SharedKeyParam.
 
     :ivar account_key: The account key to access the Azure Data Lake Storage Gen2.
@@ -6372,24 +6783,19 @@ class DataLakeGen2SharedKeyParamGenerated(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'account_key': {'key': 'accountKey', 'type': 'str'},
+        "account_key": {"key": "accountKey", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        account_key: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, account_key: Optional[str] = None, **kwargs):
         """
         :keyword account_key: The account key to access the Azure Data Lake Storage Gen2.
         :paramtype account_key: str
         """
-        super(DataLakeGen2SharedKeyParamGenerated, self).__init__(**kwargs)
+        super(DataLakeGen2SharedKeyParam, self).__init__(**kwargs)
         self.account_key = account_key
 
 
-class DataLakeGen2SharedKeyParamPatchGenerated(msrest.serialization.Model):
+class DataLakeGen2SharedKeyParamPatch(msrest.serialization.Model):
     """DataLakeGen2SharedKeyParamPatch.
 
     :ivar account_key: The account key to access the Azure Data Lake Storage Gen2.
@@ -6397,24 +6803,19 @@ class DataLakeGen2SharedKeyParamPatchGenerated(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'account_key': {'key': 'accountKey', 'type': 'str'},
+        "account_key": {"key": "accountKey", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        account_key: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, account_key: Optional[str] = None, **kwargs):
         """
         :keyword account_key: The account key to access the Azure Data Lake Storage Gen2.
         :paramtype account_key: str
         """
-        super(DataLakeGen2SharedKeyParamPatchGenerated, self).__init__(**kwargs)
+        super(DataLakeGen2SharedKeyParamPatch, self).__init__(**kwargs)
         self.account_key = account_key
 
 
-class DataPointAnomalyGenerated(msrest.serialization.Model):
+class DataPointAnomaly(msrest.serialization.Model):
     """DataPointAnomaly.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6422,25 +6823,25 @@ class DataPointAnomalyGenerated(msrest.serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar data_feed_id: data feed unique id
-    
+
      only return for alerting anomaly result.
     :vartype data_feed_id: str
     :ivar metric_id: metric unique id
-    
+
      only return for alerting anomaly result.
     :vartype metric_id: str
     :ivar anomaly_detection_configuration_id: anomaly detection configuration unique id
-    
+
      only return for alerting anomaly result.
     :vartype anomaly_detection_configuration_id: str
     :ivar timestamp: Required. anomaly time.
     :vartype timestamp: ~datetime.datetime
     :ivar created_time: created time
-    
+
      only return for alerting result.
     :vartype created_time: ~datetime.datetime
     :ivar modified_time: modified time
-    
+
      only return for alerting result.
     :vartype modified_time: ~datetime.datetime
     :ivar dimension: Required. dimension specified for series.
@@ -6450,34 +6851,29 @@ class DataPointAnomalyGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'data_feed_id': {'readonly': True},
-        'metric_id': {'readonly': True},
-        'anomaly_detection_configuration_id': {'readonly': True},
-        'timestamp': {'required': True},
-        'created_time': {'readonly': True},
-        'modified_time': {'readonly': True},
-        'dimension': {'required': True},
-        'property': {'required': True},
+        "data_feed_id": {"readonly": True},
+        "metric_id": {"readonly": True},
+        "anomaly_detection_configuration_id": {"readonly": True},
+        "timestamp": {"required": True},
+        "created_time": {"readonly": True},
+        "modified_time": {"readonly": True},
+        "dimension": {"required": True},
+        "property": {"required": True},
     }
 
     _attribute_map = {
-        'data_feed_id': {'key': 'dataFeedId', 'type': 'str'},
-        'metric_id': {'key': 'metricId', 'type': 'str'},
-        'anomaly_detection_configuration_id': {'key': 'anomalyDetectionConfigurationId', 'type': 'str'},
-        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'modified_time': {'key': 'modifiedTime', 'type': 'iso-8601'},
-        'dimension': {'key': 'dimension', 'type': '{str}'},
-        'property': {'key': 'property', 'type': 'AnomalyProperty'},
+        "data_feed_id": {"key": "dataFeedId", "type": "str"},
+        "metric_id": {"key": "metricId", "type": "str"},
+        "anomaly_detection_configuration_id": {"key": "anomalyDetectionConfigurationId", "type": "str"},
+        "timestamp": {"key": "timestamp", "type": "iso-8601"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "modified_time": {"key": "modifiedTime", "type": "iso-8601"},
+        "dimension": {"key": "dimension", "type": "{str}"},
+        "property": {"key": "property", "type": "AnomalyProperty"},
     }
 
     def __init__(
-        self,
-        *,
-        timestamp: datetime.datetime,
-        dimension: Dict[str, str],
-        property: "AnomalyProperty",
-        **kwargs
+        self, *, timestamp: datetime.datetime, dimension: Dict[str, str], property: "AnomalyProperty", **kwargs
     ):
         """
         :keyword timestamp: Required. anomaly time.
@@ -6487,7 +6883,7 @@ class DataPointAnomalyGenerated(msrest.serialization.Model):
         :keyword property: Required.
         :paramtype property: ~azure.ai.metricsadvisor.models.AnomalyProperty
         """
-        super(DataPointAnomalyGenerated, self).__init__(**kwargs)
+        super(DataPointAnomaly, self).__init__(**kwargs)
         self.data_feed_id = None
         self.metric_id = None
         self.anomaly_detection_configuration_id = None
@@ -6498,7 +6894,7 @@ class DataPointAnomalyGenerated(msrest.serialization.Model):
         self.property = property
 
 
-class DataSourceCredentialGenerated(msrest.serialization.Model):
+class DataSourceCredential(msrest.serialization.Model):
     """DataSourceCredential.
 
     You probably want to use the sub-classes and not this class directly. Known
@@ -6522,28 +6918,29 @@ class DataSourceCredentialGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'data_source_credential_type': {'required': True},
-        'data_source_credential_id': {'readonly': True},
-        'data_source_credential_name': {'required': True},
+        "data_source_credential_type": {"required": True},
+        "data_source_credential_id": {"readonly": True},
+        "data_source_credential_name": {"required": True},
     }
 
     _attribute_map = {
-        'data_source_credential_type': {'key': 'dataSourceCredentialType', 'type': 'str'},
-        'data_source_credential_id': {'key': 'dataSourceCredentialId', 'type': 'str'},
-        'data_source_credential_name': {'key': 'dataSourceCredentialName', 'type': 'str'},
-        'data_source_credential_description': {'key': 'dataSourceCredentialDescription', 'type': 'str'},
+        "data_source_credential_type": {"key": "dataSourceCredentialType", "type": "str"},
+        "data_source_credential_id": {"key": "dataSourceCredentialId", "type": "str"},
+        "data_source_credential_name": {"key": "dataSourceCredentialName", "type": "str"},
+        "data_source_credential_description": {"key": "dataSourceCredentialDescription", "type": "str"},
     }
 
     _subtype_map = {
-        'data_source_credential_type': {'AzureSQLConnectionString': 'DatasourceSqlConnectionString', 'DataLakeGen2SharedKey': 'DatasourceDataLakeGen2SharedKey', 'ServicePrincipal': 'DatasourceServicePrincipal', 'ServicePrincipalInKV': 'DatasourceServicePrincipalInKeyVault'}
+        "data_source_credential_type": {
+            "AzureSQLConnectionString": "DatasourceSqlConnectionString",
+            "DataLakeGen2SharedKey": "DatasourceDataLakeGen2SharedKey",
+            "ServicePrincipal": "DatasourceServicePrincipal",
+            "ServicePrincipalInKV": "DatasourceServicePrincipalInKeyVault",
+        }
     }
 
     def __init__(
-        self,
-        *,
-        data_source_credential_name: str,
-        data_source_credential_description: Optional[str] = None,
-        **kwargs
+        self, *, data_source_credential_name: str, data_source_credential_description: Optional[str] = None, **kwargs
     ):
         """
         :keyword data_source_credential_name: Required. Name of data source credential.
@@ -6551,14 +6948,14 @@ class DataSourceCredentialGenerated(msrest.serialization.Model):
         :keyword data_source_credential_description: Description of data source credential.
         :paramtype data_source_credential_description: str
         """
-        super(DataSourceCredentialGenerated, self).__init__(**kwargs)
+        super(DataSourceCredential, self).__init__(**kwargs)
         self.data_source_credential_type = None  # type: Optional[str]
         self.data_source_credential_id = None
         self.data_source_credential_name = data_source_credential_name
         self.data_source_credential_description = data_source_credential_description
 
 
-class DataSourceCredentialListGenerated(msrest.serialization.Model):
+class DataSourceCredentialList(msrest.serialization.Model):
     """DataSourceCredentialList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6570,27 +6967,23 @@ class DataSourceCredentialListGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
-        'value': {'readonly': True, 'unique': True},
+        "next_link": {"readonly": True},
+        "value": {"readonly": True, "unique": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': '@nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[DataSourceCredential]'},
+        "next_link": {"key": "@nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[DataSourceCredential]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(DataSourceCredentialListGenerated, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super(DataSourceCredentialList, self).__init__(**kwargs)
         self.next_link = None
         self.value = None
 
 
-class DatasourceDataLakeGen2SharedKeyGenerated(DataSourceCredentialGenerated):
+class DatasourceDataLakeGen2SharedKey(DataSourceCredential):
     """DatasourceDataLakeGen2SharedKey.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6613,18 +7006,18 @@ class DatasourceDataLakeGen2SharedKeyGenerated(DataSourceCredentialGenerated):
     """
 
     _validation = {
-        'data_source_credential_type': {'required': True},
-        'data_source_credential_id': {'readonly': True},
-        'data_source_credential_name': {'required': True},
-        'parameters': {'required': True},
+        "data_source_credential_type": {"required": True},
+        "data_source_credential_id": {"readonly": True},
+        "data_source_credential_name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'data_source_credential_type': {'key': 'dataSourceCredentialType', 'type': 'str'},
-        'data_source_credential_id': {'key': 'dataSourceCredentialId', 'type': 'str'},
-        'data_source_credential_name': {'key': 'dataSourceCredentialName', 'type': 'str'},
-        'data_source_credential_description': {'key': 'dataSourceCredentialDescription', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'DataLakeGen2SharedKeyParam'},
+        "data_source_credential_type": {"key": "dataSourceCredentialType", "type": "str"},
+        "data_source_credential_id": {"key": "dataSourceCredentialId", "type": "str"},
+        "data_source_credential_name": {"key": "dataSourceCredentialName", "type": "str"},
+        "data_source_credential_description": {"key": "dataSourceCredentialDescription", "type": "str"},
+        "parameters": {"key": "parameters", "type": "DataLakeGen2SharedKeyParam"},
     }
 
     def __init__(
@@ -6643,12 +7036,16 @@ class DatasourceDataLakeGen2SharedKeyGenerated(DataSourceCredentialGenerated):
         :keyword parameters: Required.
         :paramtype parameters: ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyParam
         """
-        super(DatasourceDataLakeGen2SharedKeyGenerated, self).__init__(data_source_credential_name=data_source_credential_name, data_source_credential_description=data_source_credential_description, **kwargs)
-        self.data_source_credential_type = 'DataLakeGen2SharedKey'  # type: str
+        super(DatasourceDataLakeGen2SharedKey, self).__init__(
+            data_source_credential_name=data_source_credential_name,
+            data_source_credential_description=data_source_credential_description,
+            **kwargs
+        )
+        self.data_source_credential_type = "DataLakeGen2SharedKey"  # type: str
         self.parameters = parameters
 
 
-class DatasourceServicePrincipalGenerated(DataSourceCredentialGenerated):
+class DatasourceServicePrincipal(DataSourceCredential):
     """DatasourceServicePrincipal.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6671,18 +7068,18 @@ class DatasourceServicePrincipalGenerated(DataSourceCredentialGenerated):
     """
 
     _validation = {
-        'data_source_credential_type': {'required': True},
-        'data_source_credential_id': {'readonly': True},
-        'data_source_credential_name': {'required': True},
-        'parameters': {'required': True},
+        "data_source_credential_type": {"required": True},
+        "data_source_credential_id": {"readonly": True},
+        "data_source_credential_name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'data_source_credential_type': {'key': 'dataSourceCredentialType', 'type': 'str'},
-        'data_source_credential_id': {'key': 'dataSourceCredentialId', 'type': 'str'},
-        'data_source_credential_name': {'key': 'dataSourceCredentialName', 'type': 'str'},
-        'data_source_credential_description': {'key': 'dataSourceCredentialDescription', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'ServicePrincipalParam'},
+        "data_source_credential_type": {"key": "dataSourceCredentialType", "type": "str"},
+        "data_source_credential_id": {"key": "dataSourceCredentialId", "type": "str"},
+        "data_source_credential_name": {"key": "dataSourceCredentialName", "type": "str"},
+        "data_source_credential_description": {"key": "dataSourceCredentialDescription", "type": "str"},
+        "parameters": {"key": "parameters", "type": "ServicePrincipalParam"},
     }
 
     def __init__(
@@ -6701,12 +7098,16 @@ class DatasourceServicePrincipalGenerated(DataSourceCredentialGenerated):
         :keyword parameters: Required.
         :paramtype parameters: ~azure.ai.metricsadvisor.models.ServicePrincipalParam
         """
-        super(DatasourceServicePrincipalGenerated, self).__init__(data_source_credential_name=data_source_credential_name, data_source_credential_description=data_source_credential_description, **kwargs)
-        self.data_source_credential_type = 'ServicePrincipal'  # type: str
+        super(DatasourceServicePrincipal, self).__init__(
+            data_source_credential_name=data_source_credential_name,
+            data_source_credential_description=data_source_credential_description,
+            **kwargs
+        )
+        self.data_source_credential_type = "ServicePrincipal"  # type: str
         self.parameters = parameters
 
 
-class DatasourceServicePrincipalInKeyVaultGenerated(DataSourceCredentialGenerated):
+class DatasourceServicePrincipalInKeyVault(DataSourceCredential):
     """DatasourceServicePrincipalInKeyVault.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6729,18 +7130,18 @@ class DatasourceServicePrincipalInKeyVaultGenerated(DataSourceCredentialGenerate
     """
 
     _validation = {
-        'data_source_credential_type': {'required': True},
-        'data_source_credential_id': {'readonly': True},
-        'data_source_credential_name': {'required': True},
-        'parameters': {'required': True},
+        "data_source_credential_type": {"required": True},
+        "data_source_credential_id": {"readonly": True},
+        "data_source_credential_name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'data_source_credential_type': {'key': 'dataSourceCredentialType', 'type': 'str'},
-        'data_source_credential_id': {'key': 'dataSourceCredentialId', 'type': 'str'},
-        'data_source_credential_name': {'key': 'dataSourceCredentialName', 'type': 'str'},
-        'data_source_credential_description': {'key': 'dataSourceCredentialDescription', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'ServicePrincipalInKVParam'},
+        "data_source_credential_type": {"key": "dataSourceCredentialType", "type": "str"},
+        "data_source_credential_id": {"key": "dataSourceCredentialId", "type": "str"},
+        "data_source_credential_name": {"key": "dataSourceCredentialName", "type": "str"},
+        "data_source_credential_description": {"key": "dataSourceCredentialDescription", "type": "str"},
+        "parameters": {"key": "parameters", "type": "ServicePrincipalInKVParam"},
     }
 
     def __init__(
@@ -6759,12 +7160,16 @@ class DatasourceServicePrincipalInKeyVaultGenerated(DataSourceCredentialGenerate
         :keyword parameters: Required.
         :paramtype parameters: ~azure.ai.metricsadvisor.models.ServicePrincipalInKVParam
         """
-        super(DatasourceServicePrincipalInKeyVaultGenerated, self).__init__(data_source_credential_name=data_source_credential_name, data_source_credential_description=data_source_credential_description, **kwargs)
-        self.data_source_credential_type = 'ServicePrincipalInKV'  # type: str
+        super(DatasourceServicePrincipalInKeyVault, self).__init__(
+            data_source_credential_name=data_source_credential_name,
+            data_source_credential_description=data_source_credential_description,
+            **kwargs
+        )
+        self.data_source_credential_type = "ServicePrincipalInKV"  # type: str
         self.parameters = parameters
 
 
-class DatasourceSqlConnectionStringGenerated(DataSourceCredentialGenerated):
+class DatasourceSqlConnectionString(DataSourceCredential):
     """DatasourceSqlConnectionString.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6787,18 +7192,18 @@ class DatasourceSqlConnectionStringGenerated(DataSourceCredentialGenerated):
     """
 
     _validation = {
-        'data_source_credential_type': {'required': True},
-        'data_source_credential_id': {'readonly': True},
-        'data_source_credential_name': {'required': True},
-        'parameters': {'required': True},
+        "data_source_credential_type": {"required": True},
+        "data_source_credential_id": {"readonly": True},
+        "data_source_credential_name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'data_source_credential_type': {'key': 'dataSourceCredentialType', 'type': 'str'},
-        'data_source_credential_id': {'key': 'dataSourceCredentialId', 'type': 'str'},
-        'data_source_credential_name': {'key': 'dataSourceCredentialName', 'type': 'str'},
-        'data_source_credential_description': {'key': 'dataSourceCredentialDescription', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'AzureSQLConnectionStringParam'},
+        "data_source_credential_type": {"key": "dataSourceCredentialType", "type": "str"},
+        "data_source_credential_id": {"key": "dataSourceCredentialId", "type": "str"},
+        "data_source_credential_name": {"key": "dataSourceCredentialName", "type": "str"},
+        "data_source_credential_description": {"key": "dataSourceCredentialDescription", "type": "str"},
+        "parameters": {"key": "parameters", "type": "AzureSQLConnectionStringParam"},
     }
 
     def __init__(
@@ -6817,12 +7222,16 @@ class DatasourceSqlConnectionStringGenerated(DataSourceCredentialGenerated):
         :keyword parameters: Required.
         :paramtype parameters: ~azure.ai.metricsadvisor.models.AzureSQLConnectionStringParam
         """
-        super(DatasourceSqlConnectionStringGenerated, self).__init__(data_source_credential_name=data_source_credential_name, data_source_credential_description=data_source_credential_description, **kwargs)
-        self.data_source_credential_type = 'AzureSQLConnectionString'  # type: str
+        super(DatasourceSqlConnectionString, self).__init__(
+            data_source_credential_name=data_source_credential_name,
+            data_source_credential_description=data_source_credential_description,
+            **kwargs
+        )
+        self.data_source_credential_type = "AzureSQLConnectionString"  # type: str
         self.parameters = parameters
 
 
-class DetectionAnomalyFilterConditionGenerated(msrest.serialization.Model):
+class DetectionAnomalyFilterCondition(msrest.serialization.Model):
     """DetectionAnomalyFilterCondition.
 
     :ivar dimension_filter: dimension filter.
@@ -6832,12 +7241,12 @@ class DetectionAnomalyFilterConditionGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'dimension_filter': {'unique': True},
+        "dimension_filter": {"unique": True},
     }
 
     _attribute_map = {
-        'dimension_filter': {'key': 'dimensionFilter', 'type': '[DimensionGroupIdentity]'},
-        'severity_filter': {'key': 'severityFilter', 'type': 'SeverityFilterCondition'},
+        "dimension_filter": {"key": "dimensionFilter", "type": "[DimensionGroupIdentity]"},
+        "severity_filter": {"key": "severityFilter", "type": "SeverityFilterCondition"},
     }
 
     def __init__(
@@ -6853,12 +7262,12 @@ class DetectionAnomalyFilterConditionGenerated(msrest.serialization.Model):
         :keyword severity_filter:
         :paramtype severity_filter: ~azure.ai.metricsadvisor.models.SeverityFilterCondition
         """
-        super(DetectionAnomalyFilterConditionGenerated, self).__init__(**kwargs)
+        super(DetectionAnomalyFilterCondition, self).__init__(**kwargs)
         self.dimension_filter = dimension_filter
         self.severity_filter = severity_filter
 
 
-class DetectionAnomalyResultQueryGenerated(msrest.serialization.Model):
+class DetectionAnomalyResultQuery(msrest.serialization.Model):
     """DetectionAnomalyResultQuery.
 
     All required parameters must be populated in order to send to Azure.
@@ -6872,14 +7281,14 @@ class DetectionAnomalyResultQueryGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'start_time': {'required': True},
-        'end_time': {'required': True},
+        "start_time": {"required": True},
+        "end_time": {"required": True},
     }
 
     _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'filter': {'key': 'filter', 'type': 'DetectionAnomalyFilterCondition'},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "filter": {"key": "filter", "type": "DetectionAnomalyFilterCondition"},
     }
 
     def __init__(
@@ -6898,13 +7307,13 @@ class DetectionAnomalyResultQueryGenerated(msrest.serialization.Model):
         :keyword filter:
         :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionAnomalyFilterCondition
         """
-        super(DetectionAnomalyResultQueryGenerated, self).__init__(**kwargs)
+        super(DetectionAnomalyResultQuery, self).__init__(**kwargs)
         self.start_time = start_time
         self.end_time = end_time
         self.filter = filter
 
 
-class DetectionIncidentFilterConditionGenerated(msrest.serialization.Model):
+class DetectionIncidentFilterCondition(msrest.serialization.Model):
     """DetectionIncidentFilterCondition.
 
     :ivar dimension_filter: dimension filter.
@@ -6912,28 +7321,23 @@ class DetectionIncidentFilterConditionGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'dimension_filter': {'unique': True},
+        "dimension_filter": {"unique": True},
     }
 
     _attribute_map = {
-        'dimension_filter': {'key': 'dimensionFilter', 'type': '[DimensionGroupIdentity]'},
+        "dimension_filter": {"key": "dimensionFilter", "type": "[DimensionGroupIdentity]"},
     }
 
-    def __init__(
-        self,
-        *,
-        dimension_filter: Optional[List["DimensionGroupIdentity"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, dimension_filter: Optional[List["DimensionGroupIdentity"]] = None, **kwargs):
         """
         :keyword dimension_filter: dimension filter.
         :paramtype dimension_filter: list[~azure.ai.metricsadvisor.models.DimensionGroupIdentity]
         """
-        super(DetectionIncidentFilterConditionGenerated, self).__init__(**kwargs)
+        super(DetectionIncidentFilterCondition, self).__init__(**kwargs)
         self.dimension_filter = dimension_filter
 
 
-class DetectionIncidentResultQueryGenerated(msrest.serialization.Model):
+class DetectionIncidentResultQuery(msrest.serialization.Model):
     """DetectionIncidentResultQuery.
 
     All required parameters must be populated in order to send to Azure.
@@ -6947,14 +7351,14 @@ class DetectionIncidentResultQueryGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'start_time': {'required': True},
-        'end_time': {'required': True},
+        "start_time": {"required": True},
+        "end_time": {"required": True},
     }
 
     _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'filter': {'key': 'filter', 'type': 'DetectionIncidentFilterCondition'},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "filter": {"key": "filter", "type": "DetectionIncidentFilterCondition"},
     }
 
     def __init__(
@@ -6973,13 +7377,13 @@ class DetectionIncidentResultQueryGenerated(msrest.serialization.Model):
         :keyword filter:
         :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionIncidentFilterCondition
         """
-        super(DetectionIncidentResultQueryGenerated, self).__init__(**kwargs)
+        super(DetectionIncidentResultQuery, self).__init__(**kwargs)
         self.start_time = start_time
         self.end_time = end_time
         self.filter = filter
 
 
-class DetectionSeriesQueryGenerated(msrest.serialization.Model):
+class DetectionSeriesQuery(msrest.serialization.Model):
     """DetectionSeriesQuery.
 
     All required parameters must be populated in order to send to Azure.
@@ -6996,24 +7400,19 @@ class DetectionSeriesQueryGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'start_time': {'required': True},
-        'end_time': {'required': True},
-        'series': {'required': True, 'unique': True},
+        "start_time": {"required": True},
+        "end_time": {"required": True},
+        "series": {"required": True, "unique": True},
     }
 
     _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'series': {'key': 'series', 'type': '[SeriesIdentity]'},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "series": {"key": "series", "type": "[SeriesIdentity]"},
     }
 
     def __init__(
-        self,
-        *,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
-        series: List["SeriesIdentity"],
-        **kwargs
+        self, *, start_time: datetime.datetime, end_time: datetime.datetime, series: List["SeriesIdentity"], **kwargs
     ):
         """
         :keyword start_time: Required. This is inclusive. The maximum number of data points (series
@@ -7026,13 +7425,13 @@ class DetectionSeriesQueryGenerated(msrest.serialization.Model):
          single time series instead of a group of time series. The maximum number of series is 100.
         :paramtype series: list[~azure.ai.metricsadvisor.models.SeriesIdentity]
         """
-        super(DetectionSeriesQueryGenerated, self).__init__(**kwargs)
+        super(DetectionSeriesQuery, self).__init__(**kwargs)
         self.start_time = start_time
         self.end_time = end_time
         self.series = series
 
 
-class DimensionGroupIdentityGenerated(msrest.serialization.Model):
+class DimensionGroupIdentity(msrest.serialization.Model):
     """DimensionGroupIdentity.
 
     All required parameters must be populated in order to send to Azure.
@@ -7042,28 +7441,23 @@ class DimensionGroupIdentityGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'dimension': {'required': True},
+        "dimension": {"required": True},
     }
 
     _attribute_map = {
-        'dimension': {'key': 'dimension', 'type': '{str}'},
+        "dimension": {"key": "dimension", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        dimension: Dict[str, str],
-        **kwargs
-    ):
+    def __init__(self, *, dimension: Dict[str, str], **kwargs):
         """
         :keyword dimension: Required. dimension specified for series group.
         :paramtype dimension: dict[str, str]
         """
-        super(DimensionGroupIdentityGenerated, self).__init__(**kwargs)
+        super(DimensionGroupIdentity, self).__init__(**kwargs)
         self.dimension = dimension
 
 
-class HookInfoPatchGenerated(msrest.serialization.Model):
+class HookInfoPatch(msrest.serialization.Model):
     """HookInfoPatch.
 
     You probably want to use the sub-classes and not this class directly. Known
@@ -7085,21 +7479,19 @@ class HookInfoPatchGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'hook_type': {'required': True},
-        'admins': {'unique': True},
+        "hook_type": {"required": True},
+        "admins": {"unique": True},
     }
 
     _attribute_map = {
-        'hook_type': {'key': 'hookType', 'type': 'str'},
-        'hook_name': {'key': 'hookName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'external_link': {'key': 'externalLink', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
+        "hook_type": {"key": "hookType", "type": "str"},
+        "hook_name": {"key": "hookName", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "external_link": {"key": "externalLink", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
     }
 
-    _subtype_map = {
-        'hook_type': {'Email': 'EmailHookInfoPatch', 'Webhook': 'WebhookHookInfoPatch'}
-    }
+    _subtype_map = {"hook_type": {"Email": "EmailHookInfoPatch", "Webhook": "WebhookHookInfoPatch"}}
 
     def __init__(
         self,
@@ -7120,7 +7512,7 @@ class HookInfoPatchGenerated(msrest.serialization.Model):
         :keyword admins: hook administrators.
         :paramtype admins: list[str]
         """
-        super(HookInfoPatchGenerated, self).__init__(**kwargs)
+        super(HookInfoPatch, self).__init__(**kwargs)
         self.hook_type = None  # type: Optional[str]
         self.hook_name = hook_name
         self.description = description
@@ -7128,7 +7520,7 @@ class HookInfoPatchGenerated(msrest.serialization.Model):
         self.admins = admins
 
 
-class EmailHookInfoPatchGenerated(HookInfoPatchGenerated):
+class EmailHookInfoPatch(HookInfoPatch):
     """EmailHookInfoPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -7149,17 +7541,17 @@ class EmailHookInfoPatchGenerated(HookInfoPatchGenerated):
     """
 
     _validation = {
-        'hook_type': {'required': True},
-        'admins': {'unique': True},
+        "hook_type": {"required": True},
+        "admins": {"unique": True},
     }
 
     _attribute_map = {
-        'hook_type': {'key': 'hookType', 'type': 'str'},
-        'hook_name': {'key': 'hookName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'external_link': {'key': 'externalLink', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'hook_parameter': {'key': 'hookParameter', 'type': 'EmailHookParameterPatch'},
+        "hook_type": {"key": "hookType", "type": "str"},
+        "hook_name": {"key": "hookName", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "external_link": {"key": "externalLink", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "hook_parameter": {"key": "hookParameter", "type": "EmailHookParameterPatch"},
     }
 
     def __init__(
@@ -7184,12 +7576,14 @@ class EmailHookInfoPatchGenerated(HookInfoPatchGenerated):
         :keyword hook_parameter:
         :paramtype hook_parameter: ~azure.ai.metricsadvisor.models.EmailHookParameterPatch
         """
-        super(EmailHookInfoPatchGenerated, self).__init__(hook_name=hook_name, description=description, external_link=external_link, admins=admins, **kwargs)
-        self.hook_type = 'Email'  # type: str
+        super(EmailHookInfoPatch, self).__init__(
+            hook_name=hook_name, description=description, external_link=external_link, admins=admins, **kwargs
+        )
+        self.hook_type = "Email"  # type: str
         self.hook_parameter = hook_parameter
 
 
-class EmailHookParameterGenerated(msrest.serialization.Model):
+class EmailHookParameter(msrest.serialization.Model):
     """EmailHookParameter.
 
     All required parameters must be populated in order to send to Azure.
@@ -7199,28 +7593,23 @@ class EmailHookParameterGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'to_list': {'required': True, 'unique': True},
+        "to_list": {"required": True, "unique": True},
     }
 
     _attribute_map = {
-        'to_list': {'key': 'toList', 'type': '[str]'},
+        "to_list": {"key": "toList", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        to_list: List[str],
-        **kwargs
-    ):
+    def __init__(self, *, to_list: List[str], **kwargs):
         """
         :keyword to_list: Required. Email TO: list.
         :paramtype to_list: list[str]
         """
-        super(EmailHookParameterGenerated, self).__init__(**kwargs)
+        super(EmailHookParameter, self).__init__(**kwargs)
         self.to_list = to_list
 
 
-class EmailHookParameterPatchGenerated(msrest.serialization.Model):
+class EmailHookParameterPatch(msrest.serialization.Model):
     """EmailHookParameterPatch.
 
     :ivar to_list: Email TO: list.
@@ -7228,28 +7617,23 @@ class EmailHookParameterPatchGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'to_list': {'unique': True},
+        "to_list": {"unique": True},
     }
 
     _attribute_map = {
-        'to_list': {'key': 'toList', 'type': '[str]'},
+        "to_list": {"key": "toList", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        to_list: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, to_list: Optional[List[str]] = None, **kwargs):
         """
         :keyword to_list: Email TO: list.
         :paramtype to_list: list[str]
         """
-        super(EmailHookParameterPatchGenerated, self).__init__(**kwargs)
+        super(EmailHookParameterPatch, self).__init__(**kwargs)
         self.to_list = to_list
 
 
-class NotificationHookGenerated(msrest.serialization.Model):
+class NotificationHook(msrest.serialization.Model):
     """NotificationHook.
 
     You probably want to use the sub-classes and not this class directly. Known
@@ -7275,24 +7659,22 @@ class NotificationHookGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'hook_type': {'required': True},
-        'hook_id': {'readonly': True},
-        'hook_name': {'required': True},
-        'admins': {'unique': True},
+        "hook_type": {"required": True},
+        "hook_id": {"readonly": True},
+        "hook_name": {"required": True},
+        "admins": {"unique": True},
     }
 
     _attribute_map = {
-        'hook_type': {'key': 'hookType', 'type': 'str'},
-        'hook_id': {'key': 'hookId', 'type': 'str'},
-        'hook_name': {'key': 'hookName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'external_link': {'key': 'externalLink', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
+        "hook_type": {"key": "hookType", "type": "str"},
+        "hook_id": {"key": "hookId", "type": "str"},
+        "hook_name": {"key": "hookName", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "external_link": {"key": "externalLink", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
     }
 
-    _subtype_map = {
-        'hook_type': {'Email': 'EmailNotificationHook', 'Webhook': 'WebNotificationHook'}
-    }
+    _subtype_map = {"hook_type": {"Email": "EmailNotificationHook", "Webhook": "WebNotificationHook"}}
 
     def __init__(
         self,
@@ -7313,7 +7695,7 @@ class NotificationHookGenerated(msrest.serialization.Model):
         :keyword admins: hook administrators.
         :paramtype admins: list[str]
         """
-        super(NotificationHookGenerated, self).__init__(**kwargs)
+        super(NotificationHook, self).__init__(**kwargs)
         self.hook_type = None  # type: Optional[str]
         self.hook_id = None
         self.hook_name = hook_name
@@ -7322,7 +7704,7 @@ class NotificationHookGenerated(msrest.serialization.Model):
         self.admins = admins
 
 
-class EmailNotificationHookGenerated(NotificationHookGenerated):
+class EmailNotificationHook(NotificationHook):
     """EmailNotificationHook.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7347,21 +7729,21 @@ class EmailNotificationHookGenerated(NotificationHookGenerated):
     """
 
     _validation = {
-        'hook_type': {'required': True},
-        'hook_id': {'readonly': True},
-        'hook_name': {'required': True},
-        'admins': {'unique': True},
-        'hook_parameter': {'required': True},
+        "hook_type": {"required": True},
+        "hook_id": {"readonly": True},
+        "hook_name": {"required": True},
+        "admins": {"unique": True},
+        "hook_parameter": {"required": True},
     }
 
     _attribute_map = {
-        'hook_type': {'key': 'hookType', 'type': 'str'},
-        'hook_id': {'key': 'hookId', 'type': 'str'},
-        'hook_name': {'key': 'hookName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'external_link': {'key': 'externalLink', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'hook_parameter': {'key': 'hookParameter', 'type': 'EmailHookParameter'},
+        "hook_type": {"key": "hookType", "type": "str"},
+        "hook_id": {"key": "hookId", "type": "str"},
+        "hook_name": {"key": "hookName", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "external_link": {"key": "externalLink", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "hook_parameter": {"key": "hookParameter", "type": "EmailHookParameter"},
     }
 
     def __init__(
@@ -7386,12 +7768,14 @@ class EmailNotificationHookGenerated(NotificationHookGenerated):
         :keyword hook_parameter: Required.
         :paramtype hook_parameter: ~azure.ai.metricsadvisor.models.EmailHookParameter
         """
-        super(EmailNotificationHookGenerated, self).__init__(hook_name=hook_name, description=description, external_link=external_link, admins=admins, **kwargs)
-        self.hook_type = 'Email'  # type: str
+        super(EmailNotificationHook, self).__init__(
+            hook_name=hook_name, description=description, external_link=external_link, admins=admins, **kwargs
+        )
+        self.hook_type = "Email"  # type: str
         self.hook_parameter = hook_parameter
 
 
-class EnrichmentStatusGenerated(msrest.serialization.Model):
+class EnrichmentStatus(msrest.serialization.Model):
     """EnrichmentStatus.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7405,30 +7789,26 @@ class EnrichmentStatusGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'timestamp': {'readonly': True},
-        'status': {'readonly': True},
-        'message': {'readonly': True},
+        "timestamp": {"readonly": True},
+        "status": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'status': {'key': 'status', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "timestamp": {"key": "timestamp", "type": "iso-8601"},
+        "status": {"key": "status", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(EnrichmentStatusGenerated, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super(EnrichmentStatus, self).__init__(**kwargs)
         self.timestamp = None
         self.status = None
         self.message = None
 
 
-class EnrichmentStatusListGenerated(msrest.serialization.Model):
+class EnrichmentStatusList(msrest.serialization.Model):
     """EnrichmentStatusList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7440,27 +7820,23 @@ class EnrichmentStatusListGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
-        'value': {'readonly': True},
+        "next_link": {"readonly": True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': '@nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[EnrichmentStatus]'},
+        "next_link": {"key": "@nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[EnrichmentStatus]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(EnrichmentStatusListGenerated, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super(EnrichmentStatusList, self).__init__(**kwargs)
         self.next_link = None
         self.value = None
 
 
-class EnrichmentStatusQueryOptionGenerated(msrest.serialization.Model):
+class EnrichmentStatusQueryOption(msrest.serialization.Model):
     """EnrichmentStatusQueryOption.
 
     All required parameters must be populated in order to send to Azure.
@@ -7472,34 +7848,28 @@ class EnrichmentStatusQueryOptionGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'start_time': {'required': True},
-        'end_time': {'required': True},
+        "start_time": {"required": True},
+        "end_time": {"required": True},
     }
 
     _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        *,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
-        **kwargs
-    ):
+    def __init__(self, *, start_time: datetime.datetime, end_time: datetime.datetime, **kwargs):
         """
         :keyword start_time: Required. the start point of time range to query anomaly detection status.
         :paramtype start_time: ~datetime.datetime
         :keyword end_time: Required. the end point of time range to query anomaly detection status.
         :paramtype end_time: ~datetime.datetime
         """
-        super(EnrichmentStatusQueryOptionGenerated, self).__init__(**kwargs)
+        super(EnrichmentStatusQueryOption, self).__init__(**kwargs)
         self.start_time = start_time
         self.end_time = end_time
 
 
-class ErrorCodeGenerated(msrest.serialization.Model):
+class ErrorCode(msrest.serialization.Model):
     """ErrorCode.
 
     :ivar message:
@@ -7509,29 +7879,23 @@ class ErrorCodeGenerated(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'message': {'key': 'message', 'type': 'str'},
-        'code': {'key': 'code', 'type': 'str'},
+        "message": {"key": "message", "type": "str"},
+        "code": {"key": "code", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        message: Optional[str] = None,
-        code: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, message: Optional[str] = None, code: Optional[str] = None, **kwargs):
         """
         :keyword message:
         :paramtype message: str
         :keyword code:
         :paramtype code: str
         """
-        super(ErrorCodeGenerated, self).__init__(**kwargs)
+        super(ErrorCode, self).__init__(**kwargs)
         self.message = message
         self.code = code
 
 
-class FeedbackDimensionFilterGenerated(msrest.serialization.Model):
+class FeedbackDimensionFilter(msrest.serialization.Model):
     """FeedbackDimensionFilter.
 
     All required parameters must be populated in order to send to Azure.
@@ -7541,38 +7905,33 @@ class FeedbackDimensionFilterGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'dimension': {'required': True},
+        "dimension": {"required": True},
     }
 
     _attribute_map = {
-        'dimension': {'key': 'dimension', 'type': '{str}'},
+        "dimension": {"key": "dimension", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        dimension: Dict[str, str],
-        **kwargs
-    ):
+    def __init__(self, *, dimension: Dict[str, str], **kwargs):
         """
         :keyword dimension: Required. metric dimension filter.
         :paramtype dimension: dict[str, str]
         """
-        super(FeedbackDimensionFilterGenerated, self).__init__(**kwargs)
+        super(FeedbackDimensionFilter, self).__init__(**kwargs)
         self.dimension = dimension
 
 
-class HardThresholdConditionGenerated(msrest.serialization.Model):
+class HardThresholdCondition(msrest.serialization.Model):
     """HardThresholdCondition.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar lower_bound: lower bound
-    
+
      should be specified when anomalyDetectorDirection is Both or Down.
     :vartype lower_bound: float
     :ivar upper_bound: upper bound
-    
+
      should be specified when anomalyDetectorDirection is Both or Up.
     :vartype upper_bound: float
     :ivar anomaly_detector_direction: Required. detection direction. Possible values include:
@@ -7584,15 +7943,15 @@ class HardThresholdConditionGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'anomaly_detector_direction': {'required': True},
-        'suppress_condition': {'required': True},
+        "anomaly_detector_direction": {"required": True},
+        "suppress_condition": {"required": True},
     }
 
     _attribute_map = {
-        'lower_bound': {'key': 'lowerBound', 'type': 'float'},
-        'upper_bound': {'key': 'upperBound', 'type': 'float'},
-        'anomaly_detector_direction': {'key': 'anomalyDetectorDirection', 'type': 'str'},
-        'suppress_condition': {'key': 'suppressCondition', 'type': 'SuppressCondition'},
+        "lower_bound": {"key": "lowerBound", "type": "float"},
+        "upper_bound": {"key": "upperBound", "type": "float"},
+        "anomaly_detector_direction": {"key": "anomalyDetectorDirection", "type": "str"},
+        "suppress_condition": {"key": "suppressCondition", "type": "SuppressCondition"},
     }
 
     def __init__(
@@ -7606,11 +7965,11 @@ class HardThresholdConditionGenerated(msrest.serialization.Model):
     ):
         """
         :keyword lower_bound: lower bound
-        
+
          should be specified when anomalyDetectorDirection is Both or Down.
         :paramtype lower_bound: float
         :keyword upper_bound: upper bound
-        
+
          should be specified when anomalyDetectorDirection is Both or Up.
         :paramtype upper_bound: float
         :keyword anomaly_detector_direction: Required. detection direction. Possible values include:
@@ -7620,22 +7979,22 @@ class HardThresholdConditionGenerated(msrest.serialization.Model):
         :keyword suppress_condition: Required.
         :paramtype suppress_condition: ~azure.ai.metricsadvisor.models.SuppressCondition
         """
-        super(HardThresholdConditionGenerated, self).__init__(**kwargs)
+        super(HardThresholdCondition, self).__init__(**kwargs)
         self.lower_bound = lower_bound
         self.upper_bound = upper_bound
         self.anomaly_detector_direction = anomaly_detector_direction
         self.suppress_condition = suppress_condition
 
 
-class HardThresholdConditionPatchGenerated(msrest.serialization.Model):
+class HardThresholdConditionPatch(msrest.serialization.Model):
     """HardThresholdConditionPatch.
 
     :ivar lower_bound: lower bound
-    
+
      should be specified when anomalyDetectorDirection is Both or Down.
     :vartype lower_bound: float
     :ivar upper_bound: upper bound
-    
+
      should be specified when anomalyDetectorDirection is Both or Up.
     :vartype upper_bound: float
     :ivar anomaly_detector_direction: detection direction. Possible values include: "Both", "Down",
@@ -7647,10 +8006,10 @@ class HardThresholdConditionPatchGenerated(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'lower_bound': {'key': 'lowerBound', 'type': 'float'},
-        'upper_bound': {'key': 'upperBound', 'type': 'float'},
-        'anomaly_detector_direction': {'key': 'anomalyDetectorDirection', 'type': 'str'},
-        'suppress_condition': {'key': 'suppressCondition', 'type': 'SuppressConditionPatch'},
+        "lower_bound": {"key": "lowerBound", "type": "float"},
+        "upper_bound": {"key": "upperBound", "type": "float"},
+        "anomaly_detector_direction": {"key": "anomalyDetectorDirection", "type": "str"},
+        "suppress_condition": {"key": "suppressCondition", "type": "SuppressConditionPatch"},
     }
 
     def __init__(
@@ -7664,11 +8023,11 @@ class HardThresholdConditionPatchGenerated(msrest.serialization.Model):
     ):
         """
         :keyword lower_bound: lower bound
-        
+
          should be specified when anomalyDetectorDirection is Both or Down.
         :paramtype lower_bound: float
         :keyword upper_bound: upper bound
-        
+
          should be specified when anomalyDetectorDirection is Both or Up.
         :paramtype upper_bound: float
         :keyword anomaly_detector_direction: detection direction. Possible values include: "Both",
@@ -7678,14 +8037,14 @@ class HardThresholdConditionPatchGenerated(msrest.serialization.Model):
         :keyword suppress_condition:
         :paramtype suppress_condition: ~azure.ai.metricsadvisor.models.SuppressConditionPatch
         """
-        super(HardThresholdConditionPatchGenerated, self).__init__(**kwargs)
+        super(HardThresholdConditionPatch, self).__init__(**kwargs)
         self.lower_bound = lower_bound
         self.upper_bound = upper_bound
         self.anomaly_detector_direction = anomaly_detector_direction
         self.suppress_condition = suppress_condition
 
 
-class HookListGenerated(msrest.serialization.Model):
+class HookList(msrest.serialization.Model):
     """HookList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7697,27 +8056,23 @@ class HookListGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
-        'value': {'readonly': True, 'unique': True},
+        "next_link": {"readonly": True},
+        "value": {"readonly": True, "unique": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': '@nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[NotificationHook]'},
+        "next_link": {"key": "@nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[NotificationHook]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(HookListGenerated, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super(HookList, self).__init__(**kwargs)
         self.next_link = None
         self.value = None
 
 
-class IncidentPropertyGenerated(msrest.serialization.Model):
+class IncidentProperty(msrest.serialization.Model):
     """IncidentProperty.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7728,7 +8083,7 @@ class IncidentPropertyGenerated(msrest.serialization.Model):
      include: "Low", "Medium", "High".
     :vartype max_severity: str or ~azure.ai.metricsadvisor.models.AnomalySeverity
     :ivar incident_status: incident status
-    
+
      only return for alerting incident result. Possible values include: "Active", "Resolved".
     :vartype incident_status: str or ~azure.ai.metricsadvisor.models.AnomalyIncidentStatus
     :ivar value_of_root_node: value of the root node.
@@ -7738,38 +8093,33 @@ class IncidentPropertyGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'max_severity': {'required': True},
-        'incident_status': {'readonly': True},
-        'value_of_root_node': {'readonly': True},
-        'expected_value_of_root_node': {'readonly': True},
+        "max_severity": {"required": True},
+        "incident_status": {"readonly": True},
+        "value_of_root_node": {"readonly": True},
+        "expected_value_of_root_node": {"readonly": True},
     }
 
     _attribute_map = {
-        'max_severity': {'key': 'maxSeverity', 'type': 'str'},
-        'incident_status': {'key': 'incidentStatus', 'type': 'str'},
-        'value_of_root_node': {'key': 'valueOfRootNode', 'type': 'float'},
-        'expected_value_of_root_node': {'key': 'expectedValueOfRootNode', 'type': 'float'},
+        "max_severity": {"key": "maxSeverity", "type": "str"},
+        "incident_status": {"key": "incidentStatus", "type": "str"},
+        "value_of_root_node": {"key": "valueOfRootNode", "type": "float"},
+        "expected_value_of_root_node": {"key": "expectedValueOfRootNode", "type": "float"},
     }
 
-    def __init__(
-        self,
-        *,
-        max_severity: Union[str, "AnomalySeverity"],
-        **kwargs
-    ):
+    def __init__(self, *, max_severity: Union[str, "AnomalySeverity"], **kwargs):
         """
         :keyword max_severity: Required. max severity of latest anomalies in the incident. Possible
          values include: "Low", "Medium", "High".
         :paramtype max_severity: str or ~azure.ai.metricsadvisor.models.AnomalySeverity
         """
-        super(IncidentPropertyGenerated, self).__init__(**kwargs)
+        super(IncidentProperty, self).__init__(**kwargs)
         self.max_severity = max_severity
         self.incident_status = None
         self.value_of_root_node = None
         self.expected_value_of_root_node = None
 
 
-class IncidentResultListGenerated(msrest.serialization.Model):
+class IncidentResultList(msrest.serialization.Model):
     """IncidentResultList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7783,31 +8133,26 @@ class IncidentResultListGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
-        'value': {'required': True},
+        "next_link": {"readonly": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': '@nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[AnomalyIncident]'},
+        "next_link": {"key": "@nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[AnomalyIncident]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["AnomalyIncident"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["AnomalyIncident"], **kwargs):
         """
         :keyword value: Required.
         :paramtype value: list[~azure.ai.metricsadvisor.models.AnomalyIncident]
         """
-        super(IncidentResultListGenerated, self).__init__(**kwargs)
+        super(IncidentResultList, self).__init__(**kwargs)
         self.next_link = None
         self.value = value
 
 
-class IncidentRootCauseGenerated(msrest.serialization.Model):
+class IncidentRootCause(msrest.serialization.Model):
     """IncidentRootCause.
 
     All required parameters must be populated in order to send to Azure.
@@ -7823,27 +8168,21 @@ class IncidentRootCauseGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'root_cause': {'required': True},
-        'path': {'required': True},
-        'score': {'required': True},
-        'description': {'required': True},
+        "root_cause": {"required": True},
+        "path": {"required": True},
+        "score": {"required": True},
+        "description": {"required": True},
     }
 
     _attribute_map = {
-        'root_cause': {'key': 'rootCause', 'type': 'DimensionGroupIdentity'},
-        'path': {'key': 'path', 'type': '[str]'},
-        'score': {'key': 'score', 'type': 'float'},
-        'description': {'key': 'description', 'type': 'str'},
+        "root_cause": {"key": "rootCause", "type": "DimensionGroupIdentity"},
+        "path": {"key": "path", "type": "[str]"},
+        "score": {"key": "score", "type": "float"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        root_cause: "DimensionGroupIdentity",
-        path: List[str],
-        score: float,
-        description: str,
-        **kwargs
+        self, *, root_cause: "DimensionGroupIdentity", path: List[str], score: float, description: str, **kwargs
     ):
         """
         :keyword root_cause: Required.
@@ -7855,14 +8194,14 @@ class IncidentRootCauseGenerated(msrest.serialization.Model):
         :keyword description: Required. description of the root cause.
         :paramtype description: str
         """
-        super(IncidentRootCauseGenerated, self).__init__(**kwargs)
+        super(IncidentRootCause, self).__init__(**kwargs)
         self.root_cause = root_cause
         self.path = path
         self.score = score
         self.description = description
 
 
-class InfluxDBDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
+class InfluxDBDataFeedPatch(DataFeedDetailPatch):
     """InfluxDBDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -7931,36 +8270,36 @@ class InfluxDBDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
+        "data_source_type": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'status': {'key': 'status', 'type': 'str'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'InfluxDBParameterPatch'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "status": {"key": "status", "type": "str"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
+        "data_source_parameter": {"key": "dataSourceParameter", "type": "InfluxDBParameterPatch"},
     }
 
     def __init__(
@@ -8049,12 +8388,35 @@ class InfluxDBDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.InfluxDBParameterPatch
         """
-        super(InfluxDBDataFeedPatchGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, status=status, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
-        self.data_source_type = 'InfluxDB'  # type: str
+        super(InfluxDBDataFeedPatch, self).__init__(
+            data_feed_name=data_feed_name,
+            data_feed_description=data_feed_description,
+            timestamp_column=timestamp_column,
+            data_start_from=data_start_from,
+            start_offset_in_seconds=start_offset_in_seconds,
+            max_concurrency=max_concurrency,
+            min_retry_interval_in_seconds=min_retry_interval_in_seconds,
+            stop_retry_after_in_seconds=stop_retry_after_in_seconds,
+            need_rollup=need_rollup,
+            roll_up_method=roll_up_method,
+            roll_up_columns=roll_up_columns,
+            all_up_identification=all_up_identification,
+            fill_missing_point_type=fill_missing_point_type,
+            fill_missing_point_value=fill_missing_point_value,
+            view_mode=view_mode,
+            admins=admins,
+            viewers=viewers,
+            status=status,
+            action_link_template=action_link_template,
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
+        self.data_source_type = "InfluxDB"  # type: str
         self.data_source_parameter = data_source_parameter
 
 
-class InfluxDbDataFeedSourceGenerated(DataFeedGenerated):
+class InfluxDbDataFeedSource(DataFeed):
     """InfluxDbDataFeedSource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8142,55 +8504,55 @@ class InfluxDbDataFeedSourceGenerated(DataFeedGenerated):
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'data_feed_id': {'readonly': True},
-        'data_feed_name': {'required': True},
-        'granularity_name': {'required': True},
-        'metrics': {'required': True, 'unique': True},
-        'dimension': {'unique': True},
-        'data_start_from': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
-        'is_admin': {'readonly': True},
-        'creator': {'readonly': True},
-        'status': {'readonly': True},
-        'created_time': {'readonly': True},
-        'data_source_parameter': {'required': True},
+        "data_source_type": {"required": True},
+        "data_feed_id": {"readonly": True},
+        "data_feed_name": {"required": True},
+        "granularity_name": {"required": True},
+        "metrics": {"required": True, "unique": True},
+        "dimension": {"unique": True},
+        "data_start_from": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
+        "is_admin": {"readonly": True},
+        "creator": {"readonly": True},
+        "status": {"readonly": True},
+        "created_time": {"readonly": True},
+        "data_source_parameter": {"required": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_id': {'key': 'dataFeedId', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'granularity_name': {'key': 'granularityName', 'type': 'str'},
-        'granularity_amount': {'key': 'granularityAmount', 'type': 'int'},
-        'metrics': {'key': 'metrics', 'type': '[DataFeedMetric]'},
-        'dimension': {'key': 'dimension', 'type': '[DataFeedDimension]'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'is_admin': {'key': 'isAdmin', 'type': 'bool'},
-        'creator': {'key': 'creator', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'InfluxDBParameter'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_id": {"key": "dataFeedId", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "granularity_name": {"key": "granularityName", "type": "str"},
+        "granularity_amount": {"key": "granularityAmount", "type": "int"},
+        "metrics": {"key": "metrics", "type": "[DataFeedMetric]"},
+        "dimension": {"key": "dimension", "type": "[DataFeedDimension]"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "is_admin": {"key": "isAdmin", "type": "bool"},
+        "creator": {"key": "creator", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
+        "data_source_parameter": {"key": "dataSourceParameter", "type": "InfluxDBParameter"},
     }
 
     def __init__(
@@ -8289,12 +8651,38 @@ class InfluxDbDataFeedSourceGenerated(DataFeedGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.InfluxDBParameter
         """
-        super(InfluxDbDataFeedSourceGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, granularity_name=granularity_name, granularity_amount=granularity_amount, metrics=metrics, dimension=dimension, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
-        self.data_source_type = 'InfluxDB'  # type: str
+        super(InfluxDbDataFeedSource, self).__init__(
+            data_feed_name=data_feed_name,
+            data_feed_description=data_feed_description,
+            granularity_name=granularity_name,
+            granularity_amount=granularity_amount,
+            metrics=metrics,
+            dimension=dimension,
+            timestamp_column=timestamp_column,
+            data_start_from=data_start_from,
+            start_offset_in_seconds=start_offset_in_seconds,
+            max_concurrency=max_concurrency,
+            min_retry_interval_in_seconds=min_retry_interval_in_seconds,
+            stop_retry_after_in_seconds=stop_retry_after_in_seconds,
+            need_rollup=need_rollup,
+            roll_up_method=roll_up_method,
+            roll_up_columns=roll_up_columns,
+            all_up_identification=all_up_identification,
+            fill_missing_point_type=fill_missing_point_type,
+            fill_missing_point_value=fill_missing_point_value,
+            view_mode=view_mode,
+            admins=admins,
+            viewers=viewers,
+            action_link_template=action_link_template,
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
+        self.data_source_type = "InfluxDB"  # type: str
         self.data_source_parameter = data_source_parameter
 
 
-class InfluxDBParameterGenerated(msrest.serialization.Model):
+class InfluxDBParameter(msrest.serialization.Model):
     """InfluxDBParameter.
 
     All required parameters must be populated in order to send to Azure.
@@ -8312,15 +8700,15 @@ class InfluxDBParameterGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'query': {'required': True},
+        "query": {"required": True},
     }
 
     _attribute_map = {
-        'connection_string': {'key': 'connectionString', 'type': 'str'},
-        'database': {'key': 'database', 'type': 'str'},
-        'user_name': {'key': 'userName', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
-        'query': {'key': 'query', 'type': 'str'},
+        "connection_string": {"key": "connectionString", "type": "str"},
+        "database": {"key": "database", "type": "str"},
+        "user_name": {"key": "userName", "type": "str"},
+        "password": {"key": "password", "type": "str"},
+        "query": {"key": "query", "type": "str"},
     }
 
     def __init__(
@@ -8345,7 +8733,7 @@ class InfluxDBParameterGenerated(msrest.serialization.Model):
         :keyword query: Required. The script to query this database.
         :paramtype query: str
         """
-        super(InfluxDBParameterGenerated, self).__init__(**kwargs)
+        super(InfluxDBParameter, self).__init__(**kwargs)
         self.connection_string = connection_string
         self.database = database
         self.user_name = user_name
@@ -8353,7 +8741,7 @@ class InfluxDBParameterGenerated(msrest.serialization.Model):
         self.query = query
 
 
-class InfluxDBParameterPatchGenerated(msrest.serialization.Model):
+class InfluxDBParameterPatch(msrest.serialization.Model):
     """InfluxDBParameterPatch.
 
     :ivar connection_string: The connection string of this InfluxDB.
@@ -8369,11 +8757,11 @@ class InfluxDBParameterPatchGenerated(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'connection_string': {'key': 'connectionString', 'type': 'str'},
-        'database': {'key': 'database', 'type': 'str'},
-        'user_name': {'key': 'userName', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
-        'query': {'key': 'query', 'type': 'str'},
+        "connection_string": {"key": "connectionString", "type": "str"},
+        "database": {"key": "database", "type": "str"},
+        "user_name": {"key": "userName", "type": "str"},
+        "password": {"key": "password", "type": "str"},
+        "query": {"key": "query", "type": "str"},
     }
 
     def __init__(
@@ -8398,7 +8786,7 @@ class InfluxDBParameterPatchGenerated(msrest.serialization.Model):
         :keyword query: The script to query this database.
         :paramtype query: str
         """
-        super(InfluxDBParameterPatchGenerated, self).__init__(**kwargs)
+        super(InfluxDBParameterPatch, self).__init__(**kwargs)
         self.connection_string = connection_string
         self.database = database
         self.user_name = user_name
@@ -8406,7 +8794,7 @@ class InfluxDBParameterPatchGenerated(msrest.serialization.Model):
         self.query = query
 
 
-class IngestionProgressResetOptionsGenerated(msrest.serialization.Model):
+class IngestionProgressResetOptions(msrest.serialization.Model):
     """IngestionProgressResetOptions.
 
     All required parameters must be populated in order to send to Azure.
@@ -8418,34 +8806,28 @@ class IngestionProgressResetOptionsGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'start_time': {'required': True},
-        'end_time': {'required': True},
+        "start_time": {"required": True},
+        "end_time": {"required": True},
     }
 
     _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        *,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
-        **kwargs
-    ):
+    def __init__(self, *, start_time: datetime.datetime, end_time: datetime.datetime, **kwargs):
         """
         :keyword start_time: Required. the start point of time range to reset data ingestion status.
         :paramtype start_time: ~datetime.datetime
         :keyword end_time: Required. the end point of time range to reset data ingestion status.
         :paramtype end_time: ~datetime.datetime
         """
-        super(IngestionProgressResetOptionsGenerated, self).__init__(**kwargs)
+        super(IngestionProgressResetOptions, self).__init__(**kwargs)
         self.start_time = start_time
         self.end_time = end_time
 
 
-class IngestionStatusListGenerated(msrest.serialization.Model):
+class IngestionStatusList(msrest.serialization.Model):
     """IngestionStatusList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8457,27 +8839,23 @@ class IngestionStatusListGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
-        'value': {'readonly': True},
+        "next_link": {"readonly": True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': '@nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[DataFeedIngestionStatus]'},
+        "next_link": {"key": "@nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[DataFeedIngestionStatus]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(IngestionStatusListGenerated, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super(IngestionStatusList, self).__init__(**kwargs)
         self.next_link = None
         self.value = None
 
 
-class IngestionStatusQueryOptionsGenerated(msrest.serialization.Model):
+class IngestionStatusQueryOptions(msrest.serialization.Model):
     """IngestionStatusQueryOptions.
 
     All required parameters must be populated in order to send to Azure.
@@ -8489,43 +8867,30 @@ class IngestionStatusQueryOptionsGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'start_time': {'required': True},
-        'end_time': {'required': True},
+        "start_time": {"required": True},
+        "end_time": {"required": True},
     }
 
     _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        *,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
-        **kwargs
-    ):
+    def __init__(self, *, start_time: datetime.datetime, end_time: datetime.datetime, **kwargs):
         """
         :keyword start_time: Required. the start point of time range to query data ingestion status.
         :paramtype start_time: ~datetime.datetime
         :keyword end_time: Required. the end point of time range to query data ingestion status.
         :paramtype end_time: ~datetime.datetime
         """
-        super(IngestionStatusQueryOptionsGenerated, self).__init__(**kwargs)
+        super(IngestionStatusQueryOptions, self).__init__(**kwargs)
         self.start_time = start_time
         self.end_time = end_time
 
 
-class MetricAlertConfigurationGenerated(msrest.serialization.Model):
+class MetricAlertConfiguration(msrest.serialization.Model):
     """MetricAlertConfiguration.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar anomaly_detection_configuration_id: Required. Anomaly detection configuration unique id.
-    :vartype anomaly_detection_configuration_id: str
-    :ivar anomaly_scope_type: Required. Anomaly scope. Possible values include: "WholeSeries",
-     "SeriesGroup", "TopN".
-    :vartype anomaly_scope_type: str or ~azure.ai.metricsadvisor.models.MetricAnomalyAlertScopeType
     :ivar negation_operation: Negation operation.
     :vartype negation_operation: bool
     :ivar dimension_anomaly_scope:
@@ -8534,49 +8899,43 @@ class MetricAlertConfigurationGenerated(msrest.serialization.Model):
     :vartype top_n_anomaly_scope: ~azure.ai.metricsadvisor.models.TopNGroupScope
     :ivar severity_filter:
     :vartype severity_filter: ~azure.ai.metricsadvisor.models.SeverityCondition
-    :ivar snooze_filter:
-    :vartype snooze_filter: ~azure.ai.metricsadvisor.models.MetricAnomalyAlertSnoozeCondition
     :ivar value_filter:
     :vartype value_filter: ~azure.ai.metricsadvisor.models.ValueCondition
+    :ivar detection_configuration_id: Anomaly detection configuration unique id.
+    :vartype detection_configuration_id: str
+    :ivar alert_scope: Anomaly scope. Possible values include: "WholeSeries", "SeriesGroup",
+     "TopN".
+    :vartype alert_scope: str or ~azure.ai.metricsadvisor.models.MetricAnomalyAlertScopeType
+    :ivar alert_snooze_condition:
+    :vartype alert_snooze_condition:
+     ~azure.ai.metricsadvisor.models.MetricAnomalyAlertSnoozeCondition
     """
 
-    _validation = {
-        'anomaly_detection_configuration_id': {'required': True},
-        'anomaly_scope_type': {'required': True},
-    }
-
     _attribute_map = {
-        'anomaly_detection_configuration_id': {'key': 'anomalyDetectionConfigurationId', 'type': 'str'},
-        'anomaly_scope_type': {'key': 'anomalyScopeType', 'type': 'str'},
-        'negation_operation': {'key': 'negationOperation', 'type': 'bool'},
-        'dimension_anomaly_scope': {'key': 'dimensionAnomalyScope', 'type': 'DimensionGroupIdentity'},
-        'top_n_anomaly_scope': {'key': 'topNAnomalyScope', 'type': 'TopNGroupScope'},
-        'severity_filter': {'key': 'severityFilter', 'type': 'SeverityCondition'},
-        'snooze_filter': {'key': 'snoozeFilter', 'type': 'MetricAnomalyAlertSnoozeCondition'},
-        'value_filter': {'key': 'valueFilter', 'type': 'ValueCondition'},
+        "negation_operation": {"key": "negationOperation", "type": "bool"},
+        "dimension_anomaly_scope": {"key": "dimensionAnomalyScope", "type": "DimensionGroupIdentity"},
+        "top_n_anomaly_scope": {"key": "topNAnomalyScope", "type": "TopNGroupScope"},
+        "severity_filter": {"key": "severityFilter", "type": "SeverityCondition"},
+        "value_filter": {"key": "valueFilter", "type": "ValueCondition"},
+        "detection_configuration_id": {"key": "detectionConfigurationId", "type": "str"},
+        "alert_scope": {"key": "alertScope", "type": "str"},
+        "alert_snooze_condition": {"key": "alertSnoozeCondition", "type": "MetricAnomalyAlertSnoozeCondition"},
     }
 
     def __init__(
         self,
         *,
-        anomaly_detection_configuration_id: str,
-        anomaly_scope_type: Union[str, "MetricAnomalyAlertScopeType"],
         negation_operation: Optional[bool] = False,
         dimension_anomaly_scope: Optional["DimensionGroupIdentity"] = None,
         top_n_anomaly_scope: Optional["TopNGroupScope"] = None,
         severity_filter: Optional["SeverityCondition"] = None,
-        snooze_filter: Optional["MetricAnomalyAlertSnoozeCondition"] = None,
         value_filter: Optional["ValueCondition"] = None,
+        detection_configuration_id: Optional[str] = None,
+        alert_scope: Optional[Union[str, "MetricAnomalyAlertScopeType"]] = None,
+        alert_snooze_condition: Optional["MetricAnomalyAlertSnoozeCondition"] = None,
         **kwargs
     ):
         """
-        :keyword anomaly_detection_configuration_id: Required. Anomaly detection configuration unique
-         id.
-        :paramtype anomaly_detection_configuration_id: str
-        :keyword anomaly_scope_type: Required. Anomaly scope. Possible values include: "WholeSeries",
-         "SeriesGroup", "TopN".
-        :paramtype anomaly_scope_type: str or
-         ~azure.ai.metricsadvisor.models.MetricAnomalyAlertScopeType
         :keyword negation_operation: Negation operation.
         :paramtype negation_operation: bool
         :keyword dimension_anomaly_scope:
@@ -8585,23 +8944,29 @@ class MetricAlertConfigurationGenerated(msrest.serialization.Model):
         :paramtype top_n_anomaly_scope: ~azure.ai.metricsadvisor.models.TopNGroupScope
         :keyword severity_filter:
         :paramtype severity_filter: ~azure.ai.metricsadvisor.models.SeverityCondition
-        :keyword snooze_filter:
-        :paramtype snooze_filter: ~azure.ai.metricsadvisor.models.MetricAnomalyAlertSnoozeCondition
         :keyword value_filter:
         :paramtype value_filter: ~azure.ai.metricsadvisor.models.ValueCondition
+        :keyword detection_configuration_id: Anomaly detection configuration unique id.
+        :paramtype detection_configuration_id: str
+        :keyword alert_scope: Anomaly scope. Possible values include: "WholeSeries", "SeriesGroup",
+         "TopN".
+        :paramtype alert_scope: str or ~azure.ai.metricsadvisor.models.MetricAnomalyAlertScopeType
+        :keyword alert_snooze_condition:
+        :paramtype alert_snooze_condition:
+         ~azure.ai.metricsadvisor.models.MetricAnomalyAlertSnoozeCondition
         """
-        super(MetricAlertConfigurationGenerated, self).__init__(**kwargs)
-        self.anomaly_detection_configuration_id = anomaly_detection_configuration_id
-        self.anomaly_scope_type = anomaly_scope_type
+        super(MetricAlertConfiguration, self).__init__(**kwargs)
         self.negation_operation = negation_operation
         self.dimension_anomaly_scope = dimension_anomaly_scope
         self.top_n_anomaly_scope = top_n_anomaly_scope
         self.severity_filter = severity_filter
-        self.snooze_filter = snooze_filter
         self.value_filter = value_filter
+        self.detection_configuration_id = detection_configuration_id
+        self.alert_scope = alert_scope
+        self.alert_snooze_condition = alert_snooze_condition
 
 
-class MetricAnomalyAlertSnoozeConditionGenerated(msrest.serialization.Model):
+class MetricAnomalyAlertSnoozeCondition(msrest.serialization.Model):
     """MetricAnomalyAlertSnoozeCondition.
 
     All required parameters must be populated in order to send to Azure.
@@ -8615,24 +8980,19 @@ class MetricAnomalyAlertSnoozeConditionGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'auto_snooze': {'required': True},
-        'snooze_scope': {'required': True},
-        'only_for_successive': {'required': True},
+        "auto_snooze": {"required": True},
+        "snooze_scope": {"required": True},
+        "only_for_successive": {"required": True},
     }
 
     _attribute_map = {
-        'auto_snooze': {'key': 'autoSnooze', 'type': 'int'},
-        'snooze_scope': {'key': 'snoozeScope', 'type': 'str'},
-        'only_for_successive': {'key': 'onlyForSuccessive', 'type': 'bool'},
+        "auto_snooze": {"key": "autoSnooze", "type": "int"},
+        "snooze_scope": {"key": "snoozeScope", "type": "str"},
+        "only_for_successive": {"key": "onlyForSuccessive", "type": "bool"},
     }
 
     def __init__(
-        self,
-        *,
-        auto_snooze: int,
-        snooze_scope: Union[str, "SnoozeScope"],
-        only_for_successive: bool,
-        **kwargs
+        self, *, auto_snooze: int, snooze_scope: Union[str, "SnoozeScope"], only_for_successive: bool, **kwargs
     ):
         """
         :keyword auto_snooze: Required. snooze point count, value range : [0, +∞).
@@ -8642,13 +9002,13 @@ class MetricAnomalyAlertSnoozeConditionGenerated(msrest.serialization.Model):
         :keyword only_for_successive: Required. only snooze for successive anomalies.
         :paramtype only_for_successive: bool
         """
-        super(MetricAnomalyAlertSnoozeConditionGenerated, self).__init__(**kwargs)
+        super(MetricAnomalyAlertSnoozeCondition, self).__init__(**kwargs)
         self.auto_snooze = auto_snooze
         self.snooze_scope = snooze_scope
         self.only_for_successive = only_for_successive
 
 
-class MetricDataItemGenerated(msrest.serialization.Model):
+class MetricDataItem(msrest.serialization.Model):
     """MetricDataItem.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8662,33 +9022,28 @@ class MetricDataItemGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'timestamp_list': {'readonly': True},
-        'value_list': {'readonly': True},
+        "timestamp_list": {"readonly": True},
+        "value_list": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'MetricSeriesDefinition'},
-        'timestamp_list': {'key': 'timestampList', 'type': '[iso-8601]'},
-        'value_list': {'key': 'valueList', 'type': '[float]'},
+        "id": {"key": "id", "type": "MetricSeriesDefinition"},
+        "timestamp_list": {"key": "timestampList", "type": "[iso-8601]"},
+        "value_list": {"key": "valueList", "type": "[float]"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional["MetricSeriesDefinition"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional["MetricSeriesDefinition"] = None, **kwargs):
         """
         :keyword id:
         :paramtype id: ~azure.ai.metricsadvisor.models.MetricSeriesDefinition
         """
-        super(MetricDataItemGenerated, self).__init__(**kwargs)
+        super(MetricDataItem, self).__init__(**kwargs)
         self.id = id
         self.timestamp_list = None
         self.value_list = None
 
 
-class MetricDataListGenerated(msrest.serialization.Model):
+class MetricDataList(msrest.serialization.Model):
     """MetricDataList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8698,24 +9053,20 @@ class MetricDataListGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[MetricDataItem]'},
+        "value": {"key": "value", "type": "[MetricDataItem]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(MetricDataListGenerated, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super(MetricDataList, self).__init__(**kwargs)
         self.value = None
 
 
-class MetricDataQueryOptionsGenerated(msrest.serialization.Model):
+class MetricDataQueryOptions(msrest.serialization.Model):
     """MetricDataQueryOptions.
 
     All required parameters must be populated in order to send to Azure.
@@ -8731,24 +9082,19 @@ class MetricDataQueryOptionsGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'start_time': {'required': True},
-        'end_time': {'required': True},
-        'series': {'required': True},
+        "start_time": {"required": True},
+        "end_time": {"required": True},
+        "series": {"required": True},
     }
 
     _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'series': {'key': 'series', 'type': '[{str}]'},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "series": {"key": "series", "type": "[{str}]"},
     }
 
     def __init__(
-        self,
-        *,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
-        series: List[Dict[str, str]],
-        **kwargs
+        self, *, start_time: datetime.datetime, end_time: datetime.datetime, series: List[Dict[str, str]], **kwargs
     ):
         """
         :keyword start_time: Required. start time of query a time series data, and format should be
@@ -8760,17 +9106,17 @@ class MetricDataQueryOptionsGenerated(msrest.serialization.Model):
         :keyword series: Required. query specific series. The maximum number of series is 100.
         :paramtype series: list[dict[str, str]]
         """
-        super(MetricDataQueryOptionsGenerated, self).__init__(**kwargs)
+        super(MetricDataQueryOptions, self).__init__(**kwargs)
         self.start_time = start_time
         self.end_time = end_time
         self.series = series
 
 
-class MetricDetectionConditionGenerated(msrest.serialization.Model):
+class MetricDetectionCondition(msrest.serialization.Model):
     """MetricDetectionCondition.
 
     :ivar condition_operator: condition operator
-    
+
      should be specified when combining multiple detection conditions. Possible values include:
      "AND", "OR".
     :vartype condition_operator: str or
@@ -8784,10 +9130,10 @@ class MetricDetectionConditionGenerated(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'condition_operator': {'key': 'conditionOperator', 'type': 'str'},
-        'smart_detection_condition': {'key': 'smartDetectionCondition', 'type': 'SmartDetectionCondition'},
-        'hard_threshold_condition': {'key': 'hardThresholdCondition', 'type': 'HardThresholdCondition'},
-        'change_threshold_condition': {'key': 'changeThresholdCondition', 'type': 'ChangeThresholdCondition'},
+        "condition_operator": {"key": "conditionOperator", "type": "str"},
+        "smart_detection_condition": {"key": "smartDetectionCondition", "type": "SmartDetectionCondition"},
+        "hard_threshold_condition": {"key": "hardThresholdCondition", "type": "HardThresholdCondition"},
+        "change_threshold_condition": {"key": "changeThresholdCondition", "type": "ChangeThresholdCondition"},
     }
 
     def __init__(
@@ -8801,7 +9147,7 @@ class MetricDetectionConditionGenerated(msrest.serialization.Model):
     ):
         """
         :keyword condition_operator: condition operator
-        
+
          should be specified when combining multiple detection conditions. Possible values include:
          "AND", "OR".
         :paramtype condition_operator: str or
@@ -8813,14 +9159,14 @@ class MetricDetectionConditionGenerated(msrest.serialization.Model):
         :keyword change_threshold_condition:
         :paramtype change_threshold_condition: ~azure.ai.metricsadvisor.models.ChangeThresholdCondition
         """
-        super(MetricDetectionConditionGenerated, self).__init__(**kwargs)
+        super(MetricDetectionCondition, self).__init__(**kwargs)
         self.condition_operator = condition_operator
         self.smart_detection_condition = smart_detection_condition
         self.hard_threshold_condition = hard_threshold_condition
         self.change_threshold_condition = change_threshold_condition
 
 
-class MetricDimensionListGenerated(msrest.serialization.Model):
+class MetricDimensionList(msrest.serialization.Model):
     """MetricDimensionList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8832,27 +9178,23 @@ class MetricDimensionListGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
-        'value': {'readonly': True, 'unique': True},
+        "next_link": {"readonly": True},
+        "value": {"readonly": True, "unique": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': '@nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[str]'},
+        "next_link": {"key": "@nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(MetricDimensionListGenerated, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super(MetricDimensionList, self).__init__(**kwargs)
         self.next_link = None
         self.value = None
 
 
-class MetricDimensionQueryOptionsGenerated(msrest.serialization.Model):
+class MetricDimensionQueryOptions(msrest.serialization.Model):
     """MetricDimensionQueryOptions.
 
     All required parameters must be populated in order to send to Azure.
@@ -8864,33 +9206,27 @@ class MetricDimensionQueryOptionsGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'dimension_name': {'required': True},
+        "dimension_name": {"required": True},
     }
 
     _attribute_map = {
-        'dimension_name': {'key': 'dimensionName', 'type': 'str'},
-        'dimension_value_filter': {'key': 'dimensionValueFilter', 'type': 'str'},
+        "dimension_name": {"key": "dimensionName", "type": "str"},
+        "dimension_value_filter": {"key": "dimensionValueFilter", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        dimension_name: str,
-        dimension_value_filter: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, dimension_name: str, dimension_value_filter: Optional[str] = None, **kwargs):
         """
         :keyword dimension_name: Required. dimension name.
         :paramtype dimension_name: str
         :keyword dimension_value_filter: dimension value to be filtered.
         :paramtype dimension_value_filter: str
         """
-        super(MetricDimensionQueryOptionsGenerated, self).__init__(**kwargs)
+        super(MetricDimensionQueryOptions, self).__init__(**kwargs)
         self.dimension_name = dimension_name
         self.dimension_value_filter = dimension_value_filter
 
 
-class MetricEnrichedSeriesDataGenerated(msrest.serialization.Model):
+class MetricEnrichedSeriesData(msrest.serialization.Model):
     """MetricEnrichedSeriesData.
 
     All required parameters must be populated in order to send to Azure.
@@ -8914,25 +9250,25 @@ class MetricEnrichedSeriesDataGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'series': {'required': True},
-        'timestamp_list': {'required': True},
-        'value_list': {'required': True},
-        'is_anomaly_list': {'required': True},
-        'period_list': {'required': True},
-        'expected_value_list': {'required': True},
-        'lower_boundary_list': {'required': True},
-        'upper_boundary_list': {'required': True},
+        "series": {"required": True},
+        "timestamp_list": {"required": True},
+        "value_list": {"required": True},
+        "is_anomaly_list": {"required": True},
+        "period_list": {"required": True},
+        "expected_value_list": {"required": True},
+        "lower_boundary_list": {"required": True},
+        "upper_boundary_list": {"required": True},
     }
 
     _attribute_map = {
-        'series': {'key': 'series', 'type': 'SeriesIdentity'},
-        'timestamp_list': {'key': 'timestampList', 'type': '[iso-8601]'},
-        'value_list': {'key': 'valueList', 'type': '[float]'},
-        'is_anomaly_list': {'key': 'isAnomalyList', 'type': '[bool]'},
-        'period_list': {'key': 'periodList', 'type': '[int]'},
-        'expected_value_list': {'key': 'expectedValueList', 'type': '[float]'},
-        'lower_boundary_list': {'key': 'lowerBoundaryList', 'type': '[float]'},
-        'upper_boundary_list': {'key': 'upperBoundaryList', 'type': '[float]'},
+        "series": {"key": "series", "type": "SeriesIdentity"},
+        "timestamp_list": {"key": "timestampList", "type": "[iso-8601]"},
+        "value_list": {"key": "valueList", "type": "[float]"},
+        "is_anomaly_list": {"key": "isAnomalyList", "type": "[bool]"},
+        "period_list": {"key": "periodList", "type": "[int]"},
+        "expected_value_list": {"key": "expectedValueList", "type": "[float]"},
+        "lower_boundary_list": {"key": "lowerBoundaryList", "type": "[float]"},
+        "upper_boundary_list": {"key": "upperBoundaryList", "type": "[float]"},
     }
 
     def __init__(
@@ -8968,7 +9304,7 @@ class MetricEnrichedSeriesDataGenerated(msrest.serialization.Model):
          detector.
         :paramtype upper_boundary_list: list[float]
         """
-        super(MetricEnrichedSeriesDataGenerated, self).__init__(**kwargs)
+        super(MetricEnrichedSeriesData, self).__init__(**kwargs)
         self.series = series
         self.timestamp_list = timestamp_list
         self.value_list = value_list
@@ -8979,7 +9315,7 @@ class MetricEnrichedSeriesDataGenerated(msrest.serialization.Model):
         self.upper_boundary_list = upper_boundary_list
 
 
-class MetricFeedbackFilterGenerated(msrest.serialization.Model):
+class MetricFeedbackFilter(msrest.serialization.Model):
     """MetricFeedbackFilter.
 
     All required parameters must be populated in order to send to Azure.
@@ -9001,16 +9337,16 @@ class MetricFeedbackFilterGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'metric_id': {'required': True},
+        "metric_id": {"required": True},
     }
 
     _attribute_map = {
-        'metric_id': {'key': 'metricId', 'type': 'str'},
-        'dimension_filter': {'key': 'dimensionFilter', 'type': 'FeedbackDimensionFilter'},
-        'feedback_type': {'key': 'feedbackType', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'time_mode': {'key': 'timeMode', 'type': 'str'},
+        "metric_id": {"key": "metricId", "type": "str"},
+        "dimension_filter": {"key": "dimensionFilter", "type": "FeedbackDimensionFilter"},
+        "feedback_type": {"key": "feedbackType", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "time_mode": {"key": "timeMode", "type": "str"},
     }
 
     def __init__(
@@ -9040,7 +9376,7 @@ class MetricFeedbackFilterGenerated(msrest.serialization.Model):
          "FeedbackCreatedTime".
         :paramtype time_mode: str or ~azure.ai.metricsadvisor.models.FeedbackQueryTimeMode
         """
-        super(MetricFeedbackFilterGenerated, self).__init__(**kwargs)
+        super(MetricFeedbackFilter, self).__init__(**kwargs)
         self.metric_id = metric_id
         self.dimension_filter = dimension_filter
         self.feedback_type = feedback_type
@@ -9049,7 +9385,7 @@ class MetricFeedbackFilterGenerated(msrest.serialization.Model):
         self.time_mode = time_mode
 
 
-class MetricFeedbackListGenerated(msrest.serialization.Model):
+class MetricFeedbackList(msrest.serialization.Model):
     """MetricFeedbackList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9061,27 +9397,23 @@ class MetricFeedbackListGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
-        'value': {'readonly': True},
+        "next_link": {"readonly": True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': '@nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[MetricFeedback]'},
+        "next_link": {"key": "@nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[MetricFeedback]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(MetricFeedbackListGenerated, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super(MetricFeedbackList, self).__init__(**kwargs)
         self.next_link = None
         self.value = None
 
 
-class MetricSeriesDefinitionGenerated(msrest.serialization.Model):
+class MetricSeriesDefinition(msrest.serialization.Model):
     """MetricSeriesDefinition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9093,27 +9425,23 @@ class MetricSeriesDefinitionGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'metric_id': {'readonly': True},
-        'dimension': {'readonly': True},
+        "metric_id": {"readonly": True},
+        "dimension": {"readonly": True},
     }
 
     _attribute_map = {
-        'metric_id': {'key': 'metricId', 'type': 'str'},
-        'dimension': {'key': 'dimension', 'type': '{str}'},
+        "metric_id": {"key": "metricId", "type": "str"},
+        "dimension": {"key": "dimension", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(MetricSeriesDefinitionGenerated, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super(MetricSeriesDefinition, self).__init__(**kwargs)
         self.metric_id = None
         self.dimension = None
 
 
-class MetricSeriesGroupDetectionConditionGenerated(msrest.serialization.Model):
+class MetricSeriesGroupDetectionCondition(msrest.serialization.Model):
     """MetricSeriesGroupDetectionCondition.
 
     All required parameters must be populated in order to send to Azure.
@@ -9121,7 +9449,7 @@ class MetricSeriesGroupDetectionConditionGenerated(msrest.serialization.Model):
     :ivar group: Required.
     :vartype group: ~azure.ai.metricsadvisor.models.DimensionGroupIdentity
     :ivar condition_operator: condition operator
-    
+
      should be specified when combining multiple detection conditions. Possible values include:
      "AND", "OR".
     :vartype condition_operator: str or
@@ -9135,15 +9463,15 @@ class MetricSeriesGroupDetectionConditionGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'group': {'required': True},
+        "group": {"required": True},
     }
 
     _attribute_map = {
-        'group': {'key': 'group', 'type': 'DimensionGroupIdentity'},
-        'condition_operator': {'key': 'conditionOperator', 'type': 'str'},
-        'smart_detection_condition': {'key': 'smartDetectionCondition', 'type': 'SmartDetectionCondition'},
-        'hard_threshold_condition': {'key': 'hardThresholdCondition', 'type': 'HardThresholdCondition'},
-        'change_threshold_condition': {'key': 'changeThresholdCondition', 'type': 'ChangeThresholdCondition'},
+        "group": {"key": "group", "type": "DimensionGroupIdentity"},
+        "condition_operator": {"key": "conditionOperator", "type": "str"},
+        "smart_detection_condition": {"key": "smartDetectionCondition", "type": "SmartDetectionCondition"},
+        "hard_threshold_condition": {"key": "hardThresholdCondition", "type": "HardThresholdCondition"},
+        "change_threshold_condition": {"key": "changeThresholdCondition", "type": "ChangeThresholdCondition"},
     }
 
     def __init__(
@@ -9160,7 +9488,7 @@ class MetricSeriesGroupDetectionConditionGenerated(msrest.serialization.Model):
         :keyword group: Required.
         :paramtype group: ~azure.ai.metricsadvisor.models.DimensionGroupIdentity
         :keyword condition_operator: condition operator
-        
+
          should be specified when combining multiple detection conditions. Possible values include:
          "AND", "OR".
         :paramtype condition_operator: str or
@@ -9172,7 +9500,7 @@ class MetricSeriesGroupDetectionConditionGenerated(msrest.serialization.Model):
         :keyword change_threshold_condition:
         :paramtype change_threshold_condition: ~azure.ai.metricsadvisor.models.ChangeThresholdCondition
         """
-        super(MetricSeriesGroupDetectionConditionGenerated, self).__init__(**kwargs)
+        super(MetricSeriesGroupDetectionCondition, self).__init__(**kwargs)
         self.group = group
         self.condition_operator = condition_operator
         self.smart_detection_condition = smart_detection_condition
@@ -9180,7 +9508,7 @@ class MetricSeriesGroupDetectionConditionGenerated(msrest.serialization.Model):
         self.change_threshold_condition = change_threshold_condition
 
 
-class MetricSeriesListGenerated(msrest.serialization.Model):
+class MetricSeriesList(msrest.serialization.Model):
     """MetricSeriesList.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9192,27 +9520,23 @@ class MetricSeriesListGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
-        'value': {'readonly': True},
+        "next_link": {"readonly": True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': '@nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[MetricSeriesDefinition]'},
+        "next_link": {"key": "@nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[MetricSeriesDefinition]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(MetricSeriesListGenerated, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super(MetricSeriesList, self).__init__(**kwargs)
         self.next_link = None
         self.value = None
 
 
-class MetricSeriesQueryOptionsGenerated(msrest.serialization.Model):
+class MetricSeriesQueryOptions(msrest.serialization.Model):
     """MetricSeriesQueryOptions.
 
     All required parameters must be populated in order to send to Azure.
@@ -9225,20 +9549,16 @@ class MetricSeriesQueryOptionsGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'active_since': {'required': True},
+        "active_since": {"required": True},
     }
 
     _attribute_map = {
-        'active_since': {'key': 'activeSince', 'type': 'iso-8601'},
-        'dimension_filter': {'key': 'dimensionFilter', 'type': '{[str]}'},
+        "active_since": {"key": "activeSince", "type": "iso-8601"},
+        "dimension_filter": {"key": "dimensionFilter", "type": "{[str]}"},
     }
 
     def __init__(
-        self,
-        *,
-        active_since: datetime.datetime,
-        dimension_filter: Optional[Dict[str, List[str]]] = None,
-        **kwargs
+        self, *, active_since: datetime.datetime, dimension_filter: Optional[Dict[str, List[str]]] = None, **kwargs
     ):
         """
         :keyword active_since: Required. query series ingested after this time, the format should be
@@ -9247,12 +9567,12 @@ class MetricSeriesQueryOptionsGenerated(msrest.serialization.Model):
         :keyword dimension_filter: filter specific dimension name and values.
         :paramtype dimension_filter: dict[str, list[str]]
         """
-        super(MetricSeriesQueryOptionsGenerated, self).__init__(**kwargs)
+        super(MetricSeriesQueryOptions, self).__init__(**kwargs)
         self.active_since = active_since
         self.dimension_filter = dimension_filter
 
 
-class MetricSingleSeriesDetectionConditionGenerated(msrest.serialization.Model):
+class MetricSingleSeriesDetectionCondition(msrest.serialization.Model):
     """MetricSingleSeriesDetectionCondition.
 
     All required parameters must be populated in order to send to Azure.
@@ -9260,7 +9580,7 @@ class MetricSingleSeriesDetectionConditionGenerated(msrest.serialization.Model):
     :ivar series: Required.
     :vartype series: ~azure.ai.metricsadvisor.models.SeriesIdentity
     :ivar condition_operator: condition operator
-    
+
      should be specified when combining multiple detection conditions. Possible values include:
      "AND", "OR".
     :vartype condition_operator: str or
@@ -9274,15 +9594,15 @@ class MetricSingleSeriesDetectionConditionGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'series': {'required': True},
+        "series": {"required": True},
     }
 
     _attribute_map = {
-        'series': {'key': 'series', 'type': 'SeriesIdentity'},
-        'condition_operator': {'key': 'conditionOperator', 'type': 'str'},
-        'smart_detection_condition': {'key': 'smartDetectionCondition', 'type': 'SmartDetectionCondition'},
-        'hard_threshold_condition': {'key': 'hardThresholdCondition', 'type': 'HardThresholdCondition'},
-        'change_threshold_condition': {'key': 'changeThresholdCondition', 'type': 'ChangeThresholdCondition'},
+        "series": {"key": "series", "type": "SeriesIdentity"},
+        "condition_operator": {"key": "conditionOperator", "type": "str"},
+        "smart_detection_condition": {"key": "smartDetectionCondition", "type": "SmartDetectionCondition"},
+        "hard_threshold_condition": {"key": "hardThresholdCondition", "type": "HardThresholdCondition"},
+        "change_threshold_condition": {"key": "changeThresholdCondition", "type": "ChangeThresholdCondition"},
     }
 
     def __init__(
@@ -9299,7 +9619,7 @@ class MetricSingleSeriesDetectionConditionGenerated(msrest.serialization.Model):
         :keyword series: Required.
         :paramtype series: ~azure.ai.metricsadvisor.models.SeriesIdentity
         :keyword condition_operator: condition operator
-        
+
          should be specified when combining multiple detection conditions. Possible values include:
          "AND", "OR".
         :paramtype condition_operator: str or
@@ -9311,7 +9631,7 @@ class MetricSingleSeriesDetectionConditionGenerated(msrest.serialization.Model):
         :keyword change_threshold_condition:
         :paramtype change_threshold_condition: ~azure.ai.metricsadvisor.models.ChangeThresholdCondition
         """
-        super(MetricSingleSeriesDetectionConditionGenerated, self).__init__(**kwargs)
+        super(MetricSingleSeriesDetectionCondition, self).__init__(**kwargs)
         self.series = series
         self.condition_operator = condition_operator
         self.smart_detection_condition = smart_detection_condition
@@ -9319,7 +9639,7 @@ class MetricSingleSeriesDetectionConditionGenerated(msrest.serialization.Model):
         self.change_threshold_condition = change_threshold_condition
 
 
-class MongoDBDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
+class MongoDBDataFeedPatch(DataFeedDetailPatch):
     """MongoDBDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -9388,36 +9708,36 @@ class MongoDBDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
+        "data_source_type": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'status': {'key': 'status', 'type': 'str'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'MongoDBParameterPatch'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "status": {"key": "status", "type": "str"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
+        "data_source_parameter": {"key": "dataSourceParameter", "type": "MongoDBParameterPatch"},
     }
 
     def __init__(
@@ -9506,12 +9826,35 @@ class MongoDBDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.MongoDBParameterPatch
         """
-        super(MongoDBDataFeedPatchGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, status=status, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
-        self.data_source_type = 'MongoDB'  # type: str
+        super(MongoDBDataFeedPatch, self).__init__(
+            data_feed_name=data_feed_name,
+            data_feed_description=data_feed_description,
+            timestamp_column=timestamp_column,
+            data_start_from=data_start_from,
+            start_offset_in_seconds=start_offset_in_seconds,
+            max_concurrency=max_concurrency,
+            min_retry_interval_in_seconds=min_retry_interval_in_seconds,
+            stop_retry_after_in_seconds=stop_retry_after_in_seconds,
+            need_rollup=need_rollup,
+            roll_up_method=roll_up_method,
+            roll_up_columns=roll_up_columns,
+            all_up_identification=all_up_identification,
+            fill_missing_point_type=fill_missing_point_type,
+            fill_missing_point_value=fill_missing_point_value,
+            view_mode=view_mode,
+            admins=admins,
+            viewers=viewers,
+            status=status,
+            action_link_template=action_link_template,
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
+        self.data_source_type = "MongoDB"  # type: str
         self.data_source_parameter = data_source_parameter
 
 
-class MongoDbDataFeedSourceGenerated(DataFeedGenerated):
+class MongoDbDataFeedSource(DataFeed):
     """MongoDbDataFeedSource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9599,55 +9942,55 @@ class MongoDbDataFeedSourceGenerated(DataFeedGenerated):
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'data_feed_id': {'readonly': True},
-        'data_feed_name': {'required': True},
-        'granularity_name': {'required': True},
-        'metrics': {'required': True, 'unique': True},
-        'dimension': {'unique': True},
-        'data_start_from': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
-        'is_admin': {'readonly': True},
-        'creator': {'readonly': True},
-        'status': {'readonly': True},
-        'created_time': {'readonly': True},
-        'data_source_parameter': {'required': True},
+        "data_source_type": {"required": True},
+        "data_feed_id": {"readonly": True},
+        "data_feed_name": {"required": True},
+        "granularity_name": {"required": True},
+        "metrics": {"required": True, "unique": True},
+        "dimension": {"unique": True},
+        "data_start_from": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
+        "is_admin": {"readonly": True},
+        "creator": {"readonly": True},
+        "status": {"readonly": True},
+        "created_time": {"readonly": True},
+        "data_source_parameter": {"required": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_id': {'key': 'dataFeedId', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'granularity_name': {'key': 'granularityName', 'type': 'str'},
-        'granularity_amount': {'key': 'granularityAmount', 'type': 'int'},
-        'metrics': {'key': 'metrics', 'type': '[DataFeedMetric]'},
-        'dimension': {'key': 'dimension', 'type': '[DataFeedDimension]'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'is_admin': {'key': 'isAdmin', 'type': 'bool'},
-        'creator': {'key': 'creator', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'MongoDBParameter'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_id": {"key": "dataFeedId", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "granularity_name": {"key": "granularityName", "type": "str"},
+        "granularity_amount": {"key": "granularityAmount", "type": "int"},
+        "metrics": {"key": "metrics", "type": "[DataFeedMetric]"},
+        "dimension": {"key": "dimension", "type": "[DataFeedDimension]"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "is_admin": {"key": "isAdmin", "type": "bool"},
+        "creator": {"key": "creator", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
+        "data_source_parameter": {"key": "dataSourceParameter", "type": "MongoDBParameter"},
     }
 
     def __init__(
@@ -9746,12 +10089,38 @@ class MongoDbDataFeedSourceGenerated(DataFeedGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.MongoDBParameter
         """
-        super(MongoDbDataFeedSourceGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, granularity_name=granularity_name, granularity_amount=granularity_amount, metrics=metrics, dimension=dimension, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
-        self.data_source_type = 'MongoDB'  # type: str
+        super(MongoDbDataFeedSource, self).__init__(
+            data_feed_name=data_feed_name,
+            data_feed_description=data_feed_description,
+            granularity_name=granularity_name,
+            granularity_amount=granularity_amount,
+            metrics=metrics,
+            dimension=dimension,
+            timestamp_column=timestamp_column,
+            data_start_from=data_start_from,
+            start_offset_in_seconds=start_offset_in_seconds,
+            max_concurrency=max_concurrency,
+            min_retry_interval_in_seconds=min_retry_interval_in_seconds,
+            stop_retry_after_in_seconds=stop_retry_after_in_seconds,
+            need_rollup=need_rollup,
+            roll_up_method=roll_up_method,
+            roll_up_columns=roll_up_columns,
+            all_up_identification=all_up_identification,
+            fill_missing_point_type=fill_missing_point_type,
+            fill_missing_point_value=fill_missing_point_value,
+            view_mode=view_mode,
+            admins=admins,
+            viewers=viewers,
+            action_link_template=action_link_template,
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
+        self.data_source_type = "MongoDB"  # type: str
         self.data_source_parameter = data_source_parameter
 
 
-class MongoDBParameterGenerated(msrest.serialization.Model):
+class MongoDBParameter(msrest.serialization.Model):
     """MongoDBParameter.
 
     All required parameters must be populated in order to send to Azure.
@@ -9765,22 +10134,17 @@ class MongoDBParameterGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'command': {'required': True},
+        "command": {"required": True},
     }
 
     _attribute_map = {
-        'connection_string': {'key': 'connectionString', 'type': 'str'},
-        'database': {'key': 'database', 'type': 'str'},
-        'command': {'key': 'command', 'type': 'str'},
+        "connection_string": {"key": "connectionString", "type": "str"},
+        "database": {"key": "database", "type": "str"},
+        "command": {"key": "command", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        command: str,
-        connection_string: Optional[str] = None,
-        database: Optional[str] = None,
-        **kwargs
+        self, *, command: str, connection_string: Optional[str] = None, database: Optional[str] = None, **kwargs
     ):
         """
         :keyword connection_string: The connection string of this MongoDB.
@@ -9790,13 +10154,13 @@ class MongoDBParameterGenerated(msrest.serialization.Model):
         :keyword command: Required. The script to query this database.
         :paramtype command: str
         """
-        super(MongoDBParameterGenerated, self).__init__(**kwargs)
+        super(MongoDBParameter, self).__init__(**kwargs)
         self.connection_string = connection_string
         self.database = database
         self.command = command
 
 
-class MongoDBParameterPatchGenerated(msrest.serialization.Model):
+class MongoDBParameterPatch(msrest.serialization.Model):
     """MongoDBParameterPatch.
 
     :ivar connection_string: The connection string of this MongoDB.
@@ -9808,9 +10172,9 @@ class MongoDBParameterPatchGenerated(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'connection_string': {'key': 'connectionString', 'type': 'str'},
-        'database': {'key': 'database', 'type': 'str'},
-        'command': {'key': 'command', 'type': 'str'},
+        "connection_string": {"key": "connectionString", "type": "str"},
+        "database": {"key": "database", "type": "str"},
+        "command": {"key": "command", "type": "str"},
     }
 
     def __init__(
@@ -9829,13 +10193,13 @@ class MongoDBParameterPatchGenerated(msrest.serialization.Model):
         :keyword command: The script to query this database.
         :paramtype command: str
         """
-        super(MongoDBParameterPatchGenerated, self).__init__(**kwargs)
+        super(MongoDBParameterPatch, self).__init__(**kwargs)
         self.connection_string = connection_string
         self.database = database
         self.command = command
 
 
-class MySqlDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
+class MySqlDataFeedPatch(DataFeedDetailPatch):
     """MySqlDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -9904,36 +10268,36 @@ class MySqlDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
+        "data_source_type": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'status': {'key': 'status', 'type': 'str'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'SQLSourceParameterPatch'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "status": {"key": "status", "type": "str"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
+        "data_source_parameter": {"key": "dataSourceParameter", "type": "SQLSourceParameterPatch"},
     }
 
     def __init__(
@@ -10022,12 +10386,35 @@ class MySqlDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.SQLSourceParameterPatch
         """
-        super(MySqlDataFeedPatchGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, status=status, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
-        self.data_source_type = 'MySql'  # type: str
+        super(MySqlDataFeedPatch, self).__init__(
+            data_feed_name=data_feed_name,
+            data_feed_description=data_feed_description,
+            timestamp_column=timestamp_column,
+            data_start_from=data_start_from,
+            start_offset_in_seconds=start_offset_in_seconds,
+            max_concurrency=max_concurrency,
+            min_retry_interval_in_seconds=min_retry_interval_in_seconds,
+            stop_retry_after_in_seconds=stop_retry_after_in_seconds,
+            need_rollup=need_rollup,
+            roll_up_method=roll_up_method,
+            roll_up_columns=roll_up_columns,
+            all_up_identification=all_up_identification,
+            fill_missing_point_type=fill_missing_point_type,
+            fill_missing_point_value=fill_missing_point_value,
+            view_mode=view_mode,
+            admins=admins,
+            viewers=viewers,
+            status=status,
+            action_link_template=action_link_template,
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
+        self.data_source_type = "MySql"  # type: str
         self.data_source_parameter = data_source_parameter
 
 
-class MySqlDataFeedSourceGenerated(DataFeedGenerated):
+class MySqlDataFeedSource(DataFeed):
     """MySqlDataFeedSource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10115,55 +10502,55 @@ class MySqlDataFeedSourceGenerated(DataFeedGenerated):
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'data_feed_id': {'readonly': True},
-        'data_feed_name': {'required': True},
-        'granularity_name': {'required': True},
-        'metrics': {'required': True, 'unique': True},
-        'dimension': {'unique': True},
-        'data_start_from': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
-        'is_admin': {'readonly': True},
-        'creator': {'readonly': True},
-        'status': {'readonly': True},
-        'created_time': {'readonly': True},
-        'data_source_parameter': {'required': True},
+        "data_source_type": {"required": True},
+        "data_feed_id": {"readonly": True},
+        "data_feed_name": {"required": True},
+        "granularity_name": {"required": True},
+        "metrics": {"required": True, "unique": True},
+        "dimension": {"unique": True},
+        "data_start_from": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
+        "is_admin": {"readonly": True},
+        "creator": {"readonly": True},
+        "status": {"readonly": True},
+        "created_time": {"readonly": True},
+        "data_source_parameter": {"required": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_id': {'key': 'dataFeedId', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'granularity_name': {'key': 'granularityName', 'type': 'str'},
-        'granularity_amount': {'key': 'granularityAmount', 'type': 'int'},
-        'metrics': {'key': 'metrics', 'type': '[DataFeedMetric]'},
-        'dimension': {'key': 'dimension', 'type': '[DataFeedDimension]'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'is_admin': {'key': 'isAdmin', 'type': 'bool'},
-        'creator': {'key': 'creator', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'SqlSourceParameter'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_id": {"key": "dataFeedId", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "granularity_name": {"key": "granularityName", "type": "str"},
+        "granularity_amount": {"key": "granularityAmount", "type": "int"},
+        "metrics": {"key": "metrics", "type": "[DataFeedMetric]"},
+        "dimension": {"key": "dimension", "type": "[DataFeedDimension]"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "is_admin": {"key": "isAdmin", "type": "bool"},
+        "creator": {"key": "creator", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
+        "data_source_parameter": {"key": "dataSourceParameter", "type": "SqlSourceParameter"},
     }
 
     def __init__(
@@ -10262,12 +10649,38 @@ class MySqlDataFeedSourceGenerated(DataFeedGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.SqlSourceParameter
         """
-        super(MySqlDataFeedSourceGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, granularity_name=granularity_name, granularity_amount=granularity_amount, metrics=metrics, dimension=dimension, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
-        self.data_source_type = 'MySql'  # type: str
+        super(MySqlDataFeedSource, self).__init__(
+            data_feed_name=data_feed_name,
+            data_feed_description=data_feed_description,
+            granularity_name=granularity_name,
+            granularity_amount=granularity_amount,
+            metrics=metrics,
+            dimension=dimension,
+            timestamp_column=timestamp_column,
+            data_start_from=data_start_from,
+            start_offset_in_seconds=start_offset_in_seconds,
+            max_concurrency=max_concurrency,
+            min_retry_interval_in_seconds=min_retry_interval_in_seconds,
+            stop_retry_after_in_seconds=stop_retry_after_in_seconds,
+            need_rollup=need_rollup,
+            roll_up_method=roll_up_method,
+            roll_up_columns=roll_up_columns,
+            all_up_identification=all_up_identification,
+            fill_missing_point_type=fill_missing_point_type,
+            fill_missing_point_value=fill_missing_point_value,
+            view_mode=view_mode,
+            admins=admins,
+            viewers=viewers,
+            action_link_template=action_link_template,
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
+        self.data_source_type = "MySql"  # type: str
         self.data_source_parameter = data_source_parameter
 
 
-class PeriodFeedbackGenerated(MetricFeedbackGenerated):
+class PeriodFeedback(MetricFeedback):
     """PeriodFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10292,32 +10705,27 @@ class PeriodFeedbackGenerated(MetricFeedbackGenerated):
     """
 
     _validation = {
-        'feedback_type': {'required': True},
-        'feedback_id': {'readonly': True},
-        'created_time': {'readonly': True},
-        'user_principal': {'readonly': True},
-        'metric_id': {'required': True},
-        'dimension_filter': {'required': True},
-        'value': {'required': True},
+        "feedback_type": {"required": True},
+        "feedback_id": {"readonly": True},
+        "created_time": {"readonly": True},
+        "user_principal": {"readonly": True},
+        "metric_id": {"required": True},
+        "dimension_filter": {"required": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'feedback_type': {'key': 'feedbackType', 'type': 'str'},
-        'feedback_id': {'key': 'feedbackId', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'user_principal': {'key': 'userPrincipal', 'type': 'str'},
-        'metric_id': {'key': 'metricId', 'type': 'str'},
-        'dimension_filter': {'key': 'dimensionFilter', 'type': 'FeedbackDimensionFilter'},
-        'value': {'key': 'value', 'type': 'PeriodFeedbackValue'},
+        "feedback_type": {"key": "feedbackType", "type": "str"},
+        "feedback_id": {"key": "feedbackId", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "user_principal": {"key": "userPrincipal", "type": "str"},
+        "metric_id": {"key": "metricId", "type": "str"},
+        "dimension_filter": {"key": "dimensionFilter", "type": "FeedbackDimensionFilter"},
+        "value": {"key": "value", "type": "PeriodFeedbackValue"},
     }
 
     def __init__(
-        self,
-        *,
-        metric_id: str,
-        dimension_filter: "FeedbackDimensionFilter",
-        value: "PeriodFeedbackValue",
-        **kwargs
+        self, *, metric_id: str, dimension_filter: "FeedbackDimensionFilter", value: "PeriodFeedbackValue", **kwargs
     ):
         """
         :keyword metric_id: Required. metric unique id.
@@ -10327,12 +10735,12 @@ class PeriodFeedbackGenerated(MetricFeedbackGenerated):
         :keyword value: Required.
         :paramtype value: ~azure.ai.metricsadvisor.models.PeriodFeedbackValue
         """
-        super(PeriodFeedbackGenerated, self).__init__(metric_id=metric_id, dimension_filter=dimension_filter, **kwargs)
-        self.feedback_type = 'Period'  # type: str
+        super(PeriodFeedback, self).__init__(metric_id=metric_id, dimension_filter=dimension_filter, **kwargs)
+        self.feedback_type = "Period"  # type: str
         self.value = value
 
 
-class PeriodFeedbackValueGenerated(msrest.serialization.Model):
+class PeriodFeedbackValue(msrest.serialization.Model):
     """PeriodFeedbackValue.
 
     All required parameters must be populated in order to send to Azure.
@@ -10346,22 +10754,16 @@ class PeriodFeedbackValueGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'period_type': {'required': True},
-        'period_value': {'required': True},
+        "period_type": {"required": True},
+        "period_value": {"required": True},
     }
 
     _attribute_map = {
-        'period_type': {'key': 'periodType', 'type': 'str'},
-        'period_value': {'key': 'periodValue', 'type': 'int'},
+        "period_type": {"key": "periodType", "type": "str"},
+        "period_value": {"key": "periodValue", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        period_type: Union[str, "PeriodType"],
-        period_value: int,
-        **kwargs
-    ):
+    def __init__(self, *, period_type: Union[str, "PeriodType"], period_value: int, **kwargs):
         """
         :keyword period_type: Required. the type of setting period. Possible values include:
          "AutoDetect", "AssignValue".
@@ -10370,12 +10772,12 @@ class PeriodFeedbackValueGenerated(msrest.serialization.Model):
          to 0.
         :paramtype period_value: int
         """
-        super(PeriodFeedbackValueGenerated, self).__init__(**kwargs)
+        super(PeriodFeedbackValue, self).__init__(**kwargs)
         self.period_type = period_type
         self.period_value = period_value
 
 
-class PostgreSqlDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
+class PostgreSqlDataFeedPatch(DataFeedDetailPatch):
     """PostgreSqlDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -10444,36 +10846,36 @@ class PostgreSqlDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
+        "data_source_type": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'status': {'key': 'status', 'type': 'str'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'SQLSourceParameterPatch'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "status": {"key": "status", "type": "str"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
+        "data_source_parameter": {"key": "dataSourceParameter", "type": "SQLSourceParameterPatch"},
     }
 
     def __init__(
@@ -10562,12 +10964,35 @@ class PostgreSqlDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.SQLSourceParameterPatch
         """
-        super(PostgreSqlDataFeedPatchGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, status=status, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
-        self.data_source_type = 'PostgreSql'  # type: str
+        super(PostgreSqlDataFeedPatch, self).__init__(
+            data_feed_name=data_feed_name,
+            data_feed_description=data_feed_description,
+            timestamp_column=timestamp_column,
+            data_start_from=data_start_from,
+            start_offset_in_seconds=start_offset_in_seconds,
+            max_concurrency=max_concurrency,
+            min_retry_interval_in_seconds=min_retry_interval_in_seconds,
+            stop_retry_after_in_seconds=stop_retry_after_in_seconds,
+            need_rollup=need_rollup,
+            roll_up_method=roll_up_method,
+            roll_up_columns=roll_up_columns,
+            all_up_identification=all_up_identification,
+            fill_missing_point_type=fill_missing_point_type,
+            fill_missing_point_value=fill_missing_point_value,
+            view_mode=view_mode,
+            admins=admins,
+            viewers=viewers,
+            status=status,
+            action_link_template=action_link_template,
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
+        self.data_source_type = "PostgreSql"  # type: str
         self.data_source_parameter = data_source_parameter
 
 
-class PostgreSqlDataFeedSourceGenerated(DataFeedGenerated):
+class PostgreSqlDataFeedSource(DataFeed):
     """PostgreSqlDataFeedSource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10655,55 +11080,55 @@ class PostgreSqlDataFeedSourceGenerated(DataFeedGenerated):
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'data_feed_id': {'readonly': True},
-        'data_feed_name': {'required': True},
-        'granularity_name': {'required': True},
-        'metrics': {'required': True, 'unique': True},
-        'dimension': {'unique': True},
-        'data_start_from': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
-        'is_admin': {'readonly': True},
-        'creator': {'readonly': True},
-        'status': {'readonly': True},
-        'created_time': {'readonly': True},
-        'data_source_parameter': {'required': True},
+        "data_source_type": {"required": True},
+        "data_feed_id": {"readonly": True},
+        "data_feed_name": {"required": True},
+        "granularity_name": {"required": True},
+        "metrics": {"required": True, "unique": True},
+        "dimension": {"unique": True},
+        "data_start_from": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
+        "is_admin": {"readonly": True},
+        "creator": {"readonly": True},
+        "status": {"readonly": True},
+        "created_time": {"readonly": True},
+        "data_source_parameter": {"required": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_id': {'key': 'dataFeedId', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'granularity_name': {'key': 'granularityName', 'type': 'str'},
-        'granularity_amount': {'key': 'granularityAmount', 'type': 'int'},
-        'metrics': {'key': 'metrics', 'type': '[DataFeedMetric]'},
-        'dimension': {'key': 'dimension', 'type': '[DataFeedDimension]'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'is_admin': {'key': 'isAdmin', 'type': 'bool'},
-        'creator': {'key': 'creator', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'SqlSourceParameter'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_id": {"key": "dataFeedId", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "granularity_name": {"key": "granularityName", "type": "str"},
+        "granularity_amount": {"key": "granularityAmount", "type": "int"},
+        "metrics": {"key": "metrics", "type": "[DataFeedMetric]"},
+        "dimension": {"key": "dimension", "type": "[DataFeedDimension]"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "is_admin": {"key": "isAdmin", "type": "bool"},
+        "creator": {"key": "creator", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
+        "data_source_parameter": {"key": "dataSourceParameter", "type": "SqlSourceParameter"},
     }
 
     def __init__(
@@ -10802,12 +11227,38 @@ class PostgreSqlDataFeedSourceGenerated(DataFeedGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.SqlSourceParameter
         """
-        super(PostgreSqlDataFeedSourceGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, granularity_name=granularity_name, granularity_amount=granularity_amount, metrics=metrics, dimension=dimension, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
-        self.data_source_type = 'PostgreSql'  # type: str
+        super(PostgreSqlDataFeedSource, self).__init__(
+            data_feed_name=data_feed_name,
+            data_feed_description=data_feed_description,
+            granularity_name=granularity_name,
+            granularity_amount=granularity_amount,
+            metrics=metrics,
+            dimension=dimension,
+            timestamp_column=timestamp_column,
+            data_start_from=data_start_from,
+            start_offset_in_seconds=start_offset_in_seconds,
+            max_concurrency=max_concurrency,
+            min_retry_interval_in_seconds=min_retry_interval_in_seconds,
+            stop_retry_after_in_seconds=stop_retry_after_in_seconds,
+            need_rollup=need_rollup,
+            roll_up_method=roll_up_method,
+            roll_up_columns=roll_up_columns,
+            all_up_identification=all_up_identification,
+            fill_missing_point_type=fill_missing_point_type,
+            fill_missing_point_value=fill_missing_point_value,
+            view_mode=view_mode,
+            admins=admins,
+            viewers=viewers,
+            action_link_template=action_link_template,
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
+        self.data_source_type = "PostgreSql"  # type: str
         self.data_source_parameter = data_source_parameter
 
 
-class RootCauseListGenerated(msrest.serialization.Model):
+class RootCauseList(msrest.serialization.Model):
     """RootCauseList.
 
     All required parameters must be populated in order to send to Azure.
@@ -10817,28 +11268,23 @@ class RootCauseListGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[IncidentRootCause]'},
+        "value": {"key": "value", "type": "[IncidentRootCause]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["IncidentRootCause"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["IncidentRootCause"], **kwargs):
         """
         :keyword value: Required.
         :paramtype value: list[~azure.ai.metricsadvisor.models.IncidentRootCause]
         """
-        super(RootCauseListGenerated, self).__init__(**kwargs)
+        super(RootCauseList, self).__init__(**kwargs)
         self.value = value
 
 
-class SeriesIdentityGenerated(msrest.serialization.Model):
+class SeriesIdentity(msrest.serialization.Model):
     """SeriesIdentity.
 
     All required parameters must be populated in order to send to Azure.
@@ -10848,28 +11294,23 @@ class SeriesIdentityGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'dimension': {'required': True},
+        "dimension": {"required": True},
     }
 
     _attribute_map = {
-        'dimension': {'key': 'dimension', 'type': '{str}'},
+        "dimension": {"key": "dimension", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        dimension: Dict[str, str],
-        **kwargs
-    ):
+    def __init__(self, *, dimension: Dict[str, str], **kwargs):
         """
         :keyword dimension: Required. dimension specified for series.
         :paramtype dimension: dict[str, str]
         """
-        super(SeriesIdentityGenerated, self).__init__(**kwargs)
+        super(SeriesIdentity, self).__init__(**kwargs)
         self.dimension = dimension
 
 
-class SeriesResultListGenerated(msrest.serialization.Model):
+class SeriesResultList(msrest.serialization.Model):
     """SeriesResultList.
 
     All required parameters must be populated in order to send to Azure.
@@ -10879,28 +11320,23 @@ class SeriesResultListGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[MetricEnrichedSeriesData]'},
+        "value": {"key": "value", "type": "[MetricEnrichedSeriesData]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["MetricEnrichedSeriesData"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["MetricEnrichedSeriesData"], **kwargs):
         """
         :keyword value: Required.
         :paramtype value: list[~azure.ai.metricsadvisor.models.MetricEnrichedSeriesData]
         """
-        super(SeriesResultListGenerated, self).__init__(**kwargs)
+        super(SeriesResultList, self).__init__(**kwargs)
         self.value = value
 
 
-class ServicePrincipalCredentialPatchGenerated(DataSourceCredentialPatchGenerated):
+class ServicePrincipalCredentialPatch(DataSourceCredentialPatch):
     """ServicePrincipalCredentialPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -10919,14 +11355,14 @@ class ServicePrincipalCredentialPatchGenerated(DataSourceCredentialPatchGenerate
     """
 
     _validation = {
-        'data_source_credential_type': {'required': True},
+        "data_source_credential_type": {"required": True},
     }
 
     _attribute_map = {
-        'data_source_credential_type': {'key': 'dataSourceCredentialType', 'type': 'str'},
-        'data_source_credential_name': {'key': 'dataSourceCredentialName', 'type': 'str'},
-        'data_source_credential_description': {'key': 'dataSourceCredentialDescription', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'ServicePrincipalParamPatch'},
+        "data_source_credential_type": {"key": "dataSourceCredentialType", "type": "str"},
+        "data_source_credential_name": {"key": "dataSourceCredentialName", "type": "str"},
+        "data_source_credential_description": {"key": "dataSourceCredentialDescription", "type": "str"},
+        "parameters": {"key": "parameters", "type": "ServicePrincipalParamPatch"},
     }
 
     def __init__(
@@ -10945,12 +11381,16 @@ class ServicePrincipalCredentialPatchGenerated(DataSourceCredentialPatchGenerate
         :keyword parameters:
         :paramtype parameters: ~azure.ai.metricsadvisor.models.ServicePrincipalParamPatch
         """
-        super(ServicePrincipalCredentialPatchGenerated, self).__init__(data_source_credential_name=data_source_credential_name, data_source_credential_description=data_source_credential_description, **kwargs)
-        self.data_source_credential_type = 'ServicePrincipal'  # type: str
+        super(ServicePrincipalCredentialPatch, self).__init__(
+            data_source_credential_name=data_source_credential_name,
+            data_source_credential_description=data_source_credential_description,
+            **kwargs
+        )
+        self.data_source_credential_type = "ServicePrincipal"  # type: str
         self.parameters = parameters
 
 
-class ServicePrincipalInKVCredentialPatchGenerated(DataSourceCredentialPatchGenerated):
+class ServicePrincipalInKVCredentialPatch(DataSourceCredentialPatch):
     """ServicePrincipalInKVCredentialPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -10969,14 +11409,14 @@ class ServicePrincipalInKVCredentialPatchGenerated(DataSourceCredentialPatchGene
     """
 
     _validation = {
-        'data_source_credential_type': {'required': True},
+        "data_source_credential_type": {"required": True},
     }
 
     _attribute_map = {
-        'data_source_credential_type': {'key': 'dataSourceCredentialType', 'type': 'str'},
-        'data_source_credential_name': {'key': 'dataSourceCredentialName', 'type': 'str'},
-        'data_source_credential_description': {'key': 'dataSourceCredentialDescription', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'ServicePrincipalInKVParamPatch'},
+        "data_source_credential_type": {"key": "dataSourceCredentialType", "type": "str"},
+        "data_source_credential_name": {"key": "dataSourceCredentialName", "type": "str"},
+        "data_source_credential_description": {"key": "dataSourceCredentialDescription", "type": "str"},
+        "parameters": {"key": "parameters", "type": "ServicePrincipalInKVParamPatch"},
     }
 
     def __init__(
@@ -10995,12 +11435,16 @@ class ServicePrincipalInKVCredentialPatchGenerated(DataSourceCredentialPatchGene
         :keyword parameters:
         :paramtype parameters: ~azure.ai.metricsadvisor.models.ServicePrincipalInKVParamPatch
         """
-        super(ServicePrincipalInKVCredentialPatchGenerated, self).__init__(data_source_credential_name=data_source_credential_name, data_source_credential_description=data_source_credential_description, **kwargs)
-        self.data_source_credential_type = 'ServicePrincipalInKV'  # type: str
+        super(ServicePrincipalInKVCredentialPatch, self).__init__(
+            data_source_credential_name=data_source_credential_name,
+            data_source_credential_description=data_source_credential_description,
+            **kwargs
+        )
+        self.data_source_credential_type = "ServicePrincipalInKV"  # type: str
         self.parameters = parameters
 
 
-class ServicePrincipalInKVParamGenerated(msrest.serialization.Model):
+class ServicePrincipalInKVParam(msrest.serialization.Model):
     """ServicePrincipalInKVParam.
 
     All required parameters must be populated in order to send to Azure.
@@ -11022,20 +11466,20 @@ class ServicePrincipalInKVParamGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'key_vault_endpoint': {'required': True},
-        'key_vault_client_id': {'required': True},
-        'service_principal_id_name_in_kv': {'required': True},
-        'service_principal_secret_name_in_kv': {'required': True},
-        'tenant_id': {'required': True},
+        "key_vault_endpoint": {"required": True},
+        "key_vault_client_id": {"required": True},
+        "service_principal_id_name_in_kv": {"required": True},
+        "service_principal_secret_name_in_kv": {"required": True},
+        "tenant_id": {"required": True},
     }
 
     _attribute_map = {
-        'key_vault_endpoint': {'key': 'keyVaultEndpoint', 'type': 'str'},
-        'key_vault_client_id': {'key': 'keyVaultClientId', 'type': 'str'},
-        'key_vault_client_secret': {'key': 'keyVaultClientSecret', 'type': 'str'},
-        'service_principal_id_name_in_kv': {'key': 'servicePrincipalIdNameInKV', 'type': 'str'},
-        'service_principal_secret_name_in_kv': {'key': 'servicePrincipalSecretNameInKV', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        "key_vault_endpoint": {"key": "keyVaultEndpoint", "type": "str"},
+        "key_vault_client_id": {"key": "keyVaultClientId", "type": "str"},
+        "key_vault_client_secret": {"key": "keyVaultClientSecret", "type": "str"},
+        "service_principal_id_name_in_kv": {"key": "servicePrincipalIdNameInKV", "type": "str"},
+        "service_principal_secret_name_in_kv": {"key": "servicePrincipalSecretNameInKV", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
     def __init__(
@@ -11066,7 +11510,7 @@ class ServicePrincipalInKVParamGenerated(msrest.serialization.Model):
         :keyword tenant_id: Required. The tenant id of your service principal.
         :paramtype tenant_id: str
         """
-        super(ServicePrincipalInKVParamGenerated, self).__init__(**kwargs)
+        super(ServicePrincipalInKVParam, self).__init__(**kwargs)
         self.key_vault_endpoint = key_vault_endpoint
         self.key_vault_client_id = key_vault_client_id
         self.key_vault_client_secret = key_vault_client_secret
@@ -11075,7 +11519,7 @@ class ServicePrincipalInKVParamGenerated(msrest.serialization.Model):
         self.tenant_id = tenant_id
 
 
-class ServicePrincipalInKVParamPatchGenerated(msrest.serialization.Model):
+class ServicePrincipalInKVParamPatch(msrest.serialization.Model):
     """ServicePrincipalInKVParamPatch.
 
     :ivar key_vault_endpoint: The Key Vault endpoint that storing the service principal.
@@ -11095,12 +11539,12 @@ class ServicePrincipalInKVParamPatchGenerated(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'key_vault_endpoint': {'key': 'keyVaultEndpoint', 'type': 'str'},
-        'key_vault_client_id': {'key': 'keyVaultClientId', 'type': 'str'},
-        'key_vault_client_secret': {'key': 'keyVaultClientSecret', 'type': 'str'},
-        'service_principal_id_name_in_kv': {'key': 'servicePrincipalIdNameInKV', 'type': 'str'},
-        'service_principal_secret_name_in_kv': {'key': 'servicePrincipalSecretNameInKV', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        "key_vault_endpoint": {"key": "keyVaultEndpoint", "type": "str"},
+        "key_vault_client_id": {"key": "keyVaultClientId", "type": "str"},
+        "key_vault_client_secret": {"key": "keyVaultClientSecret", "type": "str"},
+        "service_principal_id_name_in_kv": {"key": "servicePrincipalIdNameInKV", "type": "str"},
+        "service_principal_secret_name_in_kv": {"key": "servicePrincipalSecretNameInKV", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
     def __init__(
@@ -11130,7 +11574,7 @@ class ServicePrincipalInKVParamPatchGenerated(msrest.serialization.Model):
         :keyword tenant_id: The tenant id of your service principal.
         :paramtype tenant_id: str
         """
-        super(ServicePrincipalInKVParamPatchGenerated, self).__init__(**kwargs)
+        super(ServicePrincipalInKVParamPatch, self).__init__(**kwargs)
         self.key_vault_endpoint = key_vault_endpoint
         self.key_vault_client_id = key_vault_client_id
         self.key_vault_client_secret = key_vault_client_secret
@@ -11139,7 +11583,7 @@ class ServicePrincipalInKVParamPatchGenerated(msrest.serialization.Model):
         self.tenant_id = tenant_id
 
 
-class ServicePrincipalParamGenerated(msrest.serialization.Model):
+class ServicePrincipalParam(msrest.serialization.Model):
     """ServicePrincipalParam.
 
     All required parameters must be populated in order to send to Azure.
@@ -11153,24 +11597,17 @@ class ServicePrincipalParamGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'client_id': {'required': True},
-        'tenant_id': {'required': True},
+        "client_id": {"required": True},
+        "tenant_id": {"required": True},
     }
 
     _attribute_map = {
-        'client_id': {'key': 'clientId', 'type': 'str'},
-        'client_secret': {'key': 'clientSecret', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        "client_id": {"key": "clientId", "type": "str"},
+        "client_secret": {"key": "clientSecret", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        client_id: str,
-        tenant_id: str,
-        client_secret: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, client_id: str, tenant_id: str, client_secret: Optional[str] = None, **kwargs):
         """
         :keyword client_id: Required. The client id of the service principal.
         :paramtype client_id: str
@@ -11179,13 +11616,13 @@ class ServicePrincipalParamGenerated(msrest.serialization.Model):
         :keyword tenant_id: Required. The tenant id of the service principal.
         :paramtype tenant_id: str
         """
-        super(ServicePrincipalParamGenerated, self).__init__(**kwargs)
+        super(ServicePrincipalParam, self).__init__(**kwargs)
         self.client_id = client_id
         self.client_secret = client_secret
         self.tenant_id = tenant_id
 
 
-class ServicePrincipalParamPatchGenerated(msrest.serialization.Model):
+class ServicePrincipalParamPatch(msrest.serialization.Model):
     """ServicePrincipalParamPatch.
 
     :ivar client_id: The client id of the service principal.
@@ -11197,9 +11634,9 @@ class ServicePrincipalParamPatchGenerated(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'client_id': {'key': 'clientId', 'type': 'str'},
-        'client_secret': {'key': 'clientSecret', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        "client_id": {"key": "clientId", "type": "str"},
+        "client_secret": {"key": "clientSecret", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
     def __init__(
@@ -11218,13 +11655,13 @@ class ServicePrincipalParamPatchGenerated(msrest.serialization.Model):
         :keyword tenant_id: The tenant id of the service principal.
         :paramtype tenant_id: str
         """
-        super(ServicePrincipalParamPatchGenerated, self).__init__(**kwargs)
+        super(ServicePrincipalParamPatch, self).__init__(**kwargs)
         self.client_id = client_id
         self.client_secret = client_secret
         self.tenant_id = tenant_id
 
 
-class SeverityConditionGenerated(msrest.serialization.Model):
+class SeverityCondition(msrest.serialization.Model):
     """SeverityCondition.
 
     All required parameters must be populated in order to send to Azure.
@@ -11238,13 +11675,13 @@ class SeverityConditionGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'min_alert_severity': {'required': True},
-        'max_alert_severity': {'required': True},
+        "min_alert_severity": {"required": True},
+        "max_alert_severity": {"required": True},
     }
 
     _attribute_map = {
-        'min_alert_severity': {'key': 'minAlertSeverity', 'type': 'str'},
-        'max_alert_severity': {'key': 'maxAlertSeverity', 'type': 'str'},
+        "min_alert_severity": {"key": "minAlertSeverity", "type": "str"},
+        "max_alert_severity": {"key": "maxAlertSeverity", "type": "str"},
     }
 
     def __init__(
@@ -11262,12 +11699,12 @@ class SeverityConditionGenerated(msrest.serialization.Model):
          "Medium", "High".
         :paramtype max_alert_severity: str or ~azure.ai.metricsadvisor.models.AnomalySeverity
         """
-        super(SeverityConditionGenerated, self).__init__(**kwargs)
+        super(SeverityCondition, self).__init__(**kwargs)
         self.min_alert_severity = min_alert_severity
         self.max_alert_severity = max_alert_severity
 
 
-class SeverityFilterConditionGenerated(msrest.serialization.Model):
+class SeverityFilterCondition(msrest.serialization.Model):
     """SeverityFilterCondition.
 
     All required parameters must be populated in order to send to Azure.
@@ -11279,34 +11716,28 @@ class SeverityFilterConditionGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'min': {'required': True},
-        'max': {'required': True},
+        "min": {"required": True},
+        "max": {"required": True},
     }
 
     _attribute_map = {
-        'min': {'key': 'min', 'type': 'str'},
-        'max': {'key': 'max', 'type': 'str'},
+        "min": {"key": "min", "type": "str"},
+        "max": {"key": "max", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        min: Union[str, "AnomalySeverity"],
-        max: Union[str, "AnomalySeverity"],
-        **kwargs
-    ):
+    def __init__(self, *, min: Union[str, "AnomalySeverity"], max: Union[str, "AnomalySeverity"], **kwargs):
         """
         :keyword min: Required. min severity. Possible values include: "Low", "Medium", "High".
         :paramtype min: str or ~azure.ai.metricsadvisor.models.AnomalySeverity
         :keyword max: Required. max severity. Possible values include: "Low", "Medium", "High".
         :paramtype max: str or ~azure.ai.metricsadvisor.models.AnomalySeverity
         """
-        super(SeverityFilterConditionGenerated, self).__init__(**kwargs)
+        super(SeverityFilterCondition, self).__init__(**kwargs)
         self.min = min
         self.max = max
 
 
-class SmartDetectionConditionGenerated(msrest.serialization.Model):
+class SmartDetectionCondition(msrest.serialization.Model):
     """SmartDetectionCondition.
 
     All required parameters must be populated in order to send to Azure.
@@ -11322,15 +11753,15 @@ class SmartDetectionConditionGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'sensitivity': {'required': True},
-        'anomaly_detector_direction': {'required': True},
-        'suppress_condition': {'required': True},
+        "sensitivity": {"required": True},
+        "anomaly_detector_direction": {"required": True},
+        "suppress_condition": {"required": True},
     }
 
     _attribute_map = {
-        'sensitivity': {'key': 'sensitivity', 'type': 'float'},
-        'anomaly_detector_direction': {'key': 'anomalyDetectorDirection', 'type': 'str'},
-        'suppress_condition': {'key': 'suppressCondition', 'type': 'SuppressCondition'},
+        "sensitivity": {"key": "sensitivity", "type": "float"},
+        "anomaly_detector_direction": {"key": "anomalyDetectorDirection", "type": "str"},
+        "suppress_condition": {"key": "suppressCondition", "type": "SuppressCondition"},
     }
 
     def __init__(
@@ -11351,13 +11782,13 @@ class SmartDetectionConditionGenerated(msrest.serialization.Model):
         :keyword suppress_condition: Required.
         :paramtype suppress_condition: ~azure.ai.metricsadvisor.models.SuppressCondition
         """
-        super(SmartDetectionConditionGenerated, self).__init__(**kwargs)
+        super(SmartDetectionCondition, self).__init__(**kwargs)
         self.sensitivity = sensitivity
         self.anomaly_detector_direction = anomaly_detector_direction
         self.suppress_condition = suppress_condition
 
 
-class SmartDetectionConditionPatchGenerated(msrest.serialization.Model):
+class SmartDetectionConditionPatch(msrest.serialization.Model):
     """SmartDetectionConditionPatch.
 
     :ivar sensitivity: sensitivity, value range : (0, 100].
@@ -11371,9 +11802,9 @@ class SmartDetectionConditionPatchGenerated(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'sensitivity': {'key': 'sensitivity', 'type': 'float'},
-        'anomaly_detector_direction': {'key': 'anomalyDetectorDirection', 'type': 'str'},
-        'suppress_condition': {'key': 'suppressCondition', 'type': 'SuppressConditionPatch'},
+        "sensitivity": {"key": "sensitivity", "type": "float"},
+        "anomaly_detector_direction": {"key": "anomalyDetectorDirection", "type": "str"},
+        "suppress_condition": {"key": "suppressCondition", "type": "SuppressConditionPatch"},
     }
 
     def __init__(
@@ -11394,13 +11825,13 @@ class SmartDetectionConditionPatchGenerated(msrest.serialization.Model):
         :keyword suppress_condition:
         :paramtype suppress_condition: ~azure.ai.metricsadvisor.models.SuppressConditionPatch
         """
-        super(SmartDetectionConditionPatchGenerated, self).__init__(**kwargs)
+        super(SmartDetectionConditionPatch, self).__init__(**kwargs)
         self.sensitivity = sensitivity
         self.anomaly_detector_direction = anomaly_detector_direction
         self.suppress_condition = suppress_condition
 
 
-class SQLServerDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
+class SQLServerDataFeedPatch(DataFeedDetailPatch):
     """SQLServerDataFeedPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -11469,36 +11900,36 @@ class SQLServerDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
+        "data_source_type": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'status': {'key': 'status', 'type': 'str'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'SQLSourceParameterPatch'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "status": {"key": "status", "type": "str"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
+        "data_source_parameter": {"key": "dataSourceParameter", "type": "SQLSourceParameterPatch"},
     }
 
     def __init__(
@@ -11587,12 +12018,35 @@ class SQLServerDataFeedPatchGenerated(DataFeedDetailPatchGenerated):
         :keyword data_source_parameter:
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.SQLSourceParameterPatch
         """
-        super(SQLServerDataFeedPatchGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, status=status, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
-        self.data_source_type = 'SqlServer'  # type: str
+        super(SQLServerDataFeedPatch, self).__init__(
+            data_feed_name=data_feed_name,
+            data_feed_description=data_feed_description,
+            timestamp_column=timestamp_column,
+            data_start_from=data_start_from,
+            start_offset_in_seconds=start_offset_in_seconds,
+            max_concurrency=max_concurrency,
+            min_retry_interval_in_seconds=min_retry_interval_in_seconds,
+            stop_retry_after_in_seconds=stop_retry_after_in_seconds,
+            need_rollup=need_rollup,
+            roll_up_method=roll_up_method,
+            roll_up_columns=roll_up_columns,
+            all_up_identification=all_up_identification,
+            fill_missing_point_type=fill_missing_point_type,
+            fill_missing_point_value=fill_missing_point_value,
+            view_mode=view_mode,
+            admins=admins,
+            viewers=viewers,
+            status=status,
+            action_link_template=action_link_template,
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
+        self.data_source_type = "SqlServer"  # type: str
         self.data_source_parameter = data_source_parameter
 
 
-class SqlServerDataFeedSourceGenerated(DataFeedGenerated):
+class SqlServerDataFeedSource(DataFeed):
     """SqlServerDataFeedSource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -11680,55 +12134,55 @@ class SqlServerDataFeedSourceGenerated(DataFeedGenerated):
     """
 
     _validation = {
-        'data_source_type': {'required': True},
-        'data_feed_id': {'readonly': True},
-        'data_feed_name': {'required': True},
-        'granularity_name': {'required': True},
-        'metrics': {'required': True, 'unique': True},
-        'dimension': {'unique': True},
-        'data_start_from': {'required': True},
-        'roll_up_columns': {'unique': True},
-        'admins': {'unique': True},
-        'viewers': {'unique': True},
-        'is_admin': {'readonly': True},
-        'creator': {'readonly': True},
-        'status': {'readonly': True},
-        'created_time': {'readonly': True},
-        'data_source_parameter': {'required': True},
+        "data_source_type": {"required": True},
+        "data_feed_id": {"readonly": True},
+        "data_feed_name": {"required": True},
+        "granularity_name": {"required": True},
+        "metrics": {"required": True, "unique": True},
+        "dimension": {"unique": True},
+        "data_start_from": {"required": True},
+        "roll_up_columns": {"unique": True},
+        "admins": {"unique": True},
+        "viewers": {"unique": True},
+        "is_admin": {"readonly": True},
+        "creator": {"readonly": True},
+        "status": {"readonly": True},
+        "created_time": {"readonly": True},
+        "data_source_parameter": {"required": True},
     }
 
     _attribute_map = {
-        'data_source_type': {'key': 'dataSourceType', 'type': 'str'},
-        'data_feed_id': {'key': 'dataFeedId', 'type': 'str'},
-        'data_feed_name': {'key': 'dataFeedName', 'type': 'str'},
-        'data_feed_description': {'key': 'dataFeedDescription', 'type': 'str'},
-        'granularity_name': {'key': 'granularityName', 'type': 'str'},
-        'granularity_amount': {'key': 'granularityAmount', 'type': 'int'},
-        'metrics': {'key': 'metrics', 'type': '[DataFeedMetric]'},
-        'dimension': {'key': 'dimension', 'type': '[DataFeedDimension]'},
-        'timestamp_column': {'key': 'timestampColumn', 'type': 'str'},
-        'data_start_from': {'key': 'dataStartFrom', 'type': 'iso-8601'},
-        'start_offset_in_seconds': {'key': 'startOffsetInSeconds', 'type': 'long'},
-        'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
-        'min_retry_interval_in_seconds': {'key': 'minRetryIntervalInSeconds', 'type': 'long'},
-        'stop_retry_after_in_seconds': {'key': 'stopRetryAfterInSeconds', 'type': 'long'},
-        'need_rollup': {'key': 'needRollup', 'type': 'str'},
-        'roll_up_method': {'key': 'rollUpMethod', 'type': 'str'},
-        'roll_up_columns': {'key': 'rollUpColumns', 'type': '[str]'},
-        'all_up_identification': {'key': 'allUpIdentification', 'type': 'str'},
-        'fill_missing_point_type': {'key': 'fillMissingPointType', 'type': 'str'},
-        'fill_missing_point_value': {'key': 'fillMissingPointValue', 'type': 'float'},
-        'view_mode': {'key': 'viewMode', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'viewers': {'key': 'viewers', 'type': '[str]'},
-        'is_admin': {'key': 'isAdmin', 'type': 'bool'},
-        'creator': {'key': 'creator', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'action_link_template': {'key': 'actionLinkTemplate', 'type': 'str'},
-        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
-        'credential_id': {'key': 'credentialId', 'type': 'str'},
-        'data_source_parameter': {'key': 'dataSourceParameter', 'type': 'SqlSourceParameter'},
+        "data_source_type": {"key": "dataSourceType", "type": "str"},
+        "data_feed_id": {"key": "dataFeedId", "type": "str"},
+        "data_feed_name": {"key": "dataFeedName", "type": "str"},
+        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
+        "granularity_name": {"key": "granularityName", "type": "str"},
+        "granularity_amount": {"key": "granularityAmount", "type": "int"},
+        "metrics": {"key": "metrics", "type": "[DataFeedMetric]"},
+        "dimension": {"key": "dimension", "type": "[DataFeedDimension]"},
+        "timestamp_column": {"key": "timestampColumn", "type": "str"},
+        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
+        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
+        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
+        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
+        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
+        "need_rollup": {"key": "needRollup", "type": "str"},
+        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
+        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
+        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
+        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
+        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
+        "view_mode": {"key": "viewMode", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "viewers": {"key": "viewers", "type": "[str]"},
+        "is_admin": {"key": "isAdmin", "type": "bool"},
+        "creator": {"key": "creator", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
+        "authentication_type": {"key": "authenticationType", "type": "str"},
+        "credential_id": {"key": "credentialId", "type": "str"},
+        "data_source_parameter": {"key": "dataSourceParameter", "type": "SqlSourceParameter"},
     }
 
     def __init__(
@@ -11827,12 +12281,38 @@ class SqlServerDataFeedSourceGenerated(DataFeedGenerated):
         :keyword data_source_parameter: Required.
         :paramtype data_source_parameter: ~azure.ai.metricsadvisor.models.SqlSourceParameter
         """
-        super(SqlServerDataFeedSourceGenerated, self).__init__(data_feed_name=data_feed_name, data_feed_description=data_feed_description, granularity_name=granularity_name, granularity_amount=granularity_amount, metrics=metrics, dimension=dimension, timestamp_column=timestamp_column, data_start_from=data_start_from, start_offset_in_seconds=start_offset_in_seconds, max_concurrency=max_concurrency, min_retry_interval_in_seconds=min_retry_interval_in_seconds, stop_retry_after_in_seconds=stop_retry_after_in_seconds, need_rollup=need_rollup, roll_up_method=roll_up_method, roll_up_columns=roll_up_columns, all_up_identification=all_up_identification, fill_missing_point_type=fill_missing_point_type, fill_missing_point_value=fill_missing_point_value, view_mode=view_mode, admins=admins, viewers=viewers, action_link_template=action_link_template, authentication_type=authentication_type, credential_id=credential_id, **kwargs)
-        self.data_source_type = 'SqlServer'  # type: str
+        super(SqlServerDataFeedSource, self).__init__(
+            data_feed_name=data_feed_name,
+            data_feed_description=data_feed_description,
+            granularity_name=granularity_name,
+            granularity_amount=granularity_amount,
+            metrics=metrics,
+            dimension=dimension,
+            timestamp_column=timestamp_column,
+            data_start_from=data_start_from,
+            start_offset_in_seconds=start_offset_in_seconds,
+            max_concurrency=max_concurrency,
+            min_retry_interval_in_seconds=min_retry_interval_in_seconds,
+            stop_retry_after_in_seconds=stop_retry_after_in_seconds,
+            need_rollup=need_rollup,
+            roll_up_method=roll_up_method,
+            roll_up_columns=roll_up_columns,
+            all_up_identification=all_up_identification,
+            fill_missing_point_type=fill_missing_point_type,
+            fill_missing_point_value=fill_missing_point_value,
+            view_mode=view_mode,
+            admins=admins,
+            viewers=viewers,
+            action_link_template=action_link_template,
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
+        self.data_source_type = "SqlServer"  # type: str
         self.data_source_parameter = data_source_parameter
 
 
-class SqlSourceParameterGenerated(msrest.serialization.Model):
+class SqlSourceParameter(msrest.serialization.Model):
     """SqlSourceParameter.
 
     All required parameters must be populated in order to send to Azure.
@@ -11844,33 +12324,27 @@ class SqlSourceParameterGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'query': {'required': True},
+        "query": {"required": True},
     }
 
     _attribute_map = {
-        'connection_string': {'key': 'connectionString', 'type': 'str'},
-        'query': {'key': 'query', 'type': 'str'},
+        "connection_string": {"key": "connectionString", "type": "str"},
+        "query": {"key": "query", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        query: str,
-        connection_string: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, query: str, connection_string: Optional[str] = None, **kwargs):
         """
         :keyword connection_string: The connection string of this database.
         :paramtype connection_string: str
         :keyword query: Required. The script to query this database.
         :paramtype query: str
         """
-        super(SqlSourceParameterGenerated, self).__init__(**kwargs)
+        super(SqlSourceParameter, self).__init__(**kwargs)
         self.connection_string = connection_string
         self.query = query
 
 
-class SQLSourceParameterPatchGenerated(msrest.serialization.Model):
+class SQLSourceParameterPatch(msrest.serialization.Model):
     """SQLSourceParameterPatch.
 
     :ivar connection_string: The connection string of this database.
@@ -11880,29 +12354,23 @@ class SQLSourceParameterPatchGenerated(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'connection_string': {'key': 'connectionString', 'type': 'str'},
-        'query': {'key': 'query', 'type': 'str'},
+        "connection_string": {"key": "connectionString", "type": "str"},
+        "query": {"key": "query", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        connection_string: Optional[str] = None,
-        query: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, connection_string: Optional[str] = None, query: Optional[str] = None, **kwargs):
         """
         :keyword connection_string: The connection string of this database.
         :paramtype connection_string: str
         :keyword query: The script to query this database.
         :paramtype query: str
         """
-        super(SQLSourceParameterPatchGenerated, self).__init__(**kwargs)
+        super(SQLSourceParameterPatch, self).__init__(**kwargs)
         self.connection_string = connection_string
         self.query = query
 
 
-class SuppressConditionGenerated(msrest.serialization.Model):
+class SuppressCondition(msrest.serialization.Model):
     """SuppressCondition.
 
     All required parameters must be populated in order to send to Azure.
@@ -11914,34 +12382,28 @@ class SuppressConditionGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'min_number': {'required': True},
-        'min_ratio': {'required': True},
+        "min_number": {"required": True},
+        "min_ratio": {"required": True},
     }
 
     _attribute_map = {
-        'min_number': {'key': 'minNumber', 'type': 'int'},
-        'min_ratio': {'key': 'minRatio', 'type': 'float'},
+        "min_number": {"key": "minNumber", "type": "int"},
+        "min_ratio": {"key": "minRatio", "type": "float"},
     }
 
-    def __init__(
-        self,
-        *,
-        min_number: int,
-        min_ratio: float,
-        **kwargs
-    ):
+    def __init__(self, *, min_number: int, min_ratio: float, **kwargs):
         """
         :keyword min_number: Required. min point number, value range : [1, +∞).
         :paramtype min_number: int
         :keyword min_ratio: Required. min point ratio, value range : (0, 100].
         :paramtype min_ratio: float
         """
-        super(SuppressConditionGenerated, self).__init__(**kwargs)
+        super(SuppressCondition, self).__init__(**kwargs)
         self.min_number = min_number
         self.min_ratio = min_ratio
 
 
-class SuppressConditionPatchGenerated(msrest.serialization.Model):
+class SuppressConditionPatch(msrest.serialization.Model):
     """SuppressConditionPatch.
 
     :ivar min_number: min point number, value range : [1, +∞).
@@ -11951,29 +12413,23 @@ class SuppressConditionPatchGenerated(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'min_number': {'key': 'minNumber', 'type': 'int'},
-        'min_ratio': {'key': 'minRatio', 'type': 'float'},
+        "min_number": {"key": "minNumber", "type": "int"},
+        "min_ratio": {"key": "minRatio", "type": "float"},
     }
 
-    def __init__(
-        self,
-        *,
-        min_number: Optional[int] = None,
-        min_ratio: Optional[float] = None,
-        **kwargs
-    ):
+    def __init__(self, *, min_number: Optional[int] = None, min_ratio: Optional[float] = None, **kwargs):
         """
         :keyword min_number: min point number, value range : [1, +∞).
         :paramtype min_number: int
         :keyword min_ratio: min point ratio, value range : (0, 100].
         :paramtype min_ratio: float
         """
-        super(SuppressConditionPatchGenerated, self).__init__(**kwargs)
+        super(SuppressConditionPatch, self).__init__(**kwargs)
         self.min_number = min_number
         self.min_ratio = min_ratio
 
 
-class TopNGroupScopeGenerated(msrest.serialization.Model):
+class TopNGroupScope(msrest.serialization.Model):
     """TopNGroupScope.
 
     All required parameters must be populated in order to send to Azure.
@@ -11983,48 +12439,41 @@ class TopNGroupScopeGenerated(msrest.serialization.Model):
     :ivar period: Required. point count used to look back, value range : [1, +∞).
     :vartype period: int
     :ivar min_top_count: Required. min count should be in top N, value range : [1, +∞)
-    
+
      should be less than or equal to period.
     :vartype min_top_count: int
     """
 
     _validation = {
-        'top': {'required': True},
-        'period': {'required': True},
-        'min_top_count': {'required': True},
+        "top": {"required": True},
+        "period": {"required": True},
+        "min_top_count": {"required": True},
     }
 
     _attribute_map = {
-        'top': {'key': 'top', 'type': 'int'},
-        'period': {'key': 'period', 'type': 'int'},
-        'min_top_count': {'key': 'minTopCount', 'type': 'int'},
+        "top": {"key": "top", "type": "int"},
+        "period": {"key": "period", "type": "int"},
+        "min_top_count": {"key": "minTopCount", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        top: int,
-        period: int,
-        min_top_count: int,
-        **kwargs
-    ):
+    def __init__(self, *, top: int, period: int, min_top_count: int, **kwargs):
         """
         :keyword top: Required. top N, value range : [1, +∞).
         :paramtype top: int
         :keyword period: Required. point count used to look back, value range : [1, +∞).
         :paramtype period: int
         :keyword min_top_count: Required. min count should be in top N, value range : [1, +∞)
-        
+
          should be less than or equal to period.
         :paramtype min_top_count: int
         """
-        super(TopNGroupScopeGenerated, self).__init__(**kwargs)
+        super(TopNGroupScope, self).__init__(**kwargs)
         self.top = top
         self.period = period
         self.min_top_count = min_top_count
 
 
-class UsageStatsGenerated(msrest.serialization.Model):
+class UsageStats(msrest.serialization.Model):
     """UsageStats.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -12042,28 +12491,24 @@ class UsageStatsGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'timestamp': {'readonly': True},
-        'active_series_count': {'readonly': True},
-        'all_series_count': {'readonly': True},
-        'metrics_count': {'readonly': True},
-        'data_feed_count': {'readonly': True},
+        "timestamp": {"readonly": True},
+        "active_series_count": {"readonly": True},
+        "all_series_count": {"readonly": True},
+        "metrics_count": {"readonly": True},
+        "data_feed_count": {"readonly": True},
     }
 
     _attribute_map = {
-        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'active_series_count': {'key': 'activeSeriesCount', 'type': 'int'},
-        'all_series_count': {'key': 'allSeriesCount', 'type': 'int'},
-        'metrics_count': {'key': 'metricsCount', 'type': 'int'},
-        'data_feed_count': {'key': 'dataFeedCount', 'type': 'int'},
+        "timestamp": {"key": "timestamp", "type": "iso-8601"},
+        "active_series_count": {"key": "activeSeriesCount", "type": "int"},
+        "all_series_count": {"key": "allSeriesCount", "type": "int"},
+        "metrics_count": {"key": "metricsCount", "type": "int"},
+        "data_feed_count": {"key": "dataFeedCount", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(UsageStatsGenerated, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super(UsageStats, self).__init__(**kwargs)
         self.timestamp = None
         self.active_series_count = None
         self.all_series_count = None
@@ -12071,17 +12516,17 @@ class UsageStatsGenerated(msrest.serialization.Model):
         self.data_feed_count = None
 
 
-class ValueConditionGenerated(msrest.serialization.Model):
+class ValueCondition(msrest.serialization.Model):
     """ValueCondition.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar lower: lower bound
-    
+
      should be specified when direction is Both or Down.
     :vartype lower: float
     :ivar upper: upper bound
-    
+
      should be specified when direction is Both or Up.
     :vartype upper: float
     :ivar direction: Required. value filter direction. Possible values include: "Both", "Down",
@@ -12094,22 +12539,22 @@ class ValueConditionGenerated(msrest.serialization.Model):
     :vartype metric_id: str
     :ivar trigger_for_missing: trigger alert when the corresponding point is missing in the other
      metric
-    
+
      should be specified only when using other metric to filter.
     :vartype trigger_for_missing: bool
     """
 
     _validation = {
-        'direction': {'required': True},
+        "direction": {"required": True},
     }
 
     _attribute_map = {
-        'lower': {'key': 'lower', 'type': 'float'},
-        'upper': {'key': 'upper', 'type': 'float'},
-        'direction': {'key': 'direction', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'metric_id': {'key': 'metricId', 'type': 'str'},
-        'trigger_for_missing': {'key': 'triggerForMissing', 'type': 'bool'},
+        "lower": {"key": "lower", "type": "float"},
+        "upper": {"key": "upper", "type": "float"},
+        "direction": {"key": "direction", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "metric_id": {"key": "metricId", "type": "str"},
+        "trigger_for_missing": {"key": "triggerForMissing", "type": "bool"},
     }
 
     def __init__(
@@ -12125,11 +12570,11 @@ class ValueConditionGenerated(msrest.serialization.Model):
     ):
         """
         :keyword lower: lower bound
-        
+
          should be specified when direction is Both or Down.
         :paramtype lower: float
         :keyword upper: upper bound
-        
+
          should be specified when direction is Both or Up.
         :paramtype upper: float
         :keyword direction: Required. value filter direction. Possible values include: "Both", "Down",
@@ -12142,11 +12587,11 @@ class ValueConditionGenerated(msrest.serialization.Model):
         :paramtype metric_id: str
         :keyword trigger_for_missing: trigger alert when the corresponding point is missing in the
          other metric
-        
+
          should be specified only when using other metric to filter.
         :paramtype trigger_for_missing: bool
         """
-        super(ValueConditionGenerated, self).__init__(**kwargs)
+        super(ValueCondition, self).__init__(**kwargs)
         self.lower = lower
         self.upper = upper
         self.direction = direction
@@ -12155,7 +12600,7 @@ class ValueConditionGenerated(msrest.serialization.Model):
         self.trigger_for_missing = trigger_for_missing
 
 
-class WebhookHookInfoPatchGenerated(HookInfoPatchGenerated):
+class WebhookHookInfoPatch(HookInfoPatch):
     """WebhookHookInfoPatch.
 
     All required parameters must be populated in order to send to Azure.
@@ -12176,17 +12621,17 @@ class WebhookHookInfoPatchGenerated(HookInfoPatchGenerated):
     """
 
     _validation = {
-        'hook_type': {'required': True},
-        'admins': {'unique': True},
+        "hook_type": {"required": True},
+        "admins": {"unique": True},
     }
 
     _attribute_map = {
-        'hook_type': {'key': 'hookType', 'type': 'str'},
-        'hook_name': {'key': 'hookName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'external_link': {'key': 'externalLink', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'hook_parameter': {'key': 'hookParameter', 'type': 'WebhookHookParameterPatch'},
+        "hook_type": {"key": "hookType", "type": "str"},
+        "hook_name": {"key": "hookName", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "external_link": {"key": "externalLink", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "hook_parameter": {"key": "hookParameter", "type": "WebhookHookParameterPatch"},
     }
 
     def __init__(
@@ -12211,12 +12656,14 @@ class WebhookHookInfoPatchGenerated(HookInfoPatchGenerated):
         :keyword hook_parameter:
         :paramtype hook_parameter: ~azure.ai.metricsadvisor.models.WebhookHookParameterPatch
         """
-        super(WebhookHookInfoPatchGenerated, self).__init__(hook_name=hook_name, description=description, external_link=external_link, admins=admins, **kwargs)
-        self.hook_type = 'Webhook'  # type: str
+        super(WebhookHookInfoPatch, self).__init__(
+            hook_name=hook_name, description=description, external_link=external_link, admins=admins, **kwargs
+        )
+        self.hook_type = "Webhook"  # type: str
         self.hook_parameter = hook_parameter
 
 
-class WebhookHookParameterGenerated(msrest.serialization.Model):
+class WebhookHookParameter(msrest.serialization.Model):
     """WebhookHookParameter.
 
     All required parameters must be populated in order to send to Azure.
@@ -12239,16 +12686,16 @@ class WebhookHookParameterGenerated(msrest.serialization.Model):
     """
 
     _validation = {
-        'endpoint': {'required': True},
+        "endpoint": {"required": True},
     }
 
     _attribute_map = {
-        'endpoint': {'key': 'endpoint', 'type': 'str'},
-        'username': {'key': 'username', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
-        'headers': {'key': 'headers', 'type': '{str}'},
-        'certificate_key': {'key': 'certificateKey', 'type': 'str'},
-        'certificate_password': {'key': 'certificatePassword', 'type': 'str'},
+        "endpoint": {"key": "endpoint", "type": "str"},
+        "username": {"key": "username", "type": "str"},
+        "password": {"key": "password", "type": "str"},
+        "headers": {"key": "headers", "type": "{str}"},
+        "certificate_key": {"key": "certificateKey", "type": "str"},
+        "certificate_password": {"key": "certificatePassword", "type": "str"},
     }
 
     def __init__(
@@ -12279,7 +12726,7 @@ class WebhookHookParameterGenerated(msrest.serialization.Model):
          read documents for more informations.
         :paramtype certificate_password: str
         """
-        super(WebhookHookParameterGenerated, self).__init__(**kwargs)
+        super(WebhookHookParameter, self).__init__(**kwargs)
         self.endpoint = endpoint
         self.username = username
         self.password = password
@@ -12288,7 +12735,7 @@ class WebhookHookParameterGenerated(msrest.serialization.Model):
         self.certificate_password = certificate_password
 
 
-class WebhookHookParameterPatchGenerated(msrest.serialization.Model):
+class WebhookHookParameterPatch(msrest.serialization.Model):
     """WebhookHookParameterPatch.
 
     :ivar endpoint: API address, will be called when alert is triggered, only support POST method
@@ -12307,12 +12754,12 @@ class WebhookHookParameterPatchGenerated(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'endpoint': {'key': 'endpoint', 'type': 'str'},
-        'username': {'key': 'username', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
-        'headers': {'key': 'headers', 'type': '{str}'},
-        'certificate_key': {'key': 'certificateKey', 'type': 'str'},
-        'certificate_password': {'key': 'certificatePassword', 'type': 'str'},
+        "endpoint": {"key": "endpoint", "type": "str"},
+        "username": {"key": "username", "type": "str"},
+        "password": {"key": "password", "type": "str"},
+        "headers": {"key": "headers", "type": "{str}"},
+        "certificate_key": {"key": "certificateKey", "type": "str"},
+        "certificate_password": {"key": "certificatePassword", "type": "str"},
     }
 
     def __init__(
@@ -12341,7 +12788,7 @@ class WebhookHookParameterPatchGenerated(msrest.serialization.Model):
         :keyword certificate_password: The certificate password, if using client certificate.
         :paramtype certificate_password: str
         """
-        super(WebhookHookParameterPatchGenerated, self).__init__(**kwargs)
+        super(WebhookHookParameterPatch, self).__init__(**kwargs)
         self.endpoint = endpoint
         self.username = username
         self.password = password
@@ -12350,7 +12797,7 @@ class WebhookHookParameterPatchGenerated(msrest.serialization.Model):
         self.certificate_password = certificate_password
 
 
-class WebNotificationHookGenerated(NotificationHookGenerated):
+class WebNotificationHook(NotificationHook):
     """WebNotificationHook.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -12375,21 +12822,21 @@ class WebNotificationHookGenerated(NotificationHookGenerated):
     """
 
     _validation = {
-        'hook_type': {'required': True},
-        'hook_id': {'readonly': True},
-        'hook_name': {'required': True},
-        'admins': {'unique': True},
-        'hook_parameter': {'required': True},
+        "hook_type": {"required": True},
+        "hook_id": {"readonly": True},
+        "hook_name": {"required": True},
+        "admins": {"unique": True},
+        "hook_parameter": {"required": True},
     }
 
     _attribute_map = {
-        'hook_type': {'key': 'hookType', 'type': 'str'},
-        'hook_id': {'key': 'hookId', 'type': 'str'},
-        'hook_name': {'key': 'hookName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'external_link': {'key': 'externalLink', 'type': 'str'},
-        'admins': {'key': 'admins', 'type': '[str]'},
-        'hook_parameter': {'key': 'hookParameter', 'type': 'WebhookHookParameter'},
+        "hook_type": {"key": "hookType", "type": "str"},
+        "hook_id": {"key": "hookId", "type": "str"},
+        "hook_name": {"key": "hookName", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "external_link": {"key": "externalLink", "type": "str"},
+        "admins": {"key": "admins", "type": "[str]"},
+        "hook_parameter": {"key": "hookParameter", "type": "WebhookHookParameter"},
     }
 
     def __init__(
@@ -12414,16 +12861,18 @@ class WebNotificationHookGenerated(NotificationHookGenerated):
         :keyword hook_parameter: Required.
         :paramtype hook_parameter: ~azure.ai.metricsadvisor.models.WebhookHookParameter
         """
-        super(WebNotificationHookGenerated, self).__init__(hook_name=hook_name, description=description, external_link=external_link, admins=admins, **kwargs)
-        self.hook_type = 'Webhook'  # type: str
+        super(WebNotificationHook, self).__init__(
+            hook_name=hook_name, description=description, external_link=external_link, admins=admins, **kwargs
+        )
+        self.hook_type = "Webhook"  # type: str
         self.hook_parameter = hook_parameter
 
 
-class WholeMetricConfigurationPatchGenerated(msrest.serialization.Model):
+class WholeMetricConfigurationPatch(msrest.serialization.Model):
     """WholeMetricConfigurationPatch.
 
     :ivar condition_operator: condition operator
-    
+
      should be specified when combining multiple detection conditions. Possible values include:
      "AND", "OR".
     :vartype condition_operator: str or
@@ -12439,10 +12888,10 @@ class WholeMetricConfigurationPatchGenerated(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'condition_operator': {'key': 'conditionOperator', 'type': 'str'},
-        'smart_detection_condition': {'key': 'smartDetectionCondition', 'type': 'SmartDetectionConditionPatch'},
-        'hard_threshold_condition': {'key': 'hardThresholdCondition', 'type': 'HardThresholdConditionPatch'},
-        'change_threshold_condition': {'key': 'changeThresholdCondition', 'type': 'ChangeThresholdConditionPatch'},
+        "condition_operator": {"key": "conditionOperator", "type": "str"},
+        "smart_detection_condition": {"key": "smartDetectionCondition", "type": "SmartDetectionConditionPatch"},
+        "hard_threshold_condition": {"key": "hardThresholdCondition", "type": "HardThresholdConditionPatch"},
+        "change_threshold_condition": {"key": "changeThresholdCondition", "type": "ChangeThresholdConditionPatch"},
     }
 
     def __init__(
@@ -12456,7 +12905,7 @@ class WholeMetricConfigurationPatchGenerated(msrest.serialization.Model):
     ):
         """
         :keyword condition_operator: condition operator
-        
+
          should be specified when combining multiple detection conditions. Possible values include:
          "AND", "OR".
         :paramtype condition_operator: str or
@@ -12471,7 +12920,7 @@ class WholeMetricConfigurationPatchGenerated(msrest.serialization.Model):
         :paramtype change_threshold_condition:
          ~azure.ai.metricsadvisor.models.ChangeThresholdConditionPatch
         """
-        super(WholeMetricConfigurationPatchGenerated, self).__init__(**kwargs)
+        super(WholeMetricConfigurationPatch, self).__init__(**kwargs)
         self.condition_operator = condition_operator
         self.smart_detection_condition = smart_detection_condition
         self.hard_threshold_condition = hard_threshold_condition

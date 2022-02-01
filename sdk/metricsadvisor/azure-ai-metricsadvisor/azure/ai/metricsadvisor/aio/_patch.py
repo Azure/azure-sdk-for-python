@@ -25,84 +25,86 @@
 #
 # --------------------------------------------------------------------------
 import datetime
-import six
-from typing import TYPE_CHECKING, Any, List, Union, Dict, overload
-from ._metrics_advisor_client import MetricsAdvisorClientGenerated
+from typing import List, Dict, Any, Optional, Union, cast, overload, TYPE_CHECKING
+from ._metrics_advisor_client import MetricsAdvisorClient as _ClientAsync
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.async_paging import AsyncItemPaged
+from .._operations._patch import (
+    DataFeedSourceUnion,
+    DATA_FEED,
+    DATA_FEED_PATCH,
+    DatasourceCredentialUnion,
+    FeedbackUnion,
+)
 from .._version import SDK_MONIKER
+from .._patch import (
+    MetricsAdvisorKeyCredential,
+    get_authentication_policy,
+)
 from ..models import *
-from .._patch import MetricsAdvisorKeyCredential, _MetricsAdvisorSansIOClientBase
-
-DatasourceCredentialUnion = Union[
-    DatasourceSqlConnectionString,
-    DatasourceDataLakeGen2SharedKey,
-    DatasourceServicePrincipal,
-    DatasourceServicePrincipalInKeyVault,
-]
 
 if TYPE_CHECKING:
-    from ..models._patch import DataFeedSourceUnion
-
-FeedbackUnion = Union[
-    AnomalyFeedback,
-    ChangePointFeedback,
-    CommentFeedback,
-    PeriodFeedback,
-]
-
-class _MetricsAdvisorClientBase(_MetricsAdvisorSansIOClientBase):
-
-    def __init__(
-        self,
-        endpoint: str,
-        credential: MetricsAdvisorKeyCredential,
-        **kwargs: Any
-    ) -> None:
-        super().__init__(
-            endpoint=endpoint,
-            credential=credential,
-            client_class=MetricsAdvisorClientGenerated,
-            **kwargs
-        )
-
-    async def __aenter__(self):
-        await self._client.__aenter__()  # pylint:disable=no-member
-        return self
-
-    async def __aexit__(self, *args):
-        await self._client.__aexit__(*args)  # pylint:disable=no-member
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
-class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:disable=too-many-public-methods
+class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-public-methods
     """MetricsAdvisorAdministrationClient is used to create and manage data feeds.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
         for example: https://:code:`<resource-name>`.cognitiveservices.azure.com).
     :param credential: An instance of ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential.
         which requires both subscription key and API key. Or an object which can provide an access
-        token for the Metrics Advisor service, such as a credential from :mod:`azure.identity`
+        token for the vault, such as a credential from :mod:`azure.identity`
     :type credential: ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential or ~azure.core.credentials.TokenCredential
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/sample_authentication.py
-            :start-after: [START administration_client_with_metrics_advisor_credential]
-            :end-before: [END administration_client_with_metrics_advisor_credential]
+        .. literalinclude:: ../samples/async_samples/sample_authentication_async.py
+            :start-after: [START administration_client_with_metrics_advisor_credential_async]
+            :end-before: [END administration_client_with_metrics_advisor_credential_async]
             :language: python
             :dedent: 4
             :caption: Authenticate MetricsAdvisorAdministrationClient with a MetricsAdvisorKeyCredential
     """
-    def close(self):
-        # type: () -> None
-        """Close the :class:`~azure.ai.metricsadvisor.MetricsAdvisorAdministrationClient` session."""
-        return self._client.close()
 
-    @distributed_trace
-    def create_alert_configuration(
-        self,
-        name: str,
-        metric_alert_configurations: List[MetricAlertConfiguration],
-        hook_ids: List[str],
-        **kwargs: Any
+    def __init__(self, endpoint, credential, **kwargs):
+        # type: (str, Union[MetricsAdvisorKeyCredential, AsyncTokenCredential], **Any) -> None
+        try:
+            if not endpoint.lower().startswith("http"):
+                endpoint = "https://" + endpoint
+            endpoint = endpoint.rstrip("/")
+        except AttributeError:
+            raise ValueError("Base URL must be a string.")
+
+        self._endpoint = endpoint
+        authentication_policy = get_authentication_policy(credential)
+        self._client = _ClientAsync(
+            endpoint=endpoint,
+            credential=credential,  # type: ignore
+            sdk_moniker=SDK_MONIKER,
+            authentication_policy=authentication_policy,
+            **kwargs
+        )
+
+    def __repr__(self):
+        # type: () -> str
+        return "<MetricsAdvisorAdministrationClient [endpoint={}]>".format(repr(self._endpoint))[:1024]
+
+    async def __aenter__(self) -> "MetricsAdvisorAdministrationClient":
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *args: "Any") -> None:
+        await self._client.__aexit__(*args)
+
+    async def close(self) -> None:
+        """Close the :class:`~azure.ai.metricsadvisor.aio.MetricsAdvisorAdministrationClient` session."""
+        await self._client.__aexit__()
+
+    @distributed_trace_async
+    async def create_alert_configuration(
+        self, name: str, metric_alert_configurations: List[MetricAlertConfiguration], hook_ids: List[str], **kwargs: Any
     ) -> AnomalyAlertConfiguration:
         """Create an anomaly alert configuration.
 
@@ -121,29 +123,26 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_alert_configuration.py
-                :start-after: [START create_alert_config]
-                :end-before: [END create_alert_config]
+            .. literalinclude:: ../samples/async_samples/sample_alert_configuration_async.py
+                :start-after: [START create_alert_config_async]
+                :end-before: [END create_alert_config_async]
                 :language: python
                 :dedent: 4
                 :caption: Create an anomaly alert configuration
         """
-        return self._client.create_alert_configuration(
-            name=name,
-            metric_alert_configurations=metric_alert_configurations,
-            hook_ids=hook_ids,
-            **kwargs
+        return await self._client.create_alert_configuration(
+            name=name, metric_alert_configurations=metric_alert_configurations, hook_ids=hook_ids, **kwargs
         )
 
-    @distributed_trace
-    def create_data_feed(
+    @distributed_trace_async
+    async def create_data_feed(
         self,
         name: str,
-        source: "DataFeedSourceUnion",
+        source: DataFeedSourceUnion,
         granularity: Union[str, DataFeedGranularityType, DataFeedGranularity],
         schema: Union[List[str], DataFeedSchema],
         ingestion_settings: Union[datetime.datetime, DataFeedIngestionSettings],
-        **kwargs  # type: Any
+        **kwargs: Any
     ) -> DataFeed:
         """Create a new data feed.
 
@@ -181,14 +180,14 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_data_feeds.py
-                :start-after: [START create_data_feed]
-                :end-before: [END create_data_feed]
+            .. literalinclude:: ../samples/async_samples/sample_data_feeds_async.py
+                :start-after: [START create_data_feed_async]
+                :end-before: [END create_data_feed_async]
                 :language: python
                 :dedent: 4
                 :caption: Create a data feed
         """
-        return self._client.create_data_feed(
+        return await self._client.create_data_feed(
             name=name,
             source=source,
             granularity=granularity,
@@ -197,13 +196,12 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
             **kwargs
         )
 
-    @distributed_trace
-    def create_hook(
-        self,
-        hook: Union[EmailNotificationHook, WebNotificationHook],
-        **kwargs: Any
+    @distributed_trace_async
+    async def create_hook(
+        self, hook: Union[EmailNotificationHook, WebNotificationHook], **kwargs: Any
     ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
         """Create a new email or web hook.
+
         :param hook: An email or web hook to create
         :type hook: Union[~azure.ai.metricsadvisor.models.EmailNotificationHook,
             ~azure.ai.metricsadvisor.models.WebNotificationHook]
@@ -212,25 +210,21 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
             ~azure.ai.metricsadvisor.models.EmailNotificationHook,
             ~azure.ai.metricsadvisor.models.WebNotificationHook]
         :raises ~azure.core.exceptions.HttpResponseError:
+
         .. admonition:: Example:
-            .. literalinclude:: ../samples/sample_hooks.py
-                :start-after: [START create_hook]
-                :end-before: [END create_hook]
+
+            .. literalinclude:: ../samples/async_samples/sample_hooks_async.py
+                :start-after: [START create_hook_async]
+                :end-before: [END create_hook_async]
                 :language: python
                 :dedent: 4
                 :caption: Create a notification hook
         """
-        return self._client.create_hook(
-            hook=hook, **kwargs
-        )
+        return await self._client.create_hook(hook=hook, **kwargs)
 
-    @distributed_trace
-    def create_detection_configuration(
-        self,
-        name: str,
-        metric_id: str,
-        whole_series_detection_condition: MetricDetectionCondition,
-        **kwargs: Any
+    @distributed_trace_async
+    async def create_detection_configuration(
+        self, name: str, metric_id: str, whole_series_detection_condition: MetricDetectionCondition, **kwargs: Any
     ) -> AnomalyDetectionConfiguration:
         """Create anomaly detection configuration.
 
@@ -252,22 +246,19 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_detection_configuration.py
-                :start-after: [START create_detection_config]
-                :end-before: [END create_detection_config]
+            .. literalinclude:: ../samples/async_samples/sample_detection_configuration_async.py
+                :start-after: [START create_detection_config_async]
+                :end-before: [END create_detection_config_async]
                 :language: python
                 :dedent: 4
                 :caption: Create an anomaly detection configuration
         """
-        return self._client.create_detection_configuration(
-            name=name,
-            metric_id=metric_id,
-            whole_series_detection_condition=whole_series_detection_condition,
-            **kwargs
+        return await self._client.create_detection_configuration(
+            name=name, metric_id=metric_id, whole_series_detection_condition=whole_series_detection_condition, **kwargs
         )
 
-    @distributed_trace
-    def get_data_feed(self, data_feed_id: str, **kwargs: Any) -> DataFeed:
+    @distributed_trace_async
+    async def get_data_feed(self, data_feed_id: str, **kwargs: Any) -> DataFeed:
         """Get a data feed by its id.
 
         :param data_feed_id: The data feed unique id.
@@ -278,22 +269,17 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_data_feeds.py
-                :start-after: [START get_data_feed]
-                :end-before: [END get_data_feed]
+            .. literalinclude:: ../samples/async_samples/sample_data_feeds_async.py
+                :start-after: [START get_data_feed_async]
+                :end-before: [END get_data_feed_async]
                 :language: python
                 :dedent: 4
-                :caption: Get a single data feed by its ID
+                :caption: Get a data feed by its ID
         """
-        return self._client.get_data_feed(
-            data_feed_id=data_feed_id,
-            **kwargs
-        )
+        return await self._client.get_data_feed(data_feed_id=data_feed_id, **kwargs)
 
-    @distributed_trace
-    def get_alert_configuration(
-        self, alert_configuration_id: str, **kwargs: Any
-    ) -> AnomalyAlertConfiguration:
+    @distributed_trace_async
+    async def get_alert_configuration(self, alert_configuration_id: str, **kwargs: Any) -> AnomalyAlertConfiguration:
         """Get a single anomaly alert configuration.
 
         :param alert_configuration_id: anomaly alert configuration unique id.
@@ -304,20 +290,17 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_alert_configuration.py
-                :start-after: [START get_alert_config]
-                :end-before: [END get_alert_config]
+            .. literalinclude:: ../samples/async_samples/sample_alert_configuration_async.py
+                :start-after: [START get_alert_config_async]
+                :end-before: [END get_alert_config_async]
                 :language: python
                 :dedent: 4
                 :caption: Get a single anomaly alert configuration by its ID
         """
-        return self._client.get_alert_configuration(
-            alert_configuration_id=alert_configuration_id,
-            **kwargs
-        )
+        return await self._client.get_alert_configuration(alert_configuration_id=alert_configuration_id, **kwargs)
 
-    @distributed_trace
-    def get_detection_configuration(
+    @distributed_trace_async
+    async def get_detection_configuration(
         self, detection_configuration_id: str, **kwargs: Any
     ) -> AnomalyDetectionConfiguration:
         """Get a single anomaly detection configuration.
@@ -330,23 +313,20 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_detection_configuration.py
-                :start-after: [START get_detection_config]
-                :end-before: [END get_detection_config]
+            .. literalinclude:: ../samples/async_samples/sample_detection_configuration_async.py
+                :start-after: [START get_detection_config_async]
+                :end-before: [END get_detection_config_async]
                 :language: python
                 :dedent: 4
                 :caption: Get a single anomaly detection configuration by its ID
         """
-        return self._client.get_detection_configuration(
-            detection_configuration_id=detection_configuration_id,
-            **kwargs
+        return await self._client.get_detection_configuration(
+            detection_configuration_id=detection_configuration_id, **kwargs
         )
 
-    @distributed_trace
-    def get_hook(
-        self,
-        hook_id: str,  # type
-        **kwargs: Any
+    @distributed_trace_async
+    async def get_hook(
+        self, hook_id: str, **kwargs: Any
     ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
         """Get a web or email hook by its id.
 
@@ -360,21 +340,17 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_hooks.py
-                :start-after: [START get_hook]
-                :end-before: [END get_hook]
+            .. literalinclude:: ../samples/async_samples/sample_hooks_async.py
+                :start-after: [START get_hook_async]
+                :end-before: [END get_hook_async]
                 :language: python
                 :dedent: 4
                 :caption: Get a notification hook by its ID
         """
-        return self._client.get_hook(hook_id=hook_id, **kwargs)
+        return await self._client.get_hook(hook_id=hook_id, **kwargs)
 
-    @distributed_trace
-    def get_data_feed_ingestion_progress(
-        self,
-        data_feed_id: str,
-        **kwargs: Any
-    ) -> DataFeedIngestionProgress:
+    @distributed_trace_async
+    async def get_data_feed_ingestion_progress(self, data_feed_id: str, **kwargs: Any) -> DataFeedIngestionProgress:
         """Get last successful data ingestion job timestamp by data feed.
 
         :param data_feed_id: The data feed unique id.
@@ -386,20 +362,17 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_ingestion.py
-                :start-after: [START get_data_feed_ingestion_progress]
-                :end-before: [END get_data_feed_ingestion_progress]
+            .. literalinclude:: ../samples/async_samples/sample_ingestion_async.py
+                :start-after: [START get_data_feed_ingestion_progress_async]
+                :end-before: [END get_data_feed_ingestion_progress_async]
                 :language: python
                 :dedent: 4
                 :caption: Get the progress of data feed ingestion
         """
-        return self._client.get_data_feed_ingestion_progress(
-            data_feed_id=data_feed_id,
-            **kwargs
-        )
+        return await self._client.get_data_feed_ingestion_progress(data_feed_id=data_feed_id, **kwargs)
 
-    @distributed_trace
-    def refresh_data_feed_ingestion(
+    @distributed_trace_async
+    async def refresh_data_feed_ingestion(
         self,
         data_feed_id: str,
         start_time: Union[str, datetime.datetime],
@@ -420,24 +393,19 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_ingestion.py
-                :start-after: [START refresh_data_feed_ingestion]
-                :end-before: [END refresh_data_feed_ingestion]
+            .. literalinclude:: ../samples/async_samples/sample_ingestion_async.py
+                :start-after: [START refresh_data_feed_ingestion_async]
+                :end-before: [END refresh_data_feed_ingestion_async]
                 :language: python
                 :dedent: 4
                 :caption: Refresh data feed ingestion over a period of time
         """
-        return self._client.refresh_data_feed_ingestion(
-            data_feed_id=data_feed_id,
-            start_time=start_time,
-            end_time=end_time,
-            **kwargs
+        return await self._client.refresh_data_feed_ingestion(
+            data_feed_id=data_feed_id, start_time=start_time, end_time=end_time, **kwargs
         )
 
-    @distributed_trace
-    def delete_alert_configuration(
-        self, *alert_configuration_id: str, **kwargs: Any
-    ) -> None:
+    @distributed_trace_async
+    async def delete_alert_configuration(self, *alert_configuration_id: str, **kwargs: Any) -> None:
         """Delete an anomaly alert configuration by its ID.
 
         :param str alert_configuration_id: anomaly alert configuration unique id.
@@ -447,23 +415,17 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_alert_configuration.py
-                :start-after: [START delete_alert_config]
-                :end-before: [END delete_alert_config]
+            .. literalinclude:: ../samples/async_samples/sample_alert_configuration_async.py
+                :start-after: [START delete_alert_config_async]
+                :end-before: [END delete_alert_config_async]
                 :language: python
                 :dedent: 4
                 :caption: Delete an anomaly alert configuration by its ID
         """
-        if len(alert_configuration_id) != 1:
-            raise TypeError("Alert configuration requires exactly one id.")
-        return self._client.delete_alert_configuration(
-            *alert_configuration_id, **kwargs
-        )
+        return await self._client.delete_alert_configuration(*alert_configuration_id, **kwargs)
 
-    @distributed_trace
-    def delete_detection_configuration(
-        self, *detection_configuration_id: str, **kwargs: Any
-    ) -> None:
+    @distributed_trace_async
+    async def delete_detection_configuration(self, *detection_configuration_id: str, **kwargs: Any) -> None:
         """Delete an anomaly detection configuration by its ID.
 
         :param str detection_configuration_id: anomaly detection configuration unique id.
@@ -473,21 +435,17 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_detection_configuration.py
-                :start-after: [START delete_detection_config]
-                :end-before: [END delete_detection_config]
+            .. literalinclude:: ../samples/async_samples/sample_detection_configuration_async.py
+                :start-after: [START delete_detection_config_async]
+                :end-before: [END delete_detection_config_async]
                 :language: python
                 :dedent: 4
                 :caption: Delete an anomaly detection configuration by its ID
         """
-        if len(detection_configuration_id) != 1:
-            raise TypeError("Detection configuration requires exactly one id.")
-        return self._client.delete_detection_configuration(
-            *detection_configuration_id, **kwargs
-        )
+        return await self._client.delete_detection_configuration(*detection_configuration_id, **kwargs)
 
-    @distributed_trace
-    def delete_data_feed(self, *data_feed_id: str, **kwargs: Any) -> None:
+    @distributed_trace_async
+    async def delete_data_feed(self, *data_feed_id: str, **kwargs: Any) -> None:
         """Delete a data feed by its ID.
 
         :param str data_feed_id: The data feed unique id.
@@ -497,46 +455,37 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_data_feeds.py
-                :start-after: [START delete_data_feed]
-                :end-before: [END delete_data_feed]
+            .. literalinclude:: ../samples/async_samples/sample_data_feeds_async.py
+                :start-after: [START delete_data_feed_async]
+                :end-before: [END delete_data_feed_async]
                 :language: python
                 :dedent: 4
                 :caption: Delete a data feed by its ID
         """
-        if len(data_feed_id) != 1:
-            raise TypeError("Data feed requires exactly one id.")
-        return self._client.delete_data_feed(
-            data_feed_id[0], **kwargs
-        )
+        return await self._client.delete_data_feed(*data_feed_id, **kwargs)
 
-    @distributed_trace
-    def delete_hook(self, *hook_id: str, **kwargs: Any) -> None:
+    @distributed_trace_async
+    async def delete_hook(self, *hook_id: str, **kwargs: Any) -> None:
         """Delete a web or email hook by its ID.
+
         :param str hook_id: Hook unique ID.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
+
         .. admonition:: Example:
-            .. literalinclude:: ../samples/sample_hooks.py
-                :start-after: [START delete_hook]
-                :end-before: [END delete_hook]
+
+            .. literalinclude:: ../samples/async_samples/sample_hooks_async.py
+                :start-after: [START delete_hook_async]
+                :end-before: [END delete_hook_async]
                 :language: python
                 :dedent: 4
                 :caption: Delete a hook by its ID
         """
-        if len(hook_id) != 1:
-            raise TypeError("Hook requires exactly one id.")
-        return self._client.delete_hook(
-            *hook_id[0], **kwargs
-        )
+        return await self._client.delete_hook(*hook_id, **kwargs)
 
-    @distributed_trace
-    def update_data_feed(
-        self,
-        data_feed: Union[str, DataFeed],
-        **kwargs: Any
-    ) -> DataFeed:
+    @distributed_trace_async
+    async def update_data_feed(self, data_feed: Union[str, DataFeed], **kwargs: Any) -> DataFeed:
         """Update a data feed. Either pass the entire DataFeed object with the chosen updates
         or the ID to your data feed with updates passed via keyword arguments. If you pass both
         the DataFeed object and keyword arguments, the keyword arguments will take precedence.
@@ -587,23 +536,18 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_data_feeds.py
-                :start-after: [START update_data_feed]
-                :end-before: [END update_data_feed]
+            .. literalinclude:: ../samples/async_samples/sample_data_feeds_async.py
+                :start-after: [START update_data_feed_async]
+                :end-before: [END update_data_feed_async]
                 :language: python
                 :dedent: 4
                 :caption: Update an existing data feed
         """
-        return self._client.update_data_feed(
-            data_feed=data_feed,
-            **kwargs
-        )
+        return await self._client.update_data_feed(data_feed=data_feed, **kwargs)
 
-    @distributed_trace
-    def update_alert_configuration(
-        self,
-        alert_configuration: Union[str, AnomalyAlertConfiguration],
-        **kwargs: Any
+    @distributed_trace_async
+    async def update_alert_configuration(
+        self, alert_configuration: Union[str, AnomalyAlertConfiguration], **kwargs: Any
     ) -> AnomalyAlertConfiguration:
         """Update anomaly alerting configuration. Either pass the entire AnomalyAlertConfiguration object
         with the chosen updates or the ID to your alert configuration with updates passed via keyword arguments.
@@ -626,23 +570,18 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_alert_configuration.py
-                :start-after: [START update_alert_config]
-                :end-before: [END update_alert_config]
+            .. literalinclude:: ../samples/async_samples/sample_alert_configuration_async.py
+                :start-after: [START update_alert_config_async]
+                :end-before: [END update_alert_config_async]
                 :language: python
                 :dedent: 4
                 :caption: Update an existing anomaly alert configuration
         """
-        return self._client.update_alert_configuration(
-            alert_configuration=alert_configuration,
-            **kwargs
-        )
+        return await self._client.update_alert_configuration(alert_configuration=alert_configuration, **kwargs)
 
-    @distributed_trace
-    def update_detection_configuration(
-        self,
-        detection_configuration: Union[str, AnomalyDetectionConfiguration],
-        **kwargs: Any
+    @distributed_trace_async
+    async def update_detection_configuration(
+        self, detection_configuration: Union[str, AnomalyDetectionConfiguration], **kwargs: Any
     ) -> AnomalyDetectionConfiguration:
         """Update anomaly metric detection configuration. Either pass the entire AnomalyDetectionConfiguration object
         with the chosen updates or the ID to your detection configuration with updates passed via keyword arguments.
@@ -664,31 +603,29 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
         :keyword series_detection_conditions: detection configuration for specific series.
         :paramtype series_detection_conditions:
             list[~azure.ai.metricsadvisor.models.MetricSingleSeriesDetectionCondition]
+        :return: AnomalyDetectionConfiguration
         :rtype: ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_detection_configuration.py
-                :start-after: [START update_detection_config]
-                :end-before: [END update_detection_config]
+            .. literalinclude:: ../samples/async_samples/sample_detection_configuration_async.py
+                :start-after: [START update_detection_config_async]
+                :end-before: [END update_detection_config_async]
                 :language: python
                 :dedent: 4
                 :caption: Update an existing anomaly detection configuration
         """
-        return self._client.update_detection_configuration(
-            detection_configuration=detection_configuration,
-            **kwargs
+        return await self._client.update_detection_configuration(
+            detection_configuration=detection_configuration, **kwargs
         )
 
-    @distributed_trace
-    def update_hook(
-        self,
-        hook: Union[str, EmailNotificationHook, WebNotificationHook],
-        **kwargs: Any
+    @distributed_trace_async
+    async def update_hook(
+        self, hook: Union[str, EmailNotificationHook, WebNotificationHook], **kwargs: Any
     ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
-        """Update a hook. Either pass the entire EmailNotificationHook or WebNotificationHook object with the chosen
-        updates, or the ID to your hook configuration with the updates passed via keyword arguments.
+        """Update a hook. Either pass the entire EmailNotificationHook or WebNotificationHook object with the
+        chosen updates, or the ID to your hook configuration with the updates passed via keyword arguments.
         If you pass both the hook object and keyword arguments, the keyword arguments will take precedence.
 
         :param hook: An email or web hook or the ID to the hook. If an ID is passed, you must pass `hook_type`.
@@ -714,49 +651,41 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_hooks.py
-                :start-after: [START update_hook]
-                :end-before: [END update_hook]
+            .. literalinclude:: ../samples/async_samples/sample_hooks_async.py
+                :start-after: [START update_hook_async]
+                :end-before: [END update_hook_async]
                 :language: python
                 :dedent: 4
                 :caption: Update an existing notification hook
         """
-        return self._client.update_hook(
-            hook=hook, **kwargs
-        )
+        return await self._client.update_hook(hook=hook, **kwargs)
 
     @distributed_trace
     def list_hooks(
         self, **kwargs: Any
-    ) -> ItemPaged[Union[NotificationHook, EmailNotificationHook, WebNotificationHook]]:
+    ) -> AsyncItemPaged[Union[NotificationHook, EmailNotificationHook, WebNotificationHook]]:
         """List all hooks.
 
         :keyword str hook_name: filter hook by its name.
         :keyword int skip:
         :return: Pageable containing EmailNotificationHook and WebNotificationHook
-        :rtype: ~azure.core.paging.ItemPaged[Union[~azure.ai.metricsadvisor.models.NotificationHook,
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[Union[~azure.ai.metricsadvisor.models.NotificationHook,
             ~azure.ai.metricsadvisor.models.EmailNotificationHook, ~azure.ai.metricsadvisor.models.WebNotificationHook]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_hooks.py
-                :start-after: [START list_hooks]
-                :end-before: [END list_hooks]
+            .. literalinclude:: ../samples/async_samples/sample_hooks_async.py
+                :start-after: [START list_hooks_async]
+                :end-before: [END list_hooks_async]
                 :language: python
                 :dedent: 4
-                :caption: List all of the notification hooks under the account
+                :caption: List all the notification hooks under an account
         """
-        return self._client.list_hooks(
-            hook_name=kwargs.pop("hook_name", None),
-            skip=kwargs.pop("skip", None),
-            **kwargs
-        )
+        return self._client.list_hooks(**kwargs)
 
     @distributed_trace
-    def list_data_feeds(
-        self, **kwargs: Any
-    ) -> ItemPaged[DataFeed]:
+    def list_data_feeds(self, **kwargs: Any) -> AsyncItemPaged[DataFeed]:
         """List all data feeds.
 
         :keyword str data_feed_name: filter data feed by its name.
@@ -769,14 +698,14 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
         :keyword str creator: filter data feed by its creator.
         :keyword int skip:
         :return: Pageable of DataFeed
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.DataFeed]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.DataFeed]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_data_feeds.py
-                :start-after: [START list_data_feeds]
-                :end-before: [END list_data_feeds]
+            .. literalinclude:: ../samples/async_samples/sample_data_feeds_async.py
+                :start-after: [START list_data_feeds_async]
+                :end-before: [END list_data_feeds_async]
                 :language: python
                 :dedent: 4
                 :caption: List data feeds under an account.
@@ -785,67 +714,59 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
 
     @distributed_trace
     def list_alert_configurations(
-        self,
-        detection_configuration_id: str,
-        **kwargs: Any
-    ) -> ItemPaged[AnomalyAlertConfiguration]:
+        self, detection_configuration_id: str, **kwargs: Any
+    ) -> AsyncItemPaged[AnomalyAlertConfiguration]:
         """Query all anomaly alert configurations for specific anomaly detection configuration.
-        :param detection_configuration_id: anomaly detection configuration unique id.
 
+        :param detection_configuration_id: anomaly detection configuration unique id.
         :type detection_configuration_id: str
         :return: Pageable of AnomalyAlertConfiguration
-        :rtype: ~azure.core.paging.ItemPaged[AnomalyAlertConfiguration]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[AnomalyAlertConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_alert_configuration.py
-                :start-after: [START list_alert_configs]
-                :end-before: [END list_alert_configs]
+            .. literalinclude:: ../samples/async_samples/sample_alert_configuration_async.py
+                :start-after: [START list_alert_configs_async]
+                :end-before: [END list_alert_configs_async]
                 :language: python
                 :dedent: 4
                 :caption: List all anomaly alert configurations for specific anomaly detection configuration
         """
-        return self._client.list_alert_configurations(
-            detection_configuration_id=detection_configuration_id,
-            **kwargs
-        )
+        return self._client.list_alert_configurations(detection_configuration_id=detection_configuration_id, **kwargs)
 
     @distributed_trace
     def list_detection_configurations(
-        self,
-        metric_id: str,
-        **kwargs: Any
-    ) -> ItemPaged[AnomalyDetectionConfiguration]:
+        self, metric_id: str, **kwargs: Any
+    ) -> AsyncItemPaged[AnomalyDetectionConfiguration]:
         """Query all anomaly detection configurations for specific metric.
 
         :param metric_id: metric unique id.
         :type metric_id: str
         :return: Pageable of AnomalyDetectionConfiguration
-        :rtype: ~azure.core.paging.ItemPaged[AnomalyDetectionConfiguration]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[AnomalyDetectionConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_detection_configuration.py
-                :start-after: [START list_detection_configs]
-                :end-before: [END list_detection_configs]
+            .. literalinclude:: ../samples/async_samples/sample_detection_configuration_async.py
+                :start-after: [START list_detection_configs_async]
+                :end-before: [END list_detection_configs_async]
                 :language: python
                 :dedent: 4
                 :caption: List all anomaly detection configurations for a specific metric
         """
-        return self._client.list_detection_configurations(
-            metric_id=metric_id, **kwargs
-        )
+        return self._client.list_detection_configurations(metric_id=metric_id, **kwargs)
 
     @distributed_trace
     def list_data_feed_ingestion_status(
         self,
-        data_feed_id: str,
-        start_time: Union[str, datetime.datetime],
-        end_time: Union[str, datetime.datetime],
-        **kwargs: Any
-    ) -> ItemPaged[DataFeedIngestionStatus]:
+        data_feed_id,  # type: str
+        start_time,  # type: Union[str, datetime.datetime]
+        end_time,  # type: Union[str, datetime.datetime]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> AsyncItemPaged[DataFeedIngestionStatus]
         """Get data ingestion status by data feed.
 
         :param str data_feed_id: The data feed unique id.
@@ -855,34 +776,32 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
         :type end_time: Union[str, ~datetime.datetime]
         :keyword int skip:
         :return: Pageable of DataFeedIngestionStatus
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.DataFeedIngestionStatus]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.DataFeedIngestionStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_ingestion.py
-                :start-after: [START list_data_feed_ingestion_status]
-                :end-before: [END list_data_feed_ingestion_status]
+            .. literalinclude:: ../samples/async_samples/sample_ingestion_async.py
+                :start-after: [START list_data_feed_ingestion_status_async]
+                :end-before: [END list_data_feed_ingestion_status_async]
                 :language: python
                 :dedent: 4
                 :caption: List the data feed ingestion statuses by data feed ID
         """
         return self._client.list_data_feed_ingestion_status(
-            data_feed_id=data_feed_id,
-            start_time=start_time,
-            end_time=end_time,
-            **kwargs
+            data_feed_id=data_feed_id, start_time=start_time, end_time=end_time, **kwargs
         )
 
-    @distributed_trace
-    def get_datasource_credential(
+    @distributed_trace_async
+    async def get_datasource_credential(
         self,
-        credential_id: str,  # type
-        **kwargs: Any
-    ) -> DatasourceCredentialUnion:
+        credential_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> DatasourceCredentialUnion
         """Get a datasource credential
 
-        :param str credential_id: Data source credential entity unique ID.
+        :param str credential_id: Datasource credential unique ID.
         :return: The datasource credential
         :rtype: Union[~azure.ai.metricsadvisor.models.DatasourceCredential,
             ~azure.ai.metricsadvisor.models.DatasourceSqlConnectionString,
@@ -893,23 +812,22 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_datasource_credentials.py
-                :start-after: [START get_datasource_credential]
-                :end-before: [END get_datasource_credential]
+            .. literalinclude:: ../samples/async_samples/sample_datasource_credentials_async.py
+                :start-after: [START get_datasource_credential_async]
+                :end-before: [END get_datasource_credential_async]
                 :language: python
                 :dedent: 4
                 :caption: Get a datasource credential by its ID
         """
-        return self._client.get_datasource_credential(
-            credential_id=credential_id, **kwargs
-        )
+        return await self._client.get_datasource_credential(credential_id=credential_id, **kwargs)
 
-    @distributed_trace
-    def create_datasource_credential(
+    @distributed_trace_async
+    async def create_datasource_credential(
         self,
-        datasource_credential: DatasourceCredentialUnion,
-        **kwargs: Any
-    ) -> DatasourceCredentialUnion:
+        datasource_credential,  # type: DatasourceCredentialUnion
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> DatasourceCredentialUnion
         """Create a new datasource credential.
 
         :param datasource_credential: The datasource credential to create
@@ -926,28 +844,27 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_datasource_credentials.py
-                :start-after: [START create_datasource_credential]
-                :end-before: [END create_datasource_credential]
+            .. literalinclude:: ../samples/async_samples/sample_datasource_credentials_async.py
+                :start-after: [START create_datasource_credential_async]
+                :end-before: [END create_datasource_credential_async]
                 :language: python
                 :dedent: 4
                 :caption: Create a datasource credential
         """
-        return self._client.create_datasource_credential(
-            datasource_credential=datasource_credential,
-            *kwargs
-        )
+        return await self._client.create_datasource_credential(datasource_credential=datasource_credential, **kwargs)
 
     @distributed_trace
     def list_datasource_credentials(
-        self, **kwargs: Any
-    ) -> ItemPaged[DatasourceCredential]:
-        """List all credential entities.
+        self, **kwargs  # type: Any
+    ):
+        # type: (...) -> AsyncItemPaged[DatasourceCredentialUnion]
+        """List all datasource credential.
 
         :param skip: for paging, skipped number.
         :type skip: int
-        :return: Pageable containing datasource credential
-        :rtype: ~azure.core.paging.ItemPaged[Union[~azure.ai.metricsadvisor.models.DatasourceCredential,
+        :return: Pageable containing datasource credentials
+        :rtype: ~azure.core.paging.AsyncItemPaged[Union[
+            ~azure.ai.metricsadvisor.models.DatasourceCredential,
             ~azure.ai.metricsadvisor.models.DatasourceSqlConnectionString,
             ~azure.ai.metricsadvisor.models.DatasourceDataLakeGen2SharedKey,
             ~azure.ai.metricsadvisor.models.DatasourceServicePrincipal,
@@ -956,22 +873,23 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_datasource_credentials.py
-                :start-after: [START list_datasource_credentials]
-                :end-before: [END list_datasource_credentials]
+            .. literalinclude:: ../samples/async_samples/sample_datasource_credentials_async.py
+                :start-after: [START list_datasource_credentials_async]
+                :end-before: [END list_datasource_credentials_async]
                 :language: python
                 :dedent: 4
                 :caption: List all of the datasource credentials under the account
         """
         return self._client.list_datasource_credentials(**kwargs)
 
-    @distributed_trace
-    def update_datasource_credential(
+    @distributed_trace_async
+    async def update_datasource_credential(
         self,
-        datasource_credential: DatasourceCredential,
-        **kwargs: Any
-    ) -> DatasourceCredential:
-        """Update a datasource credential.
+        datasource_credential,  # type: DatasourceCredentialUnion
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> DatasourceCredentialUnion
+        """Update a credential entity.
 
         :param datasource_credential: The new datasource credential object
         :type datasource_credential: Union[~azure.ai.metricsadvisor.models.DatasourceSqlConnectionString,
@@ -986,44 +904,37 @@ class MetricsAdvisorAdministrationClient(_MetricsAdvisorClientBase):  # pylint:d
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_datasource_credentials.py
-                :start-after: [START update_datasource_credential]
-                :end-before: [END update_datasource_credential]
+            .. literalinclude:: ../samples/async_samples/sample_datasource_credentials_async.py
+                :start-after: [START update_datasource_credential_async]
+                :end-before: [END update_datasource_credential_async]
                 :language: python
                 :dedent: 4
                 :caption: Update an existing datasource credential
         """
-        return self._client.update_datasource_credential(
-            datasource_credential=datasource_credential, **kwargs
-        )
+        return await self._client.update_datasource_credential(datasource_credential=datasource_credential, **kwargs)
 
-    @distributed_trace
-    def delete_datasource_credential(
-        self, *credential_id: str, **kwargs: Any
-    ) -> None:
+    @distributed_trace_async
+    async def delete_datasource_credential(self, *credential_id: str, **kwargs: Any) -> None:
         """Delete a datasource credential by its ID.
 
-        :param str credential_id: Datasource credential unique ID.
+        ::param str credential_id: Datasource credential unique ID.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_datasource_credentials.py
-                :start-after: [START delete_datasource_credential]
-                :end-before: [END delete_datasource_credential]
+            .. literalinclude:: ../samples/async_samples/sample_datasource_credentials_async.py
+                :start-after: [START delete_datasource_credential_async]
+                :end-before: [END delete_datasource_credential_async]
                 :language: python
                 :dedent: 4
                 :caption: Delete a datasource credential by its ID
         """
-        if len(credential_id) != 1:
-            raise TypeError("Credential requires exactly one id.")
-        return self._client.delete_datasource_credential(
-            credential_id[0], **kwargs
-        )
+        return await self._client.delete_datasource_credential(*credential_id, **kwargs)
 
-class MetricsAdvisorClient(_MetricsAdvisorClientBase):
+
+class MetricsAdvisorClient(object):
     """Represents an client that calls restful API of Azure Metrics Advisor service.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
@@ -1032,15 +943,48 @@ class MetricsAdvisorClient(_MetricsAdvisorClientBase):
         which requires both subscription key and API key. Or an object which can provide an access
         token for the vault, such as a credential from :mod:`azure.identity`
     :type credential: ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential or ~azure.core.credentials.TokenCredential
+
     """
 
-    def close(self):
-        # type: () -> None
-        """Close the :class:`~azure.ai.metricsadvisor.MetricsAdvisorClient` session."""
-        return self._client.close()
+    def __init__(self, endpoint, credential, **kwargs):
+        # type: (str, Union[MetricsAdvisorKeyCredential, AsyncTokenCredential], **Any) -> None
+        try:
+            if not endpoint.lower().startswith("http"):
+                endpoint = "https://" + endpoint
+            endpoint = endpoint.rstrip("/")
+        except AttributeError:
+            raise ValueError("Base URL must be a string.")
 
-    @distributed_trace
-    def add_feedback(self, feedback: FeedbackUnion, **kwargs: Any) -> None:
+        self._endpoint = endpoint
+        authentication_policy = get_authentication_policy(credential)
+        self._client = _ClientAsync(
+            endpoint=endpoint,
+            credential=credential,  # type: ignore
+            sdk_moniker=SDK_MONIKER,
+            authentication_policy=authentication_policy,
+            **kwargs
+        )
+
+    def __repr__(self):
+        # type: () -> str
+        return "<MetricsAdvisorClient [endpoint={}]>".format(repr(self._endpoint))[:1024]
+
+    async def __aenter__(self):
+        # type: () -> MetricsAdvisorClient
+        await self._client.__aenter__()  # pylint:disable=no-member
+        return self
+
+    async def __aexit__(self, *args):
+        # type: (*Any) -> None
+        await self._client.__aexit__(*args)  # pylint:disable=no-member
+
+    async def close(self) -> None:
+        """Close the :class:`~azure.ai.metricsadvisor.aio.MetricsAdvisorClient` session."""
+        await self._client.__aexit__()
+
+    @distributed_trace_async
+    async def add_feedback(self, feedback, **kwargs):
+        # type: (FeedbackUnion, Any) -> None
         """Create a new metric feedback.
 
         :param feedback: metric feedback.
@@ -1052,19 +996,18 @@ class MetricsAdvisorClient(_MetricsAdvisorClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_feedback.py
-                :start-after: [START add_feedback]
-                :end-before: [END add_feedback]
+            .. literalinclude:: ../samples/async_samples/sample_feedback_async.py
+                :start-after: [START add_feedback_async]
+                :end-before: [END add_feedback_async]
                 :language: python
                 :dedent: 4
                 :caption: Add new feedback.
         """
-        return self._client.add_feedback(body=feedback, **kwargs)
+        return await self._client.add_feedback(feedback=feedback, **kwargs)
 
-    @distributed_trace
-    def get_feedback(
-        self, feedback_id: str, **kwargs: Any
-    ) -> Union[MetricFeedback, FeedbackUnion]:
+    @distributed_trace_async
+    async def get_feedback(self, feedback_id, **kwargs):
+        # type: (str, Any) -> Union[MetricFeedback, FeedbackUnion]
         """Get a metric feedback by its id.
 
         :param str feedback_id: the id of the feedback.
@@ -1078,21 +1021,23 @@ class MetricsAdvisorClient(_MetricsAdvisorClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_feedback.py
-                :start-after: [START get_feedback]
-                :end-before: [END get_feedback]
+            .. literalinclude:: ../samples/async_samples/sample_feedback_async.py
+                :start-after: [START get_feedback_async]
+                :end-before: [END get_feedback_async]
                 :language: python
                 :dedent: 4
                 :caption: Get a metric feedback by its id.
         """
-        return self._client.get_feedback(
-            feedback_id=feedback_id, **kwargs
-        )
+        return await self._client.get_feedback(feedback_id=feedback_id, **kwargs)
 
     @distributed_trace
     def list_feedback(
-        self, metric_id: str, **kwargs: Any
-    ) -> ItemPaged[Union[MetricFeedback, FeedbackUnion]]:
+        self,
+        metric_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> AsyncItemPaged[Union[MetricFeedback, FeedbackUnion]]
+
         """List feedback on the given metric.
 
         :param str metric_id: filter feedbacks by metric id
@@ -1108,27 +1053,25 @@ class MetricsAdvisorClient(_MetricsAdvisorClientBase):
                 "FeedbackCreatedTime".
         :paramtype time_mode: str or ~azure.ai.metricsadvisor.models.FeedbackQueryTimeMode
         :return: Pageable list of MetricFeedback
-        :rtype: ~azure.core.paging.ItemPaged[
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[
             Union[MetricFeedback, AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_feedback.py
-                :start-after: [START list_feedback]
-                :end-before: [END list_feedback]
+            .. literalinclude:: ../samples/async_samples/sample_feedback_async.py
+                :start-after: [START list_feedback_async]
+                :end-before: [END list_feedback_async]
                 :language: python
                 :dedent: 4
                 :caption: List feedback on the given metric.
         """
-        return self._client.list_feedback(
-            metric_id=metric_id, **kwargs
-        )
+        return self._client.list_feedback(metric_id=metric_id, **kwargs)
 
     @distributed_trace
-    def list_incident_root_causes(
-        self, detection_configuration_id: str, incident_id: str, **kwargs: Any
-    ) -> ItemPaged[IncidentRootCause]:
+    def list_incident_root_causes(self, detection_configuration_id, incident_id, **kwargs):
+        # type: (str, str, Any) -> AsyncItemPaged[IncidentRootCause]
+
         """Query root cause for incident.
 
         :param detection_configuration_id: anomaly detection configuration unique id.
@@ -1136,33 +1079,32 @@ class MetricsAdvisorClient(_MetricsAdvisorClientBase):
         :param incident_id: incident id.
         :type incident_id: str
         :return: Pageable of root cause for incident
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.IncidentRootCause]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.IncidentRootCause]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_incidents.py
-                :start-after: [START list_incident_root_cause]
-                :end-before: [END list_incident_root_cause]
+            .. literalinclude:: ../samples/async_samples/sample_incidents_async.py
+                :start-after: [START list_incident_root_cause_async]
+                :end-before: [END list_incident_root_cause_async]
                 :language: python
                 :dedent: 4
                 :caption: Query incident root causes.
         """
         return self._client.list_incident_root_causes(
-            detection_configuration_id=detection_configuration_id,
-            incident_id=incident_id,
-            **kwargs
+            detection_configuration_id=detection_configuration_id, incident_id=incident_id, **kwargs
         )
 
     @distributed_trace
     def list_metric_enriched_series_data(
         self,
-        detection_configuration_id: str,
-        series: Union[List[SeriesIdentity], List[Dict[str, str]]],
-        start_time: Union[str, datetime.datetime],
-        end_time: Union[str, datetime.datetime],
-        **kwargs: Any
-    ) -> ItemPaged[MetricEnrichedSeriesData]:
+        detection_configuration_id,  # type: str
+        series,  # type: Union[List[SeriesIdentity], List[Dict[str, str]]]
+        start_time,  # type: Union[str, datetime.datetime]
+        end_time,  # type: Union[str, datetime.datetime]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> AsyncItemPaged[MetricEnrichedSeriesData]
         """Query series enriched by anomaly detection.
 
         :param str detection_configuration_id: anomaly alerting configuration unique id.
@@ -1171,14 +1113,14 @@ class MetricsAdvisorClient(_MetricsAdvisorClientBase):
         :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
         :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
         :return: Pageable of MetricEnrichedSeriesData
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricEnrichedSeriesData]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.MetricEnrichedSeriesData]
         :raises ~azure.core.exceptions.HttpResponseError:
+
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_queries.py
-
-                :start-after: [START list_metric_enriched_series_data]
-                :end-before: [END list_metric_enriched_series_data]
+            .. literalinclude:: ../samples/async_samples/sample_queries_async.py
+                :start-after: [START list_metric_enriched_series_data_async]
+                :end-before: [END list_metric_enriched_series_data_async]
                 :language: python
                 :dedent: 4
                 :caption: Query metric enriched series data.
@@ -1194,12 +1136,13 @@ class MetricsAdvisorClient(_MetricsAdvisorClientBase):
     @distributed_trace
     def list_alerts(
         self,
-        alert_configuration_id: str,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
-        time_mode: Union[str, AlertQueryTimeMode],
-        **kwargs: Any
-    ) -> ItemPaged[AnomalyAlert]:
+        alert_configuration_id,  # type: str
+        start_time,  # type: Union[str, datetime.datetime]
+        end_time,  # type: Union[str, datetime.datetime]
+        time_mode,  # type: Union[str, AlertQueryTimeMode]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> AsyncItemPaged[AnomalyAlert]
         """Query alerts under anomaly alert configuration.
 
         :param alert_configuration_id: anomaly alert configuration unique id.
@@ -1211,14 +1154,14 @@ class MetricsAdvisorClient(_MetricsAdvisorClientBase):
         :type time_mode: str or ~azure.ai.metricsadvisor.models.AlertQueryTimeMode
         :keyword int skip:
         :return: AnomalyAlerts under anomaly alert configuration.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyAlert]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyAlert]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_alert_configuration.py
-                :start-after: [START list_alerts]
-                :end-before: [END list_alerts]
+            .. literalinclude:: ../samples/async_samples/sample_alert_configuration_async.py
+                :start-after: [START list_alerts_async]
+                :end-before: [END list_alerts_async]
                 :language: python
                 :dedent: 4
                 :caption: Query anomaly detection results.
@@ -1233,26 +1176,24 @@ class MetricsAdvisorClient(_MetricsAdvisorClientBase):
 
     @overload
     def list_anomalies(
-        self,
-        alert_configuration_id: str,
-        alert_id: str,
-        **kwargs: Any
-    ) -> ItemPaged[DataPointAnomaly]:
+        self, alert_configuration_id: str, alert_id: str, **kwargs: Any
+    ) -> AsyncItemPaged[DataPointAnomaly]:
         """Query anomalies under a specific alert.
+
         :param alert_configuration_id: anomaly alert configuration unique id.
         :type alert_configuration_id: str
         :param alert_id: alert id.
         :type alert_id: str
         :keyword int skip:
         :return: Anomalies under a specific alert.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.DataPointAnomaly]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.DataPointAnomaly]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_alert_configuration.py
-                :start-after: [START list_anomalies_for_alert]
-                :end-before: [END list_anomalies_for_alert]
+            .. literalinclude:: ../samples/async_samples/sample_alert_configuration_async.py
+                :start-after: [START list_anomalies_for_alert_async]
+                :end-before: [END list_anomalies_for_alert_async]
                 :language: python
                 :dedent: 4
                 :caption: Query anomalies using alert id.
@@ -1265,7 +1206,7 @@ class MetricsAdvisorClient(_MetricsAdvisorClientBase):
         start_time: Union[str, datetime.datetime],
         end_time: Union[str, datetime.datetime],
         **kwargs: Any
-    ) -> ItemPaged[DataPointAnomaly]:
+    ) -> AsyncItemPaged[DataPointAnomaly]:
         """Query anomalies under a detection configuration.
 
         :param detection_configuration_id: anomaly detection configuration unique id.
@@ -1276,12 +1217,13 @@ class MetricsAdvisorClient(_MetricsAdvisorClientBase):
         :keyword filter:
         :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionAnomalyFilterCondition
         :return: Anomalies under anomaly detection configuration.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.DataPointAnomaly]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.DataPointAnomaly]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def list_anomalies(self, **kwargs: Any) -> ItemPaged[DataPointAnomaly]:
+    def list_anomalies(self, **kwargs):
+        # type: (Any) -> AsyncItemPaged[DataPointAnomaly]
         """Query anomalies under a specific alert or detection configuration.
 
         :keyword str alert_configuration_id: anomaly alert configuration unique id.
@@ -1299,14 +1241,9 @@ class MetricsAdvisorClient(_MetricsAdvisorClientBase):
         return self._client.list_anomalies(**kwargs)
 
     @distributed_trace
-    def list_anomaly_dimension_values(
-        self,
-        detection_configuration_id: str,
-        dimension_name: str,
-        start_time: Union[str, datetime.datetime],
-        end_time: Union[str, datetime.datetime],
-        **kwargs: Any
-    ) -> ItemPaged[str]:
+    def list_anomaly_dimension_values(self, detection_configuration_id, dimension_name, start_time, end_time, **kwargs):
+        # type: (str, str, Union[str, datetime.datetime], Union[str, datetime.datetime], Any) -> AsyncItemPaged[str]
+
         """Query dimension values of anomalies.
 
         :param detection_configuration_id: anomaly detection configuration unique id.
@@ -1317,14 +1254,14 @@ class MetricsAdvisorClient(_MetricsAdvisorClientBase):
         :keyword int skip:
         :keyword Dict[str, str] dimension_filter: filter specfic dimension name and values.
         :return: Dimension values of anomalies.
-        :rtype: ~azure.core.paging.ItemPaged[str]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_queries.py
-                :start-after: [START list_anomaly_dimension_values]
-                :end-before: [END list_anomaly_dimension_values]
+            .. literalinclude:: ../samples/async_samples/sample_queries_async.py
+                :start-after: [START list_anomaly_dimension_values_async]
+                :end-before: [END list_anomaly_dimension_values_async]
                 :language: python
                 :dedent: 4
                 :caption: Query dimension values.
@@ -1339,11 +1276,9 @@ class MetricsAdvisorClient(_MetricsAdvisorClientBase):
 
     @overload
     def list_incidents(
-        self,
-        alert_configuration_id: str,
-        alert_id: str,
-        **kwargs: Any
-    ) -> ItemPaged[AnomalyIncident]:
+        self, alert_configuration_id: str, alert_id: str, **kwargs: Any
+    ) -> AsyncItemPaged[AnomalyIncident]:
+
         """Query incidents under a specific alert.
 
         :param alert_configuration_id: anomaly alerting configuration unique id.
@@ -1352,14 +1287,14 @@ class MetricsAdvisorClient(_MetricsAdvisorClientBase):
         :type alert_id: str
         :keyword int skip:
         :return: AnomalyIncidents under a specific alert.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyIncident]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyIncident]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_incidents.py
-                :start-after: [START list_incidents_for_alert]
-                :end-before: [END list_incidents_for_alert]
+            .. literalinclude:: ../samples/async_samples/sample_incidents_async.py
+                :start-after: [START list_incidents_for_alert_async]
+                :end-before: [END list_incidents_for_alert_async]
                 :language: python
                 :dedent: 4
                 :caption: Query incidents for alert.
@@ -1372,7 +1307,8 @@ class MetricsAdvisorClient(_MetricsAdvisorClientBase):
         start_time: Union[str, datetime.datetime],
         end_time: Union[str, datetime.datetime],
         **kwargs: Any
-    ) -> ItemPaged[AnomalyIncident]:
+    ) -> AsyncItemPaged[AnomalyIncident]:
+
         """Query incidents under a detection configuration.
 
         :param detection_configuration_id: anomaly detection configuration unique id.
@@ -1381,22 +1317,24 @@ class MetricsAdvisorClient(_MetricsAdvisorClientBase):
         :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
         :keyword filter:
         :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionIncidentFilterCondition
-        :return: AnomalyIncidents under a specific alert.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyIncident]
+        :return: AnomalyIncidents under a specific alert or detection configuration.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyIncident]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_incidents.py
-                :start-after: [START list_incidents_for_detection_configuration]
-                :end-before: [END list_incidents_for_detection_configuration]
+            .. literalinclude:: ../samples/async_samples/sample_incidents_async.py
+                :start-after: [START list_incidents_for_detection_configuration_async]
+                :end-before: [END list_incidents_for_detection_configuration_async]
                 :language: python
                 :dedent: 4
                 :caption: Query incidents for detection configuration.
         """
 
     @distributed_trace
-    def list_incidents(self, **kwargs: Any) -> ItemPaged[AnomalyIncident]:
+    def list_incidents(self, **kwargs):
+        # type: (Any) -> AsyncItemPaged[AnomalyIncident]
+
         """Query incidents under a specific alert or detection configuration.
 
         :keyword str alert_configuration_id: anomaly alerting configuration unique id.
@@ -1407,15 +1345,15 @@ class MetricsAdvisorClient(_MetricsAdvisorClientBase):
         :keyword int skip:
         :keyword filter:
         :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionAnomalyFilterCondition
-        :return: AnomalyIncidents under a specific alert or detection configuration.
+        :return: AnomalyIncidents under a specific alert.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyIncident]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        return self._client.list_incidents(**kwargs)
 
     @distributed_trace
-    def list_metric_dimension_values(
-        self, metric_id: str, dimension_name: str, **kwargs: Any
-    ) -> ItemPaged[str]:
+    def list_metric_dimension_values(self, metric_id, dimension_name, **kwargs):
+        # type: (str, str, Any) -> AsyncItemPaged[str]
         """List dimension from certain metric.
 
         :param metric_id: metric unique id.
@@ -1426,33 +1364,30 @@ class MetricsAdvisorClient(_MetricsAdvisorClientBase):
         :keyword dimension_value_filter: dimension value to be filtered.
         :paramtype dimension_value_filter: str
         :return: Dimension from certain metric.
-        :rtype: ~azure.core.paging.ItemPaged[str]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_queries.py
-                :start-after: [START list_metric_dimension_values]
-                :end-before: [END list_metric_dimension_values]
+            .. literalinclude:: ../samples/async_samples/sample_queries_async.py
+                :start-after: [START list_metric_dimension_values_async]
+                :end-before: [END list_metric_dimension_values_async]
                 :language: python
                 :dedent: 4
                 :caption: Query metric dimension values.
         """
-        return self._client.list_metric_dimension_values(
-            metric_id=metric_id,
-            dimension_name=dimension_name,
-            **kwargs
-        )
+        return self._client.list_metric_dimension_values(metric_id=metric_id, dimension_name=dimension_name, **kwargs)
 
     @distributed_trace
     def list_metric_series_data(
         self,
-        metric_id: str,
-        series_keys: List[Dict[str, str]],
-        start_time: Union[str, datetime.datetime],
-        end_time: Union[str, datetime.datetime],
-        **kwargs: Any
-    ) -> ItemPaged[MetricSeriesData]:
+        metric_id,  # type: str
+        series_keys,  # type: List[Dict[str, str]]
+        start_time,  # type: Union[str, datetime.datetime]
+        end_time,  # type: Union[str, datetime.datetime]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> AsyncItemPaged[MetricSeriesData]
         """Get time series data from metric.
 
         :param metric_id: metric unique id.
@@ -1462,30 +1397,25 @@ class MetricsAdvisorClient(_MetricsAdvisorClientBase):
         :param Union[str, datetime.datetime] start_time: start time filter under chosen time mode.
         :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
         :return: Time series data from metric.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricSeriesData]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.MetricSeriesData]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_queries.py
-                :start-after: [START list_metric_series_data]
-                :end-before: [END list_metric_series_data]
+            .. literalinclude:: ../samples/async_samples/sample_queries_async.py
+                :start-after: [START list_metric_series_data_async]
+                :end-before: [END list_metric_series_data_async]
                 :language: python
                 :dedent: 4
                 :caption: Query metrics series data.
         """
         return self._client.list_metric_series_data(
-            metric_id=metric_id,
-            series_keys=series_keys,
-            start_time=start_time,
-            end_time=end_time,
-            **kwargs
+            metric_id=metric_id, series_keys=series_keys, start_time=start_time, end_time=end_time, **kwargs
         )
 
     @distributed_trace
-    def list_metric_series_definitions(
-        self, metric_id: str, active_since: datetime.datetime, **kwargs: Any
-    ) -> ItemPaged[MetricSeriesDefinition]:
+    def list_metric_series_definitions(self, metric_id, active_since, **kwargs):
+        # type: (str, datetime.datetime, Any) -> AsyncItemPaged[MetricSeriesDefinition]
         """List series (dimension combinations) from metric.
 
         :param metric_id: metric unique id.
@@ -1497,30 +1427,29 @@ class MetricsAdvisorClient(_MetricsAdvisorClientBase):
         :keyword dimension_filter: filter specfic dimension name and values.
         :paramtype dimension_filter: dict[str, list[str]]
         :return: Series (dimension combinations) from metric.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricSeriesDefinition]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.MetricSeriesDefinition]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_queries.py
-                :start-after: [START list_metric_series_definitions]
-                :end-before: [END list_metric_series_definitions]
+            .. literalinclude:: ../samples/async_samples/sample_queries_async.py
+                :start-after: [START list_metric_series_definitions_async]
+                :end-before: [END list_metric_series_definitions_async]
                 :language: python
                 :dedent: 4
                 :caption: Query metric series definitions.
         """
-        return self._client.list_metric_series_definitions(
-            metric_id=metric_id, active_since=active_since, **kwargs
-        )
+        return self._client.list_metric_series_definitions(metric_id=metric_id, active_since=active_since, **kwargs)
 
     @distributed_trace
     def list_metric_enrichment_status(
         self,
-        metric_id: str,
-        start_time: Union[str, datetime.datetime],
-        end_time: Union[str, datetime.datetime],
-        **kwargs: Any
-    ) -> ItemPaged[EnrichmentStatus]:
+        metric_id,  # type: str
+        start_time,  # type: Union[str, datetime.datetime]
+        end_time,  # type: Union[str, datetime.datetime]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> AsyncItemPaged[EnrichmentStatus]
         """Query anomaly detection status.
 
         :param metric_id: filter feedbacks by metric id.
@@ -1529,29 +1458,28 @@ class MetricsAdvisorClient(_MetricsAdvisorClientBase):
         :param Union[str, datetime.datetime] end_time: end time filter under chosen time mode.
         :keyword int skip:
         :return: Anomaly detection status.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.EnrichmentStatus]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.EnrichmentStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_queries.py
-                :start-after: [START list_metric_enrichment_status]
-                :end-before: [END list_metric_enrichment_status]
+            .. literalinclude:: ../samples/async_samples/sample_queries_async.py
+                :start-after: [START list_metric_enrichment_status_async]
+                :end-before: [END list_metric_enrichment_status_async]
                 :language: python
                 :dedent: 4
                 :caption: Query metric enrichment status.
         """
         return self._client.list_metric_enrichment_status(
-            metric_id=metric_id,
-            start_time=start_time,
-            end_time=end_time,
-            **kwargs
+            metric_id=metric_id, start_time=start_time, end_time=end_time, **kwargs
         )
 
-def patch_sdk():
-    pass
 
 __all__ = [
     "MetricsAdvisorAdministrationClient",
     "MetricsAdvisorClient",
 ]
+
+
+def patch_sdk():
+    pass
