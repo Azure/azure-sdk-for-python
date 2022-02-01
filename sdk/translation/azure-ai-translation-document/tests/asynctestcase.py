@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -11,7 +10,7 @@ from azure.ai.translation.document import DocumentTranslationInput, TranslationT
 class AsyncDocumentTranslationTest(DocumentTranslationTest):
 
     def __init__(self, method_name):
-        super(AsyncDocumentTranslationTest, self).__init__(method_name)
+        super().__init__(method_name)
 
     def generate_oauth_token(self):
         if self.is_live:
