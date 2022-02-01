@@ -205,7 +205,7 @@ class EventData(object):
         return event_str
 
     def __data__(self) -> bytes:
-        if self.body_type!=AmqpMessageBodyType.DATA:
+        if self.body_type != AmqpMessageBodyType.DATA:
             raise TypeError('`body_type` must be `AmqpMessageBodyType.DATA`.')
         data = bytearray()
         for d in self.body: # type: ignore
