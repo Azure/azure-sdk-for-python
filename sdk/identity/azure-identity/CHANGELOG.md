@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `validate_authority` support for msal client  #22625
+
 ### Breaking Changes
 
 ### Bugs Fixed
