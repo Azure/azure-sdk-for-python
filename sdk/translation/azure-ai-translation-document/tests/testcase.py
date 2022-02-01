@@ -282,7 +282,7 @@ class DocumentTranslationTest(AzureTestCase):
         return result_job_ids
 
     def _begin_and_validate_translation_with_multiple_docs(self, client, docs_count, **kwargs):
-        # get input parms
+        # get input params
         wait_for_operation = kwargs.pop('wait', False)
         language_code = kwargs.pop('language_code', "es")
 
