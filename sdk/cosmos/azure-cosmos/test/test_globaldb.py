@@ -19,8 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-from six.moves.urllib.parse import urlparse
-import six
+from urllib.parse import urlparse
 
 import unittest
 import time
