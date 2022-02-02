@@ -682,7 +682,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             The new file name.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :keyword bool replace_if_exists:
+        :keyword bool overwrite:
             A boolean value for if the destination file already exists, whether this request will
             overwrite the file or not. If true, the rename will succeed and will overwrite the
             destination file. If not provided or if false and the destination file does exist, the
@@ -745,6 +745,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         kwargs.update(get_rename_smb_properties(kwargs))
 
         timeout = kwargs.pop('timeout', None)
+        overwrite = kwargs.pop('overwrite', None)
         metadata = kwargs.pop('metadata', None)
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
@@ -756,9 +757,10 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             await new_file_client._client.file.rename(  # pylint: disable=protected-access
                 self.url,
                 timeout=timeout,
-                headers=headers,
+                replace_if_exists=overwrite,
                 source_lease_access_conditions=source_access_conditions,
                 destination_lease_access_conditions=dest_access_conditions,
+                headers=headers,
                 **kwargs)
 
             return new_file_client

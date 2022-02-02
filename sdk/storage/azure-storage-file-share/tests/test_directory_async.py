@@ -709,7 +709,7 @@ class StorageDirectoryTest(AsyncStorageTestCase):
         # Act
         new_directory = await source_directory.rename_directory(
             dest_directory.directory_path + '/' + dest_file.file_name,
-            replace_if_exists=True, ignore_read_only=True)
+            overwrite=True, ignore_read_only=True)
 
         # Assert
         props = await new_directory.get_directory_properties()
@@ -796,7 +796,7 @@ class StorageDirectoryTest(AsyncStorageTestCase):
         # Act
         new_directory = await source_directory.rename_directory(
             dest_directory.directory_path + '/' + dest_file.file_name,
-            replace_if_exists=True, lease=lease)
+            overwrite=True, lease=lease)
 
         # Assert
         props = await new_directory.get_directory_properties()
