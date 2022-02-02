@@ -5,6 +5,8 @@
 ### Features Added
 
 - Added `validate_authority` support for msal client  #22625
+- Added `resource_id` support for user-assigned managed identity
+- Added `ClientAssertionCredential` support
 
 ### Breaking Changes
 
