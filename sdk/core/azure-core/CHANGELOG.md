@@ -1,17 +1,15 @@
 # Release History
 
-## 1.22.0 (Unreleased)
+## 1.22.0 (2022-02-03)
 
 ### Features Added
 
 - Add support for `final-state-via` LRO option in core.  #22713
 
-### Breaking Changes
-
 ### Bugs Fixed
 
 - Add response body to string representation of `HttpResponseError` if we're not able to parse out information #22302
-- raise AttributeError when calling azure.core.pipeline.transport.\_\_bases__    #22469
+- Raise `AttributeError` when calling azure.core.pipeline.transport.\_\_bases__    #22469
 
 ### Other Changes
 
