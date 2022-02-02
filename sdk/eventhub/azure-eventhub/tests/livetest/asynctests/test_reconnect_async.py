@@ -111,7 +111,6 @@ async def test_receive_connection_idle_timeout_and_reconnect_async(connstr_sende
         consumer_group='$default',
         idle_timeout=10
     )
-
     async def on_event_received(event):
         on_event_received.event = event
 

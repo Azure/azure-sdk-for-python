@@ -6,20 +6,21 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show receiving events from an Event Hub asynchronously.
+An example to show receiving events from an Event Hub for a period of time asynchronously.
 """
 
 import asyncio
 import os
+import time
 from azure.eventhub.aio import EventHubConsumerClient
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+RECEIVE_DURATION = 15
 
 
 async def on_event(partition_context, event):
     # Put your code here.
-    # If the operation is i/o intensive, async will have better performance.
     print("Received event from partition: {}.".format(partition_context.partition_id))
     await partition_context.update_checkpoint(event)
 
@@ -54,14 +55,23 @@ async def main():
         consumer_group="$default",
         eventhub_name=EVENTHUB_NAME
     )
+
+    print('Consumer will keep receiving for {} seconds, start time is {}.'.format(RECEIVE_DURATION, time.time()))
+
     async with client:
-        await client.receive(
-            on_event=on_event,
-            on_error=on_error,
-            on_partition_close=on_partition_close,
-            on_partition_initialize=on_partition_initialize,
-            starting_position="-1",  # "-1" is from the beginning of the partition.
+        task = asyncio.ensure_future(
+            client.receive(
+                on_event=on_event,
+                on_error=on_error,
+                on_partition_close=on_partition_close,
+                on_partition_initialize=on_partition_initialize,
+                starting_position="-1",  # "-1" is from the beginning of the partition.
+            )
         )
+        await asyncio.sleep(RECEIVE_DURATION)
+    await task
+
+    print('Consumer has stopped receiving, end time is {}.'.format(time.time()))
 
 
 if __name__ == '__main__':
