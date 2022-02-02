@@ -22,8 +22,9 @@
 import unittest
 
 import azure.cosmos.cosmos_client as cosmos_client
-from azure.cosmos import http_constants, exceptions
+from azure.cosmos import http_constants, exceptions, PartitionKey
 import pytest
+import uuid
 from test_config import _test_config
 
 # This test class serves to test user-configurable options and verify they are
@@ -32,7 +33,16 @@ from test_config import _test_config
 
 pytestmark = pytest.mark.cosmosEmulator
 
-DATABASE_ID = "PythonSDKUserConfigTest"
+DATABASE_ID = "PythonSDKUserConfigTesters"
+CONTAINER_ID = "PythonSDKTestContainer"
+
+def get_test_item():
+    item = {
+        'id': 'Async_' + str(uuid.uuid4()),
+        'test_object': True,
+        'lastName': 'Smith'
+    }
+    return item
 
 @pytest.mark.usefixtures("teardown")
 class TestUserConfigs(unittest.TestCase):
@@ -56,6 +66,25 @@ class TestUserConfigs(unittest.TestCase):
         database_account = client.get_database_account()
         account_consistency_level = database_account.ConsistencyPolicy["defaultConsistencyLevel"]
         self.assertEqual(account_consistency_level, "Session")
+
+        # Testing the session token logic works without user passing in Session explicitly
+        database = client.create_database(DATABASE_ID)
+        container = database.create_container(id=CONTAINER_ID, partition_key=PartitionKey(path="/id"))
+        container.create_item(body=get_test_item())
+        session_token = client.client_connection.last_response_headers[http_constants.CookieHeaders.SessionToken]
+        item2 = get_test_item()
+        container.create_item(body=item2)
+        session_token2 = client.client_connection.last_response_headers[http_constants.CookieHeaders.SessionToken]
+
+        # Check Session token is being updated to reflect new item created
+        self.assertNotEqual(session_token, session_token2)
+
+        container.read_item(item=item2.get("id"), partition_key=item2.get("id"))
+        read_session_token = client.client_connection.last_response_headers[http_constants.CookieHeaders.SessionToken]
+
+        # Check Session token remains the same for read operation as with previous create item operation
+        self.assertEqual(session_token2, read_session_token)
+        client.delete_database(DATABASE_ID)
 
         # Now testing a user-defined consistency level as opposed to using the account one
         custom_level = "Eventual"
