@@ -34,7 +34,7 @@ class TestCancelTranslation(AsyncDocumentTranslationTest):
         await client.cancel_translation(poller.id)
 
         # wait for propagation
-        wait_time = 15  # for 'canceled' status to propagate, if test failed, increase this value!
+        wait_time = 20  # for 'canceled' status to propagate, if test failed, increase this value!
         self.wait(duration=wait_time) 
 
         # check translation status
