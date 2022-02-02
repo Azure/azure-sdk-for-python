@@ -229,6 +229,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             # create a session - this is maintained only if the default consistency level
             # on the client is set to session, or if the user explicitly sets it as a property
             # via setter
+            self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
             self.session = _session.Session(self.url_connection)
         else:
             self.session = None  # type: ignore
