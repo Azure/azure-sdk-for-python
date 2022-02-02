@@ -9,7 +9,7 @@
 ### Bugs Fixed
 
 - Add response body to string representation of `HttpResponseError` if we're not able to parse out information #22302
-- Raise AttributeError when calling azure.core.pipeline.transport.\_\_bases__    #22469
+- Raise `AttributeError` when calling azure.core.pipeline.transport.\_\_bases__    #22469
 
 ### Other Changes
 
