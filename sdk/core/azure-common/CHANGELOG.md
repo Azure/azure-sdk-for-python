@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.28 (2021-12-16)
+## 1.1.28 (2022-02-03)
 
 - Raise a NotImplementedError if trying to use CLI credentials were CLI version is higher than 2.21.0  #20657 #21313
 - Deprecate all methods that needs access to CLI code using azure-cli-core, since this package is no longer importable as public API
