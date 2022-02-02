@@ -134,8 +134,9 @@ class EventData(object):
         self._last_enqueued_event_properties = {}  # type: Dict[str, Any]
         self._sys_properties = None  # type: Optional[Dict[bytes, Any]]
 
-        if data and body:
-            warnings.warn("`data` and `body` passed in. `body` will be overwritten by `data`.")
+        if data:
+            if body:
+                warnings.warn("`data` and `body` passed in. `body` will be overwritten by `data`.")
             body = data
 
         if body is None:

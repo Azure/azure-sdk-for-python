@@ -59,7 +59,7 @@ async def send_event_data_batch(producer, encoder):
     # Use the encode method to convert dict object to bytes with the given avro schema and set body of EventData.
     # The encode method will automatically register the schema into the Schema Registry Service and
     # schema will be cached locally for future usage.
-    event_data = await encoder.encode(value=dict_data, schema=SCHEMA_STRING, message_type=EventData)
+    event_data = await encoder.encode(data=dict_data, schema=SCHEMA_STRING, message_type=EventData)
     print(f'The bytes of encoded dict data is {next(event_data.body)}.')
 
     event_data_batch.add(event_data)

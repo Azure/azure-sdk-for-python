@@ -6,12 +6,6 @@
 
 - `EventData` constructor has been overloaded to take (`data`, `content_type`) as keyword args for interoperability with the Schema Registry Avro Encoder library, where `body` will be set to `data` if passed in.
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
-
 ## 5.7.0 (2022-01-12)
 
 This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.

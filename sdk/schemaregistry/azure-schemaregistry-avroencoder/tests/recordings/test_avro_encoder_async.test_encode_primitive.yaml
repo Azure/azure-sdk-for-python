@@ -9,7 +9,7 @@ interactions:
       Content-Type:
       - application/json; serialization=Avro
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0 Python/3.6.6 (Windows-10-10.0.22000-SP0)
     method: PUT
     uri: https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroup/schemas/null?api-version=2021-10
   response:
@@ -17,7 +17,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 28 Jan 2022 20:51:01 GMT
+      date: Wed, 02 Feb 2022 01:15:26 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/null/versions/1?api-version=2021-10
       schema-group-name: swathip-test-schema
       schema-id: bdfae9660e504a13a524d5785901e9a8

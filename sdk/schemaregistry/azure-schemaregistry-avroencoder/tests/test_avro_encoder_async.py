@@ -103,7 +103,7 @@ class AvroEncoderAsyncTests(AzureTestCase):
             def good_callback(data: bytes, content_type: str, **kwargs):
                 return GoodExample(data=data, content_type=content_type, **kwargs)
                 
-            good_ex_obj = await sr_avro_encoder.encode(dict_data, schema=schema_str, message_type=GoodExample, extra='val') 
+            good_ex_obj = await sr_avro_encoder.encode(dict_data, schema=schema_str, message_type=GoodExample, extra='val')
             good_ex_callback = await sr_avro_encoder.encode(dict_data, schema=schema_str, message_type=good_callback, extra='val')
             decoded_data_obj = await sr_avro_encoder.decode(message=good_ex_obj)
             decoded_data_callback = await sr_avro_encoder.decode(message=good_ex_callback)

@@ -34,7 +34,6 @@ from .exceptions import (
 )
 from ._apache_avro_encoder import ApacheAvroObjectEncoder as AvroObjectEncoder
 from ._message_protocol import MessageType, MessageCallbackType, MessageMetadataDict
-from ._utils import get_http_request_kwargs
 from ._constants import (
     SCHEMA_ID_START_INDEX,
     SCHEMA_ID_LENGTH,
@@ -127,7 +126,7 @@ class AvroEncoder(object):
 
     def encode(
         self,
-        value: Mapping[str, Any],
+        data: Mapping[str, Any],
         *,
         schema: str,
         message_type: Optional[Union[MessageCallbackType, Type[MessageType]]] = None,
@@ -145,8 +144,8 @@ class AvroEncoder(object):
         Schema must be an Avro RecordSchema:
         https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
 
-        :param value: The data to be encoded.
-        :type value: Mapping[str, Any]
+        :param data: The data to be encoded.
+        :type data: Mapping[str, Any]
         :keyword schema: Required. The schema used to encode the data.
         :paramtype schema: str
         :keyword message_type: The callback function or message class to construct the message.
@@ -167,16 +166,15 @@ class AvroEncoder(object):
                 f"Cannot parse schema: {raw_input_schema}", error=e
             ).raise_with_traceback()
 
-        http_request_kwargs = get_http_request_kwargs(kwargs)
-        schema_id = self._get_schema_id(schema_fullname, raw_input_schema, **http_request_kwargs)
+        schema_id = self._get_schema_id(schema_fullname, raw_input_schema)
         content_type = f"{AVRO_MIME_TYPE}+{schema_id}"
 
         try:
-            data_bytes = self._avro_encoder.encode(value, raw_input_schema)
+            data_bytes = self._avro_encoder.encode(data, raw_input_schema)
         except Exception as e:  # pylint:disable=broad-except
             SchemaEncodeError(
                 "Cannot encode value '{}' for schema: {}".format(
-                    value, raw_input_schema
+                    data, raw_input_schema
                 ),
                 error=e,
             ).raise_with_traceback()
@@ -263,8 +261,7 @@ class AvroEncoder(object):
             raise ValueError("'content_type' cannot be None.")
 
         schema_id = content_type.split("+")[1]
-        http_request_kwargs = get_http_request_kwargs(kwargs)
-        schema_definition = self._get_schema(schema_id, **http_request_kwargs)
+        schema_definition = self._get_schema(schema_id)
         try:
             dict_value = self._avro_encoder.decode(data, schema_definition)
         except Exception as e:  # pylint:disable=broad-except
