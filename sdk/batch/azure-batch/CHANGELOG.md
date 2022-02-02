@@ -17,15 +17,6 @@
       https://docs.microsoft.com/azure/batch/nodes-and-pools
     - https://docs.microsoft.com/azure/batch/batch-spot-vms
 
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
-
 ## 11.0.0 (2021-07-30)
 
 ### Features
