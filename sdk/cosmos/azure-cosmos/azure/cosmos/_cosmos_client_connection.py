@@ -198,9 +198,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         # Routing map provider
         self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
 
-        # Set header setting to lowest latency consistency level for the first request to _GetDatabaseAccount
-        self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = documents.ConsistencyLevel.Eventual
-
         database_account = self._global_endpoint_manager._GetDatabaseAccount(**kwargs)
         self._global_endpoint_manager.force_refresh(database_account)
 
@@ -224,9 +221,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             # Set to default level present in account
             user_consistency_policy = database_account.ConsistencyPolicy
             consistency_level = user_consistency_policy.get(constants._Constants.DefaultConsistencyLevel)
-
-        # Set consistency level header to be used for the client
-        self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
+        else:
+            # Set consistency level header to be used for the client
+            self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
 
         if consistency_level == documents.ConsistencyLevel.Session:
             # create a session - this is maintained only if the default consistency level

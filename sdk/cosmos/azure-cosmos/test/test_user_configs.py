@@ -22,7 +22,7 @@
 import unittest
 
 import azure.cosmos.cosmos_client as cosmos_client
-from azure.cosmos import http_constants
+from azure.cosmos import http_constants, exceptions
 import pytest
 from test_config import _test_config
 
@@ -32,6 +32,7 @@ from test_config import _test_config
 
 pytestmark = pytest.mark.cosmosEmulator
 
+DATABASE_ID = "PythonSDKUserConfigTest"
 
 @pytest.mark.usefixtures("teardown")
 class TestUserConfigs(unittest.TestCase):
@@ -54,11 +55,10 @@ class TestUserConfigs(unittest.TestCase):
         client = cosmos_client.CosmosClient(url=_test_config.host, credential=_test_config.masterKey)
         database_account = client.get_database_account()
         account_consistency_level = database_account.ConsistencyPolicy["defaultConsistencyLevel"]
-        self.assertEqual(client.client_connection.default_headers[http_constants.HttpHeaders.ConsistencyLevel],
-                         account_consistency_level)
+        self.assertEqual(account_consistency_level, "Session")
 
         # Now testing a user-defined consistency level as opposed to using the account one
-        custom_level = "Strong"
+        custom_level = "Eventual"
         client = cosmos_client.CosmosClient(url=_test_config.host, credential=_test_config.masterKey,
                                             consistency_level=custom_level)
         database_account = client.get_database_account()
@@ -67,6 +67,15 @@ class TestUserConfigs(unittest.TestCase):
         self.assertNotEqual(
             client.client_connection.default_headers[http_constants.HttpHeaders.ConsistencyLevel],
             account_consistency_level)
+
+        # Test for failure when trying to set consistency to higher level than account level
+        custom_level = "Strong"
+        client = cosmos_client.CosmosClient(url=_test_config.host, credential=_test_config.masterKey,
+                                            consistency_level=custom_level)
+        try:
+            client.create_database(DATABASE_ID)
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(e.status_code, http_constants.StatusCodes.BAD_REQUEST)
 
 
 if __name__ == "__main__":

@@ -138,7 +138,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             http_constants.HttpHeaders.IsContinuationExpected: False,
         }
 
-        self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
+        if consistency_level is not None:
+            self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
 
         # Keeps the latest response headers from server.
         self.last_response_headers = None
@@ -225,10 +226,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
     async def _setup(self):
         # Save the choice that was made (either None or some value) and branch to set or get the consistency
-        user_defined_consistency = self.default_headers[http_constants.HttpHeaders.ConsistencyLevel]
-        # Set header setting to lowest latency consistency level for the first request to _GetDatabaseAccount
-        if user_defined_consistency is None:
-            self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = documents.ConsistencyLevel.Eventual
+        if self.default_headers.get(http_constants.HttpHeaders.ConsistencyLevel):
+            user_defined_consistency = self.default_headers[http_constants.HttpHeaders.ConsistencyLevel]
+        else:
+            user_defined_consistency = None
 
         if user_defined_consistency == documents.ConsistencyLevel.Session:
             # create a Session if the user wants Session consistency
@@ -247,13 +248,13 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         # Use database_account if no consistency passed in to verify consistency level to be used
         if user_defined_consistency is None:
-            self._set_account_consistency_level(database_account)
+            self._check_if_session_consistency(database_account)
 
-    def _set_account_consistency_level(
+    def _check_if_session_consistency(
             self,
             database_account: ClassType,
     ) -> None:
-        """Checks if consistency level param was passed in by user and sets it to that value or to the account default.
+        """Checks account consistency level to set client Session if needed.
         :param database_account: The database account to be used to check consistency levels
         :type database_account: ~azure.cosmos.documents.DatabaseAccount
         :rtype: None
@@ -261,8 +262,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         # Set to default level present in account
         user_consistency_policy = database_account.ConsistencyPolicy
         consistency_level = user_consistency_policy.get(constants._Constants.DefaultConsistencyLevel)
-
-        self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
 
         if consistency_level == documents.ConsistencyLevel.Session:
             # create a session - this is maintained only if the default consistency level
