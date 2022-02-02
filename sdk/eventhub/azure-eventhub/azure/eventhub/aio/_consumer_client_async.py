@@ -29,7 +29,6 @@ from .._eventprocessor.common import LoadBalancingStrategy
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
-    from uamqp.constants import TransportType
     from ._eventprocessor.partition_context import PartitionContext
     from ._eventprocessor.checkpoint_store import CheckpointStore
     from .._common import EventData
@@ -224,7 +223,6 @@ class EventHubConsumerClient(ClientBaseAsync):
         auth_timeout: float = 60,
         user_agent: Optional[str] = None,
         retry_total: int = 3,
-        transport_type: Optional["TransportType"] = None,
         checkpoint_store: Optional["CheckpointStore"] = None,
         load_balancing_interval: float = 10,
         **kwargs: Any
@@ -319,7 +317,6 @@ class EventHubConsumerClient(ClientBaseAsync):
             auth_timeout=auth_timeout,
             user_agent=user_agent,
             retry_total=retry_total,
-            transport_type=transport_type,
             checkpoint_store=checkpoint_store,
             load_balancing_interval=load_balancing_interval,
             **kwargs

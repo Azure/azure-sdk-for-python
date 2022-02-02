@@ -345,7 +345,6 @@ class Session(object):
             _LOGGER.info("An error occurred when ending the session: %r", exc)
             self._set_state(SessionState.UNMAPPED)
 
-
     def create_receiver_link(self, source_address, **kwargs):
         assigned_handle = self._get_next_output_handle()
         link = ReceiverLink(

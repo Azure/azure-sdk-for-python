@@ -186,9 +186,9 @@ class AMQPClient(object):
         retry_settings = self._retry_policy.configure_retries()
         retry_active = True
         absolute_timeout = kwargs.pop("timeout", 0) or 0
+        start_time = time.time()
         while retry_active:
             try:
-                start_time = time.time()
                 if absolute_timeout < 0:
                     raise TimeoutError("Operation timed out.")
                 return operation(*args, timeout=absolute_timeout, **kwargs)

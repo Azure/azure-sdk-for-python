@@ -10,6 +10,7 @@ from enum import Enum
 from ._transport_async import AsyncTransport
 from ..types import AMQPTypes, TYPE, VALUE
 from ..constants import FIELD, SASLCode, SASL_HEADER_FRAME
+from .._transport import AMQPS_PORT
 from ..performatives import (
     SASLOutcome,
     SASLResponse,
@@ -21,6 +22,7 @@ from ..performatives import (
 _SASL_FRAME_TYPE = b'\x01'
 
 
+# TODO: do we need it here? it's a duplicate of the sync version
 class SASLPlainCredential(object):
     """PLAIN SASL authentication mechanism.
     See https://tools.ietf.org/html/rfc4616 for details
@@ -45,6 +47,7 @@ class SASLPlainCredential(object):
         return login_response
 
 
+# TODO: do we need it here? it's a duplicate of the sync version
 class SASLAnonymousCredential(object):
     """ANONYMOUS SASL authentication mechanism.
     See https://tools.ietf.org/html/rfc4505 for details
@@ -56,6 +59,7 @@ class SASLAnonymousCredential(object):
         return b''
 
 
+# TODO: do we need it here? it's a duplicate of the sync version
 class SASLExternalCredential(object):
     """EXTERNAL SASL mechanism.
     Enables external authentication, i.e. not handled through this protocol.
@@ -71,10 +75,10 @@ class SASLExternalCredential(object):
 
 class SASLTransport(AsyncTransport):
 
-    def __init__(self, host, credential, connect_timeout=None, ssl=None, **kwargs):
+    def __init__(self, host, credential, port=AMQPS_PORT, connect_timeout=None, ssl=None, **kwargs):
         self.credential = credential
         ssl = ssl or True
-        super(SASLTransport, self).__init__(host, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
+        super(SASLTransport, self).__init__(host, port=port, connect_timeout=connect_timeout, ssl=ssl, **kwargs)
 
     async def negotiate(self):
         await self.write(SASL_HEADER_FRAME)
@@ -83,8 +87,8 @@ class SASLTransport(AsyncTransport):
             raise ValueError("Mismatching AMQP header protocol. Excpected: {}, received: {}".format(
                 SASL_HEADER_FRAME, returned_header[1]))
 
-        _, supported_mechansisms = await self.receive_frame(verify_frame_type=1)
-        if self.credential.mechanism not in supported_mechansisms[1][0]:  # sasl_server_mechanisms
+        _, supported_mechanisms = await self.receive_frame(verify_frame_type=1)
+        if self.credential.mechanism not in supported_mechanisms[1][0]:  # sasl_server_mechanisms
             raise ValueError("Unsupported SASL credential type: {}".format(self.credential.mechanism))
         sasl_init = SASLInit(
             mechanism=self.credential.mechanism,
