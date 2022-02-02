@@ -212,7 +212,7 @@ class AvroEncoder(object):
         message: Optional[MessageType] = None,
         data: Optional[bytes] = None,
         content_type: Optional[str] = None,
-        **kwargs,
+        **kwargs,   # pylint: disable=unused-argument
     ) -> Dict[str, Any]:
         """
         Decode bytes data using schema ID in the content type field. One of the following is required:
