@@ -602,7 +602,7 @@ class StorageDirectoryTest(StorageTestCase):
         # Act
         new_directory = source_directory.rename_directory(
             dest_directory.directory_path + '/' + dest_file.file_name,
-            replace_if_exists=True, ignore_read_only=True)
+            overwrite=True, ignore_read_only=True)
 
         # Assert
         props = new_directory.get_directory_properties()
@@ -681,7 +681,7 @@ class StorageDirectoryTest(StorageTestCase):
         # Act
         new_directory = source_directory.rename_directory(
             dest_directory.directory_path + '/' + dest_file.file_name,
-            replace_if_exists=True, lease=lease)
+            overwrite=True, lease=lease)
 
         # Assert
         props = new_directory.get_directory_properties()

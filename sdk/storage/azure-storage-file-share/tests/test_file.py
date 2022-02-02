@@ -2140,7 +2140,7 @@ class StorageFileTest(StorageTestCase):
         dest_file.create_file(1024, file_attributes=file_attributes)
 
         # Act
-        new_file = source_file.rename_file(dest_file.file_name, replace_if_exists=True, ignore_read_only=True)
+        new_file = source_file.rename_file(dest_file.file_name, overwrite=True, ignore_read_only=True)
 
         # Assert
         self.assertEqual('file2', new_file.file_name)
@@ -2218,7 +2218,7 @@ class StorageFileTest(StorageTestCase):
         # Act
         new_file = source_file.rename_file(
             dest_file.file_name,
-            replace_if_exists=True,
+            overwrite=True,
             source_lease=source_lease,
             destination_lease=dest_lease)
 

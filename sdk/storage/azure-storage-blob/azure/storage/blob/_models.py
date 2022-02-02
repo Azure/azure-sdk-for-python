@@ -925,8 +925,8 @@ class ContainerSasPermissions(object):
         To enable operations related to set/delete immutability policy.
         To get immutability policy, you just need read permission.
     """
-    def __init__(self, read=False, write=False, delete=False, delete_previous_version=False,
-                 list=False, tag=False, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, read=False, write=False, delete=False,
+                 list=False, delete_previous_version=False, tag=False, **kwargs):  # pylint: disable=redefined-builtin
         self.read = read
         self.write = write
         self.delete = delete
@@ -971,9 +971,9 @@ class ContainerSasPermissions(object):
         p_tag = 't' in permission
         p_find = 'f' in permission
         p_set_immutability_policy = 'i' in permission
-        parsed = cls(read=p_read, write=p_write, delete=p_delete, delete_previous_version=p_delete_previous_version,
-                     permanent_delete=p_permanent_delete, list=p_list, tag=p_tag,
-                     find=p_find, set_immutability_policy=p_set_immutability_policy)
+        parsed = cls(read=p_read, write=p_write, delete=p_delete, list=p_list,
+                     delete_previous_version=p_delete_previous_version, tag=p_tag, find=p_find,
+                     set_immutability_policy=p_set_immutability_policy, permanent_delete=p_permanent_delete)
 
         return parsed
 
