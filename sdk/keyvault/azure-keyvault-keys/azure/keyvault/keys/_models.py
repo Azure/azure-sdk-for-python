@@ -86,7 +86,7 @@ class KeyProperties(object):
         if (hasattr(key_bundle, "release_policy") and
             key_bundle.release_policy is not None):  # type: ignore[attr-defined]
             release_policy = KeyReleasePolicy(
-                data=key_bundle.release_policy.data,  # type: ignore[attr-defined]
+                data=key_bundle.release_policy.encoded_policy,  # type: ignore[attr-defined]
                 content_type=key_bundle.release_policy.content_type  # type: ignore[attr-defined]
             )
 
