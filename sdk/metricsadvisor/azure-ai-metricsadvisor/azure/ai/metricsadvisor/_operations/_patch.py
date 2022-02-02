@@ -66,6 +66,19 @@ DATA_FEED_PATCH = {
     "AzureLogAnalytics": AzureLogAnalyticsDataFeedPatch,
 }
 
+HOOK_KWARG_NAMES = [
+    "name",
+    "description",
+    "external_link",
+    "emails_to_alert",
+    "endpoint",
+    "username",
+    "password",
+    "certificate_key",
+    "certificate_password",
+    "hook_type",
+]
+
 DatasourceCredentialUnion = Union[
     DatasourceSqlConnectionString,
     DatasourceDataLakeGen2SharedKey,
@@ -120,39 +133,6 @@ def convert_to_datasource_credential(datasource_credential):
     if datasource_credential.data_source_credential_type == "ServicePrincipal":
         return DatasourceServicePrincipal._from_generated(datasource_credential)
     return DatasourceServicePrincipalInKeyVault._from_generated(datasource_credential)
-
-
-def construct_hook_dict(update_kwargs, hook_type):
-
-    if hook_type.lower() == "email" and "toList" in update_kwargs:
-        update_kwargs["hookType"] = "Email"
-        update_kwargs["hookParameter"] = {}
-        update_kwargs["hookParameter"]["toList"] = update_kwargs["toList"]
-        update_kwargs.pop("toList")
-    elif hook_type.lower() == "web" and any(
-        key in update_kwargs
-        for key in [
-            "endpoint",
-            "username",
-            "password",
-            "certificateKey",
-            "certificatePassword",
-        ]
-    ):
-        update_kwargs["hookType"] = "Webhook"
-        update_kwargs["hookParameter"] = {}
-        if "endpoint" in update_kwargs:
-            update_kwargs["hookParameter"]["endpoint"] = update_kwargs.pop("endpoint")
-        if "username" in update_kwargs:
-            update_kwargs["hookParameter"]["username"] = update_kwargs.pop("username")
-        if "password" in update_kwargs:
-            update_kwargs["hookParameter"]["password"] = update_kwargs.pop("password")
-        if "certificateKey" in update_kwargs:
-            update_kwargs["hookParameter"]["certificateKey"] = update_kwargs.pop("certificateKey")
-        if "certificatePassword" in update_kwargs:
-            update_kwargs["hookParameter"]["certificatePassword"] = update_kwargs.pop("certificatePassword")
-
-    return update_kwargs
 
 
 def construct_detection_config_dict(update_kwargs):
@@ -385,15 +365,8 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin):
         hook,  # type: Union[EmailNotificationHook, WebNotificationHook]
         **kwargs  # type: Any
     ):  # type: (...) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]
-        hook_request = None
-        if hook.hook_type == "Email":
-            hook_request = hook._to_generated()
-
-        if hook.hook_type == "Webhook":
-            hook_request = hook._to_generated()
-
         response_headers = super().create_hook(  # type: ignore
-            hook_request, cls=lambda pipeline_response, _, response_headers: response_headers, **kwargs  # type: ignore
+            hook, cls=lambda pipeline_response, _, response_headers: response_headers, **kwargs  # type: ignore
         )
         hook_id = response_headers["Location"].split("hooks/")[1]
         return self.get_hook(hook_id)
@@ -447,18 +420,6 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin):
         # type: (str, Any) -> AnomalyDetectionConfiguration
         config = super().get_detection_configuration(detection_configuration_id, **kwargs)
         return AnomalyDetectionConfiguration._from_generated(config)
-
-    @distributed_trace
-    def get_hook(
-        self,
-        hook_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]
-        hook = super().get_hook(hook_id, **kwargs)
-        if hook.hook_type == "Email":
-            return EmailNotificationHook._from_generated(hook)
-        return WebNotificationHook._from_generated(hook)
 
     @distributed_trace
     def get_data_feed_ingestion_progress(
@@ -636,77 +597,22 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin):
         **kwargs  # type: Any
     ):
         # type: (...) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]
-        unset = object()
-        update_kwargs = {}
         hook_patch = None
-        hook_type = kwargs.pop("hook_type", None)
-        update_kwargs["hookName"] = kwargs.pop("name", unset)
-        update_kwargs["description"] = kwargs.pop("description", unset)
-        update_kwargs["externalLink"] = kwargs.pop("external_link", unset)
-        update_kwargs["toList"] = kwargs.pop("emails_to_alert", unset)
-        update_kwargs["endpoint"] = kwargs.pop("endpoint", unset)
-        update_kwargs["username"] = kwargs.pop("username", unset)
-        update_kwargs["password"] = kwargs.pop("password", unset)
-        update_kwargs["certificateKey"] = kwargs.pop("certificate_key", unset)
-        update_kwargs["certificatePassword"] = kwargs.pop("certificate_password", unset)
-
-        update = {key: value for key, value in update_kwargs.items() if value != unset}
+        hook_type = kwargs.get("hook_type")
         if isinstance(hook, six.string_types):
             hook_id = hook
             if hook_type is None:
                 raise ValueError("hook_type must be passed with a hook ID.")
-
-            hook_patch = construct_hook_dict(update, hook_type)
+            hook_patch = {k: v for k, v in kwargs.items() if k in HOOK_KWARG_NAMES}
 
         else:
+            hook_patch = hook
             hook_id = hook.id
-            if hook.hook_type == "Email":
-                hook = cast(EmailNotificationHook, hook)
-                hook_patch = hook._to_generated_patch(
-                    name=update.pop("hookName", None),
-                    description=update.pop("description", None),
-                    external_link=update.pop("externalLink", None),
-                    emails_to_alert=update.pop("toList", None),
-                )
+        for k in HOOK_KWARG_NAMES:
+            if k in kwargs:
+                kwargs.pop(k)
 
-            elif hook.hook_type == "Webhook":
-                hook = cast(WebNotificationHook, hook)
-                hook_patch = hook._to_generated_patch(
-                    name=update.pop("hookName", None),
-                    description=update.pop("description", None),
-                    external_link=update.pop("externalLink", None),
-                    endpoint=update.pop("endpoint", None),
-                    password=update.pop("password", None),
-                    username=update.pop("username", None),
-                    certificate_key=update.pop("certificateKey", None),
-                    certificate_password=update.pop("certificatePassword", None),
-                )
-
-        updated_hook = super().update_hook(hook_id, hook_patch, **kwargs)
-
-        if updated_hook.hook_type == "Email":
-            return EmailNotificationHook._from_generated(updated_hook)
-        return WebNotificationHook._from_generated(updated_hook)
-
-    @distributed_trace
-    def list_hooks(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> ItemPaged[Union[NotificationHook, EmailNotificationHook, WebNotificationHook]]
-        hook_name = kwargs.pop("hook_name", None)
-        skip = kwargs.pop("skip", None)
-
-        def _convert_to_hook_type(hook):
-            if hook.hook_type == "Email":
-                return EmailNotificationHook._from_generated(hook)
-            return WebNotificationHook._from_generated(hook)
-
-        return super().list_hooks(  # type: ignore
-            hook_name=hook_name,
-            skip=skip,
-            cls=kwargs.pop("cls", lambda hooks: [_convert_to_hook_type(hook) for hook in hooks]),
-            **kwargs
-        )
+        return super().update_hook(hook_id, hook_patch, **kwargs)
 
     @distributed_trace
     def list_data_feeds(

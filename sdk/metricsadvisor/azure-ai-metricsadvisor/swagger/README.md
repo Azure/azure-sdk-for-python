@@ -35,7 +35,11 @@ add-credential: true
 credential-scopes: https://cognitiveservices.azure.com/.default
 want-operation-metadata: false
 keep-version-file: true
-python3-only: true
+version-tolerant: true
+black: true
+models-mode: msrest
+modelerfour:
+    flatten-models: true
 ```
 
 ### Make get_root_cause_of_incident_by_anomaly_detection_configuration pageable
@@ -70,95 +74,94 @@ directive:
 
 ```yaml
 directive:
-    - rename-operation:
-        from: createMetricFeedback
-        to: addFeedback
-    - rename-operation:
-        from: getMetricFeedback
-        to: getFeedback
-    - rename-operation:
-        from: listMetricFeedbacks
-        to: listFeedback
-    - rename-operation:
-        from: getRootCauseOfIncidentByAnomalyDetectionConfiguration
-        to: listIncidentRootCauses
-    - rename-operation:
-        from: getSeriesByAnomalyDetectionConfiguration
-        to: listMetricEnrichedSeriesData
-    - rename-operation:
-        from: getAlertsByAnomalyAlertingConfiguration
-        to: listAlerts
-    - rename-operation:
-        from: getDimensionOfAnomaliesByAnomalyDetectionConfiguration
-        to: listAnomalyDimensionValues
-    - rename-operation:
-        from: getMetricDimension
-        to: listMetricDimensionValues
-    - rename-operation:
-        from: getMetricData
-        to: listMetricSeriesData
-    - rename-operation:
-        from: getMetricSeries
-        to: listMetricSeriesDefinitions
-    - rename-operation:
-        from: getEnrichmentStatusByMetric
-        to: listMetricEnrichmentStatus
-    - rename-operation:
-        from: createAnomalyAlertingConfiguration
-        to: createAlertConfiguration
-    - rename-operation:
-        from: createAnomalyDetectionConfiguration
-        to: createDetectionConfiguration
-    - rename-operation:
-        from: getDataFeedById
-        to: getDataFeed
-    - rename-operation:
-        from: getAnomalyAlertingConfiguration
-        to: getAlertConfiguration
-    - rename-operation:
-        from: getAnomalyDetectionConfiguration
-        to: getDetectionConfiguration
-    - rename-operation:
-        from: getIngestionProgress
-        to: getDataFeedIngestionProgress
-    - rename-operation:
-        from: resetDataFeedIngestionStatus
-        to: refreshDataFeedIngestion
-    - rename-operation:
-        from: deleteAnomalyAlertingConfiguration
-        to: deleteAlertConfiguration
-    - rename-operation:
-        from: deleteAnomalyDetectionConfiguration
-        to: deleteDetectionConfiguration
-    - rename-operation:
-        from: updateAnomalyAlertingConfiguration
-        to: updateAlertConfiguration
-    - rename-operation:
-        from: getAnomalyAlertingConfigurationsByAnomalyDetectionConfiguration
-        to: listAlertConfigurations
-    - rename-operation:
-        from: getAnomalyDetectionConfigurationsByMetric
-        to: listDetectionConfigurations
-    - rename-operation:
-        from: getDataFeedIngestionStatus
-        to: listDataFeedIngestionStatus
-    - rename-operation:
-        from: getCredential
-        to: getDatasourceCredential
-    - rename-operation:
-        from: createCredential
-        to: createDatasourceCredential
-    - rename-operation:
-        from: listCredentials
-        to: listDatasourceCredentials
-    - rename-operation:
-        from: updateCredential
-        to: updateDatasourceCredential
-    - rename-operation:
-        from: deleteCredential
-        to: deleteDatasourceCredential
+  - rename-operation:
+      from: createMetricFeedback
+      to: addFeedback
+  - rename-operation:
+      from: getMetricFeedback
+      to: getFeedback
+  - rename-operation:
+      from: listMetricFeedbacks
+      to: listFeedback
+  - rename-operation:
+      from: getRootCauseOfIncidentByAnomalyDetectionConfiguration
+      to: listIncidentRootCauses
+  - rename-operation:
+      from: getSeriesByAnomalyDetectionConfiguration
+      to: listMetricEnrichedSeriesData
+  - rename-operation:
+      from: getAlertsByAnomalyAlertingConfiguration
+      to: listAlerts
+  - rename-operation:
+      from: getDimensionOfAnomaliesByAnomalyDetectionConfiguration
+      to: listAnomalyDimensionValues
+  - rename-operation:
+      from: getMetricDimension
+      to: listMetricDimensionValues
+  - rename-operation:
+      from: getMetricData
+      to: listMetricSeriesData
+  - rename-operation:
+      from: getMetricSeries
+      to: listMetricSeriesDefinitions
+  - rename-operation:
+      from: getEnrichmentStatusByMetric
+      to: listMetricEnrichmentStatus
+  - rename-operation:
+      from: createAnomalyAlertingConfiguration
+      to: createAlertConfiguration
+  - rename-operation:
+      from: createAnomalyDetectionConfiguration
+      to: createDetectionConfiguration
+  - rename-operation:
+      from: getDataFeedById
+      to: getDataFeed
+  - rename-operation:
+      from: getAnomalyAlertingConfiguration
+      to: getAlertConfiguration
+  - rename-operation:
+      from: getAnomalyDetectionConfiguration
+      to: getDetectionConfiguration
+  - rename-operation:
+      from: getIngestionProgress
+      to: getDataFeedIngestionProgress
+  - rename-operation:
+      from: resetDataFeedIngestionStatus
+      to: refreshDataFeedIngestion
+  - rename-operation:
+      from: deleteAnomalyAlertingConfiguration
+      to: deleteAlertConfiguration
+  - rename-operation:
+      from: deleteAnomalyDetectionConfiguration
+      to: deleteDetectionConfiguration
+  - rename-operation:
+      from: updateAnomalyAlertingConfiguration
+      to: updateAlertConfiguration
+  - rename-operation:
+      from: getAnomalyAlertingConfigurationsByAnomalyDetectionConfiguration
+      to: listAlertConfigurations
+  - rename-operation:
+      from: getAnomalyDetectionConfigurationsByMetric
+      to: listDetectionConfigurations
+  - rename-operation:
+      from: getDataFeedIngestionStatus
+      to: listDataFeedIngestionStatus
+  - rename-operation:
+      from: getCredential
+      to: getDatasourceCredential
+  - rename-operation:
+      from: createCredential
+      to: createDatasourceCredential
+  - rename-operation:
+      from: listCredentials
+      to: listDatasourceCredentials
+  - rename-operation:
+      from: updateCredential
+      to: updateDatasourceCredential
+  - rename-operation:
+      from: deleteCredential
+      to: deleteDatasourceCredential
 ```
-
 
 ### anomalyScopeType enum -> metricAnomalyAlertScopeType, change enum values
 
@@ -326,109 +329,230 @@ directive:
 
 ```yaml
 directive:
-    - rename-model:
-        from: MetricSeriesItem
-        to: MetricSeriesDefinition
-    - rename-model:
-        from: IngestionStatus
-        to: DataFeedIngestionStatus
-    - rename-model:
-        from: AlertSnoozeCondition
-        to: MetricAnomalyAlertSnoozeCondition
-    - rename-model:
-        from: AnomalyAlertingConfiguration
-        to: AnomalyAlertConfiguration
-    - rename-model:
-        from: DataFeedDetail
-        to: DataFeed
-    - rename-model:
-        from: AzureApplicationInsightsDataFeed
-        to: AzureApplicationInsightsDataFeedSource
-    - rename-model:
-        from: AzureBlobDataFeed
-        to: AzureBlobDataFeedSource
-    - rename-model:
-        from: AzureCosmosDBDataFeed
-        to: AzureCosmosDbDataFeedSource
-    - rename-model:
-        from: AzureDataExplorerDataFeed
-        to: AzureDataExplorerDataFeedSource
-    - rename-model:
-        from: AzureTableDataFeed
-        to: AzureTableDataFeedSource
-    - rename-model:
-        from: AzureEventHubsDataFeed
-        to: AzureEventHubsDataFeedSource
-    - rename-model:
-        from: InfluxDBDataFeed
-        to: InfluxDbDataFeedSource
-    - rename-model:
-        from: MySqlDataFeed
-        to: MySqlDataFeedSource
-    - rename-model:
-        from: PostgreSqlDataFeed
-        to: PostgreSqlDataFeedSource
-    - rename-model:
-        from: SQLServerDataFeed
-        to: SqlServerDataFeedSource
-    - rename-model:
-        from: AzureDataLakeStorageGen2DataFeed
-        to: AzureDataLakeStorageGen2DataFeedSource
-    - rename-model:
-        from: AzureLogAnalyticsDataFeed
-        to: AzureLogAnalyticsDataFeedSource
-    - rename-model:
-        from: MongoDBDataFeed
-        to: MongoDbDataFeedSource
-    - rename-model:
-        from: HookInfo
-        to: NotificationHook
-    - rename-model:
-        from: EmailHookInfo
-        to: EmailNotificationHook
-    - rename-model:
-        from: WebhookHookInfo
-        to: WebNotificationHook
-    - rename-model:
-        from: WholeMetricConfiguration
-        to: MetricDetectionCondition
-    - rename-model:
-        from: DimensionGroupConfiguration
-        to: MetricSeriesGroupDetectionCondition
-    - rename-model:
-        from: SeriesConfiguration
-        to: MetricSingleSeriesDetectionCondition
-    - rename-model:
-        from: Metric
-        to: DataFeedMetric
-    - rename-model:
-        from: Dimension
-        to: DataFeedDimension
-    - rename-model:
-        from: SeriesResult
-        to: MetricEnrichedSeriesData
-    - rename-model:
-        from: AlertResult
-        to: AnomalyAlert
-    - rename-model:
-        from: AnomalyResult
-        to: DataPointAnomaly
-    - rename-model:
-        from: IncidentResult
-        to: AnomalyIncident
-    - rename-model:
-        from: RootCause
-        to: IncidentRootCause
-    - rename-model:
-        from: AzureSQLConnectionStringCredential
-        to: DatasourceSqlConnectionString
-    - rename-model:
-        from: DataLakeGen2SharedKeyCredential
-        to: DatasourceDataLakeGen2SharedKey
-    - rename-model:
-        from: ServicePrincipalCredential
-        to: DatasourceServicePrincipal
-    - rename-model:
-        from: ServicePrincipalInKVCredential
-        to: DatasourceServicePrincipalInKeyVault
+  - rename-model:
+      from: MetricSeriesItem
+      to: MetricSeriesDefinition
+  - rename-model:
+      from: IngestionStatus
+      to: DataFeedIngestionStatus
+  - rename-model:
+      from: AlertSnoozeCondition
+      to: MetricAnomalyAlertSnoozeCondition
+  - rename-model:
+      from: AnomalyAlertingConfiguration
+      to: AnomalyAlertConfiguration
+  - rename-model:
+      from: DataFeedDetail
+      to: DataFeed
+  - rename-model:
+      from: AzureApplicationInsightsDataFeed
+      to: AzureApplicationInsightsDataFeedSource
+  - rename-model:
+      from: AzureBlobDataFeed
+      to: AzureBlobDataFeedSource
+  - rename-model:
+      from: AzureCosmosDBDataFeed
+      to: AzureCosmosDbDataFeedSource
+  - rename-model:
+      from: AzureDataExplorerDataFeed
+      to: AzureDataExplorerDataFeedSource
+  - rename-model:
+      from: AzureTableDataFeed
+      to: AzureTableDataFeedSource
+  - rename-model:
+      from: AzureEventHubsDataFeed
+      to: AzureEventHubsDataFeedSource
+  - rename-model:
+      from: InfluxDBDataFeed
+      to: InfluxDbDataFeedSource
+  - rename-model:
+      from: MySqlDataFeed
+      to: MySqlDataFeedSource
+  - rename-model:
+      from: PostgreSqlDataFeed
+      to: PostgreSqlDataFeedSource
+  - rename-model:
+      from: SQLServerDataFeed
+      to: SqlServerDataFeedSource
+  - rename-model:
+      from: AzureDataLakeStorageGen2DataFeed
+      to: AzureDataLakeStorageGen2DataFeedSource
+  - rename-model:
+      from: AzureLogAnalyticsDataFeed
+      to: AzureLogAnalyticsDataFeedSource
+  - rename-model:
+      from: MongoDBDataFeed
+      to: MongoDbDataFeedSource
+  - rename-model:
+      from: HookInfo
+      to: NotificationHook
+  - rename-model:
+      from: EmailHookInfo
+      to: EmailNotificationHook
+  - rename-model:
+      from: WebhookHookInfo
+      to: WebNotificationHook
+  - rename-model:
+      from: WholeMetricConfiguration
+      to: MetricDetectionCondition
+  - rename-model:
+      from: DimensionGroupConfiguration
+      to: MetricSeriesGroupDetectionCondition
+  - rename-model:
+      from: SeriesConfiguration
+      to: MetricSingleSeriesDetectionCondition
+  - rename-model:
+      from: Metric
+      to: DataFeedMetric
+  - rename-model:
+      from: Dimension
+      to: DataFeedDimension
+  - rename-model:
+      from: SeriesResult
+      to: MetricEnrichedSeriesData
+  - rename-model:
+      from: AlertResult
+      to: AnomalyAlert
+  - rename-model:
+      from: AnomalyResult
+      to: DataPointAnomaly
+  - rename-model:
+      from: IncidentResult
+      to: AnomalyIncident
+  - rename-model:
+      from: RootCause
+      to: IncidentRootCause
+  - rename-model:
+      from: AzureSQLConnectionStringCredential
+      to: DatasourceSqlConnectionString
+  - rename-model:
+      from: DataLakeGen2SharedKeyCredential
+      to: DatasourceDataLakeGen2SharedKey
+  - rename-model:
+      from: ServicePrincipalCredential
+      to: DatasourceServicePrincipal
+  - rename-model:
+      from: ServicePrincipalInKVCredential
+      to: DatasourceServicePrincipalInKeyVault
+```
+
+### Remove Models
+
+```yaml
+directive:
+  - remove-model: HookInfoPatch
+  - remove-model: EmailHookInfoPatch
+  - remove-model: WebhookHookInfoPatch
+```
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["paths"]["/hooks/{hookId}"]["patch"]
+    transform: >
+        $["parameters"][1]["schema"]["$ref"] = "#/definitions/NotificationHook";
+```
+
+### Rename Properties
+
+```yaml
+declare-directive:
+    rename-property: >-
+        [{
+        from: 'swagger-document',
+        transform: `if ($.properties[${JSON.stringify($.from)}]) { $.properties[${JSON.stringify($.from)}]["x-ms-client-name"] = ${JSON.stringify($.to)}; }`
+        },
+        {
+        from: 'openapi-document',
+        transform: `if ($.properties[${JSON.stringify($.from)}]) { $.properties[${JSON.stringify($.from)}]["x-ms-client-name"] = ${JSON.stringify($.to)}; }`
+        }]
+```
+
+```yaml
+directive:
+  - where-model: AnomalyAlertConfiguration
+    rename-property:
+      from: anomalyAlertingConfigurationId
+      to: id
+  - where-model: AnomalyAlertConfiguration
+    rename-property:
+      from: metricAlertingConfigurations
+      to: metricAlertConfigurations
+  - where-model: AnomalyAlertConfiguration
+    rename-property:
+      from: splitAlertByDimensions
+      to: dimensionsToSplitAlert
+  - where-model: MetricAlertingConfiguration
+    rename-property:
+      from: anomalyDetectionConfigurationId
+      to: detectionConfigurationId
+  - where-model: MetricAlertingConfiguration
+    rename-property:
+      from: anomalyScopeType
+      to: alertScope
+  - where-model: MetricAlertingConfiguration
+    rename-property:
+      from: snoozeFilter
+      to: alertSnoozeCondition
+  - where-model: NotificationHook
+    rename-property:
+      from: hookName
+      to: name
+  - where-model: NotificationHook
+    rename-property:
+      from: hookId
+      to: id
+  - where-model: EmailHookParameter
+    rename-property:
+      from: toList
+      to: emailsToAlert
+  - where-model: WebhookHookParameter
+    remove-property: headers
+```
+
+```yaml
+declare-directive:
+    make-property-optional: >-
+        [{
+        from: 'swagger-document',
+        transform: `$.required = $.required.filter(item => item !== ${JSON.stringify($)})`
+        },
+        {
+        from: 'openapi-document',
+        transform: `$.required = $.required.filter(item => item !== ${JSON.stringify($)})`
+        }]
+```
+
+```yaml
+directive:
+  - where-model: NotificationHook
+    make-property-optional: hookName
+  - where-model: EmailNotificationHook
+    make-property-optional: hookParameter
+  - where-model: WebNotificationHook
+    make-property-optional: hookParameter
+  - where-model: WebhookHookParameter
+    make-property-optional: endpoint
+  - where-model: EmailHookParameter
+    make-property-optional: toList
+```
+
+### Flatten EmailHookParameter
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["EmailNotificationHook"]
+    transform: >
+        $.properties["hookParameter"]["x-ms-client-flatten"] = true;
+```
+
+### Flatten WebhookHookParameter
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["WebNotificationHook"]
+    transform: >
+        $.properties["hookParameter"]["x-ms-client-flatten"] = true;
 ```

@@ -85,8 +85,6 @@ from ._models_py3 import DetectionIncidentFilterCondition
 from ._models_py3 import DetectionIncidentResultQuery
 from ._models_py3 import DetectionSeriesQuery
 from ._models_py3 import DimensionGroupIdentity
-from ._models_py3 import EmailHookInfoPatch
-from ._models_py3 import EmailHookParameter
 from ._models_py3 import EmailHookParameterPatch
 from ._models_py3 import EmailNotificationHook
 from ._models_py3 import EnrichmentStatus
@@ -96,7 +94,6 @@ from ._models_py3 import ErrorCode
 from ._models_py3 import FeedbackDimensionFilter
 from ._models_py3 import HardThresholdCondition
 from ._models_py3 import HardThresholdConditionPatch
-from ._models_py3 import HookInfoPatch
 from ._models_py3 import HookList
 from ._models_py3 import IncidentProperty
 from ._models_py3 import IncidentResultList
@@ -159,8 +156,6 @@ from ._models_py3 import TopNGroupScope
 from ._models_py3 import UsageStats
 from ._models_py3 import ValueCondition
 from ._models_py3 import WebNotificationHook
-from ._models_py3 import WebhookHookInfoPatch
-from ._models_py3 import WebhookHookParameter
 from ._models_py3 import WebhookHookParameterPatch
 from ._models_py3 import WholeMetricConfigurationPatch
 
@@ -279,8 +274,6 @@ __all__ = [
     "DetectionIncidentResultQuery",
     "DetectionSeriesQuery",
     "DimensionGroupIdentity",
-    "EmailHookInfoPatch",
-    "EmailHookParameter",
     "EmailHookParameterPatch",
     "EmailNotificationHook",
     "EnrichmentStatus",
@@ -290,7 +283,6 @@ __all__ = [
     "FeedbackDimensionFilter",
     "HardThresholdCondition",
     "HardThresholdConditionPatch",
-    "HookInfoPatch",
     "HookList",
     "IncidentProperty",
     "IncidentResultList",
@@ -353,8 +345,6 @@ __all__ = [
     "UsageStats",
     "ValueCondition",
     "WebNotificationHook",
-    "WebhookHookInfoPatch",
-    "WebhookHookParameter",
     "WebhookHookParameterPatch",
     "WholeMetricConfigurationPatch",
     "AlertQueryTimeMode",

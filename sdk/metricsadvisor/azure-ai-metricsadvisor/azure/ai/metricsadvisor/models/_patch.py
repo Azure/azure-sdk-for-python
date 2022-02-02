@@ -32,8 +32,6 @@ from ._models_py3 import (
     SmartDetectionConditionPatch as _SmartDetectionConditionPatch,
     MetricSeriesGroupDetectionCondition as _MetricSeriesGroupDetectionCondition,
     MetricSingleSeriesDetectionCondition as _MetricSingleSeriesDetectionCondition,
-    EmailHookInfoPatch as _EmailNotificationHookPatch,
-    WebhookHookInfoPatch as _WebNotificationHookPatch,
     DataFeedDimension as _DataFeedDimension,
     DataFeedMetric as _DataFeedMetric,
     AnomalyFeedback as _AnomalyFeedback,
@@ -90,6 +88,7 @@ from ._models_py3 import (
     DatasourceServicePrincipalInKeyVault as _DatasourceServicePrincipalInKeyVault,
     ServicePrincipalInKVParam as _ServicePrincipalInKVParam,
     DetectionAnomalyFilterCondition as _DetectionAnomalyFilterCondition,
+    NotificationHook as _NotificationHook,
 )
 
 if TYPE_CHECKING:
@@ -681,9 +680,9 @@ class MetricAlertConfiguration(_MetricAlertConfiguration):
     :paramtype alert_snooze_condition: ~azure.ai.metricsadvisor.models.MetricAnomalyAlertSnoozeCondition
     """
 
-    _attribute_map = _MetricAlertConfiguration._attribute_map.update({
-        "alert_conditions": {"key": "alertConditions", "type": "MetricAnomalyAlertConditions"}
-    })
+    _attribute_map = _MetricAlertConfiguration._attribute_map.update(
+        {"alert_conditions": {"key": "alertConditions", "type": "MetricAnomalyAlertConditions"}}
+    )
 
     def __init__(self, detection_configuration_id: str, alert_scope: MetricAnomalyAlertScope, **kwargs: Any) -> None:
         self.detection_configuration_id = detection_configuration_id
@@ -703,6 +702,7 @@ class MetricAlertConfiguration(_MetricAlertConfiguration):
                 repr(self.alert_snooze_condition),
             )[:1024]
         )
+
 
 class AnomalyAlertConfiguration(_AnomalyAlertConfiguration):
     """AnomalyAlertConfiguration.
@@ -1770,7 +1770,7 @@ class MongoDbDataFeedSource(DataFeedSource):
         )
 
 
-class NotificationHook(dict):
+class NotificationHook(_NotificationHook, dict):
     """NotificationHook.
 
     :param str name: Hook unique name.
@@ -1782,14 +1782,10 @@ class NotificationHook(dict):
     :ivar str id: Hook unique id.
     """
 
+    _subtype_map = {"hook_type": {"Email": "EmailNotificationHook", "Webhook": "WebNotificationHook"}}
+
     def __init__(self, name, **kwargs):
-        super(NotificationHook, self).__init__(name=name, **kwargs)
-        self.id = kwargs.get("id", None)
-        self.name = name
-        self.description = kwargs.get("description", None)
-        self.external_link = kwargs.get("external_link", None)
-        self.admins = kwargs.get("admins", None)
-        self.hook_type = None
+        super().__init__(name=name, **kwargs)
 
     def __repr__(self):
         return "NotificationHook(id={}, name={}, description={}, external_link={}, admins={}, " "hook_type={})".format(
@@ -1802,7 +1798,7 @@ class NotificationHook(dict):
         )[:1024]
 
 
-class EmailNotificationHook(NotificationHook):
+class EmailNotificationHook(NotificationHook, _EmailNotificationHook):
     """EmailNotificationHook.
 
     :param str name: Hook unique name.
@@ -1814,11 +1810,8 @@ class EmailNotificationHook(NotificationHook):
     :ivar str id: Hook unique id.
     """
 
-    def __init__(self, name, emails_to_alert, **kwargs):
-        # type: (str, List[str], Any) -> None
-        super(EmailNotificationHook, self).__init__(name, **kwargs)
-        self.hook_type = "Email"  # type: str
-        self.emails_to_alert = emails_to_alert
+    def __init__(self, name: str, emails_to_alert: List[str], **kwargs: Any) -> None:
+        super(EmailNotificationHook, self).__init__(name, emails_to_alert=emails_to_alert, **kwargs)
 
     def __repr__(self):
         return (
@@ -1834,37 +1827,8 @@ class EmailNotificationHook(NotificationHook):
             )[:1024]
         )
 
-    @classmethod
-    def _from_generated(cls, hook):
-        return cls(
-            emails_to_alert=hook.hook_parameter.to_list,
-            name=hook.hook_name,
-            description=hook.description,
-            external_link=hook.external_link,
-            admins=hook.admins,
-            id=hook.hook_id,
-        )
 
-    def _to_generated(self):
-        return _EmailNotificationHook(
-            hook_name=self.name,
-            description=self.description,
-            external_link=self.external_link,
-            admins=self.admins,
-            hook_parameter=_EmailHookParameterPatch(to_list=self.emails_to_alert),
-        )
-
-    def _to_generated_patch(self, name, description, external_link, emails_to_alert):
-        return _EmailNotificationHookPatch(
-            hook_name=name or self.name,
-            description=description or self.description,
-            external_link=external_link or self.external_link,
-            admins=self.admins,
-            hook_parameter=_EmailHookParameterPatch(to_list=emails_to_alert or self.emails_to_alert),
-        )
-
-
-class WebNotificationHook(NotificationHook):
+class WebNotificationHook(NotificationHook, _WebNotificationHook):
     """WebNotificationHook.
 
     :param str name: Hook unique name.
@@ -1881,15 +1845,8 @@ class WebNotificationHook(NotificationHook):
     :ivar str id: Hook unique id.
     """
 
-    def __init__(self, name, endpoint, **kwargs):
-        # type: (str, str, Any) -> None
-        super(WebNotificationHook, self).__init__(name, **kwargs)
-        self.hook_type = "Webhook"  # type: str
-        self.endpoint = endpoint
-        self.username = kwargs.get("username", None)
-        self.password = kwargs.get("password", None)
-        self.certificate_key = kwargs.get("certificate_key", None)
-        self.certificate_password = kwargs.get("certificate_password", None)
+    def __init__(self, name: str, endpoint: str, **kwargs: Any) -> None:
+        super(WebNotificationHook, self).__init__(name, endpoint=endpoint, **kwargs)
 
     def __repr__(self):
         return (
@@ -1907,61 +1864,6 @@ class WebNotificationHook(NotificationHook):
                 self.certificate_key,
                 self.certificate_password,
             )[:1024]
-        )
-
-    @classmethod
-    def _from_generated(cls, hook):
-        return cls(
-            endpoint=hook.hook_parameter.endpoint,
-            username=hook.hook_parameter.username,
-            password=hook.hook_parameter.password,
-            certificate_key=hook.hook_parameter.certificate_key,
-            certificate_password=hook.hook_parameter.certificate_password,
-            name=hook.hook_name,
-            description=hook.description,
-            external_link=hook.external_link,
-            admins=hook.admins,
-            id=hook.hook_id,
-        )
-
-    def _to_generated(self):
-        return _WebNotificationHook(
-            hook_name=self.name,
-            description=self.description,
-            external_link=self.external_link,
-            admins=self.admins,
-            hook_parameter=_WebhookHookParameterPatch(
-                endpoint=self.endpoint,
-                username=self.username,
-                password=self.password,
-                certificate_key=self.certificate_key,
-                certificate_password=self.certificate_password,
-            ),
-        )
-
-    def _to_generated_patch(
-        self,
-        name,
-        description,
-        external_link,
-        endpoint,
-        password,
-        username,
-        certificate_key,
-        certificate_password,
-    ):
-        return _WebNotificationHookPatch(
-            hook_name=name or self.name,
-            description=description or self.description,
-            external_link=external_link or self.external_link,
-            admins=self.admins,
-            hook_parameter=_WebhookHookParameterPatch(
-                endpoint=endpoint or self.endpoint,
-                username=username or self.username,
-                password=password or self.password,
-                certificate_key=certificate_key or self.certificate_key,
-                certificate_password=certificate_password or self.certificate_password,
-            ),
         )
 
 

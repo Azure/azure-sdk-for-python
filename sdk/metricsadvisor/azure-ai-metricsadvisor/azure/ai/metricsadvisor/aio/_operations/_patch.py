@@ -36,6 +36,7 @@ from ..._operations._patch import (
     DataFeedSourceUnion,
     DATA_FEED,
     DATA_FEED_PATCH,
+    HOOK_KWARG_NAMES,
     convert_datetime,
     convert_to_generated_data_feed_type,
     convert_to_datasource_credential,
@@ -43,7 +44,6 @@ from ..._operations._patch import (
     construct_data_feed_dict,
     construct_alert_config_dict,
     construct_detection_config_dict,
-    construct_hook_dict,
     DatasourceCredentialUnion,
     FeedbackUnion,
 )
@@ -116,17 +116,9 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
     async def create_hook(
         self, hook: Union[EmailNotificationHook, WebNotificationHook], **kwargs: Any
     ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
-        hook_request = None
-        if hook.hook_type == "Email":
-            hook_request = hook._to_generated()
-
-        if hook.hook_type == "Webhook":
-            hook_request = hook._to_generated()
-
-        response_headers = await super().create_hook(
-            hook_request, cls=lambda pipeline_response, _, response_headers: response_headers, **kwargs  # type: ignore
+        response_headers = await super().create_hook(  # type: ignore
+            hook, cls=lambda pipeline_response, _, response_headers: response_headers, **kwargs  # type: ignore
         )
-        response_headers = cast(dict, response_headers)
         hook_id = response_headers["Location"].split("hooks/")[1]
         return await self.get_hook(hook_id)
 
@@ -175,15 +167,6 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
     ) -> AnomalyDetectionConfiguration:
         config = await super().get_detection_configuration(detection_configuration_id, **kwargs)
         return AnomalyDetectionConfiguration._from_generated(config)
-
-    @distributed_trace_async
-    async def get_hook(
-        self, hook_id: str, **kwargs: Any
-    ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
-        hook = await super().get_hook(hook_id, **kwargs)
-        if hook.hook_type == "Email":
-            return EmailNotificationHook._from_generated(hook)
-        return WebNotificationHook._from_generated(hook)
 
     @distributed_trace_async
     async def get_data_feed_ingestion_progress(self, data_feed_id: str, **kwargs: Any) -> DataFeedIngestionProgress:
@@ -341,75 +324,22 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
     async def update_hook(
         self, hook: Union[str, EmailNotificationHook, WebNotificationHook], **kwargs: Any
     ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
-        unset = object()
-        update_kwargs = {}
         hook_patch = None
-        hook_type = kwargs.pop("hook_type", None)
-        update_kwargs["hookName"] = kwargs.pop("name", unset)
-        update_kwargs["description"] = kwargs.pop("description", unset)
-        update_kwargs["externalLink"] = kwargs.pop("external_link", unset)
-        update_kwargs["toList"] = kwargs.pop("emails_to_alert", unset)
-        update_kwargs["endpoint"] = kwargs.pop("endpoint", unset)
-        update_kwargs["username"] = kwargs.pop("username", unset)
-        update_kwargs["password"] = kwargs.pop("password", unset)
-        update_kwargs["certificateKey"] = kwargs.pop("certificate_key", unset)
-        update_kwargs["certificatePassword"] = kwargs.pop("certificate_password", unset)
-
-        update = {key: value for key, value in update_kwargs.items() if value != unset}
+        hook_type = kwargs.get("hook_type")
         if isinstance(hook, six.string_types):
             hook_id = hook
             if hook_type is None:
                 raise ValueError("hook_type must be passed with a hook ID.")
-
-            hook_patch = construct_hook_dict(update, hook_type)
+            hook_patch = {k: v for k, v in kwargs.items() if k in HOOK_KWARG_NAMES}
 
         else:
+            hook_patch = hook
             hook_id = hook.id
-            if hook.hook_type == "Email":
-                hook = cast(EmailNotificationHook, hook)
-                hook_patch = hook._to_generated_patch(
-                    name=update.pop("hookName", None),
-                    description=update.pop("description", None),
-                    external_link=update.pop("externalLink", None),
-                    emails_to_alert=update.pop("toList", None),
-                )
+        for k in HOOK_KWARG_NAMES:
+            if k in kwargs:
+                kwargs.pop(k)
 
-            elif hook.hook_type == "Webhook":
-                hook = cast(WebNotificationHook, hook)
-                hook_patch = hook._to_generated_patch(
-                    name=update.pop("hookName", None),
-                    description=update.pop("description", None),
-                    external_link=update.pop("externalLink", None),
-                    endpoint=update.pop("endpoint", None),
-                    password=update.pop("password", None),
-                    username=update.pop("username", None),
-                    certificate_key=update.pop("certificateKey", None),
-                    certificate_password=update.pop("certificatePassword", None),
-                )
-
-        updated_hook = await super().update_hook(hook_id, hook_patch, **kwargs)
-        if updated_hook.hook_type == "Email":
-            return EmailNotificationHook._from_generated(updated_hook)
-        return WebNotificationHook._from_generated(updated_hook)
-
-    @distributed_trace
-    def list_hooks(
-        self, **kwargs: Any
-    ) -> AsyncItemPaged[Union[NotificationHook, EmailNotificationHook, WebNotificationHook]]:
-        hook_name = kwargs.pop("hook_name", None)
-        skip = kwargs.pop("skip", None)
-
-        def _convert_to_hook_type(hook):
-            if hook.hook_type == "Email":
-                return EmailNotificationHook._from_generated(hook)
-            return WebNotificationHook._from_generated(hook)
-
-        return super().list_hooks(  # type: ignore
-            hook_name=hook_name,
-            skip=skip,
-            cls=kwargs.pop("cls", lambda hooks: [_convert_to_hook_type(hook) for hook in hooks]),
-            **kwargs
-        )
+        return await super().update_hook(hook_id, hook_patch, **kwargs)
 
     @distributed_trace
     def list_data_feeds(self, **kwargs: Any) -> AsyncItemPaged[DataFeed]:

@@ -2277,7 +2277,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
 
     @distributed_trace_async
     async def update_hook(
-        self, hook_id: str, body: "_models.HookInfoPatch", **kwargs: Any
+        self, hook_id: str, body: "_models.NotificationHook", **kwargs: Any
     ) -> "_models.NotificationHook":
         """Update a hook.
 
@@ -2286,7 +2286,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :param hook_id: Hook unique ID.
         :type hook_id: str
         :param body: Update hook request.
-        :type body: ~azure.ai.metricsadvisor.models.HookInfoPatch
+        :type body: ~azure.ai.metricsadvisor.models.NotificationHook
         :return: NotificationHook
         :rtype: ~azure.ai.metricsadvisor.models.NotificationHook
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -2297,7 +2297,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, "HookInfoPatch")
+        _json = self._serialize.body(body, "NotificationHook")
 
         request = build_update_hook_request(
             hook_id=hook_id,

@@ -50,8 +50,6 @@ if TYPE_CHECKING:
         DetectionAnomalyFilterCondition,
         DetectionIncidentFilterCondition,
         DimensionGroupIdentity,
-        EmailHookParameter,
-        EmailHookParameterPatch,
         FeedbackDimensionFilter,
         HardThresholdCondition,
         HardThresholdConditionPatch,
@@ -84,8 +82,6 @@ if TYPE_CHECKING:
         SuppressConditionPatch,
         TopNGroupScope,
         ValueCondition,
-        WebhookHookParameter,
-        WebhookHookParameterPatch,
         WholeMetricConfigurationPatch,
     )
 
@@ -217,6 +213,8 @@ class AnomalyAlertConfiguration(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar id: anomaly alerting configuration unique id.
+    :vartype id: str
     :ivar name: Required. anomaly alerting configuration name.
     :vartype name: str
     :ivar description: anomaly alerting configuration description.
@@ -227,33 +225,31 @@ class AnomalyAlertConfiguration(msrest.serialization.Model):
      include: "AND", "OR", "XOR".
     :vartype cross_metrics_operator: str or
      ~azure.ai.metricsadvisor.models.AnomalyAlertingConfigurationLogicType
-    :ivar hook_ids: Required. hook unique ids.
-    :vartype hook_ids: list[str]
-    :ivar id: anomaly alerting configuration unique id.
-    :vartype id: str
-    :ivar metric_alert_configurations: Anomaly alerting configurations.
-    :vartype metric_alert_configurations:
-     list[~azure.ai.metricsadvisor.models.MetricAlertConfiguration]
     :ivar dimensions_to_split_alert: dimensions used to split alert.
     :vartype dimensions_to_split_alert: list[str]
+    :ivar hook_ids: Required. hook unique ids.
+    :vartype hook_ids: list[str]
+    :ivar metric_alert_configurations: Required. Anomaly alerting configurations.
+    :vartype metric_alert_configurations:
+     list[~azure.ai.metricsadvisor.models.MetricAlertConfiguration]
     """
 
     _validation = {
-        "name": {"required": True},
-        "hook_ids": {"required": True, "unique": True},
         "id": {"readonly": True},
-        "metric_alert_configurations": {"unique": True},
+        "name": {"required": True},
         "dimensions_to_split_alert": {"unique": True},
+        "hook_ids": {"required": True, "unique": True},
+        "metric_alert_configurations": {"required": True, "unique": True},
     }
 
     _attribute_map = {
+        "id": {"key": "anomalyAlertingConfigurationId", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "description": {"key": "description", "type": "str"},
         "cross_metrics_operator": {"key": "crossMetricsOperator", "type": "str"},
+        "dimensions_to_split_alert": {"key": "splitAlertByDimensions", "type": "[str]"},
         "hook_ids": {"key": "hookIds", "type": "[str]"},
-        "id": {"key": "id", "type": "str"},
-        "metric_alert_configurations": {"key": "metricAlertConfigurations", "type": "[MetricAlertConfiguration]"},
-        "dimensions_to_split_alert": {"key": "dimensionsToSplitAlert", "type": "[str]"},
+        "metric_alert_configurations": {"key": "metricAlertingConfigurations", "type": "[MetricAlertConfiguration]"},
     }
 
     def __init__(
@@ -261,9 +257,9 @@ class AnomalyAlertConfiguration(msrest.serialization.Model):
         *,
         name: str,
         hook_ids: List[str],
+        metric_alert_configurations: List["MetricAlertConfiguration"],
         description: Optional[str] = "",
         cross_metrics_operator: Optional[Union[str, "AnomalyAlertingConfigurationLogicType"]] = None,
-        metric_alert_configurations: Optional[List["MetricAlertConfiguration"]] = None,
         dimensions_to_split_alert: Optional[List[str]] = None,
         **kwargs
     ):
@@ -278,22 +274,22 @@ class AnomalyAlertConfiguration(msrest.serialization.Model):
          include: "AND", "OR", "XOR".
         :paramtype cross_metrics_operator: str or
          ~azure.ai.metricsadvisor.models.AnomalyAlertingConfigurationLogicType
-        :keyword hook_ids: Required. hook unique ids.
-        :paramtype hook_ids: list[str]
-        :keyword metric_alert_configurations: Anomaly alerting configurations.
-        :paramtype metric_alert_configurations:
-         list[~azure.ai.metricsadvisor.models.MetricAlertConfiguration]
         :keyword dimensions_to_split_alert: dimensions used to split alert.
         :paramtype dimensions_to_split_alert: list[str]
+        :keyword hook_ids: Required. hook unique ids.
+        :paramtype hook_ids: list[str]
+        :keyword metric_alert_configurations: Required. Anomaly alerting configurations.
+        :paramtype metric_alert_configurations:
+         list[~azure.ai.metricsadvisor.models.MetricAlertConfiguration]
         """
         super(AnomalyAlertConfiguration, self).__init__(**kwargs)
+        self.id = None
         self.name = name
         self.description = description
         self.cross_metrics_operator = cross_metrics_operator
-        self.hook_ids = hook_ids
-        self.id = None
-        self.metric_alert_configurations = metric_alert_configurations
         self.dimensions_to_split_alert = dimensions_to_split_alert
+        self.hook_ids = hook_ids
+        self.metric_alert_configurations = metric_alert_configurations
 
 
 class AnomalyAlertingConfigurationList(msrest.serialization.Model):
@@ -7457,158 +7453,6 @@ class DimensionGroupIdentity(msrest.serialization.Model):
         self.dimension = dimension
 
 
-class HookInfoPatch(msrest.serialization.Model):
-    """HookInfoPatch.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: EmailHookInfoPatch, WebhookHookInfoPatch.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar hook_type: Required. hook type.Constant filled by server. Possible values include:
-     "Webhook", "Email".
-    :vartype hook_type: str or ~azure.ai.metricsadvisor.models.HookType
-    :ivar hook_name: hook unique name.
-    :vartype hook_name: str
-    :ivar description: hook description.
-    :vartype description: str
-    :ivar external_link: hook external link.
-    :vartype external_link: str
-    :ivar admins: hook administrators.
-    :vartype admins: list[str]
-    """
-
-    _validation = {
-        "hook_type": {"required": True},
-        "admins": {"unique": True},
-    }
-
-    _attribute_map = {
-        "hook_type": {"key": "hookType", "type": "str"},
-        "hook_name": {"key": "hookName", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-        "external_link": {"key": "externalLink", "type": "str"},
-        "admins": {"key": "admins", "type": "[str]"},
-    }
-
-    _subtype_map = {"hook_type": {"Email": "EmailHookInfoPatch", "Webhook": "WebhookHookInfoPatch"}}
-
-    def __init__(
-        self,
-        *,
-        hook_name: Optional[str] = None,
-        description: Optional[str] = None,
-        external_link: Optional[str] = None,
-        admins: Optional[List[str]] = None,
-        **kwargs
-    ):
-        """
-        :keyword hook_name: hook unique name.
-        :paramtype hook_name: str
-        :keyword description: hook description.
-        :paramtype description: str
-        :keyword external_link: hook external link.
-        :paramtype external_link: str
-        :keyword admins: hook administrators.
-        :paramtype admins: list[str]
-        """
-        super(HookInfoPatch, self).__init__(**kwargs)
-        self.hook_type = None  # type: Optional[str]
-        self.hook_name = hook_name
-        self.description = description
-        self.external_link = external_link
-        self.admins = admins
-
-
-class EmailHookInfoPatch(HookInfoPatch):
-    """EmailHookInfoPatch.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar hook_type: Required. hook type.Constant filled by server. Possible values include:
-     "Webhook", "Email".
-    :vartype hook_type: str or ~azure.ai.metricsadvisor.models.HookType
-    :ivar hook_name: hook unique name.
-    :vartype hook_name: str
-    :ivar description: hook description.
-    :vartype description: str
-    :ivar external_link: hook external link.
-    :vartype external_link: str
-    :ivar admins: hook administrators.
-    :vartype admins: list[str]
-    :ivar hook_parameter:
-    :vartype hook_parameter: ~azure.ai.metricsadvisor.models.EmailHookParameterPatch
-    """
-
-    _validation = {
-        "hook_type": {"required": True},
-        "admins": {"unique": True},
-    }
-
-    _attribute_map = {
-        "hook_type": {"key": "hookType", "type": "str"},
-        "hook_name": {"key": "hookName", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-        "external_link": {"key": "externalLink", "type": "str"},
-        "admins": {"key": "admins", "type": "[str]"},
-        "hook_parameter": {"key": "hookParameter", "type": "EmailHookParameterPatch"},
-    }
-
-    def __init__(
-        self,
-        *,
-        hook_name: Optional[str] = None,
-        description: Optional[str] = None,
-        external_link: Optional[str] = None,
-        admins: Optional[List[str]] = None,
-        hook_parameter: Optional["EmailHookParameterPatch"] = None,
-        **kwargs
-    ):
-        """
-        :keyword hook_name: hook unique name.
-        :paramtype hook_name: str
-        :keyword description: hook description.
-        :paramtype description: str
-        :keyword external_link: hook external link.
-        :paramtype external_link: str
-        :keyword admins: hook administrators.
-        :paramtype admins: list[str]
-        :keyword hook_parameter:
-        :paramtype hook_parameter: ~azure.ai.metricsadvisor.models.EmailHookParameterPatch
-        """
-        super(EmailHookInfoPatch, self).__init__(
-            hook_name=hook_name, description=description, external_link=external_link, admins=admins, **kwargs
-        )
-        self.hook_type = "Email"  # type: str
-        self.hook_parameter = hook_parameter
-
-
-class EmailHookParameter(msrest.serialization.Model):
-    """EmailHookParameter.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar to_list: Required. Email TO: list.
-    :vartype to_list: list[str]
-    """
-
-    _validation = {
-        "to_list": {"required": True, "unique": True},
-    }
-
-    _attribute_map = {
-        "to_list": {"key": "toList", "type": "[str]"},
-    }
-
-    def __init__(self, *, to_list: List[str], **kwargs):
-        """
-        :keyword to_list: Required. Email TO: list.
-        :paramtype to_list: list[str]
-        """
-        super(EmailHookParameter, self).__init__(**kwargs)
-        self.to_list = to_list
-
-
 class EmailHookParameterPatch(msrest.serialization.Model):
     """EmailHookParameterPatch.
 
@@ -7646,10 +7490,10 @@ class NotificationHook(msrest.serialization.Model):
     :ivar hook_type: Required. hook type.Constant filled by server. Possible values include:
      "Webhook", "Email".
     :vartype hook_type: str or ~azure.ai.metricsadvisor.models.HookType
-    :ivar hook_id: Hook unique id.
-    :vartype hook_id: str
-    :ivar hook_name: Required. hook unique name.
-    :vartype hook_name: str
+    :ivar id: Hook unique id.
+    :vartype id: str
+    :ivar name: hook unique name.
+    :vartype name: str
     :ivar description: hook description.
     :vartype description: str
     :ivar external_link: hook external link.
@@ -7660,15 +7504,14 @@ class NotificationHook(msrest.serialization.Model):
 
     _validation = {
         "hook_type": {"required": True},
-        "hook_id": {"readonly": True},
-        "hook_name": {"required": True},
+        "id": {"readonly": True},
         "admins": {"unique": True},
     }
 
     _attribute_map = {
         "hook_type": {"key": "hookType", "type": "str"},
-        "hook_id": {"key": "hookId", "type": "str"},
-        "hook_name": {"key": "hookName", "type": "str"},
+        "id": {"key": "hookId", "type": "str"},
+        "name": {"key": "hookName", "type": "str"},
         "description": {"key": "description", "type": "str"},
         "external_link": {"key": "externalLink", "type": "str"},
         "admins": {"key": "admins", "type": "[str]"},
@@ -7679,15 +7522,15 @@ class NotificationHook(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        hook_name: str,
+        name: Optional[str] = None,
         description: Optional[str] = "",
         external_link: Optional[str] = "",
         admins: Optional[List[str]] = None,
         **kwargs
     ):
         """
-        :keyword hook_name: Required. hook unique name.
-        :paramtype hook_name: str
+        :keyword name: hook unique name.
+        :paramtype name: str
         :keyword description: hook description.
         :paramtype description: str
         :keyword external_link: hook external link.
@@ -7697,8 +7540,8 @@ class NotificationHook(msrest.serialization.Model):
         """
         super(NotificationHook, self).__init__(**kwargs)
         self.hook_type = None  # type: Optional[str]
-        self.hook_id = None
-        self.hook_name = hook_name
+        self.id = None
+        self.name = name
         self.description = description
         self.external_link = external_link
         self.admins = admins
@@ -7714,65 +7557,64 @@ class EmailNotificationHook(NotificationHook):
     :ivar hook_type: Required. hook type.Constant filled by server. Possible values include:
      "Webhook", "Email".
     :vartype hook_type: str or ~azure.ai.metricsadvisor.models.HookType
-    :ivar hook_id: Hook unique id.
-    :vartype hook_id: str
-    :ivar hook_name: Required. hook unique name.
-    :vartype hook_name: str
+    :ivar id: Hook unique id.
+    :vartype id: str
+    :ivar name: hook unique name.
+    :vartype name: str
     :ivar description: hook description.
     :vartype description: str
     :ivar external_link: hook external link.
     :vartype external_link: str
     :ivar admins: hook administrators.
     :vartype admins: list[str]
-    :ivar hook_parameter: Required.
-    :vartype hook_parameter: ~azure.ai.metricsadvisor.models.EmailHookParameter
+    :ivar emails_to_alert: Email TO: list.
+    :vartype emails_to_alert: list[str]
     """
 
     _validation = {
         "hook_type": {"required": True},
-        "hook_id": {"readonly": True},
-        "hook_name": {"required": True},
+        "id": {"readonly": True},
         "admins": {"unique": True},
-        "hook_parameter": {"required": True},
+        "emails_to_alert": {"unique": True},
     }
 
     _attribute_map = {
         "hook_type": {"key": "hookType", "type": "str"},
-        "hook_id": {"key": "hookId", "type": "str"},
-        "hook_name": {"key": "hookName", "type": "str"},
+        "id": {"key": "hookId", "type": "str"},
+        "name": {"key": "hookName", "type": "str"},
         "description": {"key": "description", "type": "str"},
         "external_link": {"key": "externalLink", "type": "str"},
         "admins": {"key": "admins", "type": "[str]"},
-        "hook_parameter": {"key": "hookParameter", "type": "EmailHookParameter"},
+        "emails_to_alert": {"key": "hookParameter.toList", "type": "[str]"},
     }
 
     def __init__(
         self,
         *,
-        hook_name: str,
-        hook_parameter: "EmailHookParameter",
+        name: Optional[str] = None,
         description: Optional[str] = "",
         external_link: Optional[str] = "",
         admins: Optional[List[str]] = None,
+        emails_to_alert: Optional[List[str]] = None,
         **kwargs
     ):
         """
-        :keyword hook_name: Required. hook unique name.
-        :paramtype hook_name: str
+        :keyword name: hook unique name.
+        :paramtype name: str
         :keyword description: hook description.
         :paramtype description: str
         :keyword external_link: hook external link.
         :paramtype external_link: str
         :keyword admins: hook administrators.
         :paramtype admins: list[str]
-        :keyword hook_parameter: Required.
-        :paramtype hook_parameter: ~azure.ai.metricsadvisor.models.EmailHookParameter
+        :keyword emails_to_alert: Email TO: list.
+        :paramtype emails_to_alert: list[str]
         """
         super(EmailNotificationHook, self).__init__(
-            hook_name=hook_name, description=description, external_link=external_link, admins=admins, **kwargs
+            name=name, description=description, external_link=external_link, admins=admins, **kwargs
         )
         self.hook_type = "Email"  # type: str
-        self.hook_parameter = hook_parameter
+        self.emails_to_alert = emails_to_alert
 
 
 class EnrichmentStatus(msrest.serialization.Model):
@@ -8891,6 +8733,13 @@ class IngestionStatusQueryOptions(msrest.serialization.Model):
 class MetricAlertConfiguration(msrest.serialization.Model):
     """MetricAlertConfiguration.
 
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar detection_configuration_id: Required. Anomaly detection configuration unique id.
+    :vartype detection_configuration_id: str
+    :ivar alert_scope: Required. Anomaly scope. Possible values include: "WholeSeries",
+     "SeriesGroup", "TopN".
+    :vartype alert_scope: str or ~azure.ai.metricsadvisor.models.MetricAnomalyAlertScopeType
     :ivar negation_operation: Negation operation.
     :vartype negation_operation: bool
     :ivar dimension_anomaly_scope:
@@ -8899,43 +8748,48 @@ class MetricAlertConfiguration(msrest.serialization.Model):
     :vartype top_n_anomaly_scope: ~azure.ai.metricsadvisor.models.TopNGroupScope
     :ivar severity_filter:
     :vartype severity_filter: ~azure.ai.metricsadvisor.models.SeverityCondition
-    :ivar value_filter:
-    :vartype value_filter: ~azure.ai.metricsadvisor.models.ValueCondition
-    :ivar detection_configuration_id: Anomaly detection configuration unique id.
-    :vartype detection_configuration_id: str
-    :ivar alert_scope: Anomaly scope. Possible values include: "WholeSeries", "SeriesGroup",
-     "TopN".
-    :vartype alert_scope: str or ~azure.ai.metricsadvisor.models.MetricAnomalyAlertScopeType
     :ivar alert_snooze_condition:
     :vartype alert_snooze_condition:
      ~azure.ai.metricsadvisor.models.MetricAnomalyAlertSnoozeCondition
+    :ivar value_filter:
+    :vartype value_filter: ~azure.ai.metricsadvisor.models.ValueCondition
     """
 
+    _validation = {
+        "detection_configuration_id": {"required": True},
+        "alert_scope": {"required": True},
+    }
+
     _attribute_map = {
+        "detection_configuration_id": {"key": "anomalyDetectionConfigurationId", "type": "str"},
+        "alert_scope": {"key": "anomalyScopeType", "type": "str"},
         "negation_operation": {"key": "negationOperation", "type": "bool"},
         "dimension_anomaly_scope": {"key": "dimensionAnomalyScope", "type": "DimensionGroupIdentity"},
         "top_n_anomaly_scope": {"key": "topNAnomalyScope", "type": "TopNGroupScope"},
         "severity_filter": {"key": "severityFilter", "type": "SeverityCondition"},
+        "alert_snooze_condition": {"key": "snoozeFilter", "type": "MetricAnomalyAlertSnoozeCondition"},
         "value_filter": {"key": "valueFilter", "type": "ValueCondition"},
-        "detection_configuration_id": {"key": "detectionConfigurationId", "type": "str"},
-        "alert_scope": {"key": "alertScope", "type": "str"},
-        "alert_snooze_condition": {"key": "alertSnoozeCondition", "type": "MetricAnomalyAlertSnoozeCondition"},
     }
 
     def __init__(
         self,
         *,
+        detection_configuration_id: str,
+        alert_scope: Union[str, "MetricAnomalyAlertScopeType"],
         negation_operation: Optional[bool] = False,
         dimension_anomaly_scope: Optional["DimensionGroupIdentity"] = None,
         top_n_anomaly_scope: Optional["TopNGroupScope"] = None,
         severity_filter: Optional["SeverityCondition"] = None,
-        value_filter: Optional["ValueCondition"] = None,
-        detection_configuration_id: Optional[str] = None,
-        alert_scope: Optional[Union[str, "MetricAnomalyAlertScopeType"]] = None,
         alert_snooze_condition: Optional["MetricAnomalyAlertSnoozeCondition"] = None,
+        value_filter: Optional["ValueCondition"] = None,
         **kwargs
     ):
         """
+        :keyword detection_configuration_id: Required. Anomaly detection configuration unique id.
+        :paramtype detection_configuration_id: str
+        :keyword alert_scope: Required. Anomaly scope. Possible values include: "WholeSeries",
+         "SeriesGroup", "TopN".
+        :paramtype alert_scope: str or ~azure.ai.metricsadvisor.models.MetricAnomalyAlertScopeType
         :keyword negation_operation: Negation operation.
         :paramtype negation_operation: bool
         :keyword dimension_anomaly_scope:
@@ -8944,26 +8798,21 @@ class MetricAlertConfiguration(msrest.serialization.Model):
         :paramtype top_n_anomaly_scope: ~azure.ai.metricsadvisor.models.TopNGroupScope
         :keyword severity_filter:
         :paramtype severity_filter: ~azure.ai.metricsadvisor.models.SeverityCondition
-        :keyword value_filter:
-        :paramtype value_filter: ~azure.ai.metricsadvisor.models.ValueCondition
-        :keyword detection_configuration_id: Anomaly detection configuration unique id.
-        :paramtype detection_configuration_id: str
-        :keyword alert_scope: Anomaly scope. Possible values include: "WholeSeries", "SeriesGroup",
-         "TopN".
-        :paramtype alert_scope: str or ~azure.ai.metricsadvisor.models.MetricAnomalyAlertScopeType
         :keyword alert_snooze_condition:
         :paramtype alert_snooze_condition:
          ~azure.ai.metricsadvisor.models.MetricAnomalyAlertSnoozeCondition
+        :keyword value_filter:
+        :paramtype value_filter: ~azure.ai.metricsadvisor.models.ValueCondition
         """
         super(MetricAlertConfiguration, self).__init__(**kwargs)
+        self.detection_configuration_id = detection_configuration_id
+        self.alert_scope = alert_scope
         self.negation_operation = negation_operation
         self.dimension_anomaly_scope = dimension_anomaly_scope
         self.top_n_anomaly_scope = top_n_anomaly_scope
         self.severity_filter = severity_filter
-        self.value_filter = value_filter
-        self.detection_configuration_id = detection_configuration_id
-        self.alert_scope = alert_scope
         self.alert_snooze_condition = alert_snooze_condition
+        self.value_filter = value_filter
 
 
 class MetricAnomalyAlertSnoozeCondition(msrest.serialization.Model):
@@ -12600,141 +12449,6 @@ class ValueCondition(msrest.serialization.Model):
         self.trigger_for_missing = trigger_for_missing
 
 
-class WebhookHookInfoPatch(HookInfoPatch):
-    """WebhookHookInfoPatch.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar hook_type: Required. hook type.Constant filled by server. Possible values include:
-     "Webhook", "Email".
-    :vartype hook_type: str or ~azure.ai.metricsadvisor.models.HookType
-    :ivar hook_name: hook unique name.
-    :vartype hook_name: str
-    :ivar description: hook description.
-    :vartype description: str
-    :ivar external_link: hook external link.
-    :vartype external_link: str
-    :ivar admins: hook administrators.
-    :vartype admins: list[str]
-    :ivar hook_parameter:
-    :vartype hook_parameter: ~azure.ai.metricsadvisor.models.WebhookHookParameterPatch
-    """
-
-    _validation = {
-        "hook_type": {"required": True},
-        "admins": {"unique": True},
-    }
-
-    _attribute_map = {
-        "hook_type": {"key": "hookType", "type": "str"},
-        "hook_name": {"key": "hookName", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-        "external_link": {"key": "externalLink", "type": "str"},
-        "admins": {"key": "admins", "type": "[str]"},
-        "hook_parameter": {"key": "hookParameter", "type": "WebhookHookParameterPatch"},
-    }
-
-    def __init__(
-        self,
-        *,
-        hook_name: Optional[str] = None,
-        description: Optional[str] = None,
-        external_link: Optional[str] = None,
-        admins: Optional[List[str]] = None,
-        hook_parameter: Optional["WebhookHookParameterPatch"] = None,
-        **kwargs
-    ):
-        """
-        :keyword hook_name: hook unique name.
-        :paramtype hook_name: str
-        :keyword description: hook description.
-        :paramtype description: str
-        :keyword external_link: hook external link.
-        :paramtype external_link: str
-        :keyword admins: hook administrators.
-        :paramtype admins: list[str]
-        :keyword hook_parameter:
-        :paramtype hook_parameter: ~azure.ai.metricsadvisor.models.WebhookHookParameterPatch
-        """
-        super(WebhookHookInfoPatch, self).__init__(
-            hook_name=hook_name, description=description, external_link=external_link, admins=admins, **kwargs
-        )
-        self.hook_type = "Webhook"  # type: str
-        self.hook_parameter = hook_parameter
-
-
-class WebhookHookParameter(msrest.serialization.Model):
-    """WebhookHookParameter.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar endpoint: Required. API address, will be called when alert is triggered, only support
-     POST method via SSL.
-    :vartype endpoint: str
-    :ivar username: (Deprecated) The username, if using basic authentication.
-    :vartype username: str
-    :ivar password: (Deprecated) The password, if using basic authentication.
-    :vartype password: str
-    :ivar headers: custom headers in api call.
-    :vartype headers: dict[str, str]
-    :ivar certificate_key: The certificate key/URL, if using client certificate, please read
-     documents for more informations.
-    :vartype certificate_key: str
-    :ivar certificate_password: The certificate password, if using client certificate, please read
-     documents for more informations.
-    :vartype certificate_password: str
-    """
-
-    _validation = {
-        "endpoint": {"required": True},
-    }
-
-    _attribute_map = {
-        "endpoint": {"key": "endpoint", "type": "str"},
-        "username": {"key": "username", "type": "str"},
-        "password": {"key": "password", "type": "str"},
-        "headers": {"key": "headers", "type": "{str}"},
-        "certificate_key": {"key": "certificateKey", "type": "str"},
-        "certificate_password": {"key": "certificatePassword", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        endpoint: str,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
-        headers: Optional[Dict[str, str]] = None,
-        certificate_key: Optional[str] = None,
-        certificate_password: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword endpoint: Required. API address, will be called when alert is triggered, only support
-         POST method via SSL.
-        :paramtype endpoint: str
-        :keyword username: (Deprecated) The username, if using basic authentication.
-        :paramtype username: str
-        :keyword password: (Deprecated) The password, if using basic authentication.
-        :paramtype password: str
-        :keyword headers: custom headers in api call.
-        :paramtype headers: dict[str, str]
-        :keyword certificate_key: The certificate key/URL, if using client certificate, please read
-         documents for more informations.
-        :paramtype certificate_key: str
-        :keyword certificate_password: The certificate password, if using client certificate, please
-         read documents for more informations.
-        :paramtype certificate_password: str
-        """
-        super(WebhookHookParameter, self).__init__(**kwargs)
-        self.endpoint = endpoint
-        self.username = username
-        self.password = password
-        self.headers = headers
-        self.certificate_key = certificate_key
-        self.certificate_password = certificate_password
-
-
 class WebhookHookParameterPatch(msrest.serialization.Model):
     """WebhookHookParameterPatch.
 
@@ -12807,65 +12521,97 @@ class WebNotificationHook(NotificationHook):
     :ivar hook_type: Required. hook type.Constant filled by server. Possible values include:
      "Webhook", "Email".
     :vartype hook_type: str or ~azure.ai.metricsadvisor.models.HookType
-    :ivar hook_id: Hook unique id.
-    :vartype hook_id: str
-    :ivar hook_name: Required. hook unique name.
-    :vartype hook_name: str
+    :ivar id: Hook unique id.
+    :vartype id: str
+    :ivar name: hook unique name.
+    :vartype name: str
     :ivar description: hook description.
     :vartype description: str
     :ivar external_link: hook external link.
     :vartype external_link: str
     :ivar admins: hook administrators.
     :vartype admins: list[str]
-    :ivar hook_parameter: Required.
-    :vartype hook_parameter: ~azure.ai.metricsadvisor.models.WebhookHookParameter
+    :ivar endpoint: API address, will be called when alert is triggered, only support POST method
+     via SSL.
+    :vartype endpoint: str
+    :ivar username: (Deprecated) The username, if using basic authentication.
+    :vartype username: str
+    :ivar password: (Deprecated) The password, if using basic authentication.
+    :vartype password: str
+    :ivar certificate_key: The certificate key/URL, if using client certificate, please read
+     documents for more informations.
+    :vartype certificate_key: str
+    :ivar certificate_password: The certificate password, if using client certificate, please read
+     documents for more informations.
+    :vartype certificate_password: str
     """
 
     _validation = {
         "hook_type": {"required": True},
-        "hook_id": {"readonly": True},
-        "hook_name": {"required": True},
+        "id": {"readonly": True},
         "admins": {"unique": True},
-        "hook_parameter": {"required": True},
     }
 
     _attribute_map = {
         "hook_type": {"key": "hookType", "type": "str"},
-        "hook_id": {"key": "hookId", "type": "str"},
-        "hook_name": {"key": "hookName", "type": "str"},
+        "id": {"key": "hookId", "type": "str"},
+        "name": {"key": "hookName", "type": "str"},
         "description": {"key": "description", "type": "str"},
         "external_link": {"key": "externalLink", "type": "str"},
         "admins": {"key": "admins", "type": "[str]"},
-        "hook_parameter": {"key": "hookParameter", "type": "WebhookHookParameter"},
+        "endpoint": {"key": "hookParameter.endpoint", "type": "str"},
+        "username": {"key": "hookParameter.username", "type": "str"},
+        "password": {"key": "hookParameter.password", "type": "str"},
+        "certificate_key": {"key": "hookParameter.certificateKey", "type": "str"},
+        "certificate_password": {"key": "hookParameter.certificatePassword", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        hook_name: str,
-        hook_parameter: "WebhookHookParameter",
+        name: Optional[str] = None,
         description: Optional[str] = "",
         external_link: Optional[str] = "",
         admins: Optional[List[str]] = None,
+        endpoint: Optional[str] = None,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
+        certificate_key: Optional[str] = None,
+        certificate_password: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword hook_name: Required. hook unique name.
-        :paramtype hook_name: str
+        :keyword name: hook unique name.
+        :paramtype name: str
         :keyword description: hook description.
         :paramtype description: str
         :keyword external_link: hook external link.
         :paramtype external_link: str
         :keyword admins: hook administrators.
         :paramtype admins: list[str]
-        :keyword hook_parameter: Required.
-        :paramtype hook_parameter: ~azure.ai.metricsadvisor.models.WebhookHookParameter
+        :keyword endpoint: API address, will be called when alert is triggered, only support POST
+         method via SSL.
+        :paramtype endpoint: str
+        :keyword username: (Deprecated) The username, if using basic authentication.
+        :paramtype username: str
+        :keyword password: (Deprecated) The password, if using basic authentication.
+        :paramtype password: str
+        :keyword certificate_key: The certificate key/URL, if using client certificate, please read
+         documents for more informations.
+        :paramtype certificate_key: str
+        :keyword certificate_password: The certificate password, if using client certificate, please
+         read documents for more informations.
+        :paramtype certificate_password: str
         """
         super(WebNotificationHook, self).__init__(
-            hook_name=hook_name, description=description, external_link=external_link, admins=admins, **kwargs
+            name=name, description=description, external_link=external_link, admins=admins, **kwargs
         )
         self.hook_type = "Webhook"  # type: str
-        self.hook_parameter = hook_parameter
+        self.endpoint = endpoint
+        self.username = username
+        self.password = password
+        self.certificate_key = certificate_key
+        self.certificate_password = certificate_password
 
 
 class WholeMetricConfigurationPatch(msrest.serialization.Model):
