@@ -86,7 +86,7 @@ class KeyProperties(object):
         if (hasattr(key_bundle, "release_policy") and
             key_bundle.release_policy is not None):  # type: ignore[attr-defined]
             release_policy = KeyReleasePolicy(
-                data=key_bundle.release_policy.encoded_policy,  # type: ignore[attr-defined]
+                encoded_policy=key_bundle.release_policy.encoded_policy,  # type: ignore[attr-defined]
                 content_type=key_bundle.release_policy.content_type  # type: ignore[attr-defined]
             )
 
@@ -254,17 +254,17 @@ class KeyProperties(object):
 class KeyReleasePolicy(object):
     """The policy rules under which a key can be exported.
 
-    :param data: Blob encoding the policy rules under which the key can be released.
-    :type data: bytes
+    :param encoded_policy: Blob encoding the policy rules under which the key can be released.
+    :type encoded_policy: bytes
 
     :keyword content_type: Content type and version of the release policy. Defaults to "application/json; charset=utf-8"
         if omitted.
     :paramtype content_type: str
     """
 
-    def __init__(self, data, **kwargs):
+    def __init__(self, encoded_policy, **kwargs):
         # type: (bytes, **Any) -> None
-        self.encoded_policy = data
+        self.encoded_policy = encoded_policy
         self.content_type = kwargs.get("content_type", None)
 
 
