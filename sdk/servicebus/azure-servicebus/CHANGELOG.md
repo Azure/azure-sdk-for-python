@@ -1,6 +1,6 @@
 # Release History
 
-## 7.5.1 (Unreleased)
+## 7.6.0 (Unreleased)
 
 ### Features Added
 
