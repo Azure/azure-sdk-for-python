@@ -187,16 +187,13 @@ class EventData(object):
         event_str += " }"
         return event_str
 
-    def __data__(self) -> bytes:
+    def __message_data__(self) -> Dict:
         if self.body_type != AmqpMessageBodyType.DATA:
             raise TypeError('`body_type` must be `AmqpMessageBodyType.DATA`.')
         data = bytearray()
         for d in self.body: # type: ignore
             data += d   # type: ignore
-        return bytes(data)
-
-    def __content_type__(self) -> Optional[str]:
-        return self.content_type
+        return {"data": bytes(data), "content_type": self.content_type}
 
     @classmethod
     def from_message_data(cls, data: bytes, content_type: str) -> "EventData":

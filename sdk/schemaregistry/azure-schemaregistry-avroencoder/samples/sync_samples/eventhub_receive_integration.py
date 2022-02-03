@@ -32,7 +32,7 @@ def on_event(partition_context, event):
     # Use the decode method to decode the payload of the event.
     # The decode method will extract the schema id from the content_type, and automatically retrieve the Avro Schema
     # from the Schema Registry Service. The schema will be cached locally for future usage.
-    decoded_data = avro_encoder.decode(message=event)
+    decoded_data = avro_encoder.decode(event)
     print(f'The dict data after decoding is {decoded_data}')
 
 

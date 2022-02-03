@@ -72,7 +72,8 @@ async def decode_with_data_and_content_type(encoder, event_data):
     for d in event_data.body:
         data += d
     data_bytes = bytes(data)
-    decoded_data = await encoder.decode(data=data_bytes, content_type=event_data.content_type)
+    data_dict = {"data": data_bytes, "content_type": event_data.content_type}
+    decoded_data = await encoder.decode(data_dict)
 
     print("Decoded data is: ", decoded_data)
     return decoded_data

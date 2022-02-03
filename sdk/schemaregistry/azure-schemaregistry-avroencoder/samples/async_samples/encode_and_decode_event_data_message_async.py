@@ -82,7 +82,7 @@ async def decode_event_data_message(encoder, event_data):
     # encoder.decode would extract the schema id from the content_type,
     # retrieve schema from Schema Registry and cache the schema locally.
     # If the schema id is in the local cache, the call won't trigger a service call.
-    decoded_data = await encoder.decode(message=event_data)
+    decoded_data = await encoder.decode(event_data)
 
     print("Decoded data is: ", decoded_data)
     return decoded_data

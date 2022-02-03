@@ -69,7 +69,8 @@ class AvroEncoderAsyncTests(AzureTestCase):
             schema_id = schema_properties.id
             assert content_type.split("+")[1] == schema_id
 
-            decoded_data = await sr_avro_encoder.decode(data=encoded_data, content_type=content_type)
+            encoded_data_dict = {"data": encoded_data, "content_type": content_type}
+            decoded_data = await sr_avro_encoder.decode(encoded_data_dict)
             assert decoded_data["name"] == u"Ben"
             assert decoded_data["favorite_number"] == 7
             assert decoded_data["favorite_color"] == u"red"
@@ -95,10 +96,8 @@ class AvroEncoderAsyncTests(AzureTestCase):
                     self.content_type = content_type
                     self.extra = kwargs.pop('extra', None)
 
-                def __data__(self):
-                    return self.data
-                def __content_type__(self):
-                    return self.content_type
+                def __message_data__(self):
+                    return {"data": self.data, "content_type": self.content_type}
 
             def good_callback(data: bytes, content_type: str, **kwargs):
                 return GoodExample(data, content_type, **kwargs)
@@ -136,7 +135,8 @@ class AvroEncoderAsyncTests(AzureTestCase):
             schema_id = schema_properties.id
             assert content_type.split("+")[1] == schema_id
 
-            decoded_data = await sr_avro_encoder.decode(data=encoded_data, content_type=content_type)
+            encoded_data_dict = {"data": encoded_data, "content_type": content_type}
+            decoded_data = await sr_avro_encoder.decode(encoded_data_dict)
             assert decoded_data["name"] == u"Ben"
             assert decoded_data["favorite_number"] == 7
             assert decoded_data["favorite_color"] == u"red"
@@ -156,13 +156,15 @@ class AvroEncoderAsyncTests(AzureTestCase):
 
         # readers_schema with removed field
         readers_schema_remove_field = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]}]}"""
-        decoded_data = await sr_avro_encoder.decode(data=encoded_data, content_type=content_type, readers_schema=readers_schema_remove_field)
+        encoded_data_dict = {"data": encoded_data, "content_type": content_type}
+        decoded_data = await sr_avro_encoder.decode(encoded_data_dict, readers_schema=readers_schema_remove_field)
         assert decoded_data["name"] == u"Ben"
         assert decoded_data["favorite_number"] == 7
 
         # readers_schema with extra field with default
         readers_schema_extra_field = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}, {"name":"favorite_city","type":["string","null"], "default": "Redmond"}]}"""
-        decoded_data = await sr_avro_encoder.decode(data=encoded_data, content_type=content_type, readers_schema=readers_schema_extra_field)
+        encoded_data_dict = {"data": encoded_data, "content_type": content_type}
+        decoded_data = await sr_avro_encoder.decode(encoded_data_dict, readers_schema=readers_schema_extra_field)
         assert decoded_data["name"] == u"Ben"
         assert decoded_data["favorite_number"] == 7
         assert decoded_data["favorite_color"] == "red"
@@ -171,7 +173,8 @@ class AvroEncoderAsyncTests(AzureTestCase):
         # readers_schema with changed name results in error
         readers_schema_change_name = """{"namespace":"fakeexample.avro","type":"record","name":"fake_user","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         with pytest.raises(SchemaDecodeError):
-            decoded_data = await sr_avro_encoder.decode(data=encoded_data, content_type=content_type, readers_schema=readers_schema_change_name)
+            encoded_data_dict = {"data": encoded_data, "content_type": content_type}
+            decoded_data = await sr_avro_encoder.decode(encoded_data_dict, readers_schema=readers_schema_change_name)
             print(decoded_data)
 
 
@@ -469,5 +472,5 @@ class AvroEncoderAsyncTests(AzureTestCase):
         }
 
         encoded_metadata = await sr_avro_encoder.encode(data, schema=schema_record)
-        decoded_data = await sr_avro_encoder.decode(data=encoded_metadata["data"], content_type=encoded_metadata["content_type"])
+        decoded_data = await sr_avro_encoder.decode(encoded_metadata)
         assert decoded_data == data

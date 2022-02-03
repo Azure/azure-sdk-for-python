@@ -222,28 +222,23 @@ class AvroEncoder(object):
 
     def decode(
         self,
+        message: Union[MessageType, MessageMetadataDict],
         *,
-        message: Optional[MessageType] = None,
-        data: Optional[bytes] = None,
-        content_type: Optional[str] = None,
         readers_schema: Optional[str] = None,
-        **kwargs,  # pylint: disable=unused-argument
+        **kwargs,   # pylint: disable=unused-argument
     ) -> Dict[str, Any]:
         """
-        Decode bytes data using schema ID in the content type field. One of the following is required:
-            1) `message`
-            2) `data` and `content_type`
+        Decode bytes data using schema ID in the content type field. `message` must be one of the following:
+            1) A Subtype of the MessageType protocol.
+            2) A dict {"data": ..., "content_type": ...}, where "data" is bytes and "content_type" is string.
+            3) If using to decode data that was serialized with the AvroSerializer, a dict
+                {"data": ..., "content_type": None}, where "data" is bytes and "content_type" is None.
         Data must follow format of associated Avro RecordSchema:
         https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
 
-        :keyword message: The message object which holds the data to be decoded and content type
-         containing the schema ID. If not set, both `data` and `content_type` must be set.
-        :paramtype message: MessageType or None
-        :keyword data: The data to be decoded. Must be set with `content_type`. If not set, `message` must be set.
-        :paramtype data: bytes or None
-        :keyword content_type: The content type containing the schema ID to be used for decoding.
-         Must be set with `data`. If not set, `message` must be set.
-        :paramtype content_type: str or None
+        :param message: The message object which holds the data to be decoded and content type
+         containing the schema ID.
+        :type message: MessageType or MessageMetadataDict
         :keyword readers_schema: An optional reader's schema as defined by the Apache Avro specification.
         :paramtype readers_schema: str or None
         :rtype: Dict[str, Any]
@@ -253,23 +248,23 @@ class AvroEncoder(object):
             Indicates an issue with decoding value.
         """
 
-        if message:
+        try:
+            message_data_dict = message.__message_data__()
+            data = message_data_dict["data"]
+            content_type = message_data_dict["content_type"]
+        except AttributeError:
             try:
-                data = message.__data__()
-                content_type = message.__content_type__()
-            except AttributeError:
+                data = message["data"]
+                content_type = message["content_type"]
+            except (KeyError, TypeError):
                 SchemaDecodeError(
-                    f"""The data model {str(message)} is not a subtype of the MessageType protocol.
-                        If using an Azure SDK model class, please check the README.md for the full list
-                        of supported Azure SDK models and their corresponding versions."""
+                    f"""The data model {str(message)} is not a subtype of the MessageType protocol or type
+                        MessageMetadataDict.  If using an Azure SDK model class, please check the README.md
+                        for the full list of supported Azure SDK models and their corresponding versions."""
                 ).raise_with_traceback()
-        if not data:
-            raise ValueError("'data' value cannot be None.")
 
         # include in first preview for back compatibility
         data, content_type = self._convert_preamble_format(data, content_type)
-        if not content_type:
-            raise ValueError("'content_type' cannot be None.")
 
         schema_id = content_type.split("+")[1]
         schema_definition = self._get_schema(schema_id)

@@ -86,7 +86,7 @@ If a message type that follows the MessageType protocol is provided to the encod
   - `avro/binary` is the format indicator
   - `<schema ID>` is the hexadecimal representation of GUID, same format and byte order as the string from the Schema Registry service.
 
-If message type is not provided, and by default, the encoder will create the following dict:
+If message type or callback function is not provided, and by default, the encoder will create the following dict:
 `{"data": <Avro encoded payload>, "content_type": 'avro/binary+<schema ID>' }`
 
 ## Examples
@@ -145,7 +145,7 @@ with encoder:
 
 Use `AvroEncoder.decode` method to decode the bytes value into dict data by either:
  - Passing in a message object that is a subtype of the MessageType protocol.
- - Passing in the bytes `data` and string `content_type`.
+ - Passing in a dict with keys `data`(type bytes) and `content_type` (type string).
 The method automatically retrieves the schema from the Schema Registry Service and keeps the schema cached for future decoding usage.
 
 ```python
@@ -169,7 +169,8 @@ with encoder:
 
     encoded_bytes = b'<data_encoded_by_azure_schema_registry_avro_encoder>'
     content_type = 'avro/binary+<schema_id_of_corresponding_schema>'
-    decoded_data = encoder.decode(encoded_bytes, data=encoded_bytes, content_type=content_type)
+    data_dict = {"data": encoded_bytes, "content_type": content_type}
+    decoded_data = encoder.decode(encoded_bytes, message=data_dict)
 ```
 
 ### Event Hubs Sending Integration
