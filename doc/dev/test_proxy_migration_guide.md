@@ -16,7 +16,7 @@ Please refer to the [troubleshooting guide][troubleshooting] if you have any iss
   - [Start the proxy server](#start-the-proxy-server)
   - [Record or play back tests](#record-or-play-back-tests)
   - [Register sanitizers](#register-sanitizers)
-  - [Enable the test proxy in CI](#enable-the-test-proxy-in-ci)
+  - [Enable the test proxy in pipelines](#enable-the-test-proxy-in-pipelines)
   - [Fetch environment variables](#fetch-environment-variables)
   - [Record test variables](#record-test-variables)
 - [Migrate management-plane tests](#migrate-management-plane-tests)
@@ -215,15 +215,41 @@ Body matching can be turned off with the test proxy by calling the `set_bodiless
 test method that `set_bodiless_matcher` is called from, so other tests in the `pytest` session will still have body
 matching enabled by default.
 
-### Enable the test proxy in CI
+### Enable the test proxy in pipelines
+
+#### CI pipelines
 
 To enable using the test proxy in CI, you need to set the parameter `TestProxy: true` in the `ci.yml` file in the
-service-level folder. For example, in `sdk/eventgrid/ci.yml`:
+service-level folder. For example, in [sdk/eventgrid/ci.yml][pipelines_ci]:
 
-![image](https://user-images.githubusercontent.com/45376673/142270668-5be58bca-87e5-45f5-b593-44f8b1f757bc.png)
+```diff
+extends:
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+  parameters:
+    ServiceDirectory: eventgrid
++   TestProxy: true
+    ...
+```
 
-The test proxy is only used in playback pipeline testing, so this parameter doesn't need to be set in `tests.yml`. For
-live pipeline testing, requests are made directly to the service instead of going through the proxy first.
+#### Live test pipelines
+
+For tests to succeed in live test pipelines, make sure environment variables `AZURE_SKIP_LIVE_RECORDING` and
+`AZURE_TEST_RUN_LIVE` are set to True in the `tests.yml` file in the service-level folder. For example, in
+[sdk/textanalytics/tests.yml][pipelines_live]:
+
+```diff
+stages:
+  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    parameters:
+      ...
+      EnvVars:
+        ...
++       AZURE_SKIP_LIVE_RECORDING: 'True'
++       AZURE_TEST_RUN_LIVE: 'true'
+```
+
+Requests are made directly to the service instead of going through the proxy when live tests are run with recording
+skipped, so the `TestProxy` parameter doesn't need to be set in `tests.yml`.
 
 ### Fetch environment variables
 
@@ -394,6 +420,8 @@ For more details on proxy startup, please refer to the [proxy documentation][det
 [env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
 [general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/README.md
 [mgmt_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_recorded_testcase.py
+[pipelines_ci]: https://github.com/Azure/azure-sdk-for-python/blob/5ba894966ed6b0e1ee8d854871f8c2da36a73d79/sdk/eventgrid/ci.yml#L30
+[pipelines_live]: https://github.com/Azure/azure-sdk-for-python/blob/e2b5852deaef04752c1323d2ab0958f83b98858f/sdk/textanalytics/tests.yml#L26-L27
 [proxy_cert_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/trusting-cert-per-language.md
 [py_sanitizers]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/sanitizers.py
 [pytest_collection]: https://docs.pytest.org/latest/goodpractices.html#test-discovery
