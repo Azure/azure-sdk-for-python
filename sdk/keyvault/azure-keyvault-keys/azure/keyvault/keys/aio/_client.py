@@ -620,7 +620,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             self.vault_url,
             parameters=self._models.KeyRestoreParameters(key_bundle_backup=backup),
             error_map=_error_map,
-            **kwargs
+            **kwargs,
         )
         return KeyVaultKey._from_key_bundle(bundle)
 
@@ -670,11 +670,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         )
 
         bundle = await self._client.import_key(
-            self.vault_url,
-            name,
-            parameters=parameters,
-            error_map=_error_map,
-            **kwargs
+            self.vault_url, name, parameters=parameters, error_map=_error_map, **kwargs
         )
         return KeyVaultKey._from_key_bundle(bundle)
 
@@ -709,7 +705,7 @@ class KeyClient(AsyncKeyVaultClientBase):
                 nonce=kwargs.pop("nonce", None),
                 enc=kwargs.pop("algorithm", None),
             ),
-            **kwargs
+            **kwargs,
         )
         return ReleaseKeyResult(result.value)
 

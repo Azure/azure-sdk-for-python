@@ -145,11 +145,7 @@ class KeyClient(KeyVaultClientBase):
         )
 
         bundle = self._client.create_key(
-            vault_base_url=self.vault_url,
-            key_name=name,
-            parameters=parameters,
-            error_map=_error_map,
-            **kwargs
+            vault_base_url=self.vault_url, key_name=name, parameters=parameters, error_map=_error_map, **kwargs
         )
         return KeyVaultKey._from_key_bundle(bundle)
 
@@ -515,7 +511,10 @@ class KeyClient(KeyVaultClientBase):
         )
         command = partial(self.get_key, name=name, **kwargs)
         polling_method = DeleteRecoverPollingMethod(
-            finished=False, command=command, final_resource=recovered_key, interval=polling_interval,
+            finished=False,
+            command=command,
+            final_resource=recovered_key,
+            interval=polling_interval,
         )
 
         return KeyVaultOperationPoller(polling_method)
@@ -572,12 +571,7 @@ class KeyClient(KeyVaultClientBase):
         )
 
         bundle = self._client.update_key(
-            self.vault_url,
-            name,
-            key_version=version or "",
-            parameters=parameters,
-            error_map=_error_map,
-            **kwargs
+            self.vault_url, name, key_version=version or "", parameters=parameters, error_map=_error_map, **kwargs
         )
         return KeyVaultKey._from_key_bundle(bundle)
 
@@ -691,13 +685,7 @@ class KeyClient(KeyVaultClientBase):
             release_policy=policy,
         )
 
-        bundle = self._client.import_key(
-            self.vault_url,
-            name,
-            parameters=parameters,
-            error_map=_error_map,
-            **kwargs
-        )
+        bundle = self._client.import_key(self.vault_url, name, parameters=parameters, error_map=_error_map, **kwargs)
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace

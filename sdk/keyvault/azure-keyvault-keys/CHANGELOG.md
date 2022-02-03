@@ -16,6 +16,7 @@
 
 ### Other Changes
 - Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+- Updated minimum `azure-core` version to 1.20.0
 
 ## 4.5.0b5 (2021-11-11)
 

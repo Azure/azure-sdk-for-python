@@ -81,14 +81,16 @@ class KeyProperties(object):
     def _from_key_bundle(cls, key_bundle):
         # type: (_models.KeyBundle) -> KeyProperties
         """Construct a KeyProperties from an autorest-generated KeyBundle"""
+        # pylint:disable=line-too-long
         # release_policy was added in 7.3-preview
         release_policy = None
-        if (hasattr(key_bundle, "release_policy") and
-            key_bundle.release_policy is not None):  # type: ignore[attr-defined]
+        if (
+            hasattr(key_bundle, "release_policy") and key_bundle.release_policy is not None  # type: ignore[attr-defined]
+        ):
             release_policy = KeyReleasePolicy(
                 encoded_policy=key_bundle.release_policy.encoded_policy,  # type: ignore[attr-defined]
                 content_type=key_bundle.release_policy.content_type,  # type: ignore[attr-defined]
-                immutable=key_bundle.release_policy.immutable,
+                immutable=key_bundle.release_policy.immutable,  # type: ignore[attr-defined]
             )
 
         return cls(
@@ -107,7 +109,7 @@ class KeyProperties(object):
             key_id=key_item.kid,  # type: ignore
             attributes=key_item.attributes,
             managed=key_item.managed,
-            tags=key_item.tags
+            tags=key_item.tags,
         )
 
     @property
@@ -337,7 +339,9 @@ class KeyRotationPolicy(object):
 
     @classmethod
     def _from_generated(cls, policy):
-        lifetime_actions = [KeyRotationLifetimeAction._from_generated(action) for action in policy.lifetime_actions]  # pylint:disable=protected-access
+        lifetime_actions = [
+            KeyRotationLifetimeAction._from_generated(action) for action in policy.lifetime_actions
+        ]  # pylint:disable=protected-access
         if policy.attributes:
             return cls(
                 policy_id=policy.id,
