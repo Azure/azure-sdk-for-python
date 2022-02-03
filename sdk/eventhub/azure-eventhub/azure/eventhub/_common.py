@@ -19,7 +19,6 @@ from typing import (
     cast,
     overload
 )
-import warnings
 
 import six
 
@@ -134,10 +133,9 @@ class EventData(object):
         self._last_enqueued_event_properties = {}  # type: Dict[str, Any]
         self._sys_properties = None  # type: Optional[Dict[bytes, Any]]
 
-        if data:
-            if body:
-                warnings.warn("`data` and `body` passed in. `body` will be overwritten by `data`.")
-            body = data
+        if data and body:
+            _LOGGER.warning("`data` and `body` passed in. `body` will be overwritten by `data`.")
+        body = data or body
 
         if body is None:
             raise ValueError("EventData cannot be None.")
