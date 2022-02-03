@@ -44,7 +44,7 @@ class ModelsRepositoryClient(object):
         """
         # Store api version here (for now). Currently doesn't do anything
         self._api_version = kwargs.get("api_version", DEFAULT_API_VERSION)
-        metadata_expiration = kwargs.pop("metadata_expiration", float('inf'))
+        # metadata_expiration = kwargs.pop("metadata_expiration", float('inf'))
         metadata_enabled = kwargs.pop("metadata_enabled", True)
 
         self.repository_uri = repository_location if repository_location else DEFAULT_LOCATION
@@ -53,7 +53,7 @@ class ModelsRepositoryClient(object):
 
         self.resolver = DtmiResolver(
             location=self.repository_uri,
-            metadata_expiration=metadata_expiration,
+            # metadata_expiration=metadata_expiration,
             metadata_enabled=metadata_enabled,
             **kwargs
         )
