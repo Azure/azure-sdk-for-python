@@ -2,6 +2,5 @@
 -e ../../../tools/azure-devtools
 -e ../../identity/azure-identity
 ../../core/azure-core
-../../nspkg/azure-communication-nspkg
-aiohttp>=3.0; python_version >= '3.5'
-aiounittest>=1.4; python_version >= '3.5'
+aiohttp>=3.0
+aiounittest>=1.4
