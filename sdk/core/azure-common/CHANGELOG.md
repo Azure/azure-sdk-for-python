@@ -1,5 +1,15 @@
 # Release History
 
+## 1.1.29 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.1.28 (2022-02-03)
 
 - Raise a NotImplementedError if trying to use CLI credentials were CLI version is higher than 2.21.0  #20657 #21313
