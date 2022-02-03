@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 import os
 import platform
@@ -91,7 +91,10 @@ def parse_token(output):
     """
     try:
         token = json.loads(output)
-        dt = datetime.strptime(token["expiresOn"], "%Y-%m-%d %H:%M:%S.%f")
+        expires_on_in_token = token["expiresOn"]
+        if not expires_on_in_token:
+            expires_on_in_token = (datetime.now()+timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S.%f")
+        dt = datetime.strptime(expires_on_in_token, "%Y-%m-%d %H:%M:%S.%f")
         if hasattr(dt, "timestamp"):
             # Python >= 3.3
             expires_on = dt.timestamp()

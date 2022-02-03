@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 import re
 import sys
@@ -247,3 +247,27 @@ async def test_multitenant_authentication_not_allowed():
         with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
             token = await credential.get_token("scope", tenant_id="un" + expected_tenant)
         assert token.token == expected_token
+
+
+async def test_no_expireson_token():
+    """The credential should parse the CLI's output to an AccessToken even expiresOn is None"""
+
+    access_token = "access token"
+    expected_expires_on = int(datetime.timestamp(datetime.now()+timedelta(days=1)))
+    successful_output = json.dumps(
+        {
+            "expiresOn": None,
+            "accessToken": access_token,
+            "subscription": "some-guid",
+            "tenant": "some-guid",
+            "tokenType": "Bearer",
+        }
+    )
+
+    with mock.patch(SUBPROCESS_EXEC, mock_exec(successful_output)):
+        credential = AzureCliCredential()
+        token = await credential.get_token("scope")
+
+    assert token.token == access_token
+    assert type(token.expires_on) == int
+    assert token.expires_on == expected_expires_on
