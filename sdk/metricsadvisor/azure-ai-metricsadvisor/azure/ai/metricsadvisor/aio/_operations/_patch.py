@@ -26,26 +26,34 @@
 # --------------------------------------------------------------------------
 import datetime
 import six
+import functools
 from typing import List, Dict, Any, Optional, Union, cast, overload
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.async_paging import AsyncItemPaged
+from azure.core.async_paging import AsyncItemPaged, AsyncList
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
+from ...models import _models_py3 as generated_models
 
 from ._operations import MetricsAdvisorClientOperationsMixin as MetricsAdvisorClientOperationsMixinGenerated
 from ..._operations._patch import (
     DataFeedSourceUnion,
-    DATA_FEED,
-    DATA_FEED_PATCH,
     HOOK_KWARG_NAMES,
     convert_datetime,
-    convert_to_generated_data_feed_type,
     convert_to_datasource_credential,
     convert_to_sub_feedback,
-    construct_data_feed_dict,
+    construct_data_feed,
     construct_alert_config_dict,
     construct_detection_config_dict,
     DatasourceCredentialUnion,
     FeedbackUnion,
+    build_get_data_feed_request,
+    build_list_data_feeds_request,
 )
 from ...models import *
 
@@ -81,34 +89,22 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         ingestion_settings: Union[datetime.datetime, DataFeedIngestionSettings],
         **kwargs: Any
     ) -> DataFeed:
-        admins = kwargs.pop("admins", None)
-        data_feed_description = kwargs.pop("data_feed_description", None)
-        missing_data_point_fill_settings = kwargs.pop("missing_data_point_fill_settings", None)
-        rollup_settings = kwargs.pop("rollup_settings", None)
-        viewers = kwargs.pop("viewers", None)
-        access_mode = kwargs.pop("access_mode", "Private")
-        action_link_template = kwargs.pop("action_link_template", None)
-        data_feed_type = DATA_FEED[source.data_source_type]
-        data_feed_detail = convert_to_generated_data_feed_type(
-            generated_feed_type=data_feed_type,
+        data_feed = construct_data_feed(
             name=name,
             source=source,
             granularity=granularity,
             schema=schema,
             ingestion_settings=ingestion_settings,
-            admins=admins,
-            data_feed_description=data_feed_description,
-            missing_data_point_fill_settings=missing_data_point_fill_settings,
-            rollup_settings=rollup_settings,
-            viewers=viewers,
-            access_mode=access_mode,
-            action_link_template=action_link_template,
+            **kwargs
         )
-
-        response_headers = await super().create_data_feed(
-            data_feed_detail, cls=lambda pipeline_response, _, response_headers: response_headers, **kwargs
+        for attr in dir(data_feed):
+            if attr in kwargs:
+                kwargs.pop(attr)
+        response_headers = await super().create_data_feed(  # type: ignore
+            data_feed._to_generated(),
+            cls=lambda pipeline_response, _, response_headers: response_headers,
+            **kwargs
         )
-        response_headers = cast(dict, response_headers)
         data_feed_id = response_headers["Location"].split("dataFeeds/")[1]
         return await self.get_data_feed(data_feed_id)
 
@@ -153,8 +149,36 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
 
     @distributed_trace_async
     async def get_data_feed(self, data_feed_id: str, **kwargs: Any) -> DataFeed:
-        data_feed = await super().get_data_feed(data_feed_id, **kwargs)
-        return DataFeed._from_generated(data_feed)
+        cls = kwargs.pop("cls", None)
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
+        request = build_get_data_feed_request(
+            data_feed_id=data_feed_id,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize(generated_models.DataFeed, pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+        json_response = response.json()
+        return DataFeed._from_generated(
+            deserialized, json_response["dataSourceParameter"], json_response["dataSourceType"]
+        )
 
     @distributed_trace_async
     async def get_alert_configuration(self, alert_configuration_id: str, **kwargs: Any) -> AnomalyAlertConfiguration:
@@ -219,42 +243,19 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
 
     @distributed_trace_async
     async def update_data_feed(self, data_feed: Union[str, DataFeed], **kwargs: Any) -> DataFeed:
-        unset = object()
-        update_kwargs = {}
-        update_kwargs["dataFeedName"] = kwargs.pop("name", unset)
-        update_kwargs["dataFeedDescription"] = kwargs.pop("data_feed_description", unset)
-        update_kwargs["timestampColumn"] = kwargs.pop("timestamp_column", unset)
-        update_kwargs["dataStartFrom"] = kwargs.pop("ingestion_begin_time", unset)
-        update_kwargs["startOffsetInSeconds"] = kwargs.pop("ingestion_start_offset", unset)
-        update_kwargs["maxConcurrency"] = kwargs.pop("data_source_request_concurrency", unset)
-        update_kwargs["minRetryIntervalInSeconds"] = kwargs.pop("ingestion_retry_delay", unset)
-        update_kwargs["stopRetryAfterInSeconds"] = kwargs.pop("stop_retry_after", unset)
-        update_kwargs["needRollup"] = kwargs.pop("rollup_type", unset)
-        update_kwargs["rollUpMethod"] = kwargs.pop("rollup_method", unset)
-        update_kwargs["rollUpColumns"] = kwargs.pop("auto_rollup_group_by_column_names", unset)
-        update_kwargs["allUpIdentification"] = kwargs.pop("rollup_identification_value", unset)
-        update_kwargs["fillMissingPointType"] = kwargs.pop("fill_type", unset)
-        update_kwargs["fillMissingPointValue"] = kwargs.pop("custom_fill_value", unset)
-        update_kwargs["viewMode"] = kwargs.pop("access_mode", unset)
-        update_kwargs["admins"] = kwargs.pop("admins", unset)
-        update_kwargs["viewers"] = kwargs.pop("viewers", unset)
-        update_kwargs["status"] = kwargs.pop("status", unset)
-        update_kwargs["actionLinkTemplate"] = kwargs.pop("action_link_template", unset)
-        update_kwargs["dataSourceParameter"] = kwargs.pop("source", unset)
-
-        update = {key: value for key, value in update_kwargs.items() if value != unset}
-
-        if isinstance(data_feed, six.string_types):
-            data_feed_id = data_feed
-            data_feed_patch = construct_data_feed_dict(update)
-
+        if isinstance(data_feed, str):
+            data_feed_patch = construct_data_feed(**kwargs)
+            for attr in dir(data_feed_patch):
+                if attr in kwargs:
+                    kwargs.pop(attr)
         else:
-            data_feed_id = data_feed.id
-            data_feed_patch_type = DATA_FEED_PATCH[data_feed.source.data_source_type]
-            data_feed_patch = data_feed._to_generated_patch(data_feed_patch_type, update)
+            data_feed_patch = data_feed._to_generated()
 
-        data_feed_detail = await super().update_data_feed(data_feed_id, data_feed_patch, **kwargs)
-        return DataFeed._from_generated(data_feed_detail)
+        return DataFeed._from_generated(
+            await super().update_data_feed(data_feed_patch.id, data_feed_patch, **kwargs),
+            data_feed_patch.data_source_parameter,
+            data_feed_patch.data_source_type,
+        )
 
     @distributed_trace_async
     async def update_alert_configuration(
@@ -342,24 +343,72 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         return await super().update_hook(hook_id, hook_patch, **kwargs)
 
     @distributed_trace
-    def list_data_feeds(self, **kwargs: Any) -> AsyncItemPaged[DataFeed]:
-        data_feed_name = kwargs.pop("data_feed_name", None)
-        data_source_type = kwargs.pop("data_source_type", None)
-        granularity_type = kwargs.pop("granularity_type", None)
-        status = kwargs.pop("status", None)
-        creator = kwargs.pop("creator", None)
-        skip = kwargs.pop("skip", None)
+    def list_data_feeds(
+        self,
+        *,
+        data_feed_name: Optional[str] = None,
+        data_source_type: Optional[Union[str, "DataSourceType"]] = None,
+        granularity_type: Optional[Union[str, "DataFeedGranularityType"]] = None,
+        status: Optional[Union[str, "DataFeedStatus"]] = None,
+        creator: Optional[str] = None,
+        skip: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[DataFeed]:
+        cls = kwargs.pop("cls", None)
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        return super().list_data_feeds(  # type: ignore
-            data_feed_name=data_feed_name,
-            data_source_type=data_source_type,
-            granularity_name=granularity_type,
-            status=status,
-            creator=creator,
-            skip=skip,
-            cls=kwargs.pop("cls", lambda feeds: [DataFeed._from_generated(feed) for feed in feeds]),
-            **kwargs
-        )
+        def prepare_request(next_link=None):
+            request = build_list_data_feeds_request(
+                data_feed_name=data_feed_name,
+                data_source_type=data_source_type,
+                granularity_name=granularity_type,
+                status=status,
+                creator=creator,
+                skip=skip,
+                maxpagesize=maxpagesize,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url(
+                    "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                ),
+            }
+            request.url = self._client.format_url(request.url, **path_format_arguments)
+            return request
+
+        deserializer = functools.partial(self._deserialize, generated_models.DataFeed)
+
+        async def extract_data(deserializer, pipeline_response):
+            response_json = pipeline_response.http_response.json()
+            list_of_elem = []
+            for l in response_json["value"]:
+                data_source_type = l["dataSourceType"]  # this gets popped during deserialization
+                data_source_parameter = l["dataSourceParameter"]
+                list_of_elem.append(
+                    DataFeed._from_generated(
+                        deserializer(l),
+                        data_source_parameter,
+                        data_source_type,
+                    )
+                )
+            return response_json.get("@nextLink", None) or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+        return AsyncItemPaged(get_next, functools.partial(extract_data, deserializer))
 
     @distributed_trace
     def list_alert_configurations(

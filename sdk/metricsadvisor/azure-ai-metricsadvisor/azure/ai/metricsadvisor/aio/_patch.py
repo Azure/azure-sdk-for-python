@@ -32,8 +32,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
 from .._operations._patch import (
     DataFeedSourceUnion,
-    DATA_FEED,
-    DATA_FEED_PATCH,
     DatasourceCredentialUnion,
     FeedbackUnion,
 )

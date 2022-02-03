@@ -9,87 +9,10 @@
 
 import datetime
 from this import d
-from typing import Any, Union, List, Dict, TYPE_CHECKING
+from typing import Any, Tuple, Union, List, Dict, Optional, TYPE_CHECKING
 from enum import Enum
 import msrest
-from ._models_py3 import (
-    MetricAlertConfiguration as _MetricAlertConfiguration,
-    SeverityCondition as _SeverityCondition,
-    TopNGroupScope as _TopNGroupScope,
-    MetricAnomalyAlertSnoozeCondition as _MetricAnomalyAlertSnoozeCondition,
-    ValueCondition as _ValueCondition,
-    EmailNotificationHook as _EmailNotificationHook,
-    WebNotificationHook as _WebNotificationHook,
-    MetricDetectionCondition as _MetricDetectionCondition,
-    WholeMetricConfigurationPatch as _MetricDetectionConditionPatch,
-    SuppressCondition as _SuppressCondition,
-    SuppressConditionPatch as _SuppressConditionPatch,
-    HardThresholdCondition as _HardThresholdCondition,
-    HardThresholdConditionPatch as _HardThresholdConditionPatch,
-    ChangeThresholdCondition as _ChangeThresholdCondition,
-    ChangeThresholdConditionPatch as _ChangeThresholdConditionPatch,
-    SmartDetectionCondition as _SmartDetectionCondition,
-    SmartDetectionConditionPatch as _SmartDetectionConditionPatch,
-    MetricSeriesGroupDetectionCondition as _MetricSeriesGroupDetectionCondition,
-    MetricSingleSeriesDetectionCondition as _MetricSingleSeriesDetectionCondition,
-    DataFeedDimension as _DataFeedDimension,
-    DataFeedMetric as _DataFeedMetric,
-    AnomalyFeedback as _AnomalyFeedback,
-    FeedbackDimensionFilter,
-    AnomalyFeedbackValue,
-    ChangePointFeedback as _ChangePointFeedback,
-    ChangePointFeedbackValue,
-    CommentFeedback as _CommentFeedback,
-    CommentFeedbackValue,
-    PeriodFeedback as _PeriodFeedback,
-    PeriodFeedbackValue,
-    EmailHookParameterPatch as _EmailHookParameterPatch,
-    WebhookHookParameterPatch as _WebhookHookParameterPatch,
-    AzureBlobParameter as _AzureBlobParameter,
-    AzureBlobParameterPatch as _AzureBlobParameterPatch,
-    SqlSourceParameter as _SQLSourceParameter,
-    SQLSourceParameterPatch as _SQLSourceParameterPatch,
-    AzureApplicationInsightsParameter as _AzureApplicationInsightsParameter,
-    AzureApplicationInsightsParameterPatch as _AzureApplicationInsightsParameterPatch,
-    AzureCosmosDBParameter as _AzureCosmosDBParameter,
-    AzureCosmosDBParameterPatch as _AzureCosmosDBParameterPatch,
-    AzureTableParameter as _AzureTableParameter,
-    AzureTableParameterPatch as _AzureTableParameterPatch,
-    AzureEventHubsParameter as _AzureEventHubsParameter,
-    AzureEventHubsParameterPatch as _AzureEventHubsParameterPatch,
-    InfluxDBParameter as _InfluxDBParameter,
-    InfluxDBParameterPatch as _InfluxDBParameterPatch,
-    MongoDBParameter as _MongoDBParameter,
-    MongoDBParameterPatch as _MongoDBParameterPatch,
-    AzureDataLakeStorageGen2Parameter as _AzureDataLakeStorageGen2Parameter,
-    AzureDataLakeStorageGen2ParameterPatch as _AzureDataLakeStorageGen2ParameterPatch,
-    AzureLogAnalyticsParameter as _AzureLogAnalyticsParameter,
-    AzureLogAnalyticsParameterPatch as _AzureLogAnalyticsParameterPatch,
-    DimensionGroupIdentity as _DimensionGroupIdentity,
-    SeriesIdentity as _SeriesIdentity,
-    AnomalyAlertConfiguration as _AnomalyAlertConfiguration,
-    AnomalyDetectionConfiguration as _AnomalyDetectionConfiguration,
-    AnomalyAlertingConfigurationPatch as _AnomalyAlertConfigurationPatch,
-    AnomalyDetectionConfigurationPatch as _AnomalyDetectionConfigurationPatch,
-    AzureSQLConnectionStringParam as _AzureSQLConnectionStringParam,
-    AzureSQLConnectionStringParamPatch as _AzureSQLConnectionStringParamPatch,
-    DatasourceSqlConnectionString as _DatasourceSqlConnectionString,
-    AzureSQLConnectionStringCredentialPatch as _DatasourceSqlConnectionStringPatch,
-    DataLakeGen2SharedKeyCredentialPatch as _DatasourceDataLakeGen2SharedKeyPatch,
-    DataLakeGen2SharedKeyParamPatch as _DataLakeGen2SharedKeyParamPatch,
-    DatasourceDataLakeGen2SharedKey as _DatasourceDataLakeGen2SharedKey,
-    DataLakeGen2SharedKeyParam as _DataLakeGen2SharedKeyParam,
-    ServicePrincipalCredentialPatch as _DatasourceServicePrincipalPatch,
-    ServicePrincipalParamPatch as _ServicePrincipalParamPatch,
-    DatasourceServicePrincipal as _DatasourceServicePrincipal,
-    ServicePrincipalParam as _ServicePrincipalParam,
-    ServicePrincipalInKVCredentialPatch as _DatasourceServicePrincipalInKeyVaultPatch,
-    ServicePrincipalInKVParamPatch as _ServicePrincipalInKVParamPatch,
-    DatasourceServicePrincipalInKeyVault as _DatasourceServicePrincipalInKeyVault,
-    ServicePrincipalInKVParam as _ServicePrincipalInKVParam,
-    DetectionAnomalyFilterCondition as _DetectionAnomalyFilterCondition,
-    NotificationHook as _NotificationHook,
-)
+from . import _models_py3 as generated_models
 
 if TYPE_CHECKING:
     from ._models_py3 import (
@@ -102,6 +25,31 @@ if TYPE_CHECKING:
         IncidentRootCause,
     )
     from .._operations._patch import DataFeedSourceUnion
+
+_SERIALIZER = msrest.Serializer()
+_DESERIALIZER = msrest.Deserializer()
+
+
+def get_auth_from_datasource_kwargs(
+    *, default_authentication_type: str, check_msi_kwarg: bool = True, **kwargs
+) -> Tuple[str, Optional[bool]]:
+    msi = False
+    if check_msi_kwarg:
+        msi = kwargs.pop("msi", False)
+    datasource_service_principal_id = kwargs.get("datasource_service_principal_id", False)
+    datasource_service_principal_in_kv_id = kwargs.get("datasource_service_principal_in_kv_id", False)
+    credential_id: Optional[bool] = None
+    if msi:
+        authentication_type = "ManagedIdentity"
+    elif datasource_service_principal_id:
+        authentication_type = "ServicePrincipal"
+        credential_id = datasource_service_principal_id
+    elif datasource_service_principal_in_kv_id:
+        authentication_type = "ServicePrincipalInKV"
+        credential_id = datasource_service_principal_in_kv_id
+    else:
+        authentication_type = default_authentication_type
+    return authentication_type, credential_id
 
 
 class MetricAnomalyAlertScopeType(str, Enum):
@@ -317,7 +265,7 @@ class DataFeedSchema(object):
         )[:1024]
 
 
-class DataFeed(object):  # pylint:disable=too-many-instance-attributes
+class DataFeed(generated_models.DataFeed):  # pylint:disable=too-many-instance-attributes
     """Represents a data feed.
 
     :ivar ~datetime.datetime created_time: Data feed created time.
@@ -356,14 +304,13 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
 
     def __init__(
         self,
-        name,  # type: str
-        source,  # type: DataFeedSourceUnion
-        granularity,  # type: DataFeedGranularity
-        schema,  # type: DataFeedSchema
-        ingestion_settings,  # type: DataFeedIngestionSettings
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        name: str,
+        source: "DataFeedSourceUnion",
+        granularity: DataFeedGranularity,
+        schema: DataFeedSchema,
+        ingestion_settings: DataFeedIngestionSettings,
+        **kwargs: Any
+    ) -> None:
         self.name = name
         self.granularity = granularity
         self.ingestion_settings = ingestion_settings
@@ -409,11 +356,11 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
         )
 
     @classmethod
-    def _from_generated(cls, data_feed):
+    def _from_generated(cls, data_feed, data_source_parameter, data_source_type):
         return cls(
             created_time=data_feed.created_time,
             granularity=DataFeedGranularity._from_generated(data_feed.granularity_name, data_feed.granularity_amount),
-            id=data_feed.data_feed_id,
+            id=data_feed.id,
             ingestion_settings=DataFeedIngestionSettings(
                 ingestion_begin_time=data_feed.data_start_from,
                 data_source_request_concurrency=data_feed.max_concurrency,
@@ -422,8 +369,8 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
                 stop_retry_after=data_feed.stop_retry_after_in_seconds,
             ),
             is_admin=data_feed.is_admin,
-            metric_ids={metric.metric_name: metric.metric_id for metric in data_feed.metrics},
-            name=data_feed.data_feed_name,
+            metric_ids={metric.name: metric.id for metric in data_feed.metrics},
+            name=data_feed.name,
             admins=data_feed.admins,
             data_feed_description=data_feed.data_feed_description,
             missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
@@ -437,72 +384,51 @@ class DataFeed(object):  # pylint:disable=too-many-instance-attributes
                 rollup_method=data_feed.roll_up_method,
             ),
             viewers=data_feed.viewers,
-            access_mode=data_feed.view_mode,
+            access_mode=data_feed.access_mode,
             action_link_template=data_feed.action_link_template,
             schema=DataFeedSchema(
-                dimensions=[DataFeedDimension._from_generated(dim) for dim in data_feed.dimension],
-                metrics=[DataFeedMetric._from_generated(metric) for metric in data_feed.metrics],
+                dimensions=data_feed.dimension,
+                metrics=data_feed.metrics,
                 timestamp_column=data_feed.timestamp_column,
             ),
-            source=DATA_FEED_TRANSFORM[data_feed.data_source_type]._from_generated(data_feed.data_source_parameter),
+            source=TYPE_TO_DATA_SOURCE[data_source_type].deserialize(data_source_parameter),
             status=data_feed.status,
         )
 
-    def _to_generated_patch(self, data_source_feed_type, kwargs):
-        source_param = kwargs.pop("dataSourceParameter", None)
-        authentication_type = None
-        credential_id = None
-        if source_param:
-            authentication_type = source_param.authentication_type
-            credential_id = source_param.credential_id
-            source_param = source_param._to_generated_patch()
-
-        rollup_type = kwargs.pop("needRollup", None)
-        if rollup_type:
-            DataFeedRollupType._to_generated(rollup_type)
-        return data_source_feed_type(
-            data_feed_name=kwargs.pop("dataFeedName", None) or self.name,
-            data_source_parameter=source_param if source_param else self.source._to_generated_patch(),
-            timestamp_column=kwargs.pop("timestampColumn", None) or self.schema.timestamp_column,
-            data_start_from=kwargs.pop("dataStartFrom", None) or self.ingestion_settings.ingestion_begin_time,
-            max_concurrency=kwargs.pop("maxConcurrency", None)
-            or self.ingestion_settings.data_source_request_concurrency,
-            min_retry_interval_in_seconds=kwargs.pop("minRetryIntervalInSeconds", None)
-            or self.ingestion_settings.ingestion_retry_delay,
-            start_offset_in_seconds=kwargs.pop("startOffsetInSeconds", None)
-            or self.ingestion_settings.ingestion_start_offset,
-            stop_retry_after_in_seconds=kwargs.pop("stopRetryAfterInSeconds", None)
-            or self.ingestion_settings.stop_retry_after,
-            data_feed_description=kwargs.pop("dataFeedDescription", None) or self.data_feed_description,
-            need_rollup=rollup_type or DataFeedRollupType._to_generated(self.rollup_settings.rollup_type)
-            if self.rollup_settings
-            else None,
-            roll_up_method=kwargs.pop("rollUpMethod", None) or self.rollup_settings.rollup_method
-            if self.rollup_settings
-            else None,
-            roll_up_columns=kwargs.pop("rollUpColumns", None) or self.rollup_settings.auto_rollup_group_by_column_names
-            if self.rollup_settings
-            else None,
-            all_up_identification=kwargs.pop("allUpIdentification", None)
-            or self.rollup_settings.rollup_identification_value
-            if self.rollup_settings
-            else None,
-            fill_missing_point_type=kwargs.pop("fillMissingPointType", None)
-            or self.missing_data_point_fill_settings.fill_type
-            if self.missing_data_point_fill_settings
-            else None,
-            fill_missing_point_value=kwargs.pop("fillMissingPointValue", None)
-            or self.missing_data_point_fill_settings.custom_fill_value
-            if self.missing_data_point_fill_settings
-            else None,
-            viewers=kwargs.pop("viewers", None) or self.viewers,
-            view_mode=kwargs.pop("viewMode", None) or self.access_mode,
-            admins=kwargs.pop("admins", None) or self.admins,
-            status=kwargs.pop("status", None) or self.status,
-            action_link_template=kwargs.pop("actionLinkTemplate", None) or self.action_link_template,
-            authentication_type=authentication_type,
-            credential_id=credential_id,
+    def _to_generated(self) -> generated_models.DataFeed:
+        retval = generated_models.DataFeed(
+            data_source_parameter=TYPE_TO_DATA_SOURCE[self.source.data_source_type].serialize(self.source),
+            id=self.id,
+            name=self.name,
+            data_feed_description=self.data_feed_description,
+            granularity_name=self.granularity.granularity_type,
+            granularity_amount=self.granularity.custom_granularity_value,
+            metrics=self.schema.metrics,
+            dimension=self.schema.dimensions,
+            timestamp_column=self.schema.timestamp_column,
+            data_start_from=self.ingestion_settings.ingestion_begin_time if self.ingestion_settings else None,
+            start_offset_in_seconds=self.ingestion_settings.ingestion_start_offset,
+            max_concurrency=self.ingestion_settings.data_source_request_concurrency,
+            min_retry_interval_in_seconds=self.ingestion_settings.stop_retry_after,
+            stop_retry_after_in_seconds=self.ingestion_settings.stop_retry_after,
+            need_rollup=self.rollup_settings.rollup_type if self.rollup_settings else None,
+            roll_up_method=self.rollup_settings.rollup_method if self.rollup_settings else None,
+            roll_up_columns=self.rollup_settings.auto_rollup_group_by_column_names if self.rollup_settings else None,
+            all_up_identification=self.rollup_settings.rollup_identification_value if self.rollup_settings else None,
+            fill_missing_point_type=self.missing_data_point_fill_settings.fill_type if self.missing_data_point_fill_settings else None,
+            fill_missing_point_value=self.missing_data_point_fill_settings.custom_fill_value if self.missing_data_point_fill_settings else None,
+            access_mode=self.access_mode,
+            admins=self.admins,
+            viewers=self.viewers,
+            is_admin=self.is_admin,
+            status=self.status,
+            created_time=self.created_time,
+            action_link_template=self.action_link_template,
+            authentication_type=self.source.authentication_type,
+            credential_id=self.source.credential_id
         )
+        retval.data_source_type = self.source.data_source_type
+        return retval
 
 
 class MetricAnomalyAlertScope(object):
@@ -665,7 +591,7 @@ class MetricBoundaryCondition(object):
         )
 
 
-class MetricAlertConfiguration(_MetricAlertConfiguration):
+class MetricAlertConfiguration(generated_models.MetricAlertConfiguration):
     """MetricAlertConfiguration.
 
     :param detection_configuration_id: Required. Anomaly detection configuration unique id.
@@ -680,7 +606,7 @@ class MetricAlertConfiguration(_MetricAlertConfiguration):
     :paramtype alert_snooze_condition: ~azure.ai.metricsadvisor.models.MetricAnomalyAlertSnoozeCondition
     """
 
-    _attribute_map = _MetricAlertConfiguration._attribute_map.update(
+    _attribute_map = generated_models.MetricAlertConfiguration._attribute_map.update(
         {"alert_conditions": {"key": "alertConditions", "type": "MetricAnomalyAlertConditions"}}
     )
 
@@ -704,7 +630,7 @@ class MetricAlertConfiguration(_MetricAlertConfiguration):
         )
 
 
-class AnomalyAlertConfiguration(_AnomalyAlertConfiguration):
+class AnomalyAlertConfiguration(generated_models.AnomalyAlertConfiguration):
     """AnomalyAlertConfiguration.
 
     :param str name: Required. anomaly alert configuration name.
@@ -816,7 +742,7 @@ class AnomalyDetectionConfiguration(object):
         )
 
     def _to_generated(self):
-        return _AnomalyDetectionConfiguration(
+        return generated_models.AnomalyDetectionConfiguration(
             name=self.name,
             metric_id=self.metric_id,
             description=self.description,
@@ -843,7 +769,7 @@ class AnomalyDetectionConfiguration(object):
         series_group = series_group_detection_conditions or self.series_group_detection_conditions
         series_detection = series_detection_conditions or self.series_detection_conditions
 
-        return _AnomalyDetectionConfigurationPatch(
+        return generated_models.AnomalyDetectionConfigurationPatch(
             name=name or self.name,
             description=description or self.description,
             whole_metric_configuration=whole_series_detection_condition._to_generated_patch()
@@ -858,7 +784,7 @@ class AnomalyDetectionConfiguration(object):
         )
 
 
-class DataFeedSource(dict):
+class DataFeedSource:
     """DataFeedSource base class
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -873,15 +799,16 @@ class DataFeedSource(dict):
     :ivar str credential_id: The datasource credential id.
     """
 
-    def __init__(self, data_source_type, **kwargs):
-        # type: (str, **Any) -> None
-        super(DataFeedSource, self).__init__(data_source_type=data_source_type, **kwargs)
+    def __init__(self, data_source_type: str, **kwargs: Any) -> None:
+        super().__init__(data_source_type=data_source_type, **kwargs)
         self.data_source_type = data_source_type
         self.authentication_type = kwargs.get("authentication_type", None)
         self.credential_id = kwargs.get("credential_id", None)
 
 
-class AzureApplicationInsightsDataFeedSource(DataFeedSource):
+class AzureApplicationInsightsDataFeedSource(
+    DataFeedSource, generated_models.AzureApplicationInsightsDataFeedSource, dict
+):
     """AzureApplicationInsightsDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -902,13 +829,9 @@ class AzureApplicationInsightsDataFeedSource(DataFeedSource):
 
     def __init__(self, query, **kwargs):
         # type: (str, **Any) -> None
-        super(AzureApplicationInsightsDataFeedSource, self).__init__(
-            data_source_type="AzureApplicationInsights", authentication_type="Basic", **kwargs
+        super().__init__(
+            data_source_type="AzureApplicationInsights", authentication_type="Basic", query=query, **kwargs
         )
-        self.azure_cloud = kwargs.get("azure_cloud", None)
-        self.application_id = kwargs.get("application_id", None)
-        self.api_key = kwargs.get("api_key", None)
-        self.query = query
 
     def __repr__(self):
         return (
@@ -924,33 +847,8 @@ class AzureApplicationInsightsDataFeedSource(DataFeedSource):
             )[:1024]
         )
 
-    @classmethod
-    def _from_generated(cls, source):
-        return cls(
-            azure_cloud=source.azure_cloud,
-            application_id=source.application_id,
-            api_key=source.api_key,
-            query=source.query,
-        )
 
-    def _to_generated(self):
-        return _AzureApplicationInsightsParameter(
-            azure_cloud=self.azure_cloud,
-            application_id=self.application_id,
-            api_key=self.api_key,
-            query=self.query,
-        )
-
-    def _to_generated_patch(self):
-        return _AzureApplicationInsightsParameterPatch(
-            azure_cloud=self.azure_cloud,
-            application_id=self.application_id,
-            api_key=self.api_key,
-            query=self.query,
-        )
-
-
-class AzureBlobDataFeedSource(DataFeedSource):
+class AzureBlobDataFeedSource(DataFeedSource, generated_models.AzureBlobDataFeedSource, dict):
     """AzureBlobDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -971,17 +869,15 @@ class AzureBlobDataFeedSource(DataFeedSource):
     :keyword bool msi: If using managed identity authentication.
     """
 
-    def __init__(self, container, blob_template, **kwargs):
-        # type: (str, str, **Any) -> None
-        super(AzureBlobDataFeedSource, self).__init__(data_source_type="AzureBlob", **kwargs)
+    def __init__(self, container: str, blob_template: str, **kwargs: Any) -> None:
         msi = kwargs.get("msi", False)
-        if msi:
-            self.authentication_type = "ManagedIdentity"
-        else:
-            self.authentication_type = "Basic"
-            self.connection_string = kwargs.get("connection_string", None)
-        self.container = container
-        self.blob_template = blob_template
+        super().__init__(
+            data_source_type="AzureBlob",
+            authentication_type="ManagedIdentity" if msi else "Basic",
+            container=container,
+            blob_template=blob_template,
+            **kwargs
+        )
 
     def __repr__(self):
         return (
@@ -996,30 +892,8 @@ class AzureBlobDataFeedSource(DataFeedSource):
             )[:1024]
         )
 
-    @classmethod
-    def _from_generated(cls, source):
-        return cls(
-            connection_string=source.connection_string,
-            container=source.container,
-            blob_template=source.blob_template,
-        )
 
-    def _to_generated(self):
-        return _AzureBlobParameter(
-            connection_string=self.connection_string,
-            container=self.container,
-            blob_template=self.blob_template,
-        )
-
-    def _to_generated_patch(self):
-        return _AzureBlobParameterPatch(
-            connection_string=self.connection_string,
-            container=self.container,
-            blob_template=self.blob_template,
-        )
-
-
-class AzureCosmosDbDataFeedSource(DataFeedSource):
+class AzureCosmosDbDataFeedSource(DataFeedSource, generated_models.AzureCosmosDbDataFeedSource, dict):
     """AzureCosmosDbDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1041,15 +915,15 @@ class AzureCosmosDbDataFeedSource(DataFeedSource):
     :keyword str connection_string: Azure CosmosDB connection string.
     """
 
-    def __init__(self, sql_query, database, collection_id, **kwargs):
-        # type: (str, str, str, **Any) -> None
-        super(AzureCosmosDbDataFeedSource, self).__init__(
-            data_source_type="AzureCosmosDB", authentication_type="Basic", **kwargs
+    def __init__(self, sql_query: str, database: str, collection_id: str, **kwargs: Any) -> None:
+        super().__init__(
+            sql_query=sql_query,
+            database=database,
+            collection_id=collection_id,
+            data_source_type="AzureCosmosDB",
+            authentication_type="Basic",
+            **kwargs
         )
-        self.connection_string = kwargs.get("connection_string", None)
-        self.sql_query = sql_query
-        self.database = database
-        self.collection_id = collection_id
 
     def __repr__(self):
         return (
@@ -1065,33 +939,8 @@ class AzureCosmosDbDataFeedSource(DataFeedSource):
             )[:1024]
         )
 
-    @classmethod
-    def _from_generated(cls, source):
-        return cls(
-            connection_string=source.connection_string,
-            sql_query=source.sql_query,
-            database=source.database,
-            collection_id=source.collection_id,
-        )
 
-    def _to_generated(self):
-        return _AzureCosmosDBParameter(
-            connection_string=self.connection_string,
-            sql_query=self.sql_query,
-            database=self.database,
-            collection_id=self.collection_id,
-        )
-
-    def _to_generated_patch(self):
-        return _AzureCosmosDBParameterPatch(
-            connection_string=self.connection_string,
-            sql_query=self.sql_query,
-            database=self.database,
-            collection_id=self.collection_id,
-        )
-
-
-class AzureDataExplorerDataFeedSource(DataFeedSource):
+class AzureDataExplorerDataFeedSource(DataFeedSource, generated_models.AzureDataExplorerDataFeedSource, dict):
     """AzureDataExplorerDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1112,24 +961,17 @@ class AzureDataExplorerDataFeedSource(DataFeedSource):
     :keyword str datasource_service_principal_in_kv_id: Datasource service principal in key vault unique id.
     """
 
-    def __init__(self, query, **kwargs):
-        # type: (str, **Any) -> None
-        super(AzureDataExplorerDataFeedSource, self).__init__(data_source_type="AzureDataExplorer", **kwargs)
-        msi = kwargs.get("msi", False)
-        datasource_service_principal_id = kwargs.get("datasource_service_principal_id", False)
-        datasource_service_principal_in_kv_id = kwargs.get("datasource_service_principal_in_kv_id", False)
-        if msi:
-            self.authentication_type = "ManagedIdentity"
-        elif datasource_service_principal_id:
-            self.authentication_type = "ServicePrincipal"
-            self.credential_id = datasource_service_principal_id
-        elif datasource_service_principal_in_kv_id:
-            self.authentication_type = "ServicePrincipalInKV"
-            self.credential_id = datasource_service_principal_in_kv_id
-        else:
-            self.authentication_type = "Basic"
-        self.connection_string = kwargs.get("connection_string", None)
-        self.query = query
+    def __init__(self, query: str, **kwargs: Any) -> None:
+        authentication_type, credential_id = get_auth_from_datasource_kwargs(
+            default_authentication_type="Basic", **kwargs
+        )
+        super().__init__(
+            data_source_type="AzureDataExplorer",
+            query=query,
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
 
     def __repr__(self):
         return (
@@ -1143,27 +985,8 @@ class AzureDataExplorerDataFeedSource(DataFeedSource):
             )[:1024]
         )
 
-    @classmethod
-    def _from_generated(cls, source):
-        return cls(
-            connection_string=source.connection_string,
-            query=source.query,
-        )
 
-    def _to_generated(self):
-        return _SQLSourceParameter(
-            connection_string=self.connection_string,
-            query=self.query,
-        )
-
-    def _to_generated_patch(self):
-        return _SQLSourceParameterPatch(
-            connection_string=self.connection_string,
-            query=self.query,
-        )
-
-
-class AzureTableDataFeedSource(DataFeedSource):
+class AzureTableDataFeedSource(DataFeedSource, generated_models.AzureTableDataFeedSource, dict):
     """AzureTableDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1181,14 +1004,8 @@ class AzureTableDataFeedSource(DataFeedSource):
     :keyword str connection_string: Azure Table connection string.
     """
 
-    def __init__(self, query, table, **kwargs):
-        # type: (str, str, **Any) -> None
-        super(AzureTableDataFeedSource, self).__init__(
-            data_source_type="AzureTable", authentication_type="Basic", **kwargs
-        )
-        self.connection_string = kwargs.get("connection_string", None)
-        self.query = query
-        self.table = table
+    def __init__(self, query: str, table: str, **kwargs: Any) -> None:
+        super().__init__(query=query, table=table, data_source_type="AzureTable", authentication_type="Basic", **kwargs)
 
     def __repr__(self):
         return (
@@ -1203,22 +1020,8 @@ class AzureTableDataFeedSource(DataFeedSource):
             )[:1024]
         )
 
-    @classmethod
-    def _from_generated(cls, source):
-        return cls(
-            connection_string=source.connection_string,
-            query=source.query,
-            table=source.table,
-        )
 
-    def _to_generated(self):
-        return _AzureTableParameter(connection_string=self.connection_string, query=self.query, table=self.table)
-
-    def _to_generated_patch(self):
-        return _AzureTableParameterPatch(connection_string=self.connection_string, query=self.query, table=self.table)
-
-
-class AzureEventHubsDataFeedSource(DataFeedSource):
+class AzureEventHubsDataFeedSource(DataFeedSource, generated_models.AzureEventHubsDataFeedSource, dict):
     """AzureEventHubsDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1235,13 +1038,10 @@ class AzureEventHubsDataFeedSource(DataFeedSource):
     :param str consumer_group: Required. The consumer group to be used in this data feed.
     """
 
-    def __init__(self, consumer_group, **kwargs):
-        # type: (str, **Any) -> None
-        super(AzureEventHubsDataFeedSource, self).__init__(
-            data_source_type="AzureEventHubs", authentication_type="Basic", **kwargs
+    def __init__(self, consumer_group: str, **kwargs: Any) -> None:
+        super().__init__(
+            data_source_type="AzureEventHubs", authentication_type="Basic", consumer_group=consumer_group, **kwargs
         )
-        self.connection_string = kwargs.get("connection_string", None)
-        self.consumer_group = consumer_group
 
     def __repr__(self):
         return (
@@ -1255,27 +1055,8 @@ class AzureEventHubsDataFeedSource(DataFeedSource):
             )[:1024]
         )
 
-    @classmethod
-    def _from_generated(cls, source):
-        return cls(
-            connection_string=source.connection_string,
-            consumer_group=source.consumer_group,
-        )
 
-    def _to_generated(self):
-        return _AzureEventHubsParameter(
-            connection_string=self.connection_string,
-            consumer_group=self.consumer_group,
-        )
-
-    def _to_generated_patch(self):
-        return _AzureEventHubsParameterPatch(
-            connection_string=self.connection_string,
-            consumer_group=self.consumer_group,
-        )
-
-
-class InfluxDbDataFeedSource(DataFeedSource):
+class InfluxDbDataFeedSource(DataFeedSource, generated_models.InfluxDbDataFeedSource, dict):
     """InfluxDbDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1295,14 +1076,8 @@ class InfluxDbDataFeedSource(DataFeedSource):
     :param str query: Required. Query script.
     """
 
-    def __init__(self, query, **kwargs):
-        # type: (str, **Any) -> None
-        super(InfluxDbDataFeedSource, self).__init__(data_source_type="InfluxDB", authentication_type="Basic", **kwargs)
-        self.connection_string = kwargs.get("connection_string", None)
-        self.database = kwargs.get("database", None)
-        self.user_name = kwargs.get("user_name", None)
-        self.password = kwargs.get("password", None)
-        self.query = query
+    def __init__(self, query: str, **kwargs: Any) -> None:
+        super().__init__(query=query, data_source_type="InfluxDB", authentication_type="Basic", **kwargs)
 
     def __repr__(self):
         return (
@@ -1319,36 +1094,8 @@ class InfluxDbDataFeedSource(DataFeedSource):
             )[:1024]
         )
 
-    @classmethod
-    def _from_generated(cls, source):
-        return cls(
-            connection_string=source.connection_string,
-            database=source.database,
-            user_name=source.user_name,
-            password=source.password,
-            query=source.query,
-        )
 
-    def _to_generated(self):
-        return _InfluxDBParameter(
-            connection_string=self.connection_string,
-            database=self.database,
-            user_name=self.user_name,
-            password=self.password,
-            query=self.query,
-        )
-
-    def _to_generated_patch(self):
-        return _InfluxDBParameterPatch(
-            connection_string=self.connection_string,
-            database=self.database,
-            user_name=self.user_name,
-            password=self.password,
-            query=self.query,
-        )
-
-
-class MySqlDataFeedSource(DataFeedSource):
+class MySqlDataFeedSource(DataFeedSource, generated_models.AzureDataExplorerDataFeedSource, dict):
     """MySqlDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1365,11 +1112,8 @@ class MySqlDataFeedSource(DataFeedSource):
     :param str query: Required. Query script.
     """
 
-    def __init__(self, query, **kwargs):
-        # type: (str, **Any) -> None
-        super(MySqlDataFeedSource, self).__init__(data_source_type="MySql", authentication_type="Basic", **kwargs)
-        self.connection_string = kwargs.get("connection_string", None)
-        self.query = query
+    def __init__(self, query: str, **kwargs: Any) -> None:
+        super().__init__(data_source_type="MySql", authentication_type="Basic", query=query, **kwargs)
 
     def __repr__(self):
         return (
@@ -1383,21 +1127,8 @@ class MySqlDataFeedSource(DataFeedSource):
             )[:1024]
         )
 
-    @classmethod
-    def _from_generated(cls, source):
-        return cls(
-            connection_string=source.connection_string,
-            query=source.query,
-        )
 
-    def _to_generated(self):
-        return _SQLSourceParameter(connection_string=self.connection_string, query=self.query)
-
-    def _to_generated_patch(self):
-        return _SQLSourceParameterPatch(connection_string=self.connection_string, query=self.query)
-
-
-class PostgreSqlDataFeedSource(DataFeedSource):
+class PostgreSqlDataFeedSource(DataFeedSource, generated_models.AzureDataExplorerDataFeedSource, dict):
     """PostgreSqlDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1414,13 +1145,8 @@ class PostgreSqlDataFeedSource(DataFeedSource):
     :param str query: Required. Query script.
     """
 
-    def __init__(self, query, **kwargs):
-        # type: (str, **Any) -> None
-        super(PostgreSqlDataFeedSource, self).__init__(
-            data_source_type="PostgreSql", authentication_type="Basic", **kwargs
-        )
-        self.connection_string = kwargs.get("connection_string", None)
-        self.query = query
+    def __init__(self, query: str, **kwargs: Any) -> None:
+        super().__init__(query=query, data_source_type="PostgreSql", authentication_type="Basic", **kwargs)
 
     def __repr__(self):
         return (
@@ -1434,21 +1160,8 @@ class PostgreSqlDataFeedSource(DataFeedSource):
             )[:1024]
         )
 
-    @classmethod
-    def _from_generated(cls, source):
-        return cls(
-            connection_string=source.connection_string,
-            query=source.query,
-        )
 
-    def _to_generated(self):
-        return _SQLSourceParameter(connection_string=self.connection_string, query=self.query)
-
-    def _to_generated_patch(self):
-        return _SQLSourceParameterPatch(connection_string=self.connection_string, query=self.query)
-
-
-class SqlServerDataFeedSource(DataFeedSource):
+class SqlServerDataFeedSource(DataFeedSource, generated_models.AzureDataExplorerDataFeedSource, dict):
     """SqlServerDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1469,28 +1182,20 @@ class SqlServerDataFeedSource(DataFeedSource):
     :keyword str datasource_sql_connection_string_id: Datasource sql connection string unique id.
     """
 
-    def __init__(self, query, **kwargs):
-        # type: (str, **Any) -> None
-        super(SqlServerDataFeedSource, self).__init__(data_source_type="SqlServer", **kwargs)
-        msi = kwargs.get("msi", False)
-        datasource_service_principal_id = kwargs.get("datasource_service_principal_id", False)
-        datasource_service_principal_in_kv_id = kwargs.get("datasource_service_principal_in_kv_id", False)
+    def __init__(self, query: str, **kwargs: Any) -> None:
         datasource_sql_connection_string_id = kwargs.get("datasource_sql_connection_string_id", False)
-        if msi:
-            self.authentication_type = "ManagedIdentity"
-        elif datasource_service_principal_id:
-            self.authentication_type = "ServicePrincipal"
-            self.credential_id = datasource_service_principal_id
-        elif datasource_service_principal_in_kv_id:
-            self.authentication_type = "ServicePrincipalInKV"
-            self.credential_id = datasource_service_principal_in_kv_id
-        elif datasource_sql_connection_string_id:
-            self.authentication_type = "AzureSQLConnectionString"
-            self.credential_id = datasource_sql_connection_string_id
-        else:
-            self.authentication_type = "Basic"
-        self.connection_string = kwargs.get("connection_string", None)
-        self.query = query
+        authentication_type, credential_id = get_auth_from_datasource_kwargs(
+            default_authentication_type="AzureSQLConnectionString" if datasource_sql_connection_string_id else "Basic"
+        )
+        if credential_id is None and datasource_sql_connection_string_id:
+            credential_id = datasource_sql_connection_string_id
+        super().__init__(
+            query=query,
+            data_source_type="SqlServer",
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            **kwargs
+        )
 
     def __repr__(self):
         return (
@@ -1504,27 +1209,10 @@ class SqlServerDataFeedSource(DataFeedSource):
             )[:1024]
         )
 
-    @classmethod
-    def _from_generated(cls, source):
-        return cls(
-            connection_string=source.connection_string,
-            query=source.query,
-        )
 
-    def _to_generated(self):
-        return _SQLSourceParameter(
-            connection_string=self.connection_string,
-            query=self.query,
-        )
-
-    def _to_generated_patch(self):
-        return _SQLSourceParameterPatch(
-            connection_string=self.connection_string,
-            query=self.query,
-        )
-
-
-class AzureDataLakeStorageGen2DataFeedSource(DataFeedSource):
+class AzureDataLakeStorageGen2DataFeedSource(
+    DataFeedSource, generated_models.AzureDataLakeStorageGen2DataFeedSource, dict
+):
     """AzureDataLakeStorageGen2DataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1548,33 +1236,23 @@ class AzureDataLakeStorageGen2DataFeedSource(DataFeedSource):
     :keyword str datasource_datalake_gen2_shared_key_id: Datasource datalake gen2 shared key unique id.
     """
 
-    def __init__(self, file_system_name, directory_template, file_template, **kwargs):
-        # type: (str, str, str, **Any) -> None
-        super(AzureDataLakeStorageGen2DataFeedSource, self).__init__(
-            data_source_type="AzureDataLakeStorageGen2", **kwargs
-        )
-        msi = kwargs.get("msi", False)
-        datasource_service_principal_id = kwargs.get("datasource_service_principal_id", False)
-        datasource_service_principal_in_kv_id = kwargs.get("datasource_service_principal_in_kv_id", False)
+    def __init__(self, file_system_name: str, directory_template: str, file_template: str, **kwargs: Any) -> None:
+
         datasource_datalake_gen2_shared_key_id = kwargs.get("datasource_datalake_gen2_shared_key_id", False)
-        if msi:
-            self.authentication_type = "ManagedIdentity"
-        elif datasource_service_principal_id:
-            self.authentication_type = "ServicePrincipal"
-            self.credential_id = datasource_service_principal_id
-        elif datasource_service_principal_in_kv_id:
-            self.authentication_type = "ServicePrincipalInKV"
-            self.credential_id = datasource_service_principal_in_kv_id
-        elif datasource_datalake_gen2_shared_key_id:
-            self.authentication_type = "DataLakeGen2SharedKey"
-            self.credential_id = datasource_datalake_gen2_shared_key_id
-        else:
-            self.authentication_type = "Basic"
-        self.account_name = kwargs.get("account_name", None)
-        self.account_key = kwargs.get("account_key", None)
-        self.file_system_name = file_system_name
-        self.directory_template = directory_template
-        self.file_template = file_template
+        authentication_type, credential_id = get_auth_from_datasource_kwargs(
+            default_authentication_type="DataLakeGen2SharedKey" if datasource_datalake_gen2_shared_key_id else "Basic",
+        )
+        if credential_id is None and datasource_datalake_gen2_shared_key_id:
+            credential_id = datasource_datalake_gen2_shared_key_id
+        super().__init__(
+            data_source_type="AzureDataLakeStorageGen2",
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            file_system_name=file_system_name,
+            directory_template=directory_template,
+            file_template=file_template,
+            **kwargs
+        )
 
     def __repr__(self):
         return (
@@ -1592,36 +1270,8 @@ class AzureDataLakeStorageGen2DataFeedSource(DataFeedSource):
             )[:1024]
         )
 
-    @classmethod
-    def _from_generated(cls, source):
-        return cls(
-            account_name=source.account_name,
-            account_key=source.account_key,
-            file_system_name=source.file_system_name,
-            directory_template=source.directory_template,
-            file_template=source.file_template,
-        )
 
-    def _to_generated(self):
-        return _AzureDataLakeStorageGen2Parameter(
-            account_name=self.account_name,
-            account_key=self.account_key,
-            file_system_name=self.file_system_name,
-            directory_template=self.directory_template,
-            file_template=self.file_template,
-        )
-
-    def _to_generated_patch(self):
-        return _AzureDataLakeStorageGen2ParameterPatch(
-            account_name=self.account_name,
-            account_key=self.account_key,
-            file_system_name=self.file_system_name,
-            directory_template=self.directory_template,
-            file_template=self.file_template,
-        )
-
-
-class AzureLogAnalyticsDataFeedSource(DataFeedSource):
+class AzureLogAnalyticsDataFeedSource(DataFeedSource, generated_models.AzureLogAnalyticsDataFeedSource, dict):
     """AzureLogAnalyticsDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1648,22 +1298,29 @@ class AzureLogAnalyticsDataFeedSource(DataFeedSource):
 
     def __init__(self, workspace_id, query, **kwargs):
         # type: (str, str, **Any) -> None
-        super(AzureLogAnalyticsDataFeedSource, self).__init__(data_source_type="AzureLogAnalytics", **kwargs)
-        datasource_service_principal_id = kwargs.get("datasource_service_principal_id", False)
-        datasource_service_principal_in_kv_id = kwargs.get("datasource_service_principal_in_kv_id", False)
-        if datasource_service_principal_id:
-            self.authentication_type = "ServicePrincipal"
-            self.credential_id = datasource_service_principal_id
-        elif datasource_service_principal_in_kv_id:
-            self.authentication_type = "ServicePrincipalInKV"
-            self.credential_id = datasource_service_principal_in_kv_id
-        else:
-            self.authentication_type = "Basic"
-            self.tenant_id = kwargs.get("tenant_id", None)
-            self.client_id = kwargs.get("client_id", None)
-            self.client_secret = kwargs.get("client_secret", None)
-        self.workspace_id = workspace_id
-        self.query = query
+        super().__init__(data_source_type="AzureLogAnalytics", **kwargs)
+        authentication_type, credential_id = get_auth_from_datasource_kwargs(
+            default_authentication_type="Basic",
+            check_msi_kwarg=False,
+        )
+        tenant_id = None
+        client_id = None
+        client_secret = None
+        if authentication_type == "Basic":
+            tenant_id = kwargs.get("tenant_id", None)
+            client_id = kwargs.get("client_id", None)
+            client_secret = kwargs.get("client_secret", None)
+        super().__init__(
+            data_source_type="AzureLogAnalytics",
+            authentication_type=authentication_type,
+            credential_id=credential_id,
+            tenant_id=tenant_id,
+            client_id=client_id,
+            client_secret=client_secret,
+            workspace_id=workspace_id,
+            query=query,
+            **kwargs
+        )
 
     def __repr__(self):
         return (
@@ -1680,36 +1337,8 @@ class AzureLogAnalyticsDataFeedSource(DataFeedSource):
             )[:1024]
         )
 
-    @classmethod
-    def _from_generated(cls, source):
-        return cls(
-            tenant_id=source.tenant_id,
-            client_id=source.client_id,
-            client_secret=source.client_secret,
-            workspace_id=source.workspace_id,
-            query=source.query,
-        )
 
-    def _to_generated(self):
-        return _AzureLogAnalyticsParameter(
-            tenant_id=self.tenant_id,
-            client_id=self.client_id,
-            client_secret=self.client_secret,
-            workspace_id=self.workspace_id,
-            query=self.query,
-        )
-
-    def _to_generated_patch(self):
-        return _AzureLogAnalyticsParameterPatch(
-            tenant_id=self.tenant_id,
-            client_id=self.client_id,
-            client_secret=self.client_secret,
-            workspace_id=self.workspace_id,
-            query=self.query,
-        )
-
-
-class MongoDbDataFeedSource(DataFeedSource):
+class MongoDbDataFeedSource(DataFeedSource, generated_models.MongoDbDataFeedSource, dict):
     """MongoDbDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1727,12 +1356,9 @@ class MongoDbDataFeedSource(DataFeedSource):
     :param str command: Required. Query script.
     """
 
-    def __init__(self, command, **kwargs):
+    def __init__(self, command: str, **kwargs: Any):
         # type: (str, **Any) -> None
-        super(MongoDbDataFeedSource, self).__init__(data_source_type="MongoDB", authentication_type="Basic", **kwargs)
-        self.connection_string = kwargs.get("connection_string", None)
-        self.database = kwargs.get("database", None)
-        self.command = command
+        super().__init__(command=command, data_source_type="MongoDB", authentication_type="Basic", **kwargs)
 
     def __repr__(self):
         return (
@@ -1747,30 +1373,8 @@ class MongoDbDataFeedSource(DataFeedSource):
             )[:1024]
         )
 
-    @classmethod
-    def _from_generated(cls, source):
-        return cls(
-            connection_string=source.connection_string,
-            database=source.database,
-            command=source.command,
-        )
 
-    def _to_generated(self):
-        return _MongoDBParameter(
-            connection_string=self.connection_string,
-            database=self.database,
-            command=self.command,
-        )
-
-    def _to_generated_patch(self):
-        return _MongoDBParameterPatch(
-            connection_string=self.connection_string,
-            database=self.database,
-            command=self.command,
-        )
-
-
-class NotificationHook(_NotificationHook, dict):
+class NotificationHook(generated_models.NotificationHook, dict):
     """NotificationHook.
 
     :param str name: Hook unique name.
@@ -1798,7 +1402,7 @@ class NotificationHook(_NotificationHook, dict):
         )[:1024]
 
 
-class EmailNotificationHook(NotificationHook, _EmailNotificationHook):
+class EmailNotificationHook(NotificationHook, generated_models.EmailNotificationHook):
     """EmailNotificationHook.
 
     :param str name: Hook unique name.
@@ -1811,7 +1415,7 @@ class EmailNotificationHook(NotificationHook, _EmailNotificationHook):
     """
 
     def __init__(self, name: str, emails_to_alert: List[str], **kwargs: Any) -> None:
-        super(EmailNotificationHook, self).__init__(name, emails_to_alert=emails_to_alert, **kwargs)
+        super().__init__(name, emails_to_alert=emails_to_alert, **kwargs)
 
     def __repr__(self):
         return (
@@ -1828,7 +1432,7 @@ class EmailNotificationHook(NotificationHook, _EmailNotificationHook):
         )
 
 
-class WebNotificationHook(NotificationHook, _WebNotificationHook):
+class WebNotificationHook(NotificationHook, generated_models.WebNotificationHook):
     """WebNotificationHook.
 
     :param str name: Hook unique name.
@@ -1846,7 +1450,7 @@ class WebNotificationHook(NotificationHook, _WebNotificationHook):
     """
 
     def __init__(self, name: str, endpoint: str, **kwargs: Any) -> None:
-        super(WebNotificationHook, self).__init__(name, endpoint=endpoint, **kwargs)
+        super().__init__(name, endpoint=endpoint, **kwargs)
 
     def __repr__(self):
         return (
@@ -1900,43 +1504,6 @@ class MetricDetectionCondition(object):
             )[:1024]
         )
 
-    @classmethod
-    def _from_generated(cls, condition):
-        return cls(
-            condition_operator=condition.condition_operator,
-            smart_detection_condition=SmartDetectionCondition._from_generated(condition.smart_detection_condition),
-            hard_threshold_condition=HardThresholdCondition._from_generated(condition.hard_threshold_condition),
-            change_threshold_condition=ChangeThresholdCondition._from_generated(condition.change_threshold_condition),
-        )
-
-    def _to_generated(self):
-        return _MetricDetectionCondition(
-            condition_operator=self.condition_operator,
-            smart_detection_condition=self.smart_detection_condition._to_generated()
-            if self.smart_detection_condition
-            else None,
-            hard_threshold_condition=self.hard_threshold_condition._to_generated()
-            if self.hard_threshold_condition
-            else None,
-            change_threshold_condition=self.change_threshold_condition._to_generated()
-            if self.change_threshold_condition
-            else None,
-        )
-
-    def _to_generated_patch(self):
-        return _MetricDetectionConditionPatch(
-            condition_operator=self.condition_operator,
-            smart_detection_condition=self.smart_detection_condition._to_generated_patch()
-            if self.smart_detection_condition
-            else None,
-            hard_threshold_condition=self.hard_threshold_condition._to_generated_patch()
-            if self.hard_threshold_condition
-            else None,
-            change_threshold_condition=self.change_threshold_condition._to_generated_patch()
-            if self.change_threshold_condition
-            else None,
-        )
-
 
 class ChangeThresholdCondition(object):
     """ChangeThresholdCondition.
@@ -1983,44 +1550,6 @@ class ChangeThresholdCondition(object):
                 self.anomaly_detector_direction,
                 repr(self.suppress_condition),
             )[:1024]
-        )
-
-    @classmethod
-    def _from_generated(cls, condition):
-        return (
-            cls(
-                change_percentage=condition.change_percentage,
-                shift_point=condition.shift_point,
-                within_range=condition.within_range,
-                anomaly_detector_direction=condition.anomaly_detector_direction,
-                suppress_condition=SuppressCondition._from_generated(condition.suppress_condition),
-            )
-            if condition
-            else None
-        )
-
-    def _to_generated(self):
-        return _ChangeThresholdCondition(
-            change_percentage=self.change_percentage,
-            shift_point=self.shift_point,
-            within_range=self.within_range,
-            anomaly_detector_direction=self.anomaly_detector_direction,
-            suppress_condition=_SuppressCondition(
-                min_number=self.suppress_condition.min_number,
-                min_ratio=self.suppress_condition.min_ratio,
-            ),
-        )
-
-    def _to_generated_patch(self):
-        return _ChangeThresholdConditionPatch(
-            change_percentage=self.change_percentage,
-            shift_point=self.shift_point,
-            within_range=self.within_range,
-            anomaly_detector_direction=self.anomaly_detector_direction,
-            suppress_condition=_SuppressConditionPatch(
-                min_number=self.suppress_condition.min_number,
-                min_ratio=self.suppress_condition.min_ratio,
-            ),
         )
 
 
@@ -2074,38 +1603,6 @@ class SmartDetectionCondition(object):
             repr(self.suppress_condition),
         )[:1024]
 
-    @classmethod
-    def _from_generated(cls, condition):
-        return (
-            cls(
-                sensitivity=condition.sensitivity,
-                anomaly_detector_direction=condition.anomaly_detector_direction,
-                suppress_condition=SuppressCondition._from_generated(condition.suppress_condition),
-            )
-            if condition
-            else None
-        )
-
-    def _to_generated(self):
-        return _SmartDetectionCondition(
-            sensitivity=self.sensitivity,
-            anomaly_detector_direction=self.anomaly_detector_direction,
-            suppress_condition=_SuppressCondition(
-                min_number=self.suppress_condition.min_number,
-                min_ratio=self.suppress_condition.min_ratio,
-            ),
-        )
-
-    def _to_generated_patch(self):
-        return _SmartDetectionConditionPatch(
-            sensitivity=self.sensitivity,
-            anomaly_detector_direction=self.anomaly_detector_direction,
-            suppress_condition=_SuppressConditionPatch(
-                min_number=self.suppress_condition.min_number,
-                min_ratio=self.suppress_condition.min_ratio,
-            ),
-        )
-
 
 class HardThresholdCondition(object):
     """HardThresholdCondition.
@@ -2142,41 +1639,6 @@ class HardThresholdCondition(object):
             )[:1024]
         )
 
-    @classmethod
-    def _from_generated(cls, condition):
-        return (
-            cls(
-                anomaly_detector_direction=condition.anomaly_detector_direction,
-                suppress_condition=SuppressCondition._from_generated(condition.suppress_condition),
-                lower_bound=condition.lower_bound,
-                upper_bound=condition.upper_bound,
-            )
-            if condition
-            else None
-        )
-
-    def _to_generated(self):
-        return _HardThresholdCondition(
-            lower_bound=self.lower_bound,
-            upper_bound=self.upper_bound,
-            anomaly_detector_direction=self.anomaly_detector_direction,
-            suppress_condition=_SuppressCondition(
-                min_number=self.suppress_condition.min_number,
-                min_ratio=self.suppress_condition.min_ratio,
-            ),
-        )
-
-    def _to_generated_patch(self):
-        return _HardThresholdConditionPatch(
-            lower_bound=self.lower_bound,
-            upper_bound=self.upper_bound,
-            anomaly_detector_direction=self.anomaly_detector_direction,
-            suppress_condition=_SuppressConditionPatch(
-                min_number=self.suppress_condition.min_number,
-                min_ratio=self.suppress_condition.min_ratio,
-            ),
-        )
-
 
 class MetricSeriesGroupDetectionCondition(MetricDetectionCondition):
     """MetricSeriesGroupAnomalyDetectionConditions.
@@ -2198,7 +1660,7 @@ class MetricSeriesGroupDetectionCondition(MetricDetectionCondition):
 
     def __init__(self, series_group_key, **kwargs):
         # type: (Dict[str, str], Any) -> None
-        super(MetricSeriesGroupDetectionCondition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.series_group_key = series_group_key
 
     def __repr__(self):
@@ -2211,31 +1673,6 @@ class MetricSeriesGroupDetectionCondition(MetricDetectionCondition):
                 repr(self.change_threshold_condition),
                 self.series_group_key,
             )[:1024]
-        )
-
-    @classmethod
-    def _from_generated(cls, condition):
-        return cls(
-            series_group_key=condition.group.dimension,
-            condition_operator=condition.condition_operator,
-            smart_detection_condition=SmartDetectionCondition._from_generated(condition.smart_detection_condition),
-            hard_threshold_condition=HardThresholdCondition._from_generated(condition.hard_threshold_condition),
-            change_threshold_condition=ChangeThresholdCondition._from_generated(condition.change_threshold_condition),
-        )
-
-    def _to_generated(self):
-        return _MetricSeriesGroupDetectionCondition(
-            group=_DimensionGroupIdentity(dimension=self.series_group_key),
-            condition_operator=self.condition_operator,
-            smart_detection_condition=self.smart_detection_condition._to_generated()
-            if self.smart_detection_condition
-            else None,
-            hard_threshold_condition=self.hard_threshold_condition._to_generated()
-            if self.hard_threshold_condition
-            else None,
-            change_threshold_condition=self.change_threshold_condition._to_generated()
-            if self.change_threshold_condition
-            else None,
         )
 
 
@@ -2259,7 +1696,7 @@ class MetricSingleSeriesDetectionCondition(MetricDetectionCondition):
 
     def __init__(self, series_key, **kwargs):
         # type: (Dict[str, str], Any) -> None
-        super(MetricSingleSeriesDetectionCondition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.series_key = series_key
 
     def __repr__(self):
@@ -2274,33 +1711,8 @@ class MetricSingleSeriesDetectionCondition(MetricDetectionCondition):
             )[:1024]
         )
 
-    @classmethod
-    def _from_generated(cls, condition):
-        return cls(
-            series_key=condition.series.dimension,
-            condition_operator=condition.condition_operator,
-            smart_detection_condition=SmartDetectionCondition._from_generated(condition.smart_detection_condition),
-            hard_threshold_condition=HardThresholdCondition._from_generated(condition.hard_threshold_condition),
-            change_threshold_condition=ChangeThresholdCondition._from_generated(condition.change_threshold_condition),
-        )
 
-    def _to_generated(self):
-        return _MetricSingleSeriesDetectionCondition(
-            series=_SeriesIdentity(dimension=self.series_key),
-            condition_operator=self.condition_operator,
-            smart_detection_condition=self.smart_detection_condition._to_generated()
-            if self.smart_detection_condition
-            else None,
-            hard_threshold_condition=self.hard_threshold_condition._to_generated()
-            if self.hard_threshold_condition
-            else None,
-            change_threshold_condition=self.change_threshold_condition._to_generated()
-            if self.change_threshold_condition
-            else None,
-        )
-
-
-class DataFeedMetric(object):
+class DataFeedMetric(generated_models.DataFeedMetric):
     """DataFeedMetric.
 
     :param name: Required. metric name.
@@ -2313,36 +1725,16 @@ class DataFeedMetric(object):
     :vartype id: str
     """
 
-    def __init__(self, name, **kwargs):
-        # type: (str, Any) -> None
-        self.name = name
-        self.id = kwargs.get("id", None)
-        self.display_name = kwargs.get("display_name", None)
-        self.description = kwargs.get("description", None)
+    def __init__(self, name: str, **kwargs: Any) -> None:
+        super().__init__(name=name, **kwargs)
 
     def __repr__(self):
         return "DataFeedMetric(name={}, id={}, display_name={}, description={})".format(
             self.name, self.id, self.display_name, self.description
         )[:1024]
 
-    @classmethod
-    def _from_generated(cls, metric):
-        return cls(
-            id=metric.metric_id,
-            name=metric.metric_name,
-            display_name=metric.metric_display_name,
-            description=metric.metric_description,
-        )
 
-    def _to_generated(self):
-        return _DataFeedMetric(
-            metric_name=self.name,
-            metric_display_name=self.display_name,
-            metric_description=self.description,
-        )
-
-
-class DataFeedDimension(object):
+class DataFeedDimension(generated_models.DataFeedDimension):
     """DataFeedDimension.
 
     :param name: Required. dimension name.
@@ -2351,23 +1743,11 @@ class DataFeedDimension(object):
     :paramtype display_name: str
     """
 
-    def __init__(self, name, **kwargs):
-        # type: (str, Any) -> None
-        self.name = name
-        self.display_name = kwargs.get("display_name", None)
+    def __init__(self, name: str, **kwargs: Any) -> None:
+        super().__init__(name=name, **kwargs)
 
     def __repr__(self):
         return "DataFeedDimension(name={}, display_name={})".format(self.name, self.display_name)[:1024]
-
-    @classmethod
-    def _from_generated(cls, dimension):
-        return cls(
-            name=dimension.dimension_name,
-            display_name=dimension.dimension_display_name,
-        )
-
-    def _to_generated(self):
-        return _DataFeedDimension(dimension_name=self.name, dimension_display_name=self.display_name)
 
 
 class DataFeedIngestionProgress(object):
@@ -2530,7 +1910,7 @@ class AnomalyAlert(object):
         )
 
 
-DATA_FEED_TRANSFORM = {
+TYPE_TO_DATA_SOURCE = {
     "SqlServer": SqlServerDataFeedSource,
     "AzureApplicationInsights": AzureApplicationInsightsDataFeedSource,
     "AzureBlob": AzureBlobDataFeedSource,
@@ -2588,7 +1968,7 @@ class DataPointAnomaly(msrest.serialization.Model):
     }
 
     def __init__(self, **kwargs):
-        super(DataPointAnomaly, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.metric_id = kwargs.get("metric_id", None)
         self.detection_configuration_id = kwargs.get("detection_configuration_id", None)
         self.timestamp = kwargs.get("timestamp", None)
@@ -2677,7 +2057,7 @@ class AnomalyIncident(msrest.serialization.Model):
     }
 
     def __init__(self, **kwargs):
-        super(AnomalyIncident, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.metric_id = kwargs.get("metric_id", None)
         self.detection_configuration_id = kwargs.get("detection_configuration_id", None)
         self.id = kwargs.get("id", None)
@@ -2748,7 +2128,7 @@ class IncidentRootCause(msrest.serialization.Model):
     }
 
     def __init__(self, **kwargs):
-        super(IncidentRootCause, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.dimension_key = kwargs.get("dimension_key", None)
         self.path = kwargs.get("path", None)
         self.score = kwargs.get("score", None)
@@ -2802,7 +2182,7 @@ class MetricFeedback(dict):
     }
 
     def __init__(self, feedback_type, metric_id, dimension_key, **kwargs):
-        super(MetricFeedback, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.feedback_type = feedback_type  # type: str
         self.id = kwargs.get("id", None)
         self.created_time = kwargs.get("created_time", None)
@@ -2879,9 +2259,7 @@ class AnomalyFeedback(MetricFeedback):  # pylint:disable=too-many-instance-attri
     }
 
     def __init__(self, metric_id, dimension_key, start_time, end_time, value, **kwargs):
-        super(AnomalyFeedback, self).__init__(
-            feedback_type="Anomaly", metric_id=metric_id, dimension_key=dimension_key, **kwargs
-        )
+        super().__init__(feedback_type="Anomaly", metric_id=metric_id, dimension_key=dimension_key, **kwargs)
         self.start_time = start_time
         self.end_time = end_time
         self.value = value
@@ -2905,40 +2283,6 @@ class AnomalyFeedback(MetricFeedback):  # pylint:disable=too-many-instance-attri
                 self.anomaly_detection_configuration_id,
                 self.anomaly_detection_configuration_snapshot,
             )[:1024]
-        )
-
-    @classmethod
-    def _from_generated(cls, anomaly_feedback):
-        # type: (_AnomalyFeedback) -> Union[AnomalyFeedback, None]
-        if not anomaly_feedback:
-            return None
-        dimension_key = anomaly_feedback.dimension_filter.dimension
-        value = anomaly_feedback.value.anomaly_value if anomaly_feedback.value else None
-        return cls(
-            id=anomaly_feedback.feedback_id,
-            created_time=anomaly_feedback.created_time,
-            user_principal=anomaly_feedback.user_principal,
-            metric_id=anomaly_feedback.metric_id,
-            dimension_key=dimension_key,
-            start_time=anomaly_feedback.start_time,
-            end_time=anomaly_feedback.end_time,
-            value=value,
-            anomaly_detection_configuration_id=anomaly_feedback.anomaly_detection_configuration_id,
-            anomaly_detection_configuration_snapshot=anomaly_feedback.anomaly_detection_configuration_snapshot,
-        )
-
-    def _to_generated(self):
-        # type: (AnomalyFeedback) -> _AnomalyFeedback
-        dimension_filter = FeedbackDimensionFilter(dimension=self.dimension_key)
-        value = AnomalyFeedbackValue(anomaly_value=self.value)
-        return _AnomalyFeedback(
-            metric_id=self.metric_id,
-            dimension_filter=dimension_filter,
-            start_time=self.start_time,
-            end_time=self.end_time,
-            value=value,
-            anomaly_detection_configuration_id=self.anomaly_detection_configuration_id,
-            anomaly_detection_configuration_snapshot=self.anomaly_detection_configuration_snapshot,
         )
 
 
@@ -2980,9 +2324,7 @@ class ChangePointFeedback(MetricFeedback):
     }
 
     def __init__(self, metric_id, dimension_key, start_time, end_time, value, **kwargs):
-        super(ChangePointFeedback, self).__init__(
-            feedback_type="ChangePoint", metric_id=metric_id, dimension_key=dimension_key, **kwargs
-        )
+        super().__init__(feedback_type="ChangePoint", metric_id=metric_id, dimension_key=dimension_key, **kwargs)
         self.start_time = start_time
         self.end_time = end_time
         self.value = value
@@ -3001,36 +2343,6 @@ class ChangePointFeedback(MetricFeedback):
                 self.end_time,
                 self.value,
             )[:1024]
-        )
-
-    @classmethod
-    def _from_generated(cls, change_point_feedback):
-        # type: (_ChangePointFeedback) -> Union[ChangePointFeedback, None]
-        if not change_point_feedback:
-            return None
-        dimension_key = change_point_feedback.dimension_filter.dimension
-        value = change_point_feedback.value.change_point_value if change_point_feedback.value else None
-        return cls(
-            id=change_point_feedback.feedback_id,
-            created_time=change_point_feedback.created_time,
-            user_principal=change_point_feedback.user_principal,
-            metric_id=change_point_feedback.metric_id,
-            dimension_key=dimension_key,
-            start_time=change_point_feedback.start_time,
-            end_time=change_point_feedback.end_time,
-            value=value,
-        )
-
-    def _to_generated(self):
-        # type: (ChangePointFeedback) -> _ChangePointFeedback
-        dimension_filter = FeedbackDimensionFilter(dimension=self.dimension_key)
-        value = ChangePointFeedbackValue(change_point_value=self.value)
-        return _ChangePointFeedback(
-            metric_id=self.metric_id,
-            dimension_filter=dimension_filter,
-            start_time=self.start_time,
-            end_time=self.end_time,
-            value=value,
         )
 
 
@@ -3072,9 +2384,7 @@ class CommentFeedback(MetricFeedback):
     }
 
     def __init__(self, metric_id, dimension_key, start_time, end_time, value, **kwargs):
-        super(CommentFeedback, self).__init__(
-            feedback_type="Comment", metric_id=metric_id, dimension_key=dimension_key, **kwargs
-        )
+        super().__init__(feedback_type="Comment", metric_id=metric_id, dimension_key=dimension_key, **kwargs)
         self.start_time = start_time
         self.end_time = end_time
         self.value = value
@@ -3093,36 +2403,6 @@ class CommentFeedback(MetricFeedback):
                 self.end_time,
                 self.value,
             )[:1024]
-        )
-
-    @classmethod
-    def _from_generated(cls, comment_feedback):
-        # type: (_CommentFeedback) -> Union[CommentFeedback, None]
-        if not comment_feedback:
-            return None
-        dimension_key = comment_feedback.dimension_filter.dimension
-        value = comment_feedback.value.comment_value if comment_feedback.value else None
-        return cls(
-            id=comment_feedback.feedback_id,
-            created_time=comment_feedback.created_time,
-            user_principal=comment_feedback.user_principal,
-            metric_id=comment_feedback.metric_id,
-            dimension_key=dimension_key,
-            start_time=comment_feedback.start_time,
-            end_time=comment_feedback.end_time,
-            value=value,
-        )
-
-    def _to_generated(self):
-        # type: (CommentFeedback) -> _CommentFeedback
-        dimension_filter = FeedbackDimensionFilter(dimension=self.dimension_key)
-        value = CommentFeedbackValue(comment_value=self.value)
-        return _CommentFeedback(
-            metric_id=self.metric_id,
-            dimension_filter=dimension_filter,
-            start_time=self.start_time,
-            end_time=self.end_time,
-            value=value,
         )
 
 
@@ -3161,9 +2441,7 @@ class PeriodFeedback(MetricFeedback):
     }
 
     def __init__(self, metric_id, dimension_key, value, period_type, **kwargs):
-        super(PeriodFeedback, self).__init__(
-            feedback_type="Period", metric_id=metric_id, dimension_key=dimension_key, **kwargs
-        )
+        super().__init__(feedback_type="Period", metric_id=metric_id, dimension_key=dimension_key, **kwargs)
         self.value = value
         self.period_type = period_type
 
@@ -3180,34 +2458,6 @@ class PeriodFeedback(MetricFeedback):
                 self.value,
                 self.period_type,
             )[:1024]
-        )
-
-    @classmethod
-    def _from_generated(cls, period_feedback):
-        # type: (_PeriodFeedback) -> Union[PeriodFeedback, None]
-        if not period_feedback:
-            return None
-        dimension_key = period_feedback.dimension_filter.dimension
-        value = period_feedback.value.period_value if period_feedback.value else None
-        period_type = period_feedback.value.period_type if period_feedback.value else None
-        return cls(
-            id=period_feedback.feedback_id,
-            created_time=period_feedback.created_time,
-            user_principal=period_feedback.user_principal,
-            metric_id=period_feedback.metric_id,
-            dimension_key=dimension_key,
-            value=value,
-            period_type=period_type,
-        )
-
-    def _to_generated(self):
-        # type: (PeriodFeedback) -> _PeriodFeedback
-        dimension_filter = FeedbackDimensionFilter(dimension=self.dimension_key)
-        value = PeriodFeedbackValue(period_type=self.period_type, period_value=self.value)
-        return _PeriodFeedback(
-            metric_id=self.metric_id,
-            dimension_filter=dimension_filter,
-            value=value,
         )
 
 
@@ -3235,7 +2485,7 @@ class DatasourceCredential(dict):
 
     def __init__(self, name, credential_type, **kwargs):
         # type: (str, str, Any) -> None
-        super(DatasourceCredential, self).__init__(name=name, credential_type=credential_type, **kwargs)
+        super().__init__(name=name, credential_type=credential_type, **kwargs)
         self.credential_type = credential_type
         self.name = name
         self.id = kwargs.get("id", None)
@@ -3279,9 +2529,7 @@ class DatasourceSqlConnectionString(DatasourceCredential):
 
     def __init__(self, name, connection_string, **kwargs):
         # type: (str, str, Any) -> None
-        super(DatasourceSqlConnectionString, self).__init__(
-            name=name, credential_type="AzureSQLConnectionString", **kwargs
-        )
+        super().__init__(name=name, credential_type="AzureSQLConnectionString", **kwargs)
         self.connection_string = connection_string
 
     def __repr__(self):
@@ -3294,33 +2542,6 @@ class DatasourceSqlConnectionString(DatasourceCredential):
                 self.connection_string,
                 self.description,
             )[:1024]
-        )
-
-    @classmethod
-    def _from_generated(cls, source):
-        return cls(
-            name=source.data_source_credential_name,
-            connection_string=source.parameters.connection_string,
-            id=source.data_source_credential_id,
-            description=source.data_source_credential_description,
-        )
-
-    def _to_generated(self):
-        param = _AzureSQLConnectionStringParam(connection_string=self.connection_string)
-        return _DatasourceSqlConnectionString(
-            data_source_credential_type=self.credential_type,
-            data_source_credential_name=self.name,
-            data_source_credential_description=self.description,
-            parameters=param,
-        )
-
-    def _to_generated_patch(self):
-        param_patch = _AzureSQLConnectionStringParamPatch(connection_string=self.connection_string)
-        return _DatasourceSqlConnectionStringPatch(
-            data_source_credential_type=self.credential_type,
-            data_source_credential_name=self.name,
-            data_source_credential_description=self.description,
-            parameters=param_patch,
         )
 
 
@@ -3353,9 +2574,7 @@ class DatasourceDataLakeGen2SharedKey(DatasourceCredential):
 
     def __init__(self, name, account_key, **kwargs):
         # type: (str, str, Any) -> None
-        super(DatasourceDataLakeGen2SharedKey, self).__init__(
-            name=name, credential_type="DataLakeGen2SharedKey", **kwargs
-        )
+        super().__init__(name=name, credential_type="DataLakeGen2SharedKey", **kwargs)
         self.account_key = account_key
 
     def __repr__(self):
@@ -3368,33 +2587,6 @@ class DatasourceDataLakeGen2SharedKey(DatasourceCredential):
                 self.account_key,
                 self.description,
             )[:1024]
-        )
-
-    @classmethod
-    def _from_generated(cls, source):
-        return cls(
-            name=source.data_source_credential_name,
-            account_key=source.parameters.account_key,
-            id=source.data_source_credential_id,
-            description=source.data_source_credential_description,
-        )
-
-    def _to_generated(self):
-        param = _DataLakeGen2SharedKeyParam(account_key=self.account_key)
-        return _DatasourceDataLakeGen2SharedKey(
-            data_source_credential_type=self.credential_type,
-            data_source_credential_name=self.name,
-            data_source_credential_description=self.description,
-            parameters=param,
-        )
-
-    def _to_generated_patch(self):
-        param_patch = _DataLakeGen2SharedKeyParamPatch(account_key=self.account_key)
-        return _DatasourceDataLakeGen2SharedKeyPatch(
-            data_source_credential_type=self.credential_type,
-            data_source_credential_name=self.name,
-            data_source_credential_description=self.description,
-            parameters=param_patch,
         )
 
 
@@ -3433,7 +2625,7 @@ class DatasourceServicePrincipal(DatasourceCredential):
 
     def __init__(self, name, client_id, client_secret, tenant_id, **kwargs):
         # type: (str, str, str, str, Any) -> None
-        super(DatasourceServicePrincipal, self).__init__(name=name, credential_type="ServicePrincipal", **kwargs)
+        super().__init__(name=name, credential_type="ServicePrincipal", **kwargs)
         self.client_id = client_id
         self.client_secret = client_secret
         self.tenant_id = tenant_id
@@ -3450,43 +2642,6 @@ class DatasourceServicePrincipal(DatasourceCredential):
                 self.tenant_id,
                 self.description,
             )[:1024]
-        )
-
-    @classmethod
-    def _from_generated(cls, source):
-        return cls(
-            name=source.data_source_credential_name,
-            client_id=source.parameters.client_id,
-            client_secret=source.parameters.client_secret,
-            tenant_id=source.parameters.tenant_id,
-            id=source.data_source_credential_id,
-            description=source.data_source_credential_description,
-        )
-
-    def _to_generated(self):
-        param = _ServicePrincipalParam(
-            client_id=self.client_id,
-            client_secret=self.client_secret,
-            tenant_id=self.tenant_id,
-        )
-        return _DatasourceServicePrincipal(
-            data_source_credential_type=self.credential_type,
-            data_source_credential_name=self.name,
-            data_source_credential_description=self.description,
-            parameters=param,
-        )
-
-    def _to_generated_patch(self):
-        param_patch = _ServicePrincipalParamPatch(
-            client_id=self.client_id,
-            client_secret=self.client_secret,
-            tenant_id=self.tenant_id,
-        )
-        return _DatasourceServicePrincipalPatch(
-            data_source_credential_type=self.credential_type,
-            data_source_credential_name=self.name,
-            data_source_credential_description=self.description,
-            parameters=param_patch,
         )
 
 
@@ -3548,9 +2703,7 @@ class DatasourceServicePrincipalInKeyVault(DatasourceCredential):
             raise ValueError("service_principal_secret_name_in_kv is required.")
         if "tenant_id" not in kwargs:
             raise ValueError("tenant_id is required.")
-        super(DatasourceServicePrincipalInKeyVault, self).__init__(
-            name=name, credential_type="ServicePrincipalInKV", **kwargs
-        )
+        super().__init__(name=name, credential_type="ServicePrincipalInKV", **kwargs)
         self.key_vault_endpoint = kwargs["key_vault_endpoint"]
         self.key_vault_client_id = kwargs["key_vault_client_id"]
         self.key_vault_client_secret = kwargs["key_vault_client_secret"]
@@ -3577,52 +2730,6 @@ class DatasourceServicePrincipalInKeyVault(DatasourceCredential):
             )[:1024]
         )
 
-    @classmethod
-    def _from_generated(cls, source):
-        return cls(
-            name=source.data_source_credential_name,
-            key_vault_endpoint=source.parameters.key_vault_endpoint,
-            key_vault_client_id=source.parameters.key_vault_client_id,
-            key_vault_client_secret=source.parameters.key_vault_client_secret,
-            service_principal_id_name_in_kv=source.parameters.service_principal_id_name_in_kv,
-            service_principal_secret_name_in_kv=source.parameters.service_principal_secret_name_in_kv,
-            tenant_id=source.parameters.tenant_id,
-            id=source.data_source_credential_id,
-            description=source.data_source_credential_description,
-        )
-
-    def _to_generated(self):
-        param = _ServicePrincipalInKVParam(
-            key_vault_endpoint=self.key_vault_endpoint,
-            key_vault_client_id=self.key_vault_client_id,
-            key_vault_client_secret=self.key_vault_client_secret,
-            service_principal_id_name_in_kv=self.service_principal_id_name_in_kv,
-            service_principal_secret_name_in_kv=self.service_principal_secret_name_in_kv,
-            tenant_id=self.tenant_id,
-        )
-        return _DatasourceServicePrincipalInKeyVault(
-            data_source_credential_type=self.credential_type,
-            data_source_credential_name=self.name,
-            data_source_credential_description=self.description,
-            parameters=param,
-        )
-
-    def _to_generated_patch(self):
-        param_patch = _ServicePrincipalInKVParamPatch(
-            key_vault_endpoint=self.key_vault_endpoint,
-            key_vault_client_id=self.key_vault_client_id,
-            key_vault_client_secret=self.key_vault_client_secret,
-            service_principal_id_name_in_kv=self.service_principal_id_name_in_kv,
-            service_principal_secret_name_in_kv=self.service_principal_secret_name_in_kv,
-            tenant_id=self.tenant_id,
-        )
-        return _DatasourceServicePrincipalInKeyVaultPatch(
-            data_source_credential_type=self.credential_type,
-            data_source_credential_name=self.name,
-            data_source_credential_description=self.description,
-            parameters=param_patch,
-        )
-
 
 class DetectionAnomalyFilterCondition(msrest.serialization.Model):
     """DetectionAnomalyFilterCondition.
@@ -3639,21 +2746,9 @@ class DetectionAnomalyFilterCondition(msrest.serialization.Model):
     }
 
     def __init__(self, **kwargs):
-        super(DetectionAnomalyFilterCondition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.series_group_key = kwargs.get("series_group_key", None)
         self.severity_filter = kwargs.get("severity_filter", None)
-
-    @classmethod
-    def _from_generated(cls, source):
-        series_group_key = source.dimension_filter.dimension if source.dimension_filter else None
-        return cls(
-            series_group_key=series_group_key,
-            severity_filter=source.severity_filter.key_vault_endpoint,
-        )
-
-    def _to_generated(self):
-        dimension_filter = _DimensionGroupIdentity(dimension=self.series_group_key)
-        return _DetectionAnomalyFilterCondition(dimension_filter=dimension_filter, severity_filter=self.severity_filter)
 
 
 __all__ = [

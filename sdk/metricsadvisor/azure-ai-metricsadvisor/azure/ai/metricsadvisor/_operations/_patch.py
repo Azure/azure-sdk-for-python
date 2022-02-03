@@ -24,47 +24,27 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import functools
 import six
 import datetime
-from typing import Any, List, Union, cast, overload, Dict
+from typing import Any, List, Union, cast, overload, Dict, Optional
 from azure.core.tracing.decorator import distributed_trace
-from ._operations import MetricsAdvisorClientOperationsMixin as _MetricsAdvisorClientOperationsMixin
+from ._operations import (
+    MetricsAdvisorClientOperationsMixin as _MetricsAdvisorClientOperationsMixin,
+    build_get_data_feed_request,
+    build_list_data_feeds_request,
+)
 from ..models import *
+from ..models import _models_py3 as generated_models
 from msrest import Serializer
 from azure.core.paging import ItemPaged
-from azure.core.exceptions import HttpResponseError
-
-DATA_FEED = {
-    "SqlServer": SqlServerDataFeedSource,
-    "AzureApplicationInsights": AzureApplicationInsightsDataFeedSource,
-    "AzureBlob": AzureBlobDataFeedSource,
-    "AzureCosmosDB": AzureCosmosDbDataFeedSource,
-    "AzureDataExplorer": AzureDataExplorerDataFeedSource,
-    "AzureTable": AzureTableDataFeedSource,
-    "AzureLogAnalytics": AzureLogAnalyticsDataFeedSource,
-    "InfluxDB": InfluxDbDataFeedSource,
-    "MySql": MySqlDataFeedSource,
-    "PostgreSql": PostgreSqlDataFeedSource,
-    "MongoDB": MongoDbDataFeedSource,
-    "AzureDataLakeStorageGen2": AzureDataLakeStorageGen2DataFeedSource,
-    "AzureEventHubs": AzureEventHubsDataFeedSource,
-}
-
-DATA_FEED_PATCH = {
-    "SqlServer": SQLServerDataFeedPatch,
-    "AzureApplicationInsights": AzureApplicationInsightsDataFeedPatch,
-    "AzureBlob": AzureBlobDataFeedPatch,
-    "AzureCosmosDB": AzureCosmosDBDataFeedPatch,
-    "AzureDataExplorer": AzureDataExplorerDataFeedPatch,
-    "AzureTable": AzureTableDataFeedPatch,
-    "AzureEventHubs": AzureEventHubsDataFeedPatch,
-    "InfluxDB": InfluxDBDataFeedPatch,
-    "MySql": MySqlDataFeedPatch,
-    "PostgreSql": PostgreSqlDataFeedPatch,
-    "MongoDB": MongoDBDataFeedPatch,
-    "AzureDataLakeStorageGen2": AzureDataLakeStorageGen2DataFeedPatch,
-    "AzureLogAnalytics": AzureLogAnalyticsDataFeedPatch,
-}
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 
 HOOK_KWARG_NAMES = [
     "name",
@@ -170,23 +150,30 @@ def construct_alert_config_dict(update_kwargs):
 
     return update_kwargs
 
-
-def construct_data_feed_dict(update_kwargs):
-    if "dataStartFrom" in update_kwargs:
-        update_kwargs["dataStartFrom"] = Serializer.serialize_iso(update_kwargs["dataStartFrom"])
-
-    if "dataSourceParameter" in update_kwargs:
-        update_kwargs["authenticationType"] = update_kwargs["dataSourceParameter"].authentication_type
-        update_kwargs["credentialId"] = update_kwargs["dataSourceParameter"].credential_id
-        update_kwargs["dataSourceParameter"] = update_kwargs["dataSourceParameter"]._to_generated_patch()
-    return update_kwargs
-
+def construct_data_feed(**kwargs):
+    granularity = kwargs.pop("granularity", None)
+    schema = kwargs.pop("schema", None)
+    ingestion_settings = kwargs.pop("ingestion_settings", None)
+    if isinstance(granularity, (DataFeedGranularityType, str)):
+        granularity = DataFeedGranularity(
+            granularity_type=granularity,
+        )
+    if isinstance(schema, list):
+        schema = DataFeedSchema(metrics=[DataFeedMetric(name=metric_name) for metric_name in schema])
+    if isinstance(ingestion_settings, (datetime.datetime, str)):
+        ingestion_settings = DataFeedIngestionSettings(ingestion_begin_time=ingestion_settings)
+    return DataFeed(
+        granularity=granularity,
+        schema=schema,
+        ingestion_settings=ingestion_settings,
+        **kwargs
+    )
 
 def convert_datetime(date_time):
     # type: (Union[str, datetime.datetime]) -> datetime.datetime
     if isinstance(date_time, datetime.datetime):
         return date_time
-    if isinstance(date_time, six.string_types):
+    if isinstance(date_time, str):
         try:
             return datetime.datetime.strptime(date_time, "%Y-%m-%d")
         except ValueError:
@@ -195,104 +182,6 @@ def convert_datetime(date_time):
             except ValueError:
                 return datetime.datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")
     raise TypeError("Bad datetime type")
-
-
-def convert_to_generated_data_feed_type(
-    generated_feed_type,
-    name,
-    source,
-    granularity,
-    schema,
-    ingestion_settings,
-    admins=None,
-    data_feed_description=None,
-    missing_data_point_fill_settings=None,
-    rollup_settings=None,
-    viewers=None,
-    access_mode=None,
-    action_link_template=None,
-):
-    """Convert input to data feed generated model type
-    :param generated_feed_type: generated model type of data feed
-    :type generated_feed_type: Union[AzureApplicationInsightsDataFeed, AzureBlobDataFeed, AzureCosmosDBDataFeed,
-        AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, AzureLogAnalyticsDataFeed,
-        InfluxDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed, MongoDBDataFeed,
-        AzureEventHubsDataFeed]
-    :param str name: Name for the data feed.
-    :param source: The exposed model source of the data feed
-    :type source: Union[AzureApplicationInsightsDataFeedSource, AzureBlobDataFeedSource, AzureCosmosDbDataFeedSource,
-        AzureDataExplorerDataFeedSource, AzureDataLakeStorageGen2DataFeedSource, AzureTableDataFeedSource,
-        AzureLogAnalyticsDataFeedSource, InfluxDbDataFeedSource, MySqlDataFeedSource, PostgreSqlDataFeedSource,
-        SqlServerDataFeedSource, MongoDbDataFeedSource, AzureEventHubsDataFeedSource]
-    :param granularity: Granularity type and amount if using custom.
-    :type granularity: ~azure.ai.metricsadvisor.models.DataFeedGranularity
-    :param schema: Data feed schema
-    :type schema: ~azure.ai.metricsadvisor.models.DataFeedSchema
-    :param ingestion_settings: The data feed ingestions settings
-    :type ingestion_settings: ~azure.ai.metricsadvisor.models.DataFeedIngestionSettings
-    :param list[str] admins: Data feed administrators.
-    :param str data_feed_description: Data feed description.
-    :param missing_data_point_fill_settings: The fill missing point type and value.
-    :type missing_data_point_fill_settings:
-        ~azure.ai.metricsadvisor.models.DataFeedMissingDataPointFillSettings
-    :param rollup_settings: The rollup settings.
-    :type rollup_settings:
-        ~azure.ai.metricsadvisor.models.DataFeedRollupSettings
-    :param list[str] viewers: Data feed viewers.
-    :param access_mode: Data feed access mode. Possible values include:
-        "Private", "Public". Default value: "Private".
-    :type access_mode: str or ~azure.ai.metricsadvisor.models.DataFeedAccessMode
-    :param str action_link_template: action link for alert.
-    :rtype: Union[AzureApplicationInsightsDataFeed, AzureBlobDataFeed, AzureCosmosDBDataFeed,
-        AzureDataExplorerDataFeed, AzureDataLakeStorageGen2DataFeed, AzureTableDataFeed, AzureLogAnalyticsDataFeed,
-        InfluxDBDataFeed, MySqlDataFeed, PostgreSqlDataFeed, SQLServerDataFeed, MongoDBDataFeed,
-        AzureEventHubsDataFeed]
-    :return: The generated model for the data source type
-    """
-
-    if isinstance(granularity, (DataFeedGranularityType, six.string_types)):
-        granularity = DataFeedGranularity(
-            granularity_type=granularity,
-        )
-
-    if isinstance(schema, list):
-        schema = DataFeedSchema(metrics=[DataFeedMetric(name=metric_name) for metric_name in schema])
-
-    if isinstance(ingestion_settings, (datetime.datetime, six.string_types)):
-        ingestion_settings = DataFeedIngestionSettings(ingestion_begin_time=ingestion_settings)
-
-    return generated_feed_type(
-        data_source_parameter=source._to_generated(),
-        authentication_type=source.authentication_type,
-        credential_id=source.credential_id,
-        data_feed_name=name,
-        granularity_name=granularity.granularity_type,
-        granularity_amount=granularity.custom_granularity_value,
-        metrics=[metric._to_generated() for metric in schema.metrics],
-        dimension=[dimension._to_generated() for dimension in schema.dimensions] if schema.dimensions else None,
-        timestamp_column=schema.timestamp_column,
-        data_start_from=ingestion_settings.ingestion_begin_time,
-        max_concurrency=ingestion_settings.data_source_request_concurrency,
-        min_retry_interval_in_seconds=ingestion_settings.ingestion_retry_delay,
-        start_offset_in_seconds=ingestion_settings.ingestion_start_offset,
-        stop_retry_after_in_seconds=ingestion_settings.stop_retry_after,
-        data_feed_description=data_feed_description,
-        need_rollup=DataFeedRollupType._to_generated(rollup_settings.rollup_type) if rollup_settings else None,
-        roll_up_method=rollup_settings.rollup_method if rollup_settings else None,
-        roll_up_columns=rollup_settings.auto_rollup_group_by_column_names if rollup_settings else None,
-        all_up_identification=rollup_settings.rollup_identification_value if rollup_settings else None,
-        fill_missing_point_type=missing_data_point_fill_settings.fill_type
-        if missing_data_point_fill_settings
-        else None,
-        fill_missing_point_value=missing_data_point_fill_settings.custom_fill_value
-        if missing_data_point_fill_settings
-        else None,
-        viewers=viewers,
-        view_mode=access_mode,
-        admins=admins,
-        action_link_template=action_link_template,
-    )
-
 
 class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin):
     @distributed_trace
@@ -329,32 +218,21 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin):
         ingestion_settings,  # type: Union[datetime.datetime, DataFeedIngestionSettings]
         **kwargs  # type: Any
     ):  # type: (...) -> DataFeed
-        admins = kwargs.pop("admins", None)
-        data_feed_description = kwargs.pop("data_feed_description", None)
-        missing_data_point_fill_settings = kwargs.pop("missing_data_point_fill_settings", None)
-        rollup_settings = kwargs.pop("rollup_settings", None)
-        viewers = kwargs.pop("viewers", None)
-        access_mode = kwargs.pop("access_mode", "Private")
-        action_link_template = kwargs.pop("action_link_template", None)
-        data_feed_type = DATA_FEED[source.data_source_type]
-        data_feed_detail = convert_to_generated_data_feed_type(
-            generated_feed_type=data_feed_type,
+        data_feed = construct_data_feed(
             name=name,
             source=source,
             granularity=granularity,
             schema=schema,
             ingestion_settings=ingestion_settings,
-            admins=admins,
-            data_feed_description=data_feed_description,
-            missing_data_point_fill_settings=missing_data_point_fill_settings,
-            rollup_settings=rollup_settings,
-            viewers=viewers,
-            access_mode=access_mode,
-            action_link_template=action_link_template,
+            **kwargs
         )
-
+        for attr in dir(data_feed):
+            if attr in kwargs:
+                kwargs.pop(attr)
         response_headers = super().create_data_feed(  # type: ignore
-            data_feed_detail, cls=lambda pipeline_response, _, response_headers: response_headers, **kwargs
+            data_feed._to_generated(),
+            cls=lambda pipeline_response, _, response_headers: response_headers,
+            **kwargs
         )
         data_feed_id = response_headers["Location"].split("dataFeeds/")[1]
         return self.get_data_feed(data_feed_id)
@@ -406,8 +284,36 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin):
     @distributed_trace
     def get_data_feed(self, data_feed_id, **kwargs):
         # type: (str, Any) -> DataFeed
-        data_feed = super().get_data_feed(data_feed_id, **kwargs)
-        return DataFeed._from_generated(data_feed)
+        cls = kwargs.pop("cls", None)
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
+        request = build_get_data_feed_request(
+            data_feed_id=data_feed_id,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize(generated_models.DataFeed, pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+        json_response = response.json()
+        return DataFeed._from_generated(
+            deserialized, json_response["dataSourceParameter"], json_response["dataSourceType"]
+        )
 
     @distributed_trace
     def get_alert_configuration(self, alert_configuration_id, **kwargs):
@@ -481,46 +387,20 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin):
         super().delete_hook(hook_id[0], **kwargs)
 
     @distributed_trace
-    def update_data_feed(
-        self,
-        data_feed,  # type: Union[str, DataFeed]
-        **kwargs  # type: Any
-    ):  # type: (...) -> DataFeed
-        unset = object()
-        update_kwargs = {}
-        update_kwargs["dataFeedName"] = kwargs.pop("name", unset)
-        update_kwargs["dataFeedDescription"] = kwargs.pop("data_feed_description", unset)
-        update_kwargs["timestampColumn"] = kwargs.pop("timestamp_column", unset)
-        update_kwargs["dataStartFrom"] = kwargs.pop("ingestion_begin_time", unset)
-        update_kwargs["startOffsetInSeconds"] = kwargs.pop("ingestion_start_offset", unset)
-        update_kwargs["maxConcurrency"] = kwargs.pop("data_source_request_concurrency", unset)
-        update_kwargs["minRetryIntervalInSeconds"] = kwargs.pop("ingestion_retry_delay", unset)
-        update_kwargs["stopRetryAfterInSeconds"] = kwargs.pop("stop_retry_after", unset)
-        update_kwargs["needRollup"] = kwargs.pop("rollup_type", unset)
-        update_kwargs["rollUpMethod"] = kwargs.pop("rollup_method", unset)
-        update_kwargs["rollUpColumns"] = kwargs.pop("auto_rollup_group_by_column_names", unset)
-        update_kwargs["allUpIdentification"] = kwargs.pop("rollup_identification_value", unset)
-        update_kwargs["fillMissingPointType"] = kwargs.pop("fill_type", unset)
-        update_kwargs["fillMissingPointValue"] = kwargs.pop("custom_fill_value", unset)
-        update_kwargs["viewMode"] = kwargs.pop("access_mode", unset)
-        update_kwargs["admins"] = kwargs.pop("admins", unset)
-        update_kwargs["viewers"] = kwargs.pop("viewers", unset)
-        update_kwargs["status"] = kwargs.pop("status", unset)
-        update_kwargs["actionLinkTemplate"] = kwargs.pop("action_link_template", unset)
-        update_kwargs["dataSourceParameter"] = kwargs.pop("source", unset)
-
-        update = {key: value for key, value in update_kwargs.items() if value != unset}
-
-        if isinstance(data_feed, six.string_types):
-            data_feed_id = data_feed
-            data_feed_patch = construct_data_feed_dict(update)
-
+    def update_data_feed(self, data_feed: Union[str, DataFeed], **kwargs: Any) -> DataFeed:
+        if isinstance(data_feed, str):
+            data_feed_patch = construct_data_feed(**kwargs)
+            for attr in dir(data_feed_patch):
+                if attr in kwargs:
+                    kwargs.pop(attr)
         else:
-            data_feed_id = data_feed.id
-            data_feed_patch_type = DATA_FEED_PATCH[data_feed.source.data_source_type]
-            data_feed_patch = data_feed._to_generated_patch(data_feed_patch_type, update)
+            data_feed_patch = data_feed._to_generated()
 
-        return DataFeed._from_generated(super().update_data_feed(data_feed_id, data_feed_patch, **kwargs))
+        return DataFeed._from_generated(
+            super().update_data_feed(data_feed_patch.id, data_feed_patch, **kwargs),
+            data_feed_patch.data_source_parameter,
+            data_feed_patch.data_source_type,
+        )
 
     @distributed_trace
     def update_alert_configuration(
@@ -538,7 +418,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin):
         update_kwargs["description"] = kwargs.pop("description", unset)
 
         update = {key: value for key, value in update_kwargs.items() if value != unset}
-        if isinstance(alert_configuration, six.string_types):
+        if isinstance(alert_configuration, str):
             alert_configuration_id = alert_configuration
             alert_configuration_patch = construct_alert_config_dict(update)
 
@@ -572,7 +452,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin):
         update_kwargs["description"] = kwargs.pop("description", unset)
 
         update = {key: value for key, value in update_kwargs.items() if value != unset}
-        if isinstance(detection_configuration, six.string_types):
+        if isinstance(detection_configuration, str):
             detection_configuration_id = detection_configuration
             detection_config_patch = construct_detection_config_dict(update)
 
@@ -599,7 +479,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin):
         # type: (...) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]
         hook_patch = None
         hook_type = kwargs.get("hook_type")
-        if isinstance(hook, six.string_types):
+        if isinstance(hook, str):
             hook_id = hook
             if hook_type is None:
                 raise ValueError("hook_type must be passed with a hook ID.")
@@ -616,26 +496,72 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin):
 
     @distributed_trace
     def list_data_feeds(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> ItemPaged[DataFeed]
-        data_feed_name = kwargs.pop("data_feed_name", None)
-        data_source_type = kwargs.pop("data_source_type", None)
-        granularity_type = kwargs.pop("granularity_type", None)
-        status = kwargs.pop("status", None)
-        creator = kwargs.pop("creator", None)
-        skip = kwargs.pop("skip", None)
+        self,
+        *,
+        data_feed_name: Optional[str] = None,
+        data_source_type: Optional[Union[str, "DataSourceType"]] = None,
+        granularity_type: Optional[Union[str, "DataFeedGranularityType"]] = None,
+        status: Optional[Union[str, "DataFeedStatus"]] = None,
+        creator: Optional[str] = None,
+        skip: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
+        **kwargs: Any
+    ) -> ItemPaged[DataFeed]:
+        cls = kwargs.pop("cls", None)
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        return super().list_data_feeds(  # type: ignore
-            data_feed_name=data_feed_name,
-            data_source_type=data_source_type,
-            granularity_name=granularity_type,
-            status=status,
-            creator=creator,
-            skip=skip,
-            cls=kwargs.pop("cls", lambda feeds: [DataFeed._from_generated(feed) for feed in feeds]),
-            **kwargs
-        )
+        def prepare_request(next_link=None):
+            request = build_list_data_feeds_request(
+                data_feed_name=data_feed_name,
+                data_source_type=data_source_type,
+                granularity_name=granularity_type,
+                status=status,
+                creator=creator,
+                skip=skip,
+                maxpagesize=maxpagesize,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url(
+                    "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                ),
+            }
+            request.url = self._client.format_url(request.url, **path_format_arguments)
+            return request
+
+        deserializer = functools.partial(self._deserialize, generated_models.DataFeed)
+
+        def extract_data(deserializer, pipeline_response):
+            response_json = pipeline_response.http_response.json()
+            list_of_elem = []
+            for l in response_json["value"]:
+                data_source_type = l["dataSourceType"]  # this gets popped during deserialization
+                data_source_parameter = l["dataSourceParameter"]
+                list_of_elem.append(
+                    DataFeed._from_generated(
+                        deserializer(l),
+                        data_source_parameter,
+                        data_source_type,
+                    )
+                )
+            return response_json.get("@nextLink", None) or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, functools.partial(extract_data, deserializer))
 
     @distributed_trace
     def list_alert_configurations(

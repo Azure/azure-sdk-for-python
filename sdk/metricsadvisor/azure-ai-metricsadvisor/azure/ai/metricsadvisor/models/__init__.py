@@ -22,39 +22,17 @@ from ._models_py3 import AnomalyFeedbackValue
 from ._models_py3 import AnomalyIncident
 from ._models_py3 import AnomalyProperty
 from ._models_py3 import AnomalyResultList
-from ._models_py3 import AzureApplicationInsightsDataFeedPatch
 from ._models_py3 import AzureApplicationInsightsDataFeedSource
-from ._models_py3 import AzureApplicationInsightsParameter
-from ._models_py3 import AzureApplicationInsightsParameterPatch
-from ._models_py3 import AzureBlobDataFeedPatch
 from ._models_py3 import AzureBlobDataFeedSource
-from ._models_py3 import AzureBlobParameter
-from ._models_py3 import AzureBlobParameterPatch
-from ._models_py3 import AzureCosmosDBDataFeedPatch
-from ._models_py3 import AzureCosmosDBParameter
-from ._models_py3 import AzureCosmosDBParameterPatch
 from ._models_py3 import AzureCosmosDbDataFeedSource
-from ._models_py3 import AzureDataExplorerDataFeedPatch
 from ._models_py3 import AzureDataExplorerDataFeedSource
-from ._models_py3 import AzureDataLakeStorageGen2DataFeedPatch
 from ._models_py3 import AzureDataLakeStorageGen2DataFeedSource
-from ._models_py3 import AzureDataLakeStorageGen2Parameter
-from ._models_py3 import AzureDataLakeStorageGen2ParameterPatch
-from ._models_py3 import AzureEventHubsDataFeedPatch
 from ._models_py3 import AzureEventHubsDataFeedSource
-from ._models_py3 import AzureEventHubsParameter
-from ._models_py3 import AzureEventHubsParameterPatch
-from ._models_py3 import AzureLogAnalyticsDataFeedPatch
 from ._models_py3 import AzureLogAnalyticsDataFeedSource
-from ._models_py3 import AzureLogAnalyticsParameter
-from ._models_py3 import AzureLogAnalyticsParameterPatch
 from ._models_py3 import AzureSQLConnectionStringCredentialPatch
 from ._models_py3 import AzureSQLConnectionStringParam
 from ._models_py3 import AzureSQLConnectionStringParamPatch
-from ._models_py3 import AzureTableDataFeedPatch
 from ._models_py3 import AzureTableDataFeedSource
-from ._models_py3 import AzureTableParameter
-from ._models_py3 import AzureTableParameterPatch
 from ._models_py3 import ChangePointFeedback
 from ._models_py3 import ChangePointFeedbackValue
 from ._models_py3 import ChangeThresholdCondition
@@ -98,9 +76,6 @@ from ._models_py3 import HookList
 from ._models_py3 import IncidentProperty
 from ._models_py3 import IncidentResultList
 from ._models_py3 import IncidentRootCause
-from ._models_py3 import InfluxDBDataFeedPatch
-from ._models_py3 import InfluxDBParameter
-from ._models_py3 import InfluxDBParameterPatch
 from ._models_py3 import InfluxDbDataFeedSource
 from ._models_py3 import IngestionProgressResetOptions
 from ._models_py3 import IngestionStatusList
@@ -122,20 +97,11 @@ from ._models_py3 import MetricSeriesGroupDetectionCondition
 from ._models_py3 import MetricSeriesList
 from ._models_py3 import MetricSeriesQueryOptions
 from ._models_py3 import MetricSingleSeriesDetectionCondition
-from ._models_py3 import MongoDBDataFeedPatch
-from ._models_py3 import MongoDBParameter
-from ._models_py3 import MongoDBParameterPatch
 from ._models_py3 import MongoDbDataFeedSource
-from ._models_py3 import MySqlDataFeedPatch
-from ._models_py3 import MySqlDataFeedSource
 from ._models_py3 import NotificationHook
 from ._models_py3 import PeriodFeedback
 from ._models_py3 import PeriodFeedbackValue
-from ._models_py3 import PostgreSqlDataFeedPatch
-from ._models_py3 import PostgreSqlDataFeedSource
 from ._models_py3 import RootCauseList
-from ._models_py3 import SQLServerDataFeedPatch
-from ._models_py3 import SQLSourceParameterPatch
 from ._models_py3 import SeriesIdentity
 from ._models_py3 import SeriesResultList
 from ._models_py3 import ServicePrincipalCredentialPatch
@@ -148,8 +114,6 @@ from ._models_py3 import SeverityCondition
 from ._models_py3 import SeverityFilterCondition
 from ._models_py3 import SmartDetectionCondition
 from ._models_py3 import SmartDetectionConditionPatch
-from ._models_py3 import SqlServerDataFeedSource
-from ._models_py3 import SqlSourceParameter
 from ._models_py3 import SuppressCondition
 from ._models_py3 import SuppressConditionPatch
 from ._models_py3 import TopNGroupScope
@@ -211,39 +175,17 @@ __all__ = [
     "AnomalyIncident",
     "AnomalyProperty",
     "AnomalyResultList",
-    "AzureApplicationInsightsDataFeedPatch",
     "AzureApplicationInsightsDataFeedSource",
-    "AzureApplicationInsightsParameter",
-    "AzureApplicationInsightsParameterPatch",
-    "AzureBlobDataFeedPatch",
     "AzureBlobDataFeedSource",
-    "AzureBlobParameter",
-    "AzureBlobParameterPatch",
-    "AzureCosmosDBDataFeedPatch",
-    "AzureCosmosDBParameter",
-    "AzureCosmosDBParameterPatch",
     "AzureCosmosDbDataFeedSource",
-    "AzureDataExplorerDataFeedPatch",
     "AzureDataExplorerDataFeedSource",
-    "AzureDataLakeStorageGen2DataFeedPatch",
     "AzureDataLakeStorageGen2DataFeedSource",
-    "AzureDataLakeStorageGen2Parameter",
-    "AzureDataLakeStorageGen2ParameterPatch",
-    "AzureEventHubsDataFeedPatch",
     "AzureEventHubsDataFeedSource",
-    "AzureEventHubsParameter",
-    "AzureEventHubsParameterPatch",
-    "AzureLogAnalyticsDataFeedPatch",
     "AzureLogAnalyticsDataFeedSource",
-    "AzureLogAnalyticsParameter",
-    "AzureLogAnalyticsParameterPatch",
     "AzureSQLConnectionStringCredentialPatch",
     "AzureSQLConnectionStringParam",
     "AzureSQLConnectionStringParamPatch",
-    "AzureTableDataFeedPatch",
     "AzureTableDataFeedSource",
-    "AzureTableParameter",
-    "AzureTableParameterPatch",
     "ChangePointFeedback",
     "ChangePointFeedbackValue",
     "ChangeThresholdCondition",
@@ -287,9 +229,6 @@ __all__ = [
     "IncidentProperty",
     "IncidentResultList",
     "IncidentRootCause",
-    "InfluxDBDataFeedPatch",
-    "InfluxDBParameter",
-    "InfluxDBParameterPatch",
     "InfluxDbDataFeedSource",
     "IngestionProgressResetOptions",
     "IngestionStatusList",
@@ -311,20 +250,11 @@ __all__ = [
     "MetricSeriesList",
     "MetricSeriesQueryOptions",
     "MetricSingleSeriesDetectionCondition",
-    "MongoDBDataFeedPatch",
-    "MongoDBParameter",
-    "MongoDBParameterPatch",
     "MongoDbDataFeedSource",
-    "MySqlDataFeedPatch",
-    "MySqlDataFeedSource",
     "NotificationHook",
     "PeriodFeedback",
     "PeriodFeedbackValue",
-    "PostgreSqlDataFeedPatch",
-    "PostgreSqlDataFeedSource",
     "RootCauseList",
-    "SQLServerDataFeedPatch",
-    "SQLSourceParameterPatch",
     "SeriesIdentity",
     "SeriesResultList",
     "ServicePrincipalCredentialPatch",
@@ -337,8 +267,6 @@ __all__ = [
     "SeverityFilterCondition",
     "SmartDetectionCondition",
     "SmartDetectionConditionPatch",
-    "SqlServerDataFeedSource",
-    "SqlSourceParameter",
     "SuppressCondition",
     "SuppressConditionPatch",
     "TopNGroupScope",

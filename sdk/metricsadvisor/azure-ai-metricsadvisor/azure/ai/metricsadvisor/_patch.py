@@ -12,8 +12,6 @@ from ._version import SDK_MONIKER
 from azure.core.tracing.decorator import distributed_trace
 from ._operations._patch import (
     DataFeedSourceUnion,
-    DATA_FEED,
-    DATA_FEED_PATCH,
     DatasourceCredentialUnion,
     FeedbackUnion,
 )

@@ -72,6 +72,28 @@ directive:
       $["x-ms-pageable"] = {"nextLinkName": null};
 ```
 
+### anomalyScopeType enum -> metricAnomalyAlertScopeType, change enum values
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["MetricAlertingConfiguration"]["properties"]["anomalyScopeType"]
+    transform: >
+      $["x-ms-enum"]["name"] = "metricAnomalyAlertScopeType";
+      $["enum"] = ["WholeSeries", "SeriesGroup", "TopN"];
+```
+
+### NeedRollupEnum -> DataFeedRollupType, change enum values
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["DataFeed"]["properties"]["needRollup"]
+    transform: >
+      $["x-ms-enum"]["name"] = "DataFeedRollupType";
+      $["enum"] = ["NoRollup", "AutoRollup", "AlreadyRollup"];
+```
+
 ```yaml
 directive:
   - rename-operation:
@@ -161,28 +183,6 @@ directive:
   - rename-operation:
       from: deleteCredential
       to: deleteDatasourceCredential
-```
-
-### anomalyScopeType enum -> metricAnomalyAlertScopeType, change enum values
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["MetricAlertingConfiguration"]["properties"]["anomalyScopeType"]
-    transform: >
-      $["x-ms-enum"]["name"] = "metricAnomalyAlertScopeType";
-      $["enum"] = ["WholeSeries", "SeriesGroup", "TopN"];
-```
-
-### NeedRollupEnum -> DataFeedRollupType, change enum values
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["DataFeed"]["properties"]["needRollup"]
-    transform: >
-      $["x-ms-enum"]["name"] = "DataFeedRollupType";
-      $["enum"] = ["NoRollup", "AutoRollup", "AlreadyRollup"];
 ```
 
 ### MetricAlertingConfiguration -> MetricAlertConfiguration
@@ -345,45 +345,6 @@ directive:
       from: DataFeedDetail
       to: DataFeed
   - rename-model:
-      from: AzureApplicationInsightsDataFeed
-      to: AzureApplicationInsightsDataFeedSource
-  - rename-model:
-      from: AzureBlobDataFeed
-      to: AzureBlobDataFeedSource
-  - rename-model:
-      from: AzureCosmosDBDataFeed
-      to: AzureCosmosDbDataFeedSource
-  - rename-model:
-      from: AzureDataExplorerDataFeed
-      to: AzureDataExplorerDataFeedSource
-  - rename-model:
-      from: AzureTableDataFeed
-      to: AzureTableDataFeedSource
-  - rename-model:
-      from: AzureEventHubsDataFeed
-      to: AzureEventHubsDataFeedSource
-  - rename-model:
-      from: InfluxDBDataFeed
-      to: InfluxDbDataFeedSource
-  - rename-model:
-      from: MySqlDataFeed
-      to: MySqlDataFeedSource
-  - rename-model:
-      from: PostgreSqlDataFeed
-      to: PostgreSqlDataFeedSource
-  - rename-model:
-      from: SQLServerDataFeed
-      to: SqlServerDataFeedSource
-  - rename-model:
-      from: AzureDataLakeStorageGen2DataFeed
-      to: AzureDataLakeStorageGen2DataFeedSource
-  - rename-model:
-      from: AzureLogAnalyticsDataFeed
-      to: AzureLogAnalyticsDataFeedSource
-  - rename-model:
-      from: MongoDBDataFeed
-      to: MongoDbDataFeedSource
-  - rename-model:
       from: HookInfo
       to: NotificationHook
   - rename-model:
@@ -434,6 +395,36 @@ directive:
   - rename-model:
       from: ServicePrincipalInKVCredential
       to: DatasourceServicePrincipalInKeyVault
+  - rename-model:
+      from: AzureApplicationInsightsParameter
+      to: AzureApplicationInsightsDataFeedSource
+  - rename-model:
+      from: AzureBlobParameter
+      to: AzureBlobDataFeedSource
+  - rename-model:
+      from: AzureCosmosDBParameter
+      to: AzureCosmosDbDataFeedSource
+  - rename-model:
+      from: SqlSourceParameter
+      to: AzureDataExplorerDataFeedSource
+  - rename-model:
+      from: AzureTableParameter
+      to: AzureTableDataFeedSource
+  - rename-model:
+      from: AzureEventHubsParameter
+      to: AzureEventHubsDataFeedSource
+  - rename-model:
+      from: InfluxDBParameter
+      to: InfluxDbDataFeedSource
+  - rename-model:
+      from: AzureDataLakeStorageGen2Parameter
+      to: AzureDataLakeStorageGen2DataFeedSource
+  - rename-model:
+      from: AzureLogAnalyticsParameter
+      to: AzureLogAnalyticsDataFeedSource
+  - rename-model:
+      from: MongoDBParameter
+      to: MongoDbDataFeedSource
 ```
 
 ### Remove Models
@@ -443,6 +434,42 @@ directive:
   - remove-model: HookInfoPatch
   - remove-model: EmailHookInfoPatch
   - remove-model: WebhookHookInfoPatch
+  - remove-model: AzureApplicationInsightsDataFeed
+  - remove-model: AzureApplicationInsightsDataFeedPatch
+  - remove-model: AzureBlobDataFeed
+  - remove-model: AzureBlobDataFeedPatch
+  - remove-model: AzureCosmosDBDataFeed
+  - remove-model: AzureCosmosDBDataFeedPatch
+  - remove-model: AzureDataExplorerDataFeed
+  - remove-model: AzureDataExplorerDataFeedPatch
+  - remove-model: AzureTableDataFeed
+  - remove-model: AzureTableDataFeedPatch
+  - remove-model: AzureEventHubsDataFeed
+  - remove-model: AzureEventHubsDataFeedPatch
+  - remove-model: InfluxDBDataFeed
+  - remove-model: InfluxDBDataFeedPatch
+  - remove-model: MySqlDataFeed
+  - remove-model: MySqlDataFeedPatch
+  - remove-model: PostgreSqlDataFeed
+  - remove-model: PostgreSqlDataFeedPatch
+  - remove-model: SQLServerDataFeed
+  - remove-model: SQLServerDataFeedPatch
+  - remove-model: AzureDataLakeStorageGen2DataFeed
+  - remove-model: AzureDataLakeStorageGen2DataFeedPatch
+  - remove-model: AzureLogAnalyticsDataFeed
+  - remove-model: AzureLogAnalyticsDataFeedPatch
+  - remove-model: MongoDBDataFeed
+  - remove-model: MongoDBDataFeedPatch
+  - remove-model: AzureApplicationInsightsParameterPatch
+  - remove-model: AzureBlobParameterPatch
+  - remove-model: AzureCosmosDBParameterPatch
+  - remove-model: AzureTableParameterPatch
+  - remove-model: AzureEventHubsParameterPatch
+  - remove-model: InfluxDBParameterPatch
+  - remove-model: SQLSourceParameterPatch
+  - remove-model: AzureDataLakeStorageGen2ParameterPatch
+  - remove-model: AzureLogAnalyticsParameterPatch
+  - remove-model: MongoDBParameterPatch
 ```
 
 ```yaml
@@ -508,6 +535,42 @@ directive:
       to: emailsToAlert
   - where-model: WebhookHookParameter
     remove-property: headers
+  - where-model: DataFeedMetric
+    rename-property:
+      from: metricName
+      to: name
+  - where-model: DataFeedMetric
+    rename-property:
+      from: metricId
+      to: id
+  - where-model: DataFeedMetric
+    rename-property:
+      from: metricDisplayName
+      to: displayName
+  - where-model: DataFeedMetric
+    rename-property:
+      from: metricDescription
+      to: description
+  - where-model: DataFeedDimension
+    rename-property:
+      from: dimensionName
+      to: name
+  - where-model: DataFeedDimension
+    rename-property:
+      from: dimensionDisplayName
+      to: displayName
+  - where-model: DataFeed
+    rename-property:
+      from: dataFeedName
+      to: name
+  - where-model: DataFeed
+    rename-property:
+      from: dataFeedId
+      to: id
+  - where-model: DataFeed
+    rename-property:
+      from: viewMode
+      to: accessMode
 ```
 
 ```yaml
@@ -535,6 +598,12 @@ directive:
     make-property-optional: endpoint
   - where-model: EmailHookParameter
     make-property-optional: toList
+  - where-model: AzureLogAnalyticsDataFeedSource
+    make-property-optional: tenantId
+  - where-model: AzureLogAnalyticsDataFeedSource
+    make-property-optional: clientId
+  - where-model: AzureLogAnalyticsDataFeedSource
+    make-property-optional: clientSecret
 ```
 
 ### Flatten EmailHookParameter
@@ -555,4 +624,14 @@ directive:
     where: $["definitions"]["WebNotificationHook"]
     transform: >
         $.properties["hookParameter"]["x-ms-client-flatten"] = true;
+```
+
+### Add DataSourceParameter to DataFeed
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["DataFeed"]
+    transform: >
+        $.properties["dataSourceParameter"] = {"type": "object"};
 ```
