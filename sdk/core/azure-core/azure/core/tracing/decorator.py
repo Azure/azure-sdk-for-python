@@ -25,39 +25,38 @@
 # --------------------------------------------------------------------------
 """The decorator to apply if you want the given function traced."""
 
+import sys
 import functools
 
-from typing import overload
+from typing import Callable, Any, TypeVar, overload
 
 from .common import change_context, get_function_and_class_name
 from ..settings import settings
 
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
+if sys.version_info >= (3, 10):
+    from typing import ParamSpec
+    P = ParamSpec("P")
+else:
+    P = ...
 
-if TYPE_CHECKING:
-    from typing import Callable, Dict, Optional, Any, TypeVar
 
-    T = TypeVar("T")
+T = TypeVar("T")
 
 
 @overload
-def distributed_trace(__func):
-    # type: (Callable[..., T]) -> Callable[..., T]
+def distributed_trace(__func: Callable[P, T]) -> Callable[P, T]:
     pass
 
 
 @overload
-def distributed_trace(**kwargs):  # pylint:disable=function-redefined,unused-argument
-    # type: (**Any) -> Callable[[Callable[..., T]], Callable[..., T]]
+def distributed_trace(  # pylint:disable=function-redefined
+    **kwargs: Any,  # pylint:disable=unused-argument
+) -> Callable[[Callable[P, T]], Callable[P, T]]:
     pass
 
 
 def distributed_trace(  # pylint:disable=function-redefined
-    __func=None,  # type: Callable[..., T]
-    **kwargs  # type: Any
+    __func: Callable[P, T] = None, **kwargs: Any
 ):
     """Decorator to apply to function to get traced automatically.
 
@@ -69,12 +68,9 @@ def distributed_trace(  # pylint:disable=function-redefined
     name_of_span = kwargs.pop("name_of_span", None)
     tracing_attributes = kwargs.pop("tracing_attributes", {})
 
-    def decorator(func):
-        # type: (Callable[..., T]) -> Callable[..., T]
-
+    def decorator(func: Callable[P, T]) -> Callable[P, T]:
         @functools.wraps(func)
-        def wrapper_use_tracer(*args, **kwargs):
-            # type: (*Any, **Any) -> T
+        def wrapper_use_tracer(*args: Any, **kwargs: Any) -> T:
             merge_span = kwargs.pop("merge_span", False)
             passed_in_parent = kwargs.pop("parent_span", None)
 
