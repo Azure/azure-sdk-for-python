@@ -2145,7 +2145,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             receiver = sb_client.get_queue_receiver(servicebus_queue.name)
             async with receiver:
                 messages = await receiver.peek_messages()
-                async for msg in messages:
+                for msg in messages:
                     assert msg.message_state == ServiceBusMessageState.SCHEDULED
 
 
