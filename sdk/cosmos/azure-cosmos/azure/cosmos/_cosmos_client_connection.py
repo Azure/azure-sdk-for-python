@@ -26,7 +26,7 @@
 """
 # https://github.com/PyCQA/pylint/issues/3112
 # Currently pylint is locked to 2.3.3 and this is fixed in 2.4.4
-from typing import Dict, Any, Optional  # pylint: disable=unused-import
+from typing import Dict, Any, Optional, TypeVar  # pylint: disable=unused-import
 import urllib.parse
 from urllib3.util.retry import Retry
 from azure.core.paging import ItemPaged  # type: ignore
@@ -58,6 +58,8 @@ from ._retry_utility import ConnectionRetryPolicy
 from . import _session
 from . import _utils
 from .partition_key import _Undefined, _Empty
+
+ClassType = TypeVar("ClassType")
 
 
 # pylint: disable=protected-access
@@ -92,7 +94,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             url_connection,  # type: str
             auth,  # type: Dict[str, Any]
             connection_policy=None,  # type: Optional[ConnectionPolicy]
-            consistency_level=documents.ConsistencyLevel.Session,  # type: str
+            consistency_level=None,  # type: Optional[str]
             **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -139,19 +141,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             http_constants.HttpHeaders.IsContinuationExpected: False,
         }
 
-        if consistency_level is not None:
-            self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
-
         # Keeps the latest response headers from server.
         self.last_response_headers = None
-
-        if consistency_level == documents.ConsistencyLevel.Session:
-            # create a session - this is maintained only if the default consistency level
-            # on the client is set to session, or if the user explicitly sets it as a property
-            # via setter
-            self.session = _session.Session(self.url_connection)
-        else:
-            self.session = None  # type: ignore
 
         self._useMultipleWriteLocations = False
         self._global_endpoint_manager = global_endpoint_manager._GlobalEndpointManager(self)
@@ -209,6 +200,39 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         database_account = self._global_endpoint_manager._GetDatabaseAccount(**kwargs)
         self._global_endpoint_manager.force_refresh(database_account)
+
+        # Use database_account if no consistency passed in to verify consistency level to be used
+        self._set_client_consistency_level(database_account, consistency_level)
+
+    def _set_client_consistency_level(
+            self,
+            database_account: ClassType,
+            consistency_level: Optional[str],
+    ) -> None:
+        """Checks if consistency level param was passed in by user and sets it to that value or to the account default.
+
+        :param database_account: The database account to be used to check consistency levels
+        :type database_account: ~azure.cosmos.documents.DatabaseAccount
+        :param consistency_level: The consistency level passed in by the user
+        :type consistency_level: Optional[str]
+        :rtype: None
+        """
+        if consistency_level is None:
+            # Set to default level present in account
+            user_consistency_policy = database_account.ConsistencyPolicy
+            consistency_level = user_consistency_policy.get(constants._Constants.DefaultConsistencyLevel)
+        else:
+            # Set consistency level header to be used for the client
+            self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
+
+        if consistency_level == documents.ConsistencyLevel.Session:
+            # create a session - this is maintained only if the default consistency level
+            # on the client is set to session, or if the user explicitly sets it as a property
+            # via setter
+            self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
+            self.session = _session.Session(self.url_connection)
+        else:
+            self.session = None  # type: ignore
 
     @property
     def Session(self):
@@ -2559,7 +2583,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
     def refresh_routing_map_provider(self):
         # re-initializes the routing map provider, effectively refreshing the current partition key range cache
         self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
-
 
     def _UpdateSessionIfRequired(self, request_headers, response_result, response_headers):
         """
