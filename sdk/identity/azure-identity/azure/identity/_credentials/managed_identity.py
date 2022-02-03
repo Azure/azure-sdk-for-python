@@ -32,8 +32,8 @@ class ManagedIdentityCredential(object):
 
     :keyword str client_id: a user-assigned identity's client ID or, when using Pod Identity, the client ID of an Azure
         AD app registration. This argument is supported in all hosting environments.
-    :keyword str resource_id: The resource id to authenticate for a user assigned managed identity.
-        More information on user assigned managed identities can be found here:
+    :keyword str resource_id: The resource ID to authenticate for a user-assigned managed identity.
+        More information on user-assigned managed identities can be found here:
         https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview#how-a-user-assigned-managed-identity-works-with-an-azure-vm
     :keyword identity_config: a mapping ``{parameter_name: value}`` specifying a user-assigned identity by its object
         or resource ID, for example ``{"object_id": "..."}``. Check the documentation for your hosting environment to
