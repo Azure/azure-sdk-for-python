@@ -3,11 +3,13 @@
 ## 4.5.0b6 (Unreleased)
 
 ### Features Added
+- Added `immutable` keyword-only argument and property to `KeyReleasePolicy` to support immutable
+  release policies. Once a release policy is marked as immutable, it can no longer be modified.
 
 ### Breaking Changes
 > These changes do not impact the API of stable versions such as 4.4.0.
 > Only code written against a beta version such as 4.5.0b1 may be affected.
-- Renamed the required argument `data` in the `KeyReleasePolicy` constructor to
+- Renamed the required argument `data` in `KeyReleasePolicy`'s constructor to
   `encoded_policy`
 
 ### Bugs Fixed

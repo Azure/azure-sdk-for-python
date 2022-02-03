@@ -130,7 +130,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         policy = kwargs.pop("release_policy", None)
         if policy is not None:
             policy = self._models.KeyReleasePolicy(
-                encoded_policy=policy.encoded_policy, content_type=policy.content_type
+                encoded_policy=policy.encoded_policy, content_type=policy.content_type, immutable=policy.immutable
             )
         parameters = self._models.KeyCreateParameters(
             kty=key_type,
@@ -543,7 +543,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         policy = kwargs.pop("release_policy", None)
         if policy is not None:
             policy = self._models.KeyReleasePolicy(
-                content_type=policy.content_type, encoded_policy=policy.encoded_policy
+                content_type=policy.content_type, encoded_policy=policy.encoded_policy, immutable=policy.immutable
             )
         parameters = self._models.KeyUpdateParameters(
             key_ops=kwargs.pop("key_operations", None),
@@ -659,7 +659,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         policy = kwargs.pop("release_policy", None)
         if policy is not None:
             policy = self._models.KeyReleasePolicy(
-                content_type=policy.content_type, encoded_policy=policy.encoded_policy
+                content_type=policy.content_type, encoded_policy=policy.encoded_policy, immutable=policy.immutable
             )
         parameters = self._models.KeyImportParameters(
             key=key._to_generated_model(),

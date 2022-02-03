@@ -87,7 +87,8 @@ class KeyProperties(object):
             key_bundle.release_policy is not None):  # type: ignore[attr-defined]
             release_policy = KeyReleasePolicy(
                 encoded_policy=key_bundle.release_policy.encoded_policy,  # type: ignore[attr-defined]
-                content_type=key_bundle.release_policy.content_type  # type: ignore[attr-defined]
+                content_type=key_bundle.release_policy.content_type,  # type: ignore[attr-defined]
+                immutable=key_bundle.release_policy.immutable,
             )
 
         return cls(
@@ -254,18 +255,19 @@ class KeyProperties(object):
 class KeyReleasePolicy(object):
     """The policy rules under which a key can be exported.
 
-    :param encoded_policy: Blob encoding the policy rules under which the key can be released.
-    :type encoded_policy: bytes
+    :param bytes encoded_policy: Blob encoding the policy rules under which the key can be released.
 
-    :keyword content_type: Content type and version of the release policy. Defaults to "application/json; charset=utf-8"
-        if omitted.
-    :paramtype content_type: str
+    :keyword str content_type: Content type and version of the release policy. Defaults to "application/json;
+        charset=utf-8" if omitted.
+    :keyword bool immutable: Marks a release policy as immutable. An immutable release policy cannot be changed or
+        updated after being marked immutable. Release policies are mutable by default.
     """
 
     def __init__(self, encoded_policy, **kwargs):
         # type: (bytes, **Any) -> None
         self.encoded_policy = encoded_policy
         self.content_type = kwargs.get("content_type", None)
+        self.immutable = kwargs.get("immutable", None)
 
 
 class ReleaseKeyResult(object):
