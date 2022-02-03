@@ -198,7 +198,7 @@ class OperationResourcePolling(LongRunningOperation):
     """
 
     def __init__(
-        self, operation_location_header="operation-location", **kwargs
+        self, operation_location_header="operation-location", *, lro_options=None
     ):
         self._operation_location_header = operation_location_header
 
@@ -206,7 +206,7 @@ class OperationResourcePolling(LongRunningOperation):
         self._async_url = None
         self._location_url = None
         self._request = None
-        self._lro_options = kwargs.pop("lro_options", {}) or {}
+        self._lro_options = lro_options or {}
 
     def can_poll(self, pipeline_response):
         """Answer if this polling method could be used.
