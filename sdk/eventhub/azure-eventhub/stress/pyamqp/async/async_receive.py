@@ -46,12 +46,10 @@ async def receive_fixed_time_interval(
     run_duration=30,
     partition_id="0"
 ):
-
     consumer_client = EventHubConsumerClient.from_connection_string(
         conn_str,
         consumer_group="$Default",
-        eventhub_name=eventhub_name,
-        prefetch=prefetch
+        eventhub_name=eventhub_name
     )
 
     last_received_count = [0]
@@ -78,8 +76,10 @@ async def receive_fixed_time_interval(
     kwargs = {
         "partition_id": partition_id,
         "starting_position": "-1",  # "-1" is from the beginning of the partition.
+        "prefetch": prefetch
     }
     if batch_receiving:
+        kwargs["max_batch_size"] = prefetch
         kwargs["on_event_batch"] = on_event_batch
     else:
         kwargs["on_event"] = on_event
@@ -98,14 +98,16 @@ async def receive_fixed_time_interval(
 
     logger.info(
         "EH Namespace: {}.\nMethod: {}, The average performance is {} events/s, throughput: {} bytes/s.\n"
-        "Configs are: Single message size: {} bytes, Run duration: {} seconds, Batch: {}.".format(
+        "Configs are: Single message size: {} bytes, Run duration: {} seconds, Batch: {}.\n"
+        "Prefetch: {}".format(
             parse_connection_string(conn_str).fully_qualified_namespace,
             description or "receive_fixed_time_interval",
             avg_perf,
             avg_perf * single_event_size,
             single_event_size,
             run_duration,
-            batch_receiving
+            batch_receiving,
+            prefetch
         )
     )
 
@@ -125,7 +127,6 @@ async def receive_fixed_amount(
         conn_str,
         consumer_group="$Default",
         eventhub_name=eventhub_name,
-        prefetch=prefetch
     )
     perf_records = []
     received_count = [0]
@@ -148,13 +149,15 @@ async def receive_fixed_amount(
                     on_event_batch=on_event_batch,
                     partition_id=partition_id,
                     starting_position="-1",
-                    max_batch_size=prefetch
+                    max_batch_size=prefetch,
+                    prefetch=prefetch
                 )
             else:
                 await consumer_client.receive(
                     on_event=on_event,
                     partition_id=partition_id,
-                    starting_position="-1"
+                    starting_position="-1",
+                    prefetch=prefetch
                 )
         end_time = time.time()
         total_time = end_time - start_time
@@ -165,14 +168,16 @@ async def receive_fixed_amount(
 
     logger.info(
         "EH Namespace: {}.\nMethod: {}, The average performance is {} events/s, throughput: {} bytes/s.\n"
-        "Configs are: Single message size: {} bytes, Total events to receive: {}, Batch: {}.".format(
+        "Configs are: Single message size: {} bytes, Total events to receive: {}, Batch: {}.\n"
+        "Prefetch: {}".format(
             parse_connection_string(conn_str).fully_qualified_namespace,
             description or "receive_fixed_amount",
             avg_perf,
             avg_perf * single_event_size,
             single_event_size,
             fixed_amount,
-            batch_receiving
+            batch_receiving,
+            prefetch
         )
     )
 
