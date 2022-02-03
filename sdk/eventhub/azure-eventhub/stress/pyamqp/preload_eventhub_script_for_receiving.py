@@ -24,6 +24,7 @@ connect_strs = [
 eh_name_size_pairs = [
     ('pyamqp_16', 16),
     ('pyamqp_128', 128),
+    ('pyamqp_512', 512),
     ('pyamqp_1024', 1024)
 ]
 
@@ -69,7 +70,7 @@ def send_batch_message(conn_str, eventhub_name, num_of_events, single_event_size
         )
 
     client.close()
-    return "Success for "
+    return "Success for {}".format(eventhub_name)
 
 
 if __name__ == '__main__':

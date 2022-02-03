@@ -7,7 +7,6 @@ import asyncio
 import os
 import dotenv
 import logging
-import threading
 from logging.handlers import RotatingFileHandler
 import time
 
@@ -28,10 +27,13 @@ CONN_STRS = [
 EH_NAME_EVENT_SIZE_PAIR = [
     ('pyamqp_16', 16),
     ('pyamqp_128', 128),
+    ('pyamqp_512', 512),
     ('pyamqp_1024', 1024)
 ]
 PREFETCH_LIST = [300, 3000, 30000]
 PARTITION_ID = "0"
+RUN_DURATION = 30
+FIXED_AMOUNT = 100_000
 
 
 async def receive_fixed_time_interval(
@@ -41,6 +43,7 @@ async def receive_fixed_time_interval(
     prefetch=300,
     batch_receiving=False,
     description=None,
+    run_duration=30,
     partition_id="0"
 ):
 
@@ -56,7 +59,6 @@ async def receive_fixed_time_interval(
     run_flag = [True]
     all_perf_records = []
     check_interval = 1
-    run_duration = 30
 
     async def on_event(partition_context, event):
         received_count[0] += 1
@@ -87,23 +89,23 @@ async def receive_fixed_time_interval(
 
     await asyncio.sleep(run_duration)
     await consumer_client.close()
+    run_flag[0] = False
     await recv_future
     await monitor_future
-
-    run_flag[0] = False
 
     valid_perf_records = all_perf_records[10:]  # skip the first 10 records to let the receiving program be stable
     avg_perf = sum(valid_perf_records) / len(valid_perf_records)
 
     logger.info(
         "EH Namespace: {}.\nMethod: {}, The average performance is {} events/s, throughput: {} bytes/s.\n"
-        "Configs are: Single message size: {} bytes, Run duration: {} seconds.".format(
+        "Configs are: Single message size: {} bytes, Run duration: {} seconds, Batch: {}.".format(
             parse_connection_string(conn_str).fully_qualified_namespace,
             description or "receive_fixed_time_interval",
             avg_perf,
             avg_perf * single_event_size,
             single_event_size,
-            run_duration
+            run_duration,
+            batch_receiving
         )
     )
 
@@ -115,7 +117,9 @@ async def receive_fixed_amount(
     prefetch=300,
     batch_receiving=False,
     description=None,
-    partition_id="0"
+    partition_id="0",
+    run_times=1,
+    fixed_amount=100_000
 ):
     consumer_client = EventHubConsumerClient.from_connection_string(
         conn_str,
@@ -123,8 +127,6 @@ async def receive_fixed_amount(
         eventhub_name=eventhub_name,
         prefetch=prefetch
     )
-    run_times = 3
-    fixed_amount = 100_000
     perf_records = []
     received_count = [0]
 
@@ -163,13 +165,14 @@ async def receive_fixed_amount(
 
     logger.info(
         "EH Namespace: {}.\nMethod: {}, The average performance is {} events/s, throughput: {} bytes/s.\n"
-        "Configs are: Single message size: {} bytes, Total events to receive: {}.".format(
+        "Configs are: Single message size: {} bytes, Total events to receive: {}, Batch: {}.".format(
             parse_connection_string(conn_str).fully_qualified_namespace,
             description or "receive_fixed_amount",
             avg_perf,
             avg_perf * single_event_size,
             single_event_size,
-            fixed_amount
+            fixed_amount,
+            batch_receiving
         )
     )
 
@@ -186,7 +189,8 @@ if __name__ == "__main__":
                             eventhub_name=eh_name,
                             single_event_size=single_event_size,
                             prefetch=prefetch,
-                            batch_receiving=batch_receiving
+                            batch_receiving=batch_receiving,
+                            fixed_amount=FIXED_AMOUNT
                         )
                     )
                     print('------------------- receiving fixed interval -------------------')
@@ -196,6 +200,7 @@ if __name__ == "__main__":
                             eventhub_name=eh_name,
                             single_event_size=single_event_size,
                             prefetch=prefetch,
-                            batch_receiving=batch_receiving
+                            batch_receiving=batch_receiving,
+                            run_duration=RUN_DURATION
                         )
                     )

@@ -25,7 +25,7 @@ CONN_STRS = [
 ]
 EVENTHUB_NAME = "pyamqp"
 
-SINGLE_EVENT_SIZE_LIST = [128, 512, 2048]
+SINGLE_EVENT_SIZE_LIST = [16, 128, 512, 1024]
 PARALLEL_COROUTINE_COUNT_LIST = [1, 4, 16]
 FIXED_AMOUNT_OF_EVENTS = 100_000
 RUN_DURATION = 30
@@ -125,6 +125,7 @@ async def send_batch_message_in_parallel(conn_str, eventhub_name, single_event_s
 
         await asyncio.sleep(run_duration)
         run_flag[0] = False
+        await asyncio.gather(*futures)
         perf_records.append(sum([future.result() for future in futures]) / run_duration)
 
         for client in clients:
