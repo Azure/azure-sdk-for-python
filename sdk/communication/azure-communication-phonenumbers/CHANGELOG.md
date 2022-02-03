@@ -1,5 +1,16 @@
 # Release History
 
+## 1.2.0 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+
 ## 1.1.0b1 (2022-01-24)
 
 - Users can now purchase United Kingdom (GB) toll free and geographic phone numbers for PSTN Calling
