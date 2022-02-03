@@ -2,7 +2,7 @@
 
 ### 4.3.0b3 (Unreleased)
 
-### Bugs fixed
+#### Bugs fixed
 - Moved `is_system_key` logic in async client to container initialization
 
 ### 4.3.0b2 (2022-01-25)
