@@ -25,21 +25,15 @@
 # --------------------------------------------------------------------------
 """The decorator to apply if you want the given function traced."""
 
-import sys
 import functools
 
 from typing import Callable, Any, TypeVar, overload
-
+from typing_extensions import ParamSpec
 from .common import change_context, get_function_and_class_name
 from ..settings import settings
 
-if sys.version_info >= (3, 10):
-    from typing import ParamSpec
-    P = ParamSpec("P")
-else:
-    P = ...
 
-
+P = ParamSpec("P")
 T = TypeVar("T")
 
 
