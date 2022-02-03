@@ -8,6 +8,8 @@ This version and all future versions will require Python 3.6+. Python 2.7 is no 
 
 ### Bugs Fixed
 - Update `azure-core` dependency to avoid inconsistent dependencies from being installed.
+- Fixed a bug, that was introuced in the previous beta release, where `generate_account_sas()`
+was not generating the proper SAS signature.
 
 ## 12.7.0b1 (2021-12-13)
 
