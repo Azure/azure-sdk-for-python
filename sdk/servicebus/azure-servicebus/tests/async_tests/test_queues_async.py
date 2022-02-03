@@ -2167,10 +2167,14 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             receiver = sb_client.get_queue_receiver(servicebus_queue.name)
             deferred_messages = []
             async with receiver:
-                for message in receiver:
+                received_msgs = await receiver.receive_messages()
+                for message in received_msgs:
+                    assert message.message_state == ServiceBusMessageState.ACTIVE
                     deferred_messages.append(message.sequence_number)
                     await receiver.defer_message(message)
-                
-                messages = await receiver.receive_deferred_messages(deferred_messages)
-                for message in messages:
+                if deferred_messages:
+                    received_deferred_msg = await receiver.receive_deferred_messages(
+                        sequence_numbers=deferred_messages
+                        )                
+                for message in received_deferred_msg:
                     assert message.message_state == ServiceBusMessageState.DEFERRED

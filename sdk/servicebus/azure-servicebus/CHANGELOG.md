@@ -4,7 +4,8 @@
 
 ### Features Added
 
-- Added support for `ServiceBusMessageState` in `ServiceBusReceivedMessage`.
+- Introduce `ServiceBusMessageState` enum that can assume the values of `active`, `scheduled` or `deferred`.
+- Add `ServiceBusMessageState` property in `ServiceBusReceivedMessage`.
 
 ### Breaking Changes
 

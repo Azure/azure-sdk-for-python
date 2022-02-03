@@ -172,9 +172,9 @@ class ServiceBusReceiveMode(str, Enum):
     RECEIVE_AND_DELETE = "receiveanddelete"
 
 class ServiceBusMessageState(str, Enum):
-    ACTIVE = "Active"
-    DEFERRED = "Deferred"
-    SCHEDULED = "Scheduled"
+    ACTIVE = "active"
+    DEFERRED = "deferred"
+    SCHEDULED = "scheduled"
 
 # To enable extensible string enums for the public facing parameter, and translate to the "real" uamqp constants.
 ServiceBusToAMQPReceiveModeMap = {

@@ -971,7 +971,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
 
     @property
     def message_state(self):
-        # type: () -> Optional[str]
+        # type: () -> ServiceBusMessageState
         """
         Defaults to Active. Represents the message state of the message. Can be Active, Deferred.
         or Scheduled.
@@ -988,7 +988,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
                 )
             except AttributeError:
                 pass
-        return None
+        return ServiceBusMessageState.ACTIVE
 
     @property
     def delivery_count(self):
