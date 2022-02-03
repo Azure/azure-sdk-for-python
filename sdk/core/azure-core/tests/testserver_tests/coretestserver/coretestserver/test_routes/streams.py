@@ -30,10 +30,15 @@ def stream_json_error():
 def stream_compressed_header_error():
     yield b'test'
 
-def stream_decompress():
-    file_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./files/test.tar.gz"))
-    with open(file_path, "rb") as fd:
-        yield fd.read()
+def stream_decompress_header():
+    try:
+        file_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./files/test.tar.gz"))
+        with open(file_path, "rb") as fd:
+            yield fd.read()
+    except:
+        file_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./files/test.tar.gz"))
+        with open(file_path, "rb") as fd:
+            yield fd.read()
 
 @streams_api.route('/basic', methods=['GET'])
 def basic():
@@ -57,6 +62,6 @@ def string():
 def compressed():
     return Response(stream_compressed_header_error(), status=300, headers={"Content-Encoding": "gzip"})
 
-@streams_api.route('/decompress', methods=['GET'])
-def decompress():
-    return Response(stream_decompress(), status=200, headers={"Content-Encoding": "gzip"})
+@streams_api.route('/decompress_header', methods=['GET'])
+def decompress_header():
+    return Response(stream_decompress_header(), status=200, headers={"Content-Encoding": "gzip"})

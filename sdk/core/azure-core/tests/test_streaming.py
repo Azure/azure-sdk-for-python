@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 import pytest
 from azure.core import PipelineClient
-from azure.core.exceptions import DecodeError
+from azure.core.exceptions import DecodeError, HttpResponseError
 from azure.core.pipeline.transport import RequestsTransport
 from utils import HTTP_REQUESTS
 
@@ -154,14 +154,18 @@ def test_decompress_compressed_header(http_request):
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_decompress_compressed_header_offline(port, http_request):
-    request = http_request(method="GET", url="http://localhost:{}/streams/decompress".format(port))
+    client = PipelineClient("")
+    request = http_request(method="GET", url="http://localhost:{}/streams/decompress_header".format(port))
     with RequestsTransport() as sender:
-        response = sender.send(request, stream=True)
-        response.raise_for_status()
-        data = response.stream_download(sender, decompress=True)
-        content = b"".join(list(data))
-        decoded = content.decode('utf-8')
-        assert decoded == "test"
+        try:
+            response = client._pipeline.run(request, stream=True).http_response
+            response.raise_for_status()
+            data = response.stream_download(sender, decompress=True)
+            content = b"".join(list(data))
+            decoded = content.decode('utf-8')
+            assert decoded == "test"
+        except HttpResponseError as e:
+            print(e.response.text())
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_compress_compressed_header(http_request):
