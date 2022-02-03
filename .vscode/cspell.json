@@ -126,6 +126,7 @@
     "azcmagent",
     "azsdk",
     "azuremgmtcore",
+    "azuremgmtcommunication",
     "bdist",
     "byref",
     "cdll",
