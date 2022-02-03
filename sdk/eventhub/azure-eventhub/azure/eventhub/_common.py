@@ -115,28 +115,12 @@ class EventData(object):
 
     """
 
-    @overload
-    def __init__(self, *, data: bytes, content_type: str):
-        ...
-
-    @overload
-    def __init__(self, body: Optional[Union[str, bytes, List[AnyStr]]] = None) -> None:
-        ...
-
     def __init__(
         self,
         body: Optional[Union[str, bytes, List[AnyStr]]] = None,
-        *,
-        data: bytes = None,
-        content_type: str = None
     ) -> None:
         self._last_enqueued_event_properties = {}  # type: Dict[str, Any]
         self._sys_properties = None  # type: Optional[Dict[bytes, Any]]
-
-        if data and body:
-            _LOGGER.warning("`data` and `body` passed in. `body` will be overwritten by `data`.")
-        body = data or body
-
         if body is None:
             raise ValueError("EventData cannot be None.")
 
@@ -148,7 +132,7 @@ class EventData(object):
         self._raw_amqp_message.header = AmqpMessageHeader()
         self._raw_amqp_message.properties = AmqpMessageProperties()
         self.message_id = None
-        self.content_type = content_type
+        self.content_type = None
         self.correlation_id = None
 
     def __repr__(self):
@@ -213,6 +197,12 @@ class EventData(object):
 
     def __content_type__(self) -> Optional[str]:
         return self.content_type
+
+    @classmethod
+    def from_message_data(cls, data: bytes, content_type: str) -> "EventData":
+        event_data = cls(data)
+        event_data.content_type = content_type
+        return event_data
 
     @classmethod
     def _from_message(cls, message, raw_amqp_message=None):

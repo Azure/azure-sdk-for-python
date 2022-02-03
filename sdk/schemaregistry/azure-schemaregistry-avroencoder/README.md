@@ -138,7 +138,7 @@ with encoder:
     # OR
 
     metadata_dict = encoder.encode(dict_data, schema=definition)
-    event_data = EventData(data=metadata_dict["data"], content_type=metadata_dict["content_type"])
+    event_data = EventData.from_message_data(data=metadata_dict["data"], content_type=metadata_dict["content_type"])
 ```
 
 ### Decoding

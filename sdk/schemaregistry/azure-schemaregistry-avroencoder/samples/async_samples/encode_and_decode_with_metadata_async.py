@@ -61,9 +61,9 @@ async def encode_metadata_dict(encoder):
     encoded_metadata_ben = await encoder.encode(dict_data_ben, schema=SCHEMA_STRING)
 
     print("Encoded metadata is: ", encoded_metadata_ben)
-    return EventData(
-        data=encoded_metadata_ben["data"],
-        content_type=encoded_metadata_ben["content_type"],
+    return EventData.from_message_data(
+        encoded_metadata_ben["data"],
+        encoded_metadata_ben["content_type"],
     )
 
 async def decode_with_data_and_content_type(encoder, event_data):

@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 from functools import lru_cache
 from io import BytesIO
-from typing import Any, Dict, Mapping, Optional, Union, Type
+from typing import Any, Dict, Mapping, Optional, Union, Callable
 
 from .exceptions import (
     SchemaParseError,
@@ -33,7 +33,7 @@ from .exceptions import (
     SchemaDecodeError,
 )
 from ._apache_avro_encoder import ApacheAvroObjectEncoder as AvroObjectEncoder
-from ._message_protocol import MessageType, MessageCallbackType, MessageMetadataDict
+from ._message_protocol import MessageMetadataDict, MessageType
 from ._constants import (
     SCHEMA_ID_START_INDEX,
     SCHEMA_ID_LENGTH,
@@ -129,7 +129,7 @@ class AvroEncoder(object):
         data: Mapping[str, Any],
         *,
         schema: str,
-        message_type: Optional[Union[MessageCallbackType, Type[MessageType]]] = None,
+        message_type: Optional[Callable] = None,
         **kwargs: Any,
     ) -> Union[MessageType, MessageMetadataDict]:
         """
@@ -148,8 +148,12 @@ class AvroEncoder(object):
         :type data: Mapping[str, Any]
         :keyword schema: Required. The schema used to encode the data.
         :paramtype schema: str
-        :keyword message_type: The callback function or message class to construct the message.
-        :paramtype message_type: MessageCallbackType or MessageType or None
+        :keyword message_type: The callback function or message class to construct the message. If message class,
+         it must be a subtype of the azure.schemaregistry.encoder.avroencoder.MessageType protocol.
+         If callback function, it must have the following method signature:
+         `(data: bytes, content_type: str, **kwargs) -> MessageType`, where `data` and `content_type`
+         are positional parameters.
+        :paramtype message_type: Callable or None
         :rtype: MessageType or MessageMetadataDict
         :raises ~azure.schemaregistry.encoder.avroencoder.exceptions.SchemaParseError:
             Indicates an issue with parsing schema.
@@ -189,13 +193,17 @@ class AvroEncoder(object):
 
         if message_type:
             try:
-                return message_type(data=payload, content_type=content_type, **kwargs)
-            except TypeError as e:
-                SchemaEncodeError(
-                    f"""The data model {str(message_type)} does not support MessageCallbackType protocol.
-                        If using an Azure SDK model class, please check the README.md for the full list
-                        of supported Azure SDK models and their corresponding versions."""
-                ).raise_with_traceback()
+                return message_type.from_message_data(payload, content_type, **kwargs)
+            except AttributeError:
+                try:
+                    return message_type(payload, content_type, **kwargs)
+                except TypeError as e:
+                    SchemaEncodeError(
+                        f"""The data model {str(message_type)} is not a Callable that takes `data`
+                            and `content_type` or a subtype of the MessageType protocol.
+                            If using an Azure SDK model class, please check the README.md for the full list
+                            of supported Azure SDK models and their corresponding versions."""
+                    ).raise_with_traceback()
 
         return {"data": payload, "content_type": content_type}
 
@@ -251,7 +259,7 @@ class AvroEncoder(object):
                 content_type = message.__content_type__()
             except AttributeError:
                 SchemaDecodeError(
-                    f"""The data model {str(message)} does not support MessageType protocol.
+                    f"""The data model {str(message)} is not a subtype of the MessageType protocol.
                         If using an Azure SDK model class, please check the README.md for the full list
                         of supported Azure SDK models and their corresponding versions."""
                 ).raise_with_traceback()

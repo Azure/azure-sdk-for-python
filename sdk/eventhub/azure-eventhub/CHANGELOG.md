@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- `EventData` constructor has been overloaded to take (`data`, `content_type`) as keyword args for interoperability with the Schema Registry Avro Encoder library, where `body` will be set to `data` if passed in.
+- The classmethod `from_message_data` has been added to `EventData` for interoperability with the Schema Registry Avro Encoder library, and takes `data` and `content_type` as positional parameters.
 
 ## 5.7.0 (2022-01-12)
 

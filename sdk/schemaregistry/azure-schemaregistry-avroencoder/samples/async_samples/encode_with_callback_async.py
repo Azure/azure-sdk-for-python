@@ -60,7 +60,7 @@ async def encode_with_callback(encoder):
     # Callback MUST have these parameters in the following order: (data, content_type, **kwargs)
     def sample_create_event_data(data, content_type, **kwargs):
         print("Creating sample EventData with callback.")
-        return EventData(data=data, content_type=content_type, **kwargs)
+        return EventData.from_message_data(data, content_type, **kwargs)
 
     dict_data_ben = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
     event_data_ben = await encoder.encode(

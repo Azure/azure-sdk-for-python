@@ -81,12 +81,12 @@ class AvroEncoderAsyncTests(AzureTestCase):
 
             with pytest.raises(SchemaEncodeError) as e:    # caught avro SchemaParseError
                 await sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_str, message_type=BadExample) 
-            assert "does not support" in (str(e.value))
+            assert "subtype of the MessageType" in (str(e.value))
 
             bad_ex = BadExample('fake')
             with pytest.raises(SchemaDecodeError) as e:    # caught avro SchemaParseError
                 await sr_avro_encoder.decode(message=bad_ex) 
-            assert "does not support" in (str(e.value))
+            assert "subtype of the MessageType" in (str(e.value))
 
             # check that AvroEncoder will work with message types that follow protocols
             class GoodExample:
@@ -101,7 +101,7 @@ class AvroEncoderAsyncTests(AzureTestCase):
                     return self.content_type
 
             def good_callback(data: bytes, content_type: str, **kwargs):
-                return GoodExample(data=data, content_type=content_type, **kwargs)
+                return GoodExample(data, content_type, **kwargs)
                 
             good_ex_obj = await sr_avro_encoder.encode(dict_data, schema=schema_str, message_type=GoodExample, extra='val')
             good_ex_callback = await sr_avro_encoder.encode(dict_data, schema=schema_str, message_type=good_callback, extra='val')

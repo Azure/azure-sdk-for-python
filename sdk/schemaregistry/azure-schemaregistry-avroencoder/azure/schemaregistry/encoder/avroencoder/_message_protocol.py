@@ -15,25 +15,14 @@ class MessageType(Protocol):
     """Message Types that set and get data and content type values internally.
     """
 
-    def __init__(self, *, data: bytes, content_type: str, **kwargs: Any) -> None:   # pylint: disable=super-init-not-called
+    @classmethod
+    def from_message_data(cls, data: bytes, content_type: str, **kwargs: Any) -> "MessageType":   # pylint: disable=super-init-not-called
         ...
 
     def __data__(self) -> bytes:
         ...
 
     def __content_type__(self) -> Optional[str]:
-        ...
-
-class MessageCallbackType(Protocol):
-    """Any Callable that requires the following keywords:
-         - `data`: bytes
-         - `content_type`: str
-        and accepts any keyword arguments:
-         - `**kwargs`: Any
-        Should return object that is a subtype of MessageType.
-    """
-
-    def __call__(self, *, data: bytes, content_type: str, **kwargs: Any) -> MessageType:
         ...
 
 class MessageMetadataDict(TypedDict):
