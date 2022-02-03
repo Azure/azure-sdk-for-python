@@ -978,17 +978,15 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
 
         :rtype: ~azure.servicebus.ServiceBusMessageState
         """
-        if self._raw_amqp_message.annotations:
-            try:
-                message_state = self._raw_amqp_message.annotations.get(MESSAGE_STATE_NAME)
-                return (
-                    ServiceBusMessageState.DEFERRED if message_state == 1
-                    else ServiceBusMessageState.SCHEDULED if message_state == 2
-                    else ServiceBusMessageState.ACTIVE
-                )
-            except AttributeError:
-                pass
-        return ServiceBusMessageState.ACTIVE
+        try:
+            message_state = self._raw_amqp_message.annotations.get(MESSAGE_STATE_NAME)
+            return (
+                ServiceBusMessageState.DEFERRED if message_state == 1
+                else ServiceBusMessageState.SCHEDULED if message_state == 2
+                else ServiceBusMessageState.ACTIVE
+            )
+        except AttributeError:
+            return ServiceBusMessageState.ACTIVE
 
     @property
     def delivery_count(self):
