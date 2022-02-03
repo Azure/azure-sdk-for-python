@@ -212,6 +212,7 @@ class AvroEncoder(object):
         message: Optional[MessageType] = None,
         data: Optional[bytes] = None,
         content_type: Optional[str] = None,
+        readers_schema: Optional[str] = None,
         **kwargs,   # pylint: disable=unused-argument
     ) -> Dict[str, Any]:
         """
@@ -229,6 +230,8 @@ class AvroEncoder(object):
         :keyword content_type: The content type containing the schema ID to be used for decoding.
          Must be set with `data`. If not set, `message` must be set.
         :paramtype content_type: str or None
+        :keyword readers_schema: An optional reader's schema as defined by the Apache Avro specification.
+        :paramtype readers_schema: str or None
         :rtype: Dict[str, Any]
         :raises ~azure.schemaregistry.encoder.avroencoder.exceptions.SchemaParseError:
             Indicates an issue with parsing schema.
@@ -257,9 +260,15 @@ class AvroEncoder(object):
         schema_id = content_type.split("+")[1]
         schema_definition = await self._get_schema(schema_id)
         try:
-            dict_value = self._avro_encoder.decode(data, schema_definition)
+            dict_value = self._avro_encoder.decode(data, schema_definition, readers_schema=readers_schema)
         except Exception as e:  # pylint:disable=broad-except
+            error_message = (
+                f"Cannot decode value '{data}' for schema: {schema_definition}\n and reader's schema: {readers_schema}"
+                if readers_schema
+                else f"Cannot decode value '{data}' for schema: {schema_definition}"
+            )
             SchemaDecodeError(
-                f"Cannot decode value '{data}' for schema: {schema_definition}", error=e
+                error_message,
+                error=e,
             ).raise_with_traceback()
         return dict_value

@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 from functools import lru_cache
-from typing import BinaryIO, Union, TypeVar
+from typing import BinaryIO, Union, TypeVar, Optional
 from io import BytesIO
 import avro
 from avro.io import DatumWriter, DatumReader, BinaryDecoder, BinaryEncoder
@@ -36,9 +36,11 @@ class ApacheAvroObjectEncoder(AbstractAvroObjectEncoder):
         return DatumWriter(schema)
 
     @lru_cache(maxsize=128)
-    def get_schema_reader(self, schema):   # pylint: disable=no-self-use
+    def get_schema_reader(self, schema, readers_schema):   # pylint: disable=no-self-use
         schema = self.parse_schema(schema)
-        return DatumReader(writers_schema=schema)
+        if readers_schema:
+            readers_schema = self.parse_schema(readers_schema)
+        return DatumReader(writers_schema=schema, readers_schema=readers_schema)
 
     # pylint: disable=no-self-use
     def encode(
@@ -72,6 +74,8 @@ class ApacheAvroObjectEncoder(AbstractAvroObjectEncoder):
         self,
         data,  # type: Union[bytes, BinaryIO]
         schema,  # type:  Union[str, bytes, avro.schema.Schema]
+        *,
+        readers_schema=None,  # type:  Optional[Union[str, bytes, avro.schema.Schema]]
     ) -> ObjectType:
         """Read the binary representation into a specific type.
         Return type will be ignored, since the schema is deduced from the provided bytes.
@@ -79,13 +83,15 @@ class ApacheAvroObjectEncoder(AbstractAvroObjectEncoder):
         :type data: BinaryIO or bytes
         :param schema: An Avro RecordSchema
         :type schema: str
+        :keyword readers_schema: An optional reader's schema as defined by the Apache Avro specification.
+        :paramtype readers_schema: str or None
         :returns: An instantiated object
         :rtype: ObjectType
         """
         if not hasattr(data, 'read'):
             data = BytesIO(data)
 
-        reader = self.get_schema_reader(schema)
+        reader = self.get_schema_reader(schema, readers_schema)
 
         with data:
             bin_decoder = BinaryDecoder(data)

@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json; serialization=Avro
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0 Python/3.6.6 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: PUT
     uri: https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroup/schemas/example.avro.User?api-version=2021-10
   response:
@@ -23,7 +23,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 02 Feb 2022 01:15:08 GMT
+      - Thu, 03 Feb 2022 21:27:58 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/example.avro.User/versions/1?api-version=2021-10
       schema-group-name:
@@ -61,7 +61,7 @@ interactions:
       Content-Type:
       - application/json; serialization=Avro
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0 Python/3.6.6 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroup/schemas/example.avro.User:get-id?api-version=2021-10
   response:
@@ -71,7 +71,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 02 Feb 2022 01:15:09 GMT
+      - Thu, 03 Feb 2022 21:27:58 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/example.avro.User/versions/1?api-version=2021-10
       schema-group-name:
@@ -103,7 +103,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0 Python/3.6.6 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/648a9a85c4c143e8a4723e820300e5ef?api-version=2021-10
   response:
@@ -113,7 +113,7 @@ interactions:
       content-type:
       - application/json;serialization=Avro
       date:
-      - Wed, 02 Feb 2022 01:15:09 GMT
+      - Thu, 03 Feb 2022 21:27:58 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/example.avro.User/versions/1?api-version=2021-10
       schema-group-name:

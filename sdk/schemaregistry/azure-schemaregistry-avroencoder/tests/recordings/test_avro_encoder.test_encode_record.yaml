@@ -17,7 +17,7 @@ interactions:
       Content-Type:
       - application/json; serialization=Avro
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0 Python/3.6.6 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: PUT
     uri: https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroup/schemas/example.avro.populatedrecord.User?api-version=2021-10
   response:
@@ -27,7 +27,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 02 Feb 2022 01:15:14 GMT
+      - Thu, 03 Feb 2022 21:28:04 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/example.avro.populatedrecord.User/versions/1?api-version=2021-10
       schema-group-name:
@@ -59,7 +59,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0 Python/3.6.6 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/167c05568d1a45bc99cfab05a2a0be37?api-version=2021-10
   response:
@@ -69,7 +69,7 @@ interactions:
       content-type:
       - application/json;serialization=Avro
       date:
-      - Wed, 02 Feb 2022 01:15:14 GMT
+      - Thu, 03 Feb 2022 21:28:04 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/example.avro.populatedrecord.User/versions/1?api-version=2021-10
       schema-group-name:
