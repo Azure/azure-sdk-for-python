@@ -37,7 +37,7 @@ class CommunicationRelayClient(object):
     def __init__(
             self,
             endpoint, # type: str
-             credential, # type: TokenCredential
+            credential, # type: TokenCredential
             **kwargs # type: Any
         ):
         # type: (...) -> None

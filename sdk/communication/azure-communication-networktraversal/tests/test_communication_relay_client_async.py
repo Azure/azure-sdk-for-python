@@ -50,7 +50,7 @@ class CommunicationRelayClientTestAsync(AsyncCommunicationTestCase):
 
         async with networkTraversalClient:
             print('Getting relay config:\n')
-            config = await networkTraversalClient.get_relay_configuration(user)
+            config = await networkTraversalClient.get_relay_configuration(user=user)
         
         for iceServer in config.ice_servers:
             assert iceServer.username is not None

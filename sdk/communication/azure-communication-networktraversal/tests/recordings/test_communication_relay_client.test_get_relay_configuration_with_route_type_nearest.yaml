@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.1.0b2 Python/3.7.4 (Windows-10-10.0.22523-SP0)
       x-ms-date:
-      - Thu, 03 Feb 2022 07:45:11 GMT
+      - Thu, 03 Feb 2022 18:48:53 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -32,9 +32,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 03 Feb 2022 07:45:09 GMT
+      - Thu, 03 Feb 2022 18:48:53 GMT
       ms-cv:
-      - z1FpLoln50m/hIfCouJovw.0
+      - iJRPb4Tcnk2GvbW8by19lQ.0
       request-context:
       - appId=
       strict-transport-security:
@@ -42,7 +42,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 29ms
+      - 31ms
     status:
       code: 201
       message: Created
@@ -60,9 +60,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-networktraversal/1.0.0b3 Python/3.7.4 (Windows-10-10.0.22523-SP0)
+      - azsdk-python-communication-networktraversal/1.0.0 Python/3.7.4 (Windows-10-10.0.22523-SP0)
       x-ms-date:
-      - Thu, 03 Feb 2022 07:45:11 GMT
+      - Thu, 03 Feb 2022 18:48:53 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -71,18 +71,18 @@ interactions:
     body:
       string: '{"iceServers": [{"routeType": "nearest", "urls": ["turn.skype.com",
         "turn:13.107.17.41:3478"], "username": "sanitized", "credential": "sanitized"}],
-        "expiresOn": "2022-02-05T07:45:09.3128317+00:00"}'
+        "expiresOn": "2022-02-05T18:48:53.374684+00:00"}'
     headers:
       api-supported-versions:
       - 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview, 2022-02-01
       content-length:
-      - '305'
+      - '304'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 03 Feb 2022 07:45:09 GMT
+      - Thu, 03 Feb 2022 18:48:53 GMT
       ms-cv:
-      - ZuLWRC2YzU2C67D8EC8UZg.0
+      - YIorLMmk/0iaxtfX+8xlXw.0
       request-context:
       - appId=
       strict-transport-security:
@@ -90,7 +90,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 63ms
+      - 26ms
     status:
       code: 200
       message: OK

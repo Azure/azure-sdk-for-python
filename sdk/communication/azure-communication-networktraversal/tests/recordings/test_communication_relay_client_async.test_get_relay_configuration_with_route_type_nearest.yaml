@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.1.0b2 Python/3.7.4 (Windows-10-10.0.22523-SP0)
       x-ms-date:
-      - Thu, 03 Feb 2022 07:45:12 GMT
+      - Thu, 03 Feb 2022 18:48:54 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -24,12 +24,12 @@ interactions:
         2021-03-31-preview1, 2021-10-31-preview, 2021-11-01, 2022-06-01
       content-length: '101'
       content-type: application/json; charset=utf-8
-      date: Thu, 03 Feb 2022 07:45:09 GMT
-      ms-cv: 7N6yYkR1DUKu9Sd8l2ZM+A.0
+      date: Thu, 03 Feb 2022 18:48:53 GMT
+      ms-cv: U7S7Y1qwuUOeBwAM1Q2FCA.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 42ms
+      x-processing-time: 31ms
     status:
       code: 201
       message: Created
@@ -44,9 +44,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-networktraversal/1.0.0b3 Python/3.7.4 (Windows-10-10.0.22523-SP0)
+      - azsdk-python-communication-networktraversal/1.0.0 Python/3.7.4 (Windows-10-10.0.22523-SP0)
       x-ms-date:
-      - Thu, 03 Feb 2022 07:45:12 GMT
+      - Thu, 03 Feb 2022 18:48:54 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -55,18 +55,18 @@ interactions:
     body:
       string: '{"iceServers": [{"routeType": "nearest", "urls": ["turn.skype.com",
         "turn:13.107.17.41:3478"], "username": "sanitized", "credential": "sanitized"}],
-        "expiresOn": "2022-02-05T07:45:10.09862+00:00"}'
+        "expiresOn": "2022-02-05T18:48:54.1541216+00:00"}'
     headers:
       api-supported-versions: 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview,
         2022-02-01
-      content-length: '303'
+      content-length: '305'
       content-type: application/json; charset=utf-8
-      date: Thu, 03 Feb 2022 07:45:09 GMT
-      ms-cv: xeDTn3qklUG3olXdukqJGA.0
+      date: Thu, 03 Feb 2022 18:48:53 GMT
+      ms-cv: tlyfMgBcmEmMWn7oD/Wppg.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 34ms
+      x-processing-time: 27ms
     status:
       code: 200
       message: OK
