@@ -67,7 +67,7 @@ relay_client = CommunicationRelayClient.from_connection_string(self.connection_s
 ```python
 # We need a user from Identity
 user = identity_client.create_user()
-relay_configuration = relay_client.get_relay_configuration(user)
+relay_configuration = relay_client.get_relay_configuration(user=user)
 
 for iceServer in config.ice_servers:
     assert iceServer.username is not None
@@ -103,7 +103,7 @@ for iceServer in config.ice_servers:
 ```python
 # We need a user from Identity
 user = identity_client.create_user()
-relay_configuration = relay_client.get_relay_configuration(user, RouteType.NEAREST)
+relay_configuration = relay_client.get_relay_configuration(user=user, route_type=RouteType.NEAREST)
 
 for iceServer in config.ice_servers:
     assert iceServer.username is not None

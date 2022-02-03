@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.1.0b2 Python/3.7.4 (Windows-10-10.0.22523-SP0)
       x-ms-date:
-      - Wed, 02 Feb 2022 18:27:16 GMT
+      - Thu, 03 Feb 2022 07:45:11 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -26,15 +26,15 @@ interactions:
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
-        2021-10-31-preview, 2021-11-01
+        2021-10-31-preview, 2021-11-01, 2022-06-01
       content-length:
       - '101'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 02 Feb 2022 18:27:15 GMT
+      - Thu, 03 Feb 2022 07:45:07 GMT
       ms-cv:
-      - Sv7u865ZRkiUJkoUts57Yw.0
+      - J8UhxqlGcUGDO+4Lo1wvEw.0
       request-context:
       - appId=
       strict-transport-security:
@@ -42,7 +42,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 30ms
+      - 55ms
     status:
       code: 201
       message: Created
@@ -62,7 +62,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-networktraversal/1.0.0b3 Python/3.7.4 (Windows-10-10.0.22523-SP0)
       x-ms-date:
-      - Wed, 02 Feb 2022 18:27:16 GMT
+      - Thu, 03 Feb 2022 07:45:11 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -72,8 +72,8 @@ interactions:
       string: '{"iceServers": [{"routeType": "any", "urls": ["turn.skype.com", "turn:turn.azure.com:3478"],
         "username": "sanitized", "credential": "sanitized"}, {"routeType": "nearest",
         "urls": ["stun:13.107.17.41:3478", "turn:13.107.17.41:3478"], "username":
-        "BQAANtaCFPoB2Bn0+86hlAiBQfar8Is4By/Ty27vNtEAAAAMARCsgNlqhd5IsZldo6P6NifI2O3C0Kbng4UQj51VRNRzKAUmVJ8=",
-        "credential": "p4fDoRUke5amBL4hDGl54k93AP0="}], "expiresOn": "2022-02-04T18:27:16.9077938+00:00"}'
+        "BQAANkxWcaUB2BpkiVInoRmzrxcA2O+hf9yDRV1Fhi8AAAAMARCsgNlqhd5IsZldo6P6NifIRUcwFyc50m1vfos1oYDwTYPvBOc=",
+        "credential": "r79G6AB0Jiv3EDh4+zwLgZvx+Ak="}], "expiresOn": "2022-02-05T07:45:08.7345427+00:00"}'
     headers:
       api-supported-versions:
       - 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview, 2022-02-01
@@ -82,9 +82,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 02 Feb 2022 18:27:16 GMT
+      - Thu, 03 Feb 2022 07:45:07 GMT
       ms-cv:
-      - blbB68XNa0irhg1/UWxCtQ.0
+      - mdgZcjPqX0uW4hlz3I+1IQ.0
       request-context:
       - appId=
       strict-transport-security:
@@ -92,7 +92,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 31ms
+      - 28ms
     status:
       code: 200
       message: OK
