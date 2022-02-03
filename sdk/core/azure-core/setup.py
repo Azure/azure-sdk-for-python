@@ -69,6 +69,6 @@ setup(
     install_requires=[
         'requests>=2.18.4',
         'six>=1.11.0',
-        "typing_extensions>=3.7.2"
+        "typing-extensions>=3.7.2"
     ],
 )
