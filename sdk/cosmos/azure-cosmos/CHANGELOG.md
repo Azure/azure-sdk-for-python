@@ -1,5 +1,10 @@
 ## Release History
 
+### 4.3.0b3 (Unreleased)
+
+### Bugs fixed
+- Moved `is_system_key` logic in async client to container initialization
+
 ### 4.3.0b2 (2022-01-25)
 
 This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
