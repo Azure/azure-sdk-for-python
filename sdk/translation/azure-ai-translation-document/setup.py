@@ -31,6 +31,7 @@ setup(
     long_description=readme + '\n\n' + changelog,
     long_description_content_type='text/markdown',
     url='https://github.com/Azure/azure-sdk-for-python',
+    keywords="azure, cognitive services, document translation, document translator, translator, translate, translation",
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
     license='MIT License',
