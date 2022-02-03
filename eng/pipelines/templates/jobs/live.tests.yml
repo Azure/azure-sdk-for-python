@@ -111,7 +111,6 @@ jobs:
           CoverageArg: $(CoverageArg)
           EnvVars:
             AZURE_RUN_MODE: 'Live' #Record, Playback
-            AZURE_TEST_RUN_LIVE: 'true'
             ${{ insert }}: ${{ parameters.EnvVars }}
           PreSteps: ${{ parameters.PreSteps }}
           PostSteps: ${{ parameters.PostSteps }}
