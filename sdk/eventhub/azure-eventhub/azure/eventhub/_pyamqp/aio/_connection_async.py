@@ -1,8 +1,8 @@
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 import threading
 import struct
@@ -35,7 +35,6 @@ from ..error import (
     AMQPConnectionError,
     AMQPError
 )
-
 
 _LOGGER = logging.getLogger(__name__)
 _CLOSING_STATES = (
@@ -150,8 +149,6 @@ class Connection(object):
                 description="Failed to initiate the connection due to exception: " + str(exc),
                 error=exc
             )
-        except Exception:
-            raise
 
     async def _disconnect(self, *args):
         if self.state == ConnectionState.END:
@@ -190,8 +187,6 @@ class Connection(object):
                     description="Can not send frame out due to exception: " + str(exc),
                     error=exc
                 )
-            except Exception:
-                raise
         else:
             _LOGGER.warning("Cannot write frame in current state: %r", self.state)
 
@@ -207,7 +202,7 @@ class Connection(object):
             raise ValueError("Maximum number of channels ({}) has been reached.".format(self.channel_max))
         next_channel = next(i for i in range(1, self.channel_max) if i not in self.outgoing_endpoints)
         return next_channel
-    
+
     async def _outgoing_empty(self):
         if self.network_trace:
             _LOGGER.info("<- empty()", extra=self.network_trace_params)
@@ -266,7 +261,7 @@ class Connection(object):
             _LOGGER.error("OPEN frame received in the OPENED state.")
             await self.close()
         if frame[4]:
-            self.remote_idle_timeout = frame[4]/1000  # Convert to seconds
+            self.remote_idle_timeout = frame[4] / 1000  # Convert to seconds
             self.remote_idle_timeout_send_frame = self.idle_timeout_empty_frame_send_ratio * self.remote_idle_timeout
 
         if frame[2] < 512:
@@ -279,7 +274,7 @@ class Connection(object):
             await self._outgoing_open()
             await self._set_state(ConnectionState.OPENED)
         else:
-            pass # TODO what now...?
+            pass  # TODO what now...?
 
     async def _outgoing_close(self, error=None):
         close_frame = CloseFrame(error=error)
@@ -332,8 +327,8 @@ class Connection(object):
             await self.incoming_endpoints[channel]._incoming_end(frame)
         except KeyError:
             pass  # TODO: channel error
-        #self.incoming_endpoints.pop(channel)  # TODO
-        #self.outgoing_endpoints.pop(channel)  # TODO
+        # self.incoming_endpoints.pop(channel)  # TODO
+        # self.outgoing_endpoints.pop(channel)  # TODO
 
     async def _process_incoming_frame(self, channel, frame):
         try:
@@ -378,7 +373,7 @@ class Connection(object):
                 _LOGGER.error("Unrecognized incoming frame: {}".format(frame))
                 return True
         except KeyError:
-            return True  #TODO: channel error
+            return True  # TODO: channel error
 
     async def _process_outgoing_frame(self, channel, frame):
         if self.network_trace:
@@ -388,7 +383,8 @@ class Connection(object):
         if self.state not in [ConnectionState.OPEN_PIPE, ConnectionState.OPEN_SENT, ConnectionState.OPENED]:
             raise ValueError("Connection not open.")
         now = time.time()
-        if get_local_timeout(now, self.idle_timeout, self.last_frame_received_time) or (await self._get_remote_timeout(now)):
+        if get_local_timeout(now, self.idle_timeout, self.last_frame_received_time) or (
+        await self._get_remote_timeout(now)):
             await self.close(
                 # TODO: check error condition
                 error=AMQPError(
@@ -406,7 +402,7 @@ class Connection(object):
             if time_since_last_sent > self.remote_idle_timeout_send_frame:
                 await self._outgoing_empty()
         return False
-    
+
     async def _wait_for_response(self, wait, end_state):
         # type: (Union[bool, float], ConnectionState) -> None
         if wait == True:
@@ -422,13 +418,6 @@ class Connection(object):
                     break
                 await asyncio.sleep(self.idle_wait_time)
                 await self.listen(wait=False)
-    
-    async def _listen_one_frame(self, **kwargs):
-        new_frame = await self._read_frame(**kwargs)
-        if not new_frame:
-            raise ValueError("Connection closed.")
-        await self._process_incoming_frame(*new_frame)
-        #    raise Exception("Stop")  # TODO: Stop listening
 
     async def listen(self, wait=False, batch=1, **kwargs):
         try:
@@ -438,7 +427,8 @@ class Connection(object):
         try:
             if self.state not in _CLOSING_STATES:
                 now = time.time()
-                if get_local_timeout(now, self.idle_timeout, self.last_frame_received_time) or (await self._get_remote_timeout(now)):
+                if get_local_timeout(now, self.idle_timeout, self.last_frame_received_time) or (
+                await self._get_remote_timeout(now)):
                     # TODO: check error condition
                     await self.close(
                         error=AMQPError(
@@ -455,15 +445,16 @@ class Connection(object):
                     description="Connection was already closed."
                 )
                 return
-            await asyncio.gather(*[self._listen_one_frame(**kwargs) for _ in range(batch)])   # TODO: Close on first exception
+            for i in range(batch):
+                new_frame = await self._read_frame(**kwargs)
+                if await self._process_incoming_frame(*new_frame):
+                    break
         except (OSError, IOError, SSLError, socket.error) as exc:
             self._error = AMQPConnectionError(
                 ErrorCondition.SocketError,
                 description="Can not send frame out due to exception: " + str(exc),
                 error=exc
             )
-        except Exception:
-            raise
 
     def create_session(self, **kwargs):
         assigned_channel = self._get_next_outgoing_channel()

@@ -33,7 +33,7 @@ async def test_client_secret_credential_async(live_eventhub):
         batch.add(EventData(body='A single message'))
         await producer_client.send_batch(batch)
 
-    def on_event(partition_context, event):
+    async def on_event(partition_context, event):
         on_event.called = True
         on_event.partition_id = partition_context.partition_id
         on_event.event = event
@@ -45,6 +45,7 @@ async def test_client_secret_credential_async(live_eventhub):
     assert on_event.called is True
     assert on_event.partition_id == "0"
     assert list(on_event.event.body)[0] == 'A single message'.encode('utf-8')
+    await credential.close()
 
 
 @pytest.mark.liveTest

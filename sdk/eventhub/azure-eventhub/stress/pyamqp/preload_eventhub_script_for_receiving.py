@@ -22,10 +22,7 @@ connect_strs = [
 ]
 
 eh_name_size_pairs = [
-    ('pyamqp_16', 16),
-    ('pyamqp_128', 128),
     ('pyamqp_512', 512),
-    ('pyamqp_1024', 1024)
 ]
 
 EVENT_DATA_COUNT = 2_000_000

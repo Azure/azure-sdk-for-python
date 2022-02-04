@@ -229,7 +229,11 @@ class AsyncTransport(object):
         try:
             while toread:
                 try:
-                    view[nbytes:nbytes + toread] = await self.reader.readexactly(toread)
+                    # TODO: await self.reader.readexactly would not return until it has received something which
+                    #  is problematic in the case timeout is required while no frame coming in.
+                    #  asyncio.wait_for is used here for timeout control
+                    #  set socket timeout does not work, maybe should be a different config?
+                    view[nbytes:nbytes + toread] = await asyncio.wait_for(self.reader.readexactly(toread), timeout=1)
                     nbytes = toread
                 except asyncio.IncompleteReadError as exc:
                     pbytes = len(exc.partial)
@@ -331,7 +335,7 @@ class AsyncTransport(object):
             # TODO: Catch decode error and return amqp:decode-error
             #_LOGGER.info("ICH%d <- %r", channel, decoded)
             return channel, decoded
-        except (socket.timeout, asyncio.IncompleteReadError):
+        except (socket.timeout, asyncio.IncompleteReadError, asyncio.exceptions.TimeoutError):
             return None, None
 
     async def receive_frame_with_lock(self, *args, **kwargs):
