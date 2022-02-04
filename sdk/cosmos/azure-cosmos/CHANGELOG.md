@@ -4,6 +4,9 @@
 
 #### Bugs fixed
 - Moved `is_system_key` logic in async client to container initialization
+- Default consistency level for the sync and async clients is no longer "Session" and will instead be set to the 
+  consistency level of the user's cosmos account setting on initialization if not passed during client initialization. 
+  This change will impact client application in terms of RUs and latency. Users relying on default `Session` consistency will need to pass it explicitly if their account consistency is different than `Session`. Please see [Consistency Levels in Azure Cosmos DB](https://docs.microsoft.com/azure/cosmos-db/consistency-levels) for more details.  
 
 ### 4.3.0b2 (2022-01-25)
 
