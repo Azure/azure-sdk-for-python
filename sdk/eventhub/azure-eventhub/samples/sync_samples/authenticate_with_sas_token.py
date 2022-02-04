@@ -9,8 +9,6 @@
 Example to demonstrate utilizing SAS (Shared Access Signature) tokens to authenticate with Event Hubs.
 """
 
-# pylint: disable=C0111
-
 import os
 import time
 import hmac

@@ -12,6 +12,7 @@ try:
     from ._models_py3 import AnalyzedTokenInfo
     from ._models_py3 import AsciiFoldingTokenFilter
     from ._models_py3 import AzureActiveDirectoryApplicationCredentials
+    from ._models_py3 import AzureMachineLearningSkill
     from ._models_py3 import BM25Similarity
     from ._models_py3 import CharFilter
     from ._models_py3 import CjkBigramTokenFilter
@@ -162,6 +163,7 @@ except (SyntaxError, ImportError):
     from ._models import AnalyzedTokenInfo  # type: ignore
     from ._models import AsciiFoldingTokenFilter  # type: ignore
     from ._models import AzureActiveDirectoryApplicationCredentials  # type: ignore
+    from ._models import AzureMachineLearningSkill  # type: ignore
     from ._models import BM25Similarity  # type: ignore
     from ._models import CharFilter  # type: ignore
     from ._models import CjkBigramTokenFilter  # type: ignore
@@ -358,6 +360,7 @@ __all__ = [
     'AnalyzedTokenInfo',
     'AsciiFoldingTokenFilter',
     'AzureActiveDirectoryApplicationCredentials',
+    'AzureMachineLearningSkill',
     'BM25Similarity',
     'CharFilter',
     'CjkBigramTokenFilter',

@@ -1,8 +1,12 @@
 # Release History
 
-## 1.8.0 (Unreleased)
+## 1.8.0b1 (2022-02-08)
 
 ### Features Added
+
+- Added `validate_authority` support for msal client  #22625
+- Added `resource_id` support for user-assigned managed identity  #22329
+- Added `ClientAssertionCredential` support  #22328
 
 ### Breaking Changes
 
@@ -10,7 +14,7 @@
 
 ### Other Changes
 
-- Python 2.7 and 3.6 are no longer supported. Please use Python version 3.7 or later.
+- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
 
 ## 1.7.1 (2021-11-09)
 

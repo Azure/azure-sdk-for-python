@@ -4,7 +4,8 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import datetime
-from typing import TYPE_CHECKING, Union, Optional
+import warnings
+from typing import TYPE_CHECKING, Any, Union, Optional
 import six
 
 from ._common.utils import utc_from_timestamp, utc_now
@@ -88,7 +89,7 @@ class ServiceBusSession(BaseSession):
             :caption: Get session from a receiver
     """
 
-    def get_state(self, *, timeout: Optional[float] = None) -> bytes:
+    def get_state(self, *, timeout: Optional[float] = None, **kwargs: Any) -> bytes:
         # pylint: disable=protected-access
         """Get the session state.
 
@@ -96,7 +97,7 @@ class ServiceBusSession(BaseSession):
 
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
          greater than 0 if specified. The default value is None, meaning no timeout.
-        :rtype: str
+        :rtype: bytes
 
         .. admonition:: Example:
 
@@ -107,6 +108,8 @@ class ServiceBusSession(BaseSession):
                 :dedent: 4
                 :caption: Get the session state
         """
+        if kwargs:
+            warnings.warn(f"Unsupported keyword args: {kwargs}")
         self._receiver._check_live()  # pylint: disable=protected-access
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -119,7 +122,7 @@ class ServiceBusSession(BaseSession):
         session_state = response.get(MGMT_RESPONSE_SESSION_STATE)  # type: ignore
         return session_state
 
-    def set_state(self, state: Union[str, bytes, bytearray], *, timeout: Optional[float] = None) -> None:
+    def set_state(self, state: Union[str, bytes, bytearray], *, timeout: Optional[float] = None, **kwargs: Any) -> None:
         # pylint: disable=protected-access
         """Set the session state.
 
@@ -137,6 +140,8 @@ class ServiceBusSession(BaseSession):
                 :dedent: 4
                 :caption: Set the session state
         """
+        if kwargs:
+            warnings.warn(f"Unsupported keyword args: {kwargs}")
         self._receiver._check_live()  # pylint: disable=protected-access
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -153,7 +158,7 @@ class ServiceBusSession(BaseSession):
             timeout=timeout,
         )
 
-    def renew_lock(self, *, timeout: Optional[float] = None) -> datetime.datetime:
+    def renew_lock(self, *, timeout: Optional[float] = None, **kwargs: Any) -> datetime.datetime:
         # pylint: disable=protected-access
         """Renew the session lock.
 
@@ -179,6 +184,8 @@ class ServiceBusSession(BaseSession):
                 :dedent: 4
                 :caption: Renew the session lock before it expires
         """
+        if kwargs:
+            warnings.warn(f"Unsupported keyword args: {kwargs}")
         self._receiver._check_live()  # pylint: disable=protected-access
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")

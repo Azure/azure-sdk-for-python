@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b8 (Unreleased)
+## 1.0.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,22 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.0.0 (2022-01-25)
+
+### Features Added
+
+- Supported passing the rest api version via `ContainerRegistryClient`.
+
+### Breaking Changes
+
+- Renamed the property `size` of `ArtifactManifestProperties` to `size_in_bytes`.
+- Renamed `TagOrder` to `ArtifactTagOrder`.
+- Renamed `ManifestOrder` to `ArtifactManifestOrder`.
+
+### Other Changes
+
+- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
 
 ## 1.0.0b7 (2021-11-19)
 

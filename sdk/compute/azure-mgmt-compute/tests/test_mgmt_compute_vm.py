@@ -14,8 +14,10 @@
 #   virtual_machine_extensions: 5/5
 #   virtual_machine_extension_images: 3/3
 
+import os
 import unittest
 
+import pytest
 import azure.mgmt.compute
 from azure.core.exceptions import ResourceExistsError
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
@@ -78,8 +80,7 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
 
         return nic_info.id
 
-
-
+    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_compute_vm(self, resource_group):
@@ -388,6 +389,7 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
         result = self.mgmt_client.virtual_machines.begin_delete(resource_group.name, VIRTUAL_MACHINE_NAME)
         result = result.result()
 
+    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_compute_vm_image(self, resource_group):
@@ -411,6 +413,7 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
         # List Virtual Machine image skus (TODO: need swagger file)
         result = self.mgmt_client.virtual_machine_images.list_skus(AZURE_LOCATION, PUBLISHER_NAME, OFFER)
 
+    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_compute_vm_extension_image(self, resource_group):

@@ -11,13 +11,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.9.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.10.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 03 Jun 2021 21:54:32 GMT
+      - Tue, 01 Feb 2022 19:11:21 GMT
       x-ms-version:
-      - '2020-08-04'
+      - '2021-02-12'
     method: PUT
-    uri: https://redacted.blob.core.windows.net/src4bca44dc-69cf-48d4-b19f-152c54698b39?restype=container
+    uri: https://redacted.blob.core.windows.net/src20fd4671-d6f0-4e50-b5d6-f1bf669ade5c?restype=container
   response:
     body:
       string: ''
@@ -25,15 +25,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 03 Jun 2021 21:54:31 GMT
+      - Tue, 01 Feb 2022 19:11:21 GMT
       etag:
-      - '"0x8D926DA2B6E514E"'
+      - '"0x8D9E5B6A23D7F2E"'
       last-modified:
-      - Thu, 03 Jun 2021 21:54:32 GMT
+      - Tue, 01 Feb 2022 19:11:21 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2020-08-04'
+      - '2021-02-12'
     status:
       code: 201
       message: Created
@@ -53,15 +53,15 @@ interactions:
       If-None-Match:
       - '*'
       User-Agent:
-      - azsdk-python-storage-blob/12.9.0b1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.10.0b2 Python/3.10.0 (Windows-10-10.0.22000-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Thu, 03 Jun 2021 21:54:32 GMT
+      - Tue, 01 Feb 2022 19:11:21 GMT
       x-ms-version:
-      - '2020-08-04'
+      - '2021-02-12'
     method: PUT
-    uri: https://redacted.blob.core.windows.net/src4bca44dc-69cf-48d4-b19f-152c54698b39/d8e8ca6c-36d9-4130-9755-0bc7d00c342a.txt
+    uri: https://redacted.blob.core.windows.net/src20fd4671-d6f0-4e50-b5d6-f1bf669ade5c/15d8969f-6f9d-429a-bef1-fef7866c6fdc.txt
   response:
     body:
       string: ''
@@ -71,11 +71,11 @@ interactions:
       content-md5:
       - lyFPYyJLwenMTaN3qtznxw==
       date:
-      - Thu, 03 Jun 2021 21:54:31 GMT
+      - Tue, 01 Feb 2022 19:11:21 GMT
       etag:
-      - '"0x8D926DA2B7BD025"'
+      - '"0x8D9E5B6A247789F"'
       last-modified:
-      - Thu, 03 Jun 2021 21:54:32 GMT
+      - Tue, 01 Feb 2022 19:11:21 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -83,12 +83,12 @@ interactions:
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2020-08-04'
+      - '2021-02-12'
     status:
       code: 201
       message: Created
 - request:
-    body: '{"inputs": [{"source": {"sourceUrl": "https://redacted.blob.core.windows.net/src4bca44dc-69cf-48d4-b19f-152c54698b39?se=end&sp=rl&sv=2020-08-04&sr=c&sig=fake_token_value",
+    body: '{"inputs": [{"source": {"sourceUrl": "https://redacted.blob.core.windows.net/src20fd4671-d6f0-4e50-b5d6-f1bf669ade5c?se=end&sp=rl&sv=2021-02-12&sr=c&sig=fake_token_value",
       "filter": {}}, "targets": [{"targetUrl": "https://idont.ex.ist", "language":
       "es"}]}]}'
     headers:
@@ -99,11 +99,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '317'
+      - '313'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-translation-document/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-translation-document/1.0.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0/batches
   response:
@@ -111,16 +111,16 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 6cb8cd71-de28-402d-b6a7-682fcbd15795
+      - 0eb39e9f-4882-4f9e-9f0e-a18b431188be
       content-length:
       - '0'
       date:
-      - Thu, 03 Jun 2021 21:54:32 GMT
+      - Tue, 01 Feb 2022 19:11:21 GMT
       operation-location:
-      - https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0/batches/46c61089-e758-4ef0-9ab0-0b07354b9955
+      - https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0/batches/c531c0dc-2a0c-4c3c-88d8-bf4f76d15ac7
       set-cookie:
-      - ARRAffinity=20358cd7aa5d6b0695f01ef171fc9a95880154357830e1c6bb513b73834a2e5f;Path=/;HttpOnly;Secure;Domain=mtbatch.nam.microsofttranslator.com
-      - ARRAffinitySameSite=20358cd7aa5d6b0695f01ef171fc9a95880154357830e1c6bb513b73834a2e5f;Path=/;HttpOnly;SameSite=None;Secure;Domain=mtbatch.nam.microsofttranslator.com
+      - ARRAffinity=748a2cefe0e94b92294828d7237123826b9552ab7a870cd971e8858b6fa6e96a;Path=/;HttpOnly;Secure;Domain=mtbatch.nam.microsofttranslator.com
+      - ARRAffinitySameSite=748a2cefe0e94b92294828d7237123826b9552ab7a870cd971e8858b6fa6e96a;Path=/;HttpOnly;SameSite=None;Secure;Domain=mtbatch.nam.microsofttranslator.com
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
@@ -128,7 +128,7 @@ interactions:
       x-powered-by:
       - ASP.NET
       x-requestid:
-      - 6cb8cd71-de28-402d-b6a7-682fcbd15795
+      - 0eb39e9f-4882-4f9e-9f0e-a18b431188be
     status:
       code: 202
       message: Accepted
@@ -142,30 +142,30 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-translation-document/1.0.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-ai-translation-document/1.0.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0/batches/46c61089-e758-4ef0-9ab0-0b07354b9955
+    uri: https://redacted.cognitiveservices.azure.com/translator/text/batch/v1.0/batches/c531c0dc-2a0c-4c3c-88d8-bf4f76d15ac7
   response:
     body:
-      string: '{"id":"46c61089-e758-4ef0-9ab0-0b07354b9955","createdDateTimeUtc":"2021-06-03T21:54:32.7556399Z","lastActionDateTimeUtc":"2021-06-03T21:54:32.837085Z","status":"ValidationFailed","error":{"code":"InvalidRequest","message":"Cannot
+      string: '{"id":"c531c0dc-2a0c-4c3c-88d8-bf4f76d15ac7","createdDateTimeUtc":"2022-02-01T19:11:22.1609723Z","lastActionDateTimeUtc":"2022-02-01T19:11:23.1302738Z","status":"ValidationFailed","error":{"code":"InvalidRequest","message":"Cannot
         access target document location with the current permissions.","target":"Operation","innerError":{"code":"InvalidTargetDocumentAccessLevel","message":"Cannot
         access target document location with the current permissions."}},"summary":{"total":0,"failed":0,"success":0,"inProgress":0,"notYetStarted":0,"cancelled":0,"totalCharacterCharged":0}}'
     headers:
       apim-request-id:
-      - 79793fac-2da7-4669-83d5-22437314742b
+      - ec1deead-f443-4da0-ba56-35a696e2f48e
       cache-control:
       - public,max-age=1
       content-length:
-      - '571'
+      - '572'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 03 Jun 2021 21:55:02 GMT
+      - Tue, 01 Feb 2022 19:11:22 GMT
       etag:
-      - '"20B523E5E12875486979EA15FF6C77384202849DAE3D14352C0A0AA5824CA0B6"'
+      - '"704374AAAB0AAE4E0B01A3030940E02272A1EEF852C032D60FC30F2187C5245D"'
       set-cookie:
-      - ARRAffinity=20358cd7aa5d6b0695f01ef171fc9a95880154357830e1c6bb513b73834a2e5f;Path=/;HttpOnly;Secure;Domain=mtbatch.nam.microsofttranslator.com
-      - ARRAffinitySameSite=20358cd7aa5d6b0695f01ef171fc9a95880154357830e1c6bb513b73834a2e5f;Path=/;HttpOnly;SameSite=None;Secure;Domain=mtbatch.nam.microsofttranslator.com
+      - ARRAffinity=b43e80ef1fbcb9f9d446cbc61b366e02dafefc2a9addab525b1fc3eda44b27b2;Path=/;HttpOnly;Secure;Domain=mtbatch.nam.microsofttranslator.com
+      - ARRAffinitySameSite=b43e80ef1fbcb9f9d446cbc61b366e02dafefc2a9addab525b1fc3eda44b27b2;Path=/;HttpOnly;SameSite=None;Secure;Domain=mtbatch.nam.microsofttranslator.com
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       transfer-encoding:
@@ -177,7 +177,7 @@ interactions:
       x-powered-by:
       - ASP.NET
       x-requestid:
-      - 79793fac-2da7-4669-83d5-22437314742b
+      - ec1deead-f443-4da0-ba56-35a696e2f48e
     status:
       code: 200
       message: OK

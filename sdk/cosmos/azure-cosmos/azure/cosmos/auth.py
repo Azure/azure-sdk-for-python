@@ -25,8 +25,7 @@
 import base64
 from hashlib import sha256
 import hmac
-
-import six
+import urllib.parse
 
 from . import http_constants
 
@@ -89,15 +88,9 @@ def __GetAuthorizationTokenUsingMasterKey(verb, resource_id_or_fullname, resourc
         http_date=headers.get(http_constants.HttpHeaders.HttpDate, "").lower(),
     )
 
-    if six.PY2:
-        body = text.decode("utf-8")
-        digest = hmac.new(key, body, sha256).digest()
-        signature = digest.encode("base64")
-    else:
-        # python 3 support
-        body = text.encode("utf-8")
-        digest = hmac.new(key, body, sha256).digest()
-        signature = base64.encodebytes(digest).decode("utf-8")
+    body = text.encode("utf-8")
+    digest = hmac.new(key, body, sha256).digest()
+    signature = base64.encodebytes(digest).decode("utf-8")
 
     master_token = "master"
     token_version = "1.0"
@@ -118,9 +111,10 @@ def __GetAuthorizationTokenUsingResourceTokens(resource_tokens, path, resource_i
         # For database account access(through GetDatabaseAccount API), path and
         # resource_id_or_fullname are '', so in this case we return the first token to be
         # used for creating the auth header as the service will accept any token in this case
-        path = six.moves.urllib.parse.unquote(path)
+        path = urllib.parse.unquote(path)
         if not path and not resource_id_or_fullname:
-            return next(six.itervalues(resource_tokens))
+            for value in resource_tokens.values():
+                return value
 
         if resource_tokens.get(resource_id_or_fullname):
             return resource_tokens[resource_id_or_fullname]

@@ -79,8 +79,9 @@ def recorded_by_proxy_async(test_func):
                 test_output = await test_func(*args, **trimmed_kwargs)
         except ResourceNotFoundError as error:
             error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
-            error_with_message = ResourceNotFoundError(message=error_body["Message"], response=error.response)
-            raise error_with_message
+            message = error_body.get("message") or error_body.get("Message")
+            error_with_message = ResourceNotFoundError(message=message, response=error.response)
+            raise error_with_message from error
         finally:
             AioHttpTransport.send = original_transport_func
             stop_record_or_playback(test_id, recording_id, test_output)
