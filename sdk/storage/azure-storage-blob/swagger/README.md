@@ -122,7 +122,7 @@ directive:
         if (property.includes('/{containerName}/{blob}'))
         {
             $[property]["parameters"] = $[property]["parameters"].filter(function(param) { return (typeof param['$ref'] === "undefined") || (false == param['$ref'].endsWith("#/parameters/ContainerName") && false == param['$ref'].endsWith("#/parameters/Blob"))});
-        } 
+        }
         else if (property.includes('/{containerName}'))
         {
             $[property]["parameters"] = $[property]["parameters"].filter(function(param) { return (typeof param['$ref'] === "undefined") || (false == param['$ref'].endsWith("#/parameters/ContainerName"))});
@@ -155,7 +155,7 @@ directive:
             var newName = property.replace('/{containerName}/{blob}', '');
             $[newName] = $[oldName];
             delete $[oldName];
-        } 
+        }
         else if (property.includes('/{containerName}'))
         {
             var oldName = property;
@@ -164,4 +164,49 @@ directive:
             delete $[oldName];
         }
     }
+```
+
+### Remove x-ms-parameterized-host and add to each operation
+``` yaml
+directive:
+- from: swagger-document
+  where: $
+  transform: >
+    $["x-ms-parameterized-host"] = undefined;
+```
+
+### Add url to each url
+``` yaml
+directive:
+- from: swagger-document
+  where: $["x-ms-paths"]
+  transform: >
+    for (const property in $)
+    {
+        var oldName = property;
+        var newName = '/{url}' + property;
+        $[newName] = $[oldName];
+        delete $[oldName];
+    }
+```
+
+### Change Url name to not conflict
+``` yaml
+directive:
+- from: swagger-document
+  where: $["x-ms-paths"]
+  transform: >
+    for (const property in $)
+    {
+        $[property]["parameters"].push({"$ref": "#/parameters/Url"});
+    }
+```
+
+### Add url param to each operation
+``` yaml
+directive:
+- from: swagger-document
+  where: $["parameters"]
+  transform: >
+    $["Url"]["x-ms-client-name"] = "clientUrl"
 ```

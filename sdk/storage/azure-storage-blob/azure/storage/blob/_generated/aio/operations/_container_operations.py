@@ -100,6 +100,7 @@ class ContainerOperations:
             _prevent_encryption_scope_override = container_cpk_scope_info.prevent_encryption_scope_override
 
         request = build_create_request(
+            client_url=self._config.client_url,
             restype=restype,
             version=self._config.version,
             timeout=timeout,
@@ -111,10 +112,7 @@ class ContainerOperations:
             template_url=self.create.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -136,7 +134,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {'url': ''}  # type: ignore
+    create.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -181,6 +179,7 @@ class ContainerOperations:
             _lease_id = lease_access_conditions.lease_id
 
         request = build_get_properties_request(
+            client_url=self._config.client_url,
             restype=restype,
             version=self._config.version,
             timeout=timeout,
@@ -189,10 +188,7 @@ class ContainerOperations:
             template_url=self.get_properties.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -224,7 +220,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_properties.metadata = {'url': ''}  # type: ignore
+    get_properties.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -277,6 +273,7 @@ class ContainerOperations:
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_delete_request(
+            client_url=self._config.client_url,
             restype=restype,
             version=self._config.version,
             timeout=timeout,
@@ -287,10 +284,7 @@ class ContainerOperations:
             template_url=self.delete.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -310,7 +304,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete.metadata = {'url': ''}  # type: ignore
+    delete.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -373,6 +367,7 @@ class ContainerOperations:
             _if_modified_since = modified_access_conditions.if_modified_since
 
         request = build_set_metadata_request(
+            client_url=self._config.client_url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -384,10 +379,7 @@ class ContainerOperations:
             template_url=self.set_metadata.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -409,7 +401,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_metadata.metadata = {'url': ''}  # type: ignore
+    set_metadata.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -458,6 +450,7 @@ class ContainerOperations:
             _lease_id = lease_access_conditions.lease_id
 
         request = build_get_access_policy_request(
+            client_url=self._config.client_url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -467,10 +460,7 @@ class ContainerOperations:
             template_url=self.get_access_policy.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -496,7 +486,7 @@ class ContainerOperations:
 
         return deserialized
 
-    get_access_policy.metadata = {'url': ''}  # type: ignore
+    get_access_policy.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -566,6 +556,7 @@ class ContainerOperations:
             _content = None
 
         request = build_set_access_policy_request(
+            client_url=self._config.client_url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -580,10 +571,7 @@ class ContainerOperations:
             template_url=self.set_access_policy.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -605,7 +593,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_access_policy.metadata = {'url': ''}  # type: ignore
+    set_access_policy.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -655,6 +643,7 @@ class ContainerOperations:
 
         
         request = build_restore_request(
+            client_url=self._config.client_url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -665,10 +654,7 @@ class ContainerOperations:
             template_url=self.restore.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -688,7 +674,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    restore.metadata = {'url': ''}  # type: ignore
+    restore.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -737,6 +723,7 @@ class ContainerOperations:
 
         
         request = build_rename_request(
+            client_url=self._config.client_url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -747,10 +734,7 @@ class ContainerOperations:
             template_url=self.rename.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -770,7 +754,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    rename.metadata = {'url': ''}  # type: ignore
+    rename.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -823,6 +807,7 @@ class ContainerOperations:
         _content = self._serialize.body(body, 'IO')
 
         request = build_submit_batch_request(
+            client_url=self._config.client_url,
             multipart_content_type=multipart_content_type,
             restype=restype,
             comp=comp,
@@ -834,10 +819,7 @@ class ContainerOperations:
             template_url=self.submit_batch.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=True, **kwargs)
         response = pipeline_response.http_response
@@ -859,7 +841,7 @@ class ContainerOperations:
 
         return deserialized
 
-    submit_batch.metadata = {'url': ''}  # type: ignore
+    submit_batch.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -924,6 +906,7 @@ class ContainerOperations:
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_acquire_lease_request(
+            client_url=self._config.client_url,
             comp=comp,
             restype=restype,
             action=action,
@@ -937,10 +920,7 @@ class ContainerOperations:
             template_url=self.acquire_lease.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -963,7 +943,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    acquire_lease.metadata = {'url': ''}  # type: ignore
+    acquire_lease.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1021,6 +1001,7 @@ class ContainerOperations:
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_release_lease_request(
+            client_url=self._config.client_url,
             comp=comp,
             restype=restype,
             action=action,
@@ -1033,10 +1014,7 @@ class ContainerOperations:
             template_url=self.release_lease.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1058,7 +1036,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    release_lease.metadata = {'url': ''}  # type: ignore
+    release_lease.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1116,6 +1094,7 @@ class ContainerOperations:
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_renew_lease_request(
+            client_url=self._config.client_url,
             comp=comp,
             restype=restype,
             action=action,
@@ -1128,10 +1107,7 @@ class ContainerOperations:
             template_url=self.renew_lease.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1154,7 +1130,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    renew_lease.metadata = {'url': ''}  # type: ignore
+    renew_lease.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1218,6 +1194,7 @@ class ContainerOperations:
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_break_lease_request(
+            client_url=self._config.client_url,
             comp=comp,
             restype=restype,
             action=action,
@@ -1230,10 +1207,7 @@ class ContainerOperations:
             template_url=self.break_lease.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1256,7 +1230,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    break_lease.metadata = {'url': ''}  # type: ignore
+    break_lease.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1319,6 +1293,7 @@ class ContainerOperations:
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_change_lease_request(
+            client_url=self._config.client_url,
             comp=comp,
             restype=restype,
             action=action,
@@ -1332,10 +1307,7 @@ class ContainerOperations:
             template_url=self.change_lease.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1358,7 +1330,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    change_lease.metadata = {'url': ''}  # type: ignore
+    change_lease.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1424,6 +1396,7 @@ class ContainerOperations:
 
         
         request = build_list_blob_flat_segment_request(
+            client_url=self._config.client_url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -1436,10 +1409,7 @@ class ContainerOperations:
             template_url=self.list_blob_flat_segment.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1463,7 +1433,7 @@ class ContainerOperations:
 
         return deserialized
 
-    list_blob_flat_segment.metadata = {'url': ''}  # type: ignore
+    list_blob_flat_segment.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1535,6 +1505,7 @@ class ContainerOperations:
 
         
         request = build_list_blob_hierarchy_segment_request(
+            client_url=self._config.client_url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -1548,10 +1519,7 @@ class ContainerOperations:
             template_url=self.list_blob_hierarchy_segment.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1575,5 +1543,5 @@ class ContainerOperations:
 
         return deserialized
 
-    list_blob_hierarchy_segment.metadata = {'url': ''}  # type: ignore
+    list_blob_hierarchy_segment.metadata = {'url': '/{url}'}  # type: ignore
 

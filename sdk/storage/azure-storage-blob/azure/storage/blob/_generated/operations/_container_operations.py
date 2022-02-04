@@ -18,7 +18,7 @@ from azure.core.tracing.decorator import distributed_trace
 from msrest import Serializer
 
 from .. import models as _models
-from .._vendor import _convert_request
+from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -31,6 +31,7 @@ _SERIALIZER.client_side_validation = False
 # fmt: off
 
 def build_create_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -45,7 +46,12 @@ def build_create_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '/{url}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -78,6 +84,7 @@ def build_create_request(
 
 
 def build_get_properties_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -89,7 +96,12 @@ def build_get_properties_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '/{url}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -116,6 +128,7 @@ def build_get_properties_request(
 
 
 def build_delete_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -129,7 +142,12 @@ def build_delete_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '/{url}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -160,6 +178,7 @@ def build_delete_request(
 
 
 def build_set_metadata_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -174,7 +193,12 @@ def build_set_metadata_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '/{url}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -206,6 +230,7 @@ def build_set_metadata_request(
 
 
 def build_get_access_policy_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -218,7 +243,12 @@ def build_get_access_policy_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '/{url}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -246,6 +276,7 @@ def build_get_access_policy_request(
 
 
 def build_set_access_policy_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -262,7 +293,12 @@ def build_set_access_policy_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '/{url}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -298,6 +334,7 @@ def build_set_access_policy_request(
 
 
 def build_restore_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -311,7 +348,12 @@ def build_restore_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '/{url}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -341,6 +383,7 @@ def build_restore_request(
 
 
 def build_rename_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -354,7 +397,12 @@ def build_rename_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '/{url}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -383,6 +431,7 @@ def build_rename_request(
 
 
 def build_submit_batch_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -396,7 +445,12 @@ def build_submit_batch_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '/{url}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -424,6 +478,7 @@ def build_submit_batch_request(
 
 
 def build_acquire_lease_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -440,7 +495,12 @@ def build_acquire_lease_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '/{url}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -475,6 +535,7 @@ def build_acquire_lease_request(
 
 
 def build_release_lease_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -490,7 +551,12 @@ def build_release_lease_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '/{url}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -522,6 +588,7 @@ def build_release_lease_request(
 
 
 def build_renew_lease_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -537,7 +604,12 @@ def build_renew_lease_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '/{url}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -569,6 +641,7 @@ def build_renew_lease_request(
 
 
 def build_break_lease_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -584,7 +657,12 @@ def build_break_lease_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '/{url}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -617,6 +695,7 @@ def build_break_lease_request(
 
 
 def build_change_lease_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -633,7 +712,12 @@ def build_change_lease_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '/{url}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -666,6 +750,7 @@ def build_change_lease_request(
 
 
 def build_list_blob_flat_segment_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -681,7 +766,12 @@ def build_list_blob_flat_segment_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '/{url}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -715,6 +805,7 @@ def build_list_blob_flat_segment_request(
 
 
 def build_list_blob_hierarchy_segment_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -731,7 +822,12 @@ def build_list_blob_hierarchy_segment_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '/{url}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -845,6 +941,7 @@ class ContainerOperations(object):
             _prevent_encryption_scope_override = container_cpk_scope_info.prevent_encryption_scope_override
 
         request = build_create_request(
+            client_url=self._config.client_url,
             restype=restype,
             version=self._config.version,
             timeout=timeout,
@@ -856,10 +953,7 @@ class ContainerOperations(object):
             template_url=self.create.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -881,7 +975,7 @@ class ContainerOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {'url': ''}  # type: ignore
+    create.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -927,6 +1021,7 @@ class ContainerOperations(object):
             _lease_id = lease_access_conditions.lease_id
 
         request = build_get_properties_request(
+            client_url=self._config.client_url,
             restype=restype,
             version=self._config.version,
             timeout=timeout,
@@ -935,10 +1030,7 @@ class ContainerOperations(object):
             template_url=self.get_properties.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -970,7 +1062,7 @@ class ContainerOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_properties.metadata = {'url': ''}  # type: ignore
+    get_properties.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1024,6 +1116,7 @@ class ContainerOperations(object):
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_delete_request(
+            client_url=self._config.client_url,
             restype=restype,
             version=self._config.version,
             timeout=timeout,
@@ -1034,10 +1127,7 @@ class ContainerOperations(object):
             template_url=self.delete.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1057,7 +1147,7 @@ class ContainerOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete.metadata = {'url': ''}  # type: ignore
+    delete.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1121,6 +1211,7 @@ class ContainerOperations(object):
             _if_modified_since = modified_access_conditions.if_modified_since
 
         request = build_set_metadata_request(
+            client_url=self._config.client_url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -1132,10 +1223,7 @@ class ContainerOperations(object):
             template_url=self.set_metadata.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1157,7 +1245,7 @@ class ContainerOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_metadata.metadata = {'url': ''}  # type: ignore
+    set_metadata.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1207,6 +1295,7 @@ class ContainerOperations(object):
             _lease_id = lease_access_conditions.lease_id
 
         request = build_get_access_policy_request(
+            client_url=self._config.client_url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -1216,10 +1305,7 @@ class ContainerOperations(object):
             template_url=self.get_access_policy.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1245,7 +1331,7 @@ class ContainerOperations(object):
 
         return deserialized
 
-    get_access_policy.metadata = {'url': ''}  # type: ignore
+    get_access_policy.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1316,6 +1402,7 @@ class ContainerOperations(object):
             _content = None
 
         request = build_set_access_policy_request(
+            client_url=self._config.client_url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -1330,10 +1417,7 @@ class ContainerOperations(object):
             template_url=self.set_access_policy.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1355,7 +1439,7 @@ class ContainerOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_access_policy.metadata = {'url': ''}  # type: ignore
+    set_access_policy.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1406,6 +1490,7 @@ class ContainerOperations(object):
 
         
         request = build_restore_request(
+            client_url=self._config.client_url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -1416,10 +1501,7 @@ class ContainerOperations(object):
             template_url=self.restore.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1439,7 +1521,7 @@ class ContainerOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    restore.metadata = {'url': ''}  # type: ignore
+    restore.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1489,6 +1571,7 @@ class ContainerOperations(object):
 
         
         request = build_rename_request(
+            client_url=self._config.client_url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -1499,10 +1582,7 @@ class ContainerOperations(object):
             template_url=self.rename.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1522,7 +1602,7 @@ class ContainerOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    rename.metadata = {'url': ''}  # type: ignore
+    rename.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1576,6 +1656,7 @@ class ContainerOperations(object):
         _content = self._serialize.body(body, 'IO')
 
         request = build_submit_batch_request(
+            client_url=self._config.client_url,
             multipart_content_type=multipart_content_type,
             restype=restype,
             comp=comp,
@@ -1587,10 +1668,7 @@ class ContainerOperations(object):
             template_url=self.submit_batch.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=True, **kwargs)
         response = pipeline_response.http_response
@@ -1612,7 +1690,7 @@ class ContainerOperations(object):
 
         return deserialized
 
-    submit_batch.metadata = {'url': ''}  # type: ignore
+    submit_batch.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1678,6 +1756,7 @@ class ContainerOperations(object):
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_acquire_lease_request(
+            client_url=self._config.client_url,
             comp=comp,
             restype=restype,
             action=action,
@@ -1691,10 +1770,7 @@ class ContainerOperations(object):
             template_url=self.acquire_lease.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1717,7 +1793,7 @@ class ContainerOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    acquire_lease.metadata = {'url': ''}  # type: ignore
+    acquire_lease.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1776,6 +1852,7 @@ class ContainerOperations(object):
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_release_lease_request(
+            client_url=self._config.client_url,
             comp=comp,
             restype=restype,
             action=action,
@@ -1788,10 +1865,7 @@ class ContainerOperations(object):
             template_url=self.release_lease.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1813,7 +1887,7 @@ class ContainerOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    release_lease.metadata = {'url': ''}  # type: ignore
+    release_lease.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1872,6 +1946,7 @@ class ContainerOperations(object):
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_renew_lease_request(
+            client_url=self._config.client_url,
             comp=comp,
             restype=restype,
             action=action,
@@ -1884,10 +1959,7 @@ class ContainerOperations(object):
             template_url=self.renew_lease.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1910,7 +1982,7 @@ class ContainerOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    renew_lease.metadata = {'url': ''}  # type: ignore
+    renew_lease.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1975,6 +2047,7 @@ class ContainerOperations(object):
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_break_lease_request(
+            client_url=self._config.client_url,
             comp=comp,
             restype=restype,
             action=action,
@@ -1987,10 +2060,7 @@ class ContainerOperations(object):
             template_url=self.break_lease.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -2013,7 +2083,7 @@ class ContainerOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    break_lease.metadata = {'url': ''}  # type: ignore
+    break_lease.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -2077,6 +2147,7 @@ class ContainerOperations(object):
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_change_lease_request(
+            client_url=self._config.client_url,
             comp=comp,
             restype=restype,
             action=action,
@@ -2090,10 +2161,7 @@ class ContainerOperations(object):
             template_url=self.change_lease.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -2116,7 +2184,7 @@ class ContainerOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    change_lease.metadata = {'url': ''}  # type: ignore
+    change_lease.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -2183,6 +2251,7 @@ class ContainerOperations(object):
 
         
         request = build_list_blob_flat_segment_request(
+            client_url=self._config.client_url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -2195,10 +2264,7 @@ class ContainerOperations(object):
             template_url=self.list_blob_flat_segment.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -2222,7 +2288,7 @@ class ContainerOperations(object):
 
         return deserialized
 
-    list_blob_flat_segment.metadata = {'url': ''}  # type: ignore
+    list_blob_flat_segment.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -2295,6 +2361,7 @@ class ContainerOperations(object):
 
         
         request = build_list_blob_hierarchy_segment_request(
+            client_url=self._config.client_url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -2308,10 +2375,7 @@ class ContainerOperations(object):
             template_url=self.list_blob_hierarchy_segment.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -2335,5 +2399,5 @@ class ContainerOperations(object):
 
         return deserialized
 
-    list_blob_hierarchy_segment.metadata = {'url': ''}  # type: ignore
+    list_blob_hierarchy_segment.metadata = {'url': '/{url}'}  # type: ignore
 

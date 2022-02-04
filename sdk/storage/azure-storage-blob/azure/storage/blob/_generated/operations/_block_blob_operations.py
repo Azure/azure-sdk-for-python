@@ -18,7 +18,7 @@ from azure.core.tracing.decorator import distributed_trace
 from msrest import Serializer
 
 from .. import models as _models
-from .._vendor import _convert_request
+from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -31,6 +31,7 @@ _SERIALIZER.client_side_validation = False
 # fmt: off
 
 def build_upload_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -66,7 +67,12 @@ def build_upload_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '/{url}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -140,6 +146,7 @@ def build_upload_request(
 
 
 def build_put_blob_from_url_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -180,7 +187,12 @@ def build_put_blob_from_url_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '/{url}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -263,6 +275,7 @@ def build_put_blob_from_url_request(
 
 
 def build_stage_block_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -283,7 +296,12 @@ def build_stage_block_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '/{url}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -326,6 +344,7 @@ def build_stage_block_request(
 
 
 def build_stage_block_from_url_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -352,7 +371,12 @@ def build_stage_block_from_url_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '/{url}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -406,6 +430,7 @@ def build_stage_block_from_url_request(
 
 
 def build_commit_block_list_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -441,7 +466,12 @@ def build_commit_block_list_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '/{url}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -516,6 +546,7 @@ def build_commit_block_list_request(
 
 
 def build_get_block_list_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -530,7 +561,12 @@ def build_get_block_list_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '/{url}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -714,6 +750,7 @@ class BlockBlobOperations(object):
         _content = body
 
         request = build_upload_request(
+            client_url=self._config.client_url,
             blob_type=blob_type,
             version=self._config.version,
             content_type=content_type,
@@ -747,10 +784,7 @@ class BlockBlobOperations(object):
             template_url=self.upload.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -777,7 +811,7 @@ class BlockBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    upload.metadata = {'url': ''}  # type: ignore
+    upload.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -929,6 +963,7 @@ class BlockBlobOperations(object):
             _source_if_tags = source_modified_access_conditions.source_if_tags
 
         request = build_put_blob_from_url_request(
+            client_url=self._config.client_url,
             blob_type=blob_type,
             version=self._config.version,
             content_length=content_length,
@@ -966,10 +1001,7 @@ class BlockBlobOperations(object):
             template_url=self.put_blob_from_url.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -996,7 +1028,7 @@ class BlockBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    put_blob_from_url.metadata = {'url': ''}  # type: ignore
+    put_blob_from_url.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1078,6 +1110,7 @@ class BlockBlobOperations(object):
         _content = body
 
         request = build_stage_block_request(
+            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             content_type=content_type,
@@ -1096,10 +1129,7 @@ class BlockBlobOperations(object):
             template_url=self.stage_block.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1124,7 +1154,7 @@ class BlockBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    stage_block.metadata = {'url': ''}  # type: ignore
+    stage_block.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1225,6 +1255,7 @@ class BlockBlobOperations(object):
             _source_if_none_match = source_modified_access_conditions.source_if_none_match
 
         request = build_stage_block_from_url_request(
+            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             block_id=block_id,
@@ -1248,10 +1279,7 @@ class BlockBlobOperations(object):
             template_url=self.stage_block_from_url.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1276,7 +1304,7 @@ class BlockBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    stage_block_from_url.metadata = {'url': ''}  # type: ignore
+    stage_block_from_url.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1412,6 +1440,7 @@ class BlockBlobOperations(object):
         _content = self._serialize.body(blocks, 'BlockLookupList', is_xml=True)
 
         request = build_commit_block_list_request(
+            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             content_type=content_type,
@@ -1445,10 +1474,7 @@ class BlockBlobOperations(object):
             template_url=self.commit_block_list.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1476,7 +1502,7 @@ class BlockBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    commit_block_list.metadata = {'url': ''}  # type: ignore
+    commit_block_list.metadata = {'url': '/{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1539,6 +1565,7 @@ class BlockBlobOperations(object):
             _if_tags = modified_access_conditions.if_tags
 
         request = build_get_block_list_request(
+            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             snapshot=snapshot,
@@ -1550,10 +1577,7 @@ class BlockBlobOperations(object):
             template_url=self.get_block_list.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1580,5 +1604,5 @@ class BlockBlobOperations(object):
 
         return deserialized
 
-    get_block_list.metadata = {'url': ''}  # type: ignore
+    get_block_list.metadata = {'url': '/{url}'}  # type: ignore
 

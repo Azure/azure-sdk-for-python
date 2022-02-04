@@ -23,25 +23,25 @@ class AzureBlobStorageConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param url: The URL of the service account, container, or blob that is the target of the desired operation.
-    :type url: str
+    :param client_url: The URL of the service account, container, or blob that is the target of the desired operation.
+    :type client_url: str
     :keyword version: Specifies the version of the operation to use for this request. The default value is "2021-02-12". Note that overriding this default value may result in unsupported behavior.
     :paramtype version: str
     """
 
     def __init__(
         self,
-        url,  # type: str
+        client_url,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         super(AzureBlobStorageConfiguration, self).__init__(**kwargs)
         version = kwargs.pop('version', "2021-02-12")  # type: str
 
-        if url is None:
-            raise ValueError("Parameter 'url' must not be None.")
+        if client_url is None:
+            raise ValueError("Parameter 'client_url' must not be None.")
 
-        self.url = url
+        self.client_url = client_url
         self.version = version
         kwargs.setdefault('sdk_moniker', 'azureblobstorage/{}'.format(VERSION))
         self._configure(**kwargs)
