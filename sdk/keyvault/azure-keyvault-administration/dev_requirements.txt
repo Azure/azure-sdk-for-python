@@ -1,10 +1,10 @@
 -e ../../../tools/azure-devtools
 -e ../../../tools/azure-sdk-tools
-../../core/azure-core
 -e ../../identity/azure-identity
 -e ../azure-keyvault-keys
 -e ../azure-mgmt-keyvault
 ../../nspkg/azure-keyvault-nspkg
 aiohttp>=3.0
+azure-core<2.0.0,>=1.20.0
 azure-storage-blob==12.6.0
 parameterized>=0.7.3
