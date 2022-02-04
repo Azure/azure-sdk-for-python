@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AnalyzeResultOperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AnalyzeResultOperationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Operation status.
     """
 
@@ -35,13 +20,13 @@ class AnalyzeResultOperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str,
     FAILED = "failed"
     SUCCEEDED = "succeeded"
 
-class ApiVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ApiVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """API version.
     """
 
-    TWO_THOUSAND_TWENTY_ONE09_30_PREVIEW = "2021-09-30-preview"
+    TWO_THOUSAND_TWENTY_TWO01_30_PREVIEW = "2022-01-30-preview"
 
-class ContentType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ContentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Content type for upload
     """
 
@@ -57,8 +42,17 @@ class ContentType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     IMAGE_PNG = "image/png"
     #: Content Type 'image/tiff'.
     IMAGE_TIFF = "image/tiff"
+    #: Content Type 'application/json'.
+    APPLICATION_JSON = "application/json"
 
-class DocumentFieldType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DocumentBuildMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Custom model build mode.
+    """
+
+    TEMPLATE = "template"
+    NEURAL = "neural"
+
+class DocumentFieldType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Semantic data type of the field value.
     """
 
@@ -73,15 +67,16 @@ class DocumentFieldType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SIGNATURE = "signature"
     ARRAY = "array"
     OBJECT = "object"
+    CURRENCY = "currency"
 
-class DocumentSignatureType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DocumentSignatureType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Presence of signature.
     """
 
     SIGNED = "signed"
     UNSIGNED = "unsigned"
 
-class DocumentTableCellKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DocumentTableCellKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Table cell kind.
     """
 
@@ -91,7 +86,7 @@ class DocumentTableCellKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum))
     STUB_HEAD = "stubHead"
     DESCRIPTION = "description"
 
-class LengthUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LengthUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The unit used by the width, height, and boundingBox properties. For images, the unit is
     "pixel". For PDF, the unit is "inch".
     """
@@ -99,7 +94,7 @@ class LengthUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PIXEL = "pixel"
     INCH = "inch"
 
-class OperationKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OperationKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of operation.
     """
 
@@ -107,7 +102,7 @@ class OperationKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DOCUMENT_MODEL_COMPOSE = "documentModelCompose"
     DOCUMENT_MODEL_COPY_TO = "documentModelCopyTo"
 
-class OperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OperationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Operation status.
     """
 
@@ -117,14 +112,14 @@ class OperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SUCCEEDED = "succeeded"
     CANCELED = "canceled"
 
-class SelectionMarkState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SelectionMarkState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """State of the selection mark.
     """
 
     SELECTED = "selected"
     UNSELECTED = "unselected"
 
-class StringIndexType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class StringIndexType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Method used to compute string offset and length.
     """
 

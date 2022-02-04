@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-receipt:analyze?stringIndexType=unicodeCodePoint\u0026api-version=2021-09-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-receipt:analyze?stringIndexType=unicodeCodePoint\u0026api-version=2022-01-30-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,19 +9,21 @@
         "Connection": "keep-alive",
         "Content-Length": "50",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "007a89c6-5ed5-11ec-b4b6-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "875816cf-7f13-11ec-94fd-c8348e073d30"
       },
-      "RequestBody": "{\u0022urlSource\u0022: \u0022https://fakeuri.com/blank%20space\u0022}",
+      "RequestBody": {
+        "urlSource": "https://fakeuri.com/blank%20space"
+      },
       "StatusCode": 400,
       "ResponseHeaders": {
-        "apim-request-id": "e2bb9ca1-15ed-4fa6-9876-45841d072699",
+        "apim-request-id": "ce900fed-a951-497f-bbba-38801cffb48e",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Dec 2021 01:02:35 GMT",
+        "Date": "Thu, 27 Jan 2022 01:50:38 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "10160"
+        "x-envoy-upstream-service-time": "90"
       },
       "ResponseBody": {
         "error": {
