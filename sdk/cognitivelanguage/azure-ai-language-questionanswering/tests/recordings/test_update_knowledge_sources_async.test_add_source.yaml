@@ -1,0 +1,148 @@
+interactions:
+- request:
+    body: '{"description": "biography of Sir Issac Newton", "language": "en", "multilingualResource":
+      true, "settings": {"defaultAnswer": "no answer"}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '140'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/unknown Python/3.10.1 (Windows-10-10.0.19044-SP0)
+    method: PATCH
+    uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton?api-version=2021-10-01
+  response:
+    body:
+      string: "{\n  \"projectName\": \"IssacNewton\",\n  \"description\": \"biography
+        of Sir Issac Newton\",\n  \"language\": \"en\",\n  \"multilingualResource\":
+        false,\n  \"createdDateTime\": \"2022-01-31T16:35:29Z\",\n  \"lastModifiedDateTime\":
+        \"2022-01-31T16:40:44Z\",\n  \"settings\": {\n    \"defaultAnswer\": \"no
+        answer\"\n  }\n}"
+    headers:
+      apim-request-id: c89fa48b-6e69-40da-96d0-af3d0785dcb8
+      content-length: '286'
+      content-type: application/json; charset=utf-8
+      date: Mon, 31 Jan 2022 16:40:44 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '131'
+    status:
+      code: 200
+      message: OK
+    url: https://wuppe.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton?api-version=2021-10-01
+- request:
+    body: '[{"op": "add", "value": {"displayName": "MicrosoftFAQ", "source": "https://www.microsoft.com/en-in/software-download/faq",
+      "sourceUri": "https://www.microsoft.com/en-in/software-download/faq", "sourceKind":
+      "url", "contentStructureKind": "unstructured", "refresh": false}}]'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '273'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/unknown Python/3.10.1 (Windows-10-10.0.19044-SP0)
+    method: PATCH
+    uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/sources?api-version=2021-10-01
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: 788efc6c-bc85-4f8e-a466-049f01f8faf5
+      content-length: '0'
+      date: Mon, 31 Jan 2022 16:40:44 GMT
+      operation-location: https://test-resource.api.cognitive.microsoft.com:443/language/query-knowledgebases/projects/IssacNewton/sources/jobs/f7fcb8fc-0060-4cfa-8214-b0a74b1744f1?api-version=2021-10-01
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '301'
+    status:
+      code: 202
+      message: Accepted
+    url: https://wuppe.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/sources?api-version=2021-10-01
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/unknown Python/3.10.1 (Windows-10-10.0.19044-SP0)
+    method: GET
+    uri: https://test-resource.api.cognitive.microsoft.com:443/language/query-knowledgebases/projects/IssacNewton/sources/jobs/f7fcb8fc-0060-4cfa-8214-b0a74b1744f1?api-version=2021-10-01
+  response:
+    body:
+      string: "{\n  \"createdDateTime\": \"2022-01-31T16:40:45+00:00\",\n  \"expirationDateTime\":
+        \"2022-01-31T22:40:45+00:00\",\n  \"jobId\": \"f7fcb8fc-0060-4cfa-8214-b0a74b1744f1\",\n
+        \ \"lastUpdatedDateTime\": \"2022-01-31T16:41:03+00:00\",\n  \"status\": \"succeeded\",\n
+        \ \"resultUrl\": \"/knowledgebases/IssacNewton\"\n}"
+    headers:
+      apim-request-id: 99ce641b-12ab-4de4-8d7e-da3be36af299
+      content-length: '281'
+      content-type: application/json; charset=utf-8
+      date: Mon, 31 Jan 2022 16:41:16 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '49'
+    status:
+      code: 200
+      message: OK
+    url: https://wuppe.api.cognitive.microsoft.com:443/language/query-knowledgebases/projects/IssacNewton/sources/jobs/f7fcb8fc-0060-4cfa-8214-b0a74b1744f1?api-version=2021-10-01
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/unknown Python/3.10.1 (Windows-10-10.0.19044-SP0)
+    method: GET
+    uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/sources?api-version=2021-10-01
+  response:
+    body:
+      string: "{\n  \"value\": [\n    {\n      \"source\": \"Editorial\",\n      \"sourceKind\":
+        \"file\",\n      \"contentStructureKind\": \"semistructured\",\n      \"lastUpdatedDateTime\":
+        \"2022-01-31T16:40:12.1215222Z\"\n    },\n    {\n      \"displayName\": \"MicrosoftFAQ\",\n
+        \     \"source\": \"https://www.microsoft.com/en-in/software-download/faq\",\n
+        \     \"sourceUri\": \"https://www.microsoft.com/en-in/software-download/faq\",\n
+        \     \"sourceKind\": \"url\",\n      \"contentStructureKind\": \"unstructured\",\n
+        \     \"lastUpdatedDateTime\": \"2022-01-31T16:41:01.1096535Z\"\n    }\n  ]\n}"
+    headers:
+      apim-request-id: 94e5bfdd-1bbc-46e0-be1f-68dc7e531527
+      content-length: '529'
+      content-type: application/json; charset=utf-8
+      date: Mon, 31 Jan 2022 16:41:16 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '46'
+    status:
+      code: 200
+      message: OK
+    url: https://wuppe.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/sources?api-version=2021-10-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/unknown Python/3.10.1 (Windows-10-10.0.19044-SP0)
+    method: GET
+    uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/sources?api-version=2021-10-01
+  response:
+    body:
+      string: "{\n  \"value\": [\n    {\n      \"source\": \"Editorial\",\n      \"sourceKind\":
+        \"file\",\n      \"contentStructureKind\": \"semistructured\",\n      \"lastUpdatedDateTime\":
+        \"2022-01-31T16:40:12.1215222Z\"\n    },\n    {\n      \"displayName\": \"MicrosoftFAQ\",\n
+        \     \"source\": \"https://www.microsoft.com/en-in/software-download/faq\",\n
+        \     \"sourceUri\": \"https://www.microsoft.com/en-in/software-download/faq\",\n
+        \     \"sourceKind\": \"url\",\n      \"contentStructureKind\": \"unstructured\",\n
+        \     \"lastUpdatedDateTime\": \"2022-01-31T16:41:01.1096535Z\"\n    }\n  ]\n}"
+    headers:
+      apim-request-id: fc37b7f6-278b-47ef-8265-c38ad4194001
+      content-length: '529'
+      content-type: application/json; charset=utf-8
+      date: Mon, 31 Jan 2022 16:41:16 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '44'
+    status:
+      code: 200
+      message: OK
+    url: https://wuppe.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/sources?api-version=2021-10-01
+version: 1

@@ -1,0 +1,84 @@
+interactions:
+- request:
+    body: '{"description": "biography of Sir Issac Newton", "language": "en", "multilingualResource":
+      true, "settings": {"defaultAnswer": "no answer"}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '140'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/unknown Python/3.10.1 (Windows-10-10.0.19044-SP0)
+    method: PATCH
+    uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton?api-version=2021-10-01
+  response:
+    body:
+      string: "{\n  \"projectName\": \"IssacNewton\",\n  \"description\": \"biography
+        of Sir Issac Newton\",\n  \"language\": \"en\",\n  \"multilingualResource\":
+        false,\n  \"createdDateTime\": \"2022-01-31T15:25:07Z\",\n  \"lastModifiedDateTime\":
+        \"2022-01-31T16:33:46Z\",\n  \"lastDeployedDateTime\": \"2022-01-31T16:28:45Z\",\n
+        \ \"settings\": {\n    \"defaultAnswer\": \"no answer\"\n  }\n}"
+    headers:
+      apim-request-id: 350d3565-2092-4912-a53c-fbc223a8580f
+      content-length: '336'
+      content-type: application/json; charset=utf-8
+      date: Mon, 31 Jan 2022 16:33:46 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '131'
+    status:
+      code: 200
+      message: OK
+    url: https://wuppe.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton?api-version=2021-10-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/unknown Python/3.10.1 (Windows-10-10.0.19044-SP0)
+    method: POST
+    uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/:export?api-version=2021-10-01&format=json
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: c061fc5a-55a4-4218-8354-ff40a047b448
+      content-length: '0'
+      date: Mon, 31 Jan 2022 16:33:46 GMT
+      operation-location: https://test-resource.api.cognitive.microsoft.com:443/language/query-knowledgebases/projects/IssacNewton/export/jobs/15895d14-f93a-42a4-896a-682aee8d1dbf?api-version=2021-10-01
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '464'
+    status:
+      code: 202
+      message: Accepted
+    url: https://wuppe.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/:export?api-version=2021-10-01&format=json
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/unknown Python/3.10.1 (Windows-10-10.0.19044-SP0)
+    method: GET
+    uri: https://test-resource.api.cognitive.microsoft.com:443/language/query-knowledgebases/projects/IssacNewton/export/jobs/15895d14-f93a-42a4-896a-682aee8d1dbf?api-version=2021-10-01
+  response:
+    body:
+      string: "{\n  \"createdDateTime\": \"2022-01-31T16:33:47+00:00\",\n  \"expirationDateTime\":
+        \"2022-01-31T22:33:47+00:00\",\n  \"jobId\": \"15895d14-f93a-42a4-896a-682aee8d1dbf\",\n
+        \ \"lastUpdatedDateTime\": \"2022-01-31T16:33:51+00:00\",\n  \"status\": \"succeeded\",\n
+        \ \"resultUrl\": \"https://test-resource.api.cognitive.microsoft.com:443/language/query-knowledgebases/projects/IssacNewton/export/jobs/15895d14-f93a-42a4-896a-682aee8d1dbf/result?api-version=2021-10-01\"\n}"
+    headers:
+      apim-request-id: 1cbdbccd-542c-4abf-a61f-7ff15a16ded2
+      content-length: '429'
+      content-type: application/json; charset=utf-8
+      date: Mon, 31 Jan 2022 16:34:18 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '58'
+    status:
+      code: 200
+      message: OK
+    url: https://wuppe.api.cognitive.microsoft.com:443/language/query-knowledgebases/projects/IssacNewton/export/jobs/15895d14-f93a-42a4-896a-682aee8d1dbf?api-version=2021-10-01
+version: 1

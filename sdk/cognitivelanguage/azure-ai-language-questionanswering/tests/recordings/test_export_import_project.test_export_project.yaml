@@ -1,0 +1,118 @@
+interactions:
+- request:
+    body: '{"description": "biography of Sir Issac Newton", "language": "en", "multilingualResource":
+      true, "settings": {"defaultAnswer": "no answer"}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '140'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/unknown Python/3.10.1 (Windows-10-10.0.19044-SP0)
+    method: PATCH
+    uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton?api-version=2021-10-01
+  response:
+    body:
+      string: "{\n  \"projectName\": \"IssacNewton\",\n  \"description\": \"biography
+        of Sir Issac Newton\",\n  \"language\": \"en\",\n  \"multilingualResource\":
+        false,\n  \"createdDateTime\": \"2022-01-30T15:44:33Z\",\n  \"lastModifiedDateTime\":
+        \"2022-01-30T16:04:33Z\",\n  \"settings\": {\n    \"defaultAnswer\": \"no
+        answer\"\n  }\n}"
+    headers:
+      apim-request-id:
+      - f9706cf0-1a31-476f-9964-3613f705095f
+      content-length:
+      - '286'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sun, 30 Jan 2022 16:04:33 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '125'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/unknown Python/3.10.1 (Windows-10-10.0.19044-SP0)
+    method: POST
+    uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/:export?api-version=2021-10-01&format=json
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id:
+      - 66dd675e-bf37-4a14-8f96-73c4c13ac40f
+      content-length:
+      - '0'
+      date:
+      - Sun, 30 Jan 2022 16:04:33 GMT
+      operation-location:
+      - https://test-resource.api.cognitive.microsoft.com:443/language/query-knowledgebases/projects/IssacNewton/export/jobs/5c14b4b8-d8d0-4c33-aa30-b3fc20411169?api-version=2021-10-01
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '154'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/unknown Python/3.10.1 (Windows-10-10.0.19044-SP0)
+    method: GET
+    uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/export/jobs/5c14b4b8-d8d0-4c33-aa30-b3fc20411169?api-version=2021-10-01
+  response:
+    body:
+      string: "{\n  \"createdDateTime\": \"2022-01-30T16:04:34+00:00\",\n  \"expirationDateTime\":
+        \"2022-01-30T22:04:34+00:00\",\n  \"jobId\": \"5c14b4b8-d8d0-4c33-aa30-b3fc20411169\",\n
+        \ \"lastUpdatedDateTime\": \"2022-01-30T16:04:35+00:00\",\n  \"status\": \"succeeded\",\n
+        \ \"resultUrl\": \"https://test-resource.api.cognitive.microsoft.com:443/language/query-knowledgebases/projects/IssacNewton/export/jobs/5c14b4b8-d8d0-4c33-aa30-b3fc20411169/result?api-version=2021-10-01\"\n}"
+    headers:
+      apim-request-id:
+      - 8599d9c4-56d4-483d-a788-98aece5031c7
+      content-length:
+      - '429'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Sun, 30 Jan 2022 16:05:04 GMT
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains; preload
+      x-content-type-options:
+      - nosniff
+      x-envoy-upstream-service-time:
+      - '47'
+    status:
+      code: 200
+      message: OK
+version: 1
