@@ -33,7 +33,14 @@ from ._shared.response_handlers import return_response_headers, process_storage_
 from ._shared.parser import _str
 from ._parser import _get_file_permission, _datetime_to_str
 from ._lease import ShareLeaseClient
-from ._serialize import get_source_conditions, get_access_conditions, get_smb_properties, get_api_version
+from ._serialize import (
+    get_access_conditions,
+    get_api_version,
+    get_dest_access_conditions,
+    get_rename_smb_properties,
+    get_smb_properties,
+    get_source_conditions,
+    get_source_access_conditions)
 from ._deserialize import deserialize_file_properties, deserialize_file_stream, get_file_ranges_result
 from ._models import HandlesPaged, NTFSAttributes  # pylint: disable=unused-import
 from ._download import StorageStreamDownloader
@@ -783,6 +790,104 @@ class ShareFileClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         try:
             self._client.file.delete(lease_access_conditions=access_conditions, timeout=timeout, **kwargs)
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    @distributed_trace
+    def rename_file(
+            self, new_name, # type: str
+            **kwargs # type: Any
+        ):
+        # type: (...) -> ShareFileClient
+        """
+        Rename the source file.
+
+        :param str new_name:
+            The new file name.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :keyword bool overwrite:
+            A boolean value for if the destination file already exists, whether this request will
+            overwrite the file or not. If true, the rename will succeed and will overwrite the
+            destination file. If not provided or if false and the destination file does exist, the
+            request will not overwrite the destination file. If provided and the destination file
+            doesn't exist, the rename will succeed.
+        :keyword bool ignore_read_only:
+            A boolean value that specifies whether the ReadOnly attribute on a preexisting destination
+            file should be respected. If true, the rename will succeed, otherwise, a previous file at the
+            destination with the ReadOnly attribute set will cause the rename to fail.
+        :keyword str file_permission:
+            If specified the permission (security descriptor) shall be set for the file. This header
+            can be used if Permission size is <= 8KB, else file_permission_key shall be used.
+            If SDDL is specified as input, it must have owner, group and dacl.
+            A value of 'preserve' can be passed to preserve source permissions.
+            Note: Only one of the file_permission or file_permission_key should be specified.
+        :keyword str file_permission_key:
+            Key of the permission to be set for the file.
+            Note: Only one of the file-permission or file-permission-key should be specified.
+        :keyword file_attributes:
+            The file system attributes for the file.
+        :paramtype file_attributes:~azure.storage.fileshare.NTFSAttributes or str
+        :keyword file_creation_time:
+            Creation time for the file.
+        :paramtype file_creation_time:~datetime.datetime or str
+        :keyword file_last_write_time:
+            Last write time for the file.
+        :paramtype file_last_write_time:~datetime.datetime or str
+        :keyword dict(str,str) metadata:
+            A name-value pair to associate with a file storage object.
+        :keyword source_lease:
+            Required if the source file has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+        :paramtype source_lease: ~azure.storage.fileshare.ShareLeaseClient or str
+        :keyword destination_lease:
+            Required if the destination file has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+        :paramtype destination_lease: ~azure.storage.fileshare.ShareLeaseClient or str
+        :returns: The new File Client.
+        :rtype: ~azure.storage.fileshare.ShareFileClient
+        """
+        if not new_name:
+            raise ValueError("Please specify a new file name.")
+
+        new_name = new_name.strip('/')
+        new_path_and_query = new_name.split('?')
+        new_file_path = new_path_and_query[0]
+        if len(new_path_and_query) == 2:
+            new_file_sas = new_path_and_query[1] or self._query_str.strip('?')
+        else:
+            new_file_sas = self._query_str.strip('?')
+
+        new_file_client = ShareFileClient(
+            '{}://{}'.format(self.scheme, self.primary_hostname), self.share_name, new_file_path,
+            credential=new_file_sas or self.credential, api_version=self.api_version,
+            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
+            _location_mode=self._location_mode, require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function
+        )
+
+        kwargs.update(get_rename_smb_properties(kwargs))
+
+        timeout = kwargs.pop('timeout', None)
+        overwrite = kwargs.pop('overwrite', None)
+        metadata = kwargs.pop('metadata', None)
+        headers = kwargs.pop('headers', {})
+        headers.update(add_metadata_headers(metadata))
+
+        source_access_conditions = get_source_access_conditions(kwargs.pop('source_lease', None))
+        dest_access_conditions = get_dest_access_conditions(kwargs.pop('destination_lease', None))
+
+        try:
+            new_file_client._client.file.rename(  # pylint: disable=protected-access
+                self.url,
+                timeout=timeout,
+                replace_if_exists=overwrite,
+                source_lease_access_conditions=source_access_conditions,
+                destination_lease_access_conditions=dest_access_conditions,
+                headers=headers,
+                **kwargs)
+
+            return new_file_client
         except HttpResponseError as error:
             process_storage_error(error)
 

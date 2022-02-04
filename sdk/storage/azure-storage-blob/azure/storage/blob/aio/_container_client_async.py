@@ -30,10 +30,11 @@ from .._generated.models import SignedIdentifier
 from .._deserialize import deserialize_container_properties
 from .._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
 from .._container_client import ContainerClient as ContainerClientBase, _get_blob_name
-from .._models import ContainerProperties, BlobType, BlobProperties  # pylint: disable=unused-import
+from .._models import ContainerProperties, BlobType, BlobProperties, FilteredBlob  # pylint: disable=unused-import
 from ._list_blobs_helper import BlobPropertiesPaged, BlobPrefix
 from ._lease_async import BlobLeaseClient
 from ._blob_client_async import BlobClient
+from ._models import FilteredBlobPaged
 
 if TYPE_CHECKING:
     from .._models import PublicAccess
@@ -681,6 +682,38 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             prefix=name_starts_with,
             results_per_page=results_per_page,
             delimiter=delimiter)
+
+    @distributed_trace
+    def find_blobs_by_tags(
+        self, filter_expression,  # type: str
+        **kwargs  # type: Optional[Any]
+    ):
+        # type: (...) -> AsyncItemPaged[FilteredBlob]
+        """Returns a generator to list the blobs under the specified container whose tags
+        match the given search expression.
+        The generator will lazily follow the continuation tokens returned by
+        the service.
+
+        :param str filter_expression:
+            The expression to find blobs whose tags matches the specified condition.
+            eg. "\"yourtagname\"='firsttag' and \"yourtagname2\"='secondtag'"
+        :keyword int results_per_page:
+            The max result per page when paginating.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: An iterable (auto-paging) response of FilteredBlob.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.BlobProperties]
+        """
+        results_per_page = kwargs.pop('results_per_page', None)
+        timeout = kwargs.pop('timeout', None)
+        command = functools.partial(
+            self._client.container.filter_blobs,
+            timeout=timeout,
+            where=filter_expression,
+            **kwargs)
+        return AsyncItemPaged(
+            command, results_per_page=results_per_page,
+            page_iterator_class=FilteredBlobPaged)
 
     @distributed_trace_async
     async def upload_blob(
