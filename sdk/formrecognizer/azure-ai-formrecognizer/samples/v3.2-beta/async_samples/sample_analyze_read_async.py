@@ -35,6 +35,7 @@ async def analyze_read():
             os.path.abspath(__file__),
             "..",
             "..",
+            "..",
             "./sample_forms/forms/Form_1.jpg",
         )
     )
