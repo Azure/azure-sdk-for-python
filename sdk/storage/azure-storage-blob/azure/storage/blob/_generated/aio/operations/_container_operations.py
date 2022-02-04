@@ -17,7 +17,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._container_operations import build_acquire_lease_request, build_break_lease_request, build_change_lease_request, build_create_request, build_delete_request, build_get_access_policy_request, build_get_account_info_request, build_get_properties_request, build_list_blob_flat_segment_request, build_list_blob_hierarchy_segment_request, build_release_lease_request, build_rename_request, build_renew_lease_request, build_restore_request, build_set_access_policy_request, build_set_metadata_request, build_submit_batch_request
+from ...operations._container_operations import build_acquire_lease_request, build_break_lease_request, build_change_lease_request, build_create_request, build_delete_request, build_get_access_policy_request, build_get_properties_request, build_list_blob_flat_segment_request, build_list_blob_hierarchy_segment_request, build_release_lease_request, build_rename_request, build_renew_lease_request, build_restore_request, build_set_access_policy_request, build_set_metadata_request, build_submit_batch_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -47,7 +47,7 @@ class ContainerOperations:
     async def create(
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
         access: Optional[Union[str, "_models.PublicAccessType"]] = None,
         request_id_parameter: Optional[str] = None,
         container_cpk_scope_info: Optional["_models.ContainerCpkScopeInfo"] = None,
@@ -68,7 +68,7 @@ class ContainerOperations:
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
-        :type metadata: str
+        :type metadata: dict[str, str]
         :param access: Specifies whether data in the container may be accessed publicly and the level
          of access.
         :type access: str or ~azure.storage.blob.models.PublicAccessType
@@ -136,7 +136,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {'url': '/{containerName}'}  # type: ignore
+    create.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -203,7 +203,7 @@ class ContainerOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-meta']=self._deserialize('str', response.headers.get('x-ms-meta'))
+        response_headers['x-ms-meta']=self._deserialize('{str}', response.headers.get('x-ms-meta'))
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
         response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
         response_headers['x-ms-lease-duration']=self._deserialize('str', response.headers.get('x-ms-lease-duration'))
@@ -224,7 +224,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_properties.metadata = {'url': '/{containerName}'}  # type: ignore
+    get_properties.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -310,14 +310,14 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete.metadata = {'url': '/{containerName}'}  # type: ignore
+    delete.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
     async def set_metadata(
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
@@ -337,7 +337,7 @@ class ContainerOperations:
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
-        :type metadata: str
+        :type metadata: dict[str, str]
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
@@ -409,7 +409,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_metadata.metadata = {'url': '/{containerName}'}  # type: ignore
+    set_metadata.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -496,7 +496,7 @@ class ContainerOperations:
 
         return deserialized
 
-    get_access_policy.metadata = {'url': '/{containerName}'}  # type: ignore
+    get_access_policy.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -605,7 +605,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_access_policy.metadata = {'url': '/{containerName}'}  # type: ignore
+    set_access_policy.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -688,7 +688,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    restore.metadata = {'url': '/{containerName}'}  # type: ignore
+    restore.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -770,7 +770,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    rename.metadata = {'url': '/{containerName}'}  # type: ignore
+    rename.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -796,6 +796,9 @@ class ContainerOperations:
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
+        :keyword multipart_content_type: Required. The value of this header must be multipart/mixed
+         with a batch boundary. Example header value: multipart/mixed; boundary=batch_:code:`<GUID>`.
+        :paramtype multipart_content_type: str
         :keyword restype: restype. The default value is "container". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
@@ -813,13 +816,14 @@ class ContainerOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        multipart_content_type = kwargs.pop('multipart_content_type')  # type: str
         restype = kwargs.pop('restype', "container")  # type: str
         comp = kwargs.pop('comp', "batch")  # type: str
-        content_type = kwargs.pop('content_type', "application/xml")  # type: Optional[str]
 
         _content = self._serialize.body(body, 'IO')
 
         request = build_submit_batch_request(
+            multipart_content_type=multipart_content_type,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -855,7 +859,7 @@ class ContainerOperations:
 
         return deserialized
 
-    submit_batch.metadata = {'url': '/{containerName}'}  # type: ignore
+    submit_batch.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -959,7 +963,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    acquire_lease.metadata = {'url': '/{containerName}'}  # type: ignore
+    acquire_lease.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -1054,7 +1058,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    release_lease.metadata = {'url': '/{containerName}'}  # type: ignore
+    release_lease.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -1150,7 +1154,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    renew_lease.metadata = {'url': '/{containerName}'}  # type: ignore
+    renew_lease.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -1252,7 +1256,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    break_lease.metadata = {'url': '/{containerName}'}  # type: ignore
+    break_lease.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -1354,7 +1358,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    change_lease.metadata = {'url': '/{containerName}'}  # type: ignore
+    change_lease.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -1459,7 +1463,7 @@ class ContainerOperations:
 
         return deserialized
 
-    list_blob_flat_segment.metadata = {'url': '/{containerName}'}  # type: ignore
+    list_blob_flat_segment.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -1571,68 +1575,5 @@ class ContainerOperations:
 
         return deserialized
 
-    list_blob_hierarchy_segment.metadata = {'url': '/{containerName}'}  # type: ignore
-
-
-    @distributed_trace_async
-    async def get_account_info(
-        self,
-        **kwargs: Any
-    ) -> None:
-        """Returns the sku name and account kind.
-
-        :keyword restype: restype. The default value is "account". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. The default value is "properties". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        restype = kwargs.pop('restype', "account")  # type: str
-        comp = kwargs.pop('comp', "properties")  # type: str
-
-        
-        request = build_get_account_info_request(
-            restype=restype,
-            comp=comp,
-            version=self._config.version,
-            template_url=self.get_account_info.metadata['url'],
-        )
-        request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-        response_headers['x-ms-sku-name']=self._deserialize('str', response.headers.get('x-ms-sku-name'))
-        response_headers['x-ms-account-kind']=self._deserialize('str', response.headers.get('x-ms-account-kind'))
-
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    get_account_info.metadata = {'url': '/{containerName}'}  # type: ignore
+    list_blob_hierarchy_segment.metadata = {'url': ''}  # type: ignore
 

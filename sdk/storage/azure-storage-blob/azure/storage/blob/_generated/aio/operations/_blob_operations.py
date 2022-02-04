@@ -45,6 +45,69 @@ class BlobOperations:
         self._config = config
 
     @distributed_trace_async
+    async def get_account_info(
+        self,
+        **kwargs: Any
+    ) -> None:
+        """Returns the sku name and account kind.
+
+        :keyword restype: restype. The default value is "account". Note that overriding this default
+         value may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. The default value is "properties". Note that overriding this default value
+         may result in unsupported behavior.
+        :paramtype comp: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        restype = kwargs.pop('restype', "account")  # type: str
+        comp = kwargs.pop('comp', "properties")  # type: str
+
+        
+        request = build_get_account_info_request(
+            restype=restype,
+            comp=comp,
+            version=self._config.version,
+            template_url=self.get_account_info.metadata['url'],
+        )
+        request = _convert_request(request)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers['x-ms-sku-name']=self._deserialize('str', response.headers.get('x-ms-sku-name'))
+        response_headers['x-ms-account-kind']=self._deserialize('str', response.headers.get('x-ms-account-kind'))
+
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    get_account_info.metadata = {'url': ''}  # type: ignore
+
+
+    @distributed_trace_async
     async def download(
         self,
         snapshot: Optional[str] = None,
@@ -165,9 +228,9 @@ class BlobOperations:
         response_headers = {}
         if response.status_code == 200:
             response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-            response_headers['x-ms-meta']=self._deserialize('str', response.headers.get('x-ms-meta'))
+            response_headers['x-ms-meta']=self._deserialize('{str}', response.headers.get('x-ms-meta'))
             response_headers['x-ms-or-policy-id']=self._deserialize('str', response.headers.get('x-ms-or-policy-id'))
-            response_headers['x-ms-or']=self._deserialize('str', response.headers.get('x-ms-or'))
+            response_headers['x-ms-or']=self._deserialize('{str}', response.headers.get('x-ms-or'))
             response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
             response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
             response_headers['Content-Range']=self._deserialize('str', response.headers.get('Content-Range'))
@@ -211,9 +274,9 @@ class BlobOperations:
 
         if response.status_code == 206:
             response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-            response_headers['x-ms-meta']=self._deserialize('str', response.headers.get('x-ms-meta'))
+            response_headers['x-ms-meta']=self._deserialize('{str}', response.headers.get('x-ms-meta'))
             response_headers['x-ms-or-policy-id']=self._deserialize('str', response.headers.get('x-ms-or-policy-id'))
-            response_headers['x-ms-or']=self._deserialize('str', response.headers.get('x-ms-or'))
+            response_headers['x-ms-or']=self._deserialize('{str}', response.headers.get('x-ms-or'))
             response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
             response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
             response_headers['Content-Range']=self._deserialize('str', response.headers.get('Content-Range'))
@@ -261,7 +324,7 @@ class BlobOperations:
 
         return deserialized
 
-    download.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    download.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -369,9 +432,9 @@ class BlobOperations:
         response_headers = {}
         response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
         response_headers['x-ms-creation-time']=self._deserialize('rfc-1123', response.headers.get('x-ms-creation-time'))
-        response_headers['x-ms-meta']=self._deserialize('str', response.headers.get('x-ms-meta'))
+        response_headers['x-ms-meta']=self._deserialize('{str}', response.headers.get('x-ms-meta'))
         response_headers['x-ms-or-policy-id']=self._deserialize('str', response.headers.get('x-ms-or-policy-id'))
-        response_headers['x-ms-or']=self._deserialize('str', response.headers.get('x-ms-or'))
+        response_headers['x-ms-or']=self._deserialize('{str}', response.headers.get('x-ms-or'))
         response_headers['x-ms-blob-type']=self._deserialize('str', response.headers.get('x-ms-blob-type'))
         response_headers['x-ms-copy-completion-time']=self._deserialize('rfc-1123', response.headers.get('x-ms-copy-completion-time'))
         response_headers['x-ms-copy-status-description']=self._deserialize('str', response.headers.get('x-ms-copy-status-description'))
@@ -421,7 +484,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_properties.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    get_properties.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -544,7 +607,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    delete.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -612,7 +675,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    undelete.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    undelete.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -690,7 +753,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_expiry.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    set_expiry.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -810,7 +873,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_http_headers.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    set_http_headers.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -896,7 +959,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_immutability_policy.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    set_immutability_policy.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -964,7 +1027,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete_immutability_policy.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    delete_immutability_policy.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -1037,14 +1100,14 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_legal_hold.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    set_legal_hold.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
     async def set_metadata(
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         cpk_info: Optional["_models.CpkInfo"] = None,
@@ -1067,7 +1130,7 @@ class BlobOperations:
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
-        :type metadata: str
+        :type metadata: dict[str, str]
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
@@ -1168,7 +1231,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_metadata.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    set_metadata.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -1276,7 +1339,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    acquire_lease.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    acquire_lease.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -1375,7 +1438,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    release_lease.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    release_lease.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -1475,7 +1538,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    renew_lease.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    renew_lease.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -1581,7 +1644,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    change_lease.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    change_lease.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -1687,14 +1750,14 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    break_lease.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    break_lease.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
     async def create_snapshot(
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
         request_id_parameter: Optional[str] = None,
         cpk_info: Optional["_models.CpkInfo"] = None,
         cpk_scope_info: Optional["_models.CpkScopeInfo"] = None,
@@ -1716,7 +1779,7 @@ class BlobOperations:
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
-        :type metadata: str
+        :type metadata: dict[str, str]
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
@@ -1816,7 +1879,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create_snapshot.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    create_snapshot.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -1824,7 +1887,7 @@ class BlobOperations:
         self,
         copy_source: str,
         timeout: Optional[int] = None,
-        metadata: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
         tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
         rehydrate_priority: Optional[Union[str, "_models.RehydratePriority"]] = None,
         request_id_parameter: Optional[str] = None,
@@ -1857,7 +1920,7 @@ class BlobOperations:
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
-        :type metadata: str
+        :type metadata: dict[str, str]
         :param tier: Optional. Indicates the tier to be set on the blob.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param rehydrate_priority: Optional: Indicates the priority with which to rehydrate an archived
@@ -1977,7 +2040,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    start_copy_from_url.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    start_copy_from_url.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -1985,7 +2048,7 @@ class BlobOperations:
         self,
         copy_source: str,
         timeout: Optional[int] = None,
-        metadata: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
         tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
         request_id_parameter: Optional[str] = None,
         source_content_md5: Optional[bytearray] = None,
@@ -2020,7 +2083,7 @@ class BlobOperations:
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
-        :type metadata: str
+        :type metadata: dict[str, str]
         :param tier: Optional. Indicates the tier to be set on the blob.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -2153,7 +2216,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    copy_from_url.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    copy_from_url.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -2239,7 +2302,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    abort_copy_from_url.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    abort_copy_from_url.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -2353,70 +2416,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_tier.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
-
-
-    @distributed_trace_async
-    async def get_account_info(
-        self,
-        **kwargs: Any
-    ) -> None:
-        """Returns the sku name and account kind.
-
-        :keyword restype: restype. The default value is "account". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. The default value is "properties". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        restype = kwargs.pop('restype', "account")  # type: str
-        comp = kwargs.pop('comp', "properties")  # type: str
-
-        
-        request = build_get_account_info_request(
-            restype=restype,
-            comp=comp,
-            version=self._config.version,
-            template_url=self.get_account_info.metadata['url'],
-        )
-        request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-        response_headers['x-ms-sku-name']=self._deserialize('str', response.headers.get('x-ms-sku-name'))
-        response_headers['x-ms-account-kind']=self._deserialize('str', response.headers.get('x-ms-account-kind'))
-
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    get_account_info.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    set_tier.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -2535,7 +2535,7 @@ class BlobOperations:
         response_headers = {}
         if response.status_code == 200:
             response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-            response_headers['x-ms-meta']=self._deserialize('str', response.headers.get('x-ms-meta'))
+            response_headers['x-ms-meta']=self._deserialize('{str}', response.headers.get('x-ms-meta'))
             response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
             response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
             response_headers['Content-Range']=self._deserialize('str', response.headers.get('Content-Range'))
@@ -2571,7 +2571,7 @@ class BlobOperations:
 
         if response.status_code == 206:
             response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
-            response_headers['x-ms-meta']=self._deserialize('str', response.headers.get('x-ms-meta'))
+            response_headers['x-ms-meta']=self._deserialize('{str}', response.headers.get('x-ms-meta'))
             response_headers['Content-Length']=self._deserialize('long', response.headers.get('Content-Length'))
             response_headers['Content-Type']=self._deserialize('str', response.headers.get('Content-Type'))
             response_headers['Content-Range']=self._deserialize('str', response.headers.get('Content-Range'))
@@ -2611,7 +2611,7 @@ class BlobOperations:
 
         return deserialized
 
-    query.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    query.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -2709,7 +2709,7 @@ class BlobOperations:
 
         return deserialized
 
-    get_tags.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    get_tags.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -2816,5 +2816,5 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_tags.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    set_tags.metadata = {'url': ''}  # type: ignore
 

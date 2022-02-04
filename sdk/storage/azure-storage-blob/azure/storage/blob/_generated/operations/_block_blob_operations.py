@@ -45,7 +45,7 @@ def build_upload_request(
     blob_content_language = kwargs.pop('blob_content_language', None)  # type: Optional[str]
     blob_content_md5 = kwargs.pop('blob_content_md5', None)  # type: Optional[bytearray]
     blob_cache_control = kwargs.pop('blob_cache_control', None)  # type: Optional[str]
-    metadata = kwargs.pop('metadata', None)  # type: Optional[str]
+    metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
     lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
     blob_content_disposition = kwargs.pop('blob_content_disposition', None)  # type: Optional[str]
     encryption_key = kwargs.pop('encryption_key', None)  # type: Optional[str]
@@ -66,7 +66,7 @@ def build_upload_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}/{blob}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -90,7 +90,7 @@ def build_upload_request(
     if blob_cache_control is not None:
         header_parameters['x-ms-blob-cache-control'] = _SERIALIZER.header("blob_cache_control", blob_cache_control, 'str')
     if metadata is not None:
-        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, 'str')
+        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
     if lease_id is not None:
         header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if blob_content_disposition is not None:
@@ -154,7 +154,7 @@ def build_put_blob_from_url_request(
     blob_content_language = kwargs.pop('blob_content_language', None)  # type: Optional[str]
     blob_content_md5 = kwargs.pop('blob_content_md5', None)  # type: Optional[bytearray]
     blob_cache_control = kwargs.pop('blob_cache_control', None)  # type: Optional[str]
-    metadata = kwargs.pop('metadata', None)  # type: Optional[str]
+    metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
     lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
     blob_content_disposition = kwargs.pop('blob_content_disposition', None)  # type: Optional[str]
     encryption_key = kwargs.pop('encryption_key', None)  # type: Optional[str]
@@ -180,7 +180,7 @@ def build_put_blob_from_url_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}/{blob}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -204,7 +204,7 @@ def build_put_blob_from_url_request(
     if blob_cache_control is not None:
         header_parameters['x-ms-blob-cache-control'] = _SERIALIZER.header("blob_cache_control", blob_cache_control, 'str')
     if metadata is not None:
-        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, 'str')
+        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
     if lease_id is not None:
         header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if blob_content_disposition is not None:
@@ -283,7 +283,7 @@ def build_stage_block_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}/{blob}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -352,7 +352,7 @@ def build_stage_block_from_url_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}/{blob}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -420,7 +420,7 @@ def build_commit_block_list_request(
     blob_content_md5 = kwargs.pop('blob_content_md5', None)  # type: Optional[bytearray]
     transactional_content_md5 = kwargs.pop('transactional_content_md5', None)  # type: Optional[bytearray]
     transactional_content_crc64 = kwargs.pop('transactional_content_crc64', None)  # type: Optional[bytearray]
-    metadata = kwargs.pop('metadata', None)  # type: Optional[str]
+    metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
     lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
     blob_content_disposition = kwargs.pop('blob_content_disposition', None)  # type: Optional[str]
     encryption_key = kwargs.pop('encryption_key', None)  # type: Optional[str]
@@ -441,7 +441,7 @@ def build_commit_block_list_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}/{blob}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -466,7 +466,7 @@ def build_commit_block_list_request(
     if transactional_content_crc64 is not None:
         header_parameters['x-ms-content-crc64'] = _SERIALIZER.header("transactional_content_crc64", transactional_content_crc64, 'bytearray')
     if metadata is not None:
-        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, 'str')
+        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
     if lease_id is not None:
         header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if blob_content_disposition is not None:
@@ -530,7 +530,7 @@ def build_get_block_list_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}/{blob}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -590,7 +590,7 @@ class BlockBlobOperations(object):
         body,  # type: IO
         timeout=None,  # type: Optional[int]
         transactional_content_md5=None,  # type: Optional[bytearray]
-        metadata=None,  # type: Optional[str]
+        metadata=None,  # type: Optional[Dict[str, str]]
         tier=None,  # type: Optional[Union[str, "_models.AccessTierOptional"]]
         request_id_parameter=None,  # type: Optional[str]
         blob_tags_string=None,  # type: Optional[str]
@@ -630,7 +630,7 @@ class BlockBlobOperations(object):
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
-        :type metadata: str
+        :type metadata: dict[str, str]
         :param tier: Optional. Indicates the tier to be set on the blob.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -777,7 +777,7 @@ class BlockBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    upload.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    upload.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -787,7 +787,7 @@ class BlockBlobOperations(object):
         copy_source,  # type: str
         timeout=None,  # type: Optional[int]
         transactional_content_md5=None,  # type: Optional[bytearray]
-        metadata=None,  # type: Optional[str]
+        metadata=None,  # type: Optional[Dict[str, str]]
         tier=None,  # type: Optional[Union[str, "_models.AccessTierOptional"]]
         request_id_parameter=None,  # type: Optional[str]
         source_content_md5=None,  # type: Optional[bytearray]
@@ -831,7 +831,7 @@ class BlockBlobOperations(object):
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
-        :type metadata: str
+        :type metadata: dict[str, str]
         :param tier: Optional. Indicates the tier to be set on the blob.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -996,7 +996,7 @@ class BlockBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    put_blob_from_url.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    put_blob_from_url.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -1124,7 +1124,7 @@ class BlockBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    stage_block.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    stage_block.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -1276,7 +1276,7 @@ class BlockBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    stage_block_from_url.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    stage_block_from_url.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -1286,7 +1286,7 @@ class BlockBlobOperations(object):
         timeout=None,  # type: Optional[int]
         transactional_content_md5=None,  # type: Optional[bytearray]
         transactional_content_crc64=None,  # type: Optional[bytearray]
-        metadata=None,  # type: Optional[str]
+        metadata=None,  # type: Optional[Dict[str, str]]
         tier=None,  # type: Optional[Union[str, "_models.AccessTierOptional"]]
         request_id_parameter=None,  # type: Optional[str]
         blob_tags_string=None,  # type: Optional[str]
@@ -1329,7 +1329,7 @@ class BlockBlobOperations(object):
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
-        :type metadata: str
+        :type metadata: dict[str, str]
         :param tier: Optional. Indicates the tier to be set on the blob.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -1476,7 +1476,7 @@ class BlockBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    commit_block_list.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    commit_block_list.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -1580,5 +1580,5 @@ class BlockBlobOperations(object):
 
         return deserialized
 
-    get_block_list.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    get_block_list.metadata = {'url': ''}  # type: ignore
 

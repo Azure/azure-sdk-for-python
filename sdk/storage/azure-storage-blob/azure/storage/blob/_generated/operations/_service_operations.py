@@ -265,6 +265,7 @@ def build_submit_batch_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    multipart_content_type = kwargs.pop('multipart_content_type')  # type: str
     comp = kwargs.pop('comp', "batch")  # type: str
     version = kwargs.pop('version', "2021-02-12")  # type: str
     content_length = kwargs.pop('content_length')  # type: int
@@ -288,8 +289,6 @@ def build_submit_batch_request(
     header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
         header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    if content_type is not None:
-        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
     header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
@@ -878,6 +877,9 @@ class ServiceOperations(object):
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
+        :keyword multipart_content_type: Required. The value of this header must be multipart/mixed
+         with a batch boundary. Example header value: multipart/mixed; boundary=batch_:code:`<GUID>`.
+        :paramtype multipart_content_type: str
         :keyword comp: comp. The default value is "batch". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
@@ -892,12 +894,13 @@ class ServiceOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        multipart_content_type = kwargs.pop('multipart_content_type')  # type: str
         comp = kwargs.pop('comp', "batch")  # type: str
-        content_type = kwargs.pop('content_type', "application/xml")  # type: Optional[str]
 
         _content = self._serialize.body(body, 'IO')
 
         request = build_submit_batch_request(
+            multipart_content_type=multipart_content_type,
             comp=comp,
             version=self._config.version,
             content=_content,

@@ -37,7 +37,7 @@ def build_create_request(
     restype = kwargs.pop('restype', "container")  # type: str
     version = kwargs.pop('version', "2021-02-12")  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
-    metadata = kwargs.pop('metadata', None)  # type: Optional[str]
+    metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
     access = kwargs.pop('access', None)  # type: Optional[Union[str, "_models.PublicAccessType"]]
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
     default_encryption_scope = kwargs.pop('default_encryption_scope', None)  # type: Optional[str]
@@ -45,7 +45,7 @@ def build_create_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -56,7 +56,7 @@ def build_create_request(
     # Construct headers
     header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if metadata is not None:
-        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, 'str')
+        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
     if access is not None:
         header_parameters['x-ms-blob-public-access'] = _SERIALIZER.header("access", access, 'str')
     header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
@@ -89,7 +89,7 @@ def build_get_properties_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -129,7 +129,7 @@ def build_delete_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -168,13 +168,13 @@ def build_set_metadata_request(
     version = kwargs.pop('version', "2021-02-12")  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
-    metadata = kwargs.pop('metadata', None)  # type: Optional[str]
+    metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
     if_modified_since = kwargs.pop('if_modified_since', None)  # type: Optional[datetime.datetime]
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -188,7 +188,7 @@ def build_set_metadata_request(
     if lease_id is not None:
         header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if metadata is not None:
-        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, 'str')
+        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
     if if_modified_since is not None:
         header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
@@ -218,7 +218,7 @@ def build_get_access_policy_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -262,7 +262,7 @@ def build_set_access_policy_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -311,7 +311,7 @@ def build_restore_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -354,7 +354,7 @@ def build_rename_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -386,6 +386,7 @@ def build_submit_batch_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
+    multipart_content_type = kwargs.pop('multipart_content_type')  # type: str
     restype = kwargs.pop('restype', "container")  # type: str
     comp = kwargs.pop('comp', "batch")  # type: str
     version = kwargs.pop('version', "2021-02-12")  # type: str
@@ -395,7 +396,7 @@ def build_submit_batch_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -411,8 +412,6 @@ def build_submit_batch_request(
     header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
         header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    if content_type is not None:
-        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
     header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
@@ -441,7 +440,7 @@ def build_acquire_lease_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -491,7 +490,7 @@ def build_release_lease_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -538,7 +537,7 @@ def build_renew_lease_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -585,7 +584,7 @@ def build_break_lease_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -634,7 +633,7 @@ def build_change_lease_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -682,7 +681,7 @@ def build_list_blob_flat_segment_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -732,7 +731,7 @@ def build_list_blob_hierarchy_segment_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -755,37 +754,6 @@ def build_list_blob_hierarchy_segment_request(
     header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
         header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
-
-
-def build_get_account_info_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    restype = kwargs.pop('restype', "account")  # type: str
-    comp = kwargs.pop('comp', "properties")  # type: str
-    version = kwargs.pop('version', "2021-02-12")  # type: str
-
-    accept = "application/xml"
-    # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}')
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['restype'] = _SERIALIZER.query("restype", restype, 'str')
-    query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
-
-    # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
@@ -823,7 +791,7 @@ class ContainerOperations(object):
     def create(
         self,
         timeout=None,  # type: Optional[int]
-        metadata=None,  # type: Optional[str]
+        metadata=None,  # type: Optional[Dict[str, str]]
         access=None,  # type: Optional[Union[str, "_models.PublicAccessType"]]
         request_id_parameter=None,  # type: Optional[str]
         container_cpk_scope_info=None,  # type: Optional["_models.ContainerCpkScopeInfo"]
@@ -845,7 +813,7 @@ class ContainerOperations(object):
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
-        :type metadata: str
+        :type metadata: dict[str, str]
         :param access: Specifies whether data in the container may be accessed publicly and the level
          of access.
         :type access: str or ~azure.storage.blob.models.PublicAccessType
@@ -913,7 +881,7 @@ class ContainerOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {'url': '/{containerName}'}  # type: ignore
+    create.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -981,7 +949,7 @@ class ContainerOperations(object):
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers['x-ms-meta']=self._deserialize('str', response.headers.get('x-ms-meta'))
+        response_headers['x-ms-meta']=self._deserialize('{str}', response.headers.get('x-ms-meta'))
         response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
         response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
         response_headers['x-ms-lease-duration']=self._deserialize('str', response.headers.get('x-ms-lease-duration'))
@@ -1002,7 +970,7 @@ class ContainerOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_properties.metadata = {'url': '/{containerName}'}  # type: ignore
+    get_properties.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -1089,14 +1057,14 @@ class ContainerOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete.metadata = {'url': '/{containerName}'}  # type: ignore
+    delete.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
     def set_metadata(
         self,
         timeout=None,  # type: Optional[int]
-        metadata=None,  # type: Optional[str]
+        metadata=None,  # type: Optional[Dict[str, str]]
         request_id_parameter=None,  # type: Optional[str]
         lease_access_conditions=None,  # type: Optional["_models.LeaseAccessConditions"]
         modified_access_conditions=None,  # type: Optional["_models.ModifiedAccessConditions"]
@@ -1117,7 +1085,7 @@ class ContainerOperations(object):
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
-        :type metadata: str
+        :type metadata: dict[str, str]
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
@@ -1189,7 +1157,7 @@ class ContainerOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_metadata.metadata = {'url': '/{containerName}'}  # type: ignore
+    set_metadata.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -1277,7 +1245,7 @@ class ContainerOperations(object):
 
         return deserialized
 
-    get_access_policy.metadata = {'url': '/{containerName}'}  # type: ignore
+    get_access_policy.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -1387,7 +1355,7 @@ class ContainerOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_access_policy.metadata = {'url': '/{containerName}'}  # type: ignore
+    set_access_policy.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -1471,7 +1439,7 @@ class ContainerOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    restore.metadata = {'url': '/{containerName}'}  # type: ignore
+    restore.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -1554,7 +1522,7 @@ class ContainerOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    rename.metadata = {'url': '/{containerName}'}  # type: ignore
+    rename.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -1581,6 +1549,9 @@ class ContainerOperations(object):
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
+        :keyword multipart_content_type: Required. The value of this header must be multipart/mixed
+         with a batch boundary. Example header value: multipart/mixed; boundary=batch_:code:`<GUID>`.
+        :paramtype multipart_content_type: str
         :keyword restype: restype. The default value is "container". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
@@ -1598,13 +1569,14 @@ class ContainerOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        multipart_content_type = kwargs.pop('multipart_content_type')  # type: str
         restype = kwargs.pop('restype', "container")  # type: str
         comp = kwargs.pop('comp', "batch")  # type: str
-        content_type = kwargs.pop('content_type', "application/xml")  # type: Optional[str]
 
         _content = self._serialize.body(body, 'IO')
 
         request = build_submit_batch_request(
+            multipart_content_type=multipart_content_type,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -1640,7 +1612,7 @@ class ContainerOperations(object):
 
         return deserialized
 
-    submit_batch.metadata = {'url': '/{containerName}'}  # type: ignore
+    submit_batch.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -1745,7 +1717,7 @@ class ContainerOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    acquire_lease.metadata = {'url': '/{containerName}'}  # type: ignore
+    acquire_lease.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -1841,7 +1813,7 @@ class ContainerOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    release_lease.metadata = {'url': '/{containerName}'}  # type: ignore
+    release_lease.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -1938,7 +1910,7 @@ class ContainerOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    renew_lease.metadata = {'url': '/{containerName}'}  # type: ignore
+    renew_lease.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -2041,7 +2013,7 @@ class ContainerOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    break_lease.metadata = {'url': '/{containerName}'}  # type: ignore
+    break_lease.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -2144,7 +2116,7 @@ class ContainerOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    change_lease.metadata = {'url': '/{containerName}'}  # type: ignore
+    change_lease.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -2250,7 +2222,7 @@ class ContainerOperations(object):
 
         return deserialized
 
-    list_blob_flat_segment.metadata = {'url': '/{containerName}'}  # type: ignore
+    list_blob_flat_segment.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -2363,69 +2335,5 @@ class ContainerOperations(object):
 
         return deserialized
 
-    list_blob_hierarchy_segment.metadata = {'url': '/{containerName}'}  # type: ignore
-
-
-    @distributed_trace
-    def get_account_info(
-        self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        """Returns the sku name and account kind.
-
-        :keyword restype: restype. The default value is "account". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. The default value is "properties". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        restype = kwargs.pop('restype', "account")  # type: str
-        comp = kwargs.pop('comp', "properties")  # type: str
-
-        
-        request = build_get_account_info_request(
-            restype=restype,
-            comp=comp,
-            version=self._config.version,
-            template_url=self.get_account_info.metadata['url'],
-        )
-        request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-        response_headers['x-ms-sku-name']=self._deserialize('str', response.headers.get('x-ms-sku-name'))
-        response_headers['x-ms-account-kind']=self._deserialize('str', response.headers.get('x-ms-account-kind'))
-
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    get_account_info.metadata = {'url': '/{containerName}'}  # type: ignore
+    list_blob_hierarchy_segment.metadata = {'url': ''}  # type: ignore
 

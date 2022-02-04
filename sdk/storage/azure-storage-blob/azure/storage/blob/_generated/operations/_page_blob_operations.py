@@ -45,7 +45,7 @@ def build_create_request(
     blob_content_language = kwargs.pop('blob_content_language', None)  # type: Optional[str]
     blob_content_md5 = kwargs.pop('blob_content_md5', None)  # type: Optional[bytearray]
     blob_cache_control = kwargs.pop('blob_cache_control', None)  # type: Optional[str]
-    metadata = kwargs.pop('metadata', None)  # type: Optional[str]
+    metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
     lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
     blob_content_disposition = kwargs.pop('blob_content_disposition', None)  # type: Optional[str]
     encryption_key = kwargs.pop('encryption_key', None)  # type: Optional[str]
@@ -66,7 +66,7 @@ def build_create_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}/{blob}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -90,7 +90,7 @@ def build_create_request(
     if blob_cache_control is not None:
         header_parameters['x-ms-blob-cache-control'] = _SERIALIZER.header("blob_cache_control", blob_cache_control, 'str')
     if metadata is not None:
-        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, 'str')
+        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
     if lease_id is not None:
         header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if blob_content_disposition is not None:
@@ -168,7 +168,7 @@ def build_upload_pages_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}/{blob}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -255,7 +255,7 @@ def build_clear_pages_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}/{blob}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -345,7 +345,7 @@ def build_upload_pages_from_url_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}/{blob}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -433,7 +433,7 @@ def build_get_page_ranges_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}/{blob}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -494,7 +494,7 @@ def build_get_page_ranges_diff_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}/{blob}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -560,7 +560,7 @@ def build_resize_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}/{blob}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -624,7 +624,7 @@ def build_update_sequence_number_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}/{blob}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -680,7 +680,7 @@ def build_copy_incremental_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}/{blob}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -744,7 +744,7 @@ class PageBlobOperations(object):
         blob_content_length,  # type: int
         timeout=None,  # type: Optional[int]
         tier=None,  # type: Optional[Union[str, "_models.PremiumPageBlobAccessTier"]]
-        metadata=None,  # type: Optional[str]
+        metadata=None,  # type: Optional[Dict[str, str]]
         blob_sequence_number=0,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
         blob_tags_string=None,  # type: Optional[str]
@@ -780,7 +780,7 @@ class PageBlobOperations(object):
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
-        :type metadata: str
+        :type metadata: dict[str, str]
         :param blob_sequence_number: Set for page blobs only. The sequence number is a user-controlled
          value that you can use to track requests. The value of the sequence number must be between 0
          and 2^63 - 1.
@@ -926,7 +926,7 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    create.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -1100,7 +1100,7 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    upload_pages.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    upload_pages.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -1254,7 +1254,7 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    clear_pages.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    clear_pages.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -1453,7 +1453,7 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    upload_pages_from_url.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    upload_pages_from_url.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -1567,7 +1567,7 @@ class PageBlobOperations(object):
 
         return deserialized
 
-    get_page_ranges.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    get_page_ranges.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -1697,7 +1697,7 @@ class PageBlobOperations(object):
 
         return deserialized
 
-    get_page_ranges_diff.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    get_page_ranges_diff.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -1820,7 +1820,7 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    resize.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    resize.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -1930,7 +1930,7 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    update_sequence_number.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    update_sequence_number.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -2033,5 +2033,5 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    copy_incremental.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    copy_incremental.metadata = {'url': ''}  # type: ignore
 

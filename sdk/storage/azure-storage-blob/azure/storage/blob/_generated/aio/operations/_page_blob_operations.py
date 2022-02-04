@@ -51,7 +51,7 @@ class PageBlobOperations:
         blob_content_length: int,
         timeout: Optional[int] = None,
         tier: Optional[Union[str, "_models.PremiumPageBlobAccessTier"]] = None,
-        metadata: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
         blob_sequence_number: Optional[int] = 0,
         request_id_parameter: Optional[str] = None,
         blob_tags_string: Optional[str] = None,
@@ -86,7 +86,7 @@ class PageBlobOperations:
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
-        :type metadata: str
+        :type metadata: dict[str, str]
         :param blob_sequence_number: Set for page blobs only. The sequence number is a user-controlled
          value that you can use to track requests. The value of the sequence number must be between 0
          and 2^63 - 1.
@@ -232,7 +232,7 @@ class PageBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    create.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -405,7 +405,7 @@ class PageBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    upload_pages.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    upload_pages.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -558,7 +558,7 @@ class PageBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    clear_pages.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    clear_pages.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -756,7 +756,7 @@ class PageBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    upload_pages_from_url.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    upload_pages_from_url.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -869,7 +869,7 @@ class PageBlobOperations:
 
         return deserialized
 
-    get_page_ranges.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    get_page_ranges.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -998,7 +998,7 @@ class PageBlobOperations:
 
         return deserialized
 
-    get_page_ranges_diff.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    get_page_ranges_diff.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -1120,7 +1120,7 @@ class PageBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    resize.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    resize.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -1229,7 +1229,7 @@ class PageBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    update_sequence_number.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    update_sequence_number.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -1331,5 +1331,5 @@ class PageBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    copy_incremental.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    copy_incremental.metadata = {'url': ''}  # type: ignore
 

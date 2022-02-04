@@ -547,6 +547,9 @@ class ServiceOperations:
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
+        :keyword multipart_content_type: Required. The value of this header must be multipart/mixed
+         with a batch boundary. Example header value: multipart/mixed; boundary=batch_:code:`<GUID>`.
+        :paramtype multipart_content_type: str
         :keyword comp: comp. The default value is "batch". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
@@ -561,12 +564,13 @@ class ServiceOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        multipart_content_type = kwargs.pop('multipart_content_type')  # type: str
         comp = kwargs.pop('comp', "batch")  # type: str
-        content_type = kwargs.pop('content_type', "application/xml")  # type: Optional[str]
 
         _content = self._serialize.body(body, 'IO')
 
         request = build_submit_batch_request(
+            multipart_content_type=multipart_content_type,
             comp=comp,
             version=self._config.version,
             content=_content,

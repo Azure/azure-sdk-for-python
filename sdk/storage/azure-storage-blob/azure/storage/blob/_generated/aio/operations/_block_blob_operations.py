@@ -51,7 +51,7 @@ class BlockBlobOperations:
         body: IO,
         timeout: Optional[int] = None,
         transactional_content_md5: Optional[bytearray] = None,
-        metadata: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
         tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
         request_id_parameter: Optional[str] = None,
         blob_tags_string: Optional[str] = None,
@@ -90,7 +90,7 @@ class BlockBlobOperations:
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
-        :type metadata: str
+        :type metadata: dict[str, str]
         :param tier: Optional. Indicates the tier to be set on the blob.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -237,7 +237,7 @@ class BlockBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    upload.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    upload.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -247,7 +247,7 @@ class BlockBlobOperations:
         copy_source: str,
         timeout: Optional[int] = None,
         transactional_content_md5: Optional[bytearray] = None,
-        metadata: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
         tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
         request_id_parameter: Optional[str] = None,
         source_content_md5: Optional[bytearray] = None,
@@ -290,7 +290,7 @@ class BlockBlobOperations:
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
-        :type metadata: str
+        :type metadata: dict[str, str]
         :param tier: Optional. Indicates the tier to be set on the blob.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -455,7 +455,7 @@ class BlockBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    put_blob_from_url.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    put_blob_from_url.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -582,7 +582,7 @@ class BlockBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    stage_block.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    stage_block.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -733,7 +733,7 @@ class BlockBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    stage_block_from_url.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    stage_block_from_url.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -743,7 +743,7 @@ class BlockBlobOperations:
         timeout: Optional[int] = None,
         transactional_content_md5: Optional[bytearray] = None,
         transactional_content_crc64: Optional[bytearray] = None,
-        metadata: Optional[str] = None,
+        metadata: Optional[Dict[str, str]] = None,
         tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
         request_id_parameter: Optional[str] = None,
         blob_tags_string: Optional[str] = None,
@@ -785,7 +785,7 @@ class BlockBlobOperations:
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
-        :type metadata: str
+        :type metadata: dict[str, str]
         :param tier: Optional. Indicates the tier to be set on the blob.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -932,7 +932,7 @@ class BlockBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    commit_block_list.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    commit_block_list.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace_async
@@ -1035,5 +1035,5 @@ class BlockBlobOperations:
 
         return deserialized
 
-    get_block_list.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    get_block_list.metadata = {'url': ''}  # type: ignore
 

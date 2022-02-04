@@ -43,7 +43,7 @@ def build_create_request(
     blob_content_language = kwargs.pop('blob_content_language', None)  # type: Optional[str]
     blob_content_md5 = kwargs.pop('blob_content_md5', None)  # type: Optional[bytearray]
     blob_cache_control = kwargs.pop('blob_cache_control', None)  # type: Optional[str]
-    metadata = kwargs.pop('metadata', None)  # type: Optional[str]
+    metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
     lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
     blob_content_disposition = kwargs.pop('blob_content_disposition', None)  # type: Optional[str]
     encryption_key = kwargs.pop('encryption_key', None)  # type: Optional[str]
@@ -63,7 +63,7 @@ def build_create_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}/{blob}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -85,7 +85,7 @@ def build_create_request(
     if blob_cache_control is not None:
         header_parameters['x-ms-blob-cache-control'] = _SERIALIZER.header("blob_cache_control", blob_cache_control, 'str')
     if metadata is not None:
-        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, 'str')
+        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
     if lease_id is not None:
         header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if blob_content_disposition is not None:
@@ -157,7 +157,7 @@ def build_append_block_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}/{blob}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -246,7 +246,7 @@ def build_append_block_from_url_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}/{blob}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -331,7 +331,7 @@ def build_seal_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{containerName}/{blob}')
+    url = kwargs.pop("template_url", '')
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -394,7 +394,7 @@ class AppendBlobOperations(object):
         self,
         content_length,  # type: int
         timeout=None,  # type: Optional[int]
-        metadata=None,  # type: Optional[str]
+        metadata=None,  # type: Optional[Dict[str, str]]
         request_id_parameter=None,  # type: Optional[str]
         blob_tags_string=None,  # type: Optional[str]
         immutability_policy_expiry=None,  # type: Optional[datetime.datetime]
@@ -424,7 +424,7 @@ class AppendBlobOperations(object):
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
          information.
-        :type metadata: str
+        :type metadata: dict[str, str]
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
         :type request_id_parameter: str
@@ -563,7 +563,7 @@ class AppendBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    create.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -721,7 +721,7 @@ class AppendBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    append_block.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    append_block.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -907,7 +907,7 @@ class AppendBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    append_block_from_url.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    append_block_from_url.metadata = {'url': ''}  # type: ignore
 
 
     @distributed_trace
@@ -1011,5 +1011,5 @@ class AppendBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    seal.metadata = {'url': '/{containerName}/{blob}'}  # type: ignore
+    seal.metadata = {'url': ''}  # type: ignore
 
