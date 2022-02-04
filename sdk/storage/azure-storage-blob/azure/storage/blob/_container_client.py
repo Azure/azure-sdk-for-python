@@ -40,8 +40,9 @@ from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get
 from ._models import ( # pylint: disable=unused-import
     ContainerProperties,
     BlobProperties,
-    BlobType)
-from ._list_blobs_helper import BlobPrefix, BlobPropertiesPaged
+    BlobType,
+    FilteredBlob)
+from ._list_blobs_helper import BlobPrefix, BlobPropertiesPaged, FilteredBlobPaged
 from ._lease import BlobLeaseClient
 from ._blob_client import BlobClient
 
@@ -821,6 +822,38 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             prefix=name_starts_with,
             results_per_page=results_per_page,
             delimiter=delimiter)
+
+    @distributed_trace
+    def find_blobs_by_tags(
+            self, filter_expression, # type: str
+            **kwargs # type: Optional[Any]
+        ):
+        # type: (...) -> ItemPaged[FilteredBlob]
+        """Returns a generator to list the blobs under the specified container whose tags
+        match the given search expression.
+        The generator will lazily follow the continuation tokens returned by
+        the service.
+
+        :param str filter_expression:
+            The expression to find blobs whose tags matches the specified condition.
+            eg. "\"yourtagname\"='firsttag' and \"yourtagname2\"='secondtag'"
+        :keyword int results_per_page:
+            The max result per page when paginating.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: An iterable (auto-paging) response of FilteredBlob.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.BlobProperties]
+        """
+        results_per_page = kwargs.pop('results_per_page', None)
+        timeout = kwargs.pop('timeout', None)
+        command = functools.partial(
+            self._client.container.filter_blobs,
+            timeout=timeout,
+            where=filter_expression,
+            **kwargs)
+        return ItemPaged(
+            command, results_per_page=results_per_page,
+            page_iterator_class=FilteredBlobPaged)
 
     @distributed_trace
     def upload_blob(

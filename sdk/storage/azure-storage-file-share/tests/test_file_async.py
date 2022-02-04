@@ -22,9 +22,11 @@ from azure.storage.blob.aio import BlobServiceClient
 from azure.storage.fileshare import (
     generate_account_sas,
     generate_file_sas,
+    generate_share_sas,
     NTFSAttributes,
     ContentSettings,
     FileSasPermissions,
+    ShareSasPermissions,
     AccessPolicy,
     ResourceTypes,
     AccountSasPermissions,
@@ -46,6 +48,9 @@ TEST_BLOB_PREFIX = 'blob'
 INPUT_FILE_PATH = 'file_input.temp.{}.dat'.format(str(uuid.uuid4()))
 OUTPUT_FILE_PATH = 'file_output.temp.{}.dat'.format(str(uuid.uuid4()))
 LARGE_FILE_SIZE = 64 * 1024 + 5
+TEST_FILE_PERMISSIONS = 'O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-' \
+                        '1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;' \
+                        'S-1-5-21-397955417-626881126-188441444-3053964)'
 
 
 # ------------------------------------------------------------------------------
@@ -1247,9 +1252,6 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
     async def test_copy_file_with_specifying_acl_copy_behavior_attributes_async(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         source_client = await self._create_file(storage_account_name, storage_account_key)
-        user_given_permission = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-" \
-                                "1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;" \
-                                "S-1-5-21-397955417-626881126-188441444-3053964)"
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
@@ -1264,7 +1266,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         copy = await file_client.start_copy_from_url(
             source_client.url,
             ignore_read_only=True,
-            file_permission=user_given_permission,
+            file_permission=TEST_FILE_PERMISSIONS,
             file_attributes=file_attributes,
             file_creation_time=file_creation_time
         )
@@ -2260,3 +2262,173 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         self.assertTrue(response.ok)
         with self.assertRaises(ResourceNotFoundError):
             await file_client_admin.download_file()
+
+    @FileSharePreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_rename_file(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        source_file = await self._create_file(storage_account_name, storage_account_key, 'file1')
+
+        # Act
+        new_file = await source_file.rename_file('file2')
+
+        # Assert
+        self.assertEqual('file2', new_file.file_name)
+        props = await new_file.get_file_properties()
+        self.assertIsNotNone(props)
+
+    @FileSharePreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_rename_file_different_directory(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        source_directory = await share_client.create_directory('dir1')
+        dest_directory = await share_client.create_directory('dir2')
+        source_file = await source_directory.upload_file('file1', self.short_byte_data)
+
+        # Act
+        new_file = await source_file.rename_file(dest_directory.directory_path + '/' + source_file.file_name)
+
+        # Assert
+        self.assertTrue('dir2' in new_file.file_path)
+        props = await new_file.get_file_properties()
+        self.assertIsNotNone(props)
+
+    @FileSharePreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_rename_file_ignore_readonly(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        source_file = share_client.get_file_client('file1')
+        await source_file.create_file(1024)
+        dest_file = share_client.get_file_client('file2')
+
+        file_attributes = NTFSAttributes(read_only=True)
+        await dest_file.create_file(1024, file_attributes=file_attributes)
+
+        # Act
+        new_file = await source_file.rename_file(dest_file.file_name, overwrite=True, ignore_read_only=True)
+
+        # Assert
+        self.assertEqual('file2', new_file.file_name)
+        props = await new_file.get_file_properties()
+        self.assertIsNotNone(props)
+
+    @FileSharePreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_rename_file_file_permission(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        file_permission_key = await share_client.create_permission_for_share(TEST_FILE_PERMISSIONS)
+
+        source_file = share_client.get_file_client('file1')
+        await source_file.create_file(1024)
+
+        # Act
+        new_file = await source_file.rename_file('file2', file_permission=TEST_FILE_PERMISSIONS)
+
+        # Assert
+        props = await new_file.get_file_properties()
+        self.assertIsNotNone(props)
+        self.assertEqual(file_permission_key, props.permission_key)
+
+    @FileSharePreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_rename_file_preserve_permission(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        source_file = share_client.get_file_client('file1')
+        await source_file.create_file(1024, file_permission=TEST_FILE_PERMISSIONS)
+
+        source_props = await source_file.get_file_properties()
+        source_permission_key = source_props.permission_key
+
+        # Act
+        new_file = await source_file.rename_file('file2', file_permission='preserve')
+
+        # Assert
+        props = await new_file.get_file_properties()
+        self.assertIsNotNone(props)
+        self.assertEqual(source_permission_key, props.permission_key)
+
+    @FileSharePreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_rename_file_smb_properties(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        source_file = await self._create_file(storage_account_name, storage_account_key, 'file1')
+
+        file_attributes = NTFSAttributes(read_only=True, archive=True)
+        file_creation_time = datetime(2022, 1, 26, 10, 9, 30, 500000)
+        file_last_write_time = datetime(2022, 1, 26, 10, 14, 30, 500000)
+
+        # Act
+        new_file = await source_file.rename_file(
+            'file2',
+            file_attributes=file_attributes,
+            file_creation_time=file_creation_time,
+            file_last_write_time=file_last_write_time)
+
+        # Assert
+        props = await new_file.get_file_properties()
+        self.assertIsNotNone(props)
+        self.assertEqual(str(file_attributes), props.file_attributes.replace(' ', ''))
+        self.assertEqual(file_creation_time, props.creation_time)
+        self.assertEqual(file_last_write_time, props.last_write_time)
+
+    @FileSharePreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_rename_file_with_lease(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+
+        source_file = await self._create_file(storage_account_name, storage_account_key, 'file1')
+        dest_file = await self._create_file(storage_account_name, storage_account_key, 'file2')
+        source_lease = await source_file.acquire_lease()
+        dest_lease = await dest_file.acquire_lease()
+
+        # Act
+        new_file = await source_file.rename_file(
+            dest_file.file_name,
+            overwrite=True,
+            source_lease=source_lease,
+            destination_lease=dest_lease)
+
+        # Assert
+        self.assertEqual('file2', new_file.file_name)
+        props = await new_file.get_file_properties()
+        self.assertIsNotNone(props)
+
+    @pytest.mark.live_test_only
+    @FileSharePreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_rename_file_share_sas(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        token = generate_share_sas(
+            share_client.account_name,
+            share_client.share_name,
+            share_client.credential.account_key,
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            permission=ShareSasPermissions(read=True, write=True))
+
+        source_file = ShareFileClient(
+            self.account_url(storage_account_name, 'file'),
+            share_client.share_name, 'file1',
+            credential=token)
+        await source_file.create_file(1024)
+
+        # Act
+        new_file = await source_file.rename_file('file2' + '?' + token)
+
+        # Assert
+        self.assertEqual('file2', new_file.file_name)
+        props = await new_file.get_file_properties()
+        self.assertIsNotNone(props)

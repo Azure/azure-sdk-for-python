@@ -1,10 +1,13 @@
 # Release History
 
-## 12.7.0b2 (Unreleased)
+## 12.7.0b2 (2022-02-08)
 
 This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
 
 ### Features Added
+- Added support for service version 2021-04-10.
+- Added support for `rename_directory()` and `rename_file()`.
+- Added support for `Create (c)` SAS permission for Share SAS.
 
 ### Bugs Fixed
 - Update `azure-core` dependency to avoid inconsistent dependencies from being installed.

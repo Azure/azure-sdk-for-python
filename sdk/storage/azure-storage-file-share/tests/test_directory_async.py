@@ -7,17 +7,26 @@
 # --------------------------------------------------------------------------
 import unittest
 import asyncio
-from datetime import timedelta
+import pytest
+from datetime import datetime, timedelta
 
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
-from azure.storage.fileshare import StorageErrorCode
-from azure.storage.fileshare.aio import ShareServiceClient
+from azure.storage.fileshare import (
+    generate_share_sas,
+    NTFSAttributes,
+    ShareSasPermissions,
+    StorageErrorCode
+)
+from azure.storage.fileshare.aio import ShareDirectoryClient, ShareServiceClient
 from settings.testcase import FileSharePreparer
 from devtools_testutils.storage.aio import AsyncStorageTestCase
 
 # ------------------------------------------------------------------------------
+TEST_FILE_PERMISSIONS = 'O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-' \
+                        '1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;' \
+                        'S-1-5-21-397955417-626881126-188441444-3053964)'
 
 class AiohttpTestTransport(AioHttpTransport):
     """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
@@ -646,5 +655,180 @@ class StorageDirectoryTest(AsyncStorageTestCase):
         self.assertIsNotNone(props.etag)
         self.assertIsNotNone(props.last_modified)
         self.assertTrue(props.server_encrypted)
+
+    @FileSharePreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_rename_directory(self, storage_account_name, storage_account_key):
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        source_directory = await share_client.create_directory('dir1')
+
+        # Act
+        new_directory = await source_directory.rename_directory('dir2')
+
+        # Assert
+        props = await new_directory.get_directory_properties()
+        self.assertIsNotNone(props)
+
+    @FileSharePreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_rename_directory_different_directory(self, storage_account_name, storage_account_key):
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        parent_source_directory = await share_client.create_directory('dir1')
+        source_directory = await parent_source_directory.create_subdirectory('sub1')
+
+        dest_parent_directory = await share_client.create_directory('dir2')
+
+        # Act
+        new_directory_path = dest_parent_directory.directory_path + '/sub2'
+        new_directory = await source_directory.rename_directory(new_directory_path)
+
+        # Assert
+        props = await new_directory.get_directory_properties()
+        self.assertIsNotNone(props)
+
+    @FileSharePreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_rename_directory_ignore_readonly(self, storage_account_name, storage_account_key):
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        source_directory = await share_client.create_directory('dir1')
+        dest_directory = await share_client.create_directory('dir2')
+        dest_file = dest_directory.get_file_client('test')
+
+        file_attributes = NTFSAttributes(read_only=True)
+        await dest_file.create_file(1024, file_attributes=file_attributes)
+
+        # Act
+        new_directory = await source_directory.rename_directory(
+            dest_directory.directory_path + '/' + dest_file.file_name,
+            overwrite=True, ignore_read_only=True)
+
+        # Assert
+        props = await new_directory.get_directory_properties()
+        self.assertIsNotNone(props)
+        self.assertTrue(props.is_directory)
+
+    @FileSharePreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_rename_directory_file_permission(self, storage_account_name, storage_account_key):
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        file_permission_key = await share_client.create_permission_for_share(TEST_FILE_PERMISSIONS)
+
+        source_directory = await share_client.create_directory('dir1')
+
+        # Act
+        new_directory = await source_directory.rename_directory('dir2', file_permission=TEST_FILE_PERMISSIONS)
+
+        # Assert
+        props = await new_directory.get_directory_properties()
+        self.assertIsNotNone(props)
+        self.assertEqual(file_permission_key, props.permission_key)
+
+    @FileSharePreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_rename_directory_preserve_permission(self, storage_account_name, storage_account_key):
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        source_directory = await share_client.create_directory('dir1', file_permission=TEST_FILE_PERMISSIONS)
+        source_props = await source_directory.get_directory_properties()
+        source_permission_key = source_props.permission_key
+
+        # Act
+        new_directory = await source_directory.rename_directory('dir2', file_permission='preserve')
+
+        # Assert
+        props = await new_directory.get_directory_properties()
+        self.assertIsNotNone(props)
+        self.assertEqual(source_permission_key, props.permission_key)
+
+    @FileSharePreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_rename_directory_smb_properties(self, storage_account_name, storage_account_key):
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        source_directory = await share_client.create_directory('dir1')
+
+        file_attributes = NTFSAttributes(read_only=True, directory=True)
+        file_creation_time = datetime(2022, 1, 26, 10, 9, 30, 500000)
+        file_last_write_time = datetime(2022, 1, 26, 10, 14, 30, 500000)
+
+        # Act
+        new_directory = await source_directory.rename_directory(
+            'dir2',
+            file_attributes=file_attributes,
+            file_creation_time=file_creation_time,
+            file_last_write_time=file_last_write_time)
+
+        # Assert
+        props = await new_directory.get_directory_properties()
+        self.assertIsNotNone(props)
+        self.assertTrue(props.is_directory)
+        self.assertEqual(str(file_attributes), props.file_attributes.replace(' ', ''))
+        self.assertEqual(file_creation_time, props.creation_time)
+        self.assertEqual(file_last_write_time, props.last_write_time)
+
+    @FileSharePreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_rename_directory_dest_lease(self, storage_account_name, storage_account_key):
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        source_directory = await share_client.create_directory('dir1')
+        dest_directory = await share_client.create_directory('dir2')
+        dest_file = await dest_directory.upload_file('test', b'Hello World')
+        lease = await dest_file.acquire_lease()
+
+        # Act
+        new_directory = await source_directory.rename_directory(
+            dest_directory.directory_path + '/' + dest_file.file_name,
+            overwrite=True, lease=lease)
+
+        # Assert
+        props = await new_directory.get_directory_properties()
+        self.assertIsNotNone(props)
+        self.assertTrue(props.is_directory)
+
+    @pytest.mark.live_test_only
+    @FileSharePreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_rename_directory_share_sas(self, storage_account_name, storage_account_key):
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        token = generate_share_sas(
+            share_client.account_name,
+            share_client.share_name,
+            share_client.credential.account_key,
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            permission=ShareSasPermissions(read=True, write=True))
+
+        source_directory = ShareDirectoryClient(
+            self.account_url(storage_account_name, 'file'),
+            share_client.share_name, 'dir1',
+            credential=token)
+        await source_directory.create_directory()
+
+        # Act
+        new_directory = await source_directory.rename_directory('dir2' + '?' + token)
+
+        # Assert
+        props = await new_directory.get_directory_properties()
+        self.assertIsNotNone(props)
 
 # ------------------------------------------------------------------------------
