@@ -21,6 +21,7 @@ from ._common.message import (
 from ._common.constants import (
     ServiceBusReceiveMode,
     ServiceBusSubQueue,
+    ServiceBusMessageState,
     ServiceBusSessionFilter,
     NEXT_AVAILABLE_SESSION,
 )
@@ -35,6 +36,7 @@ TransportType = constants.TransportType
 __all__ = [
     "ServiceBusMessage",
     "ServiceBusMessageBatch",
+    "ServiceBusMessageState",
     "ServiceBusReceivedMessage",
     "NEXT_AVAILABLE_SESSION",
     "ServiceBusSubQueue",
