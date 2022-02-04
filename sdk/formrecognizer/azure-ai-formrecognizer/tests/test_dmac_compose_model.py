@@ -9,14 +9,13 @@ import uuid
 import functools
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentModel
-from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import GetOperationResponse, ModelInfo
+from azure.ai.formrecognizer._generated.v2022_01_30_preview.models import GetOperationResponse, ModelInfo
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
 
 
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
-
 
 class TestTraining(FormRecognizerTest):
 
@@ -28,13 +27,13 @@ class TestTraining(FormRecognizerTest):
         model_id_1 = str(uuid.uuid4())
         model_id_2 = str(uuid.uuid4())
         composed_id = str(uuid.uuid4())
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, model_id=model_id_1, description="model1")
+        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template", model_id=model_id_1, description="model1")
         model_1 = poller.result()
 
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, model_id=model_id_2, description="model2")
+        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template", model_id=model_id_2, description="model2")
         model_2 = poller.result()
 
-        poller = client.begin_create_composed_model([model_1.model_id, model_2.model_id], model_id=composed_id, description="my composed model")
+        poller = client.begin_create_composed_model([model_1.model_id, model_2.model_id], model_id=composed_id, description="my composed model", tags={"frtests": "testvalue"})
 
         composed_model = poller.result()
         if self.is_live:
@@ -43,6 +42,7 @@ class TestTraining(FormRecognizerTest):
         assert composed_model.model_id
         assert composed_model.description == "my composed model"
         assert composed_model.created_on
+        assert composed_model.tags == {"frtests": "testvalue"}
         for name, doc_type in composed_model.doc_types.items():
             assert name
             for key, field in doc_type.field_schema.items():
@@ -50,15 +50,17 @@ class TestTraining(FormRecognizerTest):
                 assert field["type"]
                 assert doc_type.field_confidence[key] is not None
 
+        return {}
+
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
     def test_compose_model_transform(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, description="model1")
+        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template", description="model1")
         model_1 = poller.result()
 
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, description="model2")
+        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template", description="model2")
         model_2 = poller.result()
 
         raw_response = []
@@ -81,16 +83,18 @@ class TestTraining(FormRecognizerTest):
         document_model_from_dict = DocumentModel.from_dict(document_model_dict)
         self.assertModelTransformCorrect(document_model_from_dict, generated)
 
+        return {}
+
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_compose_continuation_token(self, **kwargs):
         client = kwargs.pop("client")
         formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
+        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
         model_1 = poller.result()
 
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
+        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
         model_2 = poller.result()
 
         initial_poller = client.begin_create_composed_model([model_1.model_id, model_2.model_id])
@@ -107,10 +111,10 @@ class TestTraining(FormRecognizerTest):
     @recorded_by_proxy
     def test_poller_metadata(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         set_bodiless_matcher()
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
+        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
         model_1 = poller.result()
 
-        poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
+        poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
         model_2 = poller.result()
 
         poller = client.begin_create_composed_model([model_1.model_id, model_2.model_id])
@@ -122,3 +126,5 @@ class TestTraining(FormRecognizerTest):
         assert poller.resource_location_url
         assert poller.created_on
         assert poller.last_updated_on
+
+        return {}
