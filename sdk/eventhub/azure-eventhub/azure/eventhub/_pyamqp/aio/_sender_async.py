@@ -100,15 +100,15 @@ class SenderLink(Link):
         if self.network_trace:
             _LOGGER.info("-> %r", TransferFrame(delivery_id='<pending>', **delivery.frame), extra=self.network_trace_params)
         await self._session._outgoing_transfer(delivery)
-        if delivery.transfer_state == SessionTransferState.Okay:
+        if delivery.transfer_state == SessionTransferState.OKAY:
             self.delivery_count = delivery_count
             self.current_link_credit -= 1
             delivery.sent = True
             if delivery.settled:
-                await delivery.on_settled(LinkDeliverySettleReason.Settled, None)
+                await delivery.on_settled(LinkDeliverySettleReason.SETTLED, None)
             else:
                 self._pending_deliveries[delivery.frame['delivery_id']] = delivery
-        elif delivery.transfer_state == SessionTransferState.Error:
+        elif delivery.transfer_state == SessionTransferState.ERROR:
             raise ValueError("Message failed to send")
         if self.current_link_credit <= 0:
             self.current_link_credit = self.link_credit
@@ -124,7 +124,7 @@ class SenderLink(Link):
         for settled_id in settled_ids:
             delivery = self._pending_deliveries.pop(settled_id, None)
             if delivery:
-                await delivery.on_settled(LinkDeliverySettleReason.DispositionReceived, frame[4])
+                await delivery.on_settled(LinkDeliverySettleReason.DISPOSITION_RECEIVED, frame[4])
 
     async def _update_pending_delivery_status(self):
         now = time.time()
@@ -132,7 +132,7 @@ class SenderLink(Link):
         for delivery in self._pending_deliveries.values():
             if delivery.timeout and (now - delivery.start) >= delivery.timeout:
                 expired.append(delivery.frame['delivery_id'])
-                await delivery.on_settled(LinkDeliverySettleReason.Timeout, None)
+                await delivery.on_settled(LinkDeliverySettleReason.TIMEOUT, None)
         self._pending_deliveries = {i: d for i, d in self._pending_deliveries.items() if i not in expired}
 
     async def _send_unsent_messages(self):
@@ -170,7 +170,7 @@ class SenderLink(Link):
     async def cancel_transfer(self, delivery):
         try:
             delivery = self._pending_deliveries.pop(delivery.frame['delivery_id'])
-            await delivery.on_settled(LinkDeliverySettleReason.Cancelled, None)
+            await delivery.on_settled(LinkDeliverySettleReason.CANCELLED, None)
             return
         except KeyError:
             pass

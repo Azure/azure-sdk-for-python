@@ -82,7 +82,7 @@ class AMQPClientAsync(AMQPClientSync):
     :type max_frame_size: int
     :param channel_max: Maximum number of Session channels in the Connection.
     :type channel_max: int
-    :param idle_timeout: Timeout in milliseconds after which the Connection will close
+    :param idle_timeout: Timeout in seconds after which the Connection will close
      if there is no further activity.
     :type idle_timeout: int
     :param properties: Connection properties.
@@ -389,7 +389,7 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
         # TODO: check whether the callback would be called in case of message expiry or link going down
         #  and if so handle the state in the callback
         message_delivery.reason = reason
-        if reason == LinkDeliverySettleReason.DispositionReceived:
+        if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED:
             if state and SEND_DISPOSITION_ACCEPT in state:
                 message_delivery.state = MessageDeliveryState.Ok
             else:
@@ -406,9 +406,9 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
                         message_delivery,
                         condition=ErrorCondition.UnknownError
                     )
-        elif reason == LinkDeliverySettleReason.Settled:
+        elif reason == LinkDeliverySettleReason.SETTLED:
             message_delivery.state = MessageDeliveryState.Ok
-        elif reason == LinkDeliverySettleReason.Timeout:
+        elif reason == LinkDeliverySettleReason.TIMEOUT:
             message_delivery.state = MessageDeliveryState.Timeout
             message_delivery.error = TimeoutError("Sending message timed out.")
         else:
@@ -443,7 +443,7 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
             except asyncio.TimeoutError:
                 pass
             if message_delivery.expiry and time.time() > message_delivery.expiry:
-                await self._on_send_complete_async(message_delivery, LinkDeliverySettleReason.Timeout, None)
+                await self._on_send_complete_async(message_delivery, LinkDeliverySettleReason.TIMEOUT, None)
 
         if message_delivery.state in (
             MessageDeliveryState.Error,
@@ -485,7 +485,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     :param debug: Whether to turn on network trace logs. If `True`, trace logs
      will be logged at INFO level. Default is `False`.
     :type debug: bool
-    :param timeout: A timeout in milliseconds. The receiver will shut down if no
+    :param timeout: A timeout in seconds. The receiver will shut down if no
      new messages are received after the specified timeout. If set to 0, the receiver
      will never timeout and will continue to listen. The default is 0.
     :type timeout: float
@@ -531,7 +531,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     :type max_frame_size: int
     :param channel_max: Maximum number of Session channels in the Connection.
     :type channel_max: int
-    :param idle_timeout: Timeout in milliseconds after which the Connection will close
+    :param idle_timeout: Timeout in seconds after which the Connection will close
      if there is no further activity.
     :type idle_timeout: int
     :param properties: Connection properties.
@@ -690,7 +690,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         :param on_message_received: A callback to process messages as they arrive from the
          service. It takes a single argument, a ~uamqp.message.Message object.
         :type on_message_received: callable[~uamqp.message.Message]
-        :param timeout: I timeout in milliseconds for which to wait to receive any messages.
+        :param timeout: Timeout in seconds for which to wait to receive any messages.
          If no messages are received in this time, an empty list will be returned. If set to
          0, the client will continue to wait until at least one message is received. The
          default is 0.

@@ -149,7 +149,7 @@ class Link(object):
     async def _remove_pending_deliveries(self):  # TODO: move to sender
         futures = []
         for delivery in self._pending_deliveries.values():
-            futures.append(asyncio.create_task(delivery.on_settled(LinkDeliverySettleReason.NotDelivered, None)))
+            futures.append(asyncio.create_task(delivery.on_settled(LinkDeliverySettleReason.NOT_DELIVERED, None)))
         await asyncio.gather(*futures)
         self._pending_deliveries = {}
     

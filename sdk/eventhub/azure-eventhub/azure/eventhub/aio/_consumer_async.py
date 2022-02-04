@@ -185,7 +185,7 @@ class EventHubConsumer(
                 try:
                     await self._open()
                     await asyncio.wait_for(
-                        cast(ReceiveClientAsync, self._handler).do_work_async(),  # uamqp sleeps 0.05 if none received
+                        cast(ReceiveClientAsync, self._handler).do_work_async(batch=self._prefetch),  # uamqp sleeps 0.05 if none received
                         timeout=(deadline - time.time() if max_wait_time else None)
                     )
                     break

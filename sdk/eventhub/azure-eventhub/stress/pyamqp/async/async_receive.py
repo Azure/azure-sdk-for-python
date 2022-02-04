@@ -25,12 +25,10 @@ CONN_STRS = [
     os.environ["EVENT_HUB_CONN_STR_STANDARD_WESTUS2"]
 ]
 EH_NAME_EVENT_SIZE_PAIR = [
-    ('pyamqp_16', 16),
-    ('pyamqp_128', 128),
     ('pyamqp_512', 512),
-    ('pyamqp_1024', 1024)
 ]
-PREFETCH_LIST = [300, 3000, 30000]
+
+PREFETCH_LIST = [300, 3000]
 PARTITION_ID = "0"
 RUN_DURATION = 30
 FIXED_AMOUNT = 100_000

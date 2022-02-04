@@ -19,6 +19,7 @@ from ._transport_async import AsyncTransport
 from ._sasl_async import SASLTransport
 from ._session_async import Session
 from ..performatives import OpenFrame, CloseFrame
+from .._connection import get_local_timeout
 from ..constants import (
     PORT,
     SECURE_PORT,
@@ -125,10 +126,8 @@ class Connection(object):
         previous_state = self.state
         self.state = new_state
         _LOGGER.info("Connection '%s' state changed: %r -> %r", self._container_id, previous_state, new_state)
-        futures = []
-        for session in self.outgoing_endpoints.values():
-            futures.append(asyncio.create_task(session._on_connection_state_change()))
-        await asyncio.gather(*futures)
+
+        await asyncio.gather(*[session._on_connection_state_change() for session in self.outgoing_endpoints.values()])
 
     async def _connect(self):
         try:
@@ -222,8 +221,6 @@ class Connection(object):
                 description="Can not send empty frame due to exception: " + str(exc),
                 error=exc
             )
-        except Exception:
-            raise
 
     async def _outgoing_header(self):
         self.last_frame_sent_time = time.time()
@@ -391,7 +388,7 @@ class Connection(object):
         if self.state not in [ConnectionState.OPEN_PIPE, ConnectionState.OPEN_SENT, ConnectionState.OPENED]:
             raise ValueError("Connection not open.")
         now = time.time()
-        if (await self._get_local_timeout(now)) or (await self._get_remote_timeout(now)):
+        if get_local_timeout(now, self.idle_timeout, self.last_frame_received_time) or (await self._get_remote_timeout(now)):
             await self.close(
                 # TODO: check error condition
                 error=AMQPError(
@@ -402,12 +399,6 @@ class Connection(object):
             )
             return
         await self._send_frame(channel, frame)
-
-    async def _get_local_timeout(self, now):
-        if self.idle_timeout and self.last_frame_received_time:
-            time_since_last_received = now - self.last_frame_received_time
-            return time_since_last_received > self.idle_timeout
-        return False
 
     async def _get_remote_timeout(self, now):
         if self.remote_idle_timeout and self.last_frame_sent_time:
@@ -447,7 +438,7 @@ class Connection(object):
         try:
             if self.state not in _CLOSING_STATES:
                 now = time.time()
-                if (await self._get_local_timeout(now)) or (await self._get_remote_timeout(now)):
+                if get_local_timeout(now, self.idle_timeout, self.last_frame_received_time) or (await self._get_remote_timeout(now)):
                     # TODO: check error condition
                     await self.close(
                         error=AMQPError(
@@ -464,10 +455,7 @@ class Connection(object):
                     description="Connection was already closed."
                 )
                 return
-            futures = []
-            for _ in range(batch):
-                futures.append(asyncio.create_task(self._listen_one_frame(**kwargs)))
-            await asyncio.gather(*futures)   # TODO: Close on first exception
+            await asyncio.gather(*[self._listen_one_frame(**kwargs) for _ in range(batch)])   # TODO: Close on first exception
         except (OSError, IOError, SSLError, socket.error) as exc:
             self._error = AMQPConnectionError(
                 ErrorCondition.SocketError,

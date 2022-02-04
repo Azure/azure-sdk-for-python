@@ -78,7 +78,7 @@ class CBSAuthenticator(object):
         self._token_status_description = None
 
         self.state = CbsState.CLOSED
-        self.auth_state = CbsAuthState.Idle
+        self.auth_state = CbsAuthState.IDLE
 
     def _put_token(self, token, token_type, audience, expires_on=None):
         # type: (str, str, str, datetime) -> None
@@ -141,26 +141,26 @@ class CBSAuthenticator(object):
         self._token_status_description = status_description
 
         if execute_operation_result == ManagementExecuteOperationResult.OK:
-            self.auth_state = CbsAuthState.Ok
+            self.auth_state = CbsAuthState.OK
         elif execute_operation_result == ManagementExecuteOperationResult.ERROR:
-            self.auth_state = CbsAuthState.Error
+            self.auth_state = CbsAuthState.ERROR
             # put-token-message sending failure, rejected
             self._token_status_code = 0
             self._token_status_description = "Auth message has been rejected."
         elif execute_operation_result == ManagementExecuteOperationResult.FAILED_BAD_STATUS:
-            self.auth_state = CbsAuthState.Error
+            self.auth_state = CbsAuthState.ERROR
 
     def _update_status(self):
-        if self.state == CbsAuthState.Ok or self.state == CbsAuthState.RefreshRequired:
+        if self.state == CbsAuthState.OK or self.state == CbsAuthState.REFRESH_REQUIRED:
             is_expired, is_refresh_required = check_expiration_and_refresh_status(self._expires_on, self._refresh_window)
             if is_expired:
-                self.state = CbsAuthState.Expired
+                self.state = CbsAuthState.EXPIRED
             elif is_refresh_required:
-                self.state = CbsAuthState.RefreshRequired
-        elif self.state == CbsAuthState.InProgress:
+                self.state = CbsAuthState.REFRESH_REQUIRED
+        elif self.state == CbsAuthState.IN_PROGRESS:
             put_timeout = check_put_timeout_status(self._auth_timeout, self._token_put_time)
             if put_timeout:
-                self.state = CbsAuthState.Timeout
+                self.state = CbsAuthState.TIMEOUT
 
     def _cbs_link_ready(self):
         if self.state == CbsState.OPEN:
@@ -184,7 +184,7 @@ class CBSAuthenticator(object):
         self.state = CbsState.CLOSED
 
     def update_token(self):
-        self.auth_state = CbsAuthState.InProgress
+        self.auth_state = CbsAuthState.IN_PROGRESS
         access_token = self._auth.get_token()
         self._expires_on = access_token.expires_on
         expires_in = self._expires_on - int(utc_now().timestamp())
@@ -197,32 +197,32 @@ class CBSAuthenticator(object):
         if not self._cbs_link_ready():
             return False
         self._update_status()
-        if self.auth_state == CbsAuthState.Idle:
+        if self.auth_state == CbsAuthState.IDLE:
             self.update_token()
             return False
-        elif self.auth_state == CbsAuthState.InProgress:
+        elif self.auth_state == CbsAuthState.IN_PROGRESS:
             return False
-        elif self.auth_state == CbsAuthState.Ok:
+        elif self.auth_state == CbsAuthState.OK:
             return True
-        elif self.auth_state == CbsAuthState.RefreshRequired:
+        elif self.auth_state == CbsAuthState.REFRESH_REQUIRED:
             _LOGGER.info("Token on connection %r will expire soon - attempting to refresh.",
                          self._connection._container_id)
             self.update_token()
             return False
-        elif self.auth_state == CbsAuthState.Failure:
+        elif self.auth_state == CbsAuthState.FAILURE:
             raise AuthenticationException(
                 condition=ErrorCondition.InternalError,
                 description="Failed to open CBS authentication link."
             )
-        elif self.auth_state == CbsAuthState.Error:
+        elif self.auth_state == CbsAuthState.ERROR:
             raise TokenAuthFailure(
                 self._token_status_code,
                 self._token_status_description,
                 encoding=self._encoding  # TODO: drop off all the encodings
             )
-        elif self.auth_state == CbsAuthState.Timeout:
+        elif self.auth_state == CbsAuthState.TIMEOUT:
             raise TimeoutError("Authentication attempt timed-out.")
-        elif self.auth_state == CbsAuthState.Expired:
+        elif self.auth_state == CbsAuthState.EXPIRED:
             raise TokenExpired(
                 condition=ErrorCondition.InternalError,
                 description="CBS Authentication Expired."

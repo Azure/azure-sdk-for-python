@@ -151,7 +151,7 @@ class Link(object):
 
     def _remove_pending_deliveries(self):  # TODO: move to sender
         for delivery in self._pending_deliveries.values():
-            delivery.on_settled(LinkDeliverySettleReason.NotDelivered, None)
+            delivery.on_settled(LinkDeliverySettleReason.NOT_DELIVERED, None)
         self._pending_deliveries = {}
     
     def _on_session_state_change(self):
