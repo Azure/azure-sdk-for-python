@@ -541,7 +541,7 @@ class FormRecognizerTest(AzureRecordedTestCase):
         if transformed_languages == [] and not raw_languages:
             return
         for lang, expected in zip(transformed_languages, raw_languages):
-            assert lang.code == expected.language_code
+            assert lang.language_code == expected.language_code
             for span, expected_span in zip(lang.spans or [], expected.spans or []):
                 self.assertSpanTransformCorrect(span, expected_span)
             assert lang.confidence == expected.confidence

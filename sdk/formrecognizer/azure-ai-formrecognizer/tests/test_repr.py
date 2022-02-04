@@ -231,8 +231,8 @@ def document_line(bounding_box, document_span):
 
 @pytest.fixture
 def document_language(document_span):
-    model = _models.DocumentLanguage(code="en", spans=[document_span[0]], confidence=0.99)
-    model_repr = "DocumentLanguage(code={}, spans=[{}], confidence={})".format(
+    model = _models.DocumentLanguage(language_code="en", spans=[document_span[0]], confidence=0.99)
+    model_repr = "DocumentLanguage(language_code={}, spans=[{}], confidence={})".format(
             "en",
             document_span[1],
             0.99,

@@ -2252,9 +2252,9 @@ class DocumentContentElement(object):
 class DocumentLanguage(object):
     """An object representing the detected language for a given text span.
 
-    :ivar code: Detected language code. Value may be an ISO 639-1 language code (ex.
+    :ivar language_code: Detected language code. Value may be an ISO 639-1 language code (ex.
      "en", "fr") or a BCP 47 language tag (ex. "zh-Hans").
-    :vartype code: str
+    :vartype language_code: str
     :ivar spans: Location of the text elements in the concatenated content that the language
      applies to.
     :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
@@ -2263,21 +2263,21 @@ class DocumentLanguage(object):
     """
 
     def __init__(self, **kwargs):
-        self.code = kwargs.get("code", None)
+        self.language_code = kwargs.get("language_code", None)
         self.spans = kwargs.get("spans", None)
         self.confidence = kwargs.get("confidence", None)
 
     @classmethod
     def _from_generated(cls, language):
         return cls(
-            code=language.language_code,
+            language_code=language.language_code,
             spans=prepare_document_spans(language.spans),
             confidence=language.confidence,
         )
 
     def __repr__(self):
-        return "DocumentLanguage(code={}, spans={}, confidence={})".format(
-            self.code,
+        return "DocumentLanguage(language_code={}, spans={}, confidence={})".format(
+            self.language_code,
             repr(self.spans),
             self.confidence,
         )
@@ -2290,7 +2290,7 @@ class DocumentLanguage(object):
         :rtype: dict
         """
         return {
-            "code": self.code,
+            "language_code": self.language_code,
             "spans": [f.to_dict() for f in self.spans]
             if self.spans
             else [],
@@ -2307,7 +2307,7 @@ class DocumentLanguage(object):
         :rtype: DocumentLanguage
         """
         return cls(
-            code=data.get("code", None),
+            language_code=data.get("language_code", None),
             spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
             if len(data.get("spans", [])) > 0
             else [],
