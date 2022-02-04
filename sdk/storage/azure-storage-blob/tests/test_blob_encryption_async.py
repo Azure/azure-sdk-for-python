@@ -217,7 +217,7 @@ class StorageBlobEncryptionTestAsync(AsyncStorageTestCase):
 
         with self.assertRaises(HttpResponseError) as e:
             await (await blob.download_blob()).content_as_bytes()
-        self.assertEqual(str(e.exception), 'Decryption failed.')
+        self.assertTrue('Decryption failed.' in str(e.exception))
 
     @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -287,7 +287,7 @@ class StorageBlobEncryptionTestAsync(AsyncStorageTestCase):
         # Assert
         with self.assertRaises(HttpResponseError) as e:
             await (await blob.download_blob()).content_as_bytes()
-        self.assertEqual(str(e.exception), 'Decryption failed.')
+        self.assertTrue('Decryption failed.' in str(e.exception))
 
     @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
