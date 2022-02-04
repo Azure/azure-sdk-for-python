@@ -1024,7 +1024,7 @@ class TestToDict(FormRecognizerTest):
             content="Sample\nFile content.",
             languages=[
                 _models.DocumentLanguage(
-                    code="en",
+                    language_code="en",
                     spans=[
                         _models.DocumentSpan(offset=5, length=2),
                     ],
@@ -1259,7 +1259,7 @@ class TestToDict(FormRecognizerTest):
             "content": "Sample\nFile content.",
             "languages": [
                 {
-                    "code": "en",
+                    "language_code": "en",
                     "spans": [
                         {
                             "offset": 5,

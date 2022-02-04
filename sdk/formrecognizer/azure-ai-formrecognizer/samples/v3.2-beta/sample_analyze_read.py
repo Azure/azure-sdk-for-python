@@ -55,7 +55,7 @@ def analyze_read():
 
     print("----Languages detected in the document----")
     for language in result.languages:
-        print("Language code: '{}' with confidence {}".format(language.code, language.confidence))
+        print("Language code: '{}' with confidence {}".format(language.language_code, language.confidence))
 
     for page in result.pages:
         print("----Analyzing document from page #{}----".format(page.page_number))
