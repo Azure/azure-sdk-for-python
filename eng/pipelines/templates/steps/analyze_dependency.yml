@@ -28,4 +28,4 @@ steps:
     condition: succeededOrFailed()
     inputs:
      scriptPath: 'scripts/analyze_deps.py'
-     arguments: '--verbose --out "$(Build.ArtifactStagingDirectory)/reports/dependencies.html" --dump "$(Build.ArtifactStagingDirectory)/reports/data.js"'
+     arguments: '--verbose --out "$(Build.ArtifactStagingDirectory)/reports/dependencies.html" --dump "$(Build.ArtifactStagingDirectory)/reports"'
