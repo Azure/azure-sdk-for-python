@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import logging
 import os
+import queue
 import re
 import six.moves.urllib as urllib
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
@@ -36,28 +37,21 @@ from ._fetcher import HttpFetcher, FilesystemFetcher
 from .._metadata_scheduler import MetadataScheduler
 from .._model_query import ModelQuery
 
-try:
-    import queue
-except ImportError:
-    import Queue as queue
-
 _LOGGER = logging.getLogger(__name__)
 
 
-class DtmiResolver(object):
-    def __init__(self, location, metadata_expiration, metadata_enabled, **kwargs):
+class RepositoryHandler(object):
+    def __init__(self, location, metadata_enabled, **kwargs):
+        # type: (str, bool, Any) -> None
         """
         :param location: Location of the Models Repository you wish to access.
             This location can be a remote HTTP/HTTPS URL, or a local filesystem path.
         :type location: str
-        :param metadata_expiration: Amount of time in seconds before the client
-            considers the repository metadata stale.
-        :type metadata_expiration: int
         :param metadata_enabled: Whether the client will fetch and cache metadata.
         :type metadata_enabled: bool
         """
         self.fetcher = _create_fetcher(location, **kwargs)
-        self._metadata_scheduler = MetadataScheduler(metadata_expiration, metadata_enabled)
+        self._metadata_scheduler = MetadataScheduler(metadata_enabled)
         self._repository_supports_expanded = False
 
     @distributed_trace_async
@@ -70,11 +64,12 @@ class DtmiResolver(object):
         await self.fetcher.__aexit__(*exc_details)
 
     @distributed_trace_async
-    async def resolve(self, dtmis, dependency_resolution=DependencyMode.enabled.value, **kwargs):
-        """Resolve a DTMI from the configured endpoint and return the resulting JSON model.
+    async def process(self, dtmis, dependency_resolution=DependencyMode.enabled.value, **kwargs):
+        # type: (Union[List[str], str], str, Any) -> Dict[str, Any]
+        """Process a DTMI from the configured endpoint and return the resulting JSON model.
 
-        :param list[str] dtmis: DTMIs to resolve
-        :param bool expanded_model: Indicates whether to resolve a regular or expanded model
+        :param list[str] dtmis: DTMIs to process
+        :param bool expanded_model: Indicates whether to process a regular or expanded model
 
         :raises: ValueError if the DTMI is invalid.
         :raises: ModelError if there is an error with the contents of the JSON model.
@@ -87,16 +82,16 @@ class DtmiResolver(object):
 
         if (
             dependency_resolution == DependencyMode.enabled.value and
-            self._metadata_scheduler.has_elapsed()
+            self._metadata_scheduler.should_fetch_metadata()
         ):
             try:
                 metadata = await self.fetcher.fetch_metadata(**kwargs)
                 self._repository_supports_expanded = (
                     metadata and
                     metadata.get("features") and
-                    metadata["features"].get("expanded")
+                    metadata.get("features").get("expanded")
                 )
-                self._metadata_scheduler.reset()
+                self._metadata_scheduler.mark_as_fetched()
             except (ResourceNotFoundError, HttpResponseError):
                 _LOGGER.debug(FAILURE_PROCESSING_REPOSITORY_METADATA)
 
@@ -127,14 +122,13 @@ class DtmiResolver(object):
                     model_metadata = ModelQuery(item).parse_model()
                     if model_metadata.dtmi not in processed_models:
                         processed_models[model_metadata.dtmi] = item
-
                 continue
 
             model_metadata = ModelQuery(dtdl).parse_model()
-            dependencies = model_metadata.dependencies
 
             # Add dependencies to to_process_queue if manual resolution is needed
             if dependency_resolution == DependencyMode.enabled.value and not expanded_result:
+                dependencies = model_metadata.dependencies
                 if len(dependencies) > 0:
                     info_msg = DISCOVERED_DEPENDENCIES.format('", "'.join(dependencies))
                     _LOGGER.debug(info_msg)

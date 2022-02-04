@@ -11,12 +11,9 @@ of truth for the DTDL model specifications.
 Note that this implementation is not representative of what an eventual full
 parser implementation would necessarily look like from an API perspective
 """
-import logging
 from six import string_types
 from .dtmi_conventions import is_valid_dtmi
 from ._common import ModelType, ModelProperties
-
-_LOGGER = logging.getLogger(__name__)
 
 class Model(object):
     def __init__(

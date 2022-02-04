@@ -16,17 +16,18 @@ DEFAULT_API_VERSION = "2021-02-11"
 # Public constants exposed to consumers
 DEFAULT_LOCATION = "https://devicemodels.azure.com"
 METADATA_FILE = "metadata.json"
+JSON_FILE_EXT = ".json"
+EXPANDED_JSON_FILE_EXT = ".expanded.json"
+URI_FILE_SCHEMA = "file"
 
 # Standard strings
-CLIENT_INIT_MSG = "Client configured for repository location \"{0}\"."
+CLIENT_INIT_MSG = "Client session {0} initialized to repository {1}."
 DISCOVERED_DEPENDENCIES = "Discovered dependencies \"{0}\"."
 ERROR_FETCHING_MODEL_CONTENT = (
-    "Model file \"{0}\" not found or not accessible in target repository. Fallback to non-expanded"
-    "model content and will determine dependencies for this model manually."
+    "Model file \"{0}\" not found or not accessible in target repository."
 )
 FAILURE_PROCESSING_REPOSITORY_METADATA = (
-    "Unable to fetch or process repository metadata file. Repository assumed to not have expanded "
-    "models. The client will fetch non-expanded model content and determine dependencies manually."
+    "Unable to fetch or process repository metadata file."
 )
 FETCHER_INIT_MSG = "Repository Location identified as {0}. Client session initialized with {1}."
 FETCHING_MODEL_CONTENT = "Attempting to fetch model content from \"{0}\"."

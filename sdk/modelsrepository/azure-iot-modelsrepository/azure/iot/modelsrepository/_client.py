@@ -4,9 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 import logging
+from uuid import uuid4
 from six import string_types
 from azure.core.tracing.decorator import distributed_trace
-from ._resolver import DtmiResolver
+from ._repository_handler import RepositoryHandler
 from ._common import (
     DEFAULT_LOCATION,
     DEFAULT_API_VERSION,
@@ -26,16 +27,15 @@ class ModelsRepositoryClient(object):
         repository_location=DEFAULT_LOCATION,
         **kwargs
     ):  # pylint: disable=missing-client-constructor-parameter-credential
-        # type: (TokenCredential, str, Any) -> None
+        # type: (str, Any) -> None
         """
         :param repository_location: Location of the Models Repository you wish to access.
             This location can be a remote HTTP/HTTPS URL, or a local filesystem path.
             If omitted, will default to using "https://devicemodels.azure.com".
         :type repository_location: str
+
         :keyword str api_version: The API version for the Models Repository Service you wish to
             access.
-        :keyword int metadata_expiration: Amount of time in seconds before the client
-            considers the repository metadata stale.
         :keyword bool metadata_enabled: Whether the client will fetch and cache metadata.
 
         For additional request configuration options, please see [core options](https://aka.ms/azsdk/python/options).
@@ -44,26 +44,25 @@ class ModelsRepositoryClient(object):
         """
         # Store api version here (for now). Currently doesn't do anything
         self._api_version = kwargs.get("api_version", DEFAULT_API_VERSION)
-        # metadata_expiration = kwargs.pop("metadata_expiration", float('inf'))
         metadata_enabled = kwargs.pop("metadata_enabled", True)
 
         self.repository_uri = repository_location if repository_location else DEFAULT_LOCATION
-        info_msg = CLIENT_INIT_MSG.format(self.repository_uri)
+        self._client_id = uuid4()
+        info_msg = CLIENT_INIT_MSG.format(self._client_id, self.repository_uri)
         _LOGGER.debug(info_msg)
 
-        self.resolver = DtmiResolver(
+        self.repository_handler = RepositoryHandler(
             location=self.repository_uri,
-            # metadata_expiration=metadata_expiration,
             metadata_enabled=metadata_enabled,
             **kwargs
         )
 
     def __enter__(self):
-        self.resolver.__enter__()
+        self.repository_handler.__enter__()
         return self
 
     def __exit__(self, *exc_details):
-        self.resolver.__exit__(*exc_details)
+        self.repository_handler.__exit__(*exc_details)
 
     def close(self):
         # type: () -> None
@@ -100,4 +99,4 @@ class ModelsRepositoryClient(object):
         if dependency_resolution not in [DependencyMode.enabled.value, DependencyMode.disabled.value]:
             raise ValueError(INVALID_DEPEDENCY_MODE)
 
-        return self.resolver.resolve(dtmis, dependency_resolution=dependency_resolution, **kwargs)
+        return self.repository_handler.process(dtmis, dependency_resolution=dependency_resolution, **kwargs)

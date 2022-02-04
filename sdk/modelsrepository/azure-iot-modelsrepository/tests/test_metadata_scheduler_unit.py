@@ -12,45 +12,23 @@ from azure.iot.modelsrepository._metadata_scheduler import (
 
 @pytest.mark.describe("MetadataScheduler")
 class MetadataSchedulerTests(object):
-    @pytest.mark.it("MetadataScheduler with expiration time of one second.")
-    def test_basic_usage(self):
-        scheduler = MetadataScheduler(1)
-        # initial fetch should return true
-        assert scheduler.has_elapsed()
-        assert scheduler.has_elapsed()
-        assert scheduler.reset()
-        assert not scheduler.has_elapsed()
-        sleep(2)
-        assert scheduler.has_elapsed()
-
-    @pytest.mark.it("MetadataScheduler with expiration time of zero seconds.")
-    def test_continuous_elapse(self):
-        scheduler = MetadataScheduler(0)
-        # initial fetch should return true
-        assert scheduler.has_elapsed()
-        assert scheduler.has_elapsed()
-        assert scheduler.reset()
-        assert scheduler.has_elapsed()
-        assert scheduler.reset()
-        assert scheduler.has_elapsed()
-
-    @pytest.mark.it("MetadataScheduler with default expiration time of infinite seconds.")
-    def test_basic_usage(self):
+    @pytest.mark.it("Enabled MetadataScheduler should support only an initial metadata fetch.")
+    def test_metadata_scheduler_enabled(self):
         scheduler = MetadataScheduler()
         # initial fetch should return true
-        assert scheduler.has_elapsed()
-        assert scheduler.has_elapsed()
-        assert scheduler.reset()
-        assert not scheduler.has_elapsed()
-        assert scheduler.reset()
-        assert not scheduler.has_elapsed()
+        assert scheduler.should_fetch_metadata()
+        assert scheduler.should_fetch_metadata()
+        assert scheduler.mark_as_fetched()
+        assert not scheduler.should_fetch_metadata()
+        assert scheduler.mark_as_fetched()
+        assert not scheduler.should_fetch_metadata()
 
-    @pytest.mark.it("MetadataScheduler disabled.")
-    def test_basic_usage(self):
+    @pytest.mark.it("Disabled MetadataScheduler should support no metadata fetching.")
+    def test_metadata_scheduler_disabled(self):
         scheduler = MetadataScheduler(enabled=False)
-        assert not scheduler.has_elapsed()
-        assert not scheduler.has_elapsed()
-        assert scheduler.reset()
-        assert not scheduler.has_elapsed()
-        assert scheduler.reset()
-        assert not scheduler.has_elapsed()
+        assert not scheduler.should_fetch_metadata()
+        assert not scheduler.should_fetch_metadata()
+        assert scheduler.mark_as_fetched()
+        assert not scheduler.should_fetch_metadata()
+        assert scheduler.mark_as_fetched()
+        assert not scheduler.should_fetch_metadata()

@@ -6,10 +6,23 @@
 import re
 from six import string_types
 from six.moves import urllib
-from ._common import INVALID_DTMI_FORMAT
+from ._common import (
+    EXPANDED_JSON_FILE_EXT,
+    INVALID_DTMI_FORMAT,
+    JSON_FILE_EXT,
+    METADATA_FILE
+)
 
 def is_valid_dtmi(dtmi):
     """Checks validity of a DTMI
+
+    A DTMI has three components: scheme, path, and version.
+    Scheme and path are separated by a colon. Path and version are separated by a semicolon i.e. <scheme> : <path> ; <version>.
+    The scheme is the string literal "dtmi" in lowercase. The path is a sequence of one or more segments, separated by colons.
+    The version is a sequence of one or more digits. Each path segment is a non-empty string containing only letters, digits, and underscores.
+    The first character may not be a digit, and the last character may not be an underscore.
+    The version length is limited to nine digits, because the number 999,999,999 fits in a 32-bit signed integer value.
+    The first digit may not be zero, so there is no ambiguity regarding whether version 1 matches version 01 since the latter is invalid.
 
     :param str dtmi: DTMI
 
@@ -63,9 +76,9 @@ def _convert_dtmi_to_path(dtmi, expanded=False):
     """
     if not is_valid_dtmi(dtmi):
         return ""
-    dtmi_path = dtmi.lower().replace(":", "/").replace(";", "-") + ".json"
+    dtmi_path = dtmi.lower().replace(":", "/").replace(";", "-") + JSON_FILE_EXT
     if expanded:
-        dtmi_path = dtmi_path.replace(".json", ".expanded.json")
+        dtmi_path = dtmi_path.replace(JSON_FILE_EXT, EXPANDED_JSON_FILE_EXT)
     return dtmi_path
 
 
@@ -90,3 +103,18 @@ def _add_scheme(uri):
         uri = "file://" + uri.strip("\\").replace("\\", "/")
 
     return uri
+
+
+def get_model_uri(dtmi, repository_uri, expanded=False):
+    """Get the URI representing the absolute location of the metadata in a Models Repository
+
+    :param str repository_uri: URI for a Models Repository
+
+    :returns: The URI for the metadata in the Models Repository
+    :rtype: str
+    """
+    repository_uri = _add_scheme(repository_uri)
+    if not repository_uri.endswith("/"):
+        repository_uri += "/"
+
+    return repository_uri + METADATA_FILE
