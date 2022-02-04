@@ -1,5 +1,10 @@
 # Release History
 
+## 1.1.0b1
+
+### Features Added
+* Added `QuestionAnsweringProjectsClient` for managing Qna projects. Performing project operations such as create, delete, export, and import project, as well as knowledge sources operations such as adding or listing knowledge sources, Qnas, and synonyms.
+
 ## 1.0.1 (Unreleased)
 
 ### Features Added
