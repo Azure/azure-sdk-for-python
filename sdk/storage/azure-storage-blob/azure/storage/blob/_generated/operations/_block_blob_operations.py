@@ -67,7 +67,7 @@ def build_upload_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -187,7 +187,7 @@ def build_put_blob_from_url_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -296,7 +296,7 @@ def build_stage_block_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -371,7 +371,7 @@ def build_stage_block_from_url_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -466,7 +466,7 @@ def build_commit_block_list_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -561,7 +561,7 @@ def build_get_block_list_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -811,7 +811,7 @@ class BlockBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    upload.metadata = {'url': '/{url}'}  # type: ignore
+    upload.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1028,7 +1028,7 @@ class BlockBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    put_blob_from_url.metadata = {'url': '/{url}'}  # type: ignore
+    put_blob_from_url.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1154,7 +1154,7 @@ class BlockBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    stage_block.metadata = {'url': '/{url}'}  # type: ignore
+    stage_block.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1304,7 +1304,7 @@ class BlockBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    stage_block_from_url.metadata = {'url': '/{url}'}  # type: ignore
+    stage_block_from_url.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1502,7 +1502,7 @@ class BlockBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    commit_block_list.metadata = {'url': '/{url}'}  # type: ignore
+    commit_block_list.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1604,5 +1604,5 @@ class BlockBlobOperations(object):
 
         return deserialized
 
-    get_block_list.metadata = {'url': '/{url}'}  # type: ignore
+    get_block_list.metadata = {'url': '{url}'}  # type: ignore
 

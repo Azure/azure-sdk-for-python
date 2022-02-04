@@ -43,7 +43,7 @@ def build_set_properties_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}/')
+    url = kwargs.pop("template_url", '{url}/')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -88,7 +88,7 @@ def build_get_properties_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}/')
+    url = kwargs.pop("template_url", '{url}/')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -131,7 +131,7 @@ def build_get_statistics_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}/')
+    url = kwargs.pop("template_url", '{url}/')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -177,7 +177,7 @@ def build_list_containers_segment_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}/')
+    url = kwargs.pop("template_url", '{url}/')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -228,7 +228,7 @@ def build_get_user_delegation_key_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}/')
+    url = kwargs.pop("template_url", '{url}/')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -271,7 +271,7 @@ def build_get_account_info_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}/')
+    url = kwargs.pop("template_url", '{url}/')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -311,7 +311,7 @@ def build_submit_batch_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}/')
+    url = kwargs.pop("template_url", '{url}/')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -357,7 +357,7 @@ def build_filter_blobs_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}/')
+    url = kwargs.pop("template_url", '{url}/')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -490,7 +490,7 @@ class ServiceOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_properties.metadata = {'url': '/{url}/'}  # type: ignore
+    set_properties.metadata = {'url': '{url}/'}  # type: ignore
 
 
     @distributed_trace
@@ -565,7 +565,7 @@ class ServiceOperations(object):
 
         return deserialized
 
-    get_properties.metadata = {'url': '/{url}/'}  # type: ignore
+    get_properties.metadata = {'url': '{url}/'}  # type: ignore
 
 
     @distributed_trace
@@ -642,7 +642,7 @@ class ServiceOperations(object):
 
         return deserialized
 
-    get_statistics.metadata = {'url': '/{url}/'}  # type: ignore
+    get_statistics.metadata = {'url': '{url}/'}  # type: ignore
 
 
     @distributed_trace
@@ -740,7 +740,7 @@ class ServiceOperations(object):
 
         return deserialized
 
-    list_containers_segment.metadata = {'url': '/{url}/'}  # type: ignore
+    list_containers_segment.metadata = {'url': '{url}/'}  # type: ignore
 
 
     @distributed_trace
@@ -823,7 +823,7 @@ class ServiceOperations(object):
 
         return deserialized
 
-    get_user_delegation_key.metadata = {'url': '/{url}/'}  # type: ignore
+    get_user_delegation_key.metadata = {'url': '{url}/'}  # type: ignore
 
 
     @distributed_trace
@@ -886,7 +886,7 @@ class ServiceOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_account_info.metadata = {'url': '/{url}/'}  # type: ignore
+    get_account_info.metadata = {'url': '{url}/'}  # type: ignore
 
 
     @distributed_trace
@@ -969,7 +969,7 @@ class ServiceOperations(object):
 
         return deserialized
 
-    submit_batch.metadata = {'url': '/{url}/'}  # type: ignore
+    submit_batch.metadata = {'url': '{url}/'}  # type: ignore
 
 
     @distributed_trace
@@ -1064,5 +1064,5 @@ class ServiceOperations(object):
 
         return deserialized
 
-    filter_blobs.metadata = {'url': '/{url}/'}  # type: ignore
+    filter_blobs.metadata = {'url': '{url}/'}  # type: ignore
 

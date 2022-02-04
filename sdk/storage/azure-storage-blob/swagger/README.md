@@ -184,7 +184,7 @@ directive:
     for (const property in $)
     {
         var oldName = property;
-        var newName = '/{url}' + property;
+        var newName = '{url}' + property;
         $[newName] = $[oldName];
         delete $[oldName];
     }

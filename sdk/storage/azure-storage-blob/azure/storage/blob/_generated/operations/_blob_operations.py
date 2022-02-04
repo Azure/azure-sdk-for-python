@@ -41,7 +41,7 @@ def build_get_account_info_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -92,7 +92,7 @@ def build_download_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -170,7 +170,7 @@ def build_get_properties_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -241,7 +241,7 @@ def build_delete_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -301,7 +301,7 @@ def build_undelete_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -344,7 +344,7 @@ def build_set_expiry_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -400,7 +400,7 @@ def build_set_http_headers_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -468,7 +468,7 @@ def build_set_immutability_policy_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -515,7 +515,7 @@ def build_delete_immutability_policy_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -557,7 +557,7 @@ def build_set_legal_hold_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -610,7 +610,7 @@ def build_set_metadata_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -681,7 +681,7 @@ def build_acquire_lease_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -744,7 +744,7 @@ def build_release_lease_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -804,7 +804,7 @@ def build_renew_lease_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -865,7 +865,7 @@ def build_change_lease_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -926,7 +926,7 @@ def build_break_lease_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -991,7 +991,7 @@ def build_create_snapshot_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -1073,7 +1073,7 @@ def build_start_copy_from_url_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -1172,7 +1172,7 @@ def build_copy_from_url_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -1255,7 +1255,7 @@ def build_abort_copy_from_url_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -1306,7 +1306,7 @@ def build_set_tier_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -1369,7 +1369,7 @@ def build_query_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -1436,7 +1436,7 @@ def build_get_tags_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -1491,7 +1491,7 @@ def build_set_tags_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -1613,7 +1613,7 @@ class BlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_account_info.metadata = {'url': '/{url}'}  # type: ignore
+    get_account_info.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1832,7 +1832,7 @@ class BlobOperations(object):
 
         return deserialized
 
-    download.metadata = {'url': '/{url}'}  # type: ignore
+    download.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1991,7 +1991,7 @@ class BlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_properties.metadata = {'url': '/{url}'}  # type: ignore
+    get_properties.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -2113,7 +2113,7 @@ class BlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete.metadata = {'url': '/{url}'}  # type: ignore
+    delete.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -2180,7 +2180,7 @@ class BlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    undelete.metadata = {'url': '/{url}'}  # type: ignore
+    undelete.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -2257,7 +2257,7 @@ class BlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_expiry.metadata = {'url': '/{url}'}  # type: ignore
+    set_expiry.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -2376,7 +2376,7 @@ class BlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_http_headers.metadata = {'url': '/{url}'}  # type: ignore
+    set_http_headers.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -2461,7 +2461,7 @@ class BlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_immutability_policy.metadata = {'url': '/{url}'}  # type: ignore
+    set_immutability_policy.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -2528,7 +2528,7 @@ class BlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete_immutability_policy.metadata = {'url': '/{url}'}  # type: ignore
+    delete_immutability_policy.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -2600,7 +2600,7 @@ class BlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_legal_hold.metadata = {'url': '/{url}'}  # type: ignore
+    set_legal_hold.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -2730,7 +2730,7 @@ class BlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_metadata.metadata = {'url': '/{url}'}  # type: ignore
+    set_metadata.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -2837,7 +2837,7 @@ class BlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    acquire_lease.metadata = {'url': '/{url}'}  # type: ignore
+    acquire_lease.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -2935,7 +2935,7 @@ class BlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    release_lease.metadata = {'url': '/{url}'}  # type: ignore
+    release_lease.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -3034,7 +3034,7 @@ class BlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    renew_lease.metadata = {'url': '/{url}'}  # type: ignore
+    renew_lease.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -3139,7 +3139,7 @@ class BlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    change_lease.metadata = {'url': '/{url}'}  # type: ignore
+    change_lease.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -3244,7 +3244,7 @@ class BlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    break_lease.metadata = {'url': '/{url}'}  # type: ignore
+    break_lease.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -3372,7 +3372,7 @@ class BlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create_snapshot.metadata = {'url': '/{url}'}  # type: ignore
+    create_snapshot.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -3532,7 +3532,7 @@ class BlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    start_copy_from_url.metadata = {'url': '/{url}'}  # type: ignore
+    start_copy_from_url.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -3707,7 +3707,7 @@ class BlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    copy_from_url.metadata = {'url': '/{url}'}  # type: ignore
+    copy_from_url.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -3792,7 +3792,7 @@ class BlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    abort_copy_from_url.metadata = {'url': '/{url}'}  # type: ignore
+    abort_copy_from_url.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -3905,7 +3905,7 @@ class BlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_tier.metadata = {'url': '/{url}'}  # type: ignore
+    set_tier.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -4099,7 +4099,7 @@ class BlobOperations(object):
 
         return deserialized
 
-    query.metadata = {'url': '/{url}'}  # type: ignore
+    query.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -4196,7 +4196,7 @@ class BlobOperations(object):
 
         return deserialized
 
-    get_tags.metadata = {'url': '/{url}'}  # type: ignore
+    get_tags.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -4302,5 +4302,5 @@ class BlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_tags.metadata = {'url': '/{url}'}  # type: ignore
+    set_tags.metadata = {'url': '{url}'}  # type: ignore
 

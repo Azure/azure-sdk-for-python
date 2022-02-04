@@ -118,7 +118,7 @@ class ServiceOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_properties.metadata = {'url': '/{url}/'}  # type: ignore
+    set_properties.metadata = {'url': '{url}/'}  # type: ignore
 
 
     @distributed_trace_async
@@ -192,7 +192,7 @@ class ServiceOperations:
 
         return deserialized
 
-    get_properties.metadata = {'url': '/{url}/'}  # type: ignore
+    get_properties.metadata = {'url': '{url}/'}  # type: ignore
 
 
     @distributed_trace_async
@@ -268,7 +268,7 @@ class ServiceOperations:
 
         return deserialized
 
-    get_statistics.metadata = {'url': '/{url}/'}  # type: ignore
+    get_statistics.metadata = {'url': '{url}/'}  # type: ignore
 
 
     @distributed_trace_async
@@ -365,7 +365,7 @@ class ServiceOperations:
 
         return deserialized
 
-    list_containers_segment.metadata = {'url': '/{url}/'}  # type: ignore
+    list_containers_segment.metadata = {'url': '{url}/'}  # type: ignore
 
 
     @distributed_trace_async
@@ -447,7 +447,7 @@ class ServiceOperations:
 
         return deserialized
 
-    get_user_delegation_key.metadata = {'url': '/{url}/'}  # type: ignore
+    get_user_delegation_key.metadata = {'url': '{url}/'}  # type: ignore
 
 
     @distributed_trace_async
@@ -509,7 +509,7 @@ class ServiceOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_account_info.metadata = {'url': '/{url}/'}  # type: ignore
+    get_account_info.metadata = {'url': '{url}/'}  # type: ignore
 
 
     @distributed_trace_async
@@ -591,7 +591,7 @@ class ServiceOperations:
 
         return deserialized
 
-    submit_batch.metadata = {'url': '/{url}/'}  # type: ignore
+    submit_batch.metadata = {'url': '{url}/'}  # type: ignore
 
 
     @distributed_trace_async
@@ -685,5 +685,5 @@ class ServiceOperations:
 
         return deserialized
 
-    filter_blobs.metadata = {'url': '/{url}/'}  # type: ignore
+    filter_blobs.metadata = {'url': '{url}/'}  # type: ignore
 

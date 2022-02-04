@@ -235,7 +235,7 @@ class BlockBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    upload.metadata = {'url': '/{url}'}  # type: ignore
+    upload.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -451,7 +451,7 @@ class BlockBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    put_blob_from_url.metadata = {'url': '/{url}'}  # type: ignore
+    put_blob_from_url.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -576,7 +576,7 @@ class BlockBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    stage_block.metadata = {'url': '/{url}'}  # type: ignore
+    stage_block.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -725,7 +725,7 @@ class BlockBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    stage_block_from_url.metadata = {'url': '/{url}'}  # type: ignore
+    stage_block_from_url.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -922,7 +922,7 @@ class BlockBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    commit_block_list.metadata = {'url': '/{url}'}  # type: ignore
+    commit_block_list.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1023,5 +1023,5 @@ class BlockBlobOperations:
 
         return deserialized
 
-    get_block_list.metadata = {'url': '/{url}'}  # type: ignore
+    get_block_list.metadata = {'url': '{url}'}  # type: ignore
 

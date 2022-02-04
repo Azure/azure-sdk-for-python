@@ -102,7 +102,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_account_info.metadata = {'url': '/{url}'}  # type: ignore
+    get_account_info.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -320,7 +320,7 @@ class BlobOperations:
 
         return deserialized
 
-    download.metadata = {'url': '/{url}'}  # type: ignore
+    download.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -478,7 +478,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_properties.metadata = {'url': '/{url}'}  # type: ignore
+    get_properties.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -599,7 +599,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete.metadata = {'url': '/{url}'}  # type: ignore
+    delete.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -665,7 +665,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    undelete.metadata = {'url': '/{url}'}  # type: ignore
+    undelete.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -741,7 +741,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_expiry.metadata = {'url': '/{url}'}  # type: ignore
+    set_expiry.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -859,7 +859,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_http_headers.metadata = {'url': '/{url}'}  # type: ignore
+    set_http_headers.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -943,7 +943,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_immutability_policy.metadata = {'url': '/{url}'}  # type: ignore
+    set_immutability_policy.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1009,7 +1009,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete_immutability_policy.metadata = {'url': '/{url}'}  # type: ignore
+    delete_immutability_policy.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1080,7 +1080,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_legal_hold.metadata = {'url': '/{url}'}  # type: ignore
+    set_legal_hold.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1209,7 +1209,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_metadata.metadata = {'url': '/{url}'}  # type: ignore
+    set_metadata.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1315,7 +1315,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    acquire_lease.metadata = {'url': '/{url}'}  # type: ignore
+    acquire_lease.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1412,7 +1412,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    release_lease.metadata = {'url': '/{url}'}  # type: ignore
+    release_lease.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1510,7 +1510,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    renew_lease.metadata = {'url': '/{url}'}  # type: ignore
+    renew_lease.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1614,7 +1614,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    change_lease.metadata = {'url': '/{url}'}  # type: ignore
+    change_lease.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1718,7 +1718,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    break_lease.metadata = {'url': '/{url}'}  # type: ignore
+    break_lease.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1845,7 +1845,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create_snapshot.metadata = {'url': '/{url}'}  # type: ignore
+    create_snapshot.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -2004,7 +2004,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    start_copy_from_url.metadata = {'url': '/{url}'}  # type: ignore
+    start_copy_from_url.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -2178,7 +2178,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    copy_from_url.metadata = {'url': '/{url}'}  # type: ignore
+    copy_from_url.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -2262,7 +2262,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    abort_copy_from_url.metadata = {'url': '/{url}'}  # type: ignore
+    abort_copy_from_url.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -2374,7 +2374,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_tier.metadata = {'url': '/{url}'}  # type: ignore
+    set_tier.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -2567,7 +2567,7 @@ class BlobOperations:
 
         return deserialized
 
-    query.metadata = {'url': '/{url}'}  # type: ignore
+    query.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -2663,7 +2663,7 @@ class BlobOperations:
 
         return deserialized
 
-    get_tags.metadata = {'url': '/{url}'}  # type: ignore
+    get_tags.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -2768,5 +2768,5 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_tags.metadata = {'url': '/{url}'}  # type: ignore
+    set_tags.metadata = {'url': '{url}'}  # type: ignore
 

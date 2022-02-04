@@ -215,7 +215,7 @@ class AppendBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {'url': '/{url}'}  # type: ignore
+    create.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -370,7 +370,7 @@ class AppendBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    append_block.metadata = {'url': '/{url}'}  # type: ignore
+    append_block.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -553,7 +553,7 @@ class AppendBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    append_block_from_url.metadata = {'url': '/{url}'}  # type: ignore
+    append_block_from_url.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -654,5 +654,5 @@ class AppendBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    seal.metadata = {'url': '/{url}'}  # type: ignore
+    seal.metadata = {'url': '{url}'}  # type: ignore
 

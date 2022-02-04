@@ -67,7 +67,7 @@ def build_create_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -175,7 +175,7 @@ def build_upload_pages_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -268,7 +268,7 @@ def build_clear_pages_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -364,7 +364,7 @@ def build_upload_pages_from_url_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -458,7 +458,7 @@ def build_get_page_ranges_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -525,7 +525,7 @@ def build_get_page_ranges_diff_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -597,7 +597,7 @@ def build_resize_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -667,7 +667,7 @@ def build_update_sequence_number_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -729,7 +729,7 @@ def build_copy_incremental_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '/{url}')
+    url = kwargs.pop("template_url", '{url}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -978,7 +978,7 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {'url': '/{url}'}  # type: ignore
+    create.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1150,7 +1150,7 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    upload_pages.metadata = {'url': '/{url}'}  # type: ignore
+    upload_pages.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1302,7 +1302,7 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    clear_pages.metadata = {'url': '/{url}'}  # type: ignore
+    clear_pages.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1499,7 +1499,7 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    upload_pages_from_url.metadata = {'url': '/{url}'}  # type: ignore
+    upload_pages_from_url.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1611,7 +1611,7 @@ class PageBlobOperations(object):
 
         return deserialized
 
-    get_page_ranges.metadata = {'url': '/{url}'}  # type: ignore
+    get_page_ranges.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1739,7 +1739,7 @@ class PageBlobOperations(object):
 
         return deserialized
 
-    get_page_ranges_diff.metadata = {'url': '/{url}'}  # type: ignore
+    get_page_ranges_diff.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1860,7 +1860,7 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    resize.metadata = {'url': '/{url}'}  # type: ignore
+    resize.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -1968,7 +1968,7 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    update_sequence_number.metadata = {'url': '/{url}'}  # type: ignore
+    update_sequence_number.metadata = {'url': '{url}'}  # type: ignore
 
 
     @distributed_trace
@@ -2069,5 +2069,5 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    copy_incremental.metadata = {'url': '/{url}'}  # type: ignore
+    copy_incremental.metadata = {'url': '{url}'}  # type: ignore
 
