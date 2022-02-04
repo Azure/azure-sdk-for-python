@@ -9,7 +9,6 @@ try:
 except ImportError:
     from typing_extensions import Protocol, TypedDict
 
-ObjectType = TypeVar("ObjectType")
 
 class MessageMetadataDict(TypedDict):
     """A dict with required keys:

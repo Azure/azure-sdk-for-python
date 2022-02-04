@@ -99,10 +99,6 @@ class EventData(object):
 
     :param body: The data to send in a single message. body can be type of str or bytes.
     :type body: str or bytes
-    :keyword data: The data to send in a single message. If set, will overwrite body argument.
-    :paramtype data: bytes or None
-    :keyword content_type: The content type descriptor.
-    :paramtype content_type: str or None
 
     .. admonition:: Example:
 

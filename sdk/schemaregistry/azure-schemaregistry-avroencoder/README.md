@@ -138,7 +138,7 @@ with encoder:
     # OR
 
     metadata_dict = encoder.encode(dict_data, schema=definition)
-    event_data = EventData.from_message_data(data=metadata_dict["data"], content_type=metadata_dict["content_type"])
+    event_data = EventData.from_message_data(metadata_dict["data"], metadata_dict["content_type"])
 ```
 
 ### Decoding
@@ -163,14 +163,14 @@ encoder = AvroEncoder(client=schema_registry_client, group_name=group_name)
 
 with encoder:
     # event_data is an EventData object with Avro encoded body
-    decoded_data = encoder.decode(encoded_bytes, message=event_data)
+    decoded_data = encoder.decode(event_data)
 
     # OR 
 
     encoded_bytes = b'<data_encoded_by_azure_schema_registry_avro_encoder>'
     content_type = 'avro/binary+<schema_id_of_corresponding_schema>'
     data_dict = {"data": encoded_bytes, "content_type": content_type}
-    decoded_data = encoder.decode(encoded_bytes, message=data_dict)
+    decoded_data = encoder.decode(data_dict)
 ```
 
 ### Event Hubs Sending Integration
@@ -244,7 +244,7 @@ eventhub_consumer = EventHubConsumerClient.from_connection_string(
 )
 
 def on_event(partition_context, event):
-    decoded_data = avro_encoder.decode(message=event)
+    decoded_data = avro_encoder.decode(event)
 
 with eventhub_consumer, avro_encoder:
     eventhub_consumer.receive(on_event=on_event, starting_position="-1")
