@@ -54,11 +54,11 @@ def analyze_receipts():
 
     for idx, receipt in enumerate(receipts.documents):
         print("--------Recognizing receipt #{}--------".format(idx + 1))
-        receipt_type = receipt.fields.get("ReceiptType")
+        receipt_type = receipt.doc_type
         if receipt_type:
             print(
-                "Receipt Type: {} has confidence: {}".format(
-                    receipt_type.value, receipt_type.confidence
+                "Receipt Type: {}".format(
+                    receipt_type
                 )
             )
         merchant_name = receipt.fields.get("MerchantName")
