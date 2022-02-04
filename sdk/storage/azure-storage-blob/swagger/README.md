@@ -141,31 +141,6 @@ directive:
     delete $.properties.ObjectReplicationMetadata;
 ```
 
-### Testing
-``` yaml
-directive:
-- from: swagger-document
-  where: $["x-ms-paths"]
-  transform: >
-    for (const property in $)
-    {
-        if (property.includes('/{containerName}/{blob}'))
-        {
-            var oldName = property;
-            var newName = property.replace('/{containerName}/{blob}', '');
-            $[newName] = $[oldName];
-            delete $[oldName];
-        }
-        else if (property.includes('/{containerName}'))
-        {
-            var oldName = property;
-            var newName = property.replace('/{containerName}', '');
-            $[newName] = $[oldName];
-            delete $[oldName];
-        }
-    }
-```
-
 ### Remove x-ms-parameterized-host and add to each operation
 ``` yaml
 directive:

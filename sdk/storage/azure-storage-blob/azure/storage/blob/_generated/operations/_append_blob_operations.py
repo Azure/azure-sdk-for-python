@@ -64,7 +64,7 @@ def build_create_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '{url}')
+    url = kwargs.pop("template_url", '{url}/{containerName}/{blob}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -164,7 +164,7 @@ def build_append_block_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '{url}')
+    url = kwargs.pop("template_url", '{url}/{containerName}/{blob}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -259,7 +259,7 @@ def build_append_block_from_url_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '{url}')
+    url = kwargs.pop("template_url", '{url}/{containerName}/{blob}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -350,7 +350,7 @@ def build_seal_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '{url}')
+    url = kwargs.pop("template_url", '{url}/{containerName}/{blob}')
     path_format_arguments = {
         "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
     }
@@ -585,7 +585,7 @@ class AppendBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {'url': '{url}'}  # type: ignore
+    create.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace
@@ -741,7 +741,7 @@ class AppendBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    append_block.metadata = {'url': '{url}'}  # type: ignore
+    append_block.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace
@@ -925,7 +925,7 @@ class AppendBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    append_block_from_url.metadata = {'url': '{url}'}  # type: ignore
+    append_block_from_url.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace
@@ -1027,5 +1027,5 @@ class AppendBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    seal.metadata = {'url': '{url}'}  # type: ignore
+    seal.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 

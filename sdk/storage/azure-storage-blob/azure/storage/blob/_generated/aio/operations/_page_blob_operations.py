@@ -230,7 +230,7 @@ class PageBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {'url': '{url}'}  # type: ignore
+    create.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -401,7 +401,7 @@ class PageBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    upload_pages.metadata = {'url': '{url}'}  # type: ignore
+    upload_pages.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -552,7 +552,7 @@ class PageBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    clear_pages.metadata = {'url': '{url}'}  # type: ignore
+    clear_pages.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -748,7 +748,7 @@ class PageBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    upload_pages_from_url.metadata = {'url': '{url}'}  # type: ignore
+    upload_pages_from_url.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -859,7 +859,7 @@ class PageBlobOperations:
 
         return deserialized
 
-    get_page_ranges.metadata = {'url': '{url}'}  # type: ignore
+    get_page_ranges.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -986,7 +986,7 @@ class PageBlobOperations:
 
         return deserialized
 
-    get_page_ranges_diff.metadata = {'url': '{url}'}  # type: ignore
+    get_page_ranges_diff.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1106,7 +1106,7 @@ class PageBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    resize.metadata = {'url': '{url}'}  # type: ignore
+    resize.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1213,7 +1213,7 @@ class PageBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    update_sequence_number.metadata = {'url': '{url}'}  # type: ignore
+    update_sequence_number.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1313,5 +1313,5 @@ class PageBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    copy_incremental.metadata = {'url': '{url}'}  # type: ignore
+    copy_incremental.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 

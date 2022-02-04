@@ -45,67 +45,6 @@ class BlobOperations:
         self._config = config
 
     @distributed_trace_async
-    async def get_account_info(
-        self,
-        **kwargs: Any
-    ) -> None:
-        """Returns the sku name and account kind.
-
-        :keyword restype: restype. The default value is "account". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. The default value is "properties". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype comp: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        restype = kwargs.pop('restype', "account")  # type: str
-        comp = kwargs.pop('comp', "properties")  # type: str
-
-        
-        request = build_get_account_info_request(
-            client_url=self._config.client_url,
-            restype=restype,
-            comp=comp,
-            version=self._config.version,
-            template_url=self.get_account_info.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
-        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
-        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
-        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
-        response_headers['x-ms-sku-name']=self._deserialize('str', response.headers.get('x-ms-sku-name'))
-        response_headers['x-ms-account-kind']=self._deserialize('str', response.headers.get('x-ms-account-kind'))
-
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    get_account_info.metadata = {'url': '{url}'}  # type: ignore
-
-
-    @distributed_trace_async
     async def download(
         self,
         snapshot: Optional[str] = None,
@@ -320,7 +259,7 @@ class BlobOperations:
 
         return deserialized
 
-    download.metadata = {'url': '{url}'}  # type: ignore
+    download.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -478,7 +417,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_properties.metadata = {'url': '{url}'}  # type: ignore
+    get_properties.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -599,7 +538,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete.metadata = {'url': '{url}'}  # type: ignore
+    delete.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -665,7 +604,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    undelete.metadata = {'url': '{url}'}  # type: ignore
+    undelete.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -741,7 +680,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_expiry.metadata = {'url': '{url}'}  # type: ignore
+    set_expiry.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -859,7 +798,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_http_headers.metadata = {'url': '{url}'}  # type: ignore
+    set_http_headers.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -943,7 +882,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_immutability_policy.metadata = {'url': '{url}'}  # type: ignore
+    set_immutability_policy.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1009,7 +948,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete_immutability_policy.metadata = {'url': '{url}'}  # type: ignore
+    delete_immutability_policy.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1080,7 +1019,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_legal_hold.metadata = {'url': '{url}'}  # type: ignore
+    set_legal_hold.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1209,7 +1148,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_metadata.metadata = {'url': '{url}'}  # type: ignore
+    set_metadata.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1315,7 +1254,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    acquire_lease.metadata = {'url': '{url}'}  # type: ignore
+    acquire_lease.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1412,7 +1351,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    release_lease.metadata = {'url': '{url}'}  # type: ignore
+    release_lease.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1510,7 +1449,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    renew_lease.metadata = {'url': '{url}'}  # type: ignore
+    renew_lease.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1614,7 +1553,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    change_lease.metadata = {'url': '{url}'}  # type: ignore
+    change_lease.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1718,7 +1657,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    break_lease.metadata = {'url': '{url}'}  # type: ignore
+    break_lease.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -1845,7 +1784,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create_snapshot.metadata = {'url': '{url}'}  # type: ignore
+    create_snapshot.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -2004,7 +1943,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    start_copy_from_url.metadata = {'url': '{url}'}  # type: ignore
+    start_copy_from_url.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -2178,7 +2117,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    copy_from_url.metadata = {'url': '{url}'}  # type: ignore
+    copy_from_url.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -2262,7 +2201,7 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    abort_copy_from_url.metadata = {'url': '{url}'}  # type: ignore
+    abort_copy_from_url.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -2374,7 +2313,68 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_tier.metadata = {'url': '{url}'}  # type: ignore
+    set_tier.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
+
+
+    @distributed_trace_async
+    async def get_account_info(
+        self,
+        **kwargs: Any
+    ) -> None:
+        """Returns the sku name and account kind.
+
+        :keyword restype: restype. The default value is "account". Note that overriding this default
+         value may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. The default value is "properties". Note that overriding this default value
+         may result in unsupported behavior.
+        :paramtype comp: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        restype = kwargs.pop('restype', "account")  # type: str
+        comp = kwargs.pop('comp', "properties")  # type: str
+
+        
+        request = build_get_account_info_request(
+            client_url=self._config.client_url,
+            restype=restype,
+            comp=comp,
+            version=self._config.version,
+            template_url=self.get_account_info.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers['x-ms-sku-name']=self._deserialize('str', response.headers.get('x-ms-sku-name'))
+        response_headers['x-ms-account-kind']=self._deserialize('str', response.headers.get('x-ms-account-kind'))
+
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    get_account_info.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -2567,7 +2567,7 @@ class BlobOperations:
 
         return deserialized
 
-    query.metadata = {'url': '{url}'}  # type: ignore
+    query.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -2663,7 +2663,7 @@ class BlobOperations:
 
         return deserialized
 
-    get_tags.metadata = {'url': '{url}'}  # type: ignore
+    get_tags.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -2768,5 +2768,5 @@ class BlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_tags.metadata = {'url': '{url}'}  # type: ignore
+    set_tags.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
