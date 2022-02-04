@@ -56,6 +56,8 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+        return {}
+
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -91,6 +93,8 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
 
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
+
+        return {}
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -128,21 +132,24 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+        return {}
+
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
-    async def test_document_multipage_table_span_pdf(self, client):
+    async def test_document_multipage_table_span_pdf(self, client, **kwargs):
+
         with open(self.multipage_table_pdf, "rb") as fd:
             myfile = fd.read()
         async with client:
             poller = await client.begin_analyze_document("prebuilt-document", myfile)
             document = await poller.result()
         assert len(document.tables) == 3
-        assert document.tables[0].row_count == 29
+        assert document.tables[0].row_count == 30
         assert document.tables[0].column_count == 5
         assert document.tables[1].row_count == 6
-        assert document.tables[1].column_count == 4
+        assert document.tables[1].column_count == 5
         assert document.tables[2].row_count == 23
         assert document.tables[2].column_count == 5
 
@@ -169,3 +176,5 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
             poller = await client.begin_analyze_document("prebuilt-document", document, pages="1-2, 3")
             result = await poller.result()
             assert len(result.pages) == 3
+
+        return {}

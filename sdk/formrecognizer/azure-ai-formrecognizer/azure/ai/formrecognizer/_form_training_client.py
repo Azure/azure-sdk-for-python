@@ -165,7 +165,7 @@ class FormTrainingClient(FormRecognizerClientBase):
                     deserialization_callback=deserialization_callback,
                 )
 
-            response = self._client.train_custom_model_async(
+            response = self._client.train_custom_model_async(  # type: ignore
                 train_request=self._generated_models.TrainRequest(
                     source=training_files_url,
                     use_label_file=use_training_labels,
@@ -486,7 +486,7 @@ class FormTrainingClient(FormRecognizerClientBase):
         )
         continuation_token = kwargs.pop("continuation_token", None)
         try:
-            return self._client.begin_compose_custom_models_async(
+            return self._client.begin_compose_custom_models_async(  # type: ignore
                 {"model_ids": model_ids, "model_name": model_name},
                 cls=kwargs.pop("cls", _compose_callback),
                 polling=LROBasePolling(

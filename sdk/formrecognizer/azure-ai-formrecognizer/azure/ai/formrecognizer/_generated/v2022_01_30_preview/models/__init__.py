@@ -17,6 +17,7 @@ try:
     from ._models_py3 import ComponentModelInfo
     from ._models_py3 import ComposeDocumentModelRequest
     from ._models_py3 import CopyAuthorization
+    from ._models_py3 import CurrencyValue
     from ._models_py3 import CustomDocumentModelsInfo
     from ._models_py3 import DocTypeInfo
     from ._models_py3 import Document
@@ -25,6 +26,7 @@ try:
     from ._models_py3 import DocumentFieldSchema
     from ._models_py3 import DocumentKeyValueElement
     from ._models_py3 import DocumentKeyValuePair
+    from ._models_py3 import DocumentLanguage
     from ._models_py3 import DocumentLine
     from ._models_py3 import DocumentPage
     from ._models_py3 import DocumentSelectionMark
@@ -54,6 +56,7 @@ except (SyntaxError, ImportError):
     from ._models import ComponentModelInfo  # type: ignore
     from ._models import ComposeDocumentModelRequest  # type: ignore
     from ._models import CopyAuthorization  # type: ignore
+    from ._models import CurrencyValue  # type: ignore
     from ._models import CustomDocumentModelsInfo  # type: ignore
     from ._models import DocTypeInfo  # type: ignore
     from ._models import Document  # type: ignore
@@ -62,6 +65,7 @@ except (SyntaxError, ImportError):
     from ._models import DocumentFieldSchema  # type: ignore
     from ._models import DocumentKeyValueElement  # type: ignore
     from ._models import DocumentKeyValuePair  # type: ignore
+    from ._models import DocumentLanguage  # type: ignore
     from ._models import DocumentLine  # type: ignore
     from ._models import DocumentPage  # type: ignore
     from ._models import DocumentSelectionMark  # type: ignore
@@ -85,6 +89,7 @@ from ._form_recognizer_client_enums import (
     AnalyzeResultOperationStatus,
     ApiVersion,
     ContentType,
+    DocumentBuildMode,
     DocumentFieldType,
     DocumentSignatureType,
     DocumentTableCellKind,
@@ -106,6 +111,7 @@ __all__ = [
     'ComponentModelInfo',
     'ComposeDocumentModelRequest',
     'CopyAuthorization',
+    'CurrencyValue',
     'CustomDocumentModelsInfo',
     'DocTypeInfo',
     'Document',
@@ -114,6 +120,7 @@ __all__ = [
     'DocumentFieldSchema',
     'DocumentKeyValueElement',
     'DocumentKeyValuePair',
+    'DocumentLanguage',
     'DocumentLine',
     'DocumentPage',
     'DocumentSelectionMark',
@@ -135,6 +142,7 @@ __all__ = [
     'AnalyzeResultOperationStatus',
     'ApiVersion',
     'ContentType',
+    'DocumentBuildMode',
     'DocumentFieldType',
     'DocumentSignatureType',
     'DocumentTableCellKind',

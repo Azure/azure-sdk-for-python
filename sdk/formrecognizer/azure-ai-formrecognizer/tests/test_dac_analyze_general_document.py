@@ -55,6 +55,8 @@ class TestDACAnalyzeDocument(FormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+        return {}
+
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -89,6 +91,8 @@ class TestDACAnalyzeDocument(FormRecognizerTest):
 
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
+
+        return {}
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -125,6 +129,8 @@ class TestDACAnalyzeDocument(FormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+        return {}
+
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -135,10 +141,10 @@ class TestDACAnalyzeDocument(FormRecognizerTest):
         poller = client.begin_analyze_document("prebuilt-document", myfile)
         document = poller.result()
         assert len(document.tables) == 3
-        assert document.tables[0].row_count == 29
+        assert document.tables[0].row_count == 30
         assert document.tables[0].column_count == 5
         assert document.tables[1].row_count == 6
-        assert document.tables[1].column_count == 4
+        assert document.tables[1].column_count == 5
         assert document.tables[2].row_count == 23
         assert document.tables[2].column_count == 5
 
@@ -164,3 +170,5 @@ class TestDACAnalyzeDocument(FormRecognizerTest):
         poller = client.begin_analyze_document("prebuilt-document", document, pages="1-2, 3")
         result = poller.result()
         assert len(result.pages) == 3
+
+        return {}

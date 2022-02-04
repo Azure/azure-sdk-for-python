@@ -28,6 +28,8 @@ class FormRecognizerClientConfiguration(Configuration):
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for
 example: https://westus2.api.cognitive.microsoft.com).
     :type endpoint: str
+    :keyword api_version: Api Version. The default value is "2022-01-30-preview". Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -36,15 +38,17 @@ example: https://westus2.api.cognitive.microsoft.com).
         endpoint: str,
         **kwargs: Any
     ) -> None:
+        super(FormRecognizerClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "2022-01-30-preview")  # type: str
+
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        super(FormRecognizerClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.endpoint = endpoint
-        self.api_version = "2021-09-30-preview"
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://cognitiveservices.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'ai-formrecognizer/{}'.format(VERSION))
         self._configure(**kwargs)
