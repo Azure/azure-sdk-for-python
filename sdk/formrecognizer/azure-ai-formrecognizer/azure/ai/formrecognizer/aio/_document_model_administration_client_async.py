@@ -26,6 +26,7 @@ from ._form_base_client_async import FormRecognizerClientBaseAsync
 from .._api_versions import DocumentAnalysisApiVersion
 from .._polling import DocumentModelAdministrationPolling
 from .._models import (
+    DocumentBuildMode,
     DocumentModel,
     DocumentModelInfo,
     ModelOperation,
@@ -89,7 +90,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         **kwargs: Any
     ) -> None:
         api_version = kwargs.pop(
-            "api_version", DocumentAnalysisApiVersion.V2021_09_30_PREVIEW
+            "api_version", DocumentAnalysisApiVersion.V2022_01_30_PREVIEW
         )
         super(DocumentModelAdministrationClient, self).__init__(
             endpoint=endpoint,
@@ -101,7 +102,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
     @distributed_trace_async
     async def begin_build_model(
-        self, source: str, **kwargs: Any
+        self, source: str, build_mode: Union[str, DocumentBuildMode], **kwargs: Any
     ) -> AsyncDocumentModelAdministrationLROPoller[DocumentModel]:
         """Build a custom model.
 
@@ -113,16 +114,23 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         :param str source: An Azure Storage blob container's SAS URI. A container URI (without SAS)
             can be used if the container is public. For more information on setting up a training data set, see:
             https://aka.ms/azsdk/formrecognizer/buildtrainingset
+        :param build_mode: The custom model build mode. Possible values include: "template", "neural".
+        :type build_mode: str or :class:`~azure.ai.formrecognizer.DocumentBuildMode`
         :keyword str model_id: A unique ID for your model. If not specified, a model ID will be created for you.
         :keyword str description: An optional description to add to the model.
         :keyword str prefix: A case-sensitive prefix string to filter documents in the source path.
             For example, when using an Azure storage blob URI, use the prefix to restrict sub folders.
             `prefix` should end in '/' to avoid cases where filenames share the same prefix.
+        :keyword tags: List of user defined key-value tag attributes associated with the model.
+        :paramtype tags: dict[str, str]
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an AsyncDocumentModelAdministrationLROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.DocumentModel`.
         :rtype: ~azure.ai.formrecognizer.aio.AsyncDocumentModelAdministrationLROPoller[DocumentModel]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: v2022-01-30-preview
+            The *tags* keyword argument
 
         .. admonition:: Example:
 
@@ -145,6 +153,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         description = kwargs.pop("description", None)
         model_id = kwargs.pop("model_id", None)
+        tags = kwargs.pop("tags", None)
         cls = kwargs.pop("cls", callback)
         continuation_token = kwargs.pop("continuation_token", None)
         polling_interval = kwargs.pop(
@@ -157,7 +166,9 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         return await self._client.begin_build_document_model(  # type: ignore
             build_request=self._generated_models.BuildDocumentModelRequest(
                 model_id=model_id,
+                build_mode=build_mode,
                 description=description,
+                tags=tags,
                 azure_blob_source=self._generated_models.AzureBlobContentSource(
                     container_url=source,
                     prefix=kwargs.pop("prefix", None),
@@ -186,11 +197,16 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         :keyword str model_id: A unique ID for your composed model.
             If not specified, a model ID will be created for you.
         :keyword str description: An optional description to add to the model.
+        :keyword tags: List of user defined key-value tag attributes associated with the model.
+        :paramtype tags: dict[str, str]
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of an AsyncDocumentModelAdministrationLROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.DocumentModel`.
         :rtype: ~azure.ai.formrecognizer.aio.AsyncDocumentModelAdministrationLROPoller[DocumentModel]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: v2022-01-30-preview
+            The *tags* keyword argument
 
         .. admonition:: Example:
 
@@ -215,6 +231,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         model_id = kwargs.pop("model_id", None)
         description = kwargs.pop("description", None)
+        tags = kwargs.pop("tags", None)
         continuation_token = kwargs.pop("continuation_token", None)
         polling_interval = kwargs.pop(
             "polling_interval", self._client._config.polling_interval
@@ -227,6 +244,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
             compose_request=self._generated_models.ComposeDocumentModelRequest(
                 model_id=model_id,
                 description=description,
+                tags=tags,
                 component_models=[
                     self._generated_models.ComponentModelInfo(model_id=model_id)
                     for model_id in model_ids
@@ -254,20 +272,26 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         :keyword str model_id: A unique ID for your copied model.
             If not specified, a model ID will be created for you.
         :keyword str description: An optional description to add to the model.
+        :keyword tags: List of user defined key-value tag attributes associated with the model.
+        :paramtype tags: dict[str, str]
         :return: A dictionary with values necessary for the copy authorization.
         :rtype: Dict[str, str]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: v2022-01-30-preview
+            The *tags* keyword argument
         """
 
         model_id = kwargs.pop("model_id", None)
         description = kwargs.pop("description", None)
+        tags = kwargs.pop("tags", None)
 
         if model_id is None:
             model_id = str(uuid.uuid4())
 
         response = await self._client.authorize_copy_document_model(
             authorize_copy_request=self._generated_models.AuthorizeCopyRequest(
-                model_id=model_id, description=description
+                model_id=model_id, description=description, tags=tags
             ),
             **kwargs
         )
@@ -387,7 +411,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
                 :caption: List all models that were built successfully under the Form Recognizer resource.
         """
 
-        return self._client.get_models(
+        return self._client.get_models(  # type: ignore
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [DocumentModelInfo._from_generated(x) for x in objs],
@@ -463,7 +487,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
                 :caption: List all document model operations in the past 24 hours.
         """
 
-        return self._client.get_operations(
+        return self._client.get_operations(  # type: ignore
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [ModelOperationInfo._from_generated(x) for x in objs],

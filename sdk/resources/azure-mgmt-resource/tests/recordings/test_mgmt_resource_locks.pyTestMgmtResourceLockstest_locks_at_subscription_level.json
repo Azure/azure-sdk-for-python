@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.7.2 Python/3.7.3 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-identity/1.8.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -17,17 +17,17 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 26 Nov 2021 06:06:13 GMT",
+        "Date": "Tue, 25 Jan 2022 10:03:39 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AqZZhQY_KKBChUOw23tj1peZHqKEBQAAAChwMtkOAAAA; expires=Sun, 26-Dec-2021 06:06:13 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AoIiSpQDvylGqwYeeHVzaUOZHqKEBwAAAJ3BgdkOAAAA; expires=Thu, 24-Feb-2022 10:03:40 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12231.8 - SCUS ProdSlices",
-        "x-ms-request-id": "951bb534-5b90-4b9c-be49-1fd4b339a801"
+        "x-ms-ests-server": "2.1.12261.22 - NCUS ProdSlices",
+        "x-ms-request-id": "71bfed6b-af3a-4635-8840-bd4de11b3300"
       },
       "ResponseBody": {
         "token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
@@ -104,8 +104,8 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=AqZZhQY_KKBChUOw23tj1peZHqKEBQAAAChwMtkOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
-        "User-Agent": "azsdk-python-identity/1.7.2 Python/3.7.3 (Windows-10-10.0.22000-SP0)"
+        "Cookie": "fpc=AoIiSpQDvylGqwYeeHVzaUOZHqKEBwAAAJ3BgdkOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.8.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -115,17 +115,17 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 26 Nov 2021 06:06:13 GMT",
+        "Date": "Tue, 25 Jan 2022 10:03:39 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AqZZhQY_KKBChUOw23tj1peZHqKEBQAAAChwMtkOAAAA; expires=Sun, 26-Dec-2021 06:06:13 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AoIiSpQDvylGqwYeeHVzaUOZHqKEBwAAAJ3BgdkOAAAA; expires=Thu, 24-Feb-2022 10:03:40 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12249.14 - KRSLR2 ProdSlices",
-        "x-ms-request-id": "87924dab-ad29-471a-88ef-bce5c5ca2400"
+        "x-ms-ests-server": "2.1.12381.20 - SEASLR2 ProdSlices",
+        "x-ms-request-id": "3199dabe-3f39-4bc7-a555-8a4780aa0e00"
       },
       "ResponseBody": {
         "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
@@ -180,12 +180,12 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "47611dbf-1836-48e7-b042-4a554eab925a",
+        "client-request-id": "5b74b396-7c47-4e42-9075-6151e0472490",
         "Connection": "keep-alive",
         "Content-Length": "289",
         "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": "fpc=AqZZhQY_KKBChUOw23tj1peZHqKEBQAAAChwMtkOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
-        "User-Agent": "azsdk-python-identity/1.7.2 Python/3.7.3 (Windows-10-10.0.22000-SP0)",
+        "Cookie": "fpc=AoIiSpQDvylGqwYeeHVzaUOZHqKEBwAAAJ3BgdkOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.8.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
         "x-client-last-telemetry": "4|0|||",
@@ -198,29 +198,29 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "47611dbf-1836-48e7-b042-4a554eab925a",
-        "Content-Length": "1349",
+        "client-request-id": "5b74b396-7c47-4e42-9075-6151e0472490",
+        "Content-Length": "1391",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 26 Nov 2021 06:06:13 GMT",
+        "Date": "Tue, 25 Jan 2022 10:03:40 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=AqZZhQY_KKBChUOw23tj1peZHqKEBgAAAChwMtkOAAAA; expires=Sun, 26-Dec-2021 06:06:14 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AoIiSpQDvylGqwYeeHVzaUOZHqKECAAAAJ3BgdkOAAAA; expires=Thu, 24-Feb-2022 10:03:40 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.12231.8 - NCUS ProdSlices",
-        "x-ms-request-id": "f6ac4322-f4ae-4992-9c90-0598e1353d01"
+        "x-ms-ests-server": "2.1.12261.22 - NCUS ProdSlices",
+        "x-ms-request-id": "1ae73ff4-3568-4195-8f6e-c5b5cc8c2b00"
       },
       "ResponseBody": {
         "token_type": "Bearer",
         "expires_in": 3599,
         "ext_expires_in": 3599,
-        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Imwzc1EtNTBjQ0g0eEJWWkxIVEd3blNSNzY4MCIsImtpZCI6Imwzc1EtNTBjQ0g0eEJWWkxIVEd3blNSNzY4MCJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuYXp1cmUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNTQ4MjZiMjItMzhkNi00ZmIyLWJhZDktYjdiOTNhM2U5YzVhLyIsImlhdCI6MTYzNzkwNjQ3NCwibmJmIjoxNjM3OTA2NDc0LCJleHAiOjE2Mzc5MTAzNzQsImFpbyI6IkUyWmdZR2lxdFkycFM4MVprZWF5eHUrTlp5a1BBQT09IiwiYXBwaWQiOiJhMmRmNTRkNS1hYjAzLTQ3MjUtOWI4MC05YTAwYjNiMTk2N2YiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC81NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEvIiwib2lkIjoiODg3YzQyYjEtNzk0Ni00YzIyLWJhYTYtMTUwNDNlNGIxMzIzIiwicmgiOiIwLkFUY0FJbXVDVk5ZNHNrLTYyYmU1T2o2Y1d0VlUzNklEcXlWSG00Q2FBTE94bG44M0FBQS4iLCJzdWIiOiI4ODdjNDJiMS03OTQ2LTRjMjItYmFhNi0xNTA0M2U0YjEzMjMiLCJ0aWQiOiI1NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEiLCJ1dGkiOiJJa09zOXE3MGtrbWNrQVdZNFRVOUFRIiwidmVyIjoiMS4wIiwieG1zX3RjZHQiOjE0MTIyMDY4NDB9.E1iB2Y7QKmF0zSodORiwJ0By5MZU_6DllgJbvTnIQYri5SN-FqicCx1hD_LfvSORXF8dgmNIUQgicl95jjM42eF_BU7nbuTcR60V6kE5z7H7gat7GX0A6RAq8QbxOh1swPXvCUalNK-oyIOPvfPrQsNFcIcdkvbJ9Q81jZFKSB8lR35yZTOubngNKNd8mbs6Bwzd7NWbx_m-Vi5q89-AeEcm41hp1F1bi0mAIdsyYLtX7NTFLxEeDA2-M9Vsf4LY9gAxe7whP4MhzZlUJRkWceuwgH9qGlqlI9uRQ2BBMALvB6wJJ1K20ag2gaEaTB9vevT9jPQcoScp4K1O759GCw"
+        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Ik1yNS1BVWliZkJpaTdOZDFqQmViYXhib1hXMCIsImtpZCI6Ik1yNS1BVWliZkJpaTdOZDFqQmViYXhib1hXMCJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuYXp1cmUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNTQ4MjZiMjItMzhkNi00ZmIyLWJhZDktYjdiOTNhM2U5YzVhLyIsImlhdCI6MTY0MzEwNDcyMCwibmJmIjoxNjQzMTA0NzIwLCJleHAiOjE2NDMxMDg2MjAsImFpbyI6IkUyWmdZREJ3TFZqN0pqRnJoNnVQNE1wcHZwYWFBQT09IiwiYXBwaWQiOiJhMmRmNTRkNS1hYjAzLTQ3MjUtOWI4MC05YTAwYjNiMTk2N2YiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC81NDgyNmIyMi0zOGQ2LTRmYjItYmFkOS1iN2I5M2EzZTljNWEvIiwiaWR0eXAiOiJhcHAiLCJvaWQiOiI4ODdjNDJiMS03OTQ2LTRjMjItYmFhNi0xNTA0M2U0YjEzMjMiLCJyaCI6IjAuQVRjQUltdUNWTlk0c2stNjJiZTVPajZjV3RWVTM2SURxeVZIbTRDYUFMT3hsbjgzQUFBLiIsInN1YiI6Ijg4N2M0MmIxLTc5NDYtNGMyMi1iYWE2LTE1MDQzZTRiMTMyMyIsInRpZCI6IjU0ODI2YjIyLTM4ZDYtNGZiMi1iYWQ5LWI3YjkzYTNlOWM1YSIsInV0aSI6IjlEX25HbWcxbFVHUGJzVzF6SXdyQUEiLCJ2ZXIiOiIxLjAiLCJ4bXNfY2MiOlsiQ1AxIl0sInhtc190Y2R0IjoxNDEyMjA2ODQwfQ.owRs-C_7z1G_g1f1lWU1T5x4AKZG3_HL2sySNvCdMpFXXGiKt1yKLC_1JjpEEg_pPMRdNvCjsxW96HZ3E7aJrUT5Mb-yEPnhqO0spOSN78jNsupQEBWDDRixA69K3FZWLI5VC1AmajYNAjxRQF7CMaiadVCsH2x3czrHLbhZdXxnBLCCv5Xey9xRrSoOLCGezAJW2nTN9VQlNfW9kmu4Q0vW-EL_MVk5PovZ0ZN5CRAyR3xPt27Ksc5C3BxuohlCtZxzuDfpvEJmWyeBmeRMvibc27xXh1tsp5hX-wN-yOvq5cxLDGa_WEsGfxuaeJzlq5aouOTX4P0sdz2OIhBXAA"
       }
     },
     {
@@ -233,8 +233,8 @@
         "Connection": "keep-alive",
         "Content-Length": "41",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-azure-mgmt-resource/20.0.0 Python/3.7.3 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "f588b164-4e7e-11ec-bf5e-2cf05d45d152"
+        "User-Agent": "azsdk-python-azure-mgmt-resource/20.0.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "117d2abb-7dc6-11ec-b0b9-70b5e82527ff"
       },
       "RequestBody": "{\u0022properties\u0022: {\u0022level\u0022: \u0022CanNotDelete\u0022}}",
       "StatusCode": 201,
@@ -242,15 +242,15 @@
         "Cache-Control": "no-cache",
         "Content-Length": "204",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 26 Nov 2021 06:06:14 GMT",
+        "Date": "Tue, 25 Jan 2022 10:03:40 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "b316773d-08b6-49b0-a626-1baf5f231650",
-        "x-ms-ratelimit-remaining-subscription-writes": "1193",
-        "x-ms-request-id": "southeastasia:e705e837-8468-496c-928d-f637eeb5f4ed",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20211126T060614Z:b316773d-08b6-49b0-a626-1baf5f231650"
+        "x-ms-correlation-request-id": "d241b3d8-2cf6-4216-9ad2-7e122741b90c",
+        "x-ms-ratelimit-remaining-subscription-writes": "1190",
+        "x-ms-request-id": "southeastasia:5a59a390-df7d-440e-9f6a-c47b550155e7",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20220125T100341Z:d241b3d8-2cf6-4216-9ad2-7e122741b90c"
       },
       "ResponseBody": {
         "properties": {
@@ -269,8 +269,8 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-resource/20.0.0 Python/3.7.3 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "f6309b92-4e7e-11ec-a02e-2cf05d45d152"
+        "User-Agent": "azsdk-python-azure-mgmt-resource/20.0.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "1237a1db-7dc6-11ec-8571-70b5e82527ff"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -278,7 +278,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 26 Nov 2021 06:06:14 GMT",
+        "Date": "Tue, 25 Jan 2022 10:03:40 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -288,10 +288,10 @@
           "Accept-Encoding"
         ],
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "a2d8ae61-5bfc-4200-9217-d40a574c87c4",
+        "x-ms-correlation-request-id": "714cc447-045f-4a6b-9a72-e27851b2d42b",
         "x-ms-ratelimit-remaining-subscription-reads": "11990",
-        "x-ms-request-id": "southeastasia:c6509d1f-5d9d-48b3-bb5f-d22941a07ffe",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20211126T060614Z:a2d8ae61-5bfc-4200-9217-d40a574c87c4"
+        "x-ms-request-id": "southeastasia:39a34dec-c74a-4530-b76c-25a3b666a07a",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20220125T100341Z:714cc447-045f-4a6b-9a72-e27851b2d42b"
       },
       "ResponseBody": {
         "properties": {
@@ -310,8 +310,8 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-resource/20.0.0 Python/3.7.3 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "f642c5e2-4e7e-11ec-ba07-2cf05d45d152"
+        "User-Agent": "azsdk-python-azure-mgmt-resource/20.0.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "1247e61f-7dc6-11ec-b727-70b5e82527ff"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -319,7 +319,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 26 Nov 2021 06:06:14 GMT",
+        "Date": "Tue, 25 Jan 2022 10:03:40 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -329,10 +329,10 @@
           "Accept-Encoding"
         ],
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "8181c800-b094-4b4c-9815-3e6b123bc073",
+        "x-ms-correlation-request-id": "e1ee3de2-0728-4ffb-8e90-9790cc196e4b",
         "x-ms-ratelimit-remaining-subscription-reads": "11989",
-        "x-ms-request-id": "southeastasia:0b92bf3a-113f-4e91-99c9-d0914508dfdc",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20211126T060614Z:8181c800-b094-4b4c-9815-3e6b123bc073"
+        "x-ms-request-id": "southeastasia:9b1de685-5611-4fd2-a8ec-370538194121",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20220125T100341Z:e1ee3de2-0728-4ffb-8e90-9790cc196e4b"
       },
       "ResponseBody": {
         "value": [
@@ -349,7 +349,7 @@
               "level": "CanNotDelete",
               "notes": ""
             },
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/bez-rg/providers/Microsoft.Authorization/locks/delete",
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/bez-rg/providers/Microsoft.KeyVault/vaults/bez-kv/providers/Microsoft.Authorization/locks/delete",
             "type": "Microsoft.Authorization/locks",
             "name": "delete"
           },
@@ -399,11 +399,21 @@
           },
           {
             "properties": {
-              "level": "CanNotDelete"
+              "level": "CanNotDelete",
+              "notes": "Auto-created by Azure Backup for storage accounts registered with a Recovery Services Vault. This lock is intended to guard against deletion of backups due to accidental deletion of the storage account."
             },
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fybot/providers/Microsoft.Authorization/locks/l",
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/clitest.rgy6swh3vebl/providers/microsoft.storage/storageAccounts/clitestaxq4uhxp4axa3uagg/providers/Microsoft.Authorization/locks/AzureBackupProtectionLock",
             "type": "Microsoft.Authorization/locks",
-            "name": "l"
+            "name": "AzureBackupProtectionLock"
+          },
+          {
+            "properties": {
+              "level": "CanNotDelete",
+              "notes": ""
+            },
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fybot/providers/Microsoft.Authorization/locks/delete-lock",
+            "type": "Microsoft.Authorization/locks",
+            "name": "delete-lock"
           },
           {
             "properties": {
@@ -422,14 +432,6 @@
             "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/clitest.rgh5duq2f6uh/providers/microsoft.storage/storageAccounts/clitest2vjedutxs37ymp4ni/providers/Microsoft.Authorization/locks/AzureBackupProtectionLock",
             "type": "Microsoft.Authorization/locks",
             "name": "AzureBackupProtectionLock"
-          },
-          {
-            "properties": {
-              "level": "ReadOnly"
-            },
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/cli_test_readonly_resource_locklucgtzf5vgc65f5gjnxtn3kf4axeyzdcowlatqmvexq3/providers/Microsoft.Network/virtualNetworks/cli.lock.rsrctghseyfj2qky7arbn/providers/Microsoft.Authorization/locks/cli-test-lockxjl4qh7c7dmei6gakhxdn4dx5etj6bbsgikpxf635qwkbtxezall4ysvef37t",
-            "type": "Microsoft.Authorization/locks",
-            "name": "cli-test-lockxjl4qh7c7dmei6gakhxdn4dx5etj6bbsgikpxf635qwkbtxezall4ysvef37t"
           },
           {
             "properties": {
@@ -504,23 +506,6 @@
           },
           {
             "properties": {
-              "level": "CanNotDelete"
-            },
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/jl-ubunturg/providers/Microsoft.Compute/virtualMachines/jl-ubuntu/providers/Microsoft.Authorization/locks/dl",
-            "type": "Microsoft.Authorization/locks",
-            "name": "dl"
-          },
-          {
-            "properties": {
-              "level": "ReadOnly",
-              "notes": ""
-            },
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jl0922rg/providers/Microsoft.Compute/virtualMachines/jl0922vm/providers/Microsoft.Authorization/locks/dl",
-            "type": "Microsoft.Authorization/locks",
-            "name": "dl"
-          },
-          {
-            "properties": {
               "level": "CanNotDelete",
               "notes": "Auto-created by Azure Backup for storage accounts registered with a Recovery Services Vault. This lock is intended to guard against deletion of backups due to accidental deletion of the storage account."
             },
@@ -567,6 +552,15 @@
           {
             "properties": {
               "level": "CanNotDelete",
+              "notes": "Deleting a domain will make it unavailable to purchase for 60 days. Please remove the lock before deleting this domain."
+            },
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/zhwen-domain/providers/Microsoft.DomainRegistration/domains/emoranran.com/providers/Microsoft.Authorization/locks/emoranran.com",
+            "type": "Microsoft.Authorization/locks",
+            "name": "emoranran.com"
+          },
+          {
+            "properties": {
+              "level": "CanNotDelete",
               "notes": "Auto-created by Azure Backup for storage accounts registered with a Recovery Services Vault. This lock is intended to guard against deletion of backups due to accidental deletion of the storage account."
             },
             "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/clitest.rggrglkh7zr7/providers/microsoft.storage/storageAccounts/clitest2f63bh43aix4wcnlh/providers/Microsoft.Authorization/locks/AzureBackupProtectionLock",
@@ -581,6 +575,15 @@
             "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dixue/providers/Microsoft.Authorization/locks/testlock",
             "type": "Microsoft.Authorization/locks",
             "name": "testlock"
+          },
+          {
+            "properties": {
+              "level": "CanNotDelete",
+              "notes": ""
+            },
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/test_cli_loadbalance/providers/Microsoft.Authorization/locks/DoNotDelete",
+            "type": "Microsoft.Authorization/locks",
+            "name": "DoNotDelete"
           },
           {
             "properties": {
@@ -652,20 +655,21 @@
           },
           {
             "properties": {
-              "level": "CanNotDelete"
-            },
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_gallery_image_version_vhddqxkb6y7azmjc53fhkyr66se7po4i2ve5es2y46av/providers/Microsoft.Storage/storageAccounts/clitestuxrcexs7kgo3dqsiz/providers/Microsoft.Authorization/locks/l",
-            "type": "Microsoft.Authorization/locks",
-            "name": "l"
-          },
-          {
-            "properties": {
               "level": "CanNotDelete",
               "notes": ""
             },
             "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/new-experiences/providers/Microsoft.Authorization/locks/NO-DELETE",
             "type": "Microsoft.Authorization/locks",
             "name": "NO-DELETE"
+          },
+          {
+            "properties": {
+              "level": "CanNotDelete",
+              "notes": "Auto-created by Azure Backup for storage accounts registered with a Recovery Services Vault. This lock is intended to guard against deletion of backups due to accidental deletion of the storage account."
+            },
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/clitest.rgaz5eufnx7d/providers/microsoft.storage/storageAccounts/clitestkj3e2bodztqdfqsa2/providers/Microsoft.Authorization/locks/AzureBackupProtectionLock",
+            "type": "Microsoft.Authorization/locks",
+            "name": "AzureBackupProtectionLock"
           },
           {
             "properties": {
@@ -684,15 +688,6 @@
             "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/clitest.rgrc4sjsrzt4/providers/microsoft.storage/storageAccounts/clitest63b5vtkhuf7auho6z/providers/Microsoft.Authorization/locks/AzureBackupProtectionLock",
             "type": "Microsoft.Authorization/locks",
             "name": "AzureBackupProtectionLock"
-          },
-          {
-            "properties": {
-              "level": "CanNotDelete",
-              "notes": "daily work"
-            },
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ethan_rg/providers/Microsoft.Authorization/locks/Lock",
-            "type": "Microsoft.Authorization/locks",
-            "name": "Lock"
           },
           {
             "properties": {
@@ -791,6 +786,15 @@
           },
           {
             "properties": {
+              "level": "CanNotDelete",
+              "notes": ""
+            },
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lgrg/providers/Microsoft.Authorization/locks/l",
+            "type": "Microsoft.Authorization/locks",
+            "name": "l"
+          },
+          {
+            "properties": {
               "level": "CanNotDelete"
             },
             "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/clitestresult/providers/Microsoft.Authorization/locks/l",
@@ -885,11 +889,21 @@
           },
           {
             "properties": {
-              "level": "CanNotDelete"
+              "level": "CanNotDelete",
+              "notes": ""
             },
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_gallery_image_version_vhddmban3xow2tgyly5j6xaruoliqaj443p3brq46idi/providers/Microsoft.Storage/storageAccounts/clitest4ydp57ynxl5tcjktl/providers/Microsoft.Authorization/locks/l1",
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/zelin63/providers/Microsoft.Authorization/locks/Do not delete",
             "type": "Microsoft.Authorization/locks",
-            "name": "l1"
+            "name": "Do not delete"
+          },
+          {
+            "properties": {
+              "level": "CanNotDelete",
+              "notes": "Auto-created by Azure Backup for storage accounts registered with a Recovery Services Vault. This lock is intended to guard against deletion of backups due to accidental deletion of the storage account."
+            },
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/clitest.rg4chnkoo7ql/providers/microsoft.storage/storageAccounts/clitestmevgvn7p2e7ydqz44/providers/Microsoft.Authorization/locks/AzureBackupProtectionLock",
+            "type": "Microsoft.Authorization/locks",
+            "name": "AzureBackupProtectionLock"
           }
         ]
       }
@@ -903,23 +917,23 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-azure-mgmt-resource/20.0.0 Python/3.7.3 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "f654e926-4e7e-11ec-b9af-2cf05d45d152"
+        "User-Agent": "azsdk-python-azure-mgmt-resource/20.0.0 Python/3.8.8 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "12730a42-7dc6-11ec-9e6b-70b5e82527ff"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Fri, 26 Nov 2021 06:06:14 GMT",
+        "Date": "Tue, 25 Jan 2022 10:03:41 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "ee70a6b2-1f82-4d0d-8e17-e72c84963b47",
-        "x-ms-ratelimit-remaining-subscription-deletes": "14994",
-        "x-ms-request-id": "southeastasia:2c2f33a6-1ece-4b86-b66f-f6e9dce5889e",
-        "x-ms-routing-request-id": "SOUTHEASTASIA:20211126T060614Z:ee70a6b2-1f82-4d0d-8e17-e72c84963b47"
+        "x-ms-correlation-request-id": "94f41bf5-f3ad-46f6-b209-f7b43ebd0fa0",
+        "x-ms-ratelimit-remaining-subscription-deletes": "14992",
+        "x-ms-request-id": "southeastasia:d7f62093-aa69-4f2b-9c9e-7dab9776f5f1",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20220125T100341Z:94f41bf5-f3ad-46f6-b209-f7b43ebd0fa0"
       },
       "ResponseBody": null
     }
