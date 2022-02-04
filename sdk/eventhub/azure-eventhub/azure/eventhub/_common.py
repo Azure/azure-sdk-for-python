@@ -110,8 +110,10 @@ class EventData(object):
 
     """
 
-    def __init__(self, body=None):
-        # type: (Union[str, bytes, List[AnyStr]]) -> None
+    def __init__(
+        self,
+        body: Optional[Union[str, bytes, List[AnyStr]]] = None,
+    ) -> None:
         self._last_enqueued_event_properties = {}  # type: Dict[str, Any]
         self._sys_properties = None  # type: Optional[Dict[bytes, Any]]
         if body is None:
@@ -179,6 +181,20 @@ class EventData(object):
             pass
         event_str += " }"
         return event_str
+
+    def __message_data__(self) -> Dict:
+        if self.body_type != AmqpMessageBodyType.DATA:
+            raise TypeError('`body_type` must be `AmqpMessageBodyType.DATA`.')
+        data = bytearray()
+        for d in self.body: # type: ignore
+            data += d   # type: ignore
+        return {"data": bytes(data), "content_type": self.content_type}
+
+    @classmethod
+    def from_message_data(cls, data: bytes, content_type: str) -> "EventData":
+        event_data = cls(data)
+        event_data.content_type = content_type
+        return event_data
 
     @classmethod
     def _from_message(cls, message, raw_amqp_message=None):
