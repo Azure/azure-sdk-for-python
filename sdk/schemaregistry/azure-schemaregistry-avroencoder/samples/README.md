@@ -38,7 +38,7 @@ pip install azure-schemaregistry-avroencoder azure-identity
 Additionally, if using with `azure.eventhub.EventData`, install `azure-eventhub==5.9.0b1`:
 
 ```bash
-pip install azure-eventhub>=5.9.0b1
+pip install azure-eventhub==5.9.0b1
 ```
 
 2. Clone or download this sample repository

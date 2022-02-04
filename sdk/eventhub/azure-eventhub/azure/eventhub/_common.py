@@ -17,7 +17,6 @@ from typing import (
     List,
     TYPE_CHECKING,
     cast,
-    overload
 )
 
 import six

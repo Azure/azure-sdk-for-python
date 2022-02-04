@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, TypeVar
+from typing import Any
 try:
     from typing import Protocol, TypedDict
 except ImportError:
