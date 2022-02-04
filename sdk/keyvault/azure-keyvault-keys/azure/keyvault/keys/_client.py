@@ -130,7 +130,9 @@ class KeyClient(KeyVaultClientBase):
 
         policy = kwargs.pop("release_policy", None)
         if policy is not None:
-            policy = self._models.KeyReleasePolicy(data=policy.encoded_policy, content_type=policy.content_type)
+            policy = self._models.KeyReleasePolicy(
+                encoded_policy=policy.encoded_policy, content_type=policy.content_type, immutable=policy.immutable
+            )
         parameters = self._models.KeyCreateParameters(
             kty=key_type,
             key_size=kwargs.pop("size", None),
@@ -143,11 +145,7 @@ class KeyClient(KeyVaultClientBase):
         )
 
         bundle = self._client.create_key(
-            vault_base_url=self.vault_url,
-            key_name=name,
-            parameters=parameters,
-            error_map=_error_map,
-            **kwargs
+            vault_base_url=self.vault_url, key_name=name, parameters=parameters, error_map=_error_map, **kwargs
         )
         return KeyVaultKey._from_key_bundle(bundle)
 
@@ -513,7 +511,10 @@ class KeyClient(KeyVaultClientBase):
         )
         command = partial(self.get_key, name=name, **kwargs)
         polling_method = DeleteRecoverPollingMethod(
-            finished=False, command=command, final_resource=recovered_key, interval=polling_interval,
+            finished=False,
+            command=command,
+            final_resource=recovered_key,
+            interval=polling_interval,
         )
 
         return KeyVaultOperationPoller(polling_method)
@@ -559,7 +560,9 @@ class KeyClient(KeyVaultClientBase):
 
         policy = kwargs.pop("release_policy", None)
         if policy is not None:
-            policy = self._models.KeyReleasePolicy(content_type=policy.content_type, data=policy.encoded_policy)
+            policy = self._models.KeyReleasePolicy(
+                content_type=policy.content_type, encoded_policy=policy.encoded_policy, immutable=policy.immutable
+            )
         parameters = self._models.KeyUpdateParameters(
             key_ops=kwargs.pop("key_operations", None),
             key_attributes=attributes,
@@ -568,12 +571,7 @@ class KeyClient(KeyVaultClientBase):
         )
 
         bundle = self._client.update_key(
-            self.vault_url,
-            name,
-            key_version=version or "",
-            parameters=parameters,
-            error_map=_error_map,
-            **kwargs
+            self.vault_url, name, key_version=version or "", parameters=parameters, error_map=_error_map, **kwargs
         )
         return KeyVaultKey._from_key_bundle(bundle)
 
@@ -676,7 +674,9 @@ class KeyClient(KeyVaultClientBase):
 
         policy = kwargs.pop("release_policy", None)
         if policy is not None:
-            policy = self._models.KeyReleasePolicy(content_type=policy.content_type, data=policy.encoded_policy)
+            policy = self._models.KeyReleasePolicy(
+                content_type=policy.content_type, encoded_policy=policy.encoded_policy, immutable=policy.immutable
+            )
         parameters = self._models.KeyImportParameters(
             key=key._to_generated_model(),
             key_attributes=attributes,
@@ -685,13 +685,7 @@ class KeyClient(KeyVaultClientBase):
             release_policy=policy,
         )
 
-        bundle = self._client.import_key(
-            self.vault_url,
-            name,
-            parameters=parameters,
-            error_map=_error_map,
-            **kwargs
-        )
+        bundle = self._client.import_key(self.vault_url, name, parameters=parameters, error_map=_error_map, **kwargs)
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
@@ -720,7 +714,9 @@ class KeyClient(KeyVaultClientBase):
             key_name=name,
             key_version=version or "",
             parameters=self._models.KeyReleaseParameters(
-                target=target_attestation_token, nonce=kwargs.pop("nonce", None), enc=kwargs.pop("algorithm", None)
+                target_attestation_token=target_attestation_token,
+                nonce=kwargs.pop("nonce", None),
+                enc=kwargs.pop("algorithm", None),
             ),
             **kwargs
         )

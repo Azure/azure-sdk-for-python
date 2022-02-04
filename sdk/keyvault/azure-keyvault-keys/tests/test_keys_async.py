@@ -9,7 +9,7 @@ import functools
 import json
 import logging
 
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.keyvault.keys import (
     ApiVersion,
@@ -522,7 +522,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         release_result = await client.release_key(imported_key_name, attestation)
         assert release_result.value
 
-    @only_hsm_7_3_preview()
+    @only_7_3_preview()
     @client_setup
     async def test_update_release_policy(self, client, **kwargs):
         attestation_uri = self._get_attestation_uri()
@@ -531,7 +531,12 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         key = await self._create_rsa_key(
             client, key_name, hardware_protected=True, exportable=True, release_policy=release_policy
         )
-        assert key.properties.release_policy.encoded_policy
+
+        policy = json.loads(key.properties.release_policy.encoded_policy.decode())
+        claim_condition = policy["anyOf"][0]["anyOf"][0]["equals"]
+        # for some reason, claim_condition may be 'true' here for KV, but should be True here for MHSM
+        claim_condition = claim_condition if isinstance(claim_condition, bool) else json.loads(claim_condition)
+        assert claim_condition is True
 
         new_release_policy_json = {
             "anyOf": [
@@ -550,7 +555,44 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         policy_string = json.dumps(new_release_policy_json).encode()
         new_release_policy = KeyReleasePolicy(policy_string)
 
-        await self._update_key_properties(client, key, new_release_policy)
+        updated_key = await self._update_key_properties(client, key, new_release_policy)
+        updated_policy = json.loads(updated_key.properties.release_policy.encoded_policy.decode())
+        claim_condition = updated_policy["anyOf"][0]["anyOf"][0]["equals"]
+        claim_condition = claim_condition if isinstance(claim_condition, bool) else json.loads(claim_condition)
+        assert claim_condition is False
+
+    # Immutable policies aren't currently supported on Managed HSM
+    @only_vault_7_3_preview()
+    @client_setup
+    async def test_immutable_release_policy(self, client, **kwargs):
+        attestation_uri = self._get_attestation_uri()
+        release_policy = get_release_policy(attestation_uri, immutable=True)
+        key_name = self.get_resource_name("key-name")
+        key = await self._create_rsa_key(
+            client, key_name, hardware_protected=True, exportable=True, release_policy=release_policy
+        )
+        assert key.properties.release_policy.encoded_policy
+        assert key.properties.release_policy.immutable
+
+        new_release_policy_json = {
+            "anyOf": [
+                {
+                    "anyOf": [
+                        {
+                            "claim": "sdk-test",
+                            "equals": False
+                        }
+                    ],
+                    "authority": attestation_uri.rstrip("/") + "/"
+                }
+            ],
+            "version": "1.0.0"
+        }
+        policy_string = json.dumps(new_release_policy_json).encode()
+        new_release_policy = KeyReleasePolicy(policy_string, immutable=True)
+
+        with pytest.raises(HttpResponseError):
+            await self._update_key_properties(client, key, new_release_policy)
 
     @only_vault_7_3_preview()
     @client_setup

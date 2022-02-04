@@ -81,13 +81,16 @@ class KeyProperties(object):
     def _from_key_bundle(cls, key_bundle):
         # type: (_models.KeyBundle) -> KeyProperties
         """Construct a KeyProperties from an autorest-generated KeyBundle"""
+        # pylint:disable=line-too-long
         # release_policy was added in 7.3-preview
         release_policy = None
-        if (hasattr(key_bundle, "release_policy") and
-            key_bundle.release_policy is not None):  # type: ignore[attr-defined]
+        if (
+            hasattr(key_bundle, "release_policy") and key_bundle.release_policy is not None  # type: ignore[attr-defined]
+        ):
             release_policy = KeyReleasePolicy(
-                data=key_bundle.release_policy.data,  # type: ignore[attr-defined]
-                content_type=key_bundle.release_policy.content_type  # type: ignore[attr-defined]
+                encoded_policy=key_bundle.release_policy.encoded_policy,  # type: ignore[attr-defined]
+                content_type=key_bundle.release_policy.content_type,  # type: ignore[attr-defined]
+                immutable=key_bundle.release_policy.immutable,  # type: ignore[attr-defined]
             )
 
         return cls(
@@ -106,7 +109,7 @@ class KeyProperties(object):
             key_id=key_item.kid,  # type: ignore
             attributes=key_item.attributes,
             managed=key_item.managed,
-            tags=key_item.tags
+            tags=key_item.tags,
         )
 
     @property
@@ -254,18 +257,19 @@ class KeyProperties(object):
 class KeyReleasePolicy(object):
     """The policy rules under which a key can be exported.
 
-    :param data: Blob encoding the policy rules under which the key can be released.
-    :type data: bytes
+    :param bytes encoded_policy: Blob encoding the policy rules under which the key can be released.
 
-    :keyword content_type: Content type and version of the release policy. Defaults to "application/json; charset=utf-8"
-        if omitted.
-    :paramtype content_type: str
+    :keyword str content_type: Content type and version of the release policy. Defaults to "application/json;
+        charset=utf-8" if omitted.
+    :keyword bool immutable: Marks a release policy as immutable. An immutable release policy cannot be changed or
+        updated after being marked immutable. Release policies are mutable by default.
     """
 
-    def __init__(self, data, **kwargs):
+    def __init__(self, encoded_policy, **kwargs):
         # type: (bytes, **Any) -> None
-        self.encoded_policy = data
+        self.encoded_policy = encoded_policy
         self.content_type = kwargs.get("content_type", None)
+        self.immutable = kwargs.get("immutable", None)
 
 
 class ReleaseKeyResult(object):
