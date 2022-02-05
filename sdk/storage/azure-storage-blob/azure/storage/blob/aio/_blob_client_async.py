@@ -119,7 +119,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             snapshot=snapshot,
             credential=credential,
             **kwargs)
-        self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
+        self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
+        self._client._client._base_url = self.url   # pylint: disable=protected-access
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
 
     @distributed_trace_async
