@@ -18,7 +18,7 @@ from azure.core.tracing.decorator import distributed_trace
 from msrest import Serializer
 
 from .. import models as _models
-from .._vendor import _convert_request
+from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -31,6 +31,7 @@ _SERIALIZER.client_side_validation = False
 # fmt: off
 
 def build_create_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -66,7 +67,12 @@ def build_create_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '{url}/{containerName}/{blob}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -139,6 +145,7 @@ def build_create_request(
 
 
 def build_upload_pages_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -168,7 +175,12 @@ def build_upload_pages_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '{url}/{containerName}/{blob}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -229,6 +241,7 @@ def build_upload_pages_request(
 
 
 def build_clear_pages_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -255,7 +268,12 @@ def build_clear_pages_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '{url}/{containerName}/{blob}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -310,6 +328,7 @@ def build_clear_pages_request(
 
 
 def build_upload_pages_from_url_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -345,7 +364,12 @@ def build_upload_pages_from_url_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '{url}/{containerName}/{blob}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -415,6 +439,7 @@ def build_upload_pages_from_url_request(
 
 
 def build_get_page_ranges_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -433,7 +458,12 @@ def build_get_page_ranges_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '{url}/{containerName}/{blob}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -474,6 +504,7 @@ def build_get_page_ranges_request(
 
 
 def build_get_page_ranges_diff_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -494,7 +525,12 @@ def build_get_page_ranges_diff_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '{url}/{containerName}/{blob}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -539,6 +575,7 @@ def build_get_page_ranges_diff_request(
 
 
 def build_resize_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -560,7 +597,12 @@ def build_resize_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '{url}/{containerName}/{blob}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -606,6 +648,7 @@ def build_resize_request(
 
 
 def build_update_sequence_number_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -624,7 +667,12 @@ def build_update_sequence_number_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '{url}/{containerName}/{blob}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -664,6 +712,7 @@ def build_update_sequence_number_request(
 
 
 def build_copy_incremental_request(
+    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -680,7 +729,12 @@ def build_copy_incremental_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '')
+    url = kwargs.pop("template_url", '{url}/{containerName}/{blob}')
+    path_format_arguments = {
+        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
 
     # Construct parameters
     query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -864,6 +918,7 @@ class PageBlobOperations(object):
             _if_tags = modified_access_conditions.if_tags
 
         request = build_create_request(
+            client_url=self._config.client_url,
             blob_type=blob_type,
             version=self._config.version,
             content_length=content_length,
@@ -896,10 +951,7 @@ class PageBlobOperations(object):
             template_url=self.create.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -926,7 +978,7 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {'url': ''}  # type: ignore
+    create.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace
@@ -1042,6 +1094,7 @@ class PageBlobOperations(object):
         _content = body
 
         request = build_upload_pages_request(
+            client_url=self._config.client_url,
             comp=comp,
             page_write=page_write,
             version=self._config.version,
@@ -1069,10 +1122,7 @@ class PageBlobOperations(object):
             template_url=self.upload_pages.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1100,7 +1150,7 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    upload_pages.metadata = {'url': ''}  # type: ignore
+    upload_pages.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace
@@ -1203,6 +1253,7 @@ class PageBlobOperations(object):
             _if_tags = modified_access_conditions.if_tags
 
         request = build_clear_pages_request(
+            client_url=self._config.client_url,
             comp=comp,
             page_write=page_write,
             version=self._config.version,
@@ -1226,10 +1277,7 @@ class PageBlobOperations(object):
             template_url=self.clear_pages.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1254,7 +1302,7 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    clear_pages.metadata = {'url': ''}  # type: ignore
+    clear_pages.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace
@@ -1391,6 +1439,7 @@ class PageBlobOperations(object):
             _source_if_none_match = source_modified_access_conditions.source_if_none_match
 
         request = build_upload_pages_from_url_request(
+            client_url=self._config.client_url,
             comp=comp,
             page_write=page_write,
             version=self._config.version,
@@ -1423,10 +1472,7 @@ class PageBlobOperations(object):
             template_url=self.upload_pages_from_url.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1453,7 +1499,7 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    upload_pages_from_url.metadata = {'url': ''}  # type: ignore
+    upload_pages_from_url.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace
@@ -1523,6 +1569,7 @@ class PageBlobOperations(object):
             _if_tags = modified_access_conditions.if_tags
 
         request = build_get_page_ranges_request(
+            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             snapshot=snapshot,
@@ -1538,10 +1585,7 @@ class PageBlobOperations(object):
             template_url=self.get_page_ranges.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1567,7 +1611,7 @@ class PageBlobOperations(object):
 
         return deserialized
 
-    get_page_ranges.metadata = {'url': ''}  # type: ignore
+    get_page_ranges.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace
@@ -1651,6 +1695,7 @@ class PageBlobOperations(object):
             _if_tags = modified_access_conditions.if_tags
 
         request = build_get_page_ranges_diff_request(
+            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             snapshot=snapshot,
@@ -1668,10 +1713,7 @@ class PageBlobOperations(object):
             template_url=self.get_page_ranges_diff.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1697,7 +1739,7 @@ class PageBlobOperations(object):
 
         return deserialized
 
-    get_page_ranges_diff.metadata = {'url': ''}  # type: ignore
+    get_page_ranges_diff.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace
@@ -1776,6 +1818,7 @@ class PageBlobOperations(object):
             _if_tags = modified_access_conditions.if_tags
 
         request = build_resize_request(
+            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             blob_content_length=blob_content_length,
@@ -1794,10 +1837,7 @@ class PageBlobOperations(object):
             template_url=self.resize.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1820,7 +1860,7 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    resize.metadata = {'url': ''}  # type: ignore
+    resize.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace
@@ -1889,6 +1929,7 @@ class PageBlobOperations(object):
             _if_tags = modified_access_conditions.if_tags
 
         request = build_update_sequence_number_request(
+            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             sequence_number_action=sequence_number_action,
@@ -1904,10 +1945,7 @@ class PageBlobOperations(object):
             template_url=self.update_sequence_number.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -1930,7 +1968,7 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    update_sequence_number.metadata = {'url': ''}  # type: ignore
+    update_sequence_number.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace
@@ -1993,6 +2031,7 @@ class PageBlobOperations(object):
             _if_tags = modified_access_conditions.if_tags
 
         request = build_copy_incremental_request(
+            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             copy_source=copy_source,
@@ -2006,10 +2045,7 @@ class PageBlobOperations(object):
             template_url=self.copy_incremental.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -2033,5 +2069,5 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    copy_incremental.metadata = {'url': ''}  # type: ignore
+    copy_incremental.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 

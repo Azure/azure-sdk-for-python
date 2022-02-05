@@ -88,6 +88,7 @@ class ServiceOperations:
         _content = self._serialize.body(storage_service_properties, 'StorageServiceProperties', is_xml=True)
 
         request = build_set_properties_request(
+            client_url=self._config.client_url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -98,10 +99,7 @@ class ServiceOperations:
             template_url=self.set_properties.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -120,7 +118,7 @@ class ServiceOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_properties.metadata = {'url': '/'}  # type: ignore
+    set_properties.metadata = {'url': '{url}/'}  # type: ignore
 
 
     @distributed_trace_async
@@ -163,6 +161,7 @@ class ServiceOperations:
 
         
         request = build_get_properties_request(
+            client_url=self._config.client_url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -171,10 +170,7 @@ class ServiceOperations:
             template_url=self.get_properties.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -196,7 +192,7 @@ class ServiceOperations:
 
         return deserialized
 
-    get_properties.metadata = {'url': '/'}  # type: ignore
+    get_properties.metadata = {'url': '{url}/'}  # type: ignore
 
 
     @distributed_trace_async
@@ -240,6 +236,7 @@ class ServiceOperations:
 
         
         request = build_get_statistics_request(
+            client_url=self._config.client_url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -248,10 +245,7 @@ class ServiceOperations:
             template_url=self.get_statistics.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -274,7 +268,7 @@ class ServiceOperations:
 
         return deserialized
 
-    get_statistics.metadata = {'url': '/'}  # type: ignore
+    get_statistics.metadata = {'url': '{url}/'}  # type: ignore
 
 
     @distributed_trace_async
@@ -337,6 +331,7 @@ class ServiceOperations:
 
         
         request = build_list_containers_segment_request(
+            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             prefix=prefix,
@@ -348,10 +343,7 @@ class ServiceOperations:
             template_url=self.list_containers_segment.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -373,7 +365,7 @@ class ServiceOperations:
 
         return deserialized
 
-    list_containers_segment.metadata = {'url': '/'}  # type: ignore
+    list_containers_segment.metadata = {'url': '{url}/'}  # type: ignore
 
 
     @distributed_trace_async
@@ -421,6 +413,7 @@ class ServiceOperations:
         _content = self._serialize.body(key_info, 'KeyInfo', is_xml=True)
 
         request = build_get_user_delegation_key_request(
+            client_url=self._config.client_url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -431,10 +424,7 @@ class ServiceOperations:
             template_url=self.get_user_delegation_key.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -457,7 +447,7 @@ class ServiceOperations:
 
         return deserialized
 
-    get_user_delegation_key.metadata = {'url': '/'}  # type: ignore
+    get_user_delegation_key.metadata = {'url': '{url}/'}  # type: ignore
 
 
     @distributed_trace_async
@@ -489,16 +479,14 @@ class ServiceOperations:
 
         
         request = build_get_account_info_request(
+            client_url=self._config.client_url,
             restype=restype,
             comp=comp,
             version=self._config.version,
             template_url=self.get_account_info.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -521,7 +509,7 @@ class ServiceOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_account_info.metadata = {'url': '/'}  # type: ignore
+    get_account_info.metadata = {'url': '{url}/'}  # type: ignore
 
 
     @distributed_trace_async
@@ -570,6 +558,7 @@ class ServiceOperations:
         _content = self._serialize.body(body, 'IO')
 
         request = build_submit_batch_request(
+            client_url=self._config.client_url,
             multipart_content_type=multipart_content_type,
             comp=comp,
             version=self._config.version,
@@ -580,10 +569,7 @@ class ServiceOperations:
             template_url=self.submit_batch.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=True, **kwargs)
         response = pipeline_response.http_response
@@ -605,7 +591,7 @@ class ServiceOperations:
 
         return deserialized
 
-    submit_batch.metadata = {'url': '/'}  # type: ignore
+    submit_batch.metadata = {'url': '{url}/'}  # type: ignore
 
 
     @distributed_trace_async
@@ -665,6 +651,7 @@ class ServiceOperations:
 
         
         request = build_filter_blobs_request(
+            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             timeout=timeout,
@@ -675,10 +662,7 @@ class ServiceOperations:
             template_url=self.filter_blobs.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -701,5 +685,5 @@ class ServiceOperations:
 
         return deserialized
 
-    filter_blobs.metadata = {'url': '/'}  # type: ignore
+    filter_blobs.metadata = {'url': '{url}/'}  # type: ignore
 

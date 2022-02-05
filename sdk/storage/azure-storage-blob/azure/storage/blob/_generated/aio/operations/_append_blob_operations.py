@@ -158,6 +158,7 @@ class AppendBlobOperations:
             _if_tags = modified_access_conditions.if_tags
 
         request = build_create_request(
+            client_url=self._config.client_url,
             blob_type=blob_type,
             version=self._config.version,
             content_length=content_length,
@@ -187,10 +188,7 @@ class AppendBlobOperations:
             template_url=self.create.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -217,7 +215,7 @@ class AppendBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {'url': ''}  # type: ignore
+    create.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -318,6 +316,7 @@ class AppendBlobOperations:
         _content = body
 
         request = build_append_block_request(
+            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             content_type=content_type,
@@ -342,10 +341,7 @@ class AppendBlobOperations:
             template_url=self.append_block.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -374,7 +370,7 @@ class AppendBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    append_block.metadata = {'url': ''}  # type: ignore
+    append_block.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -498,6 +494,7 @@ class AppendBlobOperations:
             _source_if_none_match = source_modified_access_conditions.source_if_none_match
 
         request = build_append_block_from_url_request(
+            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             source_url=source_url,
@@ -528,10 +525,7 @@ class AppendBlobOperations:
             template_url=self.append_block_from_url.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -559,7 +553,7 @@ class AppendBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    append_block_from_url.metadata = {'url': ''}  # type: ignore
+    append_block_from_url.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -623,6 +617,7 @@ class AppendBlobOperations:
             _append_position = append_position_access_conditions.append_position
 
         request = build_seal_request(
+            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             timeout=timeout,
@@ -636,10 +631,7 @@ class AppendBlobOperations:
             template_url=self.seal.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
@@ -662,5 +654,5 @@ class AppendBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    seal.metadata = {'url': ''}  # type: ignore
+    seal.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
 

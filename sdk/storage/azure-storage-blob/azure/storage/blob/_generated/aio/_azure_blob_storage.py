@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable
+from typing import Any, Awaitable, Optional
 
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -32,9 +32,11 @@ class AzureBlobStorage:
     :vartype append_blob: azure.storage.blob.aio.operations.AppendBlobOperations
     :ivar block_blob: BlockBlobOperations operations
     :vartype block_blob: azure.storage.blob.aio.operations.BlockBlobOperations
-    :param url: The URL of the service account, container, or blob that is the target of the
+    :param client_url: The URL of the service account, container, or blob that is the target of the
      desired operation.
-    :type url: str
+    :type client_url: str
+    :param base_url: Service URL. Default value is ''.
+    :type base_url: str
     :keyword version: Specifies the version of the operation to use for this request. The default
      value is "2021-02-12". Note that overriding this default value may result in unsupported
      behavior.
@@ -43,12 +45,12 @@ class AzureBlobStorage:
 
     def __init__(
         self,
-        url: str,
+        client_url: str,
+        base_url: str = "",
         **kwargs: Any
     ) -> None:
-        _base_url = '{url}'
-        self._config = AzureBlobStorageConfiguration(url=url, **kwargs)
-        self._client = AsyncPipelineClient(base_url=_base_url, config=self._config, **kwargs)
+        self._config = AzureBlobStorageConfiguration(client_url=client_url, **kwargs)
+        self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -85,11 +87,7 @@ class AzureBlobStorage:
         """
 
         request_copy = deepcopy(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-
-        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
     async def close(self) -> None:
