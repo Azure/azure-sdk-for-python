@@ -522,3 +522,29 @@ class Pipeline:
         return first_node.send(pipeline_request)  # type: ignore
 
 ```
+
+## Credentials
+
+### TokenCredential protocol
+
+Clients from the Azure SDK often require a `TokenCredential` instance in their constructors. A `TokenCredential` is
+meant to provide OAuth tokens to authenticate service requests and can be implemented in a number of ways.
+
+The [`TokenCredential` protocol][token_cred_definition] specifies a class that has a single method -- `get_token` --
+which accepts `*scopes` and `**kwargs`. Each scope specifies a type of access being requested, and the contents of
+`**kwargs` are arbitrary. For example, `TokenCredential` implementations in [`azure-identity`][identity_pypi] may
+accept [`tenant_id`][default_cred_get_token] as a keyword-only argument.
+
+`get_token` returns an [`AccessToken`][access_token_definition]: a `NamedTuple` containing a `token` string and an
+`expires_on` integer.
+
+A `TokenCredential` implementation needs to implement the `get_token` method to these specifications and can optionally
+implement additional methods. Refer to the [custom_credentials.py][custom_creds_sample] sample in `azure-identity` for
+examples of custom `TokenCredential` implementations.
+
+
+[access_token_definition]: https://github.com/Azure/azure-sdk-for-python/blob/844e16db0abc553ab1adf104128cbf0e223af189/sdk/core/azure-core/azure/core/credentials.py#L14
+[custom_creds_sample]: https://github.com/Azure/azure-sdk-for-python/blob/fc95f8d3d84d076ffea158116ca1bf6912689c70/sdk/identity/azure-identity/samples/custom_credentials.py
+[default_cred_get_token]: https://docs.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python#azure-identity-defaultazurecredential-get-token
+[identity_pypi]: https://pypi.org/project/azure-identity/
+[token_cred_definition]: https://github.com/Azure/azure-sdk-for-python/blob/844e16db0abc553ab1adf104128cbf0e223af189/sdk/core/azure-core/azure/core/credentials.py#L16
