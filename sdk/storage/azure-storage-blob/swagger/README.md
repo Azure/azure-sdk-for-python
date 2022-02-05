@@ -130,6 +130,51 @@ directive:
     }
 ```
 
+### Remove x-ms-parameterized-host and add to each operation
+``` yaml
+directive:
+- from: swagger-document
+  where: $
+  transform: >
+    $["x-ms-parameterized-host"] = undefined;
+```
+
+### Add url to each url
+``` yaml
+directive:
+- from: swagger-document
+  where: $["x-ms-paths"]
+  transform: >
+    for (const property in $)
+    {
+        var oldName = property;
+        var newName = '{url}' + property;
+        $[newName] = $[oldName];
+        delete $[oldName];
+    }
+```
+
+### Change Url name to not conflict
+``` yaml
+directive:
+- from: swagger-document
+  where: $["x-ms-paths"]
+  transform: >
+    for (const property in $)
+    {
+        $[property]["parameters"].push({"$ref": "#/parameters/Url"});
+    }
+```
+
+### Add url param to each operation
+``` yaml
+directive:
+- from: swagger-document
+  where: $["parameters"]
+  transform: >
+    $["Url"]["x-ms-client-name"] = "clientUrl"
+```
+
 ### Change to OrMetadata
 ``` yaml
 directive:
