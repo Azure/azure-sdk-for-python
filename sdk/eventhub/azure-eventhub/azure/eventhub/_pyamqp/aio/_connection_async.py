@@ -451,9 +451,11 @@ class Connection(object):
                 )
                 return
             try:
-                await asyncio.gather(*[self._listen_one_frame(**kwargs) for _ in range(batch)])
+                tasks = [asyncio.create_task(self._listen_one_frame(**kwargs)) for _ in range(batch)]
+                await asyncio.gather(*tasks)
             except ValueError:
-                pass
+                for task in tasks:
+                    task.cancel()
         except (OSError, IOError, SSLError, socket.error) as exc:
             self._error = AMQPConnectionError(
                 ErrorCondition.SocketError,

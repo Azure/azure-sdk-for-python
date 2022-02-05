@@ -435,13 +435,7 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
 
         running = True
         while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
-            try:
-                running = await asyncio.wait_for(
-                    self.do_work_async(),
-                    timeout=(expire_time - time.time() if timeout else None)
-                )
-            except asyncio.TimeoutError:
-                pass
+            await self.do_work_async()
             if message_delivery.expiry and time.time() > message_delivery.expiry:
                 await self._on_send_complete_async(message_delivery, LinkDeliverySettleReason.TIMEOUT, None)
 
