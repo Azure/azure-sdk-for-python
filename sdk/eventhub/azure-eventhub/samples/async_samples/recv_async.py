@@ -65,44 +65,5 @@ async def main():
         )
 
 
-async def localplay():
-    from azure.eventhub.aio import EventHubProducerClient
-    from azure.eventhub import EventDataBatch, EventData
-    import logging
-    logging.basicConfig(level=logging.INFO)
-
-    client = EventHubProducerClient.from_connection_string(conn_str=CONNECTION_STR, eventhub_name=EVENTHUB_NAME, idle_timeout=10, retry_total=0, logging_enable=True)
-    async with client:
-        ed = EventData('data')
-        sender = client._create_producer(partition_id='0')
-        async with sender:
-            await sender._open_with_retry()
-            await asyncio.sleep(11)
-            sender._unsent_events = [ed.message]
-            #with pytest.raises(error.AMQPConnectionError):
-            await sender._send_event_data()
-            #await sender._send_event_data_with_retry()
-
-def localplaysync():
-    import threading, time
-    client = EventHubConsumerClient.from_connection_string(CONNECTION_STR, eventhub_name=EVENTHUB_NAME, consumer_group='$default')
-    def on_event_batch(partition_context, event_batch):
-        on_event_batch.event_batch = event_batch
-
-    on_event_batch.event_batch = None
-
-    max_wait_time=3
-    sleep_time=10000
-    expected_result=[]
-    with client:
-        worker = threading.Thread(target=client.receive_batch, args=(on_event_batch,), kwargs={
-            "max_wait_time": max_wait_time, "starting_position": "-1"
-        })
-        worker.start()
-        time.sleep(sleep_time)
-        assert on_event_batch.event_batch == expected_result
-    worker.join()
-
-
 if __name__ == '__main__':
-    asyncio.run(localplay())
+    asyncio.run(main())

@@ -419,6 +419,11 @@ class Connection(object):
                 await asyncio.sleep(self.idle_wait_time)
                 await self.listen(wait=False)
 
+    async def _listen_one_frame(self, **kwargs):
+        new_frame = await self._read_frame(**kwargs)
+        if await self._process_incoming_frame(*new_frame):
+            raise ValueError("Stop")  # Stop listening
+
     async def listen(self, wait=False, batch=1, **kwargs):
         try:
             raise self._error
@@ -445,10 +450,10 @@ class Connection(object):
                     description="Connection was already closed."
                 )
                 return
-            for i in range(batch):
-                new_frame = await self._read_frame(**kwargs)
-                if await self._process_incoming_frame(*new_frame):
-                    break
+            try:
+                await asyncio.gather(*[self._listen_one_frame(**kwargs) for _ in range(batch)])
+            except ValueError:
+                pass
         except (OSError, IOError, SSLError, socket.error) as exc:
             self._error = AMQPConnectionError(
                 ErrorCondition.SocketError,
@@ -489,7 +494,7 @@ class Connection(object):
             if error:
                 self._error = AMQPConnectionError(
                     condition=error.condition,
-                    description=error.descrption,
+                    description=error.description,
                     info=error.info
                 )
             if self.state == ConnectionState.OPEN_PIPE:
