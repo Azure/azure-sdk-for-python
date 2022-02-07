@@ -12,7 +12,7 @@ from typing import Dict, List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._microsoft_cognitive_language_service_enums import *
+from ._text_analytics_client_enums import *
 
 
 class AnalyzeTextTask(msrest.serialization.Model):

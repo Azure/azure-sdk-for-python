@@ -132,3 +132,33 @@ directive:
       $["hostTemplate"] = "{Endpoint}/text/analytics/v3.2-preview.2";
       $["parameters"] = [{"$ref": "#/parameters/Endpoint"}];
 ```
+
+### Fix naming clash with analyze_text method in ApiVersion v2022_02_01_preview
+
+```yaml $(tag) == 'release_2022_02_01_preview'
+directive:
+  - from: swagger-document
+    where: '$["paths"]["/analyze-text/jobs"]["post"]'
+    transform: >
+      $["operationId"] = "AnalyzeTextSubmitJob";
+```
+
+### Fix naming clash with analyze_text method in ApiVersion v2022_02_01_preview
+
+```yaml $(tag) == 'release_2022_02_01_preview'
+directive:
+  - from: swagger-document
+    where: '$["paths"]["/analyze-text/jobs/{jobId}"]["get"]'
+    transform: >
+      $["operationId"] = "AnalyzeTextJobStatus";
+```
+
+### Fix generation of operation class name with ApiVersion v2022_02_01_preview
+
+```yaml $(tag) == 'release_2022_02_01_preview'
+directive:
+  - from: swagger-document
+    where: '$["info"]'
+    transform: >
+      $["title"] = "Text Analytics Client";
+```

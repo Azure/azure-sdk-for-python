@@ -31,7 +31,40 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 # fmt: off
 
-def build_submit_job_request_initial(
+def build_analyze_text_request(
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2022-02-01-preview")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+    show_stats = kwargs.pop('show_stats', None)  # type: Optional[bool]
+
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/:analyze-text')
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    if show_stats is not None:
+        query_parameters['showStats'] = _SERIALIZER.query("show_stats", show_stats, 'bool')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_analyze_text_submit_job_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -61,7 +94,7 @@ def build_submit_job_request_initial(
     )
 
 
-def build_job_status_request(
+def build_analyze_text_job_status_request(
     job_id,  # type: str
     **kwargs  # type: Any
 ):
@@ -103,29 +136,74 @@ def build_job_status_request(
     )
 
 # fmt: on
-class AnalyzeTextOperations(object):
-    """AnalyzeTextOperations operations.
+class TextAnalyticsClientOperationsMixin(object):
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
+    @distributed_trace
+    def analyze_text(
+        self,
+        body,  # type: "_models.AnalyzeTextTask"
+        show_stats=None,  # type: Optional[bool]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.AnalyzeTextTaskResult"
+        """Request text analysis over a collection of documents.
 
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.ai.textanalytics.v2022_02_01_preview.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
-    """
+        Submit a collection of text documents for analysis.  Specify a single unique task to be
+        executed immediately.
 
-    models = _models
+        :param body: Collection of documents to analyze and a single task to execute.
+        :type body: ~azure.ai.textanalytics.v2022_02_01_preview.models.AnalyzeTextTask
+        :param show_stats: (Optional) if set to true, response will contain request and document level
+         statistics.
+        :type show_stats: bool
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: AnalyzeTextTaskResult, or the result of cls(response)
+        :rtype: ~azure.ai.textanalytics.v2022_02_01_preview.models.AnalyzeTextTaskResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AnalyzeTextTaskResult"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
 
-    def __init__(self, client, config, serializer, deserializer):
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+        api_version = kwargs.pop('api_version', "2022-02-01-preview")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-    def _submit_job_initial(
+        _json = self._serialize.body(body, 'AnalyzeTextTask')
+
+        request = build_analyze_text_request(
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            show_stats=show_stats,
+            template_url=self.analyze_text.metadata['url'],
+        )
+        request = _convert_request(request)
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize('AnalyzeTextTaskResult', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    analyze_text.metadata = {'url': '/:analyze-text'}  # type: ignore
+
+
+    def _analyze_text_submit_job_initial(
         self,
         body,  # type: "_models.AnalyzeTextJobsInput"
         **kwargs  # type: Any
@@ -142,11 +220,11 @@ class AnalyzeTextOperations(object):
 
         _json = self._serialize.body(body, 'AnalyzeTextJobsInput')
 
-        request = build_submit_job_request_initial(
+        request = build_analyze_text_submit_job_request_initial(
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._submit_job_initial.metadata['url'],
+            template_url=self._analyze_text_submit_job_initial.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -168,11 +246,11 @@ class AnalyzeTextOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _submit_job_initial.metadata = {'url': '/analyze-text/jobs'}  # type: ignore
+    _analyze_text_submit_job_initial.metadata = {'url': '/analyze-text/jobs'}  # type: ignore
 
 
     @distributed_trace
-    def begin_submit_job(
+    def begin_analyze_text_submit_job(
         self,
         body,  # type: "_models.AnalyzeTextJobsInput"
         **kwargs  # type: Any
@@ -207,7 +285,7 @@ class AnalyzeTextOperations(object):
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._submit_job_initial(
+            raw_result = self._analyze_text_submit_job_initial(
                 body=body,
                 api_version=api_version,
                 content_type=content_type,
@@ -238,10 +316,10 @@ class AnalyzeTextOperations(object):
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_submit_job.metadata = {'url': '/analyze-text/jobs'}  # type: ignore
+    begin_analyze_text_submit_job.metadata = {'url': '/analyze-text/jobs'}  # type: ignore
 
     @distributed_trace
-    def job_status(
+    def analyze_text_job_status(
         self,
         job_id,  # type: str
         show_stats=None,  # type: Optional[bool]
@@ -279,13 +357,13 @@ class AnalyzeTextOperations(object):
         api_version = kwargs.pop('api_version', "2022-02-01-preview")  # type: str
 
         
-        request = build_job_status_request(
+        request = build_analyze_text_job_status_request(
             job_id=job_id,
             api_version=api_version,
             show_stats=show_stats,
             top=top,
             skip=skip,
-            template_url=self.job_status.metadata['url'],
+            template_url=self.analyze_text_job_status.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -308,5 +386,5 @@ class AnalyzeTextOperations(object):
 
         return deserialized
 
-    job_status.metadata = {'url': '/analyze-text/jobs/{jobId}'}  # type: ignore
+    analyze_text_job_status.metadata = {'url': '/analyze-text/jobs/{jobId}'}  # type: ignore
 

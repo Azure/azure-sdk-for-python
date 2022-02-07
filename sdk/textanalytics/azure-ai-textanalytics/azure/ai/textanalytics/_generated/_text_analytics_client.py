@@ -60,6 +60,8 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
             'analyze_text': '2022-02-01-preview',
+            'analyze_text_job_status': '2022-02-01-preview',
+            'begin_analyze_text_submit_job': '2022-02-01-preview',
         }},
         _PROFILE_TAG + " latest"
     )
@@ -115,19 +117,6 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
             from .v3_2_preview_2 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
-
-    @property
-    def analyze_text(self):
-        """Instance depends on the API version:
-
-           * 2022-02-01-preview: :class:`AnalyzeTextOperations<azure.ai.textanalytics.v2022_02_01_preview.operations.AnalyzeTextOperations>`
-        """
-        api_version = self._get_api_version('analyze_text')
-        if api_version == '2022-02-01-preview':
-            from .v2022_02_01_preview.operations import AnalyzeTextOperations as OperationClass
-        else:
-            raise ValueError("API version {} does not have operation group 'analyze_text'".format(api_version))
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     def close(self):
         self._client.close()

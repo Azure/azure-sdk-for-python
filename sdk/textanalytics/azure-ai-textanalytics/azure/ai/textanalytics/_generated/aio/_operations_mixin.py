@@ -97,6 +97,47 @@ class TextAnalyticsClientOperationsMixin(object):
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.analyze_text(body, show_stats, **kwargs)
 
+    async def analyze_text_job_status(
+        self,
+        job_id: str,
+        show_stats: Optional[bool] = None,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        **kwargs: Any
+    ) -> "_models.AnalyzeTextJobState":
+        """Get analysis status and results.
+
+        Get the status of an analysis job.  A job may consist of one or more tasks.  Once all tasks are
+        succeeded, the job will transition to the succeeded state and results will be available for
+        each task.
+
+        :param job_id: Job ID.
+        :type job_id: str
+        :param show_stats: (Optional) if set to true, response will contain request and document level
+         statistics.
+        :type show_stats: bool
+        :param top: The maximum number of resources to return from the collection.
+        :type top: int
+        :param skip: An offset into the collection of the first resource to be returned.
+        :type skip: int
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: AnalyzeTextJobState, or the result of cls(response)
+        :rtype: ~azure.ai.textanalytics.v2022_02_01_preview.models.AnalyzeTextJobState
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('analyze_text_job_status')
+        if api_version == '2022-02-01-preview':
+            from ..v2022_02_01_preview.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'analyze_text_job_status'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return await mixin_instance.analyze_text_job_status(job_id, show_stats, top, skip, **kwargs)
+
     async def begin_analyze(
         self,
         body: Optional["_models.AnalyzeBatchInput"] = None,
@@ -137,6 +178,43 @@ class TextAnalyticsClientOperationsMixin(object):
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.begin_analyze(body, **kwargs)
+
+    async def begin_analyze_text_submit_job(
+        self,
+        body: "_models.AnalyzeTextJobsInput",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Submit text analysis job.
+
+        Submit a collection of text documents for analysis. Specify one or more unique tasks to be
+        executed as a long-running operation.
+
+        :param body: Collection of documents to analyze and one or more tasks to execute.
+        :type body: ~azure.ai.textanalytics.v2022_02_01_preview.models.AnalyzeTextJobsInput
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('begin_analyze_text_submit_job')
+        if api_version == '2022-02-01-preview':
+            from ..v2022_02_01_preview.aio.operations import TextAnalyticsClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'begin_analyze_text_submit_job'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return await mixin_instance.begin_analyze_text_submit_job(body, **kwargs)
 
     async def begin_cancel_health_job(
         self,

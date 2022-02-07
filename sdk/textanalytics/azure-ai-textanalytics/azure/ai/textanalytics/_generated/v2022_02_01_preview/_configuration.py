@@ -19,8 +19,8 @@ if TYPE_CHECKING:
 
 VERSION = "unknown"
 
-class MicrosoftCognitiveLanguageServiceConfiguration(Configuration):
-    """Configuration for MicrosoftCognitiveLanguageService.
+class TextAnalyticsClientConfiguration(Configuration):
+    """Configuration for TextAnalyticsClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -40,7 +40,7 @@ class MicrosoftCognitiveLanguageServiceConfiguration(Configuration):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        super(MicrosoftCognitiveLanguageServiceConfiguration, self).__init__(**kwargs)
+        super(TextAnalyticsClientConfiguration, self).__init__(**kwargs)
         api_version = kwargs.pop('api_version', "2022-02-01-preview")  # type: str
 
         if credential is None:

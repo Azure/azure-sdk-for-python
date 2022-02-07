@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._microsoft_cognitive_language_service import MicrosoftCognitiveLanguageService
-__all__ = ['MicrosoftCognitiveLanguageService']
+from ._text_analytics_client import TextAnalyticsClient
+__all__ = ['TextAnalyticsClient']
 
 # `._patch.py` is used for handwritten extensions to the generated code
 # Example: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md

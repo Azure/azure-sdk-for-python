@@ -255,7 +255,7 @@ except (SyntaxError, ImportError):
     from ._models import TasksState  # type: ignore
     from ._models import TasksStateTasks  # type: ignore
 
-from ._microsoft_cognitive_language_service_enums import (
+from ._text_analytics_client_enums import (
     AnalyzeTextLROResultsKind,
     AnalyzeTextLROTaskKind,
     AnalyzeTextTaskKind,

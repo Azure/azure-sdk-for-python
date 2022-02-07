@@ -6,10 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._microsoft_cognitive_language_service_operations import MicrosoftCognitiveLanguageServiceOperationsMixin
-from ._analyze_text_operations import AnalyzeTextOperations
+from ._text_analytics_client_operations import TextAnalyticsClientOperationsMixin
 
 __all__ = [
-    'MicrosoftCognitiveLanguageServiceOperationsMixin',
-    'AnalyzeTextOperations',
+    'TextAnalyticsClientOperationsMixin',
 ]
