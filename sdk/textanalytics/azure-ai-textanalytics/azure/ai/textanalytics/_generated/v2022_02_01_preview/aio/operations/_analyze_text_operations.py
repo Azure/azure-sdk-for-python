@@ -47,7 +47,7 @@ class AnalyzeTextOperations:
 
     async def _submit_job_initial(
         self,
-        body: Optional["_models.AnalyzeTextJobsInput"] = None,
+        body: "_models.AnalyzeTextJobsInput",
         **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -59,10 +59,7 @@ class AnalyzeTextOperations:
         api_version = kwargs.pop('api_version', "2022-02-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        if body is not None:
-            _json = self._serialize.body(body, 'AnalyzeTextJobsInput')
-        else:
-            _json = None
+        _json = self._serialize.body(body, 'AnalyzeTextJobsInput')
 
         request = build_submit_job_request_initial(
             api_version=api_version,
@@ -96,7 +93,7 @@ class AnalyzeTextOperations:
     @distributed_trace_async
     async def begin_submit_job(
         self,
-        body: Optional["_models.AnalyzeTextJobsInput"] = None,
+        body: "_models.AnalyzeTextJobsInput",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Submit text analysis job.

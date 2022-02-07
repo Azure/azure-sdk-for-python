@@ -18,9 +18,9 @@ from azure.core.polling.base_polling import (
     BadStatus,
 )
 
-_FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted"])
+_FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted", "partiallysucceeded"])
 _FAILED = frozenset(["failed"])
-_SUCCEEDED = frozenset(["succeeded", "partiallycompleted"])
+_SUCCEEDED = frozenset(["succeeded", "partiallycompleted", "partiallysucceeded"])
 
 if TYPE_CHECKING:
     from typing import Any, Optional

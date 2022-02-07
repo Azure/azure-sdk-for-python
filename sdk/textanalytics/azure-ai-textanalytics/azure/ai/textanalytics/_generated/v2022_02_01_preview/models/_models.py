@@ -530,18 +530,12 @@ class TaskState(msrest.serialization.Model):
 class TaskIdentifier(msrest.serialization.Model):
     """Base task object.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar task_id: Required.
-    :vartype task_id: str
+    :ivar task_name:
+    :vartype task_name: str
     """
 
-    _validation = {
-        'task_id': {'required': True},
-    }
-
     _attribute_map = {
-        'task_id': {'key': 'taskId', 'type': 'str'},
+        'task_name': {'key': 'taskName', 'type': 'str'},
     }
 
     def __init__(
@@ -549,11 +543,11 @@ class TaskIdentifier(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword task_id: Required.
-        :paramtype task_id: str
+        :keyword task_name:
+        :paramtype task_name: str
         """
         super(TaskIdentifier, self).__init__(**kwargs)
-        self.task_id = kwargs['task_id']
+        self.task_name = kwargs.get('task_name', None)
 
 
 class AnalyzeTextLROResult(TaskIdentifier, TaskState):
@@ -569,8 +563,8 @@ class AnalyzeTextLROResult(TaskIdentifier, TaskState):
     :ivar status: Required. Possible values include: "notStarted", "running", "succeeded",
      "partiallySucceeded", "failed", "cancelled", "cancelling".
     :vartype status: str or ~azure.ai.textanalytics.v2022_02_01_preview.models.State
-    :ivar task_id: Required.
-    :vartype task_id: str
+    :ivar task_name:
+    :vartype task_name: str
     :ivar kind: Required. Enumeration of supported Text Analysis long-running operation task
      results.Constant filled by server. Possible values include: "SentimentAnalysisLROResults",
      "EntityRecognitionLROResults", "PiiEntityRecognitionLROResults",
@@ -584,14 +578,13 @@ class AnalyzeTextLROResult(TaskIdentifier, TaskState):
     _validation = {
         'last_update_date_time': {'required': True},
         'status': {'required': True},
-        'task_id': {'required': True},
         'kind': {'required': True},
     }
 
     _attribute_map = {
         'last_update_date_time': {'key': 'lastUpdateDateTime', 'type': 'iso-8601'},
         'status': {'key': 'status', 'type': 'str'},
-        'task_id': {'key': 'taskId', 'type': 'str'},
+        'task_name': {'key': 'taskName', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
@@ -609,14 +602,14 @@ class AnalyzeTextLROResult(TaskIdentifier, TaskState):
         :keyword status: Required. Possible values include: "notStarted", "running", "succeeded",
          "partiallySucceeded", "failed", "cancelled", "cancelling".
         :paramtype status: str or ~azure.ai.textanalytics.v2022_02_01_preview.models.State
-        :keyword task_id: Required.
-        :paramtype task_id: str
+        :keyword task_name:
+        :paramtype task_name: str
         """
         super(AnalyzeTextLROResult, self).__init__(**kwargs)
         self.last_update_date_time = kwargs['last_update_date_time']
         self.status = kwargs['status']
         self.kind = 'AnalyzeTextLROResult'  # type: str
-        self.task_id = kwargs['task_id']
+        self.task_name = kwargs.get('task_name', None)
 
 
 class AnalyzeTextLROTask(TaskIdentifier):
@@ -627,8 +620,8 @@ class AnalyzeTextLROTask(TaskIdentifier):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar task_id: Required.
-    :vartype task_id: str
+    :ivar task_name:
+    :vartype task_name: str
     :ivar kind: Required. Enumeration of supported long-running Text Analysis tasks.Constant filled
      by server. Possible values include: "SentimentAnalysis", "EntityRecognition",
      "PiiEntityRecognition", "KeyPhraseExtraction", "EntityLinking", "Healthcare",
@@ -638,12 +631,11 @@ class AnalyzeTextLROTask(TaskIdentifier):
     """
 
     _validation = {
-        'task_id': {'required': True},
         'kind': {'required': True},
     }
 
     _attribute_map = {
-        'task_id': {'key': 'taskId', 'type': 'str'},
+        'task_name': {'key': 'taskName', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
@@ -656,8 +648,8 @@ class AnalyzeTextLROTask(TaskIdentifier):
         **kwargs
     ):
         """
-        :keyword task_id: Required.
-        :paramtype task_id: str
+        :keyword task_name:
+        :paramtype task_name: str
         """
         super(AnalyzeTextLROTask, self).__init__(**kwargs)
         self.kind = 'AnalyzeTextLROTask'  # type: str
@@ -832,8 +824,8 @@ class CustomEntitiesLROTask(AnalyzeTextLROTask):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar task_id: Required.
-    :vartype task_id: str
+    :ivar task_name:
+    :vartype task_name: str
     :ivar kind: Required. Enumeration of supported long-running Text Analysis tasks.Constant filled
      by server. Possible values include: "SentimentAnalysis", "EntityRecognition",
      "PiiEntityRecognition", "KeyPhraseExtraction", "EntityLinking", "Healthcare",
@@ -846,12 +838,11 @@ class CustomEntitiesLROTask(AnalyzeTextLROTask):
     """
 
     _validation = {
-        'task_id': {'required': True},
         'kind': {'required': True},
     }
 
     _attribute_map = {
-        'task_id': {'key': 'taskId', 'type': 'str'},
+        'task_name': {'key': 'taskName', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'parameters': {'key': 'parameters', 'type': 'CustomEntitiesTaskParameters'},
     }
@@ -861,8 +852,8 @@ class CustomEntitiesLROTask(AnalyzeTextLROTask):
         **kwargs
     ):
         """
-        :keyword task_id: Required.
-        :paramtype task_id: str
+        :keyword task_name:
+        :paramtype task_name: str
         :keyword parameters: Supported parameters for a Custom Entities task.
         :paramtype parameters:
          ~azure.ai.textanalytics.v2022_02_01_preview.models.CustomEntitiesTaskParameters
@@ -1245,8 +1236,8 @@ class CustomEntityRecognitionLROResult(AnalyzeTextLROResult):
     :ivar status: Required. Possible values include: "notStarted", "running", "succeeded",
      "partiallySucceeded", "failed", "cancelled", "cancelling".
     :vartype status: str or ~azure.ai.textanalytics.v2022_02_01_preview.models.State
-    :ivar task_id: Required.
-    :vartype task_id: str
+    :ivar task_name:
+    :vartype task_name: str
     :ivar kind: Required. Enumeration of supported Text Analysis long-running operation task
      results.Constant filled by server. Possible values include: "SentimentAnalysisLROResults",
      "EntityRecognitionLROResults", "PiiEntityRecognitionLROResults",
@@ -1262,7 +1253,6 @@ class CustomEntityRecognitionLROResult(AnalyzeTextLROResult):
     _validation = {
         'last_update_date_time': {'required': True},
         'status': {'required': True},
-        'task_id': {'required': True},
         'kind': {'required': True},
         'results': {'required': True},
     }
@@ -1270,7 +1260,7 @@ class CustomEntityRecognitionLROResult(AnalyzeTextLROResult):
     _attribute_map = {
         'last_update_date_time': {'key': 'lastUpdateDateTime', 'type': 'iso-8601'},
         'status': {'key': 'status', 'type': 'str'},
-        'task_id': {'key': 'taskId', 'type': 'str'},
+        'task_name': {'key': 'taskName', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'results': {'key': 'results', 'type': 'CustomEntitiesResult'},
     }
@@ -1285,8 +1275,8 @@ class CustomEntityRecognitionLROResult(AnalyzeTextLROResult):
         :keyword status: Required. Possible values include: "notStarted", "running", "succeeded",
          "partiallySucceeded", "failed", "cancelled", "cancelling".
         :paramtype status: str or ~azure.ai.textanalytics.v2022_02_01_preview.models.State
-        :keyword task_id: Required.
-        :paramtype task_id: str
+        :keyword task_name:
+        :paramtype task_name: str
         :keyword results: Required.
         :paramtype results: ~azure.ai.textanalytics.v2022_02_01_preview.models.CustomEntitiesResult
         """
@@ -1305,8 +1295,8 @@ class CustomMultiClassificationLROResult(AnalyzeTextLROResult):
     :ivar status: Required. Possible values include: "notStarted", "running", "succeeded",
      "partiallySucceeded", "failed", "cancelled", "cancelling".
     :vartype status: str or ~azure.ai.textanalytics.v2022_02_01_preview.models.State
-    :ivar task_id: Required.
-    :vartype task_id: str
+    :ivar task_name:
+    :vartype task_name: str
     :ivar kind: Required. Enumeration of supported Text Analysis long-running operation task
      results.Constant filled by server. Possible values include: "SentimentAnalysisLROResults",
      "EntityRecognitionLROResults", "PiiEntityRecognitionLROResults",
@@ -1323,7 +1313,6 @@ class CustomMultiClassificationLROResult(AnalyzeTextLROResult):
     _validation = {
         'last_update_date_time': {'required': True},
         'status': {'required': True},
-        'task_id': {'required': True},
         'kind': {'required': True},
         'results': {'required': True},
     }
@@ -1331,7 +1320,7 @@ class CustomMultiClassificationLROResult(AnalyzeTextLROResult):
     _attribute_map = {
         'last_update_date_time': {'key': 'lastUpdateDateTime', 'type': 'iso-8601'},
         'status': {'key': 'status', 'type': 'str'},
-        'task_id': {'key': 'taskId', 'type': 'str'},
+        'task_name': {'key': 'taskName', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'results': {'key': 'results', 'type': 'CustomMultiClassificationResult'},
     }
@@ -1346,8 +1335,8 @@ class CustomMultiClassificationLROResult(AnalyzeTextLROResult):
         :keyword status: Required. Possible values include: "notStarted", "running", "succeeded",
          "partiallySucceeded", "failed", "cancelled", "cancelling".
         :paramtype status: str or ~azure.ai.textanalytics.v2022_02_01_preview.models.State
-        :keyword task_id: Required.
-        :paramtype task_id: str
+        :keyword task_name:
+        :paramtype task_name: str
         :keyword results: Required.
         :paramtype results:
          ~azure.ai.textanalytics.v2022_02_01_preview.models.CustomMultiClassificationResult
@@ -1362,8 +1351,8 @@ class CustomMultiClassificationLROTask(AnalyzeTextLROTask):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar task_id: Required.
-    :vartype task_id: str
+    :ivar task_name:
+    :vartype task_name: str
     :ivar kind: Required. Enumeration of supported long-running Text Analysis tasks.Constant filled
      by server. Possible values include: "SentimentAnalysis", "EntityRecognition",
      "PiiEntityRecognition", "KeyPhraseExtraction", "EntityLinking", "Healthcare",
@@ -1376,12 +1365,11 @@ class CustomMultiClassificationLROTask(AnalyzeTextLROTask):
     """
 
     _validation = {
-        'task_id': {'required': True},
         'kind': {'required': True},
     }
 
     _attribute_map = {
-        'task_id': {'key': 'taskId', 'type': 'str'},
+        'task_name': {'key': 'taskName', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'parameters': {'key': 'parameters', 'type': 'CustomMultiClassificationTaskParameters'},
     }
@@ -1391,8 +1379,8 @@ class CustomMultiClassificationLROTask(AnalyzeTextLROTask):
         **kwargs
     ):
         """
-        :keyword task_id: Required.
-        :paramtype task_id: str
+        :keyword task_name:
+        :paramtype task_name: str
         :keyword parameters: Supported parameters for a Custom Multi Classification task.
         :paramtype parameters:
          ~azure.ai.textanalytics.v2022_02_01_preview.models.CustomMultiClassificationTaskParameters
@@ -1606,8 +1594,8 @@ class CustomSingleClassificationLROResult(AnalyzeTextLROResult):
     :ivar status: Required. Possible values include: "notStarted", "running", "succeeded",
      "partiallySucceeded", "failed", "cancelled", "cancelling".
     :vartype status: str or ~azure.ai.textanalytics.v2022_02_01_preview.models.State
-    :ivar task_id: Required.
-    :vartype task_id: str
+    :ivar task_name:
+    :vartype task_name: str
     :ivar kind: Required. Enumeration of supported Text Analysis long-running operation task
      results.Constant filled by server. Possible values include: "SentimentAnalysisLROResults",
      "EntityRecognitionLROResults", "PiiEntityRecognitionLROResults",
@@ -1624,7 +1612,6 @@ class CustomSingleClassificationLROResult(AnalyzeTextLROResult):
     _validation = {
         'last_update_date_time': {'required': True},
         'status': {'required': True},
-        'task_id': {'required': True},
         'kind': {'required': True},
         'results': {'required': True},
     }
@@ -1632,7 +1619,7 @@ class CustomSingleClassificationLROResult(AnalyzeTextLROResult):
     _attribute_map = {
         'last_update_date_time': {'key': 'lastUpdateDateTime', 'type': 'iso-8601'},
         'status': {'key': 'status', 'type': 'str'},
-        'task_id': {'key': 'taskId', 'type': 'str'},
+        'task_name': {'key': 'taskName', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'results': {'key': 'results', 'type': 'CustomSingleClassificationResult'},
     }
@@ -1647,8 +1634,8 @@ class CustomSingleClassificationLROResult(AnalyzeTextLROResult):
         :keyword status: Required. Possible values include: "notStarted", "running", "succeeded",
          "partiallySucceeded", "failed", "cancelled", "cancelling".
         :paramtype status: str or ~azure.ai.textanalytics.v2022_02_01_preview.models.State
-        :keyword task_id: Required.
-        :paramtype task_id: str
+        :keyword task_name:
+        :paramtype task_name: str
         :keyword results: Required.
         :paramtype results:
          ~azure.ai.textanalytics.v2022_02_01_preview.models.CustomSingleClassificationResult
@@ -1663,8 +1650,8 @@ class CustomSingleClassificationLROTask(AnalyzeTextLROTask):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar task_id: Required.
-    :vartype task_id: str
+    :ivar task_name:
+    :vartype task_name: str
     :ivar kind: Required. Enumeration of supported long-running Text Analysis tasks.Constant filled
      by server. Possible values include: "SentimentAnalysis", "EntityRecognition",
      "PiiEntityRecognition", "KeyPhraseExtraction", "EntityLinking", "Healthcare",
@@ -1677,12 +1664,11 @@ class CustomSingleClassificationLROTask(AnalyzeTextLROTask):
     """
 
     _validation = {
-        'task_id': {'required': True},
         'kind': {'required': True},
     }
 
     _attribute_map = {
-        'task_id': {'key': 'taskId', 'type': 'str'},
+        'task_name': {'key': 'taskName', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'parameters': {'key': 'parameters', 'type': 'CustomSingleClassificationTaskParameters'},
     }
@@ -1692,8 +1678,8 @@ class CustomSingleClassificationLROTask(AnalyzeTextLROTask):
         **kwargs
     ):
         """
-        :keyword task_id: Required.
-        :paramtype task_id: str
+        :keyword task_name:
+        :paramtype task_name: str
         :keyword parameters: Supported parameters for a Custom Single Classification task.
         :paramtype parameters:
          ~azure.ai.textanalytics.v2022_02_01_preview.models.CustomSingleClassificationTaskParameters
@@ -2065,8 +2051,8 @@ class EntitiesLROTask(AnalyzeTextLROTask):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar task_id: Required.
-    :vartype task_id: str
+    :ivar task_name:
+    :vartype task_name: str
     :ivar kind: Required. Enumeration of supported long-running Text Analysis tasks.Constant filled
      by server. Possible values include: "SentimentAnalysis", "EntityRecognition",
      "PiiEntityRecognition", "KeyPhraseExtraction", "EntityLinking", "Healthcare",
@@ -2078,12 +2064,11 @@ class EntitiesLROTask(AnalyzeTextLROTask):
     """
 
     _validation = {
-        'task_id': {'required': True},
         'kind': {'required': True},
     }
 
     _attribute_map = {
-        'task_id': {'key': 'taskId', 'type': 'str'},
+        'task_name': {'key': 'taskName', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'parameters': {'key': 'parameters', 'type': 'EntitiesTaskParameters'},
     }
@@ -2093,8 +2078,8 @@ class EntitiesLROTask(AnalyzeTextLROTask):
         **kwargs
     ):
         """
-        :keyword task_id: Required.
-        :paramtype task_id: str
+        :keyword task_name:
+        :paramtype task_name: str
         :keyword parameters: Supported parameters for an Entity Recognition task.
         :paramtype parameters:
          ~azure.ai.textanalytics.v2022_02_01_preview.models.EntitiesTaskParameters
@@ -2428,8 +2413,8 @@ class EntityLinkingLROResult(AnalyzeTextLROResult):
     :ivar status: Required. Possible values include: "notStarted", "running", "succeeded",
      "partiallySucceeded", "failed", "cancelled", "cancelling".
     :vartype status: str or ~azure.ai.textanalytics.v2022_02_01_preview.models.State
-    :ivar task_id: Required.
-    :vartype task_id: str
+    :ivar task_name:
+    :vartype task_name: str
     :ivar kind: Required. Enumeration of supported Text Analysis long-running operation task
      results.Constant filled by server. Possible values include: "SentimentAnalysisLROResults",
      "EntityRecognitionLROResults", "PiiEntityRecognitionLROResults",
@@ -2445,7 +2430,6 @@ class EntityLinkingLROResult(AnalyzeTextLROResult):
     _validation = {
         'last_update_date_time': {'required': True},
         'status': {'required': True},
-        'task_id': {'required': True},
         'kind': {'required': True},
         'results': {'required': True},
     }
@@ -2453,7 +2437,7 @@ class EntityLinkingLROResult(AnalyzeTextLROResult):
     _attribute_map = {
         'last_update_date_time': {'key': 'lastUpdateDateTime', 'type': 'iso-8601'},
         'status': {'key': 'status', 'type': 'str'},
-        'task_id': {'key': 'taskId', 'type': 'str'},
+        'task_name': {'key': 'taskName', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'results': {'key': 'results', 'type': 'EntityLinkingResult'},
     }
@@ -2468,8 +2452,8 @@ class EntityLinkingLROResult(AnalyzeTextLROResult):
         :keyword status: Required. Possible values include: "notStarted", "running", "succeeded",
          "partiallySucceeded", "failed", "cancelled", "cancelling".
         :paramtype status: str or ~azure.ai.textanalytics.v2022_02_01_preview.models.State
-        :keyword task_id: Required.
-        :paramtype task_id: str
+        :keyword task_name:
+        :paramtype task_name: str
         :keyword results: Required.
         :paramtype results: ~azure.ai.textanalytics.v2022_02_01_preview.models.EntityLinkingResult
         """
@@ -2483,8 +2467,8 @@ class EntityLinkingLROTask(AnalyzeTextLROTask):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar task_id: Required.
-    :vartype task_id: str
+    :ivar task_name:
+    :vartype task_name: str
     :ivar kind: Required. Enumeration of supported long-running Text Analysis tasks.Constant filled
      by server. Possible values include: "SentimentAnalysis", "EntityRecognition",
      "PiiEntityRecognition", "KeyPhraseExtraction", "EntityLinking", "Healthcare",
@@ -2497,12 +2481,11 @@ class EntityLinkingLROTask(AnalyzeTextLROTask):
     """
 
     _validation = {
-        'task_id': {'required': True},
         'kind': {'required': True},
     }
 
     _attribute_map = {
-        'task_id': {'key': 'taskId', 'type': 'str'},
+        'task_name': {'key': 'taskName', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'parameters': {'key': 'parameters', 'type': 'EntityLinkingTaskParameters'},
     }
@@ -2512,8 +2495,8 @@ class EntityLinkingLROTask(AnalyzeTextLROTask):
         **kwargs
     ):
         """
-        :keyword task_id: Required.
-        :paramtype task_id: str
+        :keyword task_name:
+        :paramtype task_name: str
         :keyword parameters: Supported parameters for an Entity Linking task.
         :paramtype parameters:
          ~azure.ai.textanalytics.v2022_02_01_preview.models.EntityLinkingTaskParameters
@@ -2756,8 +2739,8 @@ class EntityRecognitionLROResult(AnalyzeTextLROResult):
     :ivar status: Required. Possible values include: "notStarted", "running", "succeeded",
      "partiallySucceeded", "failed", "cancelled", "cancelling".
     :vartype status: str or ~azure.ai.textanalytics.v2022_02_01_preview.models.State
-    :ivar task_id: Required.
-    :vartype task_id: str
+    :ivar task_name:
+    :vartype task_name: str
     :ivar kind: Required. Enumeration of supported Text Analysis long-running operation task
      results.Constant filled by server. Possible values include: "SentimentAnalysisLROResults",
      "EntityRecognitionLROResults", "PiiEntityRecognitionLROResults",
@@ -2773,7 +2756,6 @@ class EntityRecognitionLROResult(AnalyzeTextLROResult):
     _validation = {
         'last_update_date_time': {'required': True},
         'status': {'required': True},
-        'task_id': {'required': True},
         'kind': {'required': True},
         'results': {'required': True},
     }
@@ -2781,7 +2763,7 @@ class EntityRecognitionLROResult(AnalyzeTextLROResult):
     _attribute_map = {
         'last_update_date_time': {'key': 'lastUpdateDateTime', 'type': 'iso-8601'},
         'status': {'key': 'status', 'type': 'str'},
-        'task_id': {'key': 'taskId', 'type': 'str'},
+        'task_name': {'key': 'taskName', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'results': {'key': 'results', 'type': 'EntitiesResult'},
     }
@@ -2796,8 +2778,8 @@ class EntityRecognitionLROResult(AnalyzeTextLROResult):
         :keyword status: Required. Possible values include: "notStarted", "running", "succeeded",
          "partiallySucceeded", "failed", "cancelled", "cancelling".
         :paramtype status: str or ~azure.ai.textanalytics.v2022_02_01_preview.models.State
-        :keyword task_id: Required.
-        :paramtype task_id: str
+        :keyword task_name:
+        :paramtype task_name: str
         :keyword results: Required.
         :paramtype results: ~azure.ai.textanalytics.v2022_02_01_preview.models.EntitiesResult
         """
@@ -3007,8 +2989,8 @@ class ExtractiveSummarizationLROResult(AnalyzeTextLROResult):
     :ivar status: Required. Possible values include: "notStarted", "running", "succeeded",
      "partiallySucceeded", "failed", "cancelled", "cancelling".
     :vartype status: str or ~azure.ai.textanalytics.v2022_02_01_preview.models.State
-    :ivar task_id: Required.
-    :vartype task_id: str
+    :ivar task_name:
+    :vartype task_name: str
     :ivar kind: Required. Enumeration of supported Text Analysis long-running operation task
      results.Constant filled by server. Possible values include: "SentimentAnalysisLROResults",
      "EntityRecognitionLROResults", "PiiEntityRecognitionLROResults",
@@ -3025,7 +3007,6 @@ class ExtractiveSummarizationLROResult(AnalyzeTextLROResult):
     _validation = {
         'last_update_date_time': {'required': True},
         'status': {'required': True},
-        'task_id': {'required': True},
         'kind': {'required': True},
         'results': {'required': True},
     }
@@ -3033,7 +3014,7 @@ class ExtractiveSummarizationLROResult(AnalyzeTextLROResult):
     _attribute_map = {
         'last_update_date_time': {'key': 'lastUpdateDateTime', 'type': 'iso-8601'},
         'status': {'key': 'status', 'type': 'str'},
-        'task_id': {'key': 'taskId', 'type': 'str'},
+        'task_name': {'key': 'taskName', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'results': {'key': 'results', 'type': 'ExtractiveSummarizationResult'},
     }
@@ -3048,8 +3029,8 @@ class ExtractiveSummarizationLROResult(AnalyzeTextLROResult):
         :keyword status: Required. Possible values include: "notStarted", "running", "succeeded",
          "partiallySucceeded", "failed", "cancelled", "cancelling".
         :paramtype status: str or ~azure.ai.textanalytics.v2022_02_01_preview.models.State
-        :keyword task_id: Required.
-        :paramtype task_id: str
+        :keyword task_name:
+        :paramtype task_name: str
         :keyword results: Required.
         :paramtype results:
          ~azure.ai.textanalytics.v2022_02_01_preview.models.ExtractiveSummarizationResult
@@ -3064,8 +3045,8 @@ class ExtractiveSummarizationLROTask(AnalyzeTextLROTask):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar task_id: Required.
-    :vartype task_id: str
+    :ivar task_name:
+    :vartype task_name: str
     :ivar kind: Required. Enumeration of supported long-running Text Analysis tasks.Constant filled
      by server. Possible values include: "SentimentAnalysis", "EntityRecognition",
      "PiiEntityRecognition", "KeyPhraseExtraction", "EntityLinking", "Healthcare",
@@ -3078,12 +3059,11 @@ class ExtractiveSummarizationLROTask(AnalyzeTextLROTask):
     """
 
     _validation = {
-        'task_id': {'required': True},
         'kind': {'required': True},
     }
 
     _attribute_map = {
-        'task_id': {'key': 'taskId', 'type': 'str'},
+        'task_name': {'key': 'taskName', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'parameters': {'key': 'parameters', 'type': 'ExtractiveSummarizationTaskParameters'},
     }
@@ -3093,8 +3073,8 @@ class ExtractiveSummarizationLROTask(AnalyzeTextLROTask):
         **kwargs
     ):
         """
-        :keyword task_id: Required.
-        :paramtype task_id: str
+        :keyword task_name:
+        :paramtype task_name: str
         :keyword parameters: Supported parameters for an Extractive Summarization task.
         :paramtype parameters:
          ~azure.ai.textanalytics.v2022_02_01_preview.models.ExtractiveSummarizationTaskParameters
@@ -3504,8 +3484,8 @@ class HealthcareLROResult(AnalyzeTextLROResult):
     :ivar status: Required. Possible values include: "notStarted", "running", "succeeded",
      "partiallySucceeded", "failed", "cancelled", "cancelling".
     :vartype status: str or ~azure.ai.textanalytics.v2022_02_01_preview.models.State
-    :ivar task_id: Required.
-    :vartype task_id: str
+    :ivar task_name:
+    :vartype task_name: str
     :ivar kind: Required. Enumeration of supported Text Analysis long-running operation task
      results.Constant filled by server. Possible values include: "SentimentAnalysisLROResults",
      "EntityRecognitionLROResults", "PiiEntityRecognitionLROResults",
@@ -3521,7 +3501,6 @@ class HealthcareLROResult(AnalyzeTextLROResult):
     _validation = {
         'last_update_date_time': {'required': True},
         'status': {'required': True},
-        'task_id': {'required': True},
         'kind': {'required': True},
         'results': {'required': True},
     }
@@ -3529,7 +3508,7 @@ class HealthcareLROResult(AnalyzeTextLROResult):
     _attribute_map = {
         'last_update_date_time': {'key': 'lastUpdateDateTime', 'type': 'iso-8601'},
         'status': {'key': 'status', 'type': 'str'},
-        'task_id': {'key': 'taskId', 'type': 'str'},
+        'task_name': {'key': 'taskName', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'results': {'key': 'results', 'type': 'HealthcareResult'},
     }
@@ -3544,8 +3523,8 @@ class HealthcareLROResult(AnalyzeTextLROResult):
         :keyword status: Required. Possible values include: "notStarted", "running", "succeeded",
          "partiallySucceeded", "failed", "cancelled", "cancelling".
         :paramtype status: str or ~azure.ai.textanalytics.v2022_02_01_preview.models.State
-        :keyword task_id: Required.
-        :paramtype task_id: str
+        :keyword task_name:
+        :paramtype task_name: str
         :keyword results: Required.
         :paramtype results: ~azure.ai.textanalytics.v2022_02_01_preview.models.HealthcareResult
         """
@@ -3559,8 +3538,8 @@ class HealthcareLROTask(AnalyzeTextLROTask):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar task_id: Required.
-    :vartype task_id: str
+    :ivar task_name:
+    :vartype task_name: str
     :ivar kind: Required. Enumeration of supported long-running Text Analysis tasks.Constant filled
      by server. Possible values include: "SentimentAnalysis", "EntityRecognition",
      "PiiEntityRecognition", "KeyPhraseExtraction", "EntityLinking", "Healthcare",
@@ -3573,12 +3552,11 @@ class HealthcareLROTask(AnalyzeTextLROTask):
     """
 
     _validation = {
-        'task_id': {'required': True},
         'kind': {'required': True},
     }
 
     _attribute_map = {
-        'task_id': {'key': 'taskId', 'type': 'str'},
+        'task_name': {'key': 'taskName', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'parameters': {'key': 'parameters', 'type': 'HealthcareTaskParameters'},
     }
@@ -3588,8 +3566,8 @@ class HealthcareLROTask(AnalyzeTextLROTask):
         **kwargs
     ):
         """
-        :keyword task_id: Required.
-        :paramtype task_id: str
+        :keyword task_name:
+        :paramtype task_name: str
         :keyword parameters: Supported parameters for a Healthcare task.
         :paramtype parameters:
          ~azure.ai.textanalytics.v2022_02_01_preview.models.HealthcareTaskParameters
@@ -4000,8 +3978,8 @@ class KeyPhraseExtractionLROResult(AnalyzeTextLROResult):
     :ivar status: Required. Possible values include: "notStarted", "running", "succeeded",
      "partiallySucceeded", "failed", "cancelled", "cancelling".
     :vartype status: str or ~azure.ai.textanalytics.v2022_02_01_preview.models.State
-    :ivar task_id: Required.
-    :vartype task_id: str
+    :ivar task_name:
+    :vartype task_name: str
     :ivar kind: Required. Enumeration of supported Text Analysis long-running operation task
      results.Constant filled by server. Possible values include: "SentimentAnalysisLROResults",
      "EntityRecognitionLROResults", "PiiEntityRecognitionLROResults",
@@ -4017,7 +3995,6 @@ class KeyPhraseExtractionLROResult(AnalyzeTextLROResult):
     _validation = {
         'last_update_date_time': {'required': True},
         'status': {'required': True},
-        'task_id': {'required': True},
         'kind': {'required': True},
         'results': {'required': True},
     }
@@ -4025,7 +4002,7 @@ class KeyPhraseExtractionLROResult(AnalyzeTextLROResult):
     _attribute_map = {
         'last_update_date_time': {'key': 'lastUpdateDateTime', 'type': 'iso-8601'},
         'status': {'key': 'status', 'type': 'str'},
-        'task_id': {'key': 'taskId', 'type': 'str'},
+        'task_name': {'key': 'taskName', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'results': {'key': 'results', 'type': 'KeyPhraseResult'},
     }
@@ -4040,8 +4017,8 @@ class KeyPhraseExtractionLROResult(AnalyzeTextLROResult):
         :keyword status: Required. Possible values include: "notStarted", "running", "succeeded",
          "partiallySucceeded", "failed", "cancelled", "cancelling".
         :paramtype status: str or ~azure.ai.textanalytics.v2022_02_01_preview.models.State
-        :keyword task_id: Required.
-        :paramtype task_id: str
+        :keyword task_name:
+        :paramtype task_name: str
         :keyword results: Required.
         :paramtype results: ~azure.ai.textanalytics.v2022_02_01_preview.models.KeyPhraseResult
         """
@@ -4055,8 +4032,8 @@ class KeyPhraseLROTask(AnalyzeTextLROTask):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar task_id: Required.
-    :vartype task_id: str
+    :ivar task_name:
+    :vartype task_name: str
     :ivar kind: Required. Enumeration of supported long-running Text Analysis tasks.Constant filled
      by server. Possible values include: "SentimentAnalysis", "EntityRecognition",
      "PiiEntityRecognition", "KeyPhraseExtraction", "EntityLinking", "Healthcare",
@@ -4068,12 +4045,11 @@ class KeyPhraseLROTask(AnalyzeTextLROTask):
     """
 
     _validation = {
-        'task_id': {'required': True},
         'kind': {'required': True},
     }
 
     _attribute_map = {
-        'task_id': {'key': 'taskId', 'type': 'str'},
+        'task_name': {'key': 'taskName', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'parameters': {'key': 'parameters', 'type': 'KeyPhraseTaskParameters'},
     }
@@ -4083,8 +4059,8 @@ class KeyPhraseLROTask(AnalyzeTextLROTask):
         **kwargs
     ):
         """
-        :keyword task_id: Required.
-        :paramtype task_id: str
+        :keyword task_name:
+        :paramtype task_name: str
         :keyword parameters: Supported parameters for a Key Phrase Extraction task.
         :paramtype parameters:
          ~azure.ai.textanalytics.v2022_02_01_preview.models.KeyPhraseTaskParameters
@@ -4815,8 +4791,8 @@ class PiiEntityRecognitionLROResult(AnalyzeTextLROResult):
     :ivar status: Required. Possible values include: "notStarted", "running", "succeeded",
      "partiallySucceeded", "failed", "cancelled", "cancelling".
     :vartype status: str or ~azure.ai.textanalytics.v2022_02_01_preview.models.State
-    :ivar task_id: Required.
-    :vartype task_id: str
+    :ivar task_name:
+    :vartype task_name: str
     :ivar kind: Required. Enumeration of supported Text Analysis long-running operation task
      results.Constant filled by server. Possible values include: "SentimentAnalysisLROResults",
      "EntityRecognitionLROResults", "PiiEntityRecognitionLROResults",
@@ -4832,7 +4808,6 @@ class PiiEntityRecognitionLROResult(AnalyzeTextLROResult):
     _validation = {
         'last_update_date_time': {'required': True},
         'status': {'required': True},
-        'task_id': {'required': True},
         'kind': {'required': True},
         'results': {'required': True},
     }
@@ -4840,7 +4815,7 @@ class PiiEntityRecognitionLROResult(AnalyzeTextLROResult):
     _attribute_map = {
         'last_update_date_time': {'key': 'lastUpdateDateTime', 'type': 'iso-8601'},
         'status': {'key': 'status', 'type': 'str'},
-        'task_id': {'key': 'taskId', 'type': 'str'},
+        'task_name': {'key': 'taskName', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'results': {'key': 'results', 'type': 'PiiResult'},
     }
@@ -4855,8 +4830,8 @@ class PiiEntityRecognitionLROResult(AnalyzeTextLROResult):
         :keyword status: Required. Possible values include: "notStarted", "running", "succeeded",
          "partiallySucceeded", "failed", "cancelled", "cancelling".
         :paramtype status: str or ~azure.ai.textanalytics.v2022_02_01_preview.models.State
-        :keyword task_id: Required.
-        :paramtype task_id: str
+        :keyword task_name:
+        :paramtype task_name: str
         :keyword results: Required.
         :paramtype results: ~azure.ai.textanalytics.v2022_02_01_preview.models.PiiResult
         """
@@ -4870,8 +4845,8 @@ class PiiLROTask(AnalyzeTextLROTask):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar task_id: Required.
-    :vartype task_id: str
+    :ivar task_name:
+    :vartype task_name: str
     :ivar kind: Required. Enumeration of supported long-running Text Analysis tasks.Constant filled
      by server. Possible values include: "SentimentAnalysis", "EntityRecognition",
      "PiiEntityRecognition", "KeyPhraseExtraction", "EntityLinking", "Healthcare",
@@ -4883,12 +4858,11 @@ class PiiLROTask(AnalyzeTextLROTask):
     """
 
     _validation = {
-        'task_id': {'required': True},
         'kind': {'required': True},
     }
 
     _attribute_map = {
-        'task_id': {'key': 'taskId', 'type': 'str'},
+        'task_name': {'key': 'taskName', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'parameters': {'key': 'parameters', 'type': 'PiiTaskParameters'},
     }
@@ -4898,8 +4872,8 @@ class PiiLROTask(AnalyzeTextLROTask):
         **kwargs
     ):
         """
-        :keyword task_id: Required.
-        :paramtype task_id: str
+        :keyword task_name:
+        :paramtype task_name: str
         :keyword parameters: Supported parameters for a PII Entities Recognition task.
         :paramtype parameters: ~azure.ai.textanalytics.v2022_02_01_preview.models.PiiTaskParameters
         """
@@ -5391,8 +5365,8 @@ class SentimentAnalysisLROTask(AnalyzeTextLROTask):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar task_id: Required.
-    :vartype task_id: str
+    :ivar task_name:
+    :vartype task_name: str
     :ivar kind: Required. Enumeration of supported long-running Text Analysis tasks.Constant filled
      by server. Possible values include: "SentimentAnalysis", "EntityRecognition",
      "PiiEntityRecognition", "KeyPhraseExtraction", "EntityLinking", "Healthcare",
@@ -5405,12 +5379,11 @@ class SentimentAnalysisLROTask(AnalyzeTextLROTask):
     """
 
     _validation = {
-        'task_id': {'required': True},
         'kind': {'required': True},
     }
 
     _attribute_map = {
-        'task_id': {'key': 'taskId', 'type': 'str'},
+        'task_name': {'key': 'taskName', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'parameters': {'key': 'parameters', 'type': 'SentimentAnalysisTaskParameters'},
     }
@@ -5420,8 +5393,8 @@ class SentimentAnalysisLROTask(AnalyzeTextLROTask):
         **kwargs
     ):
         """
-        :keyword task_id: Required.
-        :paramtype task_id: str
+        :keyword task_name:
+        :paramtype task_name: str
         :keyword parameters: Supported parameters for a Sentiment Analysis task.
         :paramtype parameters:
          ~azure.ai.textanalytics.v2022_02_01_preview.models.SentimentAnalysisTaskParameters
@@ -5602,8 +5575,8 @@ class SentimentLROResult(AnalyzeTextLROResult):
     :ivar status: Required. Possible values include: "notStarted", "running", "succeeded",
      "partiallySucceeded", "failed", "cancelled", "cancelling".
     :vartype status: str or ~azure.ai.textanalytics.v2022_02_01_preview.models.State
-    :ivar task_id: Required.
-    :vartype task_id: str
+    :ivar task_name:
+    :vartype task_name: str
     :ivar kind: Required. Enumeration of supported Text Analysis long-running operation task
      results.Constant filled by server. Possible values include: "SentimentAnalysisLROResults",
      "EntityRecognitionLROResults", "PiiEntityRecognitionLROResults",
@@ -5619,7 +5592,6 @@ class SentimentLROResult(AnalyzeTextLROResult):
     _validation = {
         'last_update_date_time': {'required': True},
         'status': {'required': True},
-        'task_id': {'required': True},
         'kind': {'required': True},
         'results': {'required': True},
     }
@@ -5627,7 +5599,7 @@ class SentimentLROResult(AnalyzeTextLROResult):
     _attribute_map = {
         'last_update_date_time': {'key': 'lastUpdateDateTime', 'type': 'iso-8601'},
         'status': {'key': 'status', 'type': 'str'},
-        'task_id': {'key': 'taskId', 'type': 'str'},
+        'task_name': {'key': 'taskName', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'results': {'key': 'results', 'type': 'SentimentResponse'},
     }
@@ -5642,8 +5614,8 @@ class SentimentLROResult(AnalyzeTextLROResult):
         :keyword status: Required. Possible values include: "notStarted", "running", "succeeded",
          "partiallySucceeded", "failed", "cancelled", "cancelling".
         :paramtype status: str or ~azure.ai.textanalytics.v2022_02_01_preview.models.State
-        :keyword task_id: Required.
-        :paramtype task_id: str
+        :keyword task_name:
+        :paramtype task_name: str
         :keyword results: Required.
         :paramtype results: ~azure.ai.textanalytics.v2022_02_01_preview.models.SentimentResponse
         """

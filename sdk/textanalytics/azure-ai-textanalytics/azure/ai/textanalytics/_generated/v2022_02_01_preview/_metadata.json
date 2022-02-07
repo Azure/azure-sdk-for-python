@@ -4,7 +4,7 @@
     "client": {
         "name": "MicrosoftCognitiveLanguageService",
         "filename": "_microsoft_cognitive_language_service",
-        "description": "The language service API is a suite of natural language processing (NLP) skills built with best-in-class Microsoft machine learning algorithms.  The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction, language detection and question answering. Further documentation can be found in :code:`\u003ca href=\"https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview\"\u003ehttps://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview\u003c/a\u003e`.0.",
+        "description": "The language service API is a suite of natural language processing (NLP) skills built with best-in-class Microsoft machine learning algorithms.  The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction, language detection and question answering. Further documentation can be found in :code:`\u003ca href=\"https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview\"\u003ehttps://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview\u003c/a\u003e`.0.",
         "host_value": null,
         "parameterized_host_template": "\u0027{Endpoint}/language\u0027",
         "azure_arm": false,
@@ -93,15 +93,15 @@
         "operations": {
             "analyze_text" : {
                 "sync": {
-                    "signature": "def analyze_text(\n    self,\n    show_stats=None,  # type: Optional[bool]\n    body=None,  # type: Optional[\"_models.AnalyzeTextTask\"]\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.AnalyzeTextTaskResult\"\n",
-                    "doc": "\"\"\"Request text analysis over a collection of documents.\n\nSubmit a collection of text documents for analysis.  Specify a single unique task to be\nexecuted immediately.\n\n:param show_stats: (Optional) if set to true, response will contain request and document level\n statistics.\n:type show_stats: bool\n:param body: Collection of documents to analyze and a single task to execute.\n:type body: ~azure.ai.textanalytics.v2022_02_01_preview.models.AnalyzeTextTask\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: AnalyzeTextTaskResult, or the result of cls(response)\n:rtype: ~azure.ai.textanalytics.v2022_02_01_preview.models.AnalyzeTextTaskResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "def analyze_text(\n    self,\n    body,  # type: \"_models.AnalyzeTextTask\"\n    show_stats=None,  # type: Optional[bool]\n    **kwargs  # type: Any\n):\n    # type: (...) -\u003e \"_models.AnalyzeTextTaskResult\"\n",
+                    "doc": "\"\"\"Request text analysis over a collection of documents.\n\nSubmit a collection of text documents for analysis.  Specify a single unique task to be\nexecuted immediately.\n\n:param body: Collection of documents to analyze and a single task to execute.\n:type body: ~azure.ai.textanalytics.v2022_02_01_preview.models.AnalyzeTextTask\n:param show_stats: (Optional) if set to true, response will contain request and document level\n statistics.\n:type show_stats: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: AnalyzeTextTaskResult, or the result of cls(response)\n:rtype: ~azure.ai.textanalytics.v2022_02_01_preview.models.AnalyzeTextTaskResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def analyze_text(\n    self,\n    show_stats: Optional[bool] = None,\n    body: Optional[\"_models.AnalyzeTextTask\"] = None,\n    **kwargs: Any\n) -\u003e \"_models.AnalyzeTextTaskResult\":\n",
-                    "doc": "\"\"\"Request text analysis over a collection of documents.\n\nSubmit a collection of text documents for analysis.  Specify a single unique task to be\nexecuted immediately.\n\n:param show_stats: (Optional) if set to true, response will contain request and document level\n statistics.\n:type show_stats: bool\n:param body: Collection of documents to analyze and a single task to execute.\n:type body: ~azure.ai.textanalytics.v2022_02_01_preview.models.AnalyzeTextTask\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: AnalyzeTextTaskResult, or the result of cls(response)\n:rtype: ~azure.ai.textanalytics.v2022_02_01_preview.models.AnalyzeTextTaskResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
+                    "signature": "async def analyze_text(\n    self,\n    body: \"_models.AnalyzeTextTask\",\n    show_stats: Optional[bool] = None,\n    **kwargs: Any\n) -\u003e \"_models.AnalyzeTextTaskResult\":\n",
+                    "doc": "\"\"\"Request text analysis over a collection of documents.\n\nSubmit a collection of text documents for analysis.  Specify a single unique task to be\nexecuted immediately.\n\n:param body: Collection of documents to analyze and a single task to execute.\n:type body: ~azure.ai.textanalytics.v2022_02_01_preview.models.AnalyzeTextTask\n:param show_stats: (Optional) if set to true, response will contain request and document level\n statistics.\n:type show_stats: bool\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: AnalyzeTextTaskResult, or the result of cls(response)\n:rtype: ~azure.ai.textanalytics.v2022_02_01_preview.models.AnalyzeTextTaskResult\n:raises: ~azure.core.exceptions.HttpResponseError\n\"\"\""
                 },
-                "call": "show_stats, body"
+                "call": "body, show_stats"
             }
         }
     }

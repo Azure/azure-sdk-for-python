@@ -15,9 +15,9 @@ from azure.core.polling._async_poller import PollingReturnType
 from .._lro import TextAnalyticsOperationResourcePolling
 
 
-_FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted"])
+_FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted", "partiallysucceeded"])
 _FAILED = frozenset(["failed"])
-_SUCCEEDED = frozenset(["succeeded", "partiallycompleted"])
+_SUCCEEDED = frozenset(["succeeded", "partiallycompleted", "partiallysucceeded"])
 
 
 class TextAnalyticsAsyncLROPollingMethod(AsyncLROBasePolling):

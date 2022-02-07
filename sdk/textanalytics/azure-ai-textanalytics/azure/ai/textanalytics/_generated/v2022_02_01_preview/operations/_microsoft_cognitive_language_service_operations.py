@@ -37,7 +37,7 @@ def build_analyze_text_request(
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     show_stats = kwargs.pop('show_stats', None)  # type: Optional[bool]
 
-    accept = "application/json, text/json"
+    accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/:analyze-text')
 
@@ -67,8 +67,8 @@ class MicrosoftCognitiveLanguageServiceOperationsMixin(object):
     @distributed_trace
     def analyze_text(
         self,
+        body,  # type: "_models.AnalyzeTextTask"
         show_stats=None,  # type: Optional[bool]
-        body=None,  # type: Optional["_models.AnalyzeTextTask"]
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.AnalyzeTextTaskResult"
@@ -77,11 +77,11 @@ class MicrosoftCognitiveLanguageServiceOperationsMixin(object):
         Submit a collection of text documents for analysis.  Specify a single unique task to be
         executed immediately.
 
+        :param body: Collection of documents to analyze and a single task to execute.
+        :type body: ~azure.ai.textanalytics.v2022_02_01_preview.models.AnalyzeTextTask
         :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics.
         :type show_stats: bool
-        :param body: Collection of documents to analyze and a single task to execute.
-        :type body: ~azure.ai.textanalytics.v2022_02_01_preview.models.AnalyzeTextTask
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeTextTaskResult, or the result of cls(response)
         :rtype: ~azure.ai.textanalytics.v2022_02_01_preview.models.AnalyzeTextTaskResult
@@ -96,10 +96,7 @@ class MicrosoftCognitiveLanguageServiceOperationsMixin(object):
         api_version = kwargs.pop('api_version', "2022-02-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        if body is not None:
-            _json = self._serialize.body(body, 'AnalyzeTextTask')
-        else:
-            _json = None
+        _json = self._serialize.body(body, 'AnalyzeTextTask')
 
         request = build_analyze_text_request(
             api_version=api_version,

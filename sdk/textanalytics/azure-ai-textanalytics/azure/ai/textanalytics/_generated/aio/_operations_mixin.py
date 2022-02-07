@@ -65,8 +65,8 @@ class TextAnalyticsClientOperationsMixin(object):
 
     async def analyze_text(
         self,
+        body: "_models.AnalyzeTextTask",
         show_stats: Optional[bool] = None,
-        body: Optional["_models.AnalyzeTextTask"] = None,
         **kwargs: Any
     ) -> "_models.AnalyzeTextTaskResult":
         """Request text analysis over a collection of documents.
@@ -74,11 +74,11 @@ class TextAnalyticsClientOperationsMixin(object):
         Submit a collection of text documents for analysis.  Specify a single unique task to be
         executed immediately.
 
+        :param body: Collection of documents to analyze and a single task to execute.
+        :type body: ~azure.ai.textanalytics.v2022_02_01_preview.models.AnalyzeTextTask
         :param show_stats: (Optional) if set to true, response will contain request and document level
          statistics.
         :type show_stats: bool
-        :param body: Collection of documents to analyze and a single task to execute.
-        :type body: ~azure.ai.textanalytics.v2022_02_01_preview.models.AnalyzeTextTask
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeTextTaskResult, or the result of cls(response)
         :rtype: ~azure.ai.textanalytics.v2022_02_01_preview.models.AnalyzeTextTaskResult
@@ -95,7 +95,7 @@ class TextAnalyticsClientOperationsMixin(object):
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return await mixin_instance.analyze_text(show_stats, body, **kwargs)
+        return await mixin_instance.analyze_text(body, show_stats, **kwargs)
 
     async def begin_analyze(
         self,
