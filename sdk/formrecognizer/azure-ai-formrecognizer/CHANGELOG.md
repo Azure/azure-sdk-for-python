@@ -17,6 +17,9 @@
 - Added new required parameter `build_mode` to `begin_build_model()`.
 - Some models that previously returned float for currency related fields may now return a `CurrencyValue`. TIP: Use `get_model()` to see updated prebuilt model schemas.
 
+### Bugs Fixed
+- Default the `percent_completed` property to 0 when not returned with model operation information.
+
 ### Other Changes
 - Python 2.7 is no longer supported in this release. Please use Python 3.6 or later.
 - Bumped `azure-core` minimum dependency version from `1.13.0` to `1.20.1`.
