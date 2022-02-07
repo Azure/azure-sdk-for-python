@@ -4,6 +4,7 @@ Azure Cognitive Services Form Recognizer is a cloud service that uses machine le
 
 - Layout - Extract content and structure (ex. words, selection marks, tables) from documents.
 - Document - Analyze key-value pairs and entities in addition to general layout from documents.
+- Read - Read page information and detected languages from documents.
 - Prebuilt - Extract common field values from select document types (ex. receipts, invoices, business cards, ID documents) using prebuilt models.
 - Custom - Build custom models from your own data to extract tailored field values in addition to general layout from documents.
 
@@ -27,24 +28,24 @@ Install the Azure Form Recognizer client library for Python with [pip][pip]:
 pip install azure-ai-formrecognizer --pre
 ```
 
-> Note: This version of the client library defaults to the `2021-09-30-preview` version of the service.
+> Note: This version of the client library defaults to the `2022-01-30-preview` version of the service.
 
 This table shows the relationship between SDK versions and supported API versions of the service:
 
 |SDK version|Supported API version of service
 |-|-
-|3.2.0b2 - Latest beta release | 2.0, 2.1, 2021-09-30-preview
+|3.2.0b3 - Latest beta release | 2.0, 2.1, 2022-01-30-preview
 |3.1.X - Latest GA release| 2.0, 2.1 (default)
 |3.0.0| 2.0
 
-> Note: Starting with version `2021-09-30-preview`, a new set of clients were introduced to leverage the newest features
+> Note: Starting with version `3.2.0b1`, a new set of clients were introduced to leverage the newest features
 > of the Form Recognizer service. Please see the [Migration Guide][migration-guide] for detailed instructions on how to update application
 > code from client library version `3.1.X` or lower to the latest version. Additionally, see the [Changelog][changelog] for more detailed information.
 > The below table describes the relationship of each client and its supported API version(s):
 
 |API version|Supported clients
 |-|-
-|2021-09-30-preview | DocumentAnalysisClient and DocumentModelAdministrationClient
+|2022-01-30-preview | DocumentAnalysisClient and DocumentModelAdministrationClient
 |2.1 | FormRecognizerClient and FormTrainingClient
 |2.0 | FormRecognizerClient and FormTrainingClient
 
@@ -163,6 +164,7 @@ Use the `model` parameter to select the type of model for analysis.
 |-|-
 |`prebuilt-layout`| Text extraction, selection marks, tables
 |`prebuilt-document`| Text extraction, selection marks, tables, key-value pairs and entities
+|`prebuilt-read`|Text extraction and detected languages
 |`prebuilt-invoices`| Text extraction, selection marks, tables, and pre-trained fields and values pertaining to English invoices
 |`prebuilt-businessCard`| Text extraction and pre-trained fields and values pertaining to English business cards
 |`prebuilt-idDocument`| Text extraction and pre-trained fields and values pertaining to US driver licenses and international passports
@@ -444,7 +446,7 @@ document_model_admin_client = DocumentModelAdministrationClient(endpoint, creden
 container_sas_url = "<container-sas-url>"  # training documents uploaded to blob storage
 poller = document_model_admin_client.begin_build_model(
     # For more information about build_mode, see: https://aka.ms/azsdk/formrecognizer/buildmode
-    source=container_sas_url, build_mode="templeate", model_id="my-first-model"
+    source=container_sas_url, build_mode="template", model_id="my-first-model"
 )
 model = poller.result()
 
