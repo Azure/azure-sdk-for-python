@@ -3386,7 +3386,7 @@ class ModelOperationInfo(object):
     def __init__(self, **kwargs):
         self.operation_id = kwargs.get("operation_id", None)
         self.status = kwargs.get("status", None)
-        self.percent_completed = kwargs.get("percent_completed", None)
+        self.percent_completed = kwargs.get("percent_completed", 0)
         self.created_on = kwargs.get("created_on", None)
         self.last_updated_on = kwargs.get("last_updated_on", None)
         self.kind = kwargs.get("kind", None)
@@ -3455,7 +3455,7 @@ class ModelOperationInfo(object):
         return cls(
             operation_id=op.operation_id,
             status=op.status,
-            percent_completed=op.percent_completed,
+            percent_completed=op.percent_completed if op.percent_completed else 0,
             created_on=op.created_date_time,
             last_updated_on=op.last_updated_date_time,
             kind=op.kind,
@@ -3574,7 +3574,7 @@ class ModelOperation(ModelOperationInfo):
         return cls(
             operation_id=op.operation_id,
             status=op.status,
-            percent_completed=op.percent_completed,
+            percent_completed=op.percent_completed if op.percent_completed else 0,
             created_on=op.created_date_time,
             last_updated_on=op.last_updated_date_time,
             kind=op.kind,
