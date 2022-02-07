@@ -27,7 +27,7 @@ from typing import Any, Dict, List, Optional, Union, Iterable, cast  # pylint: d
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
-from ._base import build_options
+from ._base import build_options, validate_cache_staleness_value
 from .exceptions import CosmosResourceNotFoundError
 from .http_constants import StatusCodes
 from .offer import Offer
@@ -167,6 +167,7 @@ class ContainerProxy(object):
         :param partition_key: Partition key for the item to retrieve.
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param post_trigger_include: trigger id to be used as post operation trigger.
+        **Provisional** parameter max_integrated_cache_staleness_in_ms
         :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
         :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
@@ -197,6 +198,7 @@ class ContainerProxy(object):
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
         if max_integrated_cache_staleness_in_ms is not None:
+            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         result = self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
@@ -217,6 +219,7 @@ class ContainerProxy(object):
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param populate_query_metrics: Enable returning query metrics in response headers.
+        **Provisional** parameter max_integrated_cache_staleness_in_ms
         :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
         :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
@@ -232,6 +235,7 @@ class ContainerProxy(object):
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
         if max_integrated_cache_staleness_in_ms is not None:
+            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         if hasattr(response_hook, "clear"):
@@ -324,6 +328,7 @@ class ContainerProxy(object):
         :param enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
         :param populate_query_metrics: Enable returning query metrics in response headers.
+        **Provisional** parameter max_integrated_cache_staleness_in_ms
         :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
         :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
@@ -363,6 +368,7 @@ class ContainerProxy(object):
         if enable_scan_in_query is not None:
             feed_options["enableScanInQuery"] = enable_scan_in_query
         if max_integrated_cache_staleness_in_ms is not None:
+            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         if hasattr(response_hook, "clear"):
@@ -401,6 +407,7 @@ class ContainerProxy(object):
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
+        **Provisional** parameter max_integrated_cache_staleness_in_ms
         :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
         :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
@@ -425,6 +432,7 @@ class ContainerProxy(object):
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
         if max_integrated_cache_staleness_in_ms is not None:
+            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         result = self.client_connection.ReplaceItem(
@@ -454,6 +462,7 @@ class ContainerProxy(object):
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
+        **Provisional** parameter max_integrated_cache_staleness_in_ms
         :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
         :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
@@ -476,6 +485,7 @@ class ContainerProxy(object):
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
         if max_integrated_cache_staleness_in_ms is not None:
+            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         result = self.client_connection.UpsertItem(
@@ -510,6 +520,7 @@ class ContainerProxy(object):
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
         :param indexing_directive: Indicate whether the document should be omitted from indexing.
+        **Provisional** parameter max_integrated_cache_staleness_in_ms
         :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
         :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword bool enable_automatic_id_generation: Enable automatic id generation if no id present.
@@ -536,6 +547,7 @@ class ContainerProxy(object):
         if indexing_directive is not None:
             request_options["indexingDirective"] = indexing_directive
         if max_integrated_cache_staleness_in_ms is not None:
+            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         result = self.client_connection.CreateItem(
@@ -566,6 +578,7 @@ class ContainerProxy(object):
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
+        **Provisional** parameter max_integrated_cache_staleness_in_ms
         :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
         :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
@@ -589,6 +602,7 @@ class ContainerProxy(object):
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
         if max_integrated_cache_staleness_in_ms is not None:
+            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         document_link = self._get_document_link(item)

@@ -71,6 +71,7 @@ _COMMON_OPTIONS = {
     'query_version': 'queryVersion'
 }
 
+
 def _get_match_headers(kwargs):
     # type: (Dict[str, Any]) -> Tuple(Optional[str], Optional[str])
     if_match = kwargs.pop('if_match', None)
@@ -112,14 +113,14 @@ def build_options(kwargs):
 
 
 def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
-    cosmos_client_connection,
-    default_headers,
-    verb,
-    path,
-    resource_id,
-    resource_type,
-    options,
-    partition_key_range_id=None,
+        cosmos_client_connection,
+        default_headers,
+        verb,
+        path,
+        resource_id,
+        resource_type,
+        options,
+        partition_key_range_id=None,
 ):
     """Gets HTTP request headers.
 
@@ -641,7 +642,7 @@ def ParsePaths(paths):
                 newIndex += 1
 
             # This will extract the token excluding the quote chars
-            token = path[currentIndex + 1 : newIndex]
+            token = path[currentIndex + 1: newIndex]
             tokens.append(token)
             currentIndex = newIndex + 1
         else:
@@ -660,3 +661,12 @@ def ParsePaths(paths):
             tokens.append(token)
 
     return tokens
+
+
+def validate_cache_staleness_value(max_integrated_cache_staleness):
+    try:
+        int(max_integrated_cache_staleness)
+    except Exception:
+        raise
+    if max_integrated_cache_staleness < 0:
+        raise ValueError("Parameter 'max_integrated_cache_staleness_in_ms' can only be a positive integer.")

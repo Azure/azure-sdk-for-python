@@ -29,7 +29,7 @@ from azure.core.tracing.decorator import distributed_trace  # pylint: disable=un
 from azure.core.tracing.decorator_async import distributed_trace_async  # type: ignore
 
 from ._cosmos_client_connection_async import CosmosClientConnection
-from .._base import build_options as _build_options
+from .._base import build_options as _build_options, validate_cache_staleness_value
 from ..exceptions import CosmosResourceNotFoundError
 from ..http_constants import StatusCodes
 from ..offer import Offer
@@ -163,6 +163,7 @@ class ContainerProxy(object):
         :func:`ContainerProxy.upsert_item` method.
 
         :param body: A dict-like object representing the item to create.
+        **Provisional** parameter max_integrated_cache_staleness_in_ms
         :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
         :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword pre_trigger_include: trigger id to be used as pre operation trigger.
@@ -193,6 +194,7 @@ class ContainerProxy(object):
         if indexing_directive is not None:
             request_options["indexingDirective"] = indexing_directive
         if max_integrated_cache_staleness_in_ms is not None:
+            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         result = await self.client_connection.CreateItem(
@@ -215,6 +217,7 @@ class ContainerProxy(object):
 
         :param item: The ID (name) or dict representing item to retrieve.
         :param partition_key: Partition key for the item to retrieve.
+        **Provisional** parameter max_integrated_cache_staleness_in_ms
         :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
         :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
@@ -240,6 +243,7 @@ class ContainerProxy(object):
         if partition_key is not None:
             request_options["partitionKey"] = await self._set_partition_key(partition_key)
         if max_integrated_cache_staleness_in_ms is not None:
+            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         result = await self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
@@ -258,6 +262,7 @@ class ContainerProxy(object):
         """List all the items in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
+        **Provisional** parameter max_integrated_cache_staleness_in_ms
         :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
         :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
@@ -271,6 +276,7 @@ class ContainerProxy(object):
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if max_integrated_cache_staleness_in_ms is not None:
+            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         if hasattr(response_hook, "clear"):
@@ -313,6 +319,7 @@ class ContainerProxy(object):
         :param enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
         :param populate_query_metrics: Enable returning query metrics in response headers.
+        **Provisional** parameter max_integrated_cache_staleness_in_ms
         :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
         :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
@@ -352,6 +359,7 @@ class ContainerProxy(object):
         else:
             feed_options["enableCrossPartitionQuery"] = True
         if max_integrated_cache_staleness_in_ms is not None:
+            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         if hasattr(response_hook, "clear"):
@@ -434,6 +442,7 @@ class ContainerProxy(object):
         :param body: A dict-like object representing the item to update or insert.
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
+        **Provisional** parameter max_integrated_cache_staleness_in_ms
         :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
         :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
@@ -454,6 +463,7 @@ class ContainerProxy(object):
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
         if max_integrated_cache_staleness_in_ms is not None:
+            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         result = await self.client_connection.UpsertItem(
@@ -485,6 +495,7 @@ class ContainerProxy(object):
         :param body: A dict-like object representing the item to replace.
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
+        **Provisional** parameter max_integrated_cache_staleness_in_ms
         :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
         :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
@@ -507,6 +518,7 @@ class ContainerProxy(object):
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
         if max_integrated_cache_staleness_in_ms is not None:
+            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         result = await self.client_connection.ReplaceItem(
@@ -535,6 +547,7 @@ class ContainerProxy(object):
         :param partition_key: Specifies the partition key value for the item.
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
+        **Provisional** parameter max_integrated_cache_staleness_in_ms
         :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
         :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
@@ -556,6 +569,7 @@ class ContainerProxy(object):
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
         if max_integrated_cache_staleness_in_ms is not None:
+            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         document_link = self._get_document_link(item)
