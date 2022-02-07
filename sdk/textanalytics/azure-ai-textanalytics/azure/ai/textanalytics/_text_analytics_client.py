@@ -200,6 +200,20 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         if disable_service_logs is not None:
             kwargs["logging_opt_out"] = disable_service_logs
         try:
+            from ._generated.models import AnalyzeTextLanguageDetectionInput, LanguageDetectionTaskParameters
+            if self._api_version == "2022-02-01-preview":
+                return self._client.analyze_text(
+                    body=AnalyzeTextLanguageDetectionInput(
+                        analysis_input={"documents": docs},
+                        parameters=LanguageDetectionTaskParameters(
+                            logging_opt_out=kwargs.pop("logging_opt_out", None),
+                            model_version=model_version
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", language_result),
+                    **kwargs
+                )
             return self._client.languages(
                 documents=docs,
                 model_version=model_version,

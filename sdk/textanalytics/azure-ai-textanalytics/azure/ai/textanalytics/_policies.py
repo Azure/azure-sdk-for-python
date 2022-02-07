@@ -31,6 +31,8 @@ class TextAnalyticsResponseHookPolicy(SansIOHTTPPolicy):
             if self._is_lro and (not data or data.get("status") not in _FINISHED):
                 return
             if data:
+                if data.get("results"):
+                    data = data.get("results")
                 statistics = data.get("statistics", None)
                 model_version = data.get("modelVersion", None)
 

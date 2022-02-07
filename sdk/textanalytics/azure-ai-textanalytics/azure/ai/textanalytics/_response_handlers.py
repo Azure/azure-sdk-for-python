@@ -69,7 +69,10 @@ def order_results(response, combined):
     :param combined: A combined list of the results | errors
     :return: In order list of results | errors (if any)
     """
-    request = json.loads(response.http_response.request.body)["documents"]
+    try:
+        request = json.loads(response.http_response.request.body)["documents"]
+    except KeyError:
+        request = json.loads(response.http_response.request.body)["analysisInput"]["documents"]
     mapping = {item.id: item for item in combined}
     ordered_response = [mapping[item["id"]] for item in request]
     return ordered_response
@@ -97,6 +100,8 @@ def prepare_result(func):
         def wrapper(
             response, obj, response_headers, ordering_function
         ):  # pylint: disable=unused-argument
+            if hasattr(obj, "results"):
+                obj = obj.results  # language TA compatibility
             if obj.errors:
                 combined = obj.documents + obj.errors
                 results = ordering_function(response, combined)
