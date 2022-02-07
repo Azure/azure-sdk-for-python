@@ -16,10 +16,10 @@ from ._management_lock_client_enums import *
 class ManagementLockListResult(msrest.serialization.Model):
     """List of management locks.
 
-    :param value: The list of locks.
-    :type value: list[~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject]
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
+    :ivar value: The list of locks.
+    :vartype value: list[~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -34,6 +34,12 @@ class ManagementLockListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of locks.
+        :paramtype value: list[~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject]
+        :keyword next_link: The URL to get the next set of results.
+        :paramtype next_link: str
+        """
         super(ManagementLockListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -48,13 +54,13 @@ class ManagementLockObject(msrest.serialization.Model):
     :vartype id: str
     :ivar type: The type of the lock.
     :vartype type: str
-    :param name: The name of the lock.
-    :type name: str
-    :param level: The lock level of the management lock. Possible values include: "NotSpecified",
+    :ivar name: The name of the lock.
+    :vartype name: str
+    :ivar level: The lock level of the management lock. Possible values include: "NotSpecified",
      "CanNotDelete", "ReadOnly".
-    :type level: str or ~azure.mgmt.resource.locks.v2015_01_01.models.LockLevel
-    :param notes: The notes of the management lock.
-    :type notes: str
+    :vartype level: str or ~azure.mgmt.resource.locks.v2015_01_01.models.LockLevel
+    :ivar notes: The notes of the management lock.
+    :vartype notes: str
     """
 
     _validation = {
@@ -78,6 +84,15 @@ class ManagementLockObject(msrest.serialization.Model):
         notes: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: The name of the lock.
+        :paramtype name: str
+        :keyword level: The lock level of the management lock. Possible values include: "NotSpecified",
+         "CanNotDelete", "ReadOnly".
+        :paramtype level: str or ~azure.mgmt.resource.locks.v2015_01_01.models.LockLevel
+        :keyword notes: The notes of the management lock.
+        :paramtype notes: str
+        """
         super(ManagementLockObject, self).__init__(**kwargs)
         self.id = None
         self.type = None

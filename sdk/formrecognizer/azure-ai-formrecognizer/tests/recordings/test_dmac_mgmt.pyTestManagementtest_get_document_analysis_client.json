@@ -1,37 +1,35 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/info?api-version=2021-09-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/info?api-version=2022-01-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "3c77cbfe-5ee0-11ec-ac12-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "094fa6f2-7f2b-11ec-93ac-c8348e073d30"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "d73941e3-bf31-44a8-b617-2d6a1c137db1",
+        "apim-request-id": "0cee7ef6-dae3-4cc7-861e-22625aa08084",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Dec 2021 02:22:52 GMT",
+        "Date": "Thu, 27 Jan 2022 04:38:55 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "209"
+        "x-envoy-upstream-service-time": "225"
       },
-      "ResponseBody": [
-        "{\n",
-        "  \u0022customDocumentModels\u0022: {\n",
-        "    \u0022count\u0022: 2148,\n",
-        "    \u0022limit\u0022: 20000\n",
-        "  }\n",
-        "}"
-      ]
+      "ResponseBody": {
+        "customDocumentModels": {
+          "count": 2346,
+          "limit": 20000
+        }
+      }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-receipt:analyze?stringIndexType=unicodeCodePoint\u0026api-version=2021-09-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-receipt:analyze?stringIndexType=unicodeCodePoint\u0026api-version=2022-01-30-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -39,58 +37,58 @@
         "Connection": "keep-alive",
         "Content-Length": "36",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "3ca9ec6d-5ee0-11ec-a3ac-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "099f2015-7f2b-11ec-9bf3-c8348e073d30"
       },
       "RequestBody": {
         "urlSource": "https://blob_sas_url"
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "872653c1-5592-4d78-ae73-913d4ef4e8ea",
+        "apim-request-id": "42a80549-4c8a-4d61-a452-2eb7e597955a",
         "Content-Length": "0",
-        "Date": "Fri, 17 Dec 2021 02:22:53 GMT",
-        "Operation-Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/872653c1-5592-4d78-ae73-913d4ef4e8ea?api-version=2021-09-30-preview",
+        "Date": "Thu, 27 Jan 2022 04:38:56 GMT",
+        "Operation-Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/42a80549-4c8a-4d61-a452-2eb7e597955a?api-version=2022-01-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "1057"
+        "x-envoy-upstream-service-time": "1016"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/872653c1-5592-4d78-ae73-913d4ef4e8ea?api-version=2021-09-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-receipt/analyzeResults/42a80549-4c8a-4d61-a452-2eb7e597955a?api-version=2022-01-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "3ca9ec6d-5ee0-11ec-a3ac-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "099f2015-7f2b-11ec-9bf3-c8348e073d30"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "e72aa00e-7afb-4953-b45f-e12cfcd754b2",
+        "apim-request-id": "bff60565-820a-44d0-b589-6818cacb9c14",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Dec 2021 02:22:58 GMT",
+        "Date": "Thu, 27 Jan 2022 04:39:01 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "341"
+        "x-envoy-upstream-service-time": "376"
       },
       "ResponseBody": {
         "status": "succeeded",
-        "createdDateTime": "2021-12-17T02:22:53Z",
-        "lastUpdatedDateTime": "2021-12-17T02:22:56Z",
+        "createdDateTime": "2022-01-27T04:38:56Z",
+        "lastUpdatedDateTime": "2022-01-27T04:39:00Z",
         "analyzeResult": {
-          "apiVersion": "2021-09-30-preview",
+          "apiVersion": "2022-01-30-preview",
           "modelId": "prebuilt-receipt",
           "stringIndexType": "unicodeCodePoint",
-          "content": "Contoso\nContoso\n123 Main Street\nRedmond, WA 98052\n987-654-3210\n6/10/2019 13:59\nSales Associate: Paul\n-\n1 Cappuccino\n1 BACON \u0026 EGGS\n$2.20\nSunny-side-up\n$9.5\n-\nSub-Total\n$ 11.70\nTax\n1.17\nTip\nTotal\n$ 1.63\n$14,50",
+          "content": "Contoso\nContoso\n123 Main Street\nRedmond, WA 98052\n987-654-3210\n6/10/2019 13:59\nSales Associate: Paul\n- -\n-\n-\n1 Cappuccino\n1 BACON \u0026 EGGS\n===\n$2.20\nSunny-side-up\n$9.5\n--- -\n-\n----\nSub-Total\nTax\nTip\nTotal\n$ 11.70\n$ 1.17\n$ 1.63\n$14,50",
           "pages": [
             {
               "pageNumber": 1,
-              "angle": 0.9597,
+              "angle": 0.2836,
               "width": 1688,
               "height": 3000,
               "unit": "pixel",
@@ -98,16 +96,16 @@
                 {
                   "content": "Contoso",
                   "boundingBox": [
-                    633,
-                    505,
-                    1067,
-                    460,
-                    1083,
-                    561,
-                    631,
-                    600
+                    638,
+                    510,
+                    1056,
+                    471,
+                    1072,
+                    551,
+                    638,
+                    598
                   ],
-                  "confidence": 0.993,
+                  "confidence": 0.998,
                   "span": {
                     "offset": 0,
                     "length": 7
@@ -116,16 +114,16 @@
                 {
                   "content": "Contoso",
                   "boundingBox": [
-                    311,
+                    310,
                     573,
-                    515,
-                    625,
+                    517,
+                    629,
                     502,
-                    681,
-                    297,
-                    632
+                    686,
+                    298,
+                    633
                   ],
-                  "confidence": 0.681,
+                  "confidence": 0.935,
                   "span": {
                     "offset": 8,
                     "length": 7
@@ -134,16 +132,16 @@
                 {
                   "content": "123",
                   "boundingBox": [
-                    303,
+                    302,
                     677,
-                    377,
-                    695,
-                    366,
+                    385,
+                    698,
+                    375,
                     759,
-                    292,
-                    740
+                    291,
+                    739
                   ],
-                  "confidence": 0.99,
+                  "confidence": 0.998,
                   "span": {
                     "offset": 16,
                     "length": 3
@@ -152,16 +150,16 @@
                 {
                   "content": "Main",
                   "boundingBox": [
-                    389,
-                    698,
-                    517,
-                    727,
-                    506,
-                    792,
-                    378,
+                    399,
+                    702,
+                    524,
+                    731,
+                    514,
+                    791,
+                    388,
                     762
                   ],
-                  "confidence": 0.991,
+                  "confidence": 0.994,
                   "span": {
                     "offset": 20,
                     "length": 4
@@ -170,16 +168,16 @@
                 {
                   "content": "Street",
                   "boundingBox": [
-                    529,
-                    730,
+                    535,
+                    734,
                     694,
                     768,
-                    683,
-                    829,
-                    518,
+                    686,
+                    827,
+                    526,
                     794
                   ],
-                  "confidence": 0.997,
+                  "confidence": 0.999,
                   "span": {
                     "offset": 25,
                     "length": 6
@@ -188,16 +186,16 @@
                 {
                   "content": "Redmond,",
                   "boundingBox": [
-                    294,
-                    787,
-                    541,
-                    831,
-                    535,
-                    902,
-                    282,
-                    850
+                    295,
+                    786,
+                    550,
+                    838,
+                    544,
+                    901,
+                    285,
+                    847
                   ],
-                  "confidence": 0.943,
+                  "confidence": 0.724,
                   "span": {
                     "offset": 32,
                     "length": 8
@@ -206,16 +204,16 @@
                 {
                   "content": "WA",
                   "boundingBox": [
-                    554,
-                    833,
-                    634,
-                    842,
-                    630,
-                    913,
-                    548,
-                    904
+                    562,
+                    840,
+                    643,
+                    849,
+                    639,
+                    912,
+                    556,
+                    903
                   ],
-                  "confidence": 0.998,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 41,
                     "length": 2
@@ -224,16 +222,16 @@
                 {
                   "content": "98052",
                   "boundingBox": [
-                    648,
-                    844,
-                    818,
-                    855,
-                    818,
-                    919,
-                    644,
-                    914
+                    656,
+                    850,
+                    817,
+                    858,
+                    816,
+                    918,
+                    652,
+                    913
                   ],
-                  "confidence": 0.99,
+                  "confidence": 0.994,
                   "span": {
                     "offset": 44,
                     "length": 5
@@ -242,16 +240,16 @@
                 {
                   "content": "987-654-3210",
                   "boundingBox": [
-                    275,
+                    280,
                     1006,
                     648,
                     1055,
-                    643,
-                    1120,
-                    268,
-                    1072
+                    644,
+                    1119,
+                    272,
+                    1068
                   ],
-                  "confidence": 0.989,
+                  "confidence": 0.988,
                   "span": {
                     "offset": 50,
                     "length": 12
@@ -260,16 +258,16 @@
                 {
                   "content": "6/10/2019",
                   "boundingBox": [
-                    265,
-                    1227,
-                    511,
-                    1247,
-                    507,
-                    1329,
-                    259,
-                    1313
+                    264,
+                    1223,
+                    522,
+                    1246,
+                    515,
+                    1334,
+                    255,
+                    1312
                   ],
-                  "confidence": 0.99,
+                  "confidence": 0.996,
                   "span": {
                     "offset": 63,
                     "length": 9
@@ -278,16 +276,16 @@
                 {
                   "content": "13:59",
                   "boundingBox": [
-                    527,
-                    1248,
-                    677,
-                    1262,
-                    673,
-                    1337,
-                    523,
-                    1330
+                    539,
+                    1247,
+                    680,
+                    1258,
+                    674,
+                    1340,
+                    532,
+                    1336
                   ],
-                  "confidence": 0.995,
+                  "confidence": 0.999,
                   "span": {
                     "offset": 73,
                     "length": 5
@@ -297,15 +295,15 @@
                   "content": "Sales",
                   "boundingBox": [
                     258,
-                    1351,
-                    409,
-                    1365,
-                    405,
-                    1427,
-                    253,
-                    1411
+                    1346,
+                    415,
+                    1358,
+                    411,
+                    1434,
+                    252,
+                    1418
                   ],
-                  "confidence": 0.995,
+                  "confidence": 0.997,
                   "span": {
                     "offset": 79,
                     "length": 5
@@ -314,16 +312,16 @@
                 {
                   "content": "Associate:",
                   "boundingBox": [
-                    422,
-                    1366,
-                    704,
-                    1379,
+                    429,
+                    1359,
+                    706,
+                    1374,
                     703,
-                    1443,
-                    418,
-                    1428
+                    1448,
+                    425,
+                    1435
                   ],
-                  "confidence": 0.853,
+                  "confidence": 0.992,
                   "span": {
                     "offset": 85,
                     "length": 10
@@ -332,16 +330,16 @@
                 {
                   "content": "Paul",
                   "boundingBox": [
-                    716,
-                    1379,
-                    859,
-                    1380,
-                    860,
-                    1443,
-                    716,
-                    1443
+                    720,
+                    1374,
+                    854,
+                    1378,
+                    852,
+                    1447,
+                    718,
+                    1448
                   ],
-                  "confidence": 0.991,
+                  "confidence": 0.971,
                   "span": {
                     "offset": 96,
                     "length": 4
@@ -351,161 +349,233 @@
                   "content": "-",
                   "boundingBox": [
                     255,
-                    1499,
-                    263,
-                    1500,
+                    1501,
                     262,
-                    1514,
-                    253,
+                    1501,
+                    261,
+                    1513,
+                    254,
                     1513
                   ],
-                  "confidence": 0.483,
+                  "confidence": 0.749,
                   "span": {
                     "offset": 101,
                     "length": 1
                   }
                 },
                 {
-                  "content": "1",
+                  "content": "-",
                   "boundingBox": [
-                    243,
-                    1582,
-                    283,
-                    1585,
-                    276,
-                    1667,
-                    236,
-                    1662
+                    288,
+                    1502,
+                    295,
+                    1503,
+                    293,
+                    1514,
+                    287,
+                    1514
                   ],
-                  "confidence": 0.993,
+                  "confidence": 0.685,
                   "span": {
                     "offset": 103,
                     "length": 1
                   }
                 },
                 {
-                  "content": "Cappuccino",
+                  "content": "-",
                   "boundingBox": [
-                    300,
-                    1586,
-                    658,
-                    1605,
-                    653,
-                    1689,
-                    293,
-                    1670
+                    1167,
+                    1503,
+                    1175,
+                    1502,
+                    1175,
+                    1513,
+                    1168,
+                    1514
                   ],
-                  "confidence": 0.988,
+                  "confidence": 0.918,
                   "span": {
                     "offset": 105,
+                    "length": 1
+                  }
+                },
+                {
+                  "content": "-",
+                  "boundingBox": [
+                    748,
+                    1525,
+                    755,
+                    1525,
+                    754,
+                    1535,
+                    747,
+                    1535
+                  ],
+                  "confidence": 0.798,
+                  "span": {
+                    "offset": 107,
+                    "length": 1
+                  }
+                },
+                {
+                  "content": "1",
+                  "boundingBox": [
+                    248,
+                    1579,
+                    291,
+                    1582,
+                    284,
+                    1673,
+                    241,
+                    1670
+                  ],
+                  "confidence": 0.96,
+                  "span": {
+                    "offset": 109,
+                    "length": 1
+                  }
+                },
+                {
+                  "content": "Cappuccino",
+                  "boundingBox": [
+                    310,
+                    1583,
+                    659,
+                    1596,
+                    657,
+                    1693,
+                    303,
+                    1675
+                  ],
+                  "confidence": 0.955,
+                  "span": {
+                    "offset": 111,
                     "length": 10
                   }
                 },
                 {
                   "content": "1",
                   "boundingBox": [
-                    230,
-                    1839,
+                    229,
+                    1837,
                     275,
-                    1839,
-                    272,
-                    1916,
-                    227,
-                    1915
+                    1838,
+                    276,
+                    1919,
+                    231,
+                    1919
                   ],
-                  "confidence": 0.996,
+                  "confidence": 0.994,
                   "span": {
-                    "offset": 116,
+                    "offset": 122,
                     "length": 1
                   }
                 },
                 {
                   "content": "BACON",
                   "boundingBox": [
-                    295,
-                    1840,
-                    500,
-                    1842,
-                    499,
-                    1919,
-                    292,
-                    1917
+                    299,
+                    1838,
+                    502,
+                    1838,
+                    503,
+                    1920,
+                    300,
+                    1920
                   ],
-                  "confidence": 0.995,
+                  "confidence": 0.999,
                   "span": {
-                    "offset": 118,
+                    "offset": 124,
                     "length": 5
                   }
                 },
                 {
                   "content": "\u0026",
                   "boundingBox": [
-                    515,
-                    1842,
-                    560,
-                    1843,
-                    559,
-                    1919,
-                    514,
-                    1919
+                    518,
+                    1838,
+                    561,
+                    1839,
+                    562,
+                    1920,
+                    519,
+                    1920
                   ],
                   "confidence": 0.98,
                   "span": {
-                    "offset": 124,
+                    "offset": 130,
                     "length": 1
                   }
                 },
                 {
                   "content": "EGGS",
                   "boundingBox": [
-                    575,
-                    1843,
-                    736,
-                    1844,
-                    736,
-                    1917,
-                    575,
-                    1919
+                    577,
+                    1839,
+                    734,
+                    1839,
+                    735,
+                    1919,
+                    578,
+                    1920
                   ],
-                  "confidence": 0.991,
+                  "confidence": 0.994,
                   "span": {
-                    "offset": 126,
+                    "offset": 132,
                     "length": 4
+                  }
+                },
+                {
+                  "content": "===",
+                  "boundingBox": [
+                    1208,
+                    1499,
+                    1267,
+                    1496,
+                    1267,
+                    1508,
+                    1209,
+                    1511
+                  ],
+                  "confidence": 0.576,
+                  "span": {
+                    "offset": 137,
+                    "length": 3
                   }
                 },
                 {
                   "content": "$2.20",
                   "boundingBox": [
-                    1108,
-                    1583,
-                    1264,
-                    1574,
-                    1269,
-                    1649,
-                    1112,
-                    1659
+                    1110,
+                    1581,
+                    1267,
+                    1575,
+                    1270,
+                    1650,
+                    1113,
+                    1657
                   ],
-                  "confidence": 0.995,
+                  "confidence": 0.994,
                   "span": {
-                    "offset": 131,
+                    "offset": 141,
                     "length": 5
                   }
                 },
                 {
                   "content": "Sunny-side-up",
                   "boundingBox": [
-                    345,
-                    1979,
-                    748,
-                    1978,
+                    343,
+                    1972,
+                    746,
+                    1973,
                     747,
-                    2060,
-                    345,
-                    2054
+                    2063,
+                    346,
+                    2061
                   ],
-                  "confidence": 0.993,
+                  "confidence": 0.994,
                   "span": {
-                    "offset": 137,
+                    "offset": 147,
                     "length": 13
                   }
                 },
@@ -513,215 +583,287 @@
                   "content": "$9.5",
                   "boundingBox": [
                     1135,
-                    1954,
-                    1266,
-                    1954,
-                    1266,
+                    1956,
+                    1261,
+                    1952,
+                    1264,
                     2036,
-                    1135,
-                    2035
+                    1138,
+                    2040
                   ],
-                  "confidence": 0.982,
+                  "confidence": 0.991,
                   "span": {
-                    "offset": 151,
+                    "offset": 161,
                     "length": 4
+                  }
+                },
+                {
+                  "content": "---",
+                  "boundingBox": [
+                    1197,
+                    2129,
+                    1269,
+                    2129,
+                    1269,
+                    2143,
+                    1197,
+                    2144
+                  ],
+                  "confidence": 0.762,
+                  "span": {
+                    "offset": 166,
+                    "length": 3
+                  }
+                },
+                {
+                  "content": "-",
+                  "boundingBox": [
+                    1296,
+                    2129,
+                    1303,
+                    2129,
+                    1303,
+                    2142,
+                    1295,
+                    2142
+                  ],
+                  "confidence": 0.94,
+                  "span": {
+                    "offset": 170,
+                    "length": 1
                   }
                 },
                 {
                   "content": "-",
                   "boundingBox": [
                     224,
-                    2145,
-                    233,
-                    2145,
+                    2146,
                     232,
-                    2159,
+                    2146,
+                    232,
+                    2158,
                     224,
-                    2159
+                    2158
                   ],
-                  "confidence": 0.939,
+                  "confidence": 0.966,
                   "span": {
-                    "offset": 156,
+                    "offset": 172,
                     "length": 1
+                  }
+                },
+                {
+                  "content": "----",
+                  "boundingBox": [
+                    257,
+                    2145,
+                    367,
+                    2143,
+                    367,
+                    2155,
+                    257,
+                    2157
+                  ],
+                  "confidence": 0.712,
+                  "span": {
+                    "offset": 174,
+                    "length": 4
                   }
                 },
                 {
                   "content": "Sub-Total",
                   "boundingBox": [
-                    438,
-                    2236,
+                    436,
+                    2234,
+                    761,
+                    2220,
                     765,
-                    2225,
-                    768,
-                    2317,
-                    440,
+                    2315,
+                    442,
                     2325
                   ],
-                  "confidence": 0.993,
+                  "confidence": 0.992,
                   "span": {
-                    "offset": 158,
+                    "offset": 179,
                     "length": 9
-                  }
-                },
-                {
-                  "content": "$",
-                  "boundingBox": [
-                    1108,
-                    2221,
-                    1121,
-                    2221,
-                    1120,
-                    2315,
-                    1108,
-                    2314
-                  ],
-                  "confidence": 0.002,
-                  "span": {
-                    "offset": 168,
-                    "length": 1
-                  }
-                },
-                {
-                  "content": "11.70",
-                  "boundingBox": [
-                    1139,
-                    2221,
-                    1302,
-                    2222,
-                    1302,
-                    2316,
-                    1139,
-                    2315
-                  ],
-                  "confidence": 0.983,
-                  "span": {
-                    "offset": 170,
-                    "length": 5
                   }
                 },
                 {
                   "content": "Tax",
                   "boundingBox": [
-                    438,
-                    2367,
-                    560,
-                    2364,
-                    563,
-                    2456,
-                    440,
-                    2459
+                    439,
+                    2366,
+                    561,
+                    2361,
+                    565,
+                    2455,
+                    443,
+                    2460
                   ],
-                  "confidence": 0.994,
+                  "confidence": 0.998,
                   "span": {
-                    "offset": 176,
+                    "offset": 189,
                     "length": 3
-                  }
-                },
-                {
-                  "content": "1.17",
-                  "boundingBox": [
-                    1181,
-                    2354,
-                    1311,
-                    2355,
-                    1311,
-                    2453,
-                    1180,
-                    2452
-                  ],
-                  "confidence": 0.995,
-                  "span": {
-                    "offset": 180,
-                    "length": 4
                   }
                 },
                 {
                   "content": "Tip",
                   "boundingBox": [
-                    432,
-                    2500,
+                    440,
+                    2499,
+                    543,
+                    2498,
                     544,
-                    2497,
-                    547,
-                    2603,
-                    434,
-                    2606
+                    2613,
+                    441,
+                    2614
                   ],
-                  "confidence": 0.992,
+                  "confidence": 0.997,
                   "span": {
-                    "offset": 185,
+                    "offset": 193,
                     "length": 3
                   }
                 },
                 {
                   "content": "Total",
                   "boundingBox": [
-                    433,
-                    2656,
-                    602,
-                    2648,
-                    606,
-                    2736,
+                    430,
+                    2655,
+                    604,
+                    2645,
+                    610,
+                    2735,
                     436,
-                    2744
+                    2747
                   ],
-                  "confidence": 0.993,
+                  "confidence": 0.991,
                   "span": {
-                    "offset": 189,
+                    "offset": 197,
                     "length": 5
                   }
                 },
                 {
                   "content": "$",
                   "boundingBox": [
-                    1011,
-                    2476,
-                    1048,
-                    2477,
-                    1046,
-                    2593,
-                    1010,
-                    2592
+                    1085,
+                    2224,
+                    1118,
+                    2223,
+                    1121,
+                    2322,
+                    1088,
+                    2323
                   ],
-                  "confidence": 0.956,
+                  "confidence": 0.917,
                   "span": {
-                    "offset": 195,
+                    "offset": 203,
+                    "length": 1
+                  }
+                },
+                {
+                  "content": "11.70",
+                  "boundingBox": [
+                    1138,
+                    2222,
+                    1299,
+                    2221,
+                    1303,
+                    2316,
+                    1141,
+                    2321
+                  ],
+                  "confidence": 0.999,
+                  "span": {
+                    "offset": 205,
+                    "length": 5
+                  }
+                },
+                {
+                  "content": "$",
+                  "boundingBox": [
+                    1129,
+                    2355,
+                    1171,
+                    2355,
+                    1170,
+                    2452,
+                    1128,
+                    2452
+                  ],
+                  "confidence": 0.941,
+                  "span": {
+                    "offset": 211,
+                    "length": 1
+                  }
+                },
+                {
+                  "content": "1.17",
+                  "boundingBox": [
+                    1190,
+                    2356,
+                    1304,
+                    2357,
+                    1302,
+                    2454,
+                    1189,
+                    2453
+                  ],
+                  "confidence": 0.993,
+                  "span": {
+                    "offset": 213,
+                    "length": 4
+                  }
+                },
+                {
+                  "content": "$",
+                  "boundingBox": [
+                    1023,
+                    2470,
+                    1039,
+                    2470,
+                    1033,
+                    2586,
+                    1019,
+                    2585
+                  ],
+                  "confidence": 0.922,
+                  "span": {
+                    "offset": 218,
                     "length": 1
                   }
                 },
                 {
                   "content": "1.63",
                   "boundingBox": [
-                    1071,
-                    2477,
-                    1285,
-                    2481,
-                    1284,
+                    1058,
+                    2470,
+                    1276,
+                    2480,
+                    1271,
                     2597,
-                    1069,
-                    2593
+                    1053,
+                    2587
                   ],
-                  "confidence": 0.032,
+                  "confidence": 0.442,
                   "span": {
-                    "offset": 197,
+                    "offset": 220,
                     "length": 4
                   }
                 },
                 {
                   "content": "$14,50",
                   "boundingBox": [
-                    1024,
-                    2621,
-                    1377,
-                    2639,
+                    1032,
+                    2625,
+                    1376,
+                    2637,
                     1371,
-                    2760,
-                    1018,
-                    2742
+                    2759,
+                    1030,
+                    2744
                   ],
-                  "confidence": 0.654,
+                  "confidence": 0.841,
                   "span": {
-                    "offset": 202,
+                    "offset": 225,
                     "length": 6
                   }
                 }
@@ -730,14 +872,14 @@
                 {
                   "content": "Contoso",
                   "boundingBox": [
-                    630,
-                    504,
-                    1092,
-                    456,
-                    1103,
-                    565,
-                    631,
-                    600
+                    634,
+                    510,
+                    1089,
+                    466,
+                    1098,
+                    558,
+                    636,
+                    598
                   ],
                   "spans": [
                     {
@@ -749,14 +891,14 @@
                 {
                   "content": "Contoso",
                   "boundingBox": [
-                    310,
+                    309,
                     573,
-                    516,
-                    624,
-                    503,
-                    681,
-                    297,
-                    631
+                    517,
+                    628,
+                    501,
+                    686,
+                    298,
+                    630
                   ],
                   "spans": [
                     {
@@ -768,14 +910,14 @@
                 {
                   "content": "123 Main Street",
                   "boundingBox": [
-                    303,
-                    677,
-                    697,
+                    300,
+                    676,
+                    695,
                     769,
-                    684,
-                    829,
-                    291,
-                    740
+                    685,
+                    827,
+                    288,
+                    737
                   ],
                   "spans": [
                     {
@@ -787,14 +929,14 @@
                 {
                   "content": "Redmond, WA 98052",
                   "boundingBox": [
-                    291,
+                    293,
                     786,
-                    819,
-                    856,
-                    815,
-                    919,
-                    282,
-                    867
+                    818,
+                    859,
+                    814,
+                    918,
+                    284,
+                    864
                   ],
                   "spans": [
                     {
@@ -806,14 +948,14 @@
                 {
                   "content": "987-654-3210",
                   "boundingBox": [
-                    275,
+                    280,
                     1005,
-                    651,
+                    648,
                     1055,
-                    645,
-                    1120,
-                    268,
-                    1071
+                    643,
+                    1119,
+                    271,
+                    1067
                   ],
                   "spans": [
                     {
@@ -825,14 +967,14 @@
                 {
                   "content": "6/10/2019 13:59",
                   "boundingBox": [
-                    264,
-                    1227,
-                    681,
-                    1258,
-                    675,
-                    1337,
                     259,
-                    1311
+                    1222,
+                    679,
+                    1254,
+                    672,
+                    1340,
+                    252,
+                    1313
                   ],
                   "spans": [
                     {
@@ -845,13 +987,13 @@
                   "content": "Sales Associate: Paul",
                   "boundingBox": [
                     256,
-                    1351,
-                    861,
-                    1380,
-                    859,
-                    1443,
-                    253,
-                    1421
+                    1346,
+                    855,
+                    1376,
+                    852,
+                    1448,
+                    252,
+                    1426
                   ],
                   "spans": [
                     {
@@ -861,20 +1003,58 @@
                   ]
                 },
                 {
-                  "content": "-",
+                  "content": "- -",
                   "boundingBox": [
-                    255,
-                    1499,
-                    281,
-                    1502,
-                    279,
-                    1516,
                     253,
-                    1513
+                    1500,
+                    310,
+                    1503,
+                    309,
+                    1515,
+                    253,
+                    1512
                   ],
                   "spans": [
                     {
                       "offset": 101,
+                      "length": 3
+                    }
+                  ]
+                },
+                {
+                  "content": "-",
+                  "boundingBox": [
+                    1157,
+                    1503,
+                    1189,
+                    1502,
+                    1189,
+                    1513,
+                    1158,
+                    1514
+                  ],
+                  "spans": [
+                    {
+                      "offset": 105,
+                      "length": 1
+                    }
+                  ]
+                },
+                {
+                  "content": "-",
+                  "boundingBox": [
+                    741,
+                    1525,
+                    767,
+                    1526,
+                    766,
+                    1536,
+                    741,
+                    1534
+                  ],
+                  "spans": [
+                    {
+                      "offset": 107,
                       "length": 1
                     }
                   ]
@@ -882,18 +1062,18 @@
                 {
                   "content": "1 Cappuccino",
                   "boundingBox": [
-                    240,
-                    1582,
-                    660,
-                    1604,
-                    654,
-                    1689,
-                    236,
-                    1671
+                    242,
+                    1578,
+                    661,
+                    1596,
+                    658,
+                    1693,
+                    237,
+                    1673
                   ],
                   "spans": [
                     {
-                      "offset": 103,
+                      "offset": 109,
                       "length": 12
                     }
                   ]
@@ -902,36 +1082,55 @@
                   "content": "1 BACON \u0026 EGGS",
                   "boundingBox": [
                     226,
-                    1838,
-                    738,
-                    1841,
+                    1837,
                     737,
-                    1919,
+                    1838,
+                    737,
+                    1920,
                     226,
-                    1917
+                    1918
                   ],
                   "spans": [
                     {
-                      "offset": 116,
+                      "offset": 122,
                       "length": 14
+                    }
+                  ]
+                },
+                {
+                  "content": "===",
+                  "boundingBox": [
+                    1207,
+                    1498,
+                    1281,
+                    1495,
+                    1281,
+                    1507,
+                    1208,
+                    1511
+                  ],
+                  "spans": [
+                    {
+                      "offset": 137,
+                      "length": 3
                     }
                   ]
                 },
                 {
                   "content": "$2.20",
                   "boundingBox": [
-                    1108,
-                    1583,
-                    1267,
-                    1574,
-                    1272,
-                    1648,
-                    1114,
-                    1659
+                    1110,
+                    1581,
+                    1268,
+                    1575,
+                    1269,
+                    1650,
+                    1113,
+                    1657
                   ],
                   "spans": [
                     {
-                      "offset": 131,
+                      "offset": 141,
                       "length": 5
                     }
                   ]
@@ -939,18 +1138,18 @@
                 {
                   "content": "Sunny-side-up",
                   "boundingBox": [
-                    344,
-                    1977,
-                    748,
-                    1978,
-                    748,
-                    2060,
-                    344,
-                    2058
+                    343,
+                    1972,
+                    747,
+                    1973,
+                    747,
+                    2063,
+                    343,
+                    2060
                   ],
                   "spans": [
                     {
-                      "offset": 137,
+                      "offset": 147,
                       "length": 13
                     }
                   ]
@@ -958,76 +1157,95 @@
                 {
                   "content": "$9.5",
                   "boundingBox": [
-                    1135,
-                    1954,
-                    1267,
-                    1954,
-                    1268,
+                    1133,
+                    1957,
+                    1265,
+                    1952,
+                    1266,
                     2036,
-                    1135,
-                    2034
+                    1136,
+                    2040
                   ],
                   "spans": [
                     {
-                      "offset": 151,
+                      "offset": 161,
                       "length": 4
+                    }
+                  ]
+                },
+                {
+                  "content": "--- -",
+                  "boundingBox": [
+                    1184,
+                    2129,
+                    1320,
+                    2128,
+                    1320,
+                    2142,
+                    1184,
+                    2144
+                  ],
+                  "spans": [
+                    {
+                      "offset": 166,
+                      "length": 5
                     }
                   ]
                 },
                 {
                   "content": "-",
                   "boundingBox": [
-                    224,
-                    2145,
-                    248,
+                    223,
                     2146,
+                    249,
+                    2147,
                     248,
-                    2160,
-                    224,
-                    2159
+                    2159,
+                    222,
+                    2158
                   ],
                   "spans": [
                     {
-                      "offset": 156,
+                      "offset": 172,
                       "length": 1
+                    }
+                  ]
+                },
+                {
+                  "content": "----",
+                  "boundingBox": [
+                    254,
+                    2144,
+                    381,
+                    2142,
+                    381,
+                    2154,
+                    254,
+                    2157
+                  ],
+                  "spans": [
+                    {
+                      "offset": 174,
+                      "length": 4
                     }
                   ]
                 },
                 {
                   "content": "Sub-Total",
                   "boundingBox": [
-                    438,
-                    2234,
-                    768,
-                    2225,
-                    771,
-                    2315,
-                    440,
+                    435,
+                    2232,
+                    765,
+                    2219,
+                    769,
+                    2312,
+                    439,
                     2325
                   ],
                   "spans": [
                     {
-                      "offset": 158,
+                      "offset": 179,
                       "length": 9
-                    }
-                  ]
-                },
-                {
-                  "content": "$ 11.70",
-                  "boundingBox": [
-                    1108,
-                    2221,
-                    1305,
-                    2223,
-                    1304,
-                    2316,
-                    1109,
-                    2315
-                  ],
-                  "spans": [
-                    {
-                      "offset": 168,
-                      "length": 7
                     }
                   ]
                 },
@@ -1035,55 +1253,36 @@
                   "content": "Tax",
                   "boundingBox": [
                     438,
-                    2369,
-                    563,
-                    2364,
+                    2368,
+                    565,
+                    2361,
                     564,
-                    2456,
-                    442,
-                    2458
+                    2455,
+                    440,
+                    2459
                   ],
                   "spans": [
                     {
-                      "offset": 176,
+                      "offset": 189,
                       "length": 3
-                    }
-                  ]
-                },
-                {
-                  "content": "1.17",
-                  "boundingBox": [
-                    1174,
-                    2354,
-                    1316,
-                    2355,
-                    1317,
-                    2453,
-                    1175,
-                    2452
-                  ],
-                  "spans": [
-                    {
-                      "offset": 180,
-                      "length": 4
                     }
                   ]
                 },
                 {
                   "content": "Tip",
                   "boundingBox": [
-                    432,
+                    437,
                     2500,
-                    549,
-                    2497,
-                    551,
-                    2602,
-                    434,
-                    2606
+                    541,
+                    2498,
+                    545,
+                    2613,
+                    437,
+                    2613
                   ],
                   "spans": [
                     {
-                      "offset": 185,
+                      "offset": 193,
                       "length": 3
                     }
                   ]
@@ -1091,37 +1290,75 @@
                 {
                   "content": "Total",
                   "boundingBox": [
-                    433,
-                    2657,
-                    608,
-                    2648,
+                    427,
+                    2655,
+                    607,
+                    2645,
                     611,
-                    2736,
-                    436,
-                    2743
+                    2734,
+                    437,
+                    2747
                   ],
                   "spans": [
                     {
-                      "offset": 189,
+                      "offset": 197,
                       "length": 5
+                    }
+                  ]
+                },
+                {
+                  "content": "$ 11.70",
+                  "boundingBox": [
+                    1082,
+                    2224,
+                    1304,
+                    2221,
+                    1303,
+                    2312,
+                    1087,
+                    2323
+                  ],
+                  "spans": [
+                    {
+                      "offset": 203,
+                      "length": 7
+                    }
+                  ]
+                },
+                {
+                  "content": "$ 1.17",
+                  "boundingBox": [
+                    1129,
+                    2355,
+                    1305,
+                    2358,
+                    1302,
+                    2453,
+                    1128,
+                    2452
+                  ],
+                  "spans": [
+                    {
+                      "offset": 211,
+                      "length": 6
                     }
                   ]
                 },
                 {
                   "content": "$ 1.63",
                   "boundingBox": [
-                    1011,
-                    2476,
-                    1311,
+                    1023,
+                    2470,
+                    1294,
                     2481,
-                    1307,
-                    2597,
-                    1010,
-                    2592
+                    1296,
+                    2599,
+                    1019,
+                    2584
                   ],
                   "spans": [
                     {
-                      "offset": 195,
+                      "offset": 218,
                       "length": 6
                     }
                   ]
@@ -1129,18 +1366,18 @@
                 {
                   "content": "$14,50",
                   "boundingBox": [
-                    1025,
-                    2621,
-                    1383,
-                    2639,
-                    1382,
-                    2762,
-                    1018,
-                    2743
+                    1032,
+                    2625,
+                    1380,
+                    2637,
+                    1384,
+                    2761,
+                    1030,
+                    2741
                   ],
                   "spans": [
                     {
-                      "offset": 202,
+                      "offset": 225,
                       "length": 6
                     }
                   ]
@@ -1149,7 +1386,7 @@
               "spans": [
                 {
                   "offset": 0,
-                  "length": 208
+                  "length": 231
                 }
               ]
             }
@@ -1160,7 +1397,7 @@
               "confidence": 0.9,
               "spans": [
                 {
-                  "offset": 195,
+                  "offset": 218,
                   "length": 6
                 }
               ]
@@ -1170,7 +1407,7 @@
               "confidence": 0.95,
               "spans": [
                 {
-                  "offset": 202,
+                  "offset": 225,
                   "length": 6
                 }
               ]
@@ -1178,7 +1415,7 @@
           ],
           "documents": [
             {
-              "docType": "prebuilt:receipt",
+              "docType": "receipt.retailMeal",
               "boundingRegions": [
                 {
                   "pageNumber": 1,
@@ -1201,7 +1438,7 @@
                     {
                       "type": "object",
                       "valueObject": {
-                        "Name": {
+                        "Description": {
                           "type": "string",
                           "valueString": "Cappuccino",
                           "content": "Cappuccino",
@@ -1209,21 +1446,21 @@
                             {
                               "pageNumber": 1,
                               "boundingBox": [
-                                300,
-                                1586,
-                                658,
-                                1605,
-                                653,
-                                1689,
-                                293,
-                                1670
+                                310,
+                                1583,
+                                659,
+                                1596,
+                                657,
+                                1693,
+                                303,
+                                1675
                               ]
                             }
                           ],
-                          "confidence": 0.978,
+                          "confidence": 0.935,
                           "spans": [
                             {
-                              "offset": 105,
+                              "offset": 111,
                               "length": 10
                             }
                           ]
@@ -1236,21 +1473,21 @@
                             {
                               "pageNumber": 1,
                               "boundingBox": [
-                                243,
+                                248,
+                                1579,
+                                291,
                                 1582,
-                                283,
-                                1585,
-                                276,
-                                1667,
-                                236,
-                                1662
+                                284,
+                                1673,
+                                241,
+                                1670
                               ]
                             }
                           ],
-                          "confidence": 0.976,
+                          "confidence": 0.972,
                           "spans": [
                             {
-                              "offset": 103,
+                              "offset": 109,
                               "length": 1
                             }
                           ]
@@ -1263,21 +1500,21 @@
                             {
                               "pageNumber": 1,
                               "boundingBox": [
-                                1108,
-                                1583,
-                                1264,
-                                1574,
-                                1269,
-                                1649,
-                                1112,
-                                1659
+                                1110,
+                                1581,
+                                1267,
+                                1575,
+                                1270,
+                                1650,
+                                1113,
+                                1657
                               ]
                             }
                           ],
-                          "confidence": 0.987,
+                          "confidence": 0.962,
                           "spans": [
                             {
-                              "offset": 131,
+                              "offset": 141,
                               "length": 5
                             }
                           ]
@@ -1287,7 +1524,7 @@
                     {
                       "type": "object",
                       "valueObject": {
-                        "Name": {
+                        "Description": {
                           "type": "string",
                           "valueString": "BACON \u0026 EGGS",
                           "content": "BACON \u0026 EGGS",
@@ -1295,21 +1532,21 @@
                             {
                               "pageNumber": 1,
                               "boundingBox": [
-                                293,
-                                1840,
-                                737,
-                                1844,
-                                736,
-                                1921,
-                                292,
-                                1917
+                                299,
+                                1838,
+                                735,
+                                1838,
+                                735,
+                                1920,
+                                299,
+                                1920
                               ]
                             }
                           ],
-                          "confidence": 0.974,
+                          "confidence": 0.939,
                           "spans": [
                             {
-                              "offset": 118,
+                              "offset": 124,
                               "length": 12
                             }
                           ]
@@ -1322,21 +1559,21 @@
                             {
                               "pageNumber": 1,
                               "boundingBox": [
-                                230,
-                                1839,
+                                229,
+                                1837,
                                 275,
-                                1839,
-                                272,
-                                1916,
-                                227,
-                                1915
+                                1838,
+                                276,
+                                1919,
+                                231,
+                                1919
                               ]
                             }
                           ],
-                          "confidence": 0.982,
+                          "confidence": 0.974,
                           "spans": [
                             {
-                              "offset": 116,
+                              "offset": 122,
                               "length": 1
                             }
                           ]
@@ -1350,20 +1587,20 @@
                               "pageNumber": 1,
                               "boundingBox": [
                                 1135,
-                                1954,
-                                1266,
-                                1954,
-                                1266,
+                                1956,
+                                1261,
+                                1952,
+                                1264,
                                 2036,
-                                1135,
-                                2035
+                                1138,
+                                2040
                               ]
                             }
                           ],
-                          "confidence": 0.987,
+                          "confidence": 0.962,
                           "spans": [
                             {
-                              "offset": 151,
+                              "offset": 161,
                               "length": 4
                             }
                           ]
@@ -1375,7 +1612,7 @@
                 "Locale": {
                   "type": "string",
                   "valueString": "en-US",
-                  "confidence": 0.995
+                  "confidence": 0.993
                 },
                 "MerchantAddress": {
                   "type": "string",
@@ -1385,18 +1622,18 @@
                     {
                       "pageNumber": 1,
                       "boundingBox": [
-                        303,
+                        302,
                         677,
-                        845,
-                        797,
+                        843,
+                        791,
                         808,
-                        966,
-                        266,
-                        846
+                        957,
+                        267,
+                        843
                       ]
                     }
                   ],
-                  "confidence": 0.974,
+                  "confidence": 0.97,
                   "spans": [
                     {
                       "offset": 16,
@@ -1412,18 +1649,18 @@
                     {
                       "pageNumber": 1,
                       "boundingBox": [
-                        311,
+                        310,
                         573,
-                        515,
-                        625,
+                        517,
+                        629,
                         502,
-                        681,
-                        297,
-                        632
+                        686,
+                        298,
+                        633
                       ]
                     }
                   ],
-                  "confidence": 0.979,
+                  "confidence": 0.97,
                   "spans": [
                     {
                       "offset": 8,
@@ -1439,29 +1676,24 @@
                     {
                       "pageNumber": 1,
                       "boundingBox": [
-                        275,
+                        280,
                         1006,
                         648,
                         1055,
-                        643,
-                        1120,
-                        268,
-                        1072
+                        644,
+                        1119,
+                        272,
+                        1068
                       ]
                     }
                   ],
-                  "confidence": 0.989,
+                  "confidence": 0.99,
                   "spans": [
                     {
                       "offset": 50,
                       "length": 12
                     }
                   ]
-                },
-                "ReceiptType": {
-                  "type": "string",
-                  "valueString": "Itemized",
-                  "confidence": 0.96
                 },
                 "Subtotal": {
                   "type": "number",
@@ -1471,76 +1703,49 @@
                     {
                       "pageNumber": 1,
                       "boundingBox": [
-                        1108,
-                        2214,
-                        1306,
-                        2222,
-                        1302,
-                        2322,
-                        1104,
-                        2314
+                        1085,
+                        2223,
+                        1301,
+                        2219,
+                        1303,
+                        2319,
+                        1087,
+                        2323
                       ]
                     }
                   ],
-                  "confidence": 0.942,
+                  "confidence": 0.948,
                   "spans": [
                     {
-                      "offset": 168,
+                      "offset": 203,
                       "length": 7
-                    }
-                  ]
-                },
-                "Tax": {
-                  "type": "number",
-                  "valueNumber": 1.17,
-                  "content": "1.17",
-                  "boundingRegions": [
-                    {
-                      "pageNumber": 1,
-                      "boundingBox": [
-                        1181,
-                        2354,
-                        1311,
-                        2355,
-                        1311,
-                        2453,
-                        1180,
-                        2452
-                      ]
-                    }
-                  ],
-                  "confidence": 0.988,
-                  "spans": [
-                    {
-                      "offset": 180,
-                      "length": 4
                     }
                   ]
                 },
                 "Tip": {
                   "type": "number",
                   "valueNumber": 1.63,
-                  "content": "1.63",
+                  "content": "$ 1.63",
                   "boundingRegions": [
                     {
                       "pageNumber": 1,
                       "boundingBox": [
-                        1071,
-                        2477,
-                        1285,
-                        2481,
-                        1284,
+                        1023,
+                        2468,
+                        1276,
+                        2480,
+                        1271,
                         2597,
-                        1069,
-                        2593
+                        1018,
+                        2585
                       ]
                     }
                   ],
-                  "confidence": 0.977,
+                  "confidence": 0.972,
                   "spans": [
                     {
-                      "offset": 197,
-                      "length": 4
+                      "offset": 218,
+                      "length": 6
                     }
                   ]
                 },
@@ -1552,21 +1757,48 @@
                     {
                       "pageNumber": 1,
                       "boundingBox": [
-                        1024,
-                        2621,
-                        1377,
-                        2639,
+                        1032,
+                        2625,
+                        1376,
+                        2637,
                         1371,
-                        2760,
-                        1018,
-                        2742
+                        2759,
+                        1030,
+                        2744
                       ]
                     }
                   ],
-                  "confidence": 0.978,
+                  "confidence": 0.972,
                   "spans": [
                     {
-                      "offset": 202,
+                      "offset": 225,
+                      "length": 6
+                    }
+                  ]
+                },
+                "TotalTax": {
+                  "type": "number",
+                  "valueNumber": 1.17,
+                  "content": "$ 1.17",
+                  "boundingRegions": [
+                    {
+                      "pageNumber": 1,
+                      "boundingBox": [
+                        1129,
+                        2355,
+                        1304,
+                        2356,
+                        1303,
+                        2454,
+                        1128,
+                        2452
+                      ]
+                    }
+                  ],
+                  "confidence": 0.982,
+                  "spans": [
+                    {
+                      "offset": 211,
                       "length": 6
                     }
                   ]
@@ -1579,14 +1811,14 @@
                     {
                       "pageNumber": 1,
                       "boundingBox": [
-                        265,
-                        1227,
-                        511,
-                        1247,
-                        507,
-                        1329,
-                        259,
-                        1313
+                        264,
+                        1223,
+                        522,
+                        1246,
+                        515,
+                        1334,
+                        255,
+                        1312
                       ]
                     }
                   ],
@@ -1606,14 +1838,14 @@
                     {
                       "pageNumber": 1,
                       "boundingBox": [
-                        527,
-                        1248,
-                        677,
-                        1262,
-                        673,
-                        1337,
-                        523,
-                        1330
+                        539,
+                        1247,
+                        680,
+                        1258,
+                        674,
+                        1340,
+                        532,
+                        1336
                       ]
                     }
                   ],
@@ -1626,11 +1858,11 @@
                   ]
                 }
               },
-              "confidence": 1,
+              "confidence": 0.987,
               "spans": [
                 {
                   "offset": 0,
-                  "length": 208
+                  "length": 231
                 }
               ]
             }
@@ -1639,34 +1871,32 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/info?api-version=2021-09-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/info?api-version=2022-01-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "4103000d-5ee0-11ec-bf9f-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "0dd8c36e-7f2b-11ec-9a94-c8348e073d30"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "6a0694b4-8e1e-4eb9-8a13-a851a11b268e",
+        "apim-request-id": "cf008178-d0d3-45bd-8b18-6468012bf19a",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Dec 2021 02:22:59 GMT",
+        "Date": "Thu, 27 Jan 2022 04:39:02 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "225"
+        "x-envoy-upstream-service-time": "345"
       },
-      "ResponseBody": [
-        "{\n",
-        "  \u0022customDocumentModels\u0022: {\n",
-        "    \u0022count\u0022: 2148,\n",
-        "    \u0022limit\u0022: 20000\n",
-        "  }\n",
-        "}"
-      ]
+      "ResponseBody": {
+        "customDocumentModels": {
+          "count": 2346,
+          "limit": 20000
+        }
+      }
     }
   ],
   "Variables": {}

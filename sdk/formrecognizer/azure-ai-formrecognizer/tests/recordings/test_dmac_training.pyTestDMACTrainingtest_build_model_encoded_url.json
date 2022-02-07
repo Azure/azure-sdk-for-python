@@ -1,40 +1,44 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels:build?api-version=2021-09-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels:build?api-version=2022-01-30-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "125",
+        "Content-Length": "150",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "f1a53cf8-5ee5-11ec-acbb-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "81a6a841-7f2b-11ec-99a2-c8348e073d30"
       },
-      "RequestBody": "{\u0022modelId\u0022: \u0022386d187e-d685-4876-b147-7d3902f1df7a\u0022, \u0022azureBlobSource\u0022: {\u0022containerUrl\u0022: \u0022https://fakeuri.com/blank%20space\u0022}}",
+      "RequestBody": {
+        "modelId": "77ce1f1f-bbd1-40b3-991b-e147ec730738",
+        "buildMode": "template",
+        "azureBlobSource": {
+          "containerUrl": "https://fakeuri.com/blank%20space"
+        }
+      },
       "StatusCode": 400,
       "ResponseHeaders": {
-        "apim-request-id": "f932a1ed-9a3d-48b5-93c1-842434b9ecdc",
+        "apim-request-id": "c254d9d6-4926-42b3-be11-39b6e2c1373d",
         "Content-Type": "application/json",
-        "Date": "Fri, 17 Dec 2021 03:03:43 GMT",
+        "Date": "Thu, 27 Jan 2022 04:42:17 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "49"
+        "x-envoy-upstream-service-time": "50"
       },
-      "ResponseBody": [
-        "{\n",
-        "  \u0022error\u0022: {\n",
-        "    \u0022code\u0022: \u0022InvalidArgument\u0022,\n",
-        "    \u0022message\u0022: \u0022Invalid argument.\u0022,\n",
-        "    \u0022innererror\u0022: {\n",
-        "      \u0022code\u0022: \u0022InvalidContentSourceFormat\u0022,\n",
-        "      \u0022message\u0022: \u0022Invalid content source: Source Uri must include container path\u0022\n",
-        "    }\n",
-        "  }\n",
-        "}"
-      ]
+      "ResponseBody": {
+        "error": {
+          "code": "InvalidArgument",
+          "message": "Invalid argument.",
+          "innererror": {
+            "code": "InvalidContentSourceFormat",
+            "message": "Invalid content source: Source Uri must include container path"
+          }
+        }
+      }
     }
   ],
   "Variables": {}

@@ -6,6 +6,7 @@
 - PREVIEW FEATURE: Added the ability to pass `max_integrated_cache_staleness_in_ms` parameter to item methods in order to make use of 
   the CosmosDB integrated cache functionality.
   Please see [Azure Cosmos DB integrated cache](https://docs.microsoft.com/azure/cosmos-db/integrated-cache) for more details.
+- Added support for split-proof queries for the async client
 
 ### Bugs fixed
 - Default consistency level for the sync and async clients is no longer "Session" and will instead be set to the 
@@ -26,7 +27,8 @@ We will also be removing support for Python 3.6 and will only support Python 3.7
 - Added async user agent for async client
 
 ### 4.3.0b1 (2021-12-14)
-**New features**
+
+#### Features Added
 - Added language native async i/o client
 
 ### 4.2.0 (2020-10-08)
