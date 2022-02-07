@@ -2,10 +2,17 @@
 
 ### 4.3.0b3 (Unreleased)
 
+#### Features Added
+- PREVIEW FEATURE: Added the ability to pass `max_integrated_cache_staleness_in_ms` parameter to item methods in order to make use of 
+  the CosmosDB integrated cache functionality.
+  Please see [Azure Cosmos DB integrated cache](https://docs.microsoft.com/azure/cosmos-db/integrated-cache) for more details.
+
 ### Bugs fixed
 - Default consistency level for the sync and async clients is no longer "Session" and will instead be set to the 
   consistency level of the user's cosmos account setting on initialization if not passed during client initialization. 
-  This change will impact client application in terms of RUs and latency. Users relying on default `Session` consistency will need to pass it explicitly if their account consistency is different than `Session`. Please see [Consistency Levels in Azure Cosmos DB](https://docs.microsoft.com/azure/cosmos-db/consistency-levels) for more details.  
+  This change will impact client application in terms of RUs and latency. Users relying on default `Session` consistency
+  will need to pass it explicitly if their account consistency is different than `Session`.
+  Please see [Consistency Levels in Azure Cosmos DB](https://docs.microsoft.com/azure/cosmos-db/consistency-levels) for more details.  
 
 ### 4.3.0b2 (2022-01-25)
 

@@ -157,6 +157,7 @@ class ContainerProxy(object):
         partition_key,  # type: Any
         populate_query_metrics=None,  # type: Optional[bool]
         post_trigger_include=None,  # type: Optional[str]
+        max_integrated_cache_staleness_in_ms=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
@@ -166,6 +167,8 @@ class ContainerProxy(object):
         :param partition_key: Partition key for the item to retrieve.
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param post_trigger_include: trigger id to be used as post operation trigger.
+        :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
+        :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -193,6 +196,8 @@ class ContainerProxy(object):
             request_options["populateQueryMetrics"] = populate_query_metrics
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
+        if max_integrated_cache_staleness_in_ms is not None:
+            request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         result = self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
         if response_hook:
@@ -204,6 +209,7 @@ class ContainerProxy(object):
         self,
         max_item_count=None,  # type: Optional[int]
         populate_query_metrics=None,  # type: Optional[bool]
+        max_integrated_cache_staleness_in_ms=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
@@ -211,6 +217,8 @@ class ContainerProxy(object):
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param populate_query_metrics: Enable returning query metrics in response headers.
+        :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
+        :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -223,6 +231,8 @@ class ContainerProxy(object):
             feed_options["maxItemCount"] = max_item_count
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
+        if max_integrated_cache_staleness_in_ms is not None:
+            feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         if hasattr(response_hook, "clear"):
             response_hook.clear()
@@ -291,6 +301,7 @@ class ContainerProxy(object):
         max_item_count=None,  # type: Optional[int]
         enable_scan_in_query=None,  # type: Optional[bool]
         populate_query_metrics=None,  # type: Optional[bool]
+        max_integrated_cache_staleness_in_ms=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
@@ -313,6 +324,8 @@ class ContainerProxy(object):
         :param enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
         :param populate_query_metrics: Enable returning query metrics in response headers.
+        :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
+        :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -349,6 +362,8 @@ class ContainerProxy(object):
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
         if enable_scan_in_query is not None:
             feed_options["enableScanInQuery"] = enable_scan_in_query
+        if max_integrated_cache_staleness_in_ms is not None:
+            feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         if hasattr(response_hook, "clear"):
             response_hook.clear()
@@ -373,6 +388,7 @@ class ContainerProxy(object):
         populate_query_metrics=None,  # type: Optional[bool]
         pre_trigger_include=None,  # type: Optional[str]
         post_trigger_include=None,  # type: Optional[str]
+        max_integrated_cache_staleness_in_ms=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
@@ -385,6 +401,8 @@ class ContainerProxy(object):
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
+        :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
+        :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
@@ -406,6 +424,8 @@ class ContainerProxy(object):
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
+        if max_integrated_cache_staleness_in_ms is not None:
+            request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         result = self.client_connection.ReplaceItem(
             document_link=item_link, new_document=body, options=request_options, **kwargs
@@ -421,6 +441,7 @@ class ContainerProxy(object):
         populate_query_metrics=None,  # type: Optional[bool]
         pre_trigger_include=None,  # type: Optional[str]
         post_trigger_include=None,  # type: Optional[str]
+        max_integrated_cache_staleness_in_ms=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
@@ -433,6 +454,8 @@ class ContainerProxy(object):
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
+        :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
+        :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
@@ -452,6 +475,8 @@ class ContainerProxy(object):
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
+        if max_integrated_cache_staleness_in_ms is not None:
+            request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         result = self.client_connection.UpsertItem(
             database_or_container_link=self.container_link,
@@ -471,6 +496,7 @@ class ContainerProxy(object):
         pre_trigger_include=None,  # type: Optional[str]
         post_trigger_include=None,  # type: Optional[str]
         indexing_directive=None,  # type: Optional[Any]
+        max_integrated_cache_staleness_in_ms=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
@@ -484,6 +510,8 @@ class ContainerProxy(object):
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
         :param indexing_directive: Indicate whether the document should be omitted from indexing.
+        :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
+        :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword bool enable_automatic_id_generation: Enable automatic id generation if no id present.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
@@ -507,6 +535,8 @@ class ContainerProxy(object):
             request_options["postTriggerInclude"] = post_trigger_include
         if indexing_directive is not None:
             request_options["indexingDirective"] = indexing_directive
+        if max_integrated_cache_staleness_in_ms is not None:
+            request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         result = self.client_connection.CreateItem(
             database_or_container_link=self.container_link, document=body, options=request_options, **kwargs
@@ -523,6 +553,7 @@ class ContainerProxy(object):
         populate_query_metrics=None,  # type: Optional[bool]
         pre_trigger_include=None,  # type: Optional[str]
         post_trigger_include=None,  # type: Optional[str]
+        max_integrated_cache_staleness_in_ms=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -535,6 +566,8 @@ class ContainerProxy(object):
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
+        :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
+        :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
@@ -555,6 +588,8 @@ class ContainerProxy(object):
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
+        if max_integrated_cache_staleness_in_ms is not None:
+            request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         document_link = self._get_document_link(item)
         result = self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)

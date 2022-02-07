@@ -292,6 +292,9 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     if options.get("populateQuotaInfo"):
         headers[http_constants.HttpHeaders.PopulateQuotaInfo] = options["populateQuotaInfo"]
 
+    if options.get("maxIntegratedCacheStaleness"):
+        headers[http_constants.HttpHeaders.DedicatedGatewayCacheStaleness] = options["maxIntegratedCacheStaleness"]
+
     return headers
 
 

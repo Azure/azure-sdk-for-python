@@ -199,6 +199,9 @@ class HttpHeaders(object):
     # For Using Multiple Write Locations
     AllowTentativeWrites = "x-ms-cosmos-allow-tentative-writes"
 
+    # Dedicated Gateway headers
+    DedicatedGatewayCacheStaleness = "x-ms-dedicatedgateway-max-age"
+
 
 class HttpHeaderPreferenceTokens(object):
     """Constants of http header preference tokens.

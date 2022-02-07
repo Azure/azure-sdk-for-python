@@ -38,6 +38,7 @@ from ..partition_key import NonePartitionKeyValue
 
 __all__ = ("ContainerProxy",)
 
+
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
@@ -112,10 +113,10 @@ class ContainerProxy(object):
 
     @distributed_trace_async
     async def read(
-        self,
-        populate_partition_key_range_statistics=None,  # type: Optional[bool]
-        populate_quota_info=None,  # type: Optional[bool]
-        **kwargs  # type: Any
+            self,
+            populate_partition_key_range_statistics=None,  # type: Optional[bool]
+            populate_quota_info=None,  # type: Optional[bool]
+            **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
         """Read the container properties.
@@ -150,9 +151,10 @@ class ContainerProxy(object):
 
     @distributed_trace_async
     async def create_item(
-        self,
-        body,  # type: Dict[str, Any]
-        **kwargs  # type: Any
+            self,
+            body,  # type: Dict[str, Any]
+            max_integrated_cache_staleness_in_ms=None,  # type: Optional[int],
+            **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
         """Create an item in the container.
@@ -161,6 +163,8 @@ class ContainerProxy(object):
         :func:`ContainerProxy.upsert_item` method.
 
         :param body: A dict-like object representing the item to create.
+        :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
+        :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword post_trigger_include: trigger id to be used as post operation trigger.
         :keyword indexing_directive: Indicate whether the document should be omitted from indexing.
@@ -188,6 +192,8 @@ class ContainerProxy(object):
             request_options["postTriggerInclude"] = post_trigger_include
         if indexing_directive is not None:
             request_options["indexingDirective"] = indexing_directive
+        if max_integrated_cache_staleness_in_ms is not None:
+            request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         result = await self.client_connection.CreateItem(
             database_or_container_link=self.container_link, document=body, options=request_options, **kwargs
@@ -198,16 +204,19 @@ class ContainerProxy(object):
 
     @distributed_trace_async
     async def read_item(
-        self,
-        item,  # type: Union[str, Dict[str, Any]]
-        partition_key,  # type: Any
-        **kwargs  # type: Any
+            self,
+            item,  # type: Union[str, Dict[str, Any]]
+            partition_key,  # type: Any
+            max_integrated_cache_staleness_in_ms=None,  # type: Optional[int],
+            **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
         """Get the item identified by `item`.
 
         :param item: The ID (name) or dict representing item to retrieve.
         :param partition_key: Partition key for the item to retrieve.
+        :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
+        :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -230,6 +239,8 @@ class ContainerProxy(object):
         response_hook = kwargs.pop('response_hook', None)
         if partition_key is not None:
             request_options["partitionKey"] = await self._set_partition_key(partition_key)
+        if max_integrated_cache_staleness_in_ms is not None:
+            request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         result = await self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
         if response_hook:
@@ -238,14 +249,17 @@ class ContainerProxy(object):
 
     @distributed_trace
     def read_all_items(
-        self,
-        max_item_count=None,  # type: Optional[int]
-        **kwargs  # type: Any
+            self,
+            max_item_count=None,  # type: Optional[int]
+            max_integrated_cache_staleness_in_ms=None,  # type: Optional[int]
+            **kwargs  # type: Any
     ):
         # type: (...) -> AsyncItemPaged[Dict[str, Any]]
         """List all the items in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
+        :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
+        :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -256,6 +270,8 @@ class ContainerProxy(object):
         response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
+        if max_integrated_cache_staleness_in_ms is not None:
+            feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         if hasattr(response_hook, "clear"):
             response_hook.clear()
@@ -269,14 +285,15 @@ class ContainerProxy(object):
 
     @distributed_trace
     def query_items(
-        self,
-        query,  # type: str
-        parameters=None,  # type: Optional[List[Dict[str, Any]]]
-        partition_key=None,  # type: Optional[Any]
-        max_item_count=None,  # type: Optional[int]
-        enable_scan_in_query=None,  # type: Optional[bool]
-        populate_query_metrics=None,  # type: Optional[bool]
-        **kwargs  # type: Any
+            self,
+            query,  # type: str
+            parameters=None,  # type: Optional[List[Dict[str, Any]]]
+            partition_key=None,  # type: Optional[Any]
+            max_item_count=None,  # type: Optional[int]
+            enable_scan_in_query=None,  # type: Optional[bool]
+            populate_query_metrics=None,  # type: Optional[bool]
+            max_integrated_cache_staleness_in_ms=None,  # type: Optional[int],
+            **kwargs  # type: Any
     ):
         # type: (...) -> AsyncItemPaged[Dict[str, Any]]
         """Return all results matching the given `query`.
@@ -296,6 +313,8 @@ class ContainerProxy(object):
         :param enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
         :param populate_query_metrics: Enable returning query metrics in response headers.
+        :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
+        :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -332,6 +351,8 @@ class ContainerProxy(object):
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
         else:
             feed_options["enableCrossPartitionQuery"] = True
+        if max_integrated_cache_staleness_in_ms is not None:
+            feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         if hasattr(response_hook, "clear"):
             response_hook.clear()
@@ -350,12 +371,12 @@ class ContainerProxy(object):
 
     @distributed_trace
     def query_items_change_feed(
-        self,
-        partition_key_range_id=None,  # type: Optional[str]
-        is_start_from_beginning=False,  # type: bool
-        continuation=None,  # type: Optional[str]
-        max_item_count=None,  # type: Optional[int]
-        **kwargs  # type: Any
+            self,
+            partition_key_range_id=None,  # type: Optional[str]
+            is_start_from_beginning=False,  # type: bool
+            continuation=None,  # type: Optional[str]
+            max_item_count=None,  # type: Optional[int]
+            **kwargs  # type: Any
     ):
         # type: (...) -> AsyncItemPaged[Dict[str, Any]]
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -397,11 +418,12 @@ class ContainerProxy(object):
 
     @distributed_trace_async
     async def upsert_item(
-        self,
-        body,  # type: Dict[str, Any]
-        pre_trigger_include=None,  # type: Optional[str]
-        post_trigger_include=None,  # type: Optional[str]
-        **kwargs  # type: Any
+            self,
+            body,  # type: Dict[str, Any]
+            pre_trigger_include=None,  # type: Optional[str]
+            post_trigger_include=None,  # type: Optional[str]
+            max_integrated_cache_staleness_in_ms=None,  # type: Optional[int],
+            **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
         """Insert or update the specified item.
@@ -412,6 +434,8 @@ class ContainerProxy(object):
         :param body: A dict-like object representing the item to update or insert.
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
+        :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
+        :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
@@ -429,6 +453,8 @@ class ContainerProxy(object):
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
+        if max_integrated_cache_staleness_in_ms is not None:
+            request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         result = await self.client_connection.UpsertItem(
             database_or_container_link=self.container_link,
@@ -442,12 +468,13 @@ class ContainerProxy(object):
 
     @distributed_trace_async
     async def replace_item(
-        self,
-        item,  # type: Union[str, Dict[str, Any]]
-        body,  # type: Dict[str, Any]
-        pre_trigger_include=None,  # type: Optional[str]
-        post_trigger_include=None,  # type: Optional[str]
-        **kwargs  # type: Any
+            self,
+            item,  # type: Union[str, Dict[str, Any]]
+            body,  # type: Dict[str, Any]
+            pre_trigger_include=None,  # type: Optional[str]
+            post_trigger_include=None,  # type: Optional[str]
+            max_integrated_cache_staleness_in_ms=None,  # type: Optional[int]
+            **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
         """Replaces the specified item if it exists in the container.
@@ -458,6 +485,8 @@ class ContainerProxy(object):
         :param body: A dict-like object representing the item to replace.
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
+        :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
+        :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
@@ -477,6 +506,8 @@ class ContainerProxy(object):
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
+        if max_integrated_cache_staleness_in_ms is not None:
+            request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         result = await self.client_connection.ReplaceItem(
             document_link=item_link, new_document=body, options=request_options, **kwargs
@@ -487,12 +518,13 @@ class ContainerProxy(object):
 
     @distributed_trace_async
     async def delete_item(
-        self,
-        item,  # type: Union[str, Dict[str, Any]]
-        partition_key,  # type: Any
-        pre_trigger_include=None,  # type: Optional[str]
-        post_trigger_include=None,  # type: Optional[str]
-        **kwargs  # type: Any
+            self,
+            item,  # type: Union[str, Dict[str, Any]]
+            partition_key,  # type: Any
+            pre_trigger_include=None,  # type: Optional[str]
+            post_trigger_include=None,  # type: Optional[str]
+            max_integrated_cache_staleness_in_ms=None,  # type: Optional[int]
+            **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Delete the specified item from the container.
@@ -503,6 +535,8 @@ class ContainerProxy(object):
         :param partition_key: Specifies the partition key value for the item.
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
+        :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
+        :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
@@ -521,6 +555,8 @@ class ContainerProxy(object):
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
+        if max_integrated_cache_staleness_in_ms is not None:
+            request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         document_link = self._get_document_link(item)
         result = await self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
@@ -617,12 +653,12 @@ class ContainerProxy(object):
 
     @distributed_trace
     def query_conflicts(
-        self,
-        query,  # type: str
-        parameters=None,  # type: Optional[List[Dict[str, Any]]]
-        partition_key=None,  # type: Optional[Any]
-        max_item_count=None,  # type: Optional[int]
-        **kwargs  # type: Any
+            self,
+            query,  # type: str
+            parameters=None,  # type: Optional[List[Dict[str, Any]]]
+            partition_key=None,  # type: Optional[Any]
+            max_item_count=None,  # type: Optional[int]
+            **kwargs  # type: Any
     ):
         # type: (...) -> AsyncItemPaged[Dict[str, Any]]
         """Return all conflicts matching a given `query`.
@@ -657,10 +693,10 @@ class ContainerProxy(object):
 
     @distributed_trace_async
     async def read_conflict(
-        self,
-        conflict, # type: Union[str, Dict[str, Any]]
-        partition_key, # type: Any
-        **kwargs # type: Any
+            self,
+            conflict,  # type: Union[str, Dict[str, Any]]
+            partition_key,  # type: Any
+            **kwargs  # type: Any
     ):
         # type: (Union[str, Dict[str, Any]], Any, Any) -> Dict[str, Any]
         """Get the conflict identified by `conflict`.
@@ -686,10 +722,10 @@ class ContainerProxy(object):
 
     @distributed_trace_async
     async def delete_conflict(
-        self,
-        conflict, # type: Union[str, Dict[str, Any]]
-        partition_key, # type: Any
-        **kwargs # type: Any
+            self,
+            conflict,  # type: Union[str, Dict[str, Any]]
+            partition_key,  # type: Any
+            **kwargs  # type: Any
     ):
         # type: (Union[str, Dict[str, Any]], Any, Any) -> None
         """Delete a specified conflict from the container.
