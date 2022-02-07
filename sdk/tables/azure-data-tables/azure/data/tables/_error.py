@@ -61,9 +61,9 @@ def _wrap_exception(ex, desired_type):
 
 
 def _validate_table_name(table_name):
-    if match("^[a-zA-Z]{1}[a-zA-Z0-9]{2,62}$", table_name) is None:
+    if table_name is None:
         raise ValueError(
-            "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long."
+            "Table name should not be None or empty."
         )
 
 
