@@ -126,10 +126,9 @@ steps:
     parameters:
       Artifacts: ${{ parameters.Artifacts }}
 
-  # Temporarily disabling due to #22416
-  # - template: /eng/common/pipelines/templates/steps/detect-api-changes.yml
-  #   parameters:
-  #     Artifacts: ${{ parameters.Artifacts }}
+  - template: /eng/common/pipelines/templates/steps/detect-api-changes.yml
+    parameters:
+      Artifacts: ${{ parameters.Artifacts }}
 
   - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
 

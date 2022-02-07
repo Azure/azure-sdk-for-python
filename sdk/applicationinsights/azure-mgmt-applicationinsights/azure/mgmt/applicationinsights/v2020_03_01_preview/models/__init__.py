@@ -6,20 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import ComponentLinkedStorageAccounts
-    from ._models_py3 import ComponentLinkedStorageAccountsPatch
-    from ._models_py3 import ErrorResponseLinkedStorage
-    from ._models_py3 import ErrorResponseLinkedStorageError
-    from ._models_py3 import ProxyResource
-    from ._models_py3 import Resource
-except (SyntaxError, ImportError):
-    from ._models import ComponentLinkedStorageAccounts  # type: ignore
-    from ._models import ComponentLinkedStorageAccountsPatch  # type: ignore
-    from ._models import ErrorResponseLinkedStorage  # type: ignore
-    from ._models import ErrorResponseLinkedStorageError  # type: ignore
-    from ._models import ProxyResource  # type: ignore
-    from ._models import Resource  # type: ignore
+from ._models_py3 import ComponentLinkedStorageAccounts
+from ._models_py3 import ComponentLinkedStorageAccountsPatch
+from ._models_py3 import ErrorResponseLinkedStorage
+from ._models_py3 import ErrorResponseLinkedStorageError
+from ._models_py3 import ProxyResource
+from ._models_py3 import Resource
+
 
 from ._application_insights_management_client_enums import (
     StorageType,

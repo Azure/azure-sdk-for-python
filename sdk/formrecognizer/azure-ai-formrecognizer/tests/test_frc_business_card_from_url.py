@@ -71,7 +71,8 @@ class TestBusinessCardFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
-    def test_business_card_v2(self, client):
+    def test_business_card_v2(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ValueError) as e:
             client.begin_recognize_business_cards_from_url(self.business_card_url_jpg)
         assert "Method 'begin_recognize_business_cards_from_url' is only available for API version V2_1 and up" in str(e.value)

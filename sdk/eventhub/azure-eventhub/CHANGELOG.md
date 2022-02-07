@@ -1,14 +1,10 @@
 # Release History
 
-## 5.7.1 (Unreleased)
+## 5.9.0b1 (Unreleased)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- The classmethod `from_message_data` has been added to `EventData` for interoperability with the Schema Registry Avro Encoder library, and takes `data` and `content_type` as positional parameters.
 
 ## 5.7.0 (2022-01-12)
 

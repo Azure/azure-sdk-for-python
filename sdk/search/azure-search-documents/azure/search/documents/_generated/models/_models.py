@@ -18,7 +18,7 @@ class AnswerResult(msrest.serialization.Model):
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :vartype additional_properties: dict[str, any]
-    :ivar score: The score value represents how relevant the answer is to the the query relative to
+    :ivar score: The score value represents how relevant the answer is to the query relative to
      other answers returned for the query.
     :vartype score: float
     :ivar key: The key of the document the answer was extracted from.

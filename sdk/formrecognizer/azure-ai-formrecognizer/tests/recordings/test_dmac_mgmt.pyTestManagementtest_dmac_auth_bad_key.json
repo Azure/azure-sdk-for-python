@@ -1,22 +1,22 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/info?api-version=2021-09-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/info?api-version=2022-01-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "0c15c800-5ee0-11ec-aa8d-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "0471ace8-7f2b-11ec-b9ed-c8348e073d30"
       },
       "RequestBody": null,
       "StatusCode": 401,
       "ResponseHeaders": {
-        "apim-request-id": "b9c27c07-7052-4dce-ad90-21c401064adc",
+        "apim-request-id": "fdaef10c-52ff-4a9b-8090-5a9b23e18bbb",
         "Content-Length": "224",
         "Content-Type": "application/json",
-        "Date": "Fri, 17 Dec 2021 02:21:31 GMT"
+        "Date": "Thu, 27 Jan 2022 04:38:47 GMT"
       },
       "ResponseBody": {
         "error": {

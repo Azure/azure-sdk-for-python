@@ -28,6 +28,7 @@ from azure.servicebus import (
     TransportType,
     ServiceBusReceiveMode,
     ServiceBusSubQueue,
+    ServiceBusMessageState
 )
 from azure.servicebus.amqp import (
     AmqpMessageHeader,
@@ -2123,3 +2124,57 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     assert recv_sequence_msg == 3
                     assert recv_value_msg == 3
                     assert normal_msg == 4
+
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    async def test_message_state_scheduled_async(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        async with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string) as sb_client:
+
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            async with sender:
+                for i in range(10):
+                    message = ServiceBusMessage("message no. {}".format(i))
+                    scheduled_time_utc = datetime.utcnow() + timedelta(seconds=30)
+                    sequence_number = await sender.schedule_messages(message, scheduled_time_utc)
+
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name)
+            async with receiver:
+                messages = await receiver.peek_messages()
+                for msg in messages:
+                    assert msg.message_state == ServiceBusMessageState.SCHEDULED
+
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    async def test_message_state_deferred_async(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        async with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string) as sb_client:
+
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            async with sender:
+                for i in range(10):
+                    message = ServiceBusMessage("message no. {}".format(i))
+                    await sender.send_messages(message)
+
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name)
+            deferred_messages = []
+            async with receiver:
+                received_msgs = await receiver.receive_messages()
+                for message in received_msgs:
+                    assert message.message_state == ServiceBusMessageState.ACTIVE
+                    deferred_messages.append(message.sequence_number)
+                    await receiver.defer_message(message)
+                if deferred_messages:
+                    received_deferred_msg = await receiver.receive_deferred_messages(
+                        sequence_numbers=deferred_messages
+                        )                
+                for message in received_deferred_msg:
+                    assert message.message_state == ServiceBusMessageState.DEFERRED

@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added models: `AzureMachineLearningSkill`
+
 ### Breaking Changes
 
 ### Bugs Fixed

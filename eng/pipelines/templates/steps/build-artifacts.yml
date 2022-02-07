@@ -95,9 +95,9 @@ steps:
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv=sphinx
 
-  - template: /eng/pipelines/templates/steps/run_apistub.yml
-    parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+  # - template: /eng/pipelines/templates/steps/run_apistub.yml
+  #   parameters:
+  #     ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
   - ${{ parameters.BeforePublishSteps }}
 
@@ -114,6 +114,7 @@ steps:
 
   - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
     displayName: 'Generate BOM'
+    condition: succeededOrFailed()
     inputs:
       BuildDropPath: $(Build.ArtifactStagingDirectory)
 
