@@ -980,11 +980,10 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         """
         try:
             message_state = self._raw_amqp_message.annotations.get(MESSAGE_STATE_NAME)
-            if not message_state:
-                return ServiceBusMessageState.ACTIVE
-            elif message_state not in (0, 1, 2):
-                return message_state
-            return ServiceBusMessageState(message_state)
+            try:
+                return ServiceBusMessageState(message_state)
+            except ValueError:
+                return ServiceBusMessageState.ACTIVE if not message_state else message_state
         except AttributeError:
             return ServiceBusMessageState.ACTIVE
 
