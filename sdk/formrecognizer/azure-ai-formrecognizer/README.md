@@ -5,7 +5,7 @@ Azure Cognitive Services Form Recognizer is a cloud service that uses machine le
 - Layout - Extract content and structure (ex. words, selection marks, tables) from documents.
 - Document - Analyze key-value pairs and entities in addition to general layout from documents.
 - Read - Read page information and detected languages from documents.
-- Prebuilt - Extract common field values from select document types (ex. receipts, invoices, business cards, ID documents) using prebuilt models.
+- Prebuilt - Extract common field values from select document types (ex. receipts, invoices, business cards, ID documents, U.S. W-2 tax forms) using prebuilt models.
 - Custom - Build custom models from your own data to extract tailored field values in addition to general layout from documents.
 
 [Source code][python-fr-src] | [Package (PyPI)][python-fr-pypi] | [API reference documentation][python-fr-ref-docs] | [Product documentation][python-fr-product-docs] | [Samples][python-fr-samples]
@@ -38,7 +38,7 @@ This table shows the relationship between SDK versions and supported API version
 |3.1.X - Latest GA release| 2.0, 2.1 (default)
 |3.0.0| 2.0
 
-> Note: Starting with version `3.2.0b1`, a new set of clients were introduced to leverage the newest features
+> Note: Starting with version `3.2.X`, a new set of clients were introduced to leverage the newest features
 > of the Form Recognizer service. Please see the [Migration Guide][migration-guide] for detailed instructions on how to update application
 > code from client library version `3.1.X` or lower to the latest version. Additionally, see the [Changelog][changelog] for more detailed information.
 > The below table describes the relationship of each client and its supported API version(s):
@@ -169,6 +169,7 @@ Use the `model` parameter to select the type of model for analysis.
 |`prebuilt-businessCard`| Text extraction and pre-trained fields and values pertaining to English business cards
 |`prebuilt-idDocument`| Text extraction and pre-trained fields and values pertaining to US driver licenses and international passports
 |`prebuilt-receipt`| Text extraction and pre-trained fields and values pertaining to English sales receipts
+|`prebuilt-tax.us.w2`| Text extraction and pre-trained fields and values pertaining to U.S. tax W-2 forms
 |`{custom-model-id}`| Text extraction, selection marks, tables, labeled fields and values from your custom documents
 
 Sample code snippets are provided to illustrate using a DocumentAnalysisClient [here](#examples "Examples").
@@ -389,7 +390,7 @@ for page in result.pages:
 - Read more about the features provided by the `prebuilt-document` model [here][service_prebuilt_document].
 
 ### Using Prebuilt Models
-Extract fields from select document types such as receipts, invoices, business cards, and identity documents using prebuilt models provided by the Form Recognizer service.
+Extract fields from select document types such as receipts, invoices, business cards, identity documents, and U.S. W-2 tax forms using prebuilt models provided by the Form Recognizer service.
 
 For example, to analyze fields from a sales receipt, use the prebuilt receipt model provided by passing `model="prebuilt-receipt"` into the `begin_analyze_document` method:
 
@@ -426,7 +427,7 @@ You are not limited to receipts! There are a few prebuilt models to choose from,
 - Analyze business cards using the `prebuilt-businessCard` model (fields recognized by the service can be found [here][service_recognize_business_cards]).
 - Analyze invoices using the `prebuilt-invoice` model (fields recognized by the service can be found [here][service_recognize_invoice]).
 - Analyze identity documents using the `prebuilt-idDocuments` model (fields recognized by the service can be found [here][service_recognize_identity_documents]).
-
+- Analyze U.S. W-2 tax forms using the `prebuilt-tax.us.w2` model (fields recognized by the service can be found [here][service_recognize_tax_forms]).
 
 ### Build a Custom Model
 Build a custom model on your own document type. The resulting model can be used to analyze values from the types of documents it was trained on.
@@ -647,6 +648,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [service_recognize_business_cards]: https://aka.ms/azsdk/formrecognizer/businesscardfieldschema
 [service_recognize_invoice]: https://aka.ms/azsdk/formrecognizer/invoicefieldschema
 [service_recognize_identity_documents]: https://aka.ms/azsdk/formrecognizer/iddocumentfieldschema
+[service_recognize_tax_forms]: https://aka.ms/azsdk/formrecognizer/taxusw2fieldschema
 [service_prebuilt_document]: https://docs.microsoft.com/azure/applied-ai-services/form-recognizer/concept-general-document#general-document-features
 [sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
 [sample_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples

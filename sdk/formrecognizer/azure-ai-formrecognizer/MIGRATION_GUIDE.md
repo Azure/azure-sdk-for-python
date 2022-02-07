@@ -636,7 +636,8 @@ for doc in model.training_documents:
 ```
 
 Train a custom model with `3.2.x`:
-***As of 3.2.0b3, `begin_build_model()` has a required `build_mode` parameter. For more information about build modes, see: https://aka.ms/azsdk/formrecognizer/buildmode. ***
+***As of 3.2.0b3, `begin_build_model()` has a required `build_mode` parameter. See https://aka.ms/azsdk/formrecognizer/buildmode for more information about build modes.***
+
 ```python
 document_model_admin_client = DocumentModelAdministrationClient(endpoint, AzureKeyCredential(key))
 poller = document_model_admin_client.begin_build_model(
