@@ -183,6 +183,9 @@ directive:
   - rename-operation:
       from: deleteCredential
       to: deleteDatasourceCredential
+  - rename-operation:
+      from: updateAnomalyDetectionConfiguration
+      to: updateDetectionConfiguration
 ```
 
 ### MetricAlertingConfiguration -> MetricAlertConfiguration
@@ -427,6 +430,52 @@ directive:
       to: MongoDbDataFeedSource
 ```
 
+```yaml
+declare-directive:
+  where-parameter: >-
+    (() => {
+      switch ($context.from) {
+        case "code-model-v1":
+          throw "not implemented";
+
+        case "code-model-v3":
+          return {from: "code-model-v3", where: `$.parameters.filter(p => p["name"] == ${JSON.stringify($)})[0]`};
+
+        case "openapi-document":
+          return { from: "openapi-document", where: `$.parameters.filter(p => p["name"] == ${JSON.stringify($)})[0]` };
+
+        case "swagger-document":
+        default:
+          return { from: "swagger-document", where: `$.parameters.filter(p => p["name"] == ${JSON.stringify($)})[0]` };
+      }
+    })()
+```
+
+```yaml
+declare-directive:
+    change-parameter-schema: >-
+        [{
+        from: 'swagger-document',
+        transform: `$.schema["$ref"] = "#/definitions/" + JSON.stringify($)`
+        },
+        {
+        from: 'openapi-document',
+        transform: `$.schema["$ref"] = "#/definitions/" + JSON.stringify($)`
+        }]
+```
+
+### Change parameter types
+
+```yaml
+directive:
+  - where-operation: updateHook
+    transform: >
+      $["parameters"][1]["schema"]["$ref"] = "#/definitions/NotificationHook";
+  - where-operation: updateAnomalyDetectionConfiguration
+    transform: >
+      $["parameters"][1]["schema"]["$ref"] = "#/definitions/AnomalyDetectionConfiguration";
+```
+
 ### Remove Models
 
 ```yaml
@@ -470,14 +519,12 @@ directive:
   - remove-model: AzureDataLakeStorageGen2ParameterPatch
   - remove-model: AzureLogAnalyticsParameterPatch
   - remove-model: MongoDBParameterPatch
-```
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["paths"]["/hooks/{hookId}"]["patch"]
-    transform: >
-        $["parameters"][1]["schema"]["$ref"] = "#/definitions/NotificationHook";
+  - remove-model: SuppressConditionPatch
+  - remove-model: SmartDetectionConditionPatch
+  - remove-model: HardThresholdConditionPatch
+  - remove-model: ChangeThresholdConditionPatch
+  - remove-model: AnomalyDetectionConfigurationPatch
+  - remove-model: WholeMetricConfigurationPatch
 ```
 
 ### Rename Properties
@@ -571,6 +618,34 @@ directive:
     rename-property:
       from: viewMode
       to: accessMode
+  - where-model: AnomalyDetectionConfiguration
+    rename-property:
+      from: anomalyDetectionConfigurationId
+      to: id
+  - where-model: AnomalyDetectionConfiguration
+    rename-property:
+      from: wholeMetricConfiguration
+      to: wholeSeriesDetectionCondition
+  - where-model: AnomalyDetectionConfiguration
+    rename-property:
+      from: dimensionGroupOverrideConfigurations
+      to: seriesGroupDetectionConditions
+  - where-model: AnomalyDetectionConfiguration
+    rename-property:
+      from: seriesOverrideConfigurations
+      to: seriesDetectionConditions
+  - where-model: MetricSeriesGroupDetectionCondition
+    rename-property:
+      from: seriesOverrideConfigurations
+      to: seriesDetectionConditions
+  - where-model: DimensionGroupIdentity
+    rename-property:
+      from: dimension
+      to: seriesGroupKey
+  - where-model: SeriesIdentity
+    rename-property:
+      from: dimension
+      to: seriesKey
 ```
 
 ```yaml
@@ -604,26 +679,79 @@ directive:
     make-property-optional: clientId
   - where-model: AzureLogAnalyticsDataFeedSource
     make-property-optional: clientSecret
+  - where-model: SuppressCondition
+    make-property-optional: minNumber
+  - where-model: SuppressCondition
+    make-property-optional: minRatio
+  - where-model: SmartDetectionCondition
+    make-property-optional: anomalyDetectorDirection
+  - where-model: SmartDetectionCondition
+    make-property-optional: sensitivity
+  - where-model: SmartDetectionCondition
+    make-property-optional: suppressCondition
+  - where-model: HardThresholdCondition
+    make-property-optional: anomalyDetectorDirection
+  - where-model: HardThresholdCondition
+    make-property-optional: suppressCondition
+  - where-model: ChangeThresholdCondition
+    make-property-optional: anomalyDetectorDirection
+  - where-model: ChangeThresholdCondition
+    make-property-optional: changePercentage
+  - where-model: ChangeThresholdCondition
+    make-property-optional: shiftPoint
+  - where-model: ChangeThresholdCondition
+    make-property-optional: suppressCondition
+  - where-model: ChangeThresholdCondition
+    make-property-optional: withinRange
 ```
 
-### Flatten EmailHookParameter
+```yaml
+declare-directive:
+    flatten-property: >-
+        [{
+        from: 'swagger-document',
+        transform: `if ($.properties[${JSON.stringify($)}]) { $.properties[${JSON.stringify($)}]["x-ms-client-flatten"] = true; }`
+        },
+        {
+        from: 'openapi-document',
+        transform: `if ($.properties[${JSON.stringify($)}]) { $.properties[${JSON.stringify($)}]["x-ms-client-flatten"] = true; }`
+        }]
+```
+
+### Flatten properties
 
 ```yaml
 directive:
-  - from: swagger-document
-    where: $["definitions"]["EmailNotificationHook"]
-    transform: >
-        $.properties["hookParameter"]["x-ms-client-flatten"] = true;
+  - where-model: EmailNotificationHook
+    flatten-property: hookParameter
+  - where-model: WebNotificationHook
+    flatten-property: hookParameter
+  - where-model: MetricSeriesGroupDetectionCondition
+    flatten-property: group
+  - where-model: MetricSingleSeriesDetectionCondition
+    flatten-property: series
 ```
 
-### Flatten WebhookHookParameter
+```yaml
+declare-directive:
+    rename-parameter: >-
+        [{
+        from: 'swagger-document',
+        transform: `for (const param in $.parameters) { if (param["name"] == ${JSON.stringify($.from)}) { $[param]["x-ms-client-name"] = ${JSON.stringify($.to)}; } }`
+        },
+        {
+        from: 'openapi-document',
+        transform: `for (const param in $.parameters) { if (param["name"] == ${JSON.stringify($.from)}) { $[param]["x-ms-client-name"] = ${JSON.stringify($.to)}; } }`
+        }]
+```
+
+### Rename parameters
 
 ```yaml
 directive:
-  - from: swagger-document
-    where: $["definitions"]["WebNotificationHook"]
+  - where-operation: getDetectionConfiguration
     transform: >
-        $.properties["hookParameter"]["x-ms-client-flatten"] = true;
+        $.parameters[0]["x-ms-client-name"] = "detectionConfigurationId";
 ```
 
 ### Add DataSourceParameter to DataFeed

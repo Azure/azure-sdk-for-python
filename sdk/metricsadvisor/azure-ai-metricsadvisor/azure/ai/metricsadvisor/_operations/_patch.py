@@ -27,12 +27,13 @@
 import functools
 import six
 import datetime
-from typing import Any, List, Union, cast, overload, Dict, Optional
+from typing import Any, List, Tuple, Union, cast, overload, Dict, Optional
 from azure.core.tracing.decorator import distributed_trace
 from ._operations import (
     MetricsAdvisorClientOperationsMixin as _MetricsAdvisorClientOperationsMixin,
     build_get_data_feed_request,
     build_list_data_feeds_request,
+    JSONType,
 )
 from ..models import *
 from ..models import _models_py3 as generated_models
@@ -92,98 +93,153 @@ FeedbackUnion = Union[
 ########################### HELPERS ###########################
 
 
-def convert_to_sub_feedback(feedback):
-    # type: (MetricFeedback) -> Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]
-    if feedback.feedback_type == "Anomaly":
-        return AnomalyFeedback._from_generated(feedback)  # type: ignore
-    if feedback.feedback_type == "ChangePoint":
-        return ChangePointFeedback._from_generated(feedback)  # type: ignore
-    if feedback.feedback_type == "Comment":
-        return CommentFeedback._from_generated(feedback)  # type: ignore
-    if feedback.feedback_type == "Period":
-        return PeriodFeedback._from_generated(feedback)  # type: ignore
-    raise HttpResponseError("Invalid feedback type returned in the response.")
+class OperationMixinHelpers:
+
+    def _convert_to_sub_feedback(self, feedback):
+        # type: (MetricFeedback) -> Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]
+        if feedback.feedback_type == "Anomaly":
+            return AnomalyFeedback._from_generated(feedback)  # type: ignore
+        if feedback.feedback_type == "ChangePoint":
+            return ChangePointFeedback._from_generated(feedback)  # type: ignore
+        if feedback.feedback_type == "Comment":
+            return CommentFeedback._from_generated(feedback)  # type: ignore
+        if feedback.feedback_type == "Period":
+            return PeriodFeedback._from_generated(feedback)  # type: ignore
+        raise HttpResponseError("Invalid feedback type returned in the response.")
 
 
-def convert_to_datasource_credential(datasource_credential):
-    if datasource_credential.data_source_credential_type == "AzureSQLConnectionString":
-        return DatasourceSqlConnectionString._from_generated(datasource_credential)
-    if datasource_credential.data_source_credential_type == "DataLakeGen2SharedKey":
-        return DatasourceDataLakeGen2SharedKey._from_generated(datasource_credential)
-    if datasource_credential.data_source_credential_type == "ServicePrincipal":
-        return DatasourceServicePrincipal._from_generated(datasource_credential)
-    return DatasourceServicePrincipalInKeyVault._from_generated(datasource_credential)
+    def _convert_to_datasource_credential(self, datasource_credential):
+        if datasource_credential.data_source_credential_type == "AzureSQLConnectionString":
+            return DatasourceSqlConnectionString._from_generated(datasource_credential)
+        if datasource_credential.data_source_credential_type == "DataLakeGen2SharedKey":
+            return DatasourceDataLakeGen2SharedKey._from_generated(datasource_credential)
+        if datasource_credential.data_source_credential_type == "ServicePrincipal":
+            return DatasourceServicePrincipal._from_generated(datasource_credential)
+        return DatasourceServicePrincipalInKeyVault._from_generated(datasource_credential)
 
 
-def construct_detection_config_dict(update_kwargs):
+    def _construct_alert_config_dict(self, **update_kwargs):
 
-    if "wholeMetricConfiguration" in update_kwargs:
-        update_kwargs["wholeMetricConfiguration"] = (
-            update_kwargs["wholeMetricConfiguration"]._to_generated_patch()
-            if update_kwargs["wholeMetricConfiguration"]
-            else None
+        if "metricAlertingConfigurations" in update_kwargs:
+            update_kwargs["metricAlertingConfigurations"] = (
+                [config._to_generated() for config in update_kwargs["metricAlertingConfigurations"]]
+                if update_kwargs["metricAlertingConfigurations"]
+                else None
+            )
+
+        return update_kwargs
+
+
+    def _construct_data_feed(self, **kwargs):
+        granularity = kwargs.pop("granularity", None)
+        schema = kwargs.pop("schema", None)
+        ingestion_settings = kwargs.pop("ingestion_settings", None)
+        if isinstance(granularity, (DataFeedGranularityType, str)):
+            granularity = DataFeedGranularity(
+                granularity_type=granularity,
+            )
+        if isinstance(schema, list):
+            schema = DataFeedSchema(metrics=[DataFeedMetric(name=metric_name) for metric_name in schema])
+        if isinstance(ingestion_settings, (datetime.datetime, str)):
+            ingestion_settings = DataFeedIngestionSettings(ingestion_begin_time=ingestion_settings)
+        return DataFeed(granularity=granularity, schema=schema, ingestion_settings=ingestion_settings, **kwargs)
+
+    def _update_detection_configuration_helper(self, detection_configuration, **kwargs) -> Tuple[str, Union[JSONType, AnomalyDetectionConfiguration], Any]:
+
+        unset = object()
+        update_kwargs = {}
+        update_kwargs["name"] = kwargs.pop("name", unset)
+        update_kwargs["wholeMetricConfiguration"] = kwargs.pop("whole_series_detection_condition", unset)
+        update_kwargs["dimensionGroupOverrideConfigurations"] = kwargs.pop("series_group_detection_conditions", unset)
+        update_kwargs["seriesOverrideConfigurations"] = kwargs.pop("series_detection_conditions", unset)
+        update_kwargs["description"] = kwargs.pop("description", unset)
+
+        update = {key: value for key, value in update_kwargs.items() if value != unset}
+        if isinstance(detection_configuration, str):
+            detection_configuration_id = detection_configuration
+            detection_config_patch = update
+            for key in update.keys():
+                if key in kwargs:
+                    kwargs.pop(key)
+        else:
+            detection_configuration_id = detection_configuration.id
+            detection_config_patch = AnomalyDetectionConfiguration(
+                name=update.pop("name", detection_configuration.name),
+                metric_id=detection_configuration.metric_id,
+                id=detection_configuration.id,
+                description=update.pop("description", detection_configuration.description),
+                whole_series_detection_condition=update.pop("whole_series_detection_condition", detection_configuration.whole_series_detection_condition),
+                series_group_detection_conditions=update.pop("series_group_detection_conditions", detection_configuration.series_group_detection_conditions),
+                series_detection_conditions=update.pop("series_detection_conditions", detection_configuration.series_detection_conditions)
+            )
+        return detection_configuration_id, detection_config_patch, kwargs
+
+    def _update_data_feed_helper(self, data_feed: Union[str, DataFeed], **kwargs) -> Tuple[str, Union[JSONType, DataFeed], Any]:
+        unset = object()
+        update_kwargs = {}
+        update_kwargs["dataFeedName"] = kwargs.pop("name", unset)
+        update_kwargs["dataFeedDescription"] = kwargs.pop(
+            "data_feed_description", unset
         )
-    if "dimensionGroupOverrideConfigurations" in update_kwargs:
-        update_kwargs["dimensionGroupOverrideConfigurations"] = (
-            [group._to_generated() for group in update_kwargs["dimensionGroupOverrideConfigurations"]]
-            if update_kwargs["dimensionGroupOverrideConfigurations"]
-            else None
+        update_kwargs["timestampColumn"] = kwargs.pop("timestamp_column", unset)
+        update_kwargs["dataStartFrom"] = kwargs.pop("ingestion_begin_time", unset)
+        update_kwargs["startOffsetInSeconds"] = kwargs.pop(
+            "ingestion_start_offset", unset
         )
-    if "seriesOverrideConfigurations" in update_kwargs:
-        update_kwargs["seriesOverrideConfigurations"] = (
-            [series._to_generated() for series in update_kwargs["seriesOverrideConfigurations"]]
-            if update_kwargs["seriesOverrideConfigurations"]
-            else None
+        update_kwargs["maxConcurrency"] = kwargs.pop(
+            "data_source_request_concurrency", unset
         )
-
-    return update_kwargs
-
-
-def construct_alert_config_dict(update_kwargs):
-
-    if "metricAlertingConfigurations" in update_kwargs:
-        update_kwargs["metricAlertingConfigurations"] = (
-            [config._to_generated() for config in update_kwargs["metricAlertingConfigurations"]]
-            if update_kwargs["metricAlertingConfigurations"]
-            else None
+        update_kwargs["minRetryIntervalInSeconds"] = kwargs.pop(
+            "ingestion_retry_delay", unset
         )
-
-    return update_kwargs
-
-def construct_data_feed(**kwargs):
-    granularity = kwargs.pop("granularity", None)
-    schema = kwargs.pop("schema", None)
-    ingestion_settings = kwargs.pop("ingestion_settings", None)
-    if isinstance(granularity, (DataFeedGranularityType, str)):
-        granularity = DataFeedGranularity(
-            granularity_type=granularity,
+        update_kwargs["stopRetryAfterInSeconds"] = kwargs.pop("stop_retry_after", unset)
+        update_kwargs["needRollup"] = kwargs.pop("rollup_type", unset)
+        update_kwargs["rollUpMethod"] = kwargs.pop("rollup_method", unset)
+        update_kwargs["rollUpColumns"] = kwargs.pop(
+            "auto_rollup_group_by_column_names", unset
         )
-    if isinstance(schema, list):
-        schema = DataFeedSchema(metrics=[DataFeedMetric(name=metric_name) for metric_name in schema])
-    if isinstance(ingestion_settings, (datetime.datetime, str)):
-        ingestion_settings = DataFeedIngestionSettings(ingestion_begin_time=ingestion_settings)
-    return DataFeed(
-        granularity=granularity,
-        schema=schema,
-        ingestion_settings=ingestion_settings,
-        **kwargs
-    )
+        update_kwargs["allUpIdentification"] = kwargs.pop(
+            "rollup_identification_value", unset
+        )
+        update_kwargs["fillMissingPointType"] = kwargs.pop("fill_type", unset)
+        update_kwargs["fillMissingPointValue"] = kwargs.pop("custom_fill_value", unset)
+        update_kwargs["viewMode"] = kwargs.pop("access_mode", unset)
+        update_kwargs["admins"] = kwargs.pop("admins", unset)
+        update_kwargs["viewers"] = kwargs.pop("viewers", unset)
+        update_kwargs["status"] = kwargs.pop("status", unset)
+        update_kwargs["actionLinkTemplate"] = kwargs.pop("action_link_template", unset)
+        update_kwargs["dataSourceParameter"] = kwargs.pop("source", unset)
 
-def convert_datetime(date_time):
-    # type: (Union[str, datetime.datetime]) -> datetime.datetime
-    if isinstance(date_time, datetime.datetime):
-        return date_time
-    if isinstance(date_time, str):
-        try:
-            return datetime.datetime.strptime(date_time, "%Y-%m-%d")
-        except ValueError:
+        update = {key: value for key, value in update_kwargs.items() if value != unset}
+
+        if isinstance(data_feed, str):
+            data_feed_id = data_feed
+            if "dataStartFrom" in update:
+                update["dataStartFrom"] = Serializer.serialize_iso(update["dataStartFrom"])
+            data_feed_patch = update
+
+        else:
+            data_feed_id = data_feed.id
+            data_feed_patch = data_feed._to_generated()
+        return data_feed_id, data_feed_patch, kwargs
+
+
+    def _convert_datetime(self, date_time):
+        # type: (Union[str, datetime.datetime]) -> datetime.datetime
+        if isinstance(date_time, datetime.datetime):
+            return date_time
+        if isinstance(date_time, str):
             try:
-                return datetime.datetime.strptime(date_time, "%Y-%m-%dT%H:%M:%SZ")
+                return datetime.datetime.strptime(date_time, "%Y-%m-%d")
             except ValueError:
-                return datetime.datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")
-    raise TypeError("Bad datetime type")
+                try:
+                    return datetime.datetime.strptime(date_time, "%Y-%m-%dT%H:%M:%SZ")
+                except ValueError:
+                    return datetime.datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")
+        raise TypeError("Bad datetime type")
 
-class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin):
+
+class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, OperationMixinHelpers):
     @distributed_trace
     def create_alert_configuration(
         self,
@@ -218,7 +274,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin):
         ingestion_settings,  # type: Union[datetime.datetime, DataFeedIngestionSettings]
         **kwargs  # type: Any
     ):  # type: (...) -> DataFeed
-        data_feed = construct_data_feed(
+        data_feed = self._construct_data_feed(
             name=name,
             source=source,
             granularity=granularity,
@@ -230,9 +286,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin):
             if attr in kwargs:
                 kwargs.pop(attr)
         response_headers = super().create_data_feed(  # type: ignore
-            data_feed._to_generated(),
-            cls=lambda pipeline_response, _, response_headers: response_headers,
-            **kwargs
+            data_feed._to_generated(), cls=lambda pipeline_response, _, response_headers: response_headers, **kwargs
         )
         data_feed_id = response_headers["Location"].split("dataFeeds/")[1]
         return self.get_data_feed(data_feed_id)
@@ -257,24 +311,16 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin):
         whole_series_detection_condition,  # type: MetricDetectionCondition
         **kwargs  # type: Any
     ):  # type: (...) -> AnomalyDetectionConfiguration
-        description = kwargs.pop("description", None)
-        series_group_detection_conditions = kwargs.pop("series_group_detection_conditions", None)
-        series_detection_conditions = kwargs.pop("series_detection_conditions", None)
         config = AnomalyDetectionConfiguration(
             name=name,
             metric_id=metric_id,
-            description=description,
-            whole_metric_configuration=whole_series_detection_condition._to_generated(),
-            dimension_group_override_configurations=[
-                group._to_generated() for group in series_group_detection_conditions
-            ]
-            if series_group_detection_conditions
-            else None,
-            series_override_configurations=[series._to_generated() for series in series_detection_conditions]
-            if series_detection_conditions
-            else None,
+            description=kwargs.pop("description", None),
+            whole_series_detection_condition=whole_series_detection_condition,
+            **kwargs
         )
-
+        for attr in dir(config):
+            if attr in kwargs:
+                kwargs.pop(attr)
         response_headers = super().create_detection_configuration(  # type: ignore
             config, cls=lambda pipeline_response, _, response_headers: response_headers, **kwargs
         )
@@ -322,12 +368,6 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin):
         return AnomalyAlertConfiguration._from_generated(config)
 
     @distributed_trace
-    def get_detection_configuration(self, detection_configuration_id, **kwargs):
-        # type: (str, Any) -> AnomalyDetectionConfiguration
-        config = super().get_detection_configuration(detection_configuration_id, **kwargs)
-        return AnomalyDetectionConfiguration._from_generated(config)
-
-    @distributed_trace
     def get_data_feed_ingestion_progress(
         self,
         data_feed_id,  # type: str
@@ -346,8 +386,8 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        converted_start_time = convert_datetime(start_time)
-        converted_end_time = convert_datetime(end_time)
+        converted_start_time = self._convert_datetime(start_time)
+        converted_end_time = self._convert_datetime(end_time)
         super().refresh_data_feed_ingestion(
             data_feed_id,
             body=IngestionProgressResetOptions(start_time=converted_start_time, end_time=converted_end_time),
@@ -388,19 +428,8 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin):
 
     @distributed_trace
     def update_data_feed(self, data_feed: Union[str, DataFeed], **kwargs: Any) -> DataFeed:
-        if isinstance(data_feed, str):
-            data_feed_patch = construct_data_feed(**kwargs)
-            for attr in dir(data_feed_patch):
-                if attr in kwargs:
-                    kwargs.pop(attr)
-        else:
-            data_feed_patch = data_feed._to_generated()
-
-        return DataFeed._from_generated(
-            super().update_data_feed(data_feed_patch.id, data_feed_patch, **kwargs),
-            data_feed_patch.data_source_parameter,
-            data_feed_patch.data_source_type,
-        )
+        data_feed_id, data_feed_patch, kwargs = self._update_data_feed_helper(data_feed, **kwargs)
+        return super().update_data_feed(data_feed_id, data_feed_patch, **kwargs)
 
     @distributed_trace
     def update_alert_configuration(
@@ -439,35 +468,15 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin):
     @distributed_trace
     def update_detection_configuration(
         self,
-        detection_configuration,  # type: Union[str, AnomalyDetectionConfiguration]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> AnomalyDetectionConfiguration
-        unset = object()
-        update_kwargs = {}
-        update_kwargs["name"] = kwargs.pop("name", unset)
-        update_kwargs["wholeMetricConfiguration"] = kwargs.pop("whole_series_detection_condition", unset)
-        update_kwargs["dimensionGroupOverrideConfigurations"] = kwargs.pop("series_group_detection_conditions", unset)
-        update_kwargs["seriesOverrideConfigurations"] = kwargs.pop("series_detection_conditions", unset)
-        update_kwargs["description"] = kwargs.pop("description", unset)
+        detection_configuration: Union[str, AnomalyDetectionConfiguration],
+        **kwargs: Any
+    ) -> AnomalyDetectionConfiguration:
+        detection_configuration_id, detection_config_patch, kwargs = self._update_detection_configuration_helper(detection_configuration, **kwargs)
 
-        update = {key: value for key, value in update_kwargs.items() if value != unset}
-        if isinstance(detection_configuration, str):
-            detection_configuration_id = detection_configuration
-            detection_config_patch = construct_detection_config_dict(update)
-
-        else:
-            detection_configuration_id = detection_configuration.id
-            detection_config_patch = detection_configuration._to_generated_patch(
-                name=update.pop("name", None),
-                description=update.pop("description", None),
-                whole_series_detection_condition=update.pop("wholeMetricConfiguration", None),
-                series_group_detection_conditions=update.pop("dimensionGroupOverrideConfigurations", None),
-                series_detection_conditions=update.pop("seriesOverrideConfigurations", None),
-            )
-
-        return AnomalyDetectionConfiguration._from_generated(
-            super().update_anomaly_detection_configuration(detection_configuration_id, detection_config_patch, **kwargs)
+        return super().update_anomaly_detection_configuration(
+            configuration_id=detection_configuration_id,
+            body=detection_config_patch,
+            **kwargs
         )
 
     @distributed_trace
@@ -522,9 +531,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin):
                 maxpagesize=maxpagesize,
             )
             path_format_arguments = {
-                "endpoint": self._serialize.url(
-                    "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                ),
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
             }
             request.url = self._client.format_url(request.url, **path_format_arguments)
             return request
@@ -575,22 +582,6 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin):
             cls=kwargs.pop(
                 "cls",
                 lambda confs: [AnomalyAlertConfiguration._from_generated(conf) for conf in confs],
-            ),
-            **kwargs
-        )
-
-    @distributed_trace
-    def list_detection_configurations(
-        self,
-        metric_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> ItemPaged[AnomalyDetectionConfiguration]
-        return super().list_detection_configurations(  # type: ignore
-            metric_id,
-            cls=kwargs.pop(
-                "cls",
-                lambda confs: [AnomalyDetectionConfiguration._from_generated(conf) for conf in confs],
             ),
             **kwargs
         )

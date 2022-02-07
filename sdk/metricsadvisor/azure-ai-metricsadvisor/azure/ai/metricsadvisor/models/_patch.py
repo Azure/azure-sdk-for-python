@@ -7,6 +7,7 @@
 # pylint:disable=protected-access
 # pylint:disable=too-many-lines
 
+from contextlib import suppress
 import datetime
 from this import d
 from typing import Any, Tuple, Union, List, Dict, Optional, TYPE_CHECKING
@@ -415,8 +416,12 @@ class DataFeed(generated_models.DataFeed):  # pylint:disable=too-many-instance-a
             roll_up_method=self.rollup_settings.rollup_method if self.rollup_settings else None,
             roll_up_columns=self.rollup_settings.auto_rollup_group_by_column_names if self.rollup_settings else None,
             all_up_identification=self.rollup_settings.rollup_identification_value if self.rollup_settings else None,
-            fill_missing_point_type=self.missing_data_point_fill_settings.fill_type if self.missing_data_point_fill_settings else None,
-            fill_missing_point_value=self.missing_data_point_fill_settings.custom_fill_value if self.missing_data_point_fill_settings else None,
+            fill_missing_point_type=self.missing_data_point_fill_settings.fill_type
+            if self.missing_data_point_fill_settings
+            else None,
+            fill_missing_point_value=self.missing_data_point_fill_settings.custom_fill_value
+            if self.missing_data_point_fill_settings
+            else None,
             access_mode=self.access_mode,
             admins=self.admins,
             viewers=self.viewers,
@@ -425,7 +430,7 @@ class DataFeed(generated_models.DataFeed):  # pylint:disable=too-many-instance-a
             created_time=self.created_time,
             action_link_template=self.action_link_template,
             authentication_type=self.source.authentication_type,
-            credential_id=self.source.credential_id
+            credential_id=self.source.credential_id,
         )
         retval.data_source_type = self.source.data_source_type
         return retval
@@ -673,7 +678,7 @@ class AnomalyAlertConfiguration(generated_models.AnomalyAlertConfiguration):
         )
 
 
-class AnomalyDetectionConfiguration(object):
+class AnomalyDetectionConfiguration(generated_models.AnomalyDetectionConfiguration):
     """AnomalyDetectionConfiguration.
 
 
@@ -692,15 +697,12 @@ class AnomalyDetectionConfiguration(object):
         list[~azure.ai.metricsadvisor.models.MetricSingleSeriesDetectionCondition]
     """
 
-    def __init__(self, name, metric_id, whole_series_detection_condition, **kwargs):
-        # type: (str, str, MetricDetectionCondition, Any) -> None
-        self.name = name
-        self.metric_id = metric_id
-        self.whole_series_detection_condition = whole_series_detection_condition
-        self.id = kwargs.get("id", None)
-        self.description = kwargs.get("description", None)
-        self.series_group_detection_conditions = kwargs.get("series_group_detection_conditions", None)
-        self.series_detection_conditions = kwargs.get("series_detection_conditions", None)
+    def __init__(
+        self, name: str, metric_id: str, whole_series_detection_condition: "MetricDetectionCondition", **kwargs: Any
+    ) -> None:
+        super().__init__(
+            name=name, metric_id=metric_id, whole_series_detection_condition=whole_series_detection_condition, **kwargs
+        )
 
     def __repr__(self):
         return (
@@ -715,72 +717,6 @@ class AnomalyDetectionConfiguration(object):
                 repr(self.series_group_detection_conditions),
                 repr(self.series_detection_conditions),
             )[:1024]
-        )
-
-    @classmethod
-    def _from_generated(cls, config):
-        return cls(
-            id=config.anomaly_detection_configuration_id,
-            name=config.name,
-            description=config.description,
-            metric_id=config.metric_id,
-            whole_series_detection_condition=MetricDetectionCondition._from_generated(
-                config.whole_metric_configuration
-            ),
-            series_group_detection_conditions=[
-                MetricSeriesGroupDetectionCondition._from_generated(conf)
-                for conf in config.dimension_group_override_configurations
-            ]
-            if config.dimension_group_override_configurations
-            else None,
-            series_detection_conditions=[
-                MetricSingleSeriesDetectionCondition._from_generated(conf)
-                for conf in config.series_override_configurations
-            ]
-            if config.series_override_configurations
-            else None,
-        )
-
-    def _to_generated(self):
-        return generated_models.AnomalyDetectionConfiguration(
-            name=self.name,
-            metric_id=self.metric_id,
-            description=self.description,
-            whole_metric_configuration=self.whole_series_detection_condition._to_generated(),
-            dimension_group_override_configurations=[
-                group._to_generated() for group in self.series_group_detection_conditions
-            ]
-            if self.series_group_detection_conditions
-            else None,
-            series_override_configurations=[series._to_generated() for series in self.series_detection_conditions]
-            if self.series_detection_conditions
-            else None,
-        )
-
-    def _to_generated_patch(
-        self,
-        name,
-        description,
-        whole_series_detection_condition,
-        series_group_detection_conditions,
-        series_detection_conditions,
-    ):
-        whole_series_detection_condition = whole_series_detection_condition or self.whole_series_detection_condition
-        series_group = series_group_detection_conditions or self.series_group_detection_conditions
-        series_detection = series_detection_conditions or self.series_detection_conditions
-
-        return generated_models.AnomalyDetectionConfigurationPatch(
-            name=name or self.name,
-            description=description or self.description,
-            whole_metric_configuration=whole_series_detection_condition._to_generated_patch()
-            if whole_series_detection_condition
-            else None,
-            dimension_group_override_configurations=[group._to_generated() for group in series_group]
-            if series_group
-            else None,
-            series_override_configurations=[series._to_generated() for series in series_detection]
-            if series_detection
-            else None,
         )
 
 
@@ -1471,7 +1407,7 @@ class WebNotificationHook(NotificationHook, generated_models.WebNotificationHook
         )
 
 
-class MetricDetectionCondition(object):
+class MetricDetectionCondition(generated_models.MetricDetectionCondition):
     """MetricDetectionCondition.
 
     :keyword condition_operator: condition operator
@@ -1487,12 +1423,6 @@ class MetricDetectionCondition(object):
     :paramtype change_threshold_condition: ~azure.ai.metricsadvisor.models.ChangeThresholdCondition
     """
 
-    def __init__(self, **kwargs):
-        self.condition_operator = kwargs.get("condition_operator", None)
-        self.smart_detection_condition = kwargs.get("smart_detection_condition", None)
-        self.hard_threshold_condition = kwargs.get("hard_threshold_condition", None)
-        self.change_threshold_condition = kwargs.get("change_threshold_condition", None)
-
     def __repr__(self):
         return (
             "MetricDetectionCondition(condition_operator={}, smart_detection_condition={}, "
@@ -1505,7 +1435,7 @@ class MetricDetectionCondition(object):
         )
 
 
-class ChangeThresholdCondition(object):
+class ChangeThresholdCondition(generated_models.ChangeThresholdCondition):
     """ChangeThresholdCondition.
 
     :param change_percentage: Required. change percentage, value range : [0, +∞).
@@ -1526,19 +1456,21 @@ class ChangeThresholdCondition(object):
 
     def __init__(
         self,
-        change_percentage,  # type: float
-        shift_point,  # type: int
-        within_range,  # type: bool
-        anomaly_detector_direction,  # type: Union[str, AnomalyDetectorDirection]
-        suppress_condition,  # type: SuppressCondition
-        **kwargs  # type: Any
-    ):  # pylint: disable=unused-argument
-        # type: (...) -> None
-        self.change_percentage = change_percentage
-        self.shift_point = shift_point
-        self.within_range = within_range
-        self.anomaly_detector_direction = anomaly_detector_direction
-        self.suppress_condition = suppress_condition
+        change_percentage: float,
+        shift_point: int,
+        within_range: bool,
+        anomaly_detector_direction: Union[str, "AnomalyDetectorDirection"],
+        suppress_condition: "SuppressCondition",
+        **kwargs: Any
+    ) -> None:
+        super().__init__(
+            change_percentage=change_percentage,
+            shift_point=shift_point,
+            within_range=within_range,
+            anomaly_detector_direction=anomaly_detector_direction,
+            suppress_condition=suppress_condition,
+            **kwargs
+        )
 
     def __repr__(self):
         return (
@@ -1553,7 +1485,7 @@ class ChangeThresholdCondition(object):
         )
 
 
-class SuppressCondition(object):
+class SuppressCondition(generated_models.SuppressCondition):
     """SuppressCondition.
 
     :param min_number: Required. min point number, value range : [1, +∞).
@@ -1562,20 +1494,14 @@ class SuppressCondition(object):
     :type min_ratio: float
     """
 
-    def __init__(self, min_number, min_ratio, **kwargs):  # pylint: disable=unused-argument
-        # type: (int, float, Any) -> None
-        self.min_number = min_number
-        self.min_ratio = min_ratio
+    def __init__(self, min_number: int, min_ratio: float, **kwargs: Any) -> None:
+        super().__init__(min_number=min_number, min_ratio=min_ratio, **kwargs)
 
     def __repr__(self):
         return "SuppressCondition(min_number={}, min_ratio={})".format(self.min_number, self.min_ratio)[:1024]
 
-    @classmethod
-    def _from_generated(cls, condition):
-        return cls(min_number=condition.min_number, min_ratio=condition.min_ratio) if condition else None
 
-
-class SmartDetectionCondition(object):
+class SmartDetectionCondition(generated_models.SmartDetectionCondition):
     """SmartDetectionCondition.
 
     :param sensitivity: Required. sensitivity, value range : (0, 100].
@@ -1589,12 +1515,18 @@ class SmartDetectionCondition(object):
     """
 
     def __init__(
-        self, sensitivity, anomaly_detector_direction, suppress_condition, **kwargs
-    ):  # pylint: disable=unused-argument
-        # type: (float, Union[str, AnomalyDetectorDirection], SuppressCondition, Any) -> None
-        self.sensitivity = sensitivity
-        self.anomaly_detector_direction = anomaly_detector_direction
-        self.suppress_condition = suppress_condition
+        self,
+        sensitivity: float,
+        anomaly_detector_direction: Union[str, "AnomalyDetectorDirection"],
+        suppress_condition: "SuppressCondition",
+        **kwargs: Any
+    ) -> None:
+        super().__init__(
+            sensitivity=sensitivity,
+            anomaly_detector_direction=anomaly_detector_direction,
+            suppress_condition=suppress_condition,
+            **kwargs
+        )
 
     def __repr__(self):
         return "SmartDetectionCondition(sensitivity={}, anomaly_detector_direction={}, suppress_condition={})".format(
@@ -1604,7 +1536,7 @@ class SmartDetectionCondition(object):
         )[:1024]
 
 
-class HardThresholdCondition(object):
+class HardThresholdCondition(generated_models.HardThresholdCondition):
     """HardThresholdCondition.
 
     :param anomaly_detector_direction: Required. detection direction. Possible values include:
@@ -1621,12 +1553,15 @@ class HardThresholdCondition(object):
     :paramtype upper_bound: float
     """
 
-    def __init__(self, anomaly_detector_direction, suppress_condition, **kwargs):
-        # type: (Union[str, AnomalyDetectorDirection], SuppressCondition, Any) -> None
-        self.anomaly_detector_direction = anomaly_detector_direction
-        self.suppress_condition = suppress_condition
-        self.lower_bound = kwargs.get("lower_bound", None)
-        self.upper_bound = kwargs.get("upper_bound", None)
+    def __init__(
+        self,
+        anomaly_detector_direction: Union[str, "AnomalyDetectorDirection"],
+        suppress_condition: "SuppressCondition",
+        **kwargs: Any
+    ) -> None:
+        super().__init__(
+            anomaly_detector_direction=anomaly_detector_direction, suppress_condition=suppress_condition, **kwargs
+        )
 
     def __repr__(self):
         return (
@@ -1640,7 +1575,9 @@ class HardThresholdCondition(object):
         )
 
 
-class MetricSeriesGroupDetectionCondition(MetricDetectionCondition):
+class MetricSeriesGroupDetectionCondition(
+    generated_models.MetricSeriesGroupDetectionCondition, MetricDetectionCondition
+):
     """MetricSeriesGroupAnomalyDetectionConditions.
 
     :param series_group_key: Required. dimension specified for series group.
@@ -1658,10 +1595,8 @@ class MetricSeriesGroupDetectionCondition(MetricDetectionCondition):
     :paramtype change_threshold_condition: ~azure.ai.metricsadvisor.models.ChangeThresholdCondition
     """
 
-    def __init__(self, series_group_key, **kwargs):
-        # type: (Dict[str, str], Any) -> None
-        super().__init__(**kwargs)
-        self.series_group_key = series_group_key
+    def __init__(self, series_group_key: Dict[str, str], **kwargs: Any) -> None:
+        super().__init__(series_group_key=series_group_key, **kwargs)
 
     def __repr__(self):
         return (
@@ -1676,7 +1611,9 @@ class MetricSeriesGroupDetectionCondition(MetricDetectionCondition):
         )
 
 
-class MetricSingleSeriesDetectionCondition(MetricDetectionCondition):
+class MetricSingleSeriesDetectionCondition(
+    generated_models.MetricSingleSeriesDetectionCondition, MetricDetectionCondition
+):
     """MetricSingleSeriesDetectionCondition.
 
     :param series_key: Required. dimension specified for series.
@@ -1694,10 +1631,8 @@ class MetricSingleSeriesDetectionCondition(MetricDetectionCondition):
     :paramtype change_threshold_condition: ~azure.ai.metricsadvisor.models.ChangeThresholdCondition
     """
 
-    def __init__(self, series_key, **kwargs):
-        # type: (Dict[str, str], Any) -> None
-        super().__init__(**kwargs)
-        self.series_key = series_key
+    def __init__(self, series_key: Dict[str, str], **kwargs: Any) -> None:
+        super().__init__(series_key=series_key, **kwargs)
 
     def __repr__(self):
         return (

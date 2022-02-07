@@ -69,8 +69,8 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
                 self.assertEqual(config.metric_id, data_feed.metric_ids['cost'])
                 self.assertEqual(config.description, "My test metric anomaly detection configuration")
                 self.assertIsNotNone(config.name)
-                self.assertIsNone(config.series_detection_conditions)
-                self.assertIsNone(config.series_group_detection_conditions)
+                assert config.series_detection_conditions == []
+                assert config.series_group_detection_conditions == []
                 self.assertEqual(config.whole_series_detection_condition.condition_operator, "OR")
                 self.assertEqual(
                     config.whole_series_detection_condition.change_threshold_condition.anomaly_detector_direction, "Both")

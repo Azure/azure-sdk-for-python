@@ -14,7 +14,6 @@ from ._models_py3 import AnomalyAlertingConfigurationList
 from ._models_py3 import AnomalyAlertingConfigurationPatch
 from ._models_py3 import AnomalyDetectionConfiguration
 from ._models_py3 import AnomalyDetectionConfigurationList
-from ._models_py3 import AnomalyDetectionConfigurationPatch
 from ._models_py3 import AnomalyDimensionList
 from ._models_py3 import AnomalyDimensionQuery
 from ._models_py3 import AnomalyFeedback
@@ -36,7 +35,6 @@ from ._models_py3 import AzureTableDataFeedSource
 from ._models_py3 import ChangePointFeedback
 from ._models_py3 import ChangePointFeedbackValue
 from ._models_py3 import ChangeThresholdCondition
-from ._models_py3 import ChangeThresholdConditionPatch
 from ._models_py3 import CommentFeedback
 from ._models_py3 import CommentFeedbackValue
 from ._models_py3 import DataFeed
@@ -71,7 +69,6 @@ from ._models_py3 import EnrichmentStatusQueryOption
 from ._models_py3 import ErrorCode
 from ._models_py3 import FeedbackDimensionFilter
 from ._models_py3 import HardThresholdCondition
-from ._models_py3 import HardThresholdConditionPatch
 from ._models_py3 import HookList
 from ._models_py3 import IncidentProperty
 from ._models_py3 import IncidentResultList
@@ -113,15 +110,12 @@ from ._models_py3 import ServicePrincipalParamPatch
 from ._models_py3 import SeverityCondition
 from ._models_py3 import SeverityFilterCondition
 from ._models_py3 import SmartDetectionCondition
-from ._models_py3 import SmartDetectionConditionPatch
 from ._models_py3 import SuppressCondition
-from ._models_py3 import SuppressConditionPatch
 from ._models_py3 import TopNGroupScope
 from ._models_py3 import UsageStats
 from ._models_py3 import ValueCondition
 from ._models_py3 import WebNotificationHook
 from ._models_py3 import WebhookHookParameterPatch
-from ._models_py3 import WholeMetricConfigurationPatch
 
 
 from ._metrics_advisor_client_enums import (
@@ -167,7 +161,6 @@ __all__ = [
     "AnomalyAlertingConfigurationPatch",
     "AnomalyDetectionConfiguration",
     "AnomalyDetectionConfigurationList",
-    "AnomalyDetectionConfigurationPatch",
     "AnomalyDimensionList",
     "AnomalyDimensionQuery",
     "AnomalyFeedback",
@@ -189,7 +182,6 @@ __all__ = [
     "ChangePointFeedback",
     "ChangePointFeedbackValue",
     "ChangeThresholdCondition",
-    "ChangeThresholdConditionPatch",
     "CommentFeedback",
     "CommentFeedbackValue",
     "DataFeed",
@@ -224,7 +216,6 @@ __all__ = [
     "ErrorCode",
     "FeedbackDimensionFilter",
     "HardThresholdCondition",
-    "HardThresholdConditionPatch",
     "HookList",
     "IncidentProperty",
     "IncidentResultList",
@@ -266,15 +257,12 @@ __all__ = [
     "SeverityCondition",
     "SeverityFilterCondition",
     "SmartDetectionCondition",
-    "SmartDetectionConditionPatch",
     "SuppressCondition",
-    "SuppressConditionPatch",
     "TopNGroupScope",
     "UsageStats",
     "ValueCondition",
     "WebNotificationHook",
     "WebhookHookParameterPatch",
-    "WholeMetricConfigurationPatch",
     "AlertQueryTimeMode",
     "AnomalyAlertingConfigurationLogicType",
     "AnomalyDetectionConfigurationLogicType",

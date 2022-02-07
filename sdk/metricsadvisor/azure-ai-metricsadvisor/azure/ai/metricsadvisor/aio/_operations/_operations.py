@@ -580,14 +580,14 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
 
     @distributed_trace_async
     async def get_detection_configuration(
-        self, configuration_id: str, **kwargs: Any
+        self, detection_configuration_id: str, **kwargs: Any
     ) -> "_models.AnomalyDetectionConfiguration":
         """Query a single anomaly detection configuration.
 
         Query a single anomaly detection configuration.
 
-        :param configuration_id: anomaly detection configuration unique id.
-        :type configuration_id: str
+        :param detection_configuration_id: anomaly detection configuration unique id.
+        :type detection_configuration_id: str
         :return: AnomalyDetectionConfiguration
         :rtype: ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -597,7 +597,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         error_map.update(kwargs.pop("error_map", {}))
 
         request = build_get_detection_configuration_request(
-            configuration_id=configuration_id,
+            detection_configuration_id=detection_configuration_id,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -623,7 +623,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
 
     @distributed_trace_async
     async def update_anomaly_detection_configuration(
-        self, configuration_id: str, body: "_models.AnomalyDetectionConfigurationPatch", **kwargs: Any
+        self, configuration_id: str, body: "_models.AnomalyDetectionConfiguration", **kwargs: Any
     ) -> "_models.AnomalyDetectionConfiguration":
         """Update anomaly detection configuration.
 
@@ -632,7 +632,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :param configuration_id: anomaly detection configuration unique id.
         :type configuration_id: str
         :param body: anomaly detection configuration.
-        :type body: ~azure.ai.metricsadvisor.models.AnomalyDetectionConfigurationPatch
+        :type body: ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
         :return: AnomalyDetectionConfiguration
         :rtype: ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -643,7 +643,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, "AnomalyDetectionConfigurationPatch")
+        _json = self._serialize.body(body, "AnomalyDetectionConfiguration")
 
         request = build_update_anomaly_detection_configuration_request(
             configuration_id=configuration_id,
