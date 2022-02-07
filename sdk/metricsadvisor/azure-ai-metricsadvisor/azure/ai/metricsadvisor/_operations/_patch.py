@@ -47,18 +47,6 @@ from azure.core.exceptions import (
     map_error,
 )
 
-HOOK_KWARG_NAMES = [
-    "name",
-    "description",
-    "external_link",
-    "emails_to_alert",
-    "endpoint",
-    "username",
-    "password",
-    "certificate_key",
-    "certificate_password",
-    "hook_type",
-]
 
 DatasourceCredentialUnion = Union[
     DatasourceSqlConnectionString,
@@ -222,6 +210,39 @@ class OperationMixinHelpers:
             data_feed_id = data_feed.id
             data_feed_patch = data_feed._to_generated()
         return data_feed_id, data_feed_patch, kwargs
+
+    def _update_hook_helper(
+        self,
+        hook: Union[str, EmailNotificationHook, WebNotificationHook],
+        **kwargs: Any
+    ) -> Tuple[str, Union[JSONType, NotificationHook], Any]:
+        hook_patch = None
+        hook_type = kwargs.get("hook_type")
+        hook_kwarg_names = [
+            "name",
+            "description",
+            "external_link",
+            "emails_to_alert",
+            "endpoint",
+            "username",
+            "password",
+            "certificate_key",
+            "certificate_password",
+            "hook_type",
+        ]
+        if isinstance(hook, str):
+            hook_id = hook
+            if hook_type is None:
+                raise ValueError("hook_type must be passed with a hook ID.")
+            hook_patch = {k: v for k, v in kwargs.items() if k in hook_kwarg_names}
+
+        else:
+            hook_patch = hook
+            hook_id = hook.id
+        for k in hook_kwarg_names:
+            if k in kwargs:
+                kwargs.pop(k)
+        return hook_id, hook_patch, kwargs
 
 
     def _convert_datetime(self, date_time):
@@ -482,24 +503,10 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
     @distributed_trace
     def update_hook(
         self,
-        hook,  # type: Union[str, EmailNotificationHook, WebNotificationHook]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]
-        hook_patch = None
-        hook_type = kwargs.get("hook_type")
-        if isinstance(hook, str):
-            hook_id = hook
-            if hook_type is None:
-                raise ValueError("hook_type must be passed with a hook ID.")
-            hook_patch = {k: v for k, v in kwargs.items() if k in HOOK_KWARG_NAMES}
-
-        else:
-            hook_patch = hook
-            hook_id = hook.id
-        for k in HOOK_KWARG_NAMES:
-            if k in kwargs:
-                kwargs.pop(k)
+        hook: Union[str, EmailNotificationHook, WebNotificationHook],
+        **kwargs: Any
+    ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
+        hook_id, hook_patch, kwargs = self._update_hook_helper(hook, **kwargs)
 
         return super().update_hook(hook_id, hook_patch, **kwargs)
 

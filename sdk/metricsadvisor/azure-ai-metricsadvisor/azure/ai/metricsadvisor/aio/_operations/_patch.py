@@ -273,20 +273,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
     async def update_hook(
         self, hook: Union[str, EmailNotificationHook, WebNotificationHook], **kwargs: Any
     ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
-        hook_patch = None
-        hook_type = kwargs.get("hook_type")
-        if isinstance(hook, six.string_types):
-            hook_id = hook
-            if hook_type is None:
-                raise ValueError("hook_type must be passed with a hook ID.")
-            hook_patch = {k: v for k, v in kwargs.items() if k in HOOK_KWARG_NAMES}
-
-        else:
-            hook_patch = hook
-            hook_id = hook.id
-        for k in HOOK_KWARG_NAMES:
-            if k in kwargs:
-                kwargs.pop(k)
+        hook_id, hook_patch, kwargs = self._update_hook_helper(hook, **kwargs)
 
         return await super().update_hook(hook_id, hook_patch, **kwargs)
 
