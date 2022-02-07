@@ -93,6 +93,16 @@ def test_servicebus_received_message_state():
     received_message = ServiceBusReceivedMessage(uamqp_received_message, receiver=None)
     assert received_message.message_state == ServiceBusMessageState.ACTIVE
 
+    uamqp_received_message = uamqp.message.Message(
+        body=b'data',
+        annotations={
+            b"x-opt-message-state": 0
+        },
+        properties=uamqp.message.MessageProperties()
+    )
+    received_message = ServiceBusReceivedMessage(uamqp_received_message, receiver=None)
+    assert received_message.message_state == ServiceBusMessageState.ACTIVE
+
 def test_servicebus_received_message_repr_with_props():
     uamqp_received_message = uamqp.message.Message(
         body=b'data',
