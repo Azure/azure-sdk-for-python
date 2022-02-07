@@ -140,8 +140,15 @@ class JwtCredentialPolicy(SansIOHTTPPolicy):
 
     NAME_CLAIM_TYPE = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
 
-    def __init__(self, credential, **kwargs):
-        # type: (AzureKeyCredential, typing.Any) -> None
+    def __init__(
+        self,
+        credential: AzureKeyCredential,
+        *,
+        user: typing.Optional[str] = None,
+        origin_endpoint: typing.Optional[str] = None,
+        reverse_proxy_endpoint: typing.Optional[str] = None,
+        **kwargs
+    ) -> None:
         """Create a new instance of the policy associated with the given credential.
 
         :param credential: The azure.core.credentials.AzureKeyCredential instance to use
@@ -150,9 +157,9 @@ class JwtCredentialPolicy(SansIOHTTPPolicy):
         :type user: str
         """
         self._credential = credential
-        self._user = kwargs.pop("user", None)
-        self._original_url = kwargs.pop("origin_endpoint", None)
-        self._reverse_proxy_endpoint = kwargs.pop("reverse_proxy_endpoint", None)
+        self._user = user
+        self._original_url = origin_endpoint
+        self._reverse_proxy_endpoint = reverse_proxy_endpoint
 
     def on_request(self, request):
         # type: (PipelineRequest) -> typing.Union[None, typing.Awaitable[None]]
