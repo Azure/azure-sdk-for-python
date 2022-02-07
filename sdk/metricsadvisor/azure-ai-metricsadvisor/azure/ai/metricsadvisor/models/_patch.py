@@ -1685,7 +1685,7 @@ class DataFeedDimension(generated_models.DataFeedDimension):
         return "DataFeedDimension(name={}, display_name={})".format(self.name, self.display_name)[:1024]
 
 
-class DataFeedIngestionProgress(object):
+class DataFeedIngestionProgress(generated_models.DataFeedIngestionProgress):
     """DataFeedIngestionProgress.
 
     :ivar latest_success_timestamp: the timestamp of lastest success ingestion job.
@@ -1696,21 +1696,11 @@ class DataFeedIngestionProgress(object):
     :vartype latest_active_timestamp: ~datetime.datetime
     """
 
-    def __init__(self, **kwargs):
-        self.latest_success_timestamp = kwargs.get("latest_success_timestamp")
-        self.latest_active_timestamp = kwargs.get("latest_active_timestamp")
-
     def __repr__(self):
         return "DataFeedIngestionProgress(latest_success_timestamp={}, latest_active_timestamp={})".format(
             self.latest_success_timestamp, self.latest_active_timestamp
         )[:1024]
 
-    @classmethod
-    def _from_generated(cls, resp):
-        return cls(
-            latest_success_timestamp=resp.latest_success_timestamp,
-            latest_active_timestamp=resp.latest_active_timestamp,
-        )
 
 
 class MetricSeriesData(object):

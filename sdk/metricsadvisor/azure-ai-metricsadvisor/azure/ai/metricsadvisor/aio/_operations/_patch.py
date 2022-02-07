@@ -43,7 +43,6 @@ from ...models import _models_py3 as generated_models
 from ._operations import MetricsAdvisorClientOperationsMixin as MetricsAdvisorClientOperationsMixinGenerated
 from ..._operations._patch import (
     DataFeedSourceUnion,
-    HOOK_KWARG_NAMES,
     DatasourceCredentialUnion,
     FeedbackUnion,
     build_get_data_feed_request,
@@ -170,11 +169,6 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
     async def get_alert_configuration(self, alert_configuration_id: str, **kwargs: Any) -> AnomalyAlertConfiguration:
         config = await super().get_alert_configuration(alert_configuration_id, **kwargs)
         return AnomalyAlertConfiguration._from_generated(config)
-
-    @distributed_trace_async
-    async def get_data_feed_ingestion_progress(self, data_feed_id: str, **kwargs: Any) -> DataFeedIngestionProgress:
-        ingestion_process = await super().get_data_feed_ingestion_progress(data_feed_id, **kwargs)
-        return DataFeedIngestionProgress._from_generated(ingestion_process)
 
     @distributed_trace_async
     async def refresh_data_feed_ingestion(
@@ -601,8 +595,8 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         skip = kwargs.pop("skip", None)
         condition = kwargs.pop("filter", None)
         filter_condition = condition._to_generated() if condition else None
-        converted_start_time = convert_datetime(start_time)
-        converted_end_time = convert_datetime(end_time)
+        converted_start_time = self._convert_datetime(start_time)
+        converted_end_time = self._convert_datetime(end_time)
         detection_anomaly_result_query = DetectionAnomalyResultQuery(
             start_time=converted_start_time,
             end_time=converted_end_time,
@@ -643,8 +637,8 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         skip = kwargs.pop("skip", None)
         dimension = kwargs.pop("dimension_filter", None)
         dimension_filter = DimensionGroupIdentity(dimension=dimension) if dimension else None
-        converted_start_time = convert_datetime(start_time)
-        converted_end_time = convert_datetime(end_time)
+        converted_start_time = self._convert_datetime(start_time)
+        converted_end_time = self._convert_datetime(end_time)
         anomaly_dimension_query = AnomalyDimensionQuery(
             start_time=converted_start_time,
             end_time=converted_end_time,
@@ -679,8 +673,8 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
 
         condition = kwargs.pop("filter", None)
         filter_condition = condition._to_generated() if condition else None
-        converted_start_time = convert_datetime(start_time)
-        converted_end_time = convert_datetime(end_time)
+        converted_start_time = self._convert_datetime(start_time)
+        converted_end_time = self._convert_datetime(end_time)
 
         detection_incident_result_query = DetectionIncidentResultQuery(
             start_time=converted_start_time,
@@ -740,8 +734,8 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         **kwargs  # type: Any
     ):
         # type: (...) -> AsyncItemPaged[MetricSeriesData]
-        converted_start_time = convert_datetime(start_time)
-        converted_end_time = convert_datetime(end_time)
+        converted_start_time = self._convert_datetime(start_time)
+        converted_end_time = self._convert_datetime(end_time)
 
         metric_data_query_options = MetricDataQueryOptions(
             start_time=converted_start_time,
@@ -784,8 +778,8 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
     ):
         # type: (...) -> AsyncItemPaged[EnrichmentStatus]
         skip = kwargs.pop("skip", None)
-        converted_start_time = convert_datetime(start_time)
-        converted_end_time = convert_datetime(end_time)
+        converted_start_time = self._convert_datetime(start_time)
+        converted_end_time = self._convert_datetime(end_time)
         enrichment_status_query_option = EnrichmentStatusQueryOption(
             start_time=converted_start_time,
             end_time=converted_end_time,
