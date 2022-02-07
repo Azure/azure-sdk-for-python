@@ -2,10 +2,14 @@
 
 ### 4.3.0b3 (Unreleased)
 
+#### Features Added
+- Added support for split-proof queries for the async client
+
 ### Bugs fixed
 - Default consistency level for the sync and async clients is no longer "Session" and will instead be set to the 
   consistency level of the user's cosmos account setting on initialization if not passed during client initialization. 
-  This change will impact client application in terms of RUs and latency. Users relying on default `Session` consistency will need to pass it explicitly if their account consistency is different than `Session`. Please see [Consistency Levels in Azure Cosmos DB](https://docs.microsoft.com/azure/cosmos-db/consistency-levels) for more details.  
+  This change will impact client application in terms of RUs and latency. Users relying on default `Session` consistency will need to pass it explicitly if their account consistency is different than `Session`.
+  Please see [Consistency Levels in Azure Cosmos DB](https://docs.microsoft.com/azure/cosmos-db/consistency-levels) for more details.
 
 ### 4.3.0b2 (2022-01-25)
 
@@ -19,7 +23,8 @@ We will also be removing support for Python 3.6 and will only support Python 3.7
 - Added async user agent for async client
 
 ### 4.3.0b1 (2021-12-14)
-**New features**
+
+#### Features Added
 - Added language native async i/o client
 
 ### 4.2.0 (2020-10-08)
