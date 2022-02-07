@@ -33,11 +33,6 @@ class AsyncSecretsTestCaseClientPrepaper(AzureRecordedTestCase):
             await fn(test_class, client)
         return _preparer
 
-    def tearDown(self):
-        HttpChallengeCache.clear()
-        assert len(HttpChallengeCache._cache) == 0
-        #super(SecretsTestCaseClientPrepaper, self).tearDown()
-
     def create_client(self, vault_uri, **kwargs):
         from azure.keyvault.secrets.aio import SecretClient
         
