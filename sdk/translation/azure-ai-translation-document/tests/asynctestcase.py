@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -11,7 +10,7 @@ from azure.ai.translation.document import DocumentTranslationInput, TranslationT
 class AsyncDocumentTranslationTest(DocumentTranslationTest):
 
     def __init__(self, method_name):
-        super(AsyncDocumentTranslationTest, self).__init__(method_name)
+        super().__init__(method_name)
 
     def generate_oauth_token(self):
         if self.is_live:
@@ -78,7 +77,7 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest):
         return result_ids
 
     async def _begin_and_validate_translation_with_multiple_docs_async(self, async_client, docs_count, **kwargs):
-        # get input parms
+        # get input params
         wait_for_operation = kwargs.pop('wait', False)
         language_code = kwargs.pop('language_code', "es")
 

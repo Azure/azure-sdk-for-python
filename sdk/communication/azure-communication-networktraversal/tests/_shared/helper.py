@@ -5,10 +5,7 @@
 # --------------------------------------------------------------------------
 import re
 from azure_devtools.scenario_tests import RecordingProcessor
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse
+from urllib.parse import urlparse
 
 class URIIdentityReplacer(RecordingProcessor):
     """Replace the identity in request uri"""

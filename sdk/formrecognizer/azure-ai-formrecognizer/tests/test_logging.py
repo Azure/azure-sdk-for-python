@@ -32,7 +32,9 @@ class TestLogging(FormRecognizerTest):
 
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
-    def test_logging_info_dac_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    def test_logging_info_dac_client(self, **kwargs):
+        formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
+        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         mock_handler = MockHandler()
 
@@ -53,7 +55,9 @@ class TestLogging(FormRecognizerTest):
 
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
-    def test_logging_info_dmac_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    def test_logging_info_dmac_client(self, **kwargs):
+        formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
+        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         client = DocumentModelAdministrationClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         mock_handler = MockHandler()
 
@@ -72,7 +76,9 @@ class TestLogging(FormRecognizerTest):
                     assert message.message.find("REDACTED") == -1
 
     @FormRecognizerPreparer()
-    def test_mock_quota_exceeded_403(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    def test_mock_quota_exceeded_403(self, **kwargs):
+        formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
+        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
 
         response = mock.Mock(
             status_code=403,
@@ -94,7 +100,9 @@ class TestLogging(FormRecognizerTest):
         assert e.value.error.message == 'Out of call volume quota for FormRecognizer F0 pricing tier. Please retry after 1 day. To increase your call volume switch to a paid tier.'
 
     @FormRecognizerPreparer()
-    def test_mock_quota_exceeded_429(self, formrecognizer_test_endpoint, formrecognizer_test_api_key):
+    def test_mock_quota_exceeded_429(self, **kwargs):
+        formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
+        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
 
         response = mock.Mock(
             status_code=429,

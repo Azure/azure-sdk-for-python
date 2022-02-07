@@ -1,6 +1,5 @@
 -e ../../../tools/azure-sdk-tools
-../../nspkg/azure-communication-nspkg
 -e ../azure-communication-identity
-aiohttp>=3.0; python_version >= '3.5'
+aiohttp>=3.0
 -e ../../../tools/azure-devtools
-python-dateutil>=2.8.1; python_version >= '3.5'
+python-dateutil>=2.8.1

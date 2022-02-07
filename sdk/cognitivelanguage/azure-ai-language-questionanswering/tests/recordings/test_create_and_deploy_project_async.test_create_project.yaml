@@ -1,0 +1,83 @@
+interactions:
+- request:
+    body: '{"description": "biography of Sir Issac Newton", "language": "en", "multilingualResource":
+      true, "settings": {"defaultAnswer": "no answer"}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '140'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/unknown Python/3.10.1 (Windows-10-10.0.19044-SP0)
+    method: PATCH
+    uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton?api-version=2021-10-01
+  response:
+    body:
+      string: "{\n  \"projectName\": \"IssacNewton\",\n  \"description\": \"biography
+        of Sir Issac Newton\",\n  \"language\": \"en\",\n  \"multilingualResource\":
+        false,\n  \"createdDateTime\": \"2022-01-31T15:25:07Z\",\n  \"lastModifiedDateTime\":
+        \"2022-01-31T16:28:09Z\",\n  \"lastDeployedDateTime\": \"2022-01-31T16:10:26Z\",\n
+        \ \"settings\": {\n    \"defaultAnswer\": \"no answer\"\n  }\n}"
+    headers:
+      apim-request-id: 2c868471-836b-440c-b8bf-991fe925fa3a
+      content-length: '336'
+      content-type: application/json; charset=utf-8
+      date: Mon, 31 Jan 2022 16:28:10 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '135'
+    status:
+      code: 200
+      message: OK
+    url: https://wuppe.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton?api-version=2021-10-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/unknown Python/3.10.1 (Windows-10-10.0.19044-SP0)
+    method: GET
+    uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects?api-version=2021-10-01
+  response:
+    body:
+      string: "{\n  \"value\": [\n    {\n      \"projectName\": \"IssacNewton\",\n
+        \     \"description\": \"biography of Sir Issac Newton\",\n      \"language\":
+        \"en\",\n      \"multilingualResource\": false,\n      \"createdDateTime\":
+        \"2022-01-31T15:25:07Z\",\n      \"lastModifiedDateTime\": \"2022-01-31T16:28:09Z\",\n
+        \     \"lastDeployedDateTime\": \"2022-01-31T16:10:26Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"no answer\"\n      }\n    },\n    {\n      \"projectName\":
+        \"Microsoft\",\n      \"description\": \"test project for some Microsoft QnAs\",\n
+        \     \"language\": \"en\",\n      \"multilingualResource\": false,\n      \"createdDateTime\":
+        \"2022-01-25T18:33:47Z\",\n      \"lastModifiedDateTime\": \"2022-01-31T15:48:19Z\",\n
+        \     \"settings\": {\n        \"defaultAnswer\": \"no answer\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"TestProject131875973\",\n      \"description\":
+        \"This is the description for a test project\",\n      \"language\": \"en\",\n
+        \     \"multilingualResource\": false,\n      \"createdDateTime\": \"2022-01-26T09:27:33Z\",\n
+        \     \"lastModifiedDateTime\": \"2022-01-26T09:27:33Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"No answer found for your question.\"\n      }\n
+        \   },\n    {\n      \"projectName\": \"fc12a55c-be22-46cc-b4b0-5b0a270f19e3\",\n
+        \     \"description\": \"rokulkaTestNe2\",\n      \"language\": \"en\",\n
+        \     \"multilingualResource\": false,\n      \"createdDateTime\": \"2021-06-16T09:51:00Z\",\n
+        \     \"lastModifiedDateTime\": \"2021-06-16T09:51:00Z\",\n      \"settings\":
+        {\n        \"defaultAnswer\": \"No good match found in KB\"\n      }\n    },\n
+        \   {\n      \"projectName\": \"rokulkatest5\",\n      \"description\": \"RokulkaTest\",\n
+        \     \"language\": \"en\",\n      \"multilingualResource\": false,\n      \"createdDateTime\":
+        \"2022-01-24T19:04:26Z\",\n      \"lastModifiedDateTime\": \"2022-01-24T19:04:26Z\",\n
+        \     \"settings\": {\n        \"defaultAnswer\": \"No good match found in
+        KB\"\n      }\n    }\n  ]\n}"
+    headers:
+      apim-request-id: 5d7c652f-b99a-4abf-abee-a240bb5c682f
+      content-length: '1810'
+      content-type: application/json; charset=utf-8
+      date: Mon, 31 Jan 2022 16:28:10 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '133'
+    status:
+      code: 200
+      message: OK
+    url: https://wuppe.api.cognitive.microsoft.com/language/query-knowledgebases/projects?api-version=2021-10-01
+version: 1

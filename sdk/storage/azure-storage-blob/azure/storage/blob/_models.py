@@ -917,21 +917,24 @@ class ContainerSasPermissions(object):
         List blobs in the container.
     :param bool tag:
         Set or get tags on the blobs in the container.
+    :keyword bool permanent_delete:
+        To enable permanent delete on the blob is permitted.
+    :keyword bool find:
+        To enable finding blobs by tags
     :keyword bool set_immutability_policy:
         To enable operations related to set/delete immutability policy.
         To get immutability policy, you just need read permission.
-    :keyword bool permanent_delete:
-        To enable permanent delete on the blob is permitted.
     """
     def __init__(self, read=False, write=False, delete=False,
                  list=False, delete_previous_version=False, tag=False, **kwargs):  # pylint: disable=redefined-builtin
         self.read = read
         self.write = write
         self.delete = delete
-        self.list = list
         self.delete_previous_version = delete_previous_version
         self.permanent_delete = kwargs.pop('permanent_delete', False)
+        self.list = list
         self.tag = tag
+        self.find = kwargs.pop('find', False)
         self.set_immutability_policy = kwargs.pop('set_immutability_policy', False)
         self._str = (('r' if self.read else '') +
                      ('w' if self.write else '') +
@@ -940,6 +943,7 @@ class ContainerSasPermissions(object):
                      ('y' if self.permanent_delete else '') +
                      ('l' if self.list else '') +
                      ('t' if self.tag else '') +
+                     ('f' if self.find else '') +
                      ('i' if self.set_immutability_policy else ''))
 
     def __str__(self):
@@ -961,13 +965,14 @@ class ContainerSasPermissions(object):
         p_read = 'r' in permission
         p_write = 'w' in permission
         p_delete = 'd' in permission
-        p_list = 'l' in permission
         p_delete_previous_version = 'x' in permission
         p_permanent_delete = 'y' in permission
+        p_list = 'l' in permission
         p_tag = 't' in permission
+        p_find = 'f' in permission
         p_set_immutability_policy = 'i' in permission
         parsed = cls(read=p_read, write=p_write, delete=p_delete, list=p_list,
-                     delete_previous_version=p_delete_previous_version, tag=p_tag,
+                     delete_previous_version=p_delete_previous_version, tag=p_tag, find=p_find,
                      set_immutability_policy=p_set_immutability_policy, permanent_delete=p_permanent_delete)
 
         return parsed

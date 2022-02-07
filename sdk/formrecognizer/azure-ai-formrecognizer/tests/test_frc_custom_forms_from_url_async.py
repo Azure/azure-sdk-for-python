@@ -158,7 +158,9 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
-    async def test_custom_form_continuation_token(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    async def test_custom_form_continuation_token(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
         fr_client = client.get_form_recognizer_client()
 
         async with client:

@@ -57,13 +57,7 @@ async def analyze_receipts_async():
 
     for idx, receipt in enumerate(receipts.documents):
         print("--------Recognizing receipt #{}--------".format(idx + 1))
-        receipt_type = receipt.fields.get("ReceiptType")
-        if receipt_type:
-            print(
-                "Receipt Type: {} has confidence: {}".format(
-                    receipt_type.value, receipt_type.confidence
-                )
-            )
+        print("Receipt type: {}".format(receipt.doc_type or "N/A"))
         merchant_name = receipt.fields.get("MerchantName")
         if merchant_name:
             print(
