@@ -56,6 +56,17 @@ def test_servicebus_received_message_repr():
     assert "content_type=None, correlation_id=None, to=None, reply_to=None, reply_to_session_id=None, subject=None,"
     assert "partition_key=r_key, scheduled_enqueue_time_utc" in repr_str
 
+def test_servicebus_received_message_state_future_value():
+    uamqp_received_message = uamqp.message.Message(
+        body=b'data',
+        annotations={
+            b"x-opt-message-state": 3
+        },
+        properties=uamqp.message.MessageProperties()
+    )
+    received_message = ServiceBusReceivedMessage(uamqp_received_message, receiver=None)
+    assert received_message.message_state == 3
+
 
 def test_servicebus_received_message_repr_with_props():
     uamqp_received_message = uamqp.message.Message(
