@@ -12,10 +12,11 @@ import json
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.keyvault.secrets import SecretClient
+from azure.keyvault.secrets._shared import HttpChallengeCache
 from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import client_setup, get_decorator, SecretsTestCaseClientPrepaper
+from _test_case import get_decorator, SecretsTestCaseClientPrepaper
 
 from devtools_testutils import recorded_by_proxy
 import pytest
@@ -136,6 +137,8 @@ class TestSecretClient(KeyVaultTestCase):
         # delete secret
         deleted = client.begin_delete_secret(updated.name).result()
         assert deleted is not None
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
 
     
     @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
@@ -157,6 +160,8 @@ class TestSecretClient(KeyVaultTestCase):
         # list secrets
         result = list(client.list_properties_of_secrets(max_page_size=max_secrets - 1))
         self._validate_secret_list(result, expected)
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
 
     @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
     @SecretsPreparer()
@@ -184,6 +189,8 @@ class TestSecretClient(KeyVaultTestCase):
                 del expected[secret.id]
                 self._assert_secret_attributes_equal(expected_secret.properties, secret)
         assert len(expected) == 0
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
 
     @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
     @SecretsPreparer()
@@ -209,6 +216,9 @@ class TestSecretClient(KeyVaultTestCase):
             if deleted_secret.name in expected:
                 expected_secret = expected[deleted_secret.name]
                 self._assert_secret_attributes_equal(expected_secret.properties, deleted_secret.properties)
+        
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
 
     @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
     @SecretsPreparer()
@@ -234,6 +244,9 @@ class TestSecretClient(KeyVaultTestCase):
         restore_function = functools.partial(client.restore_secret_backup, secret_backup)
         restored_secret = self._poll_until_no_exception(restore_function, ResourceExistsError)
         self._assert_secret_attributes_equal(created_bundle.properties, restored_secret)
+
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
 
     @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
     @SecretsPreparer()
@@ -263,6 +276,9 @@ class TestSecretClient(KeyVaultTestCase):
         for secret_name in secrets.keys():
             secret = client.get_secret(name=secret_name)
             self._assert_secret_attributes_equal(secret.properties, secrets[secret.name].properties)
+        
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
 
     @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
     @SecretsPreparer()
@@ -292,6 +308,8 @@ class TestSecretClient(KeyVaultTestCase):
 
         deleted = [s.name for s in client.list_deleted_secrets()]
         assert not any(s in deleted for s in secrets.keys())
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
 
     @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
     @SecretsPreparer(logging_enable = True)
@@ -326,6 +344,8 @@ class TestSecretClient(KeyVaultTestCase):
 
         mock_handler.close()
         assert False, "Expected request body wasn't logged"
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
 
     @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
     @SecretsPreparer(logging_enable = False)
@@ -359,6 +379,8 @@ class TestSecretClient(KeyVaultTestCase):
                         pass
 
         mock_handler.close()
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
 
 
 def test_service_headers_allowed_in_logs():

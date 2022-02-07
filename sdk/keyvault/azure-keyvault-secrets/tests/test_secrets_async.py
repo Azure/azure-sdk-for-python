@@ -14,7 +14,7 @@ from dateutil import parser as date_parse
 from devtools_testutils import AzureRecordedTestCase
 
 from _shared.test_case_async import KeyVaultTestCase
-from _test_case import client_setup, get_decorator
+from _test_case import get_decorator
 from _async_test_case import AsyncSecretsTestCaseClientPrepaper
 from devtools_testutils.aio import recorded_by_proxy_async
 import pytest

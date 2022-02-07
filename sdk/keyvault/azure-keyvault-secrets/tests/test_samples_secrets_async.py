@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # -------------------------------------
 import asyncio
+from azure.keyvault.secrets._shared import HttpChallengeCache
 import functools
 from devtools_testutils import AzureRecordedTestCase
 
@@ -103,6 +104,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(deleted_secret.scheduled_purge_date)
             print(deleted_secret.recovery_id)
             # [END delete_secret]
+            HttpChallengeCache.clear()
+            assert len(HttpChallengeCache._cache) == 0
         return dict()
 
     @AzureRecordedTestCase.await_prepared_test
@@ -150,6 +153,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
                 print(secret.recovery_id)
                 print(secret.deleted_date)
             # [END list_deleted_secrets]
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
         return dict()
 
     @AzureRecordedTestCase.await_prepared_test
@@ -181,6 +186,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(restored_secret.id)
             print(restored_secret.version)
             # [END restore_secret_backup]
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
         return dict()
 
     @AzureRecordedTestCase.await_prepared_test
@@ -206,4 +213,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(recovered_secret.id)
             print(recovered_secret.name)
             # [END recover_deleted_secret]
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
         return dict()
