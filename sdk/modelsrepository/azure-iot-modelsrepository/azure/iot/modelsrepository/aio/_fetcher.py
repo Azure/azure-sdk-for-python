@@ -87,7 +87,7 @@ class Fetcher(ABC):
 
     @abstractmethod
     @distributed_trace_async
-    async def _fetch_model_data(self, path, **kwargs):
+    async def _fetch_model_data(self, path):
         pass
 
     @abstractmethod

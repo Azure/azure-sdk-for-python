@@ -86,7 +86,7 @@ class Fetcher(ABC):
         return ModelsRepositoryMetadata.from_json_str(json_str=metadata)
 
     @abstractmethod
-    def _fetch_model_data(self, path, **kwargs):
+    def _fetch_model_data(self, path):
         pass
 
     @abstractmethod
