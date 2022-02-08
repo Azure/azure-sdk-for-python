@@ -49,15 +49,15 @@ class Fetcher(ABC):
         :returns: FetchModelResult representing data at the path and if the expanded form was used.
         :rtype: FetchModelResult
         """
-        dtdl_path = _convert_dtmi_to_path(dtmi, expanded=try_from_expanded)
+        dtdl_path = _convert_dtmi_to_path(dtmi=dtmi, expanded=try_from_expanded)
         if try_from_expanded:
             try:
                 info_msg = FETCHING_MODEL_CONTENT.format(dtdl_path)
                 _LOGGER.debug(info_msg)
 
                 return FetchModelResult(
-                    await self._fetch_model_data(dtdl_path, **kwargs),
-                    dtdl_path
+                    definition=await self._fetch_model_data(path=dtdl_path, **kwargs),
+                    path=dtdl_path
                 )
             except (ResourceNotFoundError, HttpResponseError):
                 # Fallback to non expanded model
@@ -70,8 +70,8 @@ class Fetcher(ABC):
 
         # Let errors from this bubble up
         return FetchModelResult(
-            await self._fetch_model_data(dtdl_path, **kwargs),
-            dtdl_path
+            definition=await self._fetch_model_data(dtdl_path, **kwargs),
+            path=dtdl_path
         )
 
     @distributed_trace_async
@@ -82,12 +82,12 @@ class Fetcher(ABC):
         :returns: metadata file contents
         :rtype: str
         """
-        metadata = await self._fetch_model_data(METADATA_FILE, **kwargs)
-        return ModelsRepositoryMetadata.from_json_str(metadata)
+        metadata = await self._fetch_model_data(path=METADATA_FILE, **kwargs)
+        return ModelsRepositoryMetadata.from_json_str(json_str=metadata)
 
     @abstractmethod
     @distributed_trace_async
-    async def _fetch_model_data(self, path):
+    async def _fetch_model_data(self, path, **kwargs):
         pass
 
     @abstractmethod

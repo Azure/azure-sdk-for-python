@@ -57,8 +57,8 @@ class RepositoryHandler(object):
         :param metadata_enabled: Whether the client will fetch and cache metadata.
         :type metadata_enabled: bool
         """
-        self.fetcher = _create_fetcher(location, **kwargs)
-        self._metadata_scheduler = MetadataScheduler(metadata_enabled)
+        self.fetcher = _create_fetcher(location=location, **kwargs)
+        self._metadata_scheduler = MetadataScheduler(enabled=metadata_enabled)
         self._repository_supports_expanded = False
 
     def __enter__(self):
@@ -89,7 +89,7 @@ class RepositoryHandler(object):
         :rtype: dict
         """
         processed_models = {}
-        to_process_models = _prepare_queue(dtmis)
+        to_process_models = _prepare_queue(dtmis=dtmis)
 
         if (
             dependency_resolution == DependencyMode.enabled.value and
@@ -124,18 +124,18 @@ class RepositoryHandler(object):
             _LOGGER.debug(info_msg)
 
             fetched_model_result = self.fetcher.fetch(
-                target_dtmi, try_from_expanded=try_from_expanded, **kwargs
+                dtmi=target_dtmi, try_from_expanded=try_from_expanded, **kwargs
             )
 
             # Add dependencies if the result is expanded
             if fetched_model_result.from_expanded:
-                expanded = ModelQuery(fetched_model_result.definition).parse_models_from_list()
+                expanded = ModelQuery(content=fetched_model_result.definition).parse_models_from_list()
                 for item in expanded:
                     if item not in processed_models:
                         processed_models[item] = expanded[item]
                 continue
 
-            model_metadata = ModelQuery(fetched_model_result.definition).parse_model()
+            model_metadata = ModelQuery(content=fetched_model_result.definition).parse_model()
 
             # Add dependencies to to_process_queue if manual resolution is needed
             if dependency_resolution == DependencyMode.enabled.value and not fetched_model_result.from_expanded:
@@ -155,7 +155,7 @@ class RepositoryHandler(object):
 
             processed_models[parsed_dtmi] = fetched_model_result.definition
 
-        return ModelResult(contents=processed_models)
+        return ModelResult(content=processed_models)
 
 def _prepare_queue(dtmis):
     # type: (List[str]) -> Queue
@@ -181,7 +181,7 @@ def _create_fetcher(location, **kwargs):
         _LOGGER.debug(info_msg)
 
         pipeline = _create_pipeline(**kwargs)
-        fetcher = HttpFetcher(location, pipeline)
+        fetcher = HttpFetcher(base_url=location, pipeline=pipeline)
 
     elif scheme == "" and re.search(
         r"\.[a-zA-z]{2,63}$",
@@ -195,7 +195,7 @@ def _create_fetcher(location, **kwargs):
 
         location = RemoteProtocolType.https.value + "://" + location
         pipeline = _create_pipeline(**kwargs)
-        fetcher = HttpFetcher(location, pipeline)
+        fetcher = HttpFetcher(base_url=location, pipeline=pipeline)
 
     elif scheme == "file":
         # Filesystem URI
@@ -204,7 +204,7 @@ def _create_fetcher(location, **kwargs):
 
         location = location[len("file://") :]
         location = _sanitize_filesystem_path(location)
-        fetcher = FilesystemFetcher(location)
+        fetcher = FilesystemFetcher(base_filepath=location)
 
     elif scheme == "" and location.startswith("/"):
         # POSIX filesystem path
@@ -212,7 +212,7 @@ def _create_fetcher(location, **kwargs):
         _LOGGER.debug(info_msg)
 
         location = _sanitize_filesystem_path(location)
-        fetcher = FilesystemFetcher(location)
+        fetcher = FilesystemFetcher(base_filepath=location)
 
     elif scheme != "" and len(scheme) == 1 and scheme.isalpha():
         # Filesystem path using drive letters (e.g. "C:", "D:", etc.)
@@ -220,7 +220,7 @@ def _create_fetcher(location, **kwargs):
         _LOGGER.debug(info_msg)
 
         location = _sanitize_filesystem_path(location)
-        fetcher = FilesystemFetcher(location)
+        fetcher = FilesystemFetcher(base_filepath=location)
 
     else:
         raise ValueError("Unable to identify location: {}".format(location))

@@ -103,4 +103,4 @@ class ModelsRepositoryClient(object):
         if dependency_resolution not in [DependencyMode.enabled.value, DependencyMode.disabled.value]:
             raise ValueError(INVALID_DEPEDENCY_MODE)
 
-        return self.repository_handler.process(dtmis, dependency_resolution=dependency_resolution, **kwargs)
+        return self.repository_handler.process(dtmis=dtmis, dependency_resolution=dependency_resolution, **kwargs)

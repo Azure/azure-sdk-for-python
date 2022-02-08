@@ -6,9 +6,9 @@
 import json
 import re
 from typing import TYPE_CHECKING
+from .dtmi_conventions import is_valid_dtmi
 from ._common import ModelType, ModelProperties
 from ._models import ModelMetadata
-from dtmi_conventions import is_valid_dtmi
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -40,22 +40,22 @@ class ModelQuery(object):
 
     def parse_model(self):
         # type: () -> ModelMetadata
-        return self._parse_interface(json.loads(self._content))
+        return self._parse_interface(root=json.loads(self._content))
 
     def _parse_interface(self, root):
         # type: (Dict[str, Any]) -> ModelMetadata
         dtmi_id = root.get(ModelProperties.id.value)
 
         root_dtmi = dtmi_id if isinstance(dtmi_id, str) else None
-        extends = self._parse_extends(root)
-        components = self._parse_contents(root)
+        extends = self._parse_extends(root=root)
+        components = self._parse_contents(root=root)
 
-        return ModelMetadata(root_dtmi, extends, components)
+        return ModelMetadata(dtmi=root_dtmi, extends=extends, components=components)
 
     def _parse_extends(self, root):
         # type: (Dict[str, Any]) -> List[str | ModelMetadata]
         extends = root.get(ModelProperties.extends.value, None)
-        return self._parse_component(extends)
+        return self._parse_component(component=extends)
 
     def _parse_contents(self, root):
         # type: (Dict[str, Any]) -> List[str | ModelMetadata]
@@ -65,7 +65,7 @@ class ModelQuery(object):
         if isinstance(contents, list):
             for item in contents:
                 dependencies.update(
-                    self._parse_component(item.get(ModelProperties.schema.value))
+                    self._parse_component(component=item.get(ModelProperties.schema.value))
                 )
         return list(dependencies)
 
@@ -80,11 +80,11 @@ class ModelQuery(object):
                 if isinstance(item, str):
                     # If there are strings in the list, that's a DTMI reference, so add it
                     dependencies.add(item)
-                elif _is_interface_or_component(item):
+                elif _is_interface_or_component(root=item):
                     # This is a nested model. Now go get its dependencies and add them
-                    dependencies.update(self._parse_interface(item).dependencies)
-        elif _is_interface_or_component(component):
-            metadata = self._parse_interface(component).dependencies
+                    dependencies.update(self._parse_interface(root=item).dependencies)
+        elif _is_interface_or_component(root=component):
+            metadata = self._parse_interface(root=component).dependencies
             dependencies.update(metadata)
         return list(dependencies)
 
@@ -95,7 +95,7 @@ class ModelQuery(object):
         contents = json.loads(self._content)
         if isinstance(contents, list):
             for content in contents:
-                model_metadata = ModelQuery(content).parse_model()
+                model_metadata = ModelQuery(content=content).parse_model()
                 result[model_metadata.dtmi] = content
         return result
 
