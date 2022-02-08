@@ -200,7 +200,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         if disable_service_logs is not None:
             kwargs["logging_opt_out"] = disable_service_logs
         try:
-            from ._generated.models import AnalyzeTextLanguageDetectionInput, LanguageDetectionTaskParameters
+            from ._generated.v2022_02_01_preview.models import AnalyzeTextLanguageDetectionInput, LanguageDetectionTaskParameters
             if self._api_version == "2022-02-01-preview":
                 return self._client.analyze_text(
                     body=AnalyzeTextLanguageDetectionInput(
@@ -305,6 +305,21 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             kwargs["logging_opt_out"] = disable_service_logs
 
         try:
+            from ._generated.v2022_02_01_preview.models import AnalyzeTextEntityRecognitionInput, EntitiesTaskParameters
+            if self._api_version == "2022-02-01-preview":
+                return self._client.analyze_text(
+                    body=AnalyzeTextEntityRecognitionInput(
+                        analysis_input={"documents": docs},
+                        parameters=EntitiesTaskParameters(
+                            logging_opt_out=kwargs.pop("logging_opt_out", None),
+                            model_version=model_version,
+                            string_index_type=kwargs.pop("string_index_type", None)
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", entities_result),
+                    **kwargs
+                )
             return self._client.entities_recognition_general(
                 documents=docs,
                 model_version=model_version,
