@@ -3,75 +3,62 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-"""This module contains a partial parsing implementation that is strictly
-scoped for parsing dependencies. Ideally, this would be made obsolete by
-a full Python parser implementation, as it is supposed to be a single source
-of truth for the DTDL model specifications.
-
-Note that this implementation is not representative of what an eventual full
-parser implementation would necessarily look like from an API perspective
-"""
-from six import string_types
-from .dtmi_conventions import is_valid_dtmi
+import json
+import re
+from typing import TYPE_CHECKING
 from ._common import ModelType, ModelProperties
+from ._models import ModelMetadata
+from dtmi_conventions import is_valid_dtmi
 
-class Model(object):
-    def __init__(
-        self,
-        dtmi="",
-        extends=None,
-        components=None,
-        contents=None,
-    ):
-        """ The Model class is responsible for storing results from ModelQuery.parse_model().
-
-        :param dtmi: The DTMI for the model
-        :type dtmi: str
-        :param extends: The list of strings or models representing the extend
-        :type extends: list[str], list[Model]
-        :param components: The list of strings or models representing the components
-        :type components: list[str], list[Model]
-        :param contents: The raw data representing the model
-        :type contents: dict
-        """
-        self.dtmi = dtmi
-        self.extends = extends if extends else []
-        self.components = components if components else []
-        self.dependencies = list(set(extends).union(set(components)))
-        self.contents = contents
-
-    def __repr__(self):
-        return self.contents
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any, Dict, List
 
 
 class ModelQuery(object):
     def __init__(self, content):
+        # type: (str) -> None
         """ The ModelQuery class is responsible for parsing DTDL v2 models to produce key metadata.
         In the current form ModelQuery is focused on determining model dependencies recursively
         via extends and component schemas.
 
+        This class contains a partial parsing implementation that is strictly
+        scoped for parsing dependencies. Ideally, this would be made obsolete by
+        a full Python parser implementation, as it is supposed to be a single source
+        of truth for the DTDL model specifications.
+
+        Note that this implementation is not representative of what an eventual full
+        parser implementation would necessarily look like from an API perspective
+
         :param content: JSON object representing the DTMI model
         :type content: JSON object
         """
+        # Remove trailing commas if needed
+        content = re.sub(r",[ \t\r\n]+}", "}", content.text())
+        content = re.sub(r",[ \t\r\n]+\]", "]", content)
         self._content = content
 
     def parse_model(self):
-        return self._parse_interface(self._content)
+        # type: () -> ModelMetadata
+        return self._parse_interface(json.loads(self._content))
 
     def _parse_interface(self, root):
+        # type: (Dict[str, Any]) -> ModelMetadata
         dtmi_id = root.get(ModelProperties.id.value)
 
-        root_dtmi = dtmi_id if isinstance(dtmi_id, string_types) else None
+        root_dtmi = dtmi_id if isinstance(dtmi_id, str) else None
         extends = self._parse_extends(root)
-        contents = self._parse_contents(root)
+        components = self._parse_contents(root)
 
-        return Model(root_dtmi, extends, contents)
+        return ModelMetadata(root_dtmi, extends, components)
 
     def _parse_extends(self, root):
+        # type: (Dict[str, Any]) -> List[str | ModelMetadata]
         extends = root.get(ModelProperties.extends.value, None)
         return self._parse_component(extends)
 
     def _parse_contents(self, root):
+        # type: (Dict[str, Any]) -> List[str | ModelMetadata]
         dependencies = set()
         contents = root.get(ModelProperties.contents.value, None)
 
@@ -80,17 +67,17 @@ class ModelQuery(object):
                 dependencies.update(
                     self._parse_component(item.get(ModelProperties.schema.value))
                 )
-
         return list(dependencies)
 
     def _parse_component(self, component):
+        # type: (Any) -> List[str | ModelMetadata]
         dependencies = set()
-        if isinstance(component, string_types) and is_valid_dtmi(component):
+        if isinstance(component, str) and is_valid_dtmi(component):
             dependencies.add(component)
         elif isinstance(component, list):
             # If it's a list, could have DTMIs or nested models
             for item in component:
-                if isinstance(item, string_types):
+                if isinstance(item, str):
                     # If there are strings in the list, that's a DTMI reference, so add it
                     dependencies.add(item)
                 elif _is_interface_or_component(item):
@@ -101,12 +88,25 @@ class ModelQuery(object):
             dependencies.update(metadata)
         return list(dependencies)
 
+    def parse_models_from_list(self):
+        # type: () -> Dict[str, str]
+        """Parse contents from an expanded json using the ModelQuery class."""
+        result = {}
+        contents = json.loads(self._content)
+        if isinstance(contents, list):
+            for content in contents:
+                model_metadata = ModelQuery(content).parse_model()
+                result[model_metadata.dtmi] = content
+        return result
+
+
 def _is_interface_or_component(root):
+    # type (Any) -> bool
     if not isinstance(root, dict):
         return False
 
     interface = root.get(ModelProperties.type.value)
     return (
-        isinstance(interface, string_types) and
+        isinstance(interface, str) and
         interface in [ModelType.interface.value, ModelType.component.value]
     )

@@ -100,7 +100,7 @@ class TestIntegrationGetModels(AzureTestCase):
         repo = determine_repo(client_type=client_type, has_metadata=has_metadata)
         client = ModelsRepositoryClient(repository_location=repo)
         async with client:
-            model_map = await client.get_models(dtmi)
+            model_map = await client.get_models(dtmi).content
 
         self.assertTrue(len(model_map) == 1)
         self.assertTrue(dtmi in model_map.keys())
@@ -125,7 +125,7 @@ class TestIntegrationGetModels(AzureTestCase):
         async with client:
             model_map = await client.get_models(
                 [dtmi1, dtmi2]
-            )
+            ).content
 
         self.assertTrue(len(model_map) == 2)
         self.assertTrue(dtmi1 in model_map.keys())
@@ -155,7 +155,7 @@ class TestIntegrationGetModels(AzureTestCase):
         repo = determine_repo(client_type=client_type, has_metadata=has_metadata)
         client = ModelsRepositoryClient(repository_location=repo)
         async with client:
-            model_map = await client.get_models(root_dtmi)
+            model_map = await client.get_models(root_dtmi).content
 
         self.assertTrue(len(model_map) == len(expected_dtmis))
         for dtmi in expected_dtmis:
@@ -180,7 +180,7 @@ class TestIntegrationGetModels(AzureTestCase):
         async with client:
             model_map = await client.get_models(
                 [root_dtmi1, root_dtmi2]
-            )
+            ).content
 
         self.assertTrue(len(model_map) == len(expected_dtmis))
         for dtmi in expected_dtmis:
@@ -204,7 +204,7 @@ class TestIntegrationGetModels(AzureTestCase):
         async with client:
             model_map = await client.get_models(
                 [root_dtmi1, root_dtmi2]
-            )
+            ).content
 
         self.assertTrue(len(model_map) == len(expected_dtmis))
         for dtmi in expected_dtmis:
@@ -229,7 +229,7 @@ class TestIntegrationGetModels(AzureTestCase):
         async with client:
             model_map = await client.get_models(
                 [root_dtmi1, root_dtmi2]
-            )
+            ).content
 
         self.assertTrue(len(model_map) == len(expected_dtmis))
         for dtmi in expected_dtmis:
@@ -244,7 +244,7 @@ class TestIntegrationGetModels(AzureTestCase):
         repo = determine_repo(client_type=ClientType.local.value)
         client = ModelsRepositoryClient(repository_location=repo)
         async with client:
-            model_map = await client.get_models(dtmi)
+            model_map = await client.get_models(dtmi).content
 
         self.assertTrue(len(model_map) == 1)
         self.assertTrue(dtmi in model_map.keys())
@@ -260,7 +260,7 @@ class TestIntegrationGetModels(AzureTestCase):
         repo = determine_repo(client_type=ClientType.local.value)
         client = ModelsRepositoryClient(repository_location=repo)
         async with client:
-            model_map = await client.get_models(root_dtmi)
+            model_map = await client.get_models(root_dtmi).content
 
         self.assertTrue(len(model_map) == len(expected_dtmis))
         for dtmi in expected_dtmis:
@@ -284,7 +284,7 @@ class TestIntegrationGetModels(AzureTestCase):
         async with client:
             model_map = await client.get_models(
                 [dtmi1, dtmi1]
-            )
+            ).content
 
         self.assertTrue(len(model_map) == 1)
         self.assertTrue(dtmi1 in model_map.keys())
@@ -305,7 +305,9 @@ class TestIntegrationGetModels(AzureTestCase):
         repo = determine_repo(client_type=client_type)
         client = ModelsRepositoryClient(repository_location=repo)
         async with client:
-            model_map = await client.get_models(dtmi, dependency_resolution=DependencyMode.disabled.value)
+            model_map = await client.get_models(
+                dtmi, dependency_resolution=DependencyMode.disabled.value
+            ).content
 
         self.assertTrue(len(model_map) == 1)
         self.assertTrue(dtmi in model_map.keys())
@@ -324,7 +326,9 @@ class TestIntegrationGetModels(AzureTestCase):
         repo = determine_repo(client_type=ClientType.local.value, has_metadata=True)
         client = ModelsRepositoryClient(repository_location=repo)
         async with client:
-            model_map = await client.get_models(dtmi, dependency_resolution=DependencyMode.enabled.value)
+            model_map = await client.get_models(
+                dtmi, dependency_resolution=DependencyMode.enabled.value
+            ).content
 
         self.assertTrue(len(model_map) == len(expected_dtmis))
         for dtmi in expected_dtmis:
@@ -359,7 +363,9 @@ class TestIntegrationGetModels(AzureTestCase):
         repo = determine_repo(client_type=ClientType.local.value, has_metadata=has_metadata)
         client = ModelsRepositoryClient(repository_location=repo)
         async with client:
-            model_map = await client.get_models([dtmis_expanded[0], dtmis_non_expanded[0]])
+            model_map = await client.get_models(
+                [dtmis_expanded[0], dtmis_non_expanded[0]]
+            ).content
 
         self.assertTrue(len(model_map) == len(total_dtmis))
         for dtmi in total_dtmis:
@@ -389,7 +395,7 @@ class TestIntegrationGetModels(AzureTestCase):
 
         async with client:
             for _ in range(2):
-                model_map_with_deps = await client.get_models(root_dtmi)
+                model_map_with_deps = await client.get_models(root_dtmi).content
 
                 self.assertTrue(len(model_map_with_deps) == len(expected_dtmis))
                 for dtmi in expected_dtmis:
@@ -399,7 +405,7 @@ class TestIntegrationGetModels(AzureTestCase):
 
                 model_map_no_deps = await client.get_models(
                     root_dtmi, dependency_resolution=DependencyMode.disabled.value
-                )
+                ).content
                 self.assertTrue(len(model_map_no_deps) == 1)
                 self.assertTrue(root_dtmi in model_map_no_deps.keys())
                 model = model_map_no_deps[root_dtmi]

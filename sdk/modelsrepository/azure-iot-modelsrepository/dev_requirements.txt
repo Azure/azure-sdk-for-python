@@ -4,5 +4,5 @@
 aiohttp>=3.0; python_version >= '3.5'
 pytest-mock
 pytest-testdox
-parameterized
+parameterized>=0.7.3
 flake8

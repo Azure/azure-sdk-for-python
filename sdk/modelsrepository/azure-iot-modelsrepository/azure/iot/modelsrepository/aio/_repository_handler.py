@@ -5,9 +5,10 @@
 # --------------------------------------------------------------------------
 import logging
 import os
-import queue
 import re
-import six.moves.urllib as urllib
+from queue import Queue
+from typing import TYPE_CHECKING
+from urllib.parse import urlparse
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
@@ -18,6 +19,7 @@ from azure.core.pipeline.policies import (
     NetworkTraceLoggingPolicy,
     ProxyPolicy,
 )
+from azure.core.pipeline.transport import AioHttpTransport
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ..dtmi_conventions import is_valid_dtmi
 from ..exceptions import ModelError
@@ -36,6 +38,10 @@ from .._common import (
 from ._fetcher import HttpFetcher, FilesystemFetcher
 from .._metadata_scheduler import MetadataScheduler
 from .._model_query import ModelQuery
+from .._models import ModelResult
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any, List
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -65,7 +71,7 @@ class RepositoryHandler(object):
 
     @distributed_trace_async
     async def process(self, dtmis, dependency_resolution=DependencyMode.enabled.value, **kwargs):
-        # type: (Union[List[str], str], str, Any) -> Dict[str, Any]
+        # type: (List[str] | str, str, Any) -> ModelResult
         """Process a DTMI from the configured endpoint and return the resulting JSON model.
 
         :param list[str] dtmis: DTMIs to process
@@ -88,8 +94,8 @@ class RepositoryHandler(object):
                 metadata = await self.fetcher.fetch_metadata(**kwargs)
                 self._repository_supports_expanded = (
                     metadata and
-                    metadata.get("features") and
-                    metadata.get("features").get("expanded")
+                    metadata.features and
+                    metadata.features.expanded
                 )
                 self._metadata_scheduler.mark_as_fetched()
             except (ResourceNotFoundError, HttpResponseError):
@@ -112,22 +118,22 @@ class RepositoryHandler(object):
             info_msg = PROCESSING_DTMI.format(target_dtmi)
             _LOGGER.debug(info_msg)
 
-            dtdl, expanded_result = await self.fetcher.fetch(
+            fetched_model_result = await self.fetcher.fetch(
                 target_dtmi, try_from_expanded=try_from_expanded, **kwargs
             )
 
             # Add dependencies if the result is expanded
-            if expanded_result:
-                for item in dtdl:
-                    model_metadata = ModelQuery(item).parse_model()
-                    if model_metadata.dtmi not in processed_models:
-                        processed_models[model_metadata.dtmi] = item
+            if fetched_model_result.from_expanded:
+                expanded = ModelQuery(fetched_model_result.definition).parse_models_from_list()
+                for item in expanded:
+                    if item not in processed_models:
+                        processed_models[item] = expanded[item]
                 continue
 
-            model_metadata = ModelQuery(dtdl).parse_model()
+            model_metadata = ModelQuery(fetched_model_result.definition).parse_model()
 
             # Add dependencies to to_process_queue if manual resolution is needed
-            if dependency_resolution == DependencyMode.enabled.value and not expanded_result:
+            if dependency_resolution == DependencyMode.enabled.value and not fetched_model_result.from_expanded:
                 dependencies = model_metadata.dependencies
                 if len(dependencies) > 0:
                     info_msg = DISCOVERED_DEPENDENCIES.format('", "'.join(dependencies))
@@ -142,13 +148,14 @@ class RepositoryHandler(object):
                     INVALID_DTMI_FORMAT.format(target_dtmi, parsed_dtmi)
                 )
 
-            processed_models[parsed_dtmi] = dtdl
+            processed_models[parsed_dtmi] = fetched_model_result.definition
 
-        return processed_models
+        return ModelResult(contents=processed_models)
 
 @distributed_trace_async
 async def _prepare_queue(dtmis):
-    to_process_models = queue.Queue()
+    # type: (List[str]) -> Queue
+    to_process_models = Queue()
     for dtmi in dtmis:
         if is_valid_dtmi(dtmi):
             to_process_models.put(dtmi)
@@ -161,8 +168,9 @@ async def _prepare_queue(dtmis):
 
 
 def _create_fetcher(location, **kwargs):
+    # type: (str, Any) -> HttpFetcher | FilesystemFetcher
     """Return a Fetcher based upon the type of location"""
-    scheme = urllib.parse.urlparse(location).scheme
+    scheme = urlparse(location).scheme
     if scheme in [RemoteProtocolType.http.value, RemoteProtocolType.https.value]:
         # HTTP/HTTPS URL
         info_msg = FETCHER_INIT_MSG.format("HTTP/HTTPS endpoint", "HttpFetcher")
@@ -216,8 +224,8 @@ def _create_fetcher(location, **kwargs):
 
 
 def _create_pipeline(**kwargs):
+    # type: (Any) -> AsyncPipeline
     """Creates and returns a PipelineClient configured for the provided base_url and kwargs"""
-    from azure.core.pipeline.transport import AioHttpTransport
     transport = kwargs.get("transport", AioHttpTransport(**kwargs))
 
     if kwargs.get('policies'):
@@ -236,6 +244,7 @@ def _create_pipeline(**kwargs):
 
 
 def _sanitize_filesystem_path(path):
+    # type: (str) -> str
     """Sanitize the filesystem path to be formatted correctly for the current OS"""
     path = os.path.normcase(path)
     path = os.path.normpath(path)

@@ -4,8 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import re
-from six import string_types
-from six.moves import urllib
+from urllib.parse import urlparse
 from ._common import (
     EXPANDED_JSON_FILE_EXT,
     INVALID_DTMI_FORMAT,
@@ -33,7 +32,7 @@ def is_valid_dtmi(dtmi):
     :returns: Boolean indicating if DTMI is valid
     :rtype: bool
     """
-    if not isinstance(dtmi, string_types):
+    if not isinstance(dtmi, str):
         return False
     pattern = re.compile(
         "^dtmi:[A-Za-z](?:[A-Za-z0-9_]*[A-Za-z0-9])?(?::[A-Za-z](?:[A-Za-z0-9_]*[A-Za-z0-9])?)*;[1-9][0-9]{0,8}$"
@@ -97,7 +96,7 @@ def _add_scheme(uri):
     :returns: The URI for the metadata in the Models Repository
     :rtype: str
     """
-    scheme = urllib.parse.urlparse(uri).scheme
+    scheme = urlparse(uri).scheme
     if len(scheme) == 1 and scheme.isalpha():
         uri = "file:///" + uri.replace("\\", "/")
     elif scheme == "" and not re.search(

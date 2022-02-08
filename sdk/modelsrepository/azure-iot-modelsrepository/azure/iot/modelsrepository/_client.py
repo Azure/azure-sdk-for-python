@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import logging
 from uuid import uuid4
-from six import string_types
+from typing import TYPE_CHECKING
 from azure.core.tracing.decorator import distributed_trace
 from ._repository_handler import RepositoryHandler
 from ._common import (
@@ -15,6 +15,10 @@ from ._common import (
     INVALID_DEPEDENCY_MODE,
     DependencyMode
 )
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any, List
+    from ._models import ModelResult
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -71,7 +75,7 @@ class ModelsRepositoryClient(object):
 
     @distributed_trace
     def get_models(self, dtmis, dependency_resolution=DependencyMode.enabled.value, **kwargs):
-        # type: (Union[List[str], str], str, Any) -> Dict[str, Any]
+        # type: (List[str] | str, str, Any) -> ModelResult
         """Retrieve a model from the Models Repository.
 
         :param dtmis: The DTMI(s) for the model(s) you wish to retrieve
@@ -93,7 +97,7 @@ class ModelsRepositoryClient(object):
         :returns: Dictionary mapping DTMIs to models
         :rtype: dict
         """
-        if isinstance(dtmis, string_types):
+        if isinstance(dtmis, str):
             dtmis = [dtmis]
 
         if dependency_resolution not in [DependencyMode.enabled.value, DependencyMode.disabled.value]:
