@@ -115,6 +115,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
             can be used if the container is public. For more information on setting up a training data set, see:
             https://aka.ms/azsdk/formrecognizer/buildtrainingset
         :param build_mode: The custom model build mode. Possible values include: "template", "neural".
+            For more information about build modes, see: https://aka.ms/azsdk/formrecognizer/buildmode.
         :type build_mode: str or :class:`~azure.ai.formrecognizer.DocumentBuildMode`
         :keyword str model_id: A unique ID for your model. If not specified, a model ID will be created for you.
         :keyword str description: An optional description to add to the model.
