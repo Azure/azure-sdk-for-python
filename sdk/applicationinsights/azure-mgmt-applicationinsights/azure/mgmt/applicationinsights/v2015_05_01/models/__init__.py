@@ -6,118 +6,62 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import APIKeyRequest
-    from ._models_py3 import Annotation
-    from ._models_py3 import AnnotationError
-    from ._models_py3 import AnnotationsListResult
-    from ._models_py3 import ApplicationInsightsComponent
-    from ._models_py3 import ApplicationInsightsComponentAPIKey
-    from ._models_py3 import ApplicationInsightsComponentAPIKeyListResult
-    from ._models_py3 import ApplicationInsightsComponentAnalyticsItem
-    from ._models_py3 import ApplicationInsightsComponentAnalyticsItemProperties
-    from ._models_py3 import ApplicationInsightsComponentAvailableFeatures
-    from ._models_py3 import ApplicationInsightsComponentBillingFeatures
-    from ._models_py3 import ApplicationInsightsComponentDataVolumeCap
-    from ._models_py3 import ApplicationInsightsComponentExportConfiguration
-    from ._models_py3 import ApplicationInsightsComponentExportRequest
-    from ._models_py3 import ApplicationInsightsComponentFavorite
-    from ._models_py3 import ApplicationInsightsComponentFeature
-    from ._models_py3 import ApplicationInsightsComponentFeatureCapabilities
-    from ._models_py3 import ApplicationInsightsComponentFeatureCapability
-    from ._models_py3 import ApplicationInsightsComponentListResult
-    from ._models_py3 import ApplicationInsightsComponentProactiveDetectionConfiguration
-    from ._models_py3 import ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions
-    from ._models_py3 import ApplicationInsightsComponentQuotaStatus
-    from ._models_py3 import ApplicationInsightsComponentWebTestLocation
-    from ._models_py3 import ApplicationInsightsWebTestLocationsListResult
-    from ._models_py3 import ComponentPurgeBody
-    from ._models_py3 import ComponentPurgeBodyFilters
-    from ._models_py3 import ComponentPurgeResponse
-    from ._models_py3 import ComponentPurgeStatusResponse
-    from ._models_py3 import ComponentsResource
-    from ._models_py3 import ErrorFieldContract
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import InnerError
-    from ._models_py3 import LinkProperties
-    from ._models_py3 import MyWorkbook
-    from ._models_py3 import MyWorkbookError
-    from ._models_py3 import MyWorkbookResource
-    from ._models_py3 import MyWorkbooksListResult
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import PrivateLinkScopedResource
-    from ._models_py3 import TagsResource
-    from ._models_py3 import WebTest
-    from ._models_py3 import WebTestGeolocation
-    from ._models_py3 import WebTestListResult
-    from ._models_py3 import WebTestPropertiesConfiguration
-    from ._models_py3 import WebtestsResource
-    from ._models_py3 import WorkItemConfiguration
-    from ._models_py3 import WorkItemConfigurationError
-    from ._models_py3 import WorkItemConfigurationsListResult
-    from ._models_py3 import WorkItemCreateConfiguration
-    from ._models_py3 import Workbook
-    from ._models_py3 import WorkbookError
-    from ._models_py3 import WorkbookResource
-    from ._models_py3 import WorkbooksListResult
-except (SyntaxError, ImportError):
-    from ._models import APIKeyRequest  # type: ignore
-    from ._models import Annotation  # type: ignore
-    from ._models import AnnotationError  # type: ignore
-    from ._models import AnnotationsListResult  # type: ignore
-    from ._models import ApplicationInsightsComponent  # type: ignore
-    from ._models import ApplicationInsightsComponentAPIKey  # type: ignore
-    from ._models import ApplicationInsightsComponentAPIKeyListResult  # type: ignore
-    from ._models import ApplicationInsightsComponentAnalyticsItem  # type: ignore
-    from ._models import ApplicationInsightsComponentAnalyticsItemProperties  # type: ignore
-    from ._models import ApplicationInsightsComponentAvailableFeatures  # type: ignore
-    from ._models import ApplicationInsightsComponentBillingFeatures  # type: ignore
-    from ._models import ApplicationInsightsComponentDataVolumeCap  # type: ignore
-    from ._models import ApplicationInsightsComponentExportConfiguration  # type: ignore
-    from ._models import ApplicationInsightsComponentExportRequest  # type: ignore
-    from ._models import ApplicationInsightsComponentFavorite  # type: ignore
-    from ._models import ApplicationInsightsComponentFeature  # type: ignore
-    from ._models import ApplicationInsightsComponentFeatureCapabilities  # type: ignore
-    from ._models import ApplicationInsightsComponentFeatureCapability  # type: ignore
-    from ._models import ApplicationInsightsComponentListResult  # type: ignore
-    from ._models import ApplicationInsightsComponentProactiveDetectionConfiguration  # type: ignore
-    from ._models import ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions  # type: ignore
-    from ._models import ApplicationInsightsComponentQuotaStatus  # type: ignore
-    from ._models import ApplicationInsightsComponentWebTestLocation  # type: ignore
-    from ._models import ApplicationInsightsWebTestLocationsListResult  # type: ignore
-    from ._models import ComponentPurgeBody  # type: ignore
-    from ._models import ComponentPurgeBodyFilters  # type: ignore
-    from ._models import ComponentPurgeResponse  # type: ignore
-    from ._models import ComponentPurgeStatusResponse  # type: ignore
-    from ._models import ComponentsResource  # type: ignore
-    from ._models import ErrorFieldContract  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import InnerError  # type: ignore
-    from ._models import LinkProperties  # type: ignore
-    from ._models import MyWorkbook  # type: ignore
-    from ._models import MyWorkbookError  # type: ignore
-    from ._models import MyWorkbookResource  # type: ignore
-    from ._models import MyWorkbooksListResult  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import PrivateLinkScopedResource  # type: ignore
-    from ._models import TagsResource  # type: ignore
-    from ._models import WebTest  # type: ignore
-    from ._models import WebTestGeolocation  # type: ignore
-    from ._models import WebTestListResult  # type: ignore
-    from ._models import WebTestPropertiesConfiguration  # type: ignore
-    from ._models import WebtestsResource  # type: ignore
-    from ._models import WorkItemConfiguration  # type: ignore
-    from ._models import WorkItemConfigurationError  # type: ignore
-    from ._models import WorkItemConfigurationsListResult  # type: ignore
-    from ._models import WorkItemCreateConfiguration  # type: ignore
-    from ._models import Workbook  # type: ignore
-    from ._models import WorkbookError  # type: ignore
-    from ._models import WorkbookResource  # type: ignore
-    from ._models import WorkbooksListResult  # type: ignore
+from ._models_py3 import APIKeyRequest
+from ._models_py3 import Annotation
+from ._models_py3 import AnnotationError
+from ._models_py3 import AnnotationsListResult
+from ._models_py3 import ApplicationInsightsComponent
+from ._models_py3 import ApplicationInsightsComponentAPIKey
+from ._models_py3 import ApplicationInsightsComponentAPIKeyListResult
+from ._models_py3 import ApplicationInsightsComponentAnalyticsItem
+from ._models_py3 import ApplicationInsightsComponentAnalyticsItemProperties
+from ._models_py3 import ApplicationInsightsComponentAvailableFeatures
+from ._models_py3 import ApplicationInsightsComponentBillingFeatures
+from ._models_py3 import ApplicationInsightsComponentDataVolumeCap
+from ._models_py3 import ApplicationInsightsComponentExportConfiguration
+from ._models_py3 import ApplicationInsightsComponentExportRequest
+from ._models_py3 import ApplicationInsightsComponentFavorite
+from ._models_py3 import ApplicationInsightsComponentFeature
+from ._models_py3 import ApplicationInsightsComponentFeatureCapabilities
+from ._models_py3 import ApplicationInsightsComponentFeatureCapability
+from ._models_py3 import ApplicationInsightsComponentListResult
+from ._models_py3 import ApplicationInsightsComponentProactiveDetectionConfiguration
+from ._models_py3 import ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions
+from ._models_py3 import ApplicationInsightsComponentQuotaStatus
+from ._models_py3 import ApplicationInsightsComponentWebTestLocation
+from ._models_py3 import ApplicationInsightsWebTestLocationsListResult
+from ._models_py3 import ComponentPurgeBody
+from ._models_py3 import ComponentPurgeBodyFilters
+from ._models_py3 import ComponentPurgeResponse
+from ._models_py3 import ComponentPurgeStatusResponse
+from ._models_py3 import ComponentsResource
+from ._models_py3 import ErrorFieldContract
+from ._models_py3 import ErrorResponse
+from ._models_py3 import InnerError
+from ._models_py3 import LinkProperties
+from ._models_py3 import MyWorkbook
+from ._models_py3 import MyWorkbookError
+from ._models_py3 import MyWorkbookResource
+from ._models_py3 import MyWorkbooksListResult
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import PrivateLinkScopedResource
+from ._models_py3 import TagsResource
+from ._models_py3 import WebTest
+from ._models_py3 import WebTestGeolocation
+from ._models_py3 import WebTestListResult
+from ._models_py3 import WebTestPropertiesConfiguration
+from ._models_py3 import WebtestsResource
+from ._models_py3 import WorkItemConfiguration
+from ._models_py3 import WorkItemConfigurationError
+from ._models_py3 import WorkItemConfigurationsListResult
+from ._models_py3 import WorkItemCreateConfiguration
+from ._models_py3 import Workbook
+from ._models_py3 import WorkbookError
+from ._models_py3 import WorkbookResource
+from ._models_py3 import WorkbooksListResult
+
 
 from ._application_insights_management_client_enums import (
     ApplicationType,

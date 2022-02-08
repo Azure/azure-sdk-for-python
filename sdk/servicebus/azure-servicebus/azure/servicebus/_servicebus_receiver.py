@@ -7,6 +7,7 @@ import logging
 import functools
 import uuid
 import datetime
+import warnings
 from typing import Any, List, Optional, Dict, Iterator, Union, TYPE_CHECKING
 
 import six
@@ -108,7 +109,7 @@ class ServiceBusReceiver(
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the Service Bus service. Default is `TransportType.Amqp`.
     :paramtype transport_type: ~azure.servicebus.TransportType
-    :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+    :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
@@ -283,7 +284,7 @@ class ServiceBusReceiver(
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Service Bus service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.servicebus.TransportType
-        :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+        :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
         :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
@@ -660,7 +661,8 @@ class ServiceBusReceiver(
         self,
         sequence_numbers: Union[int, List[int]],
         *,
-        timeout: Optional[float] = None
+        timeout: Optional[float] = None,
+        **kwargs: Any
     ) -> List[ServiceBusReceivedMessage]:
         """Receive messages that have previously been deferred.
 
@@ -683,6 +685,8 @@ class ServiceBusReceiver(
                 :caption: Receive deferred messages from ServiceBus.
 
         """
+        if kwargs:
+            warnings.warn(f"Unsupported keyword args: {kwargs}")
         self._check_live()
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -734,7 +738,8 @@ class ServiceBusReceiver(
         max_message_count: int = 1,
         *,
         sequence_number: int = 0,
-        timeout: Optional[float] = None
+        timeout: Optional[float] = None,
+        **kwargs: Any
     ) -> List[ServiceBusReceivedMessage]:
         """Browse messages currently pending in the queue.
 
@@ -759,6 +764,8 @@ class ServiceBusReceiver(
                 :caption: Look at pending messages in the queue.
 
         """
+        if kwargs:
+            warnings.warn(f"Unsupported keyword args: {kwargs}")
         self._check_live()
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
@@ -899,7 +906,8 @@ class ServiceBusReceiver(
         self,
         message: ServiceBusReceivedMessage,
         *,
-        timeout: Optional[float] = None
+        timeout: Optional[float] = None,
+        **kwargs: Any
     ) -> datetime.datetime:
         # pylint: disable=protected-access,no-member
         """Renew the message lock.
@@ -933,6 +941,8 @@ class ServiceBusReceiver(
                 :caption: Renew the lock on a received message.
 
         """
+        if kwargs:
+            warnings.warn(f"Unsupported keyword args: {kwargs}")
         # type: ignore
         try:
             if self.session:
