@@ -234,43 +234,39 @@ def get_sales_order_v2(item_id):
 
 
 async def run_sample():
-    client = cosmos_client.CosmosClient(HOST, MASTER_KEY)
-    try:
-        # setup database for this sample
+    async with cosmos_client.CosmosClient(HOST, MASTER_KEY) as client:
         try:
-            db = await client.create_database(id=DATABASE_ID)
-        except exceptions.CosmosResourceExistsError:
-            db = await client.get_database_client(DATABASE_ID)
+            # setup database for this sample
+            try:
+                db = await client.create_database(id=DATABASE_ID)
+            except exceptions.CosmosResourceExistsError:
+                db = await client.get_database_client(DATABASE_ID)
 
-        # setup container for this sample
-        try:
-            container, document = create_nonpartitioned_container(db)
-            print('Container with id \'{0}\' created'.format(CONTAINER_ID))
+            # setup container for this sample
+            try:
+                container, document = create_nonpartitioned_container(db)
+                print('Container with id \'{0}\' created'.format(CONTAINER_ID))
 
-        except exceptions.CosmosResourceExistsError:
-            print('Container with id \'{0}\' was found'.format(CONTAINER_ID))
+            except exceptions.CosmosResourceExistsError:
+                print('Container with id \'{0}\' was found'.format(CONTAINER_ID))
 
-        # Read Item created in non partitioned container using older API version
-        await read_item(container, document)
-        await create_items(container)
-        await read_items(container)
-        await query_items(container, 'SalesOrder1')
-        await replace_item(container, 'SalesOrder1')
-        await upsert_item(container, 'SalesOrder1')
-        await delete_item(container, 'SalesOrder1')
+            # Read Item created in non partitioned container using older API version
+            await read_item(container, document)
+            await create_items(container)
+            await read_items(container)
+            await query_items(container, 'SalesOrder1')
+            await replace_item(container, 'SalesOrder1')
+            await upsert_item(container, 'SalesOrder1')
+            await delete_item(container, 'SalesOrder1')
 
-        # cleanup database after sample
-        try:
-            await client.delete_database(db)
-        except exceptions.CosmosResourceNotFoundError:
-            pass
+            # cleanup database after sample
+            try:
+                await client.delete_database(db)
+            except exceptions.CosmosResourceNotFoundError:
+                pass
 
-    except exceptions.CosmosHttpResponseError as e:
-        print('\nrun_sample has caught an error. {0}'.format(e.message))
-
-    finally:
-        await client.close()
-        print("\nrun_sample done")
+        except exceptions.CosmosHttpResponseError as e:
+            print('\nrun_sample has caught an error. {0}'.format(e.message))
 
 
 if __name__ == '__main__':

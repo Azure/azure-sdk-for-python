@@ -8,7 +8,12 @@
 from azure.core import MatchConditions
 
 from ._parser import _datetime_to_str, _get_file_permission
-from ._generated.models import SourceModifiedAccessConditions, LeaseAccessConditions, CopyFileSmbInfo
+from ._generated.models import (
+    SourceModifiedAccessConditions,
+    LeaseAccessConditions,
+    SourceLeaseAccessConditions,
+    DestinationLeaseAccessConditions,
+    CopyFileSmbInfo)
 
 
 _SUPPORTED_API_VERSIONS = [
@@ -21,7 +26,8 @@ _SUPPORTED_API_VERSIONS = [
     '2020-06-12',
     '2020-08-04',
     '2020-10-02',
-    '2021-02-12'
+    '2021-02-12',
+    '2021-04-10'
 ]
 
 
@@ -63,12 +69,30 @@ def get_source_conditions(kwargs):
 
 
 def get_access_conditions(lease):
-    # type: (Optional[Union[ShareLeaseClient, str]]) -> Union[LeaseAccessConditions, None]
+    # type: (ShareLeaseClient or str) -> LeaseAccessConditions or None
     try:
         lease_id = lease.id # type: ignore
     except AttributeError:
         lease_id = lease # type: ignore
     return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
+
+
+def get_source_access_conditions(lease):
+    # type: (ShareLeaseClient or str) -> SourceLeaseAccessConditions or None
+    try:
+        lease_id = lease.id # type: ignore
+    except AttributeError:
+        lease_id = lease # type: ignore
+    return SourceLeaseAccessConditions(source_lease_id=lease_id) if lease_id else None
+
+
+def get_dest_access_conditions(lease):
+    # type: (ShareLeaseClient or str) -> DestinationLeaseAccessConditions or None
+    try:
+        lease_id = lease.id # type: ignore
+    except AttributeError:
+        lease_id = lease # type: ignore
+    return DestinationLeaseAccessConditions(destination_lease_id=lease_id) if lease_id else None
 
 
 def get_smb_properties(kwargs):
@@ -109,6 +133,26 @@ def get_smb_properties(kwargs):
         )
 
     }
+
+
+def get_rename_smb_properties(kwargs):
+    # type: (dict[str, Any]) -> dict[str, Any]
+    file_permission = kwargs.pop('file_permission', None)
+    file_permission_key = kwargs.pop('permission_key', None)
+    file_attributes = kwargs.pop('file_attributes', None)
+    file_creation_time = kwargs.pop('file_creation_time', None)
+    file_last_write_time = kwargs.pop('file_last_write_time', None)
+
+    file_permission = _get_file_permission(file_permission, file_permission_key, None)
+
+    return {
+        'file_permission': file_permission,
+        'file_permission_key': file_permission_key,
+        'copy_file_smb_info': CopyFileSmbInfo(
+            file_attributes=file_attributes,
+            file_creation_time=_datetime_to_str(file_creation_time) if file_creation_time else None,
+            file_last_write_time=_datetime_to_str(file_last_write_time) if file_last_write_time else None
+        )}
 
 
 def get_api_version(kwargs):

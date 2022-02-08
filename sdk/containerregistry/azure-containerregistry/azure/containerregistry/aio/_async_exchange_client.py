@@ -34,7 +34,7 @@ class ACRExchangeClient(object):
     :param endpoint: Azure Container Registry endpoint
     :type endpoint: str
     :param credential: Credential which provides tokens to authenticate requests
-    :type credential: :class:`azure.core.credentials.TokenCredential`
+    :type credential: ~azure.core.credentials.TokenCredential
     """
 
     def __init__(self, endpoint: str, credential: "AsyncTokencredential", **kwargs: Dict[str, Any]) -> None:

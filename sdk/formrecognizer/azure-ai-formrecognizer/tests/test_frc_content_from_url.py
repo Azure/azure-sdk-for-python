@@ -155,7 +155,8 @@ class TestContentFromUrl(FormRecognizerTest):
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
-    def test_content_continuation_token(self, client):
+    def test_content_continuation_token(self, **kwargs):
+        client = kwargs.pop("client")
         initial_poller = client.begin_recognize_content_from_url(self.form_url_jpg)
         cont_token = initial_poller.continuation_token()
 
@@ -266,7 +267,8 @@ class TestContentFromUrl(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
-    def test_content_language_v2(self, client):
+    def test_content_language_v2(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ValueError) as e:
             client.begin_recognize_content_from_url(self.form_url_jpg, language="en")
         assert "'language' is only available for API version V2_1 and up" in str(e.value)

@@ -295,7 +295,7 @@ class ComputeNodeState(str, Enum):
     unknown = "unknown"  #: The Batch service has lost contact with the Compute Node, and does not know its true state.
     leaving_pool = "leavingpool"  #: The Compute Node is leaving the Pool, either because the user explicitly removed it or because the Pool is resizing or autoscaling down.
     offline = "offline"  #: The Compute Node is not currently running a Task, and scheduling of new Tasks to the Compute Node is disabled.
-    preempted = "preempted"  #: The low-priority Compute Node has been preempted. Tasks which were running on the Compute Node when it was preempted will be rescheduled when another Compute Node becomes available.
+    preempted = "preempted"  #: The Spot/Low-priority Compute Node has been preempted. Tasks which were running on the Compute Node when it was preempted will be rescheduled when another Compute Node becomes available.
 
 
 class SchedulingState(str, Enum):

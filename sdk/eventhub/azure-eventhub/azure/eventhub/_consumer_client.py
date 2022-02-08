@@ -366,12 +366,12 @@ class EventHubConsumerClient(ClientBase):
          value for all partitions. The value type can be str, int or datetime.datetime. Also supported are the
          values "-1" for receiving from the beginning of the stream, and "@latest" for receiving only new events.
          Default value is "@latest".
-        :paramtype starting_position: str, int, datetime.datetime or dict[str,Any]
+        :paramtype starting_position: str, int, datetime.datetime or Dict[str,Any]
         :keyword starting_position_inclusive: Determine whether the given starting_position is inclusive(>=) or
          not (>). True for inclusive and False for exclusive. This can be a dict with partition ID as the key and
          bool as the value indicating whether the starting_position for a specific partition is inclusive or not.
          This can also be a single bool value for all starting_position. The default value is False.
-        :paramtype starting_position_inclusive: bool or dict[str,bool]
+        :paramtype starting_position_inclusive: bool or Dict[str,bool]
         :keyword on_error: The callback function that will be called when an error is raised during receiving
          after retry attempts are exhausted, or during the process of load-balancing.
          The callback takes two parameters: `partition_context` which contains partition information
@@ -447,12 +447,12 @@ class EventHubConsumerClient(ClientBase):
          value for all partitions. The value type can be str, int or datetime.datetime. Also supported are the
          values "-1" for receiving from the beginning of the stream, and "@latest" for receiving only new events.
          Default value is "@latest".
-        :paramtype starting_position: str, int, datetime.datetime or dict[str,Any]
+        :paramtype starting_position: str, int, datetime.datetime or Dict[str,Any]
         :keyword starting_position_inclusive: Determine whether the given starting_position is inclusive(>=) or
          not (>). True for inclusive and False for exclusive. This can be a dict with partition ID as the key and
          bool as the value indicating whether the starting_position for a specific partition is inclusive or not.
          This can also be a single bool value for all starting_position. The default value is False.
-        :paramtype starting_position_inclusive: bool or dict[str,bool]
+        :paramtype starting_position_inclusive: bool or Dict[str,bool]
         :keyword on_error: The callback function that will be called when an error is raised during receiving
          after retry attempts are exhausted, or during the process of load-balancing.
          The callback takes two parameters: `partition_context` which contains partition information
@@ -498,7 +498,7 @@ class EventHubConsumerClient(ClientBase):
             - `created_at` (UTC datetime.datetime)
             - `partition_ids` (list[str])
 
-        :rtype: dict
+        :rtype: Dict[str, Any]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return super(EventHubConsumerClient, self)._get_eventhub_properties()
@@ -528,7 +528,7 @@ class EventHubConsumerClient(ClientBase):
 
         :param partition_id: The target partition ID.
         :type partition_id: str
-        :rtype: dict
+        :rtype: Dict[str, Any]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return super(EventHubConsumerClient, self)._get_partition_properties(
