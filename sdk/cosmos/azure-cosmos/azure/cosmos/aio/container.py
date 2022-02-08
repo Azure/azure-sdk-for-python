@@ -153,7 +153,6 @@ class ContainerProxy(object):
     async def create_item(
             self,
             body,  # type: Dict[str, Any]
-            max_integrated_cache_staleness_in_ms=None,  # type: Optional[int],
             **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
@@ -163,9 +162,6 @@ class ContainerProxy(object):
         :func:`ContainerProxy.upsert_item` method.
 
         :param body: A dict-like object representing the item to create.
-        **Provisional** parameter max_integrated_cache_staleness_in_ms
-        :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
-        :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword post_trigger_include: trigger id to be used as post operation trigger.
         :keyword indexing_directive: Indicate whether the document should be omitted from indexing.
@@ -193,9 +189,6 @@ class ContainerProxy(object):
             request_options["postTriggerInclude"] = post_trigger_include
         if indexing_directive is not None:
             request_options["indexingDirective"] = indexing_directive
-        if max_integrated_cache_staleness_in_ms is not None:
-            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
-            request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         result = await self.client_connection.CreateItem(
             database_or_container_link=self.container_link, document=body, options=request_options, **kwargs
@@ -430,7 +423,6 @@ class ContainerProxy(object):
             body,  # type: Dict[str, Any]
             pre_trigger_include=None,  # type: Optional[str]
             post_trigger_include=None,  # type: Optional[str]
-            max_integrated_cache_staleness_in_ms=None,  # type: Optional[int],
             **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
@@ -442,9 +434,6 @@ class ContainerProxy(object):
         :param body: A dict-like object representing the item to update or insert.
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
-        **Provisional** parameter max_integrated_cache_staleness_in_ms
-        :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
-        :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
@@ -462,9 +451,6 @@ class ContainerProxy(object):
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
-        if max_integrated_cache_staleness_in_ms is not None:
-            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
-            request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         result = await self.client_connection.UpsertItem(
             database_or_container_link=self.container_link,
@@ -483,7 +469,6 @@ class ContainerProxy(object):
             body,  # type: Dict[str, Any]
             pre_trigger_include=None,  # type: Optional[str]
             post_trigger_include=None,  # type: Optional[str]
-            max_integrated_cache_staleness_in_ms=None,  # type: Optional[int]
             **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
@@ -495,9 +480,6 @@ class ContainerProxy(object):
         :param body: A dict-like object representing the item to replace.
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
-        **Provisional** parameter max_integrated_cache_staleness_in_ms
-        :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
-        :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
@@ -517,9 +499,6 @@ class ContainerProxy(object):
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
-        if max_integrated_cache_staleness_in_ms is not None:
-            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
-            request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         result = await self.client_connection.ReplaceItem(
             document_link=item_link, new_document=body, options=request_options, **kwargs
@@ -535,7 +514,6 @@ class ContainerProxy(object):
             partition_key,  # type: Any
             pre_trigger_include=None,  # type: Optional[str]
             post_trigger_include=None,  # type: Optional[str]
-            max_integrated_cache_staleness_in_ms=None,  # type: Optional[int]
             **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -547,9 +525,6 @@ class ContainerProxy(object):
         :param partition_key: Specifies the partition key value for the item.
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
-        **Provisional** parameter max_integrated_cache_staleness_in_ms
-        :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
-        :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
@@ -568,9 +543,6 @@ class ContainerProxy(object):
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
-        if max_integrated_cache_staleness_in_ms is not None:
-            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
-            request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         document_link = self._get_document_link(item)
         result = await self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
