@@ -225,10 +225,10 @@ class KeyProperties(object):
 
     @property
     def managed(self):
-        # type: () -> bool
-        """Returns whether the key's lifetime is managed by key vault
+        # type: () -> Optional[bool]
+        """Whether the key's lifetime is managed by Key Vault. If the key backs a certificate, this will be true.
 
-        :rtype: bool
+        :rtype: bool or None
         """
         return self._managed
 
@@ -237,7 +237,7 @@ class KeyProperties(object):
         # type: () -> Optional[bool]
         """Whether the private key can be exported
 
-        :rtype: bool
+        :rtype: bool or None
         """
         # exportable was added in 7.3-preview
         if self._attributes:
@@ -249,7 +249,7 @@ class KeyProperties(object):
         # type: () -> Optional[KeyReleasePolicy]
         """The :class:`~azure.keyvault.keys.KeyReleasePolicy` specifying the rules under which the key can be exported.
 
-        :rtype: ~azure.keyvault.keys.KeyReleasePolicy
+        :rtype: ~azure.keyvault.keys.KeyReleasePolicy or None
         """
         return self._release_policy
 
