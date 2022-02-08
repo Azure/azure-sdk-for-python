@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added models: `AmlSkill`
+- Added models: `AzureMachineLearningSkill`
 
 ### Breaking Changes
 

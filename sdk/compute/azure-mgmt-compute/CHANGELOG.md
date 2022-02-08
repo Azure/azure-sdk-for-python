@@ -1,5 +1,42 @@
 # Release History
 
+## 25.0.0 (2022-01-28)
+
+**Features**
+
+  - Added operation DedicatedHostsOperations.begin_restart
+  - Model AutomaticRepairsPolicy has a new parameter repair_action
+  - Model CapacityReservation has a new parameter time_created
+  - Model CapacityReservationUpdate has a new parameter time_created
+  - Model DedicatedHost has a new parameter time_created
+  - Model DedicatedHostUpdate has a new parameter time_created
+  - Model ImageReference has a new parameter community_gallery_image_id
+  - Model ManagedDiskParameters has a new parameter security_profile
+  - Model RestorePoint has a new parameter instance_view
+  - Model RestorePoint has a new parameter source_restore_point
+  - Model VirtualMachine has a new parameter time_created
+  - Model VirtualMachineExtension has a new parameter protected_settings_from_key_vault
+  - Model VirtualMachineExtensionUpdate has a new parameter protected_settings_from_key_vault
+  - Model VirtualMachineScaleSet has a new parameter time_created
+  - Model VirtualMachineScaleSetExtension has a new parameter protected_settings_from_key_vault
+  - Model VirtualMachineScaleSetExtensionUpdate has a new parameter protected_settings_from_key_vault
+  - Model VirtualMachineScaleSetManagedDiskParameters has a new parameter security_profile
+  - Model VirtualMachineScaleSetOSProfile has a new parameter allow_extension_operations
+  - Model VirtualMachineScaleSetUpdatePublicIPAddressConfiguration has a new parameter public_ip_prefix
+  - Model VirtualMachineScaleSetVMExtension has a new parameter protected_settings_from_key_vault
+  - Model VirtualMachineScaleSetVMExtensionUpdate has a new parameter protected_settings_from_key_vault
+  - Model VirtualMachineScaleSetVMProfile has a new parameter hardware_profile
+  - Model VirtualMachineUpdate has a new parameter time_created
+
+**Breaking changes**
+
+  - Model PurchasePlan no longer has parameter promotion_code
+  - Operation RestorePointsOperations.get has a new signature
+  - Operation VirtualMachineScaleSetsOperations.force_recovery_service_fabric_platform_update_domain_walk has a new signature
+  - Operation VirtualMachineScaleSetsOperations.force_recovery_service_fabric_platform_update_domain_walk has a new signature
+  - Operation VirtualMachinesOperations.list has a new signature
+  - Operation VirtualMachinesOperations.list_all has a new signature
+
 ## 24.0.1 (2022-01-17)
 
 **Bugfixes**

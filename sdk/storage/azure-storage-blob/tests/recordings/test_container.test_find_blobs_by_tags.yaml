@@ -1,0 +1,306 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.10.0b2 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 18 Jan 2022 21:22:11 GMT
+      x-ms-version:
+      - '2021-04-10'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/container2ff20f8a?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      date:
+      - Tue, 18 Jan 2022 21:22:11 GMT
+      etag:
+      - '"0x8D9DAC8972E02FD"'
+      last-modified:
+      - Tue, 18 Jan 2022 21:22:11 GMT
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2021-04-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: hello world
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '11'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.10.0b2 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Tue, 18 Jan 2022 21:22:11 GMT
+      x-ms-tags:
+      - tag1=firsttag&tag2=secondtag&tag3=thirdtag
+      x-ms-version:
+      - '2021-04-10'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/container2ff20f8a/blob1
+  response:
+    body:
+      string: ''
+    headers:
+      content-md5:
+      - XrY7u+Ae7tCTyyK7j1rNww==
+      date:
+      - Tue, 18 Jan 2022 21:22:11 GMT
+      etag:
+      - '"0x8D9DAC8973BE886"'
+      last-modified:
+      - Tue, 18 Jan 2022 21:22:11 GMT
+      transfer-encoding:
+      - chunked
+      x-ms-content-crc64:
+      - vo7q9sPVKY0=
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2021-04-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: hello world
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '11'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.10.0b2 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Tue, 18 Jan 2022 21:22:11 GMT
+      x-ms-tags:
+      - tag1=firsttag&tag2=secondtag&tag3=thirdtag
+      x-ms-version:
+      - '2021-04-10'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/container2ff20f8a/blob2
+  response:
+    body:
+      string: ''
+    headers:
+      content-md5:
+      - XrY7u+Ae7tCTyyK7j1rNww==
+      date:
+      - Tue, 18 Jan 2022 21:22:11 GMT
+      etag:
+      - '"0x8D9DAC897436236"'
+      last-modified:
+      - Tue, 18 Jan 2022 21:22:11 GMT
+      transfer-encoding:
+      - chunked
+      x-ms-content-crc64:
+      - vo7q9sPVKY0=
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2021-04-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: hello world
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '11'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.10.0b2 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Tue, 18 Jan 2022 21:22:11 GMT
+      x-ms-tags:
+      - tag1=firsttag&tag2=secondtag&tag3=thirdtag
+      x-ms-version:
+      - '2021-04-10'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/container2ff20f8a/blob3
+  response:
+    body:
+      string: ''
+    headers:
+      content-md5:
+      - XrY7u+Ae7tCTyyK7j1rNww==
+      date:
+      - Tue, 18 Jan 2022 21:22:11 GMT
+      etag:
+      - '"0x8D9DAC8974C630D"'
+      last-modified:
+      - Tue, 18 Jan 2022 21:22:11 GMT
+      transfer-encoding:
+      - chunked
+      x-ms-content-crc64:
+      - vo7q9sPVKY0=
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2021-04-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: hello world
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '11'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.10.0b2 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Tue, 18 Jan 2022 21:22:11 GMT
+      x-ms-tags:
+      - tag1=other
+      x-ms-version:
+      - '2021-04-10'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/container2ff20f8a/blob4
+  response:
+    body:
+      string: ''
+    headers:
+      content-md5:
+      - XrY7u+Ae7tCTyyK7j1rNww==
+      date:
+      - Tue, 18 Jan 2022 21:22:11 GMT
+      etag:
+      - '"0x8D9DAC89755D8E1"'
+      last-modified:
+      - Tue, 18 Jan 2022 21:22:11 GMT
+      transfer-encoding:
+      - chunked
+      x-ms-content-crc64:
+      - vo7q9sPVKY0=
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2021-04-10'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.10.0b2 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 18 Jan 2022 21:22:21 GMT
+      x-ms-version:
+      - '2021-04-10'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/container2ff20f8a?restype=container&comp=blobs&where=tag1%3D%27firsttag%27%20and%20tag2%3D%27secondtag%27&maxresults=2
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<EnumerationResults
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\"><Where>tag1=&apos;firsttag&apos;
+        and tag2=&apos;secondtag&apos;</Where><MaxResults>2</MaxResults><Blobs><Blob><Name>blob1</Name><ContainerName>container2ff20f8a</ContainerName><Tags><TagSet><Tag><Key>tag1</Key><Value>firsttag</Value></Tag><Tag><Key>tag2</Key><Value>secondtag</Value></Tag></TagSet></Tags></Blob><Blob><Name>blob2</Name><ContainerName>container2ff20f8a</ContainerName><Tags><TagSet><Tag><Key>tag1</Key><Value>firsttag</Value></Tag><Tag><Key>tag2</Key><Value>secondtag</Value></Tag></TagSet></Tags></Blob></Blobs><NextMarker>2!240!MDAwMDM0IWNvbnRhaW5lcjJmZjIwZjhhATAxRDgwQ0IxNzRCN0VDNkQhMDAwMDA1IWJsb2IzITAwMDAxNiEIAAAACAAAAGZpcnN0dGFnITAwMDAwMSEwITAwMDAyOCE5OTk5LTEyLTMxVDIzOjU5OjU5Ljk5OTk5OTlaITAwMDAzNiE5M2UyYzk0Mi0yYjU2LTQxYjEtYjkzZS1mODcxZTZmOGQwMDghMDAwMDA0IXRhZzEh</NextMarker></EnumerationResults>"
+    headers:
+      content-type:
+      - application/xml
+      date:
+      - Tue, 18 Jan 2022 21:22:22 GMT
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2021-04-10'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.10.0b2 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 18 Jan 2022 21:22:22 GMT
+      x-ms-version:
+      - '2021-04-10'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/container2ff20f8a?restype=container&comp=blobs&where=tag1%3D%27firsttag%27%20and%20tag2%3D%27secondtag%27&marker=2%21240%21MDAwMDM0IWNvbnRhaW5lcjJmZjIwZjhhATAxRDgwQ0IxNzRCN0VDNkQhMDAwMDA1IWJsb2IzITAwMDAxNiEIAAAACAAAAGZpcnN0dGFnITAwMDAwMSEwITAwMDAyOCE5OTk5LTEyLTMxVDIzOjU5OjU5Ljk5OTk5OTlaITAwMDAzNiE5M2UyYzk0Mi0yYjU2LTQxYjEtYjkzZS1mODcxZTZmOGQwMDghMDAwMDA0IXRhZzEh&maxresults=2
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<EnumerationResults
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\"><Marker>2!240!MDAwMDM0IWNvbnRhaW5lcjJmZjIwZjhhATAxRDgwQ0IxNzRCN0VDNkQhMDAwMDA1IWJsb2IzITAwMDAxNiEIAAAACAAAAGZpcnN0dGFnITAwMDAwMSEwITAwMDAyOCE5OTk5LTEyLTMxVDIzOjU5OjU5Ljk5OTk5OTlaITAwMDAzNiE5M2UyYzk0Mi0yYjU2LTQxYjEtYjkzZS1mODcxZTZmOGQwMDghMDAwMDA0IXRhZzEh</Marker><Where>tag1=&apos;firsttag&apos;
+        and tag2=&apos;secondtag&apos;</Where><MaxResults>2</MaxResults><Blobs><Blob><Name>blob3</Name><ContainerName>container2ff20f8a</ContainerName><Tags><TagSet><Tag><Key>tag1</Key><Value>firsttag</Value></Tag><Tag><Key>tag2</Key><Value>secondtag</Value></Tag></TagSet></Tags></Blob></Blobs><NextMarker/></EnumerationResults>"
+    headers:
+      content-type:
+      - application/xml
+      date:
+      - Tue, 18 Jan 2022 21:22:22 GMT
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2021-04-10'
+    status:
+      code: 200
+      message: OK
+version: 1
