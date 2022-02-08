@@ -664,9 +664,6 @@ def ParsePaths(paths):
 
 
 def validate_cache_staleness_value(max_integrated_cache_staleness):
-    try:
-        int(max_integrated_cache_staleness)
-    except Exception:
-        raise
+    int(max_integrated_cache_staleness)  # Will throw error if data type cant be converted to int
     if max_integrated_cache_staleness < 0:
         raise ValueError("Parameter 'max_integrated_cache_staleness_in_ms' can only be a positive integer.")
