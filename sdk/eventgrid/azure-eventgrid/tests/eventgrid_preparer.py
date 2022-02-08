@@ -21,13 +21,13 @@ CUSTOM_JSON_INPUT_SCHEMA_MAPPING = JsonInputSchemaMapping(id=ID_JSON_FIELD, topi
 EventGridPreparer = functools.partial(
     PowerShellPreparer, "eventgrid",
     eventgrid_topic_endpoint="https://fakeresource.westus2-1.eventgrid.azure.net/api/events",
-    eventgrid_topic_key="XxxxXxxxXXXxxxXXXXxxxxXXxxxXxxx=",
+    eventgrid_topic_key="XxxxXxxxXXXxxxXXXXxxxxXXxxxXxxx",
     eventgrid_domain_endpoint="https://fakeresource.westus2-1.eventgrid.azure.net/api/events",
-    eventgrid_domain_key="XxxxXxxxXXXxxxXXXXxxxxXXxxxXxxx=",
+    eventgrid_domain_key="XxxxXxxxXXXxxxXXXXxxxxXXxxxXxxx",
     eventgrid_cloud_event_topic_endpoint="https://fakeresource.westus2-1.eventgrid.azure.net/api/events",
-    eventgrid_cloud_event_topic_key="XxxxXxxxXXXxxxXXXXxxxxXXxxxXxxx=",
+    eventgrid_cloud_event_topic_key="XxxxXxxxXXXxxxXXXXxxxxXXxxxXxxx",
     eventgrid_cloud_event_domain_endpoint="https://fakeresource.westus2-1.eventgrid.azure.net/api/events",
-    eventgrid_cloud_event_domain_key="XxxxXxxxXXXxxxXXXXxxxxXXxxxXxxx=",
+    eventgrid_cloud_event_domain_key="XxxxXxxxXXXxxxXXXXxxxxXXxxxXxxx",
     eventgrid_custom_event_topic_endpoint="https://fakeresource.westus2-1.eventgrid.azure.net/api/events",
-    eventgrid_custom_event_topic_key="XxxxXxxxXXXxxxXXXXxxxxXXxxxXxxx=",
+    eventgrid_custom_event_topic_key="XxxxXxxxXXXxxxXXXXxxxxXXxxxXxxx",
 )
