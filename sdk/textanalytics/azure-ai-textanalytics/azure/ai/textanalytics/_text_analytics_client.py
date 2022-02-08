@@ -543,6 +543,21 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             kwargs.update({"string_index_type": string_index_type})
 
         try:
+            from ._generated.v2022_02_01_preview.models import AnalyzeTextEntityLinkingInput, EntityLinkingTaskParameters
+            if self._api_version == "2022-02-01-preview":
+                return self._client.analyze_text(
+                    body=AnalyzeTextEntityLinkingInput(
+                        analysis_input={"documents": docs},
+                        parameters=EntityLinkingTaskParameters(
+                            logging_opt_out=kwargs.pop("logging_opt_out", None),
+                            model_version=model_version,
+                            string_index_type=kwargs.pop("string_index_type", None)
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", linked_entities_result),
+                    **kwargs
+                )
             return self._client.entities_linking(
                 documents=docs,
                 model_version=model_version,
