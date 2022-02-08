@@ -36,6 +36,22 @@ from .._transport import (
 _LOGGER = logging.getLogger(__name__)
 
 
+def get_running_loop():
+    try:
+        import asyncio  # pylint: disable=import-error
+        return asyncio.get_running_loop()
+    except AttributeError:  # 3.6
+        loop = None
+        try:
+            loop = asyncio._get_running_loop()  # pylint: disable=protected-access
+        except AttributeError:
+            _LOGGER.warning('This version of Python is deprecated, please upgrade to >= v3.6')
+        if loop is None:
+            _LOGGER.warning('No running event loop')
+            loop = asyncio.get_event_loop()
+        return loop
+
+
 class AsyncTransport(object):
     """Common superclass for TCP and SSL transports."""
 
@@ -54,7 +70,7 @@ class AsyncTransport(object):
         self.read_timeout = read_timeout
         self.write_timeout = write_timeout
         self.socket_settings = socket_settings
-        self.loop = asyncio.get_running_loop()
+        self.loop = get_running_loop()
         self.socket_lock = asyncio.Lock()
         self.sslopts = self._build_ssl_opts(ssl)
 
@@ -69,7 +85,8 @@ class AsyncTransport(object):
                 ssl_version = ssl.PROTOCOL_TLS
 
             # Set SNI headers if supported
-            if (hasattr(ssl, 'HAS_SNI') and ssl.HAS_SNI) and (hasattr(ssl, 'SSLContext')):
+            server_hostname = sslopts.get('server_hostname')
+            if (server_hostname is not None) and (hasattr(ssl, 'HAS_SNI') and ssl.HAS_SNI) and (hasattr(ssl, 'SSLContext')):
                 context = ssl.SSLContext(ssl_version)
                 cert_reqs = sslopts.get('cert_reqs', ssl.CERT_REQUIRED)
                 certfile = sslopts.get('certfile')
@@ -337,7 +354,7 @@ class AsyncTransport(object):
             # TODO: Catch decode error and return amqp:decode-error
             #_LOGGER.info("ICH%d <- %r", channel, decoded)
             return channel, decoded
-        except (socket.timeout, asyncio.IncompleteReadError, asyncio.exceptions.TimeoutError):
+        except (socket.timeout, asyncio.IncompleteReadError, asyncio.TimeoutError):
             return None, None
 
     async def receive_frame_with_lock(self, *args, **kwargs):

@@ -192,15 +192,10 @@ class AMQPClientAsync(AMQPClientSync):
             return  # already open.
         _logger.debug("Opening client connection.")
         if not self._connection:
-            # TODO: in sync Connection, we pass
-            #  ssl={'ca_certs':certifi.where()},
-            #  however, passing the same parameter in async connection results in
-            #  ssl.SSLCertVerificationError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get
-            #  local issuer certificate (_ssl.c:1131)
             self._connection = Connection(
                 "amqps://" + self._hostname,
                 sasl_credential=self._auth.sasl,
-                # ssl={'ca_certs': certifi.where()},  TODO: results in ssl.SSLCertVerificationError: certificate verify failed: unable to get local issuer certificate
+                ssl={'ca_certs': certifi.where()},
                 container_id=self._name,
                 max_frame_size=self._max_frame_size,
                 channel_max=self._channel_max,
