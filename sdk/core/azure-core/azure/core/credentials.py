@@ -16,12 +16,12 @@ if TYPE_CHECKING:
     class TokenCredential(Protocol):
         """Protocol for classes able to provide OAuth tokens."""
 
-        # pylint:disable=too-few-public-methods
+        # pylint:disable=too-few-public-methods, no-method-argument, unnecessary-pass
         def get_token(
-            *scopes : str,
-            claims : Optional[str] = None,
-            tenant_id : Optional[str] = None,
-            **kwargs : Any
+            *scopes: str,
+            claims: Optional[str] = None,
+            tenant_id: Optional[str] = None,
+            **kwargs: Any
         ) -> AccessToken:
             """Request an access token for `scopes`.
 
