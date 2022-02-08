@@ -3,7 +3,7 @@ from typing import Any, List
 import os
 
 # assignee dict which will be assigned to handle issues
-_GO_OWNER = {'ArcturusZhang'}
+_GO_OWNER = {'ArcturusZhang', 'Alancere'}
 
 # 'github assignee': 'token'
 _ASSIGNEE_TOKEN_GO = {
