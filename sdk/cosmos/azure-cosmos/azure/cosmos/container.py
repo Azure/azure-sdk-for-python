@@ -473,9 +473,6 @@ class ContainerProxy(object):
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
-        if max_integrated_cache_staleness_in_ms is not None:
-            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
-            request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
         result = self.client_connection.UpsertItem(
             database_or_container_link=self.container_link,
