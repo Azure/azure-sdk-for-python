@@ -530,21 +530,53 @@ class Pipeline:
 Clients from the Azure SDK often require a `TokenCredential` instance in their constructors. A `TokenCredential` is
 meant to provide OAuth tokens to authenticate service requests and can be implemented in a number of ways.
 
-The [`TokenCredential` protocol][token_cred_definition] specifies a class that has a single method -- `get_token` --
-which accepts `*scopes` and `**kwargs`. Each scope specifies a type of access being requested, and the contents of
-`**kwargs` are arbitrary. For example, `TokenCredential` implementations in [`azure-identity`][identity_pypi] may
-accept [`tenant_id`][default_cred_get_token] as a keyword-only argument.
+The `TokenCredential` protocol specifies a class that has a single method -- `get_token` -- which returns an
+`AccessToken`: a `NamedTuple` containing a `token` string and an `expires_on` integer.
 
-`get_token` returns an [`AccessToken`][access_token_definition]: a `NamedTuple` containing a `token` string and an
-`expires_on` integer.
+```python
+AccessToken = NamedTuple("AccessToken", [("token", str), ("expires_on", int)])
+
+class TokenCredential(Protocol):
+    """Protocol for classes able to provide OAuth tokens."""
+
+    def get_token(
+        *scopes : str,
+        claims : Optional[str] = None,
+        tenant_id : Optional[str] = None,
+        **kwargs : Any
+    ) -> AccessToken:
+        """Request an access token for `scopes`.
+
+        :param str scopes: The type(s) of access needed.
+
+        :keyword str claims: Additional claims required in the token, such as those returned in a resource
+            provider's claims challenge following an authorization failure.
+        :keyword str tenant_id: Optional tenant to include in the token request.
+        """
+```
 
 A `TokenCredential` implementation needs to implement the `get_token` method to these specifications and can optionally
-implement additional methods. Refer to the [custom_credentials.py][custom_creds_sample] sample in `azure-identity` for
-examples of custom `TokenCredential` implementations.
+implement additional methods. The [`azure-identity`][identity_github] package has a number of `TokenCredential`
+implementations that can be used for reference. For example, the [`InteractiveCredential`][interactive_cred] is used as
+a base class for multiple credentials and uses `claims` and `tenant_id` in token requests.
+
+#### Known uses of `get_token` keyword-only parameters
+
+**`claims`**
+
+| Service/Feature | Reason |
+| --- | --- |
+| [Continuous Access Evaluation][cae_doc] | Respond to claim challenges when unexpired tokens have access revoked
+
+**`tenant_id`**
+
+| Service/Feature | Reason |
+| --- | --- |
+| Key Vault ([example][kv_tenant_id]) | Request access in a tenant that was discovered as part of an authentication challenge
 
 
-[access_token_definition]: https://github.com/Azure/azure-sdk-for-python/blob/844e16db0abc553ab1adf104128cbf0e223af189/sdk/core/azure-core/azure/core/credentials.py#L14
+[cae_doc]: https://docs.microsoft.com/azure/active-directory/conditional-access/concept-continuous-access-evaluation
 [custom_creds_sample]: https://github.com/Azure/azure-sdk-for-python/blob/fc95f8d3d84d076ffea158116ca1bf6912689c70/sdk/identity/azure-identity/samples/custom_credentials.py
-[default_cred_get_token]: https://docs.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python#azure-identity-defaultazurecredential-get-token
-[identity_pypi]: https://pypi.org/project/azure-identity/
-[token_cred_definition]: https://github.com/Azure/azure-sdk-for-python/blob/844e16db0abc553ab1adf104128cbf0e223af189/sdk/core/azure-core/azure/core/credentials.py#L16
+[identity_github]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
+[interactive_cred]: https://github.com/Azure/azure-sdk-for-python/blob/58c974883123b10b1ca9249ac49109220facb02f/sdk/identity/azure-identity/azure/identity/_internal/interactive.py
+[kv_tenant_id]: https://github.com/Azure/azure-sdk-for-python/blob/0a0cc97f178a7476ec79f29c090b8c93ad5d4955/sdk/keyvault/azure-keyvault-keys/azure/keyvault/keys/_shared/challenge_auth_policy.py#L102

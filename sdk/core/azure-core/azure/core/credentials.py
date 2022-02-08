@@ -8,20 +8,29 @@ from typing import TYPE_CHECKING
 import six
 
 if TYPE_CHECKING:
-    from typing import Any, NamedTuple
+    from typing import Any, Optional, NamedTuple
     from typing_extensions import Protocol
 
     AccessToken = NamedTuple("AccessToken", [("token", str), ("expires_on", int)])
 
     class TokenCredential(Protocol):
-        """Protocol for classes able to provide OAuth tokens.
-
-        :param str scopes: Lets you specify the type of access needed.
-        """
+        """Protocol for classes able to provide OAuth tokens."""
 
         # pylint:disable=too-few-public-methods
-        def get_token(self, *scopes, **kwargs):
-            # type: (*str, **Any) -> AccessToken
+        def get_token(
+            *scopes : str,
+            claims : Optional[str] = None,
+            tenant_id : Optional[str] = None,
+            **kwargs : Any
+        ) -> AccessToken:
+            """Request an access token for `scopes`.
+
+            :param str scopes: The type(s) of access needed.
+
+            :keyword str claims: Additional claims required in the token, such as those returned in a resource
+                provider's claims challenge following an authorization failure.
+            :keyword str tenant_id: Optional tenant to include in the token request.
+            """
             pass
 
 
