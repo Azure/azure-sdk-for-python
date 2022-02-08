@@ -138,7 +138,10 @@ def get_field_value_v3(value):  # pylint: disable=too-many-return-statements
     return None
 
 class DocumentBuildMode(str, Enum):
-    """The mode used when building custom models."""
+    """The mode used when building custom models.
+
+    For more information, see https://aka.ms/azsdk/formrecognizer/buildmode.
+    """
 
     NEURAL = "neural"
     TEMPLATE = "template"
