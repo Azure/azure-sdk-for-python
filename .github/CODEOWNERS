@@ -99,7 +99,7 @@
 /sdk/schemaregistry/                                                 @yunhaoling
 
 # PRLabel: %Search
-/sdk/search/                                                         @tjprescott
+/sdk/search/                                                         @kashifkhan
 
 # PRLabel: %Service Fabric
 /sdk/servicefabric/                                                  @QingChenmsft @samedder
