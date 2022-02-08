@@ -1,5 +1,18 @@
 # Release History
 
+## 7.6.0 (Unreleased)
+
+### Features Added
+
+- Introduce `ServiceBusMessageState` enum that can assume the values of `active`, `scheduled` or `deferred`.
+- Add `ServiceBusMessageState` property in `ServiceBusReceivedMessage`.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 7.5.0 (2022-01-12)
 
 This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.

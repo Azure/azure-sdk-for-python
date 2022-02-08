@@ -729,7 +729,8 @@ class TestAnalyzeSentiment(TextAnalyticsTest):
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": TextAnalyticsApiVersion.V3_0})
-    async def test_opinion_mining_v3(self, client):
+    async def test_opinion_mining_v3(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ValueError) as excinfo:
             await client.analyze_sentiment(["will fail"], show_opinion_mining=True)
 

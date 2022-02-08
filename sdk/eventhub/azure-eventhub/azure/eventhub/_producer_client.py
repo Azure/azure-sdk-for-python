@@ -346,7 +346,7 @@ class EventHubProducerClient(ClientBase):
             - `created_at` (UTC datetime.datetime)
             - `partition_ids` (list[str])
 
-        :rtype: dict
+        :rtype: Dict[str, Any]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return super(EventHubProducerClient, self)._get_eventhub_properties()
@@ -376,7 +376,7 @@ class EventHubProducerClient(ClientBase):
 
         :param partition_id: The target partition ID.
         :type partition_id: str
-        :rtype: dict
+        :rtype: Dict[str, Any]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return super(EventHubProducerClient, self)._get_partition_properties(

@@ -189,7 +189,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
         with self.assertRaises(HttpResponseError) as e:
             blob.download_blob().content_as_bytes()
-        self.assertEqual(str(e.exception), 'Decryption failed.')
+        self.assertTrue('Decryption failed.' in str(e.exception))
 
     @BlobPreparer()
     def test_get_blob_kek(self, storage_account_name, storage_account_key):
@@ -252,7 +252,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         # Assert
         with self.assertRaises(HttpResponseError) as e:
             blob.download_blob().content_as_bytes()
-        self.assertEqual(str(e.exception), 'Decryption failed.')
+        self.assertTrue('Decryption failed.' in str(e.exception))
 
     @BlobPreparer()
     def test_put_blob_invalid_stream_type(self, storage_account_name, storage_account_key):

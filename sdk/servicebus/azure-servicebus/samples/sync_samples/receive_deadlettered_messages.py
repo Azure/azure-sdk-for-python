@@ -9,8 +9,6 @@
 Example to show receiving dead-lettered messages from a Service Bus Queue.
 """
 
-# pylint: disable=C0111
-
 import os
 from azure.servicebus import ServiceBusClient, ServiceBusMessage, ServiceBusSubQueue
 

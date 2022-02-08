@@ -18,9 +18,9 @@ from ._key_vault_client_enums import *
 class Action(msrest.serialization.Model):
     """The action that will be executed.
 
-    :param action_type: The type of the action. Possible values include: "EmailContacts",
+    :ivar action_type: The type of the action. Possible values include: "EmailContacts",
      "AutoRenew".
-    :type action_type: str or ~azure.keyvault.v7_0.models.ActionType
+    :vartype action_type: str or ~azure.keyvault.v7_0.models.ActionType
     """
 
     _attribute_map = {
@@ -33,6 +33,11 @@ class Action(msrest.serialization.Model):
         action_type: Optional[Union[str, "ActionType"]] = None,
         **kwargs
     ):
+        """
+        :keyword action_type: The type of the action. Possible values include: "EmailContacts",
+         "AutoRenew".
+        :paramtype action_type: str or ~azure.keyvault.v7_0.models.ActionType
+        """
         super(Action, self).__init__(**kwargs)
         self.action_type = action_type
 
@@ -40,14 +45,14 @@ class Action(msrest.serialization.Model):
 class AdministratorDetails(msrest.serialization.Model):
     """Details of the organization administrator of the certificate issuer.
 
-    :param first_name: First name.
-    :type first_name: str
-    :param last_name: Last name.
-    :type last_name: str
-    :param email_address: Email address.
-    :type email_address: str
-    :param phone: Phone number.
-    :type phone: str
+    :ivar first_name: First name.
+    :vartype first_name: str
+    :ivar last_name: Last name.
+    :vartype last_name: str
+    :ivar email_address: Email address.
+    :vartype email_address: str
+    :ivar phone: Phone number.
+    :vartype phone: str
     """
 
     _attribute_map = {
@@ -66,6 +71,16 @@ class AdministratorDetails(msrest.serialization.Model):
         phone: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword first_name: First name.
+        :paramtype first_name: str
+        :keyword last_name: Last name.
+        :paramtype last_name: str
+        :keyword email_address: Email address.
+        :paramtype email_address: str
+        :keyword phone: Phone number.
+        :paramtype phone: str
+        """
         super(AdministratorDetails, self).__init__(**kwargs)
         self.first_name = first_name
         self.last_name = last_name
@@ -78,12 +93,12 @@ class Attributes(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param enabled: Determines whether the object is enabled.
-    :type enabled: bool
-    :param not_before: Not before date in UTC.
-    :type not_before: ~datetime.datetime
-    :param expires: Expiry date in UTC.
-    :type expires: ~datetime.datetime
+    :ivar enabled: Determines whether the object is enabled.
+    :vartype enabled: bool
+    :ivar not_before: Not before date in UTC.
+    :vartype not_before: ~datetime.datetime
+    :ivar expires: Expiry date in UTC.
+    :vartype expires: ~datetime.datetime
     :ivar created: Creation time in UTC.
     :vartype created: ~datetime.datetime
     :ivar updated: Last updated time in UTC.
@@ -111,6 +126,14 @@ class Attributes(msrest.serialization.Model):
         expires: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword enabled: Determines whether the object is enabled.
+        :paramtype enabled: bool
+        :keyword not_before: Not before date in UTC.
+        :paramtype not_before: ~datetime.datetime
+        :keyword expires: Expiry date in UTC.
+        :paramtype expires: ~datetime.datetime
+        """
         super(Attributes, self).__init__(**kwargs)
         self.enabled = enabled
         self.not_before = not_before
@@ -140,6 +163,8 @@ class BackupCertificateResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(BackupCertificateResult, self).__init__(**kwargs)
         self.value = None
 
@@ -165,6 +190,8 @@ class BackupKeyResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(BackupKeyResult, self).__init__(**kwargs)
         self.value = None
 
@@ -190,6 +217,8 @@ class BackupSecretResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(BackupSecretResult, self).__init__(**kwargs)
         self.value = None
 
@@ -215,6 +244,8 @@ class BackupStorageResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(BackupStorageResult, self).__init__(**kwargs)
         self.value = None
 
@@ -224,12 +255,12 @@ class CertificateAttributes(Attributes):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param enabled: Determines whether the object is enabled.
-    :type enabled: bool
-    :param not_before: Not before date in UTC.
-    :type not_before: ~datetime.datetime
-    :param expires: Expiry date in UTC.
-    :type expires: ~datetime.datetime
+    :ivar enabled: Determines whether the object is enabled.
+    :vartype enabled: bool
+    :ivar not_before: Not before date in UTC.
+    :vartype not_before: ~datetime.datetime
+    :ivar expires: Expiry date in UTC.
+    :vartype expires: ~datetime.datetime
     :ivar created: Creation time in UTC.
     :vartype created: ~datetime.datetime
     :ivar updated: Last updated time in UTC.
@@ -266,6 +297,14 @@ class CertificateAttributes(Attributes):
         expires: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword enabled: Determines whether the object is enabled.
+        :paramtype enabled: bool
+        :keyword not_before: Not before date in UTC.
+        :paramtype not_before: ~datetime.datetime
+        :keyword expires: Expiry date in UTC.
+        :paramtype expires: ~datetime.datetime
+        """
         super(CertificateAttributes, self).__init__(enabled=enabled, not_before=not_before, expires=expires, **kwargs)
         self.recovery_level = None
 
@@ -285,14 +324,14 @@ class CertificateBundle(msrest.serialization.Model):
     :vartype x509_thumbprint: bytes
     :ivar policy: The management policy.
     :vartype policy: ~azure.keyvault.v7_0.models.CertificatePolicy
-    :param cer: CER contents of x509 certificate.
-    :type cer: bytearray
-    :param content_type: The content type of the secret.
-    :type content_type: str
-    :param attributes: The certificate attributes.
-    :type attributes: ~azure.keyvault.v7_0.models.CertificateAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :ivar cer: CER contents of x509 certificate.
+    :vartype cer: bytearray
+    :ivar content_type: The content type of the secret.
+    :vartype content_type: str
+    :ivar attributes: The certificate attributes.
+    :vartype attributes: ~azure.keyvault.v7_0.models.CertificateAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -324,6 +363,16 @@ class CertificateBundle(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword cer: CER contents of x509 certificate.
+        :paramtype cer: bytearray
+        :keyword content_type: The content type of the secret.
+        :paramtype content_type: str
+        :keyword attributes: The certificate attributes.
+        :paramtype attributes: ~azure.keyvault.v7_0.models.CertificateAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        """
         super(CertificateBundle, self).__init__(**kwargs)
         self.id = None
         self.kid = None
@@ -339,12 +388,12 @@ class CertificateBundle(msrest.serialization.Model):
 class CertificateCreateParameters(msrest.serialization.Model):
     """The certificate create parameters.
 
-    :param certificate_policy: The management policy for the certificate.
-    :type certificate_policy: ~azure.keyvault.v7_0.models.CertificatePolicy
-    :param certificate_attributes: The attributes of the certificate (optional).
-    :type certificate_attributes: ~azure.keyvault.v7_0.models.CertificateAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :ivar certificate_policy: The management policy for the certificate.
+    :vartype certificate_policy: ~azure.keyvault.v7_0.models.CertificatePolicy
+    :ivar certificate_attributes: The attributes of the certificate (optional).
+    :vartype certificate_attributes: ~azure.keyvault.v7_0.models.CertificateAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -361,6 +410,14 @@ class CertificateCreateParameters(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword certificate_policy: The management policy for the certificate.
+        :paramtype certificate_policy: ~azure.keyvault.v7_0.models.CertificatePolicy
+        :keyword certificate_attributes: The attributes of the certificate (optional).
+        :paramtype certificate_attributes: ~azure.keyvault.v7_0.models.CertificateAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        """
         super(CertificateCreateParameters, self).__init__(**kwargs)
         self.certificate_policy = certificate_policy
         self.certificate_attributes = certificate_attributes
@@ -372,18 +429,18 @@ class CertificateImportParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param base64_encoded_certificate: Required. A PEM file or a base64-encoded PFX file.  PEM
-     files need to contain the private key.
-    :type base64_encoded_certificate: str
-    :param password: If the private key in base64EncodedCertificate is encrypted, the password used
+    :ivar base64_encoded_certificate: Required. A PEM file or a base64-encoded PFX file.  PEM files
+     need to contain the private key.
+    :vartype base64_encoded_certificate: str
+    :ivar password: If the private key in base64EncodedCertificate is encrypted, the password used
      for encryption.
-    :type password: str
-    :param certificate_policy: The management policy for the certificate.
-    :type certificate_policy: ~azure.keyvault.v7_0.models.CertificatePolicy
-    :param certificate_attributes: The attributes of the certificate (optional).
-    :type certificate_attributes: ~azure.keyvault.v7_0.models.CertificateAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :vartype password: str
+    :ivar certificate_policy: The management policy for the certificate.
+    :vartype certificate_policy: ~azure.keyvault.v7_0.models.CertificatePolicy
+    :ivar certificate_attributes: The attributes of the certificate (optional).
+    :vartype certificate_attributes: ~azure.keyvault.v7_0.models.CertificateAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -408,6 +465,20 @@ class CertificateImportParameters(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword base64_encoded_certificate: Required. A PEM file or a base64-encoded PFX file.  PEM
+         files need to contain the private key.
+        :paramtype base64_encoded_certificate: str
+        :keyword password: If the private key in base64EncodedCertificate is encrypted, the password
+         used for encryption.
+        :paramtype password: str
+        :keyword certificate_policy: The management policy for the certificate.
+        :paramtype certificate_policy: ~azure.keyvault.v7_0.models.CertificatePolicy
+        :keyword certificate_attributes: The attributes of the certificate (optional).
+        :paramtype certificate_attributes: ~azure.keyvault.v7_0.models.CertificateAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        """
         super(CertificateImportParameters, self).__init__(**kwargs)
         self.base64_encoded_certificate = base64_encoded_certificate
         self.password = password
@@ -419,10 +490,10 @@ class CertificateImportParameters(msrest.serialization.Model):
 class CertificateIssuerItem(msrest.serialization.Model):
     """The certificate issuer item containing certificate issuer metadata.
 
-    :param id: Certificate Identifier.
-    :type id: str
-    :param provider: The issuer provider.
-    :type provider: str
+    :ivar id: Certificate Identifier.
+    :vartype id: str
+    :ivar provider: The issuer provider.
+    :vartype provider: str
     """
 
     _attribute_map = {
@@ -437,6 +508,12 @@ class CertificateIssuerItem(msrest.serialization.Model):
         provider: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Certificate Identifier.
+        :paramtype id: str
+        :keyword provider: The issuer provider.
+        :paramtype provider: str
+        """
         super(CertificateIssuerItem, self).__init__(**kwargs)
         self.id = id
         self.provider = provider
@@ -468,6 +545,8 @@ class CertificateIssuerListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(CertificateIssuerListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -478,14 +557,14 @@ class CertificateIssuerSetParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param provider: Required. The issuer provider.
-    :type provider: str
-    :param credentials: The credentials to be used for the issuer.
-    :type credentials: ~azure.keyvault.v7_0.models.IssuerCredentials
-    :param organization_details: Details of the organization as provided to the issuer.
-    :type organization_details: ~azure.keyvault.v7_0.models.OrganizationDetails
-    :param attributes: Attributes of the issuer object.
-    :type attributes: ~azure.keyvault.v7_0.models.IssuerAttributes
+    :ivar provider: Required. The issuer provider.
+    :vartype provider: str
+    :ivar credentials: The credentials to be used for the issuer.
+    :vartype credentials: ~azure.keyvault.v7_0.models.IssuerCredentials
+    :ivar organization_details: Details of the organization as provided to the issuer.
+    :vartype organization_details: ~azure.keyvault.v7_0.models.OrganizationDetails
+    :ivar attributes: Attributes of the issuer object.
+    :vartype attributes: ~azure.keyvault.v7_0.models.IssuerAttributes
     """
 
     _validation = {
@@ -508,6 +587,16 @@ class CertificateIssuerSetParameters(msrest.serialization.Model):
         attributes: Optional["IssuerAttributes"] = None,
         **kwargs
     ):
+        """
+        :keyword provider: Required. The issuer provider.
+        :paramtype provider: str
+        :keyword credentials: The credentials to be used for the issuer.
+        :paramtype credentials: ~azure.keyvault.v7_0.models.IssuerCredentials
+        :keyword organization_details: Details of the organization as provided to the issuer.
+        :paramtype organization_details: ~azure.keyvault.v7_0.models.OrganizationDetails
+        :keyword attributes: Attributes of the issuer object.
+        :paramtype attributes: ~azure.keyvault.v7_0.models.IssuerAttributes
+        """
         super(CertificateIssuerSetParameters, self).__init__(**kwargs)
         self.provider = provider
         self.credentials = credentials
@@ -518,14 +607,14 @@ class CertificateIssuerSetParameters(msrest.serialization.Model):
 class CertificateIssuerUpdateParameters(msrest.serialization.Model):
     """The certificate issuer update parameters.
 
-    :param provider: The issuer provider.
-    :type provider: str
-    :param credentials: The credentials to be used for the issuer.
-    :type credentials: ~azure.keyvault.v7_0.models.IssuerCredentials
-    :param organization_details: Details of the organization as provided to the issuer.
-    :type organization_details: ~azure.keyvault.v7_0.models.OrganizationDetails
-    :param attributes: Attributes of the issuer object.
-    :type attributes: ~azure.keyvault.v7_0.models.IssuerAttributes
+    :ivar provider: The issuer provider.
+    :vartype provider: str
+    :ivar credentials: The credentials to be used for the issuer.
+    :vartype credentials: ~azure.keyvault.v7_0.models.IssuerCredentials
+    :ivar organization_details: Details of the organization as provided to the issuer.
+    :vartype organization_details: ~azure.keyvault.v7_0.models.OrganizationDetails
+    :ivar attributes: Attributes of the issuer object.
+    :vartype attributes: ~azure.keyvault.v7_0.models.IssuerAttributes
     """
 
     _attribute_map = {
@@ -544,6 +633,16 @@ class CertificateIssuerUpdateParameters(msrest.serialization.Model):
         attributes: Optional["IssuerAttributes"] = None,
         **kwargs
     ):
+        """
+        :keyword provider: The issuer provider.
+        :paramtype provider: str
+        :keyword credentials: The credentials to be used for the issuer.
+        :paramtype credentials: ~azure.keyvault.v7_0.models.IssuerCredentials
+        :keyword organization_details: Details of the organization as provided to the issuer.
+        :paramtype organization_details: ~azure.keyvault.v7_0.models.OrganizationDetails
+        :keyword attributes: Attributes of the issuer object.
+        :paramtype attributes: ~azure.keyvault.v7_0.models.IssuerAttributes
+        """
         super(CertificateIssuerUpdateParameters, self).__init__(**kwargs)
         self.provider = provider
         self.credentials = credentials
@@ -554,14 +653,14 @@ class CertificateIssuerUpdateParameters(msrest.serialization.Model):
 class CertificateItem(msrest.serialization.Model):
     """The certificate item containing certificate metadata.
 
-    :param id: Certificate identifier.
-    :type id: str
-    :param attributes: The certificate management attributes.
-    :type attributes: ~azure.keyvault.v7_0.models.CertificateAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
-    :param x509_thumbprint: Thumbprint of the certificate.
-    :type x509_thumbprint: bytes
+    :ivar id: Certificate identifier.
+    :vartype id: str
+    :ivar attributes: The certificate management attributes.
+    :vartype attributes: ~azure.keyvault.v7_0.models.CertificateAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
+    :ivar x509_thumbprint: Thumbprint of the certificate.
+    :vartype x509_thumbprint: bytes
     """
 
     _attribute_map = {
@@ -580,6 +679,16 @@ class CertificateItem(msrest.serialization.Model):
         x509_thumbprint: Optional[bytes] = None,
         **kwargs
     ):
+        """
+        :keyword id: Certificate identifier.
+        :paramtype id: str
+        :keyword attributes: The certificate management attributes.
+        :paramtype attributes: ~azure.keyvault.v7_0.models.CertificateAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        :keyword x509_thumbprint: Thumbprint of the certificate.
+        :paramtype x509_thumbprint: bytes
+        """
         super(CertificateItem, self).__init__(**kwargs)
         self.id = id
         self.attributes = attributes
@@ -613,6 +722,8 @@ class CertificateListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(CertificateListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -623,12 +734,12 @@ class CertificateMergeParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param x509_certificates: Required. The certificate or the certificate chain to merge.
-    :type x509_certificates: list[bytearray]
-    :param certificate_attributes: The attributes of the certificate (optional).
-    :type certificate_attributes: ~azure.keyvault.v7_0.models.CertificateAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :ivar x509_certificates: Required. The certificate or the certificate chain to merge.
+    :vartype x509_certificates: list[bytearray]
+    :ivar certificate_attributes: The attributes of the certificate (optional).
+    :vartype certificate_attributes: ~azure.keyvault.v7_0.models.CertificateAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -649,6 +760,14 @@ class CertificateMergeParameters(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword x509_certificates: Required. The certificate or the certificate chain to merge.
+        :paramtype x509_certificates: list[bytearray]
+        :keyword certificate_attributes: The attributes of the certificate (optional).
+        :paramtype certificate_attributes: ~azure.keyvault.v7_0.models.CertificateAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        """
         super(CertificateMergeParameters, self).__init__(**kwargs)
         self.x509_certificates = x509_certificates
         self.certificate_attributes = certificate_attributes
@@ -662,24 +781,24 @@ class CertificateOperation(msrest.serialization.Model):
 
     :ivar id: The certificate id.
     :vartype id: str
-    :param issuer_parameters: Parameters for the issuer of the X509 component of a certificate.
-    :type issuer_parameters: ~azure.keyvault.v7_0.models.IssuerParameters
-    :param csr: The certificate signing request (CSR) that is being used in the certificate
+    :ivar issuer_parameters: Parameters for the issuer of the X509 component of a certificate.
+    :vartype issuer_parameters: ~azure.keyvault.v7_0.models.IssuerParameters
+    :ivar csr: The certificate signing request (CSR) that is being used in the certificate
      operation.
-    :type csr: bytearray
-    :param cancellation_requested: Indicates if cancellation was requested on the certificate
+    :vartype csr: bytearray
+    :ivar cancellation_requested: Indicates if cancellation was requested on the certificate
      operation.
-    :type cancellation_requested: bool
-    :param status: Status of the certificate operation.
-    :type status: str
-    :param status_details: The status details of the certificate operation.
-    :type status_details: str
-    :param error: Error encountered, if any, during the certificate operation.
-    :type error: ~azure.keyvault.v7_0.models.Error
-    :param target: Location which contains the result of the certificate operation.
-    :type target: str
-    :param request_id: Identifier for the certificate operation.
-    :type request_id: str
+    :vartype cancellation_requested: bool
+    :ivar status: Status of the certificate operation.
+    :vartype status: str
+    :ivar status_details: The status details of the certificate operation.
+    :vartype status_details: str
+    :ivar error: Error encountered, if any, during the certificate operation.
+    :vartype error: ~azure.keyvault.v7_0.models.Error
+    :ivar target: Location which contains the result of the certificate operation.
+    :vartype target: str
+    :ivar request_id: Identifier for the certificate operation.
+    :vartype request_id: str
     """
 
     _validation = {
@@ -711,6 +830,26 @@ class CertificateOperation(msrest.serialization.Model):
         request_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword issuer_parameters: Parameters for the issuer of the X509 component of a certificate.
+        :paramtype issuer_parameters: ~azure.keyvault.v7_0.models.IssuerParameters
+        :keyword csr: The certificate signing request (CSR) that is being used in the certificate
+         operation.
+        :paramtype csr: bytearray
+        :keyword cancellation_requested: Indicates if cancellation was requested on the certificate
+         operation.
+        :paramtype cancellation_requested: bool
+        :keyword status: Status of the certificate operation.
+        :paramtype status: str
+        :keyword status_details: The status details of the certificate operation.
+        :paramtype status_details: str
+        :keyword error: Error encountered, if any, during the certificate operation.
+        :paramtype error: ~azure.keyvault.v7_0.models.Error
+        :keyword target: Location which contains the result of the certificate operation.
+        :paramtype target: str
+        :keyword request_id: Identifier for the certificate operation.
+        :paramtype request_id: str
+        """
         super(CertificateOperation, self).__init__(**kwargs)
         self.id = None
         self.issuer_parameters = issuer_parameters
@@ -728,9 +867,9 @@ class CertificateOperationUpdateParameter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param cancellation_requested: Required. Indicates if cancellation was requested on the
+    :ivar cancellation_requested: Required. Indicates if cancellation was requested on the
      certificate operation.
-    :type cancellation_requested: bool
+    :vartype cancellation_requested: bool
     """
 
     _validation = {
@@ -747,6 +886,11 @@ class CertificateOperationUpdateParameter(msrest.serialization.Model):
         cancellation_requested: bool,
         **kwargs
     ):
+        """
+        :keyword cancellation_requested: Required. Indicates if cancellation was requested on the
+         certificate operation.
+        :paramtype cancellation_requested: bool
+        """
         super(CertificateOperationUpdateParameter, self).__init__(**kwargs)
         self.cancellation_requested = cancellation_requested
 
@@ -758,19 +902,19 @@ class CertificatePolicy(msrest.serialization.Model):
 
     :ivar id: The certificate id.
     :vartype id: str
-    :param key_properties: Properties of the key backing a certificate.
-    :type key_properties: ~azure.keyvault.v7_0.models.KeyProperties
-    :param secret_properties: Properties of the secret backing a certificate.
-    :type secret_properties: ~azure.keyvault.v7_0.models.SecretProperties
-    :param x509_certificate_properties: Properties of the X509 component of a certificate.
-    :type x509_certificate_properties: ~azure.keyvault.v7_0.models.X509CertificateProperties
-    :param lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a
+    :ivar key_properties: Properties of the key backing a certificate.
+    :vartype key_properties: ~azure.keyvault.v7_0.models.KeyProperties
+    :ivar secret_properties: Properties of the secret backing a certificate.
+    :vartype secret_properties: ~azure.keyvault.v7_0.models.SecretProperties
+    :ivar x509_certificate_properties: Properties of the X509 component of a certificate.
+    :vartype x509_certificate_properties: ~azure.keyvault.v7_0.models.X509CertificateProperties
+    :ivar lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a
      certificate.
-    :type lifetime_actions: list[~azure.keyvault.v7_0.models.LifetimeAction]
-    :param issuer_parameters: Parameters for the issuer of the X509 component of a certificate.
-    :type issuer_parameters: ~azure.keyvault.v7_0.models.IssuerParameters
-    :param attributes: The certificate attributes.
-    :type attributes: ~azure.keyvault.v7_0.models.CertificateAttributes
+    :vartype lifetime_actions: list[~azure.keyvault.v7_0.models.LifetimeAction]
+    :ivar issuer_parameters: Parameters for the issuer of the X509 component of a certificate.
+    :vartype issuer_parameters: ~azure.keyvault.v7_0.models.IssuerParameters
+    :ivar attributes: The certificate attributes.
+    :vartype attributes: ~azure.keyvault.v7_0.models.CertificateAttributes
     """
 
     _validation = {
@@ -798,6 +942,21 @@ class CertificatePolicy(msrest.serialization.Model):
         attributes: Optional["CertificateAttributes"] = None,
         **kwargs
     ):
+        """
+        :keyword key_properties: Properties of the key backing a certificate.
+        :paramtype key_properties: ~azure.keyvault.v7_0.models.KeyProperties
+        :keyword secret_properties: Properties of the secret backing a certificate.
+        :paramtype secret_properties: ~azure.keyvault.v7_0.models.SecretProperties
+        :keyword x509_certificate_properties: Properties of the X509 component of a certificate.
+        :paramtype x509_certificate_properties: ~azure.keyvault.v7_0.models.X509CertificateProperties
+        :keyword lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a
+         certificate.
+        :paramtype lifetime_actions: list[~azure.keyvault.v7_0.models.LifetimeAction]
+        :keyword issuer_parameters: Parameters for the issuer of the X509 component of a certificate.
+        :paramtype issuer_parameters: ~azure.keyvault.v7_0.models.IssuerParameters
+        :keyword attributes: The certificate attributes.
+        :paramtype attributes: ~azure.keyvault.v7_0.models.CertificateAttributes
+        """
         super(CertificatePolicy, self).__init__(**kwargs)
         self.id = None
         self.key_properties = key_properties
@@ -813,9 +972,9 @@ class CertificateRestoreParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param certificate_bundle_backup: Required. The backup blob associated with a certificate
+    :ivar certificate_bundle_backup: Required. The backup blob associated with a certificate
      bundle.
-    :type certificate_bundle_backup: bytes
+    :vartype certificate_bundle_backup: bytes
     """
 
     _validation = {
@@ -832,6 +991,11 @@ class CertificateRestoreParameters(msrest.serialization.Model):
         certificate_bundle_backup: bytes,
         **kwargs
     ):
+        """
+        :keyword certificate_bundle_backup: Required. The backup blob associated with a certificate
+         bundle.
+        :paramtype certificate_bundle_backup: bytes
+        """
         super(CertificateRestoreParameters, self).__init__(**kwargs)
         self.certificate_bundle_backup = certificate_bundle_backup
 
@@ -839,12 +1003,12 @@ class CertificateRestoreParameters(msrest.serialization.Model):
 class CertificateUpdateParameters(msrest.serialization.Model):
     """The certificate update parameters.
 
-    :param certificate_policy: The management policy for the certificate.
-    :type certificate_policy: ~azure.keyvault.v7_0.models.CertificatePolicy
-    :param certificate_attributes: The attributes of the certificate (optional).
-    :type certificate_attributes: ~azure.keyvault.v7_0.models.CertificateAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :ivar certificate_policy: The management policy for the certificate.
+    :vartype certificate_policy: ~azure.keyvault.v7_0.models.CertificatePolicy
+    :ivar certificate_attributes: The attributes of the certificate (optional).
+    :vartype certificate_attributes: ~azure.keyvault.v7_0.models.CertificateAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -861,6 +1025,14 @@ class CertificateUpdateParameters(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword certificate_policy: The management policy for the certificate.
+        :paramtype certificate_policy: ~azure.keyvault.v7_0.models.CertificatePolicy
+        :keyword certificate_attributes: The attributes of the certificate (optional).
+        :paramtype certificate_attributes: ~azure.keyvault.v7_0.models.CertificateAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        """
         super(CertificateUpdateParameters, self).__init__(**kwargs)
         self.certificate_policy = certificate_policy
         self.certificate_attributes = certificate_attributes
@@ -870,12 +1042,12 @@ class CertificateUpdateParameters(msrest.serialization.Model):
 class Contact(msrest.serialization.Model):
     """The contact information for the vault certificates.
 
-    :param email_address: Email address.
-    :type email_address: str
-    :param name: Name.
-    :type name: str
-    :param phone: Phone number.
-    :type phone: str
+    :ivar email_address: Email address.
+    :vartype email_address: str
+    :ivar name: Name.
+    :vartype name: str
+    :ivar phone: Phone number.
+    :vartype phone: str
     """
 
     _attribute_map = {
@@ -892,6 +1064,14 @@ class Contact(msrest.serialization.Model):
         phone: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword email_address: Email address.
+        :paramtype email_address: str
+        :keyword name: Name.
+        :paramtype name: str
+        :keyword phone: Phone number.
+        :paramtype phone: str
+        """
         super(Contact, self).__init__(**kwargs)
         self.email_address = email_address
         self.name = name
@@ -905,8 +1085,8 @@ class Contacts(msrest.serialization.Model):
 
     :ivar id: Identifier for the contacts collection.
     :vartype id: str
-    :param contact_list: The contact list for the vault certificates.
-    :type contact_list: list[~azure.keyvault.v7_0.models.Contact]
+    :ivar contact_list: The contact list for the vault certificates.
+    :vartype contact_list: list[~azure.keyvault.v7_0.models.Contact]
     """
 
     _validation = {
@@ -924,6 +1104,10 @@ class Contacts(msrest.serialization.Model):
         contact_list: Optional[List["Contact"]] = None,
         **kwargs
     ):
+        """
+        :keyword contact_list: The contact list for the vault certificates.
+        :paramtype contact_list: list[~azure.keyvault.v7_0.models.Contact]
+        """
         super(Contacts, self).__init__(**kwargs)
         self.id = None
         self.contact_list = contact_list
@@ -944,17 +1128,17 @@ class DeletedCertificateBundle(CertificateBundle):
     :vartype x509_thumbprint: bytes
     :ivar policy: The management policy.
     :vartype policy: ~azure.keyvault.v7_0.models.CertificatePolicy
-    :param cer: CER contents of x509 certificate.
-    :type cer: bytearray
-    :param content_type: The content type of the secret.
-    :type content_type: str
-    :param attributes: The certificate attributes.
-    :type attributes: ~azure.keyvault.v7_0.models.CertificateAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
-    :param recovery_id: The url of the recovery object, used to identify and recover the deleted
+    :ivar cer: CER contents of x509 certificate.
+    :vartype cer: bytearray
+    :ivar content_type: The content type of the secret.
+    :vartype content_type: str
+    :ivar attributes: The certificate attributes.
+    :vartype attributes: ~azure.keyvault.v7_0.models.CertificateAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
+    :ivar recovery_id: The url of the recovery object, used to identify and recover the deleted
      certificate.
-    :type recovery_id: str
+    :vartype recovery_id: str
     :ivar scheduled_purge_date: The time when the certificate is scheduled to be purged, in UTC.
     :vartype scheduled_purge_date: ~datetime.datetime
     :ivar deleted_date: The time when the certificate was deleted, in UTC.
@@ -996,6 +1180,19 @@ class DeletedCertificateBundle(CertificateBundle):
         recovery_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword cer: CER contents of x509 certificate.
+        :paramtype cer: bytearray
+        :keyword content_type: The content type of the secret.
+        :paramtype content_type: str
+        :keyword attributes: The certificate attributes.
+        :paramtype attributes: ~azure.keyvault.v7_0.models.CertificateAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        :keyword recovery_id: The url of the recovery object, used to identify and recover the deleted
+         certificate.
+        :paramtype recovery_id: str
+        """
         super(DeletedCertificateBundle, self).__init__(cer=cer, content_type=content_type, attributes=attributes, tags=tags, **kwargs)
         self.recovery_id = recovery_id
         self.scheduled_purge_date = None
@@ -1007,17 +1204,17 @@ class DeletedCertificateItem(CertificateItem):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param id: Certificate identifier.
-    :type id: str
-    :param attributes: The certificate management attributes.
-    :type attributes: ~azure.keyvault.v7_0.models.CertificateAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
-    :param x509_thumbprint: Thumbprint of the certificate.
-    :type x509_thumbprint: bytes
-    :param recovery_id: The url of the recovery object, used to identify and recover the deleted
+    :ivar id: Certificate identifier.
+    :vartype id: str
+    :ivar attributes: The certificate management attributes.
+    :vartype attributes: ~azure.keyvault.v7_0.models.CertificateAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
+    :ivar x509_thumbprint: Thumbprint of the certificate.
+    :vartype x509_thumbprint: bytes
+    :ivar recovery_id: The url of the recovery object, used to identify and recover the deleted
      certificate.
-    :type recovery_id: str
+    :vartype recovery_id: str
     :ivar scheduled_purge_date: The time when the certificate is scheduled to be purged, in UTC.
     :vartype scheduled_purge_date: ~datetime.datetime
     :ivar deleted_date: The time when the certificate was deleted, in UTC.
@@ -1049,6 +1246,19 @@ class DeletedCertificateItem(CertificateItem):
         recovery_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Certificate identifier.
+        :paramtype id: str
+        :keyword attributes: The certificate management attributes.
+        :paramtype attributes: ~azure.keyvault.v7_0.models.CertificateAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        :keyword x509_thumbprint: Thumbprint of the certificate.
+        :paramtype x509_thumbprint: bytes
+        :keyword recovery_id: The url of the recovery object, used to identify and recover the deleted
+         certificate.
+        :paramtype recovery_id: str
+        """
         super(DeletedCertificateItem, self).__init__(id=id, attributes=attributes, tags=tags, x509_thumbprint=x509_thumbprint, **kwargs)
         self.recovery_id = recovery_id
         self.scheduled_purge_date = None
@@ -1081,6 +1291,8 @@ class DeletedCertificateListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(DeletedCertificateListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1091,12 +1303,12 @@ class KeyBundle(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param key: The Json web key.
-    :type key: ~azure.keyvault.v7_0.models.JsonWebKey
-    :param attributes: The key management attributes.
-    :type attributes: ~azure.keyvault.v7_0.models.KeyAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :ivar key: The Json web key.
+    :vartype key: ~azure.keyvault.v7_0.models.JsonWebKey
+    :ivar attributes: The key management attributes.
+    :vartype attributes: ~azure.keyvault.v7_0.models.KeyAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     :ivar managed: True if the key's lifetime is managed by key vault. If this is a key backing a
      certificate, then managed will be true.
     :vartype managed: bool
@@ -1121,6 +1333,14 @@ class KeyBundle(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword key: The Json web key.
+        :paramtype key: ~azure.keyvault.v7_0.models.JsonWebKey
+        :keyword attributes: The key management attributes.
+        :paramtype attributes: ~azure.keyvault.v7_0.models.KeyAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        """
         super(KeyBundle, self).__init__(**kwargs)
         self.key = key
         self.attributes = attributes
@@ -1133,18 +1353,18 @@ class DeletedKeyBundle(KeyBundle):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param key: The Json web key.
-    :type key: ~azure.keyvault.v7_0.models.JsonWebKey
-    :param attributes: The key management attributes.
-    :type attributes: ~azure.keyvault.v7_0.models.KeyAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :ivar key: The Json web key.
+    :vartype key: ~azure.keyvault.v7_0.models.JsonWebKey
+    :ivar attributes: The key management attributes.
+    :vartype attributes: ~azure.keyvault.v7_0.models.KeyAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     :ivar managed: True if the key's lifetime is managed by key vault. If this is a key backing a
      certificate, then managed will be true.
     :vartype managed: bool
-    :param recovery_id: The url of the recovery object, used to identify and recover the deleted
+    :ivar recovery_id: The url of the recovery object, used to identify and recover the deleted
      key.
-    :type recovery_id: str
+    :vartype recovery_id: str
     :ivar scheduled_purge_date: The time when the key is scheduled to be purged, in UTC.
     :vartype scheduled_purge_date: ~datetime.datetime
     :ivar deleted_date: The time when the key was deleted, in UTC.
@@ -1176,6 +1396,17 @@ class DeletedKeyBundle(KeyBundle):
         recovery_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword key: The Json web key.
+        :paramtype key: ~azure.keyvault.v7_0.models.JsonWebKey
+        :keyword attributes: The key management attributes.
+        :paramtype attributes: ~azure.keyvault.v7_0.models.KeyAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        :keyword recovery_id: The url of the recovery object, used to identify and recover the deleted
+         key.
+        :paramtype recovery_id: str
+        """
         super(DeletedKeyBundle, self).__init__(key=key, attributes=attributes, tags=tags, **kwargs)
         self.recovery_id = recovery_id
         self.scheduled_purge_date = None
@@ -1187,12 +1418,12 @@ class KeyItem(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param kid: Key identifier.
-    :type kid: str
-    :param attributes: The key management attributes.
-    :type attributes: ~azure.keyvault.v7_0.models.KeyAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :ivar kid: Key identifier.
+    :vartype kid: str
+    :ivar attributes: The key management attributes.
+    :vartype attributes: ~azure.keyvault.v7_0.models.KeyAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     :ivar managed: True if the key's lifetime is managed by key vault. If this is a key backing a
      certificate, then managed will be true.
     :vartype managed: bool
@@ -1217,6 +1448,14 @@ class KeyItem(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword kid: Key identifier.
+        :paramtype kid: str
+        :keyword attributes: The key management attributes.
+        :paramtype attributes: ~azure.keyvault.v7_0.models.KeyAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        """
         super(KeyItem, self).__init__(**kwargs)
         self.kid = kid
         self.attributes = attributes
@@ -1229,18 +1468,18 @@ class DeletedKeyItem(KeyItem):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param kid: Key identifier.
-    :type kid: str
-    :param attributes: The key management attributes.
-    :type attributes: ~azure.keyvault.v7_0.models.KeyAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :ivar kid: Key identifier.
+    :vartype kid: str
+    :ivar attributes: The key management attributes.
+    :vartype attributes: ~azure.keyvault.v7_0.models.KeyAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     :ivar managed: True if the key's lifetime is managed by key vault. If this is a key backing a
      certificate, then managed will be true.
     :vartype managed: bool
-    :param recovery_id: The url of the recovery object, used to identify and recover the deleted
+    :ivar recovery_id: The url of the recovery object, used to identify and recover the deleted
      key.
-    :type recovery_id: str
+    :vartype recovery_id: str
     :ivar scheduled_purge_date: The time when the key is scheduled to be purged, in UTC.
     :vartype scheduled_purge_date: ~datetime.datetime
     :ivar deleted_date: The time when the key was deleted, in UTC.
@@ -1272,6 +1511,17 @@ class DeletedKeyItem(KeyItem):
         recovery_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword kid: Key identifier.
+        :paramtype kid: str
+        :keyword attributes: The key management attributes.
+        :paramtype attributes: ~azure.keyvault.v7_0.models.KeyAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        :keyword recovery_id: The url of the recovery object, used to identify and recover the deleted
+         key.
+        :paramtype recovery_id: str
+        """
         super(DeletedKeyItem, self).__init__(kid=kid, attributes=attributes, tags=tags, **kwargs)
         self.recovery_id = recovery_id
         self.scheduled_purge_date = None
@@ -1304,6 +1554,8 @@ class DeletedKeyListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(DeletedKeyListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1357,6 +1609,8 @@ class SasDefinitionBundle(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SasDefinitionBundle, self).__init__(**kwargs)
         self.id = None
         self.secret_id = None
@@ -1389,9 +1643,9 @@ class DeletedSasDefinitionBundle(SasDefinitionBundle):
     :vartype attributes: ~azure.keyvault.v7_0.models.SasDefinitionAttributes
     :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
-    :param recovery_id: The url of the recovery object, used to identify and recover the deleted
-     SAS definition.
-    :type recovery_id: str
+    :ivar recovery_id: The url of the recovery object, used to identify and recover the deleted SAS
+     definition.
+    :vartype recovery_id: str
     :ivar scheduled_purge_date: The time when the SAS definition is scheduled to be purged, in UTC.
     :vartype scheduled_purge_date: ~datetime.datetime
     :ivar deleted_date: The time when the SAS definition was deleted, in UTC.
@@ -1429,6 +1683,11 @@ class DeletedSasDefinitionBundle(SasDefinitionBundle):
         recovery_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword recovery_id: The url of the recovery object, used to identify and recover the deleted
+         SAS definition.
+        :paramtype recovery_id: str
+        """
         super(DeletedSasDefinitionBundle, self).__init__(**kwargs)
         self.recovery_id = recovery_id
         self.scheduled_purge_date = None
@@ -1468,6 +1727,8 @@ class SasDefinitionItem(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SasDefinitionItem, self).__init__(**kwargs)
         self.id = None
         self.secret_id = None
@@ -1488,9 +1749,9 @@ class DeletedSasDefinitionItem(SasDefinitionItem):
     :vartype attributes: ~azure.keyvault.v7_0.models.SasDefinitionAttributes
     :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
-    :param recovery_id: The url of the recovery object, used to identify and recover the deleted
-     SAS definition.
-    :type recovery_id: str
+    :ivar recovery_id: The url of the recovery object, used to identify and recover the deleted SAS
+     definition.
+    :vartype recovery_id: str
     :ivar scheduled_purge_date: The time when the SAS definition is scheduled to be purged, in UTC.
     :vartype scheduled_purge_date: ~datetime.datetime
     :ivar deleted_date: The time when the SAS definition was deleted, in UTC.
@@ -1522,6 +1783,11 @@ class DeletedSasDefinitionItem(SasDefinitionItem):
         recovery_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword recovery_id: The url of the recovery object, used to identify and recover the deleted
+         SAS definition.
+        :paramtype recovery_id: str
+        """
         super(DeletedSasDefinitionItem, self).__init__(**kwargs)
         self.recovery_id = recovery_id
         self.scheduled_purge_date = None
@@ -1554,6 +1820,8 @@ class DeletedSasDefinitionListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(DeletedSasDefinitionListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1564,16 +1832,16 @@ class SecretBundle(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The secret value.
-    :type value: str
-    :param id: The secret id.
-    :type id: str
-    :param content_type: The content type of the secret.
-    :type content_type: str
-    :param attributes: The secret management attributes.
-    :type attributes: ~azure.keyvault.v7_0.models.SecretAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :ivar value: The secret value.
+    :vartype value: str
+    :ivar id: The secret id.
+    :vartype id: str
+    :ivar content_type: The content type of the secret.
+    :vartype content_type: str
+    :ivar attributes: The secret management attributes.
+    :vartype attributes: ~azure.keyvault.v7_0.models.SecretAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     :ivar kid: If this is a secret backing a KV certificate, then this field specifies the
      corresponding key backing the KV certificate.
     :vartype kid: str
@@ -1607,6 +1875,18 @@ class SecretBundle(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The secret value.
+        :paramtype value: str
+        :keyword id: The secret id.
+        :paramtype id: str
+        :keyword content_type: The content type of the secret.
+        :paramtype content_type: str
+        :keyword attributes: The secret management attributes.
+        :paramtype attributes: ~azure.keyvault.v7_0.models.SecretAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        """
         super(SecretBundle, self).__init__(**kwargs)
         self.value = value
         self.id = id
@@ -1622,25 +1902,25 @@ class DeletedSecretBundle(SecretBundle):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The secret value.
-    :type value: str
-    :param id: The secret id.
-    :type id: str
-    :param content_type: The content type of the secret.
-    :type content_type: str
-    :param attributes: The secret management attributes.
-    :type attributes: ~azure.keyvault.v7_0.models.SecretAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :ivar value: The secret value.
+    :vartype value: str
+    :ivar id: The secret id.
+    :vartype id: str
+    :ivar content_type: The content type of the secret.
+    :vartype content_type: str
+    :ivar attributes: The secret management attributes.
+    :vartype attributes: ~azure.keyvault.v7_0.models.SecretAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     :ivar kid: If this is a secret backing a KV certificate, then this field specifies the
      corresponding key backing the KV certificate.
     :vartype kid: str
     :ivar managed: True if the secret's lifetime is managed by key vault. If this is a secret
      backing a certificate, then managed will be true.
     :vartype managed: bool
-    :param recovery_id: The url of the recovery object, used to identify and recover the deleted
+    :ivar recovery_id: The url of the recovery object, used to identify and recover the deleted
      secret.
-    :type recovery_id: str
+    :vartype recovery_id: str
     :ivar scheduled_purge_date: The time when the secret is scheduled to be purged, in UTC.
     :vartype scheduled_purge_date: ~datetime.datetime
     :ivar deleted_date: The time when the secret was deleted, in UTC.
@@ -1678,6 +1958,21 @@ class DeletedSecretBundle(SecretBundle):
         recovery_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: The secret value.
+        :paramtype value: str
+        :keyword id: The secret id.
+        :paramtype id: str
+        :keyword content_type: The content type of the secret.
+        :paramtype content_type: str
+        :keyword attributes: The secret management attributes.
+        :paramtype attributes: ~azure.keyvault.v7_0.models.SecretAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        :keyword recovery_id: The url of the recovery object, used to identify and recover the deleted
+         secret.
+        :paramtype recovery_id: str
+        """
         super(DeletedSecretBundle, self).__init__(value=value, id=id, content_type=content_type, attributes=attributes, tags=tags, **kwargs)
         self.recovery_id = recovery_id
         self.scheduled_purge_date = None
@@ -1689,14 +1984,14 @@ class SecretItem(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param id: Secret identifier.
-    :type id: str
-    :param attributes: The secret management attributes.
-    :type attributes: ~azure.keyvault.v7_0.models.SecretAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
-    :param content_type: Type of the secret value such as a password.
-    :type content_type: str
+    :ivar id: Secret identifier.
+    :vartype id: str
+    :ivar attributes: The secret management attributes.
+    :vartype attributes: ~azure.keyvault.v7_0.models.SecretAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
+    :ivar content_type: Type of the secret value such as a password.
+    :vartype content_type: str
     :ivar managed: True if the secret's lifetime is managed by key vault. If this is a key backing
      a certificate, then managed will be true.
     :vartype managed: bool
@@ -1723,6 +2018,16 @@ class SecretItem(msrest.serialization.Model):
         content_type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Secret identifier.
+        :paramtype id: str
+        :keyword attributes: The secret management attributes.
+        :paramtype attributes: ~azure.keyvault.v7_0.models.SecretAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        :keyword content_type: Type of the secret value such as a password.
+        :paramtype content_type: str
+        """
         super(SecretItem, self).__init__(**kwargs)
         self.id = id
         self.attributes = attributes
@@ -1736,20 +2041,20 @@ class DeletedSecretItem(SecretItem):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param id: Secret identifier.
-    :type id: str
-    :param attributes: The secret management attributes.
-    :type attributes: ~azure.keyvault.v7_0.models.SecretAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
-    :param content_type: Type of the secret value such as a password.
-    :type content_type: str
+    :ivar id: Secret identifier.
+    :vartype id: str
+    :ivar attributes: The secret management attributes.
+    :vartype attributes: ~azure.keyvault.v7_0.models.SecretAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
+    :ivar content_type: Type of the secret value such as a password.
+    :vartype content_type: str
     :ivar managed: True if the secret's lifetime is managed by key vault. If this is a key backing
      a certificate, then managed will be true.
     :vartype managed: bool
-    :param recovery_id: The url of the recovery object, used to identify and recover the deleted
+    :ivar recovery_id: The url of the recovery object, used to identify and recover the deleted
      secret.
-    :type recovery_id: str
+    :vartype recovery_id: str
     :ivar scheduled_purge_date: The time when the secret is scheduled to be purged, in UTC.
     :vartype scheduled_purge_date: ~datetime.datetime
     :ivar deleted_date: The time when the secret was deleted, in UTC.
@@ -1783,6 +2088,19 @@ class DeletedSecretItem(SecretItem):
         recovery_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Secret identifier.
+        :paramtype id: str
+        :keyword attributes: The secret management attributes.
+        :paramtype attributes: ~azure.keyvault.v7_0.models.SecretAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        :keyword content_type: Type of the secret value such as a password.
+        :paramtype content_type: str
+        :keyword recovery_id: The url of the recovery object, used to identify and recover the deleted
+         secret.
+        :paramtype recovery_id: str
+        """
         super(DeletedSecretItem, self).__init__(id=id, attributes=attributes, tags=tags, content_type=content_type, **kwargs)
         self.recovery_id = recovery_id
         self.scheduled_purge_date = None
@@ -1815,6 +2133,8 @@ class DeletedSecretListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(DeletedSecretListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -1853,6 +2173,8 @@ class StorageAccountItem(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(StorageAccountItem, self).__init__(**kwargs)
         self.id = None
         self.resource_id = None
@@ -1873,9 +2195,9 @@ class DeletedStorageAccountItem(StorageAccountItem):
     :vartype attributes: ~azure.keyvault.v7_0.models.StorageAccountAttributes
     :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
-    :param recovery_id: The url of the recovery object, used to identify and recover the deleted
+    :ivar recovery_id: The url of the recovery object, used to identify and recover the deleted
      storage account.
-    :type recovery_id: str
+    :vartype recovery_id: str
     :ivar scheduled_purge_date: The time when the storage account is scheduled to be purged, in
      UTC.
     :vartype scheduled_purge_date: ~datetime.datetime
@@ -1908,6 +2230,11 @@ class DeletedStorageAccountItem(StorageAccountItem):
         recovery_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword recovery_id: The url of the recovery object, used to identify and recover the deleted
+         storage account.
+        :paramtype recovery_id: str
+        """
         super(DeletedStorageAccountItem, self).__init__(**kwargs)
         self.recovery_id = recovery_id
         self.scheduled_purge_date = None
@@ -1959,6 +2286,8 @@ class StorageBundle(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(StorageBundle, self).__init__(**kwargs)
         self.id = None
         self.resource_id = None
@@ -1988,9 +2317,9 @@ class DeletedStorageBundle(StorageBundle):
     :vartype attributes: ~azure.keyvault.v7_0.models.StorageAccountAttributes
     :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
-    :param recovery_id: The url of the recovery object, used to identify and recover the deleted
+    :ivar recovery_id: The url of the recovery object, used to identify and recover the deleted
      storage account.
-    :type recovery_id: str
+    :vartype recovery_id: str
     :ivar scheduled_purge_date: The time when the storage account is scheduled to be purged, in
      UTC.
     :vartype scheduled_purge_date: ~datetime.datetime
@@ -2029,6 +2358,11 @@ class DeletedStorageBundle(StorageBundle):
         recovery_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword recovery_id: The url of the recovery object, used to identify and recover the deleted
+         storage account.
+        :paramtype recovery_id: str
+        """
         super(DeletedStorageBundle, self).__init__(**kwargs)
         self.recovery_id = recovery_id
         self.scheduled_purge_date = None
@@ -2061,6 +2395,8 @@ class DeletedStorageListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(DeletedStorageListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -2095,6 +2431,8 @@ class Error(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Error, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -2106,8 +2444,8 @@ class IssuerAttributes(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param enabled: Determines whether the issuer is enabled.
-    :type enabled: bool
+    :ivar enabled: Determines whether the issuer is enabled.
+    :vartype enabled: bool
     :ivar created: Creation time in UTC.
     :vartype created: ~datetime.datetime
     :ivar updated: Last updated time in UTC.
@@ -2131,6 +2469,10 @@ class IssuerAttributes(msrest.serialization.Model):
         enabled: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword enabled: Determines whether the issuer is enabled.
+        :paramtype enabled: bool
+        """
         super(IssuerAttributes, self).__init__(**kwargs)
         self.enabled = enabled
         self.created = None
@@ -2144,14 +2486,14 @@ class IssuerBundle(msrest.serialization.Model):
 
     :ivar id: Identifier for the issuer object.
     :vartype id: str
-    :param provider: The issuer provider.
-    :type provider: str
-    :param credentials: The credentials to be used for the issuer.
-    :type credentials: ~azure.keyvault.v7_0.models.IssuerCredentials
-    :param organization_details: Details of the organization as provided to the issuer.
-    :type organization_details: ~azure.keyvault.v7_0.models.OrganizationDetails
-    :param attributes: Attributes of the issuer object.
-    :type attributes: ~azure.keyvault.v7_0.models.IssuerAttributes
+    :ivar provider: The issuer provider.
+    :vartype provider: str
+    :ivar credentials: The credentials to be used for the issuer.
+    :vartype credentials: ~azure.keyvault.v7_0.models.IssuerCredentials
+    :ivar organization_details: Details of the organization as provided to the issuer.
+    :vartype organization_details: ~azure.keyvault.v7_0.models.OrganizationDetails
+    :ivar attributes: Attributes of the issuer object.
+    :vartype attributes: ~azure.keyvault.v7_0.models.IssuerAttributes
     """
 
     _validation = {
@@ -2175,6 +2517,16 @@ class IssuerBundle(msrest.serialization.Model):
         attributes: Optional["IssuerAttributes"] = None,
         **kwargs
     ):
+        """
+        :keyword provider: The issuer provider.
+        :paramtype provider: str
+        :keyword credentials: The credentials to be used for the issuer.
+        :paramtype credentials: ~azure.keyvault.v7_0.models.IssuerCredentials
+        :keyword organization_details: Details of the organization as provided to the issuer.
+        :paramtype organization_details: ~azure.keyvault.v7_0.models.OrganizationDetails
+        :keyword attributes: Attributes of the issuer object.
+        :paramtype attributes: ~azure.keyvault.v7_0.models.IssuerAttributes
+        """
         super(IssuerBundle, self).__init__(**kwargs)
         self.id = None
         self.provider = provider
@@ -2186,10 +2538,10 @@ class IssuerBundle(msrest.serialization.Model):
 class IssuerCredentials(msrest.serialization.Model):
     """The credentials to be used for the certificate issuer.
 
-    :param account_id: The user name/account name/account id.
-    :type account_id: str
-    :param password: The password/secret/account key.
-    :type password: str
+    :ivar account_id: The user name/account name/account id.
+    :vartype account_id: str
+    :ivar password: The password/secret/account key.
+    :vartype password: str
     """
 
     _attribute_map = {
@@ -2204,6 +2556,12 @@ class IssuerCredentials(msrest.serialization.Model):
         password: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword account_id: The user name/account name/account id.
+        :paramtype account_id: str
+        :keyword password: The password/secret/account key.
+        :paramtype password: str
+        """
         super(IssuerCredentials, self).__init__(**kwargs)
         self.account_id = account_id
         self.password = password
@@ -2212,15 +2570,15 @@ class IssuerCredentials(msrest.serialization.Model):
 class IssuerParameters(msrest.serialization.Model):
     """Parameters for the issuer of the X509 component of a certificate.
 
-    :param name: Name of the referenced issuer object or reserved names; for example, 'Self' or
+    :ivar name: Name of the referenced issuer object or reserved names; for example, 'Self' or
      'Unknown'.
-    :type name: str
-    :param certificate_type: Certificate type as supported by the provider (optional); for example
+    :vartype name: str
+    :ivar certificate_type: Certificate type as supported by the provider (optional); for example
      'OV-SSL', 'EV-SSL'.
-    :type certificate_type: str
-    :param certificate_transparency: Indicates if the certificates generated under this policy
+    :vartype certificate_type: str
+    :ivar certificate_transparency: Indicates if the certificates generated under this policy
      should be published to certificate transparency logs.
-    :type certificate_transparency: bool
+    :vartype certificate_transparency: bool
     """
 
     _attribute_map = {
@@ -2237,6 +2595,17 @@ class IssuerParameters(msrest.serialization.Model):
         certificate_transparency: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of the referenced issuer object or reserved names; for example, 'Self' or
+         'Unknown'.
+        :paramtype name: str
+        :keyword certificate_type: Certificate type as supported by the provider (optional); for
+         example 'OV-SSL', 'EV-SSL'.
+        :paramtype certificate_type: str
+        :keyword certificate_transparency: Indicates if the certificates generated under this policy
+         should be published to certificate transparency logs.
+        :paramtype certificate_transparency: bool
+        """
         super(IssuerParameters, self).__init__(**kwargs)
         self.name = name
         self.certificate_type = certificate_type
@@ -2246,41 +2615,41 @@ class IssuerParameters(msrest.serialization.Model):
 class JsonWebKey(msrest.serialization.Model):
     """As of http://tools.ietf.org/html/draft-ietf-jose-json-web-key-18.
 
-    :param kid: Key identifier.
-    :type kid: str
-    :param kty: JsonWebKey Key Type (kty), as defined in
+    :ivar kid: Key identifier.
+    :vartype kid: str
+    :ivar kty: JsonWebKey Key Type (kty), as defined in
      https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40. Possible values include:
      "EC", "EC-HSM", "RSA", "RSA-HSM", "oct".
-    :type kty: str or ~azure.keyvault.v7_0.models.JsonWebKeyType
-    :param key_ops:
-    :type key_ops: list[str]
-    :param n: RSA modulus.
-    :type n: bytes
-    :param e: RSA public exponent.
-    :type e: bytes
-    :param d: RSA private exponent, or the D component of an EC private key.
-    :type d: bytes
-    :param dp: RSA private key parameter.
-    :type dp: bytes
-    :param dq: RSA private key parameter.
-    :type dq: bytes
-    :param qi: RSA private key parameter.
-    :type qi: bytes
-    :param p: RSA secret prime.
-    :type p: bytes
-    :param q: RSA secret prime, with p < q.
-    :type q: bytes
-    :param k: Symmetric key.
-    :type k: bytes
-    :param t: HSM Token, used with 'Bring Your Own Key'.
-    :type t: bytes
-    :param crv: Elliptic curve name. For valid values, see JsonWebKeyCurveName. Possible values
+    :vartype kty: str or ~azure.keyvault.v7_0.models.JsonWebKeyType
+    :ivar key_ops:
+    :vartype key_ops: list[str]
+    :ivar n: RSA modulus.
+    :vartype n: bytes
+    :ivar e: RSA public exponent.
+    :vartype e: bytes
+    :ivar d: RSA private exponent, or the D component of an EC private key.
+    :vartype d: bytes
+    :ivar dp: RSA private key parameter.
+    :vartype dp: bytes
+    :ivar dq: RSA private key parameter.
+    :vartype dq: bytes
+    :ivar qi: RSA private key parameter.
+    :vartype qi: bytes
+    :ivar p: RSA secret prime.
+    :vartype p: bytes
+    :ivar q: RSA secret prime, with p < q.
+    :vartype q: bytes
+    :ivar k: Symmetric key.
+    :vartype k: bytes
+    :ivar t: HSM Token, used with 'Bring Your Own Key'.
+    :vartype t: bytes
+    :ivar crv: Elliptic curve name. For valid values, see JsonWebKeyCurveName. Possible values
      include: "P-256", "P-384", "P-521", "P-256K".
-    :type crv: str or ~azure.keyvault.v7_0.models.JsonWebKeyCurveName
-    :param x: X component of an EC public key.
-    :type x: bytes
-    :param y: Y component of an EC public key.
-    :type y: bytes
+    :vartype crv: str or ~azure.keyvault.v7_0.models.JsonWebKeyCurveName
+    :ivar x: X component of an EC public key.
+    :vartype x: bytes
+    :ivar y: Y component of an EC public key.
+    :vartype y: bytes
     """
 
     _attribute_map = {
@@ -2323,6 +2692,43 @@ class JsonWebKey(msrest.serialization.Model):
         y: Optional[bytes] = None,
         **kwargs
     ):
+        """
+        :keyword kid: Key identifier.
+        :paramtype kid: str
+        :keyword kty: JsonWebKey Key Type (kty), as defined in
+         https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40. Possible values include:
+         "EC", "EC-HSM", "RSA", "RSA-HSM", "oct".
+        :paramtype kty: str or ~azure.keyvault.v7_0.models.JsonWebKeyType
+        :keyword key_ops:
+        :paramtype key_ops: list[str]
+        :keyword n: RSA modulus.
+        :paramtype n: bytes
+        :keyword e: RSA public exponent.
+        :paramtype e: bytes
+        :keyword d: RSA private exponent, or the D component of an EC private key.
+        :paramtype d: bytes
+        :keyword dp: RSA private key parameter.
+        :paramtype dp: bytes
+        :keyword dq: RSA private key parameter.
+        :paramtype dq: bytes
+        :keyword qi: RSA private key parameter.
+        :paramtype qi: bytes
+        :keyword p: RSA secret prime.
+        :paramtype p: bytes
+        :keyword q: RSA secret prime, with p < q.
+        :paramtype q: bytes
+        :keyword k: Symmetric key.
+        :paramtype k: bytes
+        :keyword t: HSM Token, used with 'Bring Your Own Key'.
+        :paramtype t: bytes
+        :keyword crv: Elliptic curve name. For valid values, see JsonWebKeyCurveName. Possible values
+         include: "P-256", "P-384", "P-521", "P-256K".
+        :paramtype crv: str or ~azure.keyvault.v7_0.models.JsonWebKeyCurveName
+        :keyword x: X component of an EC public key.
+        :paramtype x: bytes
+        :keyword y: Y component of an EC public key.
+        :paramtype y: bytes
+        """
         super(JsonWebKey, self).__init__(**kwargs)
         self.kid = kid
         self.kty = kty
@@ -2347,12 +2753,12 @@ class KeyAttributes(Attributes):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param enabled: Determines whether the object is enabled.
-    :type enabled: bool
-    :param not_before: Not before date in UTC.
-    :type not_before: ~datetime.datetime
-    :param expires: Expiry date in UTC.
-    :type expires: ~datetime.datetime
+    :ivar enabled: Determines whether the object is enabled.
+    :vartype enabled: bool
+    :ivar not_before: Not before date in UTC.
+    :vartype not_before: ~datetime.datetime
+    :ivar expires: Expiry date in UTC.
+    :vartype expires: ~datetime.datetime
     :ivar created: Creation time in UTC.
     :vartype created: ~datetime.datetime
     :ivar updated: Last updated time in UTC.
@@ -2389,6 +2795,14 @@ class KeyAttributes(Attributes):
         expires: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword enabled: Determines whether the object is enabled.
+        :paramtype enabled: bool
+        :keyword not_before: Not before date in UTC.
+        :paramtype not_before: ~datetime.datetime
+        :keyword expires: Expiry date in UTC.
+        :paramtype expires: ~datetime.datetime
+        """
         super(KeyAttributes, self).__init__(enabled=enabled, not_before=not_before, expires=expires, **kwargs)
         self.recovery_level = None
 
@@ -2398,20 +2812,20 @@ class KeyCreateParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param kty: Required. The type of key to create. For valid values, see JsonWebKeyType. Possible
+    :ivar kty: Required. The type of key to create. For valid values, see JsonWebKeyType. Possible
      values include: "EC", "EC-HSM", "RSA", "RSA-HSM", "oct".
-    :type kty: str or ~azure.keyvault.v7_0.models.JsonWebKeyType
-    :param key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
-    :type key_size: int
-    :param key_ops:
-    :type key_ops: list[str or ~azure.keyvault.v7_0.models.JsonWebKeyOperation]
-    :param key_attributes: The attributes of a key managed by the key vault service.
-    :type key_attributes: ~azure.keyvault.v7_0.models.KeyAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
-    :param curve: Elliptic curve name. For valid values, see JsonWebKeyCurveName. Possible values
+    :vartype kty: str or ~azure.keyvault.v7_0.models.JsonWebKeyType
+    :ivar key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
+    :vartype key_size: int
+    :ivar key_ops:
+    :vartype key_ops: list[str or ~azure.keyvault.v7_0.models.JsonWebKeyOperation]
+    :ivar key_attributes: The attributes of a key managed by the key vault service.
+    :vartype key_attributes: ~azure.keyvault.v7_0.models.KeyAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
+    :ivar curve: Elliptic curve name. For valid values, see JsonWebKeyCurveName. Possible values
      include: "P-256", "P-384", "P-521", "P-256K".
-    :type curve: str or ~azure.keyvault.v7_0.models.JsonWebKeyCurveName
+    :vartype curve: str or ~azure.keyvault.v7_0.models.JsonWebKeyCurveName
     """
 
     _validation = {
@@ -2438,6 +2852,22 @@ class KeyCreateParameters(msrest.serialization.Model):
         curve: Optional[Union[str, "JsonWebKeyCurveName"]] = None,
         **kwargs
     ):
+        """
+        :keyword kty: Required. The type of key to create. For valid values, see JsonWebKeyType.
+         Possible values include: "EC", "EC-HSM", "RSA", "RSA-HSM", "oct".
+        :paramtype kty: str or ~azure.keyvault.v7_0.models.JsonWebKeyType
+        :keyword key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
+        :paramtype key_size: int
+        :keyword key_ops:
+        :paramtype key_ops: list[str or ~azure.keyvault.v7_0.models.JsonWebKeyOperation]
+        :keyword key_attributes: The attributes of a key managed by the key vault service.
+        :paramtype key_attributes: ~azure.keyvault.v7_0.models.KeyAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        :keyword curve: Elliptic curve name. For valid values, see JsonWebKeyCurveName. Possible values
+         include: "P-256", "P-384", "P-521", "P-256K".
+        :paramtype curve: str or ~azure.keyvault.v7_0.models.JsonWebKeyCurveName
+        """
         super(KeyCreateParameters, self).__init__(**kwargs)
         self.kty = kty
         self.key_size = key_size
@@ -2452,14 +2882,14 @@ class KeyImportParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param hsm: Whether to import as a hardware key (HSM) or software key.
-    :type hsm: bool
-    :param key: Required. The Json web key.
-    :type key: ~azure.keyvault.v7_0.models.JsonWebKey
-    :param key_attributes: The key management attributes.
-    :type key_attributes: ~azure.keyvault.v7_0.models.KeyAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :ivar hsm: Whether to import as a hardware key (HSM) or software key.
+    :vartype hsm: bool
+    :ivar key: Required. The Json web key.
+    :vartype key: ~azure.keyvault.v7_0.models.JsonWebKey
+    :ivar key_attributes: The key management attributes.
+    :vartype key_attributes: ~azure.keyvault.v7_0.models.KeyAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -2482,6 +2912,16 @@ class KeyImportParameters(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword hsm: Whether to import as a hardware key (HSM) or software key.
+        :paramtype hsm: bool
+        :keyword key: Required. The Json web key.
+        :paramtype key: ~azure.keyvault.v7_0.models.JsonWebKey
+        :keyword key_attributes: The key management attributes.
+        :paramtype key_attributes: ~azure.keyvault.v7_0.models.KeyAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        """
         super(KeyImportParameters, self).__init__(**kwargs)
         self.hsm = hsm
         self.key = key
@@ -2515,6 +2955,8 @@ class KeyListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(KeyListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -2545,6 +2987,8 @@ class KeyOperationResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(KeyOperationResult, self).__init__(**kwargs)
         self.kid = None
         self.result = None
@@ -2555,11 +2999,11 @@ class KeyOperationsParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param algorithm: Required. algorithm identifier. Possible values include: "RSA-OAEP",
+    :ivar algorithm: Required. algorithm identifier. Possible values include: "RSA-OAEP",
      "RSA-OAEP-256", "RSA1_5".
-    :type algorithm: str or ~azure.keyvault.v7_0.models.JsonWebKeyEncryptionAlgorithm
-    :param value: Required.
-    :type value: bytes
+    :vartype algorithm: str or ~azure.keyvault.v7_0.models.JsonWebKeyEncryptionAlgorithm
+    :ivar value: Required.
+    :vartype value: bytes
     """
 
     _validation = {
@@ -2579,6 +3023,13 @@ class KeyOperationsParameters(msrest.serialization.Model):
         value: bytes,
         **kwargs
     ):
+        """
+        :keyword algorithm: Required. algorithm identifier. Possible values include: "RSA-OAEP",
+         "RSA-OAEP-256", "RSA1_5".
+        :paramtype algorithm: str or ~azure.keyvault.v7_0.models.JsonWebKeyEncryptionAlgorithm
+        :keyword value: Required.
+        :paramtype value: bytes
+        """
         super(KeyOperationsParameters, self).__init__(**kwargs)
         self.algorithm = algorithm
         self.value = value
@@ -2587,18 +3038,18 @@ class KeyOperationsParameters(msrest.serialization.Model):
 class KeyProperties(msrest.serialization.Model):
     """Properties of the key pair backing a certificate.
 
-    :param exportable: Indicates if the private key can be exported.
-    :type exportable: bool
-    :param key_type: The type of key pair to be used for the certificate. Possible values include:
+    :ivar exportable: Indicates if the private key can be exported.
+    :vartype exportable: bool
+    :ivar key_type: The type of key pair to be used for the certificate. Possible values include:
      "EC", "EC-HSM", "RSA", "RSA-HSM", "oct".
-    :type key_type: str or ~azure.keyvault.v7_0.models.JsonWebKeyType
-    :param key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
-    :type key_size: int
-    :param reuse_key: Indicates if the same key pair will be used on certificate renewal.
-    :type reuse_key: bool
-    :param curve: Elliptic curve name. For valid values, see JsonWebKeyCurveName. Possible values
+    :vartype key_type: str or ~azure.keyvault.v7_0.models.JsonWebKeyType
+    :ivar key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
+    :vartype key_size: int
+    :ivar reuse_key: Indicates if the same key pair will be used on certificate renewal.
+    :vartype reuse_key: bool
+    :ivar curve: Elliptic curve name. For valid values, see JsonWebKeyCurveName. Possible values
      include: "P-256", "P-384", "P-521", "P-256K".
-    :type curve: str or ~azure.keyvault.v7_0.models.JsonWebKeyCurveName
+    :vartype curve: str or ~azure.keyvault.v7_0.models.JsonWebKeyCurveName
     """
 
     _attribute_map = {
@@ -2619,6 +3070,20 @@ class KeyProperties(msrest.serialization.Model):
         curve: Optional[Union[str, "JsonWebKeyCurveName"]] = None,
         **kwargs
     ):
+        """
+        :keyword exportable: Indicates if the private key can be exported.
+        :paramtype exportable: bool
+        :keyword key_type: The type of key pair to be used for the certificate. Possible values
+         include: "EC", "EC-HSM", "RSA", "RSA-HSM", "oct".
+        :paramtype key_type: str or ~azure.keyvault.v7_0.models.JsonWebKeyType
+        :keyword key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
+        :paramtype key_size: int
+        :keyword reuse_key: Indicates if the same key pair will be used on certificate renewal.
+        :paramtype reuse_key: bool
+        :keyword curve: Elliptic curve name. For valid values, see JsonWebKeyCurveName. Possible values
+         include: "P-256", "P-384", "P-521", "P-256K".
+        :paramtype curve: str or ~azure.keyvault.v7_0.models.JsonWebKeyCurveName
+        """
         super(KeyProperties, self).__init__(**kwargs)
         self.exportable = exportable
         self.key_type = key_type
@@ -2632,8 +3097,8 @@ class KeyRestoreParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key_bundle_backup: Required. The backup blob associated with a key bundle.
-    :type key_bundle_backup: bytes
+    :ivar key_bundle_backup: Required. The backup blob associated with a key bundle.
+    :vartype key_bundle_backup: bytes
     """
 
     _validation = {
@@ -2650,6 +3115,10 @@ class KeyRestoreParameters(msrest.serialization.Model):
         key_bundle_backup: bytes,
         **kwargs
     ):
+        """
+        :keyword key_bundle_backup: Required. The backup blob associated with a key bundle.
+        :paramtype key_bundle_backup: bytes
+        """
         super(KeyRestoreParameters, self).__init__(**kwargs)
         self.key_bundle_backup = key_bundle_backup
 
@@ -2659,13 +3128,13 @@ class KeySignParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param algorithm: Required. The signing/verification algorithm identifier. For more information
+    :ivar algorithm: Required. The signing/verification algorithm identifier. For more information
      on possible algorithm types, see JsonWebKeySignatureAlgorithm. Possible values include:
      "PS256", "PS384", "PS512", "RS256", "RS384", "RS512", "RSNULL", "ES256", "ES384", "ES512",
      "ES256K".
-    :type algorithm: str or ~azure.keyvault.v7_0.models.JsonWebKeySignatureAlgorithm
-    :param value: Required.
-    :type value: bytes
+    :vartype algorithm: str or ~azure.keyvault.v7_0.models.JsonWebKeySignatureAlgorithm
+    :ivar value: Required.
+    :vartype value: bytes
     """
 
     _validation = {
@@ -2685,6 +3154,15 @@ class KeySignParameters(msrest.serialization.Model):
         value: bytes,
         **kwargs
     ):
+        """
+        :keyword algorithm: Required. The signing/verification algorithm identifier. For more
+         information on possible algorithm types, see JsonWebKeySignatureAlgorithm. Possible values
+         include: "PS256", "PS384", "PS512", "RS256", "RS384", "RS512", "RSNULL", "ES256", "ES384",
+         "ES512", "ES256K".
+        :paramtype algorithm: str or ~azure.keyvault.v7_0.models.JsonWebKeySignatureAlgorithm
+        :keyword value: Required.
+        :paramtype value: bytes
+        """
         super(KeySignParameters, self).__init__(**kwargs)
         self.algorithm = algorithm
         self.value = value
@@ -2693,13 +3171,13 @@ class KeySignParameters(msrest.serialization.Model):
 class KeyUpdateParameters(msrest.serialization.Model):
     """The key update parameters.
 
-    :param key_ops: Json web key operations. For more information on possible key operations, see
+    :ivar key_ops: Json web key operations. For more information on possible key operations, see
      JsonWebKeyOperation.
-    :type key_ops: list[str or ~azure.keyvault.v7_0.models.JsonWebKeyOperation]
-    :param key_attributes: The attributes of a key managed by the key vault service.
-    :type key_attributes: ~azure.keyvault.v7_0.models.KeyAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :vartype key_ops: list[str or ~azure.keyvault.v7_0.models.JsonWebKeyOperation]
+    :ivar key_attributes: The attributes of a key managed by the key vault service.
+    :vartype key_attributes: ~azure.keyvault.v7_0.models.KeyAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -2716,6 +3194,15 @@ class KeyUpdateParameters(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword key_ops: Json web key operations. For more information on possible key operations, see
+         JsonWebKeyOperation.
+        :paramtype key_ops: list[str or ~azure.keyvault.v7_0.models.JsonWebKeyOperation]
+        :keyword key_attributes: The attributes of a key managed by the key vault service.
+        :paramtype key_attributes: ~azure.keyvault.v7_0.models.KeyAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        """
         super(KeyUpdateParameters, self).__init__(**kwargs)
         self.key_ops = key_ops
         self.key_attributes = key_attributes
@@ -2743,6 +3230,8 @@ class KeyVaultError(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(KeyVaultError, self).__init__(**kwargs)
         self.error = None
 
@@ -2752,14 +3241,14 @@ class KeyVerifyParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param algorithm: Required. The signing/verification algorithm. For more information on
-     possible algorithm types, see JsonWebKeySignatureAlgorithm. Possible values include: "PS256",
-     "PS384", "PS512", "RS256", "RS384", "RS512", "RSNULL", "ES256", "ES384", "ES512", "ES256K".
-    :type algorithm: str or ~azure.keyvault.v7_0.models.JsonWebKeySignatureAlgorithm
-    :param digest: Required. The digest used for signing.
-    :type digest: bytes
-    :param signature: Required. The signature to be verified.
-    :type signature: bytes
+    :ivar algorithm: Required. The signing/verification algorithm. For more information on possible
+     algorithm types, see JsonWebKeySignatureAlgorithm. Possible values include: "PS256", "PS384",
+     "PS512", "RS256", "RS384", "RS512", "RSNULL", "ES256", "ES384", "ES512", "ES256K".
+    :vartype algorithm: str or ~azure.keyvault.v7_0.models.JsonWebKeySignatureAlgorithm
+    :ivar digest: Required. The digest used for signing.
+    :vartype digest: bytes
+    :ivar signature: Required. The signature to be verified.
+    :vartype signature: bytes
     """
 
     _validation = {
@@ -2782,6 +3271,16 @@ class KeyVerifyParameters(msrest.serialization.Model):
         signature: bytes,
         **kwargs
     ):
+        """
+        :keyword algorithm: Required. The signing/verification algorithm. For more information on
+         possible algorithm types, see JsonWebKeySignatureAlgorithm. Possible values include: "PS256",
+         "PS384", "PS512", "RS256", "RS384", "RS512", "RSNULL", "ES256", "ES384", "ES512", "ES256K".
+        :paramtype algorithm: str or ~azure.keyvault.v7_0.models.JsonWebKeySignatureAlgorithm
+        :keyword digest: Required. The digest used for signing.
+        :paramtype digest: bytes
+        :keyword signature: Required. The signature to be verified.
+        :paramtype signature: bytes
+        """
         super(KeyVerifyParameters, self).__init__(**kwargs)
         self.algorithm = algorithm
         self.digest = digest
@@ -2809,6 +3308,8 @@ class KeyVerifyResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(KeyVerifyResult, self).__init__(**kwargs)
         self.value = None
 
@@ -2816,10 +3317,10 @@ class KeyVerifyResult(msrest.serialization.Model):
 class LifetimeAction(msrest.serialization.Model):
     """Action and its trigger that will be performed by Key Vault over the lifetime of a certificate.
 
-    :param trigger: The condition that will execute the action.
-    :type trigger: ~azure.keyvault.v7_0.models.Trigger
-    :param action: The action that will be executed.
-    :type action: ~azure.keyvault.v7_0.models.Action
+    :ivar trigger: The condition that will execute the action.
+    :vartype trigger: ~azure.keyvault.v7_0.models.Trigger
+    :ivar action: The action that will be executed.
+    :vartype action: ~azure.keyvault.v7_0.models.Action
     """
 
     _attribute_map = {
@@ -2834,6 +3335,12 @@ class LifetimeAction(msrest.serialization.Model):
         action: Optional["Action"] = None,
         **kwargs
     ):
+        """
+        :keyword trigger: The condition that will execute the action.
+        :paramtype trigger: ~azure.keyvault.v7_0.models.Trigger
+        :keyword action: The action that will be executed.
+        :paramtype action: ~azure.keyvault.v7_0.models.Action
+        """
         super(LifetimeAction, self).__init__(**kwargs)
         self.trigger = trigger
         self.action = action
@@ -2842,10 +3349,10 @@ class LifetimeAction(msrest.serialization.Model):
 class OrganizationDetails(msrest.serialization.Model):
     """Details of the organization of the certificate issuer.
 
-    :param id: Id of the organization.
-    :type id: str
-    :param admin_details: Details of the organization administrator.
-    :type admin_details: list[~azure.keyvault.v7_0.models.AdministratorDetails]
+    :ivar id: Id of the organization.
+    :vartype id: str
+    :ivar admin_details: Details of the organization administrator.
+    :vartype admin_details: list[~azure.keyvault.v7_0.models.AdministratorDetails]
     """
 
     _attribute_map = {
@@ -2860,6 +3367,12 @@ class OrganizationDetails(msrest.serialization.Model):
         admin_details: Optional[List["AdministratorDetails"]] = None,
         **kwargs
     ):
+        """
+        :keyword id: Id of the organization.
+        :paramtype id: str
+        :keyword admin_details: Details of the organization administrator.
+        :paramtype admin_details: list[~azure.keyvault.v7_0.models.AdministratorDetails]
+        """
         super(OrganizationDetails, self).__init__(**kwargs)
         self.id = id
         self.admin_details = admin_details
@@ -2886,6 +3399,8 @@ class PendingCertificateSigningRequestResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PendingCertificateSigningRequestResult, self).__init__(**kwargs)
         self.value = None
 
@@ -2895,8 +3410,8 @@ class SasDefinitionAttributes(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param enabled: the enabled state of the object.
-    :type enabled: bool
+    :ivar enabled: the enabled state of the object.
+    :vartype enabled: bool
     :ivar created: Creation time in UTC.
     :vartype created: ~datetime.datetime
     :ivar updated: Last updated time in UTC.
@@ -2930,6 +3445,10 @@ class SasDefinitionAttributes(msrest.serialization.Model):
         enabled: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword enabled: the enabled state of the object.
+        :paramtype enabled: bool
+        """
         super(SasDefinitionAttributes, self).__init__(**kwargs)
         self.enabled = enabled
         self.created = None
@@ -2942,19 +3461,19 @@ class SasDefinitionCreateParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param template_uri: Required. The SAS definition token template signed with an arbitrary key.
+    :ivar template_uri: Required. The SAS definition token template signed with an arbitrary key.
      Tokens created according to the SAS definition will have the same properties as the template.
-    :type template_uri: str
-    :param sas_type: Required. The type of SAS token the SAS definition will create. Possible
-     values include: "account", "service".
-    :type sas_type: str or ~azure.keyvault.v7_0.models.SasTokenType
-    :param validity_period: Required. The validity period of SAS tokens created according to the
-     SAS definition.
-    :type validity_period: str
-    :param sas_definition_attributes: The attributes of the SAS definition.
-    :type sas_definition_attributes: ~azure.keyvault.v7_0.models.SasDefinitionAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :vartype template_uri: str
+    :ivar sas_type: Required. The type of SAS token the SAS definition will create. Possible values
+     include: "account", "service".
+    :vartype sas_type: str or ~azure.keyvault.v7_0.models.SasTokenType
+    :ivar validity_period: Required. The validity period of SAS tokens created according to the SAS
+     definition.
+    :vartype validity_period: str
+    :ivar sas_definition_attributes: The attributes of the SAS definition.
+    :vartype sas_definition_attributes: ~azure.keyvault.v7_0.models.SasDefinitionAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -2981,6 +3500,22 @@ class SasDefinitionCreateParameters(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword template_uri: Required. The SAS definition token template signed with an arbitrary
+         key.  Tokens created according to the SAS definition will have the same properties as the
+         template.
+        :paramtype template_uri: str
+        :keyword sas_type: Required. The type of SAS token the SAS definition will create. Possible
+         values include: "account", "service".
+        :paramtype sas_type: str or ~azure.keyvault.v7_0.models.SasTokenType
+        :keyword validity_period: Required. The validity period of SAS tokens created according to the
+         SAS definition.
+        :paramtype validity_period: str
+        :keyword sas_definition_attributes: The attributes of the SAS definition.
+        :paramtype sas_definition_attributes: ~azure.keyvault.v7_0.models.SasDefinitionAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        """
         super(SasDefinitionCreateParameters, self).__init__(**kwargs)
         self.template_uri = template_uri
         self.sas_type = sas_type
@@ -3015,6 +3550,8 @@ class SasDefinitionListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SasDefinitionListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -3023,19 +3560,19 @@ class SasDefinitionListResult(msrest.serialization.Model):
 class SasDefinitionUpdateParameters(msrest.serialization.Model):
     """The SAS definition update parameters.
 
-    :param template_uri: The SAS definition token template signed with an arbitrary key.  Tokens
+    :ivar template_uri: The SAS definition token template signed with an arbitrary key.  Tokens
      created according to the SAS definition will have the same properties as the template.
-    :type template_uri: str
-    :param sas_type: The type of SAS token the SAS definition will create. Possible values include:
+    :vartype template_uri: str
+    :ivar sas_type: The type of SAS token the SAS definition will create. Possible values include:
      "account", "service".
-    :type sas_type: str or ~azure.keyvault.v7_0.models.SasTokenType
-    :param validity_period: The validity period of SAS tokens created according to the SAS
+    :vartype sas_type: str or ~azure.keyvault.v7_0.models.SasTokenType
+    :ivar validity_period: The validity period of SAS tokens created according to the SAS
      definition.
-    :type validity_period: str
-    :param sas_definition_attributes: The attributes of the SAS definition.
-    :type sas_definition_attributes: ~azure.keyvault.v7_0.models.SasDefinitionAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :vartype validity_period: str
+    :ivar sas_definition_attributes: The attributes of the SAS definition.
+    :vartype sas_definition_attributes: ~azure.keyvault.v7_0.models.SasDefinitionAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -3056,6 +3593,21 @@ class SasDefinitionUpdateParameters(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword template_uri: The SAS definition token template signed with an arbitrary key.  Tokens
+         created according to the SAS definition will have the same properties as the template.
+        :paramtype template_uri: str
+        :keyword sas_type: The type of SAS token the SAS definition will create. Possible values
+         include: "account", "service".
+        :paramtype sas_type: str or ~azure.keyvault.v7_0.models.SasTokenType
+        :keyword validity_period: The validity period of SAS tokens created according to the SAS
+         definition.
+        :paramtype validity_period: str
+        :keyword sas_definition_attributes: The attributes of the SAS definition.
+        :paramtype sas_definition_attributes: ~azure.keyvault.v7_0.models.SasDefinitionAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        """
         super(SasDefinitionUpdateParameters, self).__init__(**kwargs)
         self.template_uri = template_uri
         self.sas_type = sas_type
@@ -3069,12 +3621,12 @@ class SecretAttributes(Attributes):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param enabled: Determines whether the object is enabled.
-    :type enabled: bool
-    :param not_before: Not before date in UTC.
-    :type not_before: ~datetime.datetime
-    :param expires: Expiry date in UTC.
-    :type expires: ~datetime.datetime
+    :ivar enabled: Determines whether the object is enabled.
+    :vartype enabled: bool
+    :ivar not_before: Not before date in UTC.
+    :vartype not_before: ~datetime.datetime
+    :ivar expires: Expiry date in UTC.
+    :vartype expires: ~datetime.datetime
     :ivar created: Creation time in UTC.
     :vartype created: ~datetime.datetime
     :ivar updated: Last updated time in UTC.
@@ -3111,6 +3663,14 @@ class SecretAttributes(Attributes):
         expires: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword enabled: Determines whether the object is enabled.
+        :paramtype enabled: bool
+        :keyword not_before: Not before date in UTC.
+        :paramtype not_before: ~datetime.datetime
+        :keyword expires: Expiry date in UTC.
+        :paramtype expires: ~datetime.datetime
+        """
         super(SecretAttributes, self).__init__(enabled=enabled, not_before=not_before, expires=expires, **kwargs)
         self.recovery_level = None
 
@@ -3141,6 +3701,8 @@ class SecretListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(SecretListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -3149,8 +3711,8 @@ class SecretListResult(msrest.serialization.Model):
 class SecretProperties(msrest.serialization.Model):
     """Properties of the key backing a certificate.
 
-    :param content_type: The media type (MIME type).
-    :type content_type: str
+    :ivar content_type: The media type (MIME type).
+    :vartype content_type: str
     """
 
     _attribute_map = {
@@ -3163,6 +3725,10 @@ class SecretProperties(msrest.serialization.Model):
         content_type: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword content_type: The media type (MIME type).
+        :paramtype content_type: str
+        """
         super(SecretProperties, self).__init__(**kwargs)
         self.content_type = content_type
 
@@ -3172,8 +3738,8 @@ class SecretRestoreParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param secret_bundle_backup: Required. The backup blob associated with a secret bundle.
-    :type secret_bundle_backup: bytes
+    :ivar secret_bundle_backup: Required. The backup blob associated with a secret bundle.
+    :vartype secret_bundle_backup: bytes
     """
 
     _validation = {
@@ -3190,6 +3756,10 @@ class SecretRestoreParameters(msrest.serialization.Model):
         secret_bundle_backup: bytes,
         **kwargs
     ):
+        """
+        :keyword secret_bundle_backup: Required. The backup blob associated with a secret bundle.
+        :paramtype secret_bundle_backup: bytes
+        """
         super(SecretRestoreParameters, self).__init__(**kwargs)
         self.secret_bundle_backup = secret_bundle_backup
 
@@ -3199,14 +3769,14 @@ class SecretSetParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. The value of the secret.
-    :type value: str
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
-    :param content_type: Type of the secret value such as a password.
-    :type content_type: str
-    :param secret_attributes: The secret management attributes.
-    :type secret_attributes: ~azure.keyvault.v7_0.models.SecretAttributes
+    :ivar value: Required. The value of the secret.
+    :vartype value: str
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
+    :ivar content_type: Type of the secret value such as a password.
+    :vartype content_type: str
+    :ivar secret_attributes: The secret management attributes.
+    :vartype secret_attributes: ~azure.keyvault.v7_0.models.SecretAttributes
     """
 
     _validation = {
@@ -3229,6 +3799,16 @@ class SecretSetParameters(msrest.serialization.Model):
         secret_attributes: Optional["SecretAttributes"] = None,
         **kwargs
     ):
+        """
+        :keyword value: Required. The value of the secret.
+        :paramtype value: str
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        :keyword content_type: Type of the secret value such as a password.
+        :paramtype content_type: str
+        :keyword secret_attributes: The secret management attributes.
+        :paramtype secret_attributes: ~azure.keyvault.v7_0.models.SecretAttributes
+        """
         super(SecretSetParameters, self).__init__(**kwargs)
         self.value = value
         self.tags = tags
@@ -3239,12 +3819,12 @@ class SecretSetParameters(msrest.serialization.Model):
 class SecretUpdateParameters(msrest.serialization.Model):
     """The secret update parameters.
 
-    :param content_type: Type of the secret value such as a password.
-    :type content_type: str
-    :param secret_attributes: The secret management attributes.
-    :type secret_attributes: ~azure.keyvault.v7_0.models.SecretAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :ivar content_type: Type of the secret value such as a password.
+    :vartype content_type: str
+    :ivar secret_attributes: The secret management attributes.
+    :vartype secret_attributes: ~azure.keyvault.v7_0.models.SecretAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -3261,6 +3841,14 @@ class SecretUpdateParameters(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword content_type: Type of the secret value such as a password.
+        :paramtype content_type: str
+        :keyword secret_attributes: The secret management attributes.
+        :paramtype secret_attributes: ~azure.keyvault.v7_0.models.SecretAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        """
         super(SecretUpdateParameters, self).__init__(**kwargs)
         self.content_type = content_type
         self.secret_attributes = secret_attributes
@@ -3272,8 +3860,8 @@ class StorageAccountAttributes(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param enabled: the enabled state of the object.
-    :type enabled: bool
+    :ivar enabled: the enabled state of the object.
+    :vartype enabled: bool
     :ivar created: Creation time in UTC.
     :vartype created: ~datetime.datetime
     :ivar updated: Last updated time in UTC.
@@ -3307,6 +3895,10 @@ class StorageAccountAttributes(msrest.serialization.Model):
         enabled: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword enabled: the enabled state of the object.
+        :paramtype enabled: bool
+        """
         super(StorageAccountAttributes, self).__init__(**kwargs)
         self.enabled = enabled
         self.created = None
@@ -3319,19 +3911,19 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param resource_id: Required. Storage account resource id.
-    :type resource_id: str
-    :param active_key_name: Required. Current active storage account key name.
-    :type active_key_name: str
-    :param auto_regenerate_key: Required. whether keyvault should manage the storage account for
-     the user.
-    :type auto_regenerate_key: bool
-    :param regeneration_period: The key regeneration time duration specified in ISO-8601 format.
-    :type regeneration_period: str
-    :param storage_account_attributes: The attributes of the storage account.
-    :type storage_account_attributes: ~azure.keyvault.v7_0.models.StorageAccountAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :ivar resource_id: Required. Storage account resource id.
+    :vartype resource_id: str
+    :ivar active_key_name: Required. Current active storage account key name.
+    :vartype active_key_name: str
+    :ivar auto_regenerate_key: Required. whether keyvault should manage the storage account for the
+     user.
+    :vartype auto_regenerate_key: bool
+    :ivar regeneration_period: The key regeneration time duration specified in ISO-8601 format.
+    :vartype regeneration_period: str
+    :ivar storage_account_attributes: The attributes of the storage account.
+    :vartype storage_account_attributes: ~azure.keyvault.v7_0.models.StorageAccountAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -3360,6 +3952,21 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword resource_id: Required. Storage account resource id.
+        :paramtype resource_id: str
+        :keyword active_key_name: Required. Current active storage account key name.
+        :paramtype active_key_name: str
+        :keyword auto_regenerate_key: Required. whether keyvault should manage the storage account for
+         the user.
+        :paramtype auto_regenerate_key: bool
+        :keyword regeneration_period: The key regeneration time duration specified in ISO-8601 format.
+        :paramtype regeneration_period: str
+        :keyword storage_account_attributes: The attributes of the storage account.
+        :paramtype storage_account_attributes: ~azure.keyvault.v7_0.models.StorageAccountAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        """
         super(StorageAccountCreateParameters, self).__init__(**kwargs)
         self.resource_id = resource_id
         self.active_key_name = active_key_name
@@ -3374,8 +3981,8 @@ class StorageAccountRegenerteKeyParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key_name: Required. The storage account key name.
-    :type key_name: str
+    :ivar key_name: Required. The storage account key name.
+    :vartype key_name: str
     """
 
     _validation = {
@@ -3392,6 +3999,10 @@ class StorageAccountRegenerteKeyParameters(msrest.serialization.Model):
         key_name: str,
         **kwargs
     ):
+        """
+        :keyword key_name: Required. The storage account key name.
+        :paramtype key_name: str
+        """
         super(StorageAccountRegenerteKeyParameters, self).__init__(**kwargs)
         self.key_name = key_name
 
@@ -3399,16 +4010,16 @@ class StorageAccountRegenerteKeyParameters(msrest.serialization.Model):
 class StorageAccountUpdateParameters(msrest.serialization.Model):
     """The storage account update parameters.
 
-    :param active_key_name: The current active storage account key name.
-    :type active_key_name: str
-    :param auto_regenerate_key: whether keyvault should manage the storage account for the user.
-    :type auto_regenerate_key: bool
-    :param regeneration_period: The key regeneration time duration specified in ISO-8601 format.
-    :type regeneration_period: str
-    :param storage_account_attributes: The attributes of the storage account.
-    :type storage_account_attributes: ~azure.keyvault.v7_0.models.StorageAccountAttributes
-    :param tags: A set of tags. Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :ivar active_key_name: The current active storage account key name.
+    :vartype active_key_name: str
+    :ivar auto_regenerate_key: whether keyvault should manage the storage account for the user.
+    :vartype auto_regenerate_key: bool
+    :ivar regeneration_period: The key regeneration time duration specified in ISO-8601 format.
+    :vartype regeneration_period: str
+    :ivar storage_account_attributes: The attributes of the storage account.
+    :vartype storage_account_attributes: ~azure.keyvault.v7_0.models.StorageAccountAttributes
+    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -3429,6 +4040,18 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword active_key_name: The current active storage account key name.
+        :paramtype active_key_name: str
+        :keyword auto_regenerate_key: whether keyvault should manage the storage account for the user.
+        :paramtype auto_regenerate_key: bool
+        :keyword regeneration_period: The key regeneration time duration specified in ISO-8601 format.
+        :paramtype regeneration_period: str
+        :keyword storage_account_attributes: The attributes of the storage account.
+        :paramtype storage_account_attributes: ~azure.keyvault.v7_0.models.StorageAccountAttributes
+        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        """
         super(StorageAccountUpdateParameters, self).__init__(**kwargs)
         self.active_key_name = active_key_name
         self.auto_regenerate_key = auto_regenerate_key
@@ -3463,6 +4086,8 @@ class StorageListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(StorageListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -3473,8 +4098,8 @@ class StorageRestoreParameters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param storage_bundle_backup: Required. The backup blob associated with a storage account.
-    :type storage_bundle_backup: bytes
+    :ivar storage_bundle_backup: Required. The backup blob associated with a storage account.
+    :vartype storage_bundle_backup: bytes
     """
 
     _validation = {
@@ -3491,6 +4116,10 @@ class StorageRestoreParameters(msrest.serialization.Model):
         storage_bundle_backup: bytes,
         **kwargs
     ):
+        """
+        :keyword storage_bundle_backup: Required. The backup blob associated with a storage account.
+        :paramtype storage_bundle_backup: bytes
+        """
         super(StorageRestoreParameters, self).__init__(**kwargs)
         self.storage_bundle_backup = storage_bundle_backup
 
@@ -3498,12 +4127,12 @@ class StorageRestoreParameters(msrest.serialization.Model):
 class SubjectAlternativeNames(msrest.serialization.Model):
     """The subject alternate names of a X509 object.
 
-    :param emails: Email addresses.
-    :type emails: list[str]
-    :param dns_names: Domain names.
-    :type dns_names: list[str]
-    :param upns: User principal names.
-    :type upns: list[str]
+    :ivar emails: Email addresses.
+    :vartype emails: list[str]
+    :ivar dns_names: Domain names.
+    :vartype dns_names: list[str]
+    :ivar upns: User principal names.
+    :vartype upns: list[str]
     """
 
     _attribute_map = {
@@ -3520,6 +4149,14 @@ class SubjectAlternativeNames(msrest.serialization.Model):
         upns: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword emails: Email addresses.
+        :paramtype emails: list[str]
+        :keyword dns_names: Domain names.
+        :paramtype dns_names: list[str]
+        :keyword upns: User principal names.
+        :paramtype upns: list[str]
+        """
         super(SubjectAlternativeNames, self).__init__(**kwargs)
         self.emails = emails
         self.dns_names = dns_names
@@ -3529,13 +4166,13 @@ class SubjectAlternativeNames(msrest.serialization.Model):
 class Trigger(msrest.serialization.Model):
     """A condition to be satisfied for an action to be executed.
 
-    :param lifetime_percentage: Percentage of lifetime at which to trigger. Value should be between
+    :ivar lifetime_percentage: Percentage of lifetime at which to trigger. Value should be between
      1 and 99.
-    :type lifetime_percentage: int
-    :param days_before_expiry: Days before expiry to attempt renewal. Value should be between 1 and
+    :vartype lifetime_percentage: int
+    :ivar days_before_expiry: Days before expiry to attempt renewal. Value should be between 1 and
      validity_in_months multiplied by 27. If validity_in_months is 36, then value should be between
      1 and 972 (36 * 27).
-    :type days_before_expiry: int
+    :vartype days_before_expiry: int
     """
 
     _validation = {
@@ -3554,6 +4191,15 @@ class Trigger(msrest.serialization.Model):
         days_before_expiry: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword lifetime_percentage: Percentage of lifetime at which to trigger. Value should be
+         between 1 and 99.
+        :paramtype lifetime_percentage: int
+        :keyword days_before_expiry: Days before expiry to attempt renewal. Value should be between 1
+         and validity_in_months multiplied by 27. If validity_in_months is 36, then value should be
+         between 1 and 972 (36 * 27).
+        :paramtype days_before_expiry: int
+        """
         super(Trigger, self).__init__(**kwargs)
         self.lifetime_percentage = lifetime_percentage
         self.days_before_expiry = days_before_expiry
@@ -3562,16 +4208,16 @@ class Trigger(msrest.serialization.Model):
 class X509CertificateProperties(msrest.serialization.Model):
     """Properties of the X509 component of a certificate.
 
-    :param subject: The subject name. Should be a valid X509 distinguished Name.
-    :type subject: str
-    :param ekus: The enhanced key usage.
-    :type ekus: list[str]
-    :param subject_alternative_names: The subject alternative names.
-    :type subject_alternative_names: ~azure.keyvault.v7_0.models.SubjectAlternativeNames
-    :param key_usage: List of key usages.
-    :type key_usage: list[str or ~azure.keyvault.v7_0.models.KeyUsageType]
-    :param validity_in_months: The duration that the certificate is valid in months.
-    :type validity_in_months: int
+    :ivar subject: The subject name. Should be a valid X509 distinguished Name.
+    :vartype subject: str
+    :ivar ekus: The enhanced key usage.
+    :vartype ekus: list[str]
+    :ivar subject_alternative_names: The subject alternative names.
+    :vartype subject_alternative_names: ~azure.keyvault.v7_0.models.SubjectAlternativeNames
+    :ivar key_usage: List of key usages.
+    :vartype key_usage: list[str or ~azure.keyvault.v7_0.models.KeyUsageType]
+    :ivar validity_in_months: The duration that the certificate is valid in months.
+    :vartype validity_in_months: int
     """
 
     _validation = {
@@ -3596,6 +4242,18 @@ class X509CertificateProperties(msrest.serialization.Model):
         validity_in_months: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword subject: The subject name. Should be a valid X509 distinguished Name.
+        :paramtype subject: str
+        :keyword ekus: The enhanced key usage.
+        :paramtype ekus: list[str]
+        :keyword subject_alternative_names: The subject alternative names.
+        :paramtype subject_alternative_names: ~azure.keyvault.v7_0.models.SubjectAlternativeNames
+        :keyword key_usage: List of key usages.
+        :paramtype key_usage: list[str or ~azure.keyvault.v7_0.models.KeyUsageType]
+        :keyword validity_in_months: The duration that the certificate is valid in months.
+        :paramtype validity_in_months: int
+        """
         super(X509CertificateProperties, self).__init__(**kwargs)
         self.subject = subject
         self.ekus = ekus

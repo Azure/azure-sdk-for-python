@@ -1,5 +1,11 @@
 # Release History
 
+## 2.1.0 (2022-01-25)
+
+**Features**
+
+  - Model OperationLive has a new parameter is_data_action
+
 ## 2.0.0 (2021-12-12)
 
 **Features**

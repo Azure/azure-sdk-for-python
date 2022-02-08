@@ -9,8 +9,6 @@
 Examples to show sending events with different options to an Event Hub partition.
 """
 
-# pylint: disable=C0111
-
 import time
 import os
 from azure.eventhub import EventHubProducerClient, EventData

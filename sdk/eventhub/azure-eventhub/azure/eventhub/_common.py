@@ -109,8 +109,10 @@ class EventData(object):
 
     """
 
-    def __init__(self, body=None):
-        # type: (Union[str, bytes, List[AnyStr]]) -> None
+    def __init__(
+        self,
+        body: Optional[Union[str, bytes, List[AnyStr]]] = None,
+    ) -> None:
         self._last_enqueued_event_properties = {}  # type: Dict[str, Any]
         self._sys_properties = None  # type: Optional[Dict[bytes, Any]]
         if body is None:
@@ -386,7 +388,7 @@ class EventData(object):
 
         :param encoding: The encoding to use for decoding event data.
          Default is 'UTF-8'
-        :rtype: dict
+        :rtype: Dict[str, Any]
         """
         data_str = self.body_as_str(encoding=encoding)
         try:

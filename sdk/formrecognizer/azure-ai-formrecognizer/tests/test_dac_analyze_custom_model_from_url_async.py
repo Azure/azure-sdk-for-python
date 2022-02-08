@@ -10,7 +10,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import set_bodiless_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient, DocumentModelAdministrationClient
-from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2022_01_30_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer import AnalyzeResult
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
@@ -18,18 +18,21 @@ from preparers import GlobalClientPreparer as _GlobalClientPreparer
 
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
-
 class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
-    async def test_document_analysis_none_model(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
+    async def test_document_analysis_none_model(self, **kwargs):
+        formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
+        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):
             async with client:
                 await client.begin_analyze_document_from_url(model=None, document_url="https://badurl.jpg")
 
     @FormRecognizerPreparer()
-    async def test_document_analysis_empty_model_id(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
+    async def test_document_analysis_empty_model_id(self, **kwargs):
+        formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
+        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
         with pytest.raises(ValueError):
             async with client:
@@ -51,7 +54,7 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(document)
 
         async with client:
-            poller = await client.begin_build_model(formrecognizer_selection_mark_storage_container_sas_url)
+            poller = await client.begin_build_model(formrecognizer_selection_mark_storage_container_sas_url, "template")
             model = await poller.result()
 
 
@@ -80,6 +83,8 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+        return {}
+
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -97,7 +102,7 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
 
         async with client:
             build_poller = await client.begin_build_model(
-                formrecognizer_table_variable_rows_container_sas_url)
+                formrecognizer_table_variable_rows_container_sas_url, "template")
             model = await build_poller.result()
 
             poller = await da_client.begin_analyze_document_from_url(
@@ -125,6 +130,8 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+        return {}
+
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -141,7 +148,7 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
             responses.append(document)
 
         async with client:
-            build_poller = await client.begin_build_model(formrecognizer_table_fixed_rows_container_sas_url)
+            build_poller = await client.begin_build_model(formrecognizer_table_fixed_rows_container_sas_url, "template")
             model = await build_poller.result()
 
             poller = await da_client.begin_analyze_document_from_url(
@@ -168,3 +175,5 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
 
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
+
+        return {}
