@@ -37,13 +37,10 @@ def main(generate_input, generate_output):
         folder_name = package["path"][0]
         dist_path = Path(sdk_folder, folder_name, package_name, "dist")
         package["artifacts"] = [str(dist_path / package_file) for package_file in os.listdir(dist_path)]
-        # Installation package
-        package["installInstructions"] = {
-            "full": "You can install the use using pip install of the artificats.",
-            "lite": f"pip install {package_name}",
-        }
+        package["result"] = "succeeded"
         # to distinguish with track1
         package["packageName"] = "track2_" + package["packageName"]
+        package["packageFolder"] = package["path"][0]
         result["packages"].append(package)
 
     with open(generate_output, "w") as writer:
