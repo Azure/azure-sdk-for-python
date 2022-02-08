@@ -914,6 +914,22 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             kwargs.update({"opinion_mining": show_opinion_mining})
 
         try:
+            from ._generated.v2022_02_01_preview.models import AnalyzeTextSentimentAnalysisInput, SentimentAnalysisTaskParameters
+            if self._api_version == "2022-02-01-preview":
+                return self._client.analyze_text(
+                    body=AnalyzeTextSentimentAnalysisInput(
+                        analysis_input={"documents": docs},
+                        parameters=SentimentAnalysisTaskParameters(
+                            logging_opt_out=kwargs.pop("logging_opt_out", None),
+                            model_version=model_version,
+                            string_index_type=kwargs.pop("string_index_type", None),
+                            opinion_mining=kwargs.pop("opinion_mining", None),
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", sentiment_result),
+                    **kwargs
+                )
             return self._client.sentiment(
                 documents=docs,
                 model_version=model_version,
