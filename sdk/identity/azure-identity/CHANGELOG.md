@@ -8,10 +8,6 @@
 - Added `resource_id` support for user-assigned managed identity  #22329
 - Added `ClientAssertionCredential` support  #22328
 
-### Breaking Changes
-
-### Bugs Fixed
-
 ### Other Changes
 
 - Python 2.7 is no longer supported. Please use Python version 3.6 or later.
