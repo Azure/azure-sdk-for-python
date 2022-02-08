@@ -791,6 +791,20 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             kwargs["logging_opt_out"] = disable_service_logs
 
         try:
+            from ._generated.v2022_02_01_preview.models import AnalyzeTextKeyPhraseExtractionInput, KeyPhraseTaskParameters
+            if self._api_version == "2022-02-01-preview":
+                return self._client.analyze_text(
+                    body=AnalyzeTextKeyPhraseExtractionInput(
+                        analysis_input={"documents": docs},
+                        parameters=KeyPhraseTaskParameters(
+                            logging_opt_out=kwargs.pop("logging_opt_out", None),
+                            model_version=model_version,
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", key_phrases_result),
+                    **kwargs
+                )
             return self._client.key_phrases(
                 documents=docs,
                 model_version=model_version,
