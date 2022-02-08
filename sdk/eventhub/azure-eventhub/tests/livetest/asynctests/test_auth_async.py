@@ -45,7 +45,6 @@ async def test_client_secret_credential_async(live_eventhub):
     assert on_event.called is True
     assert on_event.partition_id == "0"
     assert list(on_event.event.body)[0] == 'A single message'.encode('utf-8')
-    await credential.close()
 
 
 @pytest.mark.liveTest
@@ -75,7 +74,7 @@ async def test_client_sas_credential_async(live_eventhub):
         await producer_client.send_batch(batch)
 
     # Finally let's do it with SAS token + conn str
-    token_conn_str = "Endpoint=sb://{}/;SharedAccessSignature={};".format(hostname, token)
+    token_conn_str = "Endpoint=sb://{}/;SharedAccessSignature={};".format(hostname, token.decode())
     conn_str_producer_client = EventHubProducerClient.from_connection_string(token_conn_str,
                                                                              eventhub_name=live_eventhub['event_hub'])
 
@@ -99,7 +98,7 @@ async def test_client_azure_sas_credential_async(live_eventhub):
 
     credential = EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
     auth_uri = "sb://{}/{}".format(hostname, live_eventhub['event_hub'])
-    token = (await credential.get_token(auth_uri)).token
+    token = (await credential.get_token(auth_uri)).token.decode()
     producer_client = EventHubProducerClient(fully_qualified_namespace=hostname,
                                              eventhub_name=live_eventhub['event_hub'],
                                              credential=AzureSasCredential(token))

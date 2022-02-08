@@ -178,7 +178,10 @@ class CBSAuthenticator(object):
         self._expires_on = access_token.expires_on
         expires_in = self._expires_on - int(utc_now().timestamp())
         self._refresh_window = int(float(expires_in) * 0.1)
-        self._token = access_token.token
+        try:
+            self._token = access_token.token.decode()
+        except AttributeError:
+            self._token = access_token.token
         self._token_put_time = int(utc_now().timestamp())
         await self._put_token(self._token, self._auth.token_type, self._auth.audience, utc_from_timestamp(self._expires_on))
 
