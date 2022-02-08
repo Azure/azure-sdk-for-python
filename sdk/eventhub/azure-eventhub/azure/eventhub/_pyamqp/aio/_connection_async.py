@@ -451,7 +451,7 @@ class Connection(object):
                 )
                 return
             try:
-                tasks = [asyncio.create_task(self._listen_one_frame(**kwargs)) for _ in range(batch)]
+                tasks = [asyncio.ensure_future(self._listen_one_frame(**kwargs)) for _ in range(batch)]
                 await asyncio.gather(*tasks)
             except ValueError:
                 for task in tasks:

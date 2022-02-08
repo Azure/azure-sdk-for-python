@@ -100,7 +100,7 @@ class Session(object):
 
         futures = []
         for link in self.links.values():
-            futures.append(asyncio.create_task(link._on_session_state_change()))
+            futures.append(asyncio.ensure_future(link._on_session_state_change()))
         await asyncio.gather(*futures)
 
     async def _on_connection_state_change(self):
@@ -297,7 +297,7 @@ class Session(object):
     async def _incoming_disposition(self, frame):
         futures = []
         for link in self._input_handles.values():
-            asyncio.create_task(link._incoming_disposition(frame))
+            asyncio.ensure_future(link._incoming_disposition(frame))
         await asyncio.gather(*futures)
 
     async def _outgoing_detach(self, frame):
