@@ -422,6 +422,23 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             kwargs["logging_opt_out"] = disable_service_logs
 
         try:
+            from ._generated.v2022_02_01_preview.models import AnalyzeTextPiiEntitiesRecognitionInput, PiiTaskParameters
+            if self._api_version == "2022-02-01-preview":
+                return self._client.analyze_text(
+                    body=AnalyzeTextPiiEntitiesRecognitionInput(
+                        analysis_input={"documents": docs},
+                        parameters=PiiTaskParameters(
+                            logging_opt_out=kwargs.pop("logging_opt_out", None),
+                            model_version=model_version,
+                            domain=domain_filter,
+                            pii_categories=categories_filter,
+                            string_index_type=kwargs.pop("string_index_type", None)
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", pii_entities_result),
+                    **kwargs
+                )
             return self._client.entities_recognition_pii(
                 documents=docs,
                 model_version=model_version,
