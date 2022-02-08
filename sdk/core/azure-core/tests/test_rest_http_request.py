@@ -355,7 +355,7 @@ def test_request_policies_chain(port):
             # modify header to know we entered this callback
             request.http_request.headers = {
                 "x-ms-date": "Thu, 14 Jun 2018 16:46:54 GMT",
-                "Authorization": "SharedKey account:G4jjBXA7LI/RnWKIOQ8i9xH4p76pAQ+4Fs4R1VxasaE=",
+                "Authorization": "SharedKey account:G4jjBXA7LI/RnWKIOQ8i9xH4p76pAQ+4Fs4R1VxasaE=", # fake key suppressed in credscan
                 "Content-Length": "0",
             }
 
@@ -367,7 +367,7 @@ def test_request_policies_chain(port):
             expected = (
                 b'DELETE http://localhost:5000/container0/blob0 HTTP/1.1\r\n'
                 b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
-                b'Authorization: SharedKey account:G4jjBXA7LI/RnWKIOQ8i9xH4p76pAQ+4Fs4R1VxasaE=\r\n'
+                b'Authorization: SharedKey account:G4jjBXA7LI/RnWKIOQ8i9xH4p76pAQ+4Fs4R1VxasaE=\r\n' # fake key suppressed in credscan
                 b'Content-Length: 0\r\n'
                 b'\r\n'
             )
