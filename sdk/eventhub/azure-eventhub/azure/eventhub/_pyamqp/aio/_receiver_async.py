@@ -73,11 +73,15 @@ class ReceiverLink(Link):
         if not self.received_delivery_id and not self._received_payload:
             pass  # TODO: delivery error
         if self._received_payload or frame[5]:
-            raise NotImplementedError()  # TODO
+            self._received_payload.extend(frame[11])
         if not frame[5]:
-            message = decode_payload(frame[11])
+            if self._received_payload:
+                message = decode_payload(memoryview(self._received_payload))
+                self._received_payload = bytearray()
+            else:
+                message = decode_payload(frame[11])
             delivery_state = await self._process_incoming_message(frame, message)
-            if not frame[4] and delivery_state:
+            if not frame[4] and delivery_state:  # settled
                 await self._outgoing_disposition(frame[1], delivery_state)
         if self.current_link_credit <= 0:
             self.current_link_credit = self.link_credit

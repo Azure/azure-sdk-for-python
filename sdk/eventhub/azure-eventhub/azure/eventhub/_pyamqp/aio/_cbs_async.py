@@ -5,18 +5,19 @@
 #-------------------------------------------------------------------------
 
 import logging
+import asyncio
 from datetime import datetime
 
-from .utils import utc_now, utc_from_timestamp
-from .management_link import ManagementLink
-from .message import Message, Properties
-from .error import (
+from ._management_link_async import ManagementLink
+from ..utils import utc_now, utc_from_timestamp
+from ..message import Message, Properties
+from ..error import (
     AuthenticationException,
-    ErrorCondition,
     TokenAuthFailure,
-    TokenExpired
+    TokenExpired,
+    ErrorCondition
 )
-from .constants import (
+from ..constants import (
     CbsState,
     CbsAuthState,
     CBS_PUT_TOKEN,
@@ -28,22 +29,12 @@ from .constants import (
     ManagementOpenResult,
     DEFAULT_AUTH_TIMEOUT
 )
+from ..cbs import (
+    check_put_timeout_status,
+    check_expiration_and_refresh_status
+)
 
 _LOGGER = logging.getLogger(__name__)
-
-
-def check_expiration_and_refresh_status(expires_on, refresh_window):
-    seconds_since_epoc = int(utc_now().timestamp())
-    is_expired = seconds_since_epoc >= expires_on
-    is_refresh_required = (expires_on - seconds_since_epoc) <= refresh_window
-    return is_expired, is_refresh_required
-
-
-def check_put_timeout_status(auth_timeout, token_put_time):
-    if auth_timeout > 0:
-        return (int(utc_now().timestamp()) - token_put_time) >= auth_timeout
-    else:
-        return False
 
 
 class CBSAuthenticator(object):
@@ -62,10 +53,6 @@ class CBSAuthenticator(object):
             status_code_field=b'status-code',
             status_description_field=b'status-description'
         )  # type: ManagementLink
-
-        if not auth.get_token or not callable(auth.get_token):
-            raise ValueError("get_token must be a callable object.")
-
         self._auth = auth
         self._encoding = 'UTF-8'
         self._auth_timeout = kwargs.pop('auth_timeout', DEFAULT_AUTH_TIMEOUT)
@@ -80,7 +67,7 @@ class CBSAuthenticator(object):
         self.state = CbsState.CLOSED
         self.auth_state = CbsAuthState.IDLE
 
-    def _put_token(self, token, token_type, audience, expires_on=None):
+    async def _put_token(self, token, token_type, audience, expires_on=None):
         # type: (str, str, str, datetime) -> None
         message = Message(
             value=token,
@@ -92,7 +79,7 @@ class CBSAuthenticator(object):
                 CBS_EXPIRATION: expires_on
             }
         )
-        self._mgmt_link.execute_operation(
+        await self._mgmt_link.execute_operation(
             message,
             self._on_execute_operation_complete,
             timeout=self._auth_timeout,
@@ -101,9 +88,9 @@ class CBSAuthenticator(object):
         )
         self._mgmt_link.next_message_id += 1
 
-    def _on_amqp_management_open_complete(self, management_open_result):
+    async def _on_amqp_management_open_complete(self, management_open_result):
         if self.state in (CbsState.CLOSED, CbsState.ERROR):
-            _LOGGER.debug("CSB with status: %r encounters unexpected AMQP management open complete.", self.state)
+            _LOGGER.debug("Unexpected AMQP management open complete.")
         elif self.state == CbsState.OPEN:
             self.state = CbsState.ERROR
             _LOGGER.info(
@@ -115,19 +102,21 @@ class CBSAuthenticator(object):
             _LOGGER.info("CBS for connection %r completed opening with status: %r",
                          self._connection._container_id, management_open_result)
 
-    def _on_amqp_management_error(self):
+    async def _on_amqp_management_error(self):
+        # TODO: review the logging information, adjust level/information
+        #  this should be applied to overall logging
         if self.state == CbsState.CLOSED:
-            _LOGGER.info("Unexpected AMQP error in CLOSED state.")
+            _LOGGER.debug("Unexpected AMQP error in CLOSED state.")
         elif self.state == CbsState.OPENING:
             self.state = CbsState.ERROR
-            self._mgmt_link.close()
+            await self._mgmt_link.close()
             _LOGGER.info("CBS for connection %r failed to open with status: %r",
                          self._connection._container_id, ManagementOpenResult.ERROR)
         elif self.state == CbsState.OPEN:
             self.state = CbsState.ERROR
             _LOGGER.info("CBS error occurred on connection %r.", self._connection._container_id)
 
-    def _on_execute_operation_complete(
+    async def _on_execute_operation_complete(
             self,
             execute_operation_result,
             status_code,
@@ -150,7 +139,7 @@ class CBSAuthenticator(object):
         elif execute_operation_result == ManagementExecuteOperationResult.FAILED_BAD_STATUS:
             self.auth_state = CbsAuthState.ERROR
 
-    def _update_status(self):
+    async def _update_status(self):
         if self.state == CbsAuthState.OK or self.state == CbsAuthState.REFRESH_REQUIRED:
             is_expired, is_refresh_required = check_expiration_and_refresh_status(self._expires_on, self._refresh_window)
             if is_expired:
@@ -162,7 +151,7 @@ class CBSAuthenticator(object):
             if put_timeout:
                 self.state = CbsAuthState.TIMEOUT
 
-    def _cbs_link_ready(self):
+    async def _cbs_link_ready(self):
         if self.state == CbsState.OPEN:
             return True
         if self.state != CbsState.OPEN:
@@ -175,17 +164,17 @@ class CBSAuthenticator(object):
                 description="CBS authentication link is in broken status, please recreate the cbs link."
             )
 
-    def open(self):
+    async def open(self):
         self.state = CbsState.OPENING
-        self._mgmt_link.open()
+        await self._mgmt_link.open()
 
-    def close(self):
-        self._mgmt_link.close()
+    async def close(self):
+        await self._mgmt_link.close()
         self.state = CbsState.CLOSED
 
-    def update_token(self):
+    async def update_token(self):
         self.auth_state = CbsAuthState.IN_PROGRESS
-        access_token = self._auth.get_token()
+        access_token = await self._auth.get_token()
         self._expires_on = access_token.expires_on
         expires_in = self._expires_on - int(utc_now().timestamp())
         self._refresh_window = int(float(expires_in) * 0.1)
@@ -194,14 +183,14 @@ class CBSAuthenticator(object):
         except AttributeError:
             self._token = access_token.token
         self._token_put_time = int(utc_now().timestamp())
-        self._put_token(self._token, self._auth.token_type, self._auth.audience, utc_from_timestamp(self._expires_on))
+        await self._put_token(self._token, self._auth.token_type, self._auth.audience, utc_from_timestamp(self._expires_on))
 
-    def handle_token(self):
-        if not self._cbs_link_ready():
+    async def handle_token(self):
+        if not (await self._cbs_link_ready()):
             return False
-        self._update_status()
+        await self._update_status()
         if self.auth_state == CbsAuthState.IDLE:
-            self.update_token()
+            await self.update_token()
             return False
         elif self.auth_state == CbsAuthState.IN_PROGRESS:
             return False
@@ -210,7 +199,7 @@ class CBSAuthenticator(object):
         elif self.auth_state == CbsAuthState.REFRESH_REQUIRED:
             _LOGGER.info("Token on connection %r will expire soon - attempting to refresh.",
                          self._connection._container_id)
-            self.update_token()
+            await self.update_token()
             return False
         elif self.auth_state == CbsAuthState.FAILURE:
             raise AuthenticationException(
