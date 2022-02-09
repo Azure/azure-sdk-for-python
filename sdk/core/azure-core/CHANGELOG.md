@@ -17,7 +17,7 @@
 - Limiting `final-state-via` scope to POST until consuming SDKs has been fixed to use this option properly on PUT.  #22989
 
 ## 1.22.0 (2022-02-03)
-_[**YANKED**]_
+_[**This version is deprecated.**]_
 
 ### Features Added
 
