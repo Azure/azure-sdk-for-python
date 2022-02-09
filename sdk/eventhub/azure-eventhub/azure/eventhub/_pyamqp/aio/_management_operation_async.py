@@ -8,16 +8,16 @@ import uuid
 import time
 from functools import partial
 
-from .management_link import ManagementLink
-from .message import Message
-from .error import (
+from ._management_link_async import ManagementLink
+from ..message import Message
+from ..error import (
     AMQPException,
     AMQPConnectionError,
     AMQPLinkError,
     ErrorCondition
 )
 
-from .constants import (
+from ..constants import (
     ManagementOpenResult,
     ManagementExecuteOperationResult
 )
@@ -40,7 +40,7 @@ class ManagementOperation(object):
         self._responses = {}
         self._mgmt_error = None
 
-    def _on_amqp_management_open_complete(self, result):
+    async def _on_amqp_management_open_complete(self, result):
         """Callback run when the send/receive links are open and ready
         to process messages.
 
@@ -49,12 +49,12 @@ class ManagementOperation(object):
         """
         self._mgmt_link_open_status = result
 
-    def _on_amqp_management_error(self):
+    async def _on_amqp_management_error(self):
         """Callback run if an error occurs in the send/receive links."""
         # TODO: This probably shouldn't be ValueError
         self._mgmt_error = ValueError("Management Operation error occurred.")
 
-    def _on_execute_operation_complete(
+    async def _on_execute_operation_complete(
         self,
         operation_id,
         operation_result,
@@ -84,13 +84,13 @@ class ManagementOperation(object):
         else:
             self._responses[operation_id] = (status_code, status_description, raw_message)
 
-    def execute(self, message, operation=None, operation_type=None, timeout=0):
+    async def execute(self, message, operation=None, operation_type=None, timeout=0):
         start_time = time.time()
         operation_id = str(uuid.uuid4())
         self._responses[operation_id] = None
         self._mgmt_error = None
 
-        self._mgmt_link.execute_operation(
+        await self._mgmt_link.execute_operation(
             message,
             partial(self._on_execute_operation_complete, operation_id),
             timeout=timeout,
@@ -103,7 +103,7 @@ class ManagementOperation(object):
                 now = time.time()
                 if (now - start_time) >= timeout:
                     raise TimeoutError("Failed to receive mgmt response in {}ms".format(timeout))
-            self._connection.listen()
+            await self._connection.listen()
 
         if self._mgmt_error:
             self._responses.pop(operation_id)
@@ -112,11 +112,11 @@ class ManagementOperation(object):
         response = self._responses.pop(operation_id)
         return response
 
-    def open(self):
+    async def open(self):
         self._mgmt_link_open_status = ManagementOpenResult.OPENING
-        self._mgmt_link.open()
+        await self._mgmt_link.open()
 
-    def ready(self):
+    async def ready(self):
         try:
             raise self._mgmt_error
         except TypeError:
@@ -134,5 +134,5 @@ class ManagementOperation(object):
             info=None
         )
 
-    def close(self):
-        self._mgmt_link.close()
+    async def close(self):
+        await self._mgmt_link.close()

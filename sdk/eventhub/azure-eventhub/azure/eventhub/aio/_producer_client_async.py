@@ -6,18 +6,16 @@ import asyncio
 import logging
 
 from typing import Any, Union, TYPE_CHECKING, List, Optional, Dict, cast
-from uamqp import constants
 
 from ..exceptions import ConnectError, EventHubError
 from ..amqp import AmqpAnnotatedMessage
 from ._client_base_async import ClientBaseAsync
 from ._producer_async import EventHubProducer
-from .._constants import ALL_PARTITIONS
+from .._constants import ALL_PARTITIONS, MAX_MESSAGE_LENGTH_BYTES
 from .._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
-    from ._client_base_async import CredentialTypes
-    from uamqp.constants import TransportType  # pylint: disable=ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential
 
 SendEventTypes = List[Union[EventData, AmqpAnnotatedMessage]]
 
@@ -129,8 +127,8 @@ class EventHubProducerClient(ClientBaseAsync):   # pylint: disable=client-accept
                 self._max_message_size_on_link = (
                     cast(  # type: ignore
                         EventHubProducer, self._producers[ALL_PARTITIONS]
-                    )._handler.message_handler._link.peer_max_message_size
-                    or constants.MAX_MESSAGE_LENGTH_BYTES
+                    )._handler._link.remote_max_message_size
+                    or MAX_MESSAGE_LENGTH_BYTES
                 )
 
     async def _start_producer(

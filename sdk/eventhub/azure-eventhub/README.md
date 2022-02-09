@@ -20,7 +20,7 @@ The Azure Event Hubs client library allows for publishing and consuming of Azure
 _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 _This version is our first efforts to build an Azure Event Hubs client library based on pure python implemented AMQP stack.
-Features like async support or AmqpOverWebsocket are unavailable for this version which will be added back in future previews as we work towards a stable release.
+Features like AmqpOverWebsocket or `custom_endpoint_address` are unavailable for this version which will be added back in future previews as we work towards a stable release.
 Please refer to the changelog for more details._
 
 

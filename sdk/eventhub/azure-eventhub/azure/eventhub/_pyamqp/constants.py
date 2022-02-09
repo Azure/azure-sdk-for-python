@@ -143,18 +143,18 @@ class SessionState(Enum):
 
 class SessionTransferState(Enum):
 
-    Okay = 0
-    Error = 1
-    Busy = 2
+    OKAY = 0
+    ERROR = 1
+    BUSY = 2
 
 
 class LinkDeliverySettleReason(Enum):
 
-    DispositionReceived = 0
-    Settled = 1
-    NotDelivered = 2
-    Timeout = 3
-    Cancelled = 4
+    DISPOSITION_RECEIVED = 0
+    SETTLED = 1
+    NOT_DELIVERED = 2
+    TIMEOUT = 3
+    CANCELLED = 4
 
 
 class LinkState(Enum):
@@ -201,14 +201,14 @@ class CbsState(Enum):
 
 
 class CbsAuthState(Enum):
-    Ok = 0
-    Idle = 1
-    InProgress = 2
-    Timeout = 3
-    RefreshRequired = 4
-    Expired = 5
-    Error = 6  # Put token rejected or complete but fail authentication
-    Failure = 7  # Fail to open cbs links
+    OK = 0
+    IDLE = 1
+    IN_PROGRESS = 2
+    TIMEOUT = 3
+    REFRESH_REQUIRED = 4
+    EXPIRED = 5
+    ERROR = 6  # Put token rejected or complete but fail authentication
+    FAILURE = 7  # Fail to open cbs links
 
 
 class Role(object):

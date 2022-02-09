@@ -1,6 +1,17 @@
 # Release History
 
-## 5.8.0a1 (Unreleased)
+## 5.8.0a2 (2022-02-09)
+
+### Features Added
+
+- Added support for async `EventHubProducerClient` and `EventHubConsumerClient`.
+
+### Breaking changes
+
+- The following features have been temporarily pulled out of async `EventHubProducerClient` and `EventHubConsumerClient` which will be added back in future previews as we work towards a stable release:
+  - Passing the following keyword arguments to the constructors and `from_connection_string` methods of the `EventHubProducerClient` and `EventHubConsumerClient` is not supported:  `transport_type`, `http_proxy`, `custom_endpoint_address`, and `connection_verify`.
+
+## 5.8.0a1 (2022-01-13)
 
 Version 5.8.0a1 is our first efforts to build an Azure Event Hubs client library based on pure python implemented AMQP stack.
 

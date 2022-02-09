@@ -41,6 +41,20 @@ _CLOSING_STATES = (
 )
 
 
+def get_local_timeout(now, idle_timeout, last_frame_received_time):
+    # type: (float, float, float) -> bool
+    """Check whether the local timeout has been reached since a new incoming frame was received.
+
+    :param float now: The current time to check against.
+    :rtype: bool
+    :returns: Whether to shutdown the connection due to timeout.
+    """
+    if idle_timeout and last_frame_received_time:
+        time_since_last_received = now - last_frame_received_time
+        return time_since_last_received > idle_timeout
+    return False
+
+
 class Connection(object):
     """An AMQP Connection.
 
@@ -537,7 +551,7 @@ class Connection(object):
         if self.state not in [ConnectionState.OPEN_PIPE, ConnectionState.OPEN_SENT, ConnectionState.OPENED]:
             raise ValueError("Connection not open.")
         now = time.time()
-        if self._get_local_timeout(now) or self._get_remote_timeout(now):
+        if get_local_timeout(now, self._idle_timeout, self._last_frame_received_time) or self._get_remote_timeout(now):
             self.close(
                 # TODO: check error condition
                 error=AMQPError(
@@ -548,19 +562,6 @@ class Connection(object):
             )
             return
         self._send_frame(channel, frame)
-
-    def _get_local_timeout(self, now):
-        # type: (float) -> bool
-        """Check whether the local timeout has been reached since a new incoming frame was received.
-
-        :param float now: The current time to check against.
-        :rtype: bool
-        :returns: Whether to shutdown the connection due to timeout.
-        """
-        if self._idle_timeout and self._last_frame_received_time:
-            time_since_last_received = now - self._last_frame_received_time
-            return time_since_last_received > self._idle_timeout
-        return False
 
     def _get_remote_timeout(self, now):
         # type: (float) -> bool
@@ -625,7 +626,7 @@ class Connection(object):
         try:
             if self.state not in _CLOSING_STATES:
                 now = time.time()
-                if self._get_local_timeout(now) or self._get_remote_timeout(now):
+                if get_local_timeout(now, self._idle_timeout, self._last_frame_received_time) or self._get_remote_timeout(now):
                     # TODO: check error condition
                     self.close(
                         error=AMQPError(

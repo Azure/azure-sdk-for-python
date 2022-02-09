@@ -11,7 +11,7 @@ from .exceptions import ConnectError, EventHubError
 from .amqp import AmqpAnnotatedMessage
 from ._client_base import ClientBase
 from ._producer import EventHubProducer
-from ._constants import ALL_PARTITIONS
+from ._constants import ALL_PARTITIONS, MAX_MESSAGE_LENGTH_BYTES
 from ._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
@@ -113,7 +113,7 @@ class EventHubProducerClient(ClientBase):   # pylint: disable=client-accepts-api
                     self._producers[  # type: ignore
                         ALL_PARTITIONS
                     ]._handler._link.remote_max_message_size
-                    or constants.MAX_MESSAGE_LENGTH_BYTES
+                    or MAX_MESSAGE_LENGTH_BYTES
                 )
 
     def _start_producer(self, partition_id, send_timeout):
