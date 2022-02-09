@@ -34,8 +34,8 @@ class ModelQuery(object):
         :type content: JSON object
         """
         # Remove trailing commas if needed
-        # content = re.sub(r",[ \t\r\n]+}", "}", content)
-        # content = re.sub(r",[ \t\r\n]+\]", "]", content)
+        content = re.sub(r",[ \t\r\n]+}", "}", content)
+        content = re.sub(r",[ \t\r\n]+\]", "]", content)
         self._content = json.loads(content)
 
     def parse_model(self):
