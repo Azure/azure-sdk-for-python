@@ -8,6 +8,8 @@
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union
 
+from msrest import Serializer
+
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -19,7 +21,6 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
-from msrest import Serializer
 
 from .._vendor import _format_url_section
 
@@ -43,28 +44,28 @@ def build_get_client_access_token_request(
 
     accept = "application/json, text/json"
     # Construct URL
-    url = "/api/hubs/{hub}/:generateToken"
+    _url = "/api/hubs/{hub}/:generateToken"
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if user_id is not None:
-        query_parameters["userId"] = _SERIALIZER.query("user_id", user_id, "str")
+        _query_parameters["userId"] = _SERIALIZER.query("user_id", user_id, "str")
     if roles is not None:
-        query_parameters["role"] = [_SERIALIZER.query("roles", q, "str") if q is not None else "" for q in roles]
+        _query_parameters["role"] = [_SERIALIZER.query("roles", q, "str") if q is not None else "" for q in roles]
     if minutes_to_expire is not None:
-        query_parameters["minutesToExpire"] = _SERIALIZER.query("minutes_to_expire", minutes_to_expire, "int")
-    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _query_parameters["minutesToExpire"] = _SERIALIZER.query("minutes_to_expire", minutes_to_expire, "int")
+    _query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=url, params=query_parameters, headers=header_parameters, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
 
 
 def build_close_all_connections_request(
@@ -74,28 +75,28 @@ def build_close_all_connections_request(
 
     accept = "application/json, text/json"
     # Construct URL
-    url = "/api/hubs/{hub}/:closeConnections"
+    _url = "/api/hubs/{hub}/:closeConnections"
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if excluded is not None:
-        query_parameters["excluded"] = [
+        _query_parameters["excluded"] = [
             _SERIALIZER.query("excluded", q, "str") if q is not None else "" for q in excluded
         ]
     if reason is not None:
-        query_parameters["reason"] = _SERIALIZER.query("reason", reason, "str")
-    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _query_parameters["reason"] = _SERIALIZER.query("reason", reason, "str")
+    _query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=url, params=query_parameters, headers=header_parameters, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
 
 
 def build_send_to_all_request(
@@ -106,29 +107,35 @@ def build_send_to_all_request(
 
     accept = "application/json, text/json"
     # Construct URL
-    url = "/api/hubs/{hub}/:send"
+    _url = "/api/hubs/{hub}/:send"
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if excluded is not None:
-        query_parameters["excluded"] = [
+        _query_parameters["excluded"] = [
             _SERIALIZER.query("excluded", q, "str") if q is not None else "" for q in excluded
         ]
-    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(
-        method="POST", url=url, params=query_parameters, headers=header_parameters, json=json, content=content, **kwargs
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        json=json,
+        content=content,
+        **kwargs
     )
 
 
@@ -137,23 +144,23 @@ def build_connection_exists_request(hub: str, connection_id: str, **kwargs: Any)
 
     accept = "application/json, text/json"
     # Construct URL
-    url = "/api/hubs/{hub}/connections/{connectionId}"
+    _url = "/api/hubs/{hub}/connections/{connectionId}"
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
         "connectionId": _SERIALIZER.url("connection_id", connection_id, "str", min_length=1),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="HEAD", url=url, params=query_parameters, headers=header_parameters, **kwargs)
+    return HttpRequest(method="HEAD", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
 
 
 def build_close_connection_request(
@@ -163,25 +170,25 @@ def build_close_connection_request(
 
     accept = "application/json, text/json"
     # Construct URL
-    url = "/api/hubs/{hub}/connections/{connectionId}"
+    _url = "/api/hubs/{hub}/connections/{connectionId}"
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
         "connectionId": _SERIALIZER.url("connection_id", connection_id, "str", min_length=1),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if reason is not None:
-        query_parameters["reason"] = _SERIALIZER.query("reason", reason, "str")
-    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _query_parameters["reason"] = _SERIALIZER.query("reason", reason, "str")
+    _query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=url, params=query_parameters, headers=header_parameters, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
 
 
 def build_send_to_connection_request(
@@ -192,26 +199,32 @@ def build_send_to_connection_request(
 
     accept = "application/json, text/json"
     # Construct URL
-    url = "/api/hubs/{hub}/connections/{connectionId}/:send"
+    _url = "/api/hubs/{hub}/connections/{connectionId}/:send"
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
         "connectionId": _SERIALIZER.url("connection_id", connection_id, "str", min_length=1),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(
-        method="POST", url=url, params=query_parameters, headers=header_parameters, json=json, content=content, **kwargs
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        json=json,
+        content=content,
+        **kwargs
     )
 
 
@@ -220,23 +233,23 @@ def build_group_exists_request(hub: str, group: str, **kwargs: Any) -> HttpReque
 
     accept = "application/json, text/json"
     # Construct URL
-    url = "/api/hubs/{hub}/groups/{group}"
+    _url = "/api/hubs/{hub}/groups/{group}"
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
         "group": _SERIALIZER.url("group", group, "str", max_length=1024, min_length=1),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="HEAD", url=url, params=query_parameters, headers=header_parameters, **kwargs)
+    return HttpRequest(method="HEAD", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
 
 
 def build_close_group_connections_request(
@@ -246,29 +259,29 @@ def build_close_group_connections_request(
 
     accept = "application/json, text/json"
     # Construct URL
-    url = "/api/hubs/{hub}/groups/{group}/:closeConnections"
+    _url = "/api/hubs/{hub}/groups/{group}/:closeConnections"
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
         "group": _SERIALIZER.url("group", group, "str", max_length=1024, min_length=1),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if excluded is not None:
-        query_parameters["excluded"] = [
+        _query_parameters["excluded"] = [
             _SERIALIZER.query("excluded", q, "str") if q is not None else "" for q in excluded
         ]
     if reason is not None:
-        query_parameters["reason"] = _SERIALIZER.query("reason", reason, "str")
-    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _query_parameters["reason"] = _SERIALIZER.query("reason", reason, "str")
+    _query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=url, params=query_parameters, headers=header_parameters, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
 
 
 def build_send_to_group_request(
@@ -285,30 +298,36 @@ def build_send_to_group_request(
 
     accept = "application/json, text/json"
     # Construct URL
-    url = "/api/hubs/{hub}/groups/{group}/:send"
+    _url = "/api/hubs/{hub}/groups/{group}/:send"
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
         "group": _SERIALIZER.url("group", group, "str", max_length=1024, min_length=1),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if excluded is not None:
-        query_parameters["excluded"] = [
+        _query_parameters["excluded"] = [
             _SERIALIZER.query("excluded", q, "str") if q is not None else "" for q in excluded
         ]
-    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(
-        method="POST", url=url, params=query_parameters, headers=header_parameters, json=json, content=content, **kwargs
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        json=json,
+        content=content,
+        **kwargs
     )
 
 
@@ -317,24 +336,24 @@ def build_add_connection_to_group_request(hub: str, group: str, connection_id: s
 
     accept = "application/json, text/json"
     # Construct URL
-    url = "/api/hubs/{hub}/groups/{group}/connections/{connectionId}"
+    _url = "/api/hubs/{hub}/groups/{group}/connections/{connectionId}"
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
         "group": _SERIALIZER.url("group", group, "str", max_length=1024, min_length=1),
         "connectionId": _SERIALIZER.url("connection_id", connection_id, "str", min_length=1),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PUT", url=url, params=query_parameters, headers=header_parameters, **kwargs)
+    return HttpRequest(method="PUT", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
 
 
 def build_remove_connection_from_group_request(hub: str, group: str, connection_id: str, **kwargs: Any) -> HttpRequest:
@@ -342,24 +361,24 @@ def build_remove_connection_from_group_request(hub: str, group: str, connection_
 
     accept = "application/json, text/json"
     # Construct URL
-    url = "/api/hubs/{hub}/groups/{group}/connections/{connectionId}"
+    _url = "/api/hubs/{hub}/groups/{group}/connections/{connectionId}"
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
         "group": _SERIALIZER.url("group", group, "str", max_length=1024, min_length=1),
         "connectionId": _SERIALIZER.url("connection_id", connection_id, "str", min_length=1),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=url, params=query_parameters, headers=header_parameters, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
 
 
 def build_user_exists_request(hub: str, user_id: str, **kwargs: Any) -> HttpRequest:
@@ -367,23 +386,23 @@ def build_user_exists_request(hub: str, user_id: str, **kwargs: Any) -> HttpRequ
 
     accept = "application/json, text/json"
     # Construct URL
-    url = "/api/hubs/{hub}/users/{userId}"
+    _url = "/api/hubs/{hub}/users/{userId}"
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
         "userId": _SERIALIZER.url("user_id", user_id, "str", min_length=1),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="HEAD", url=url, params=query_parameters, headers=header_parameters, **kwargs)
+    return HttpRequest(method="HEAD", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
 
 
 def build_close_user_connections_request(
@@ -393,29 +412,29 @@ def build_close_user_connections_request(
 
     accept = "application/json, text/json"
     # Construct URL
-    url = "/api/hubs/{hub}/users/{userId}/:closeConnections"
+    _url = "/api/hubs/{hub}/users/{userId}/:closeConnections"
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
         "userId": _SERIALIZER.url("user_id", user_id, "str", min_length=1),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if excluded is not None:
-        query_parameters["excluded"] = [
+        _query_parameters["excluded"] = [
             _SERIALIZER.query("excluded", q, "str") if q is not None else "" for q in excluded
         ]
     if reason is not None:
-        query_parameters["reason"] = _SERIALIZER.query("reason", reason, "str")
-    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _query_parameters["reason"] = _SERIALIZER.query("reason", reason, "str")
+    _query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=url, params=query_parameters, headers=header_parameters, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
 
 
 def build_send_to_user_request(
@@ -426,26 +445,32 @@ def build_send_to_user_request(
 
     accept = "application/json, text/json"
     # Construct URL
-    url = "/api/hubs/{hub}/users/{userId}/:send"
+    _url = "/api/hubs/{hub}/users/{userId}/:send"
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
         "userId": _SERIALIZER.url("user_id", user_id, "str", min_length=1),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(
-        method="POST", url=url, params=query_parameters, headers=header_parameters, json=json, content=content, **kwargs
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        json=json,
+        content=content,
+        **kwargs
     )
 
 
@@ -454,24 +479,24 @@ def build_add_user_to_group_request(hub: str, group: str, user_id: str, **kwargs
 
     accept = "application/json, text/json"
     # Construct URL
-    url = "/api/hubs/{hub}/users/{userId}/groups/{group}"
+    _url = "/api/hubs/{hub}/users/{userId}/groups/{group}"
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
         "group": _SERIALIZER.url("group", group, "str", max_length=1024, min_length=1),
         "userId": _SERIALIZER.url("user_id", user_id, "str", min_length=1),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PUT", url=url, params=query_parameters, headers=header_parameters, **kwargs)
+    return HttpRequest(method="PUT", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
 
 
 def build_remove_user_from_group_request(hub: str, group: str, user_id: str, **kwargs: Any) -> HttpRequest:
@@ -479,24 +504,24 @@ def build_remove_user_from_group_request(hub: str, group: str, user_id: str, **k
 
     accept = "application/json, text/json"
     # Construct URL
-    url = "/api/hubs/{hub}/users/{userId}/groups/{group}"
+    _url = "/api/hubs/{hub}/users/{userId}/groups/{group}"
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
         "group": _SERIALIZER.url("group", group, "str", max_length=1024, min_length=1),
         "userId": _SERIALIZER.url("user_id", user_id, "str", min_length=1),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=url, params=query_parameters, headers=header_parameters, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
 
 
 def build_remove_user_from_all_groups_request(hub: str, user_id: str, **kwargs: Any) -> HttpRequest:
@@ -504,23 +529,23 @@ def build_remove_user_from_all_groups_request(hub: str, user_id: str, **kwargs: 
 
     accept = "application/json, text/json"
     # Construct URL
-    url = "/api/hubs/{hub}/users/{userId}/groups"
+    _url = "/api/hubs/{hub}/users/{userId}/groups"
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
         "userId": _SERIALIZER.url("user_id", user_id, "str", min_length=1),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=url, params=query_parameters, headers=header_parameters, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
 
 
 def build_grant_permission_request(
@@ -530,26 +555,26 @@ def build_grant_permission_request(
 
     accept = "application/json, text/json"
     # Construct URL
-    url = "/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}"
+    _url = "/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}"
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
         "permission": _SERIALIZER.url("permission", permission, "str"),
         "connectionId": _SERIALIZER.url("connection_id", connection_id, "str", min_length=1),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if target_name is not None:
-        query_parameters["targetName"] = _SERIALIZER.query("target_name", target_name, "str")
-    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _query_parameters["targetName"] = _SERIALIZER.query("target_name", target_name, "str")
+    _query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PUT", url=url, params=query_parameters, headers=header_parameters, **kwargs)
+    return HttpRequest(method="PUT", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
 
 
 def build_revoke_permission_request(
@@ -559,26 +584,26 @@ def build_revoke_permission_request(
 
     accept = "application/json, text/json"
     # Construct URL
-    url = "/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}"
+    _url = "/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}"
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
         "permission": _SERIALIZER.url("permission", permission, "str"),
         "connectionId": _SERIALIZER.url("connection_id", connection_id, "str", min_length=1),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if target_name is not None:
-        query_parameters["targetName"] = _SERIALIZER.query("target_name", target_name, "str")
-    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _query_parameters["targetName"] = _SERIALIZER.query("target_name", target_name, "str")
+    _query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=url, params=query_parameters, headers=header_parameters, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
 
 
 def build_has_permission_request(
@@ -588,26 +613,26 @@ def build_has_permission_request(
 
     accept = "application/json, text/json"
     # Construct URL
-    url = "/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}"
+    _url = "/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}"
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
         "permission": _SERIALIZER.url("permission", permission, "str"),
         "connectionId": _SERIALIZER.url("connection_id", connection_id, "str", min_length=1),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if target_name is not None:
-        query_parameters["targetName"] = _SERIALIZER.query("target_name", target_name, "str")
-    query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+        _query_parameters["targetName"] = _SERIALIZER.query("target_name", target_name, "str")
+    _query_parameters["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="HEAD", url=url, params=query_parameters, headers=header_parameters, **kwargs)
+    return HttpRequest(method="HEAD", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
 
 
 class WebPubSubServiceClientOperationsMixin(object):
