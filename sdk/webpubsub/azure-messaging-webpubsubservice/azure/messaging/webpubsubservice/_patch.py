@@ -147,7 +147,6 @@ class JwtCredentialPolicy(SansIOHTTPPolicy):
         user: typing.Optional[str] = None,
         origin_endpoint: typing.Optional[str] = None,
         reverse_proxy_endpoint: typing.Optional[str] = None,
-        **kwargs
     ) -> None:
         """Create a new instance of the policy associated with the given credential.
 
@@ -170,7 +169,7 @@ class JwtCredentialPolicy(SansIOHTTPPolicy):
         """
         url = request.http_request.url
         if self._reverse_proxy_endpoint:
-            url = url.replace(self._reverse_proxy_endpoint, self._original_url)
+            url = url.replace(self._reverse_proxy_endpoint, self._original_url, 1)
         request.http_request.headers["Authorization"] = "Bearer " + self._encode(
             url
         )
@@ -278,7 +277,12 @@ class WebPubSubServiceClientConfiguration(Configuration):
         self.authentication_policy = kwargs.get('authentication_policy')
         if self.credential and not self.authentication_policy:
             if isinstance(self.credential, AzureKeyCredential):
-                self.authentication_policy = JwtCredentialPolicy(self.credential, **kwargs)
+                self.authentication_policy = JwtCredentialPolicy(
+                    self.credential,
+                    user=kwargs.get("user"),
+                    origin_endpoint=kwargs.get("origin_endpoint"),
+                    reverse_proxy_endpoint=kwargs.get("reverse_proxy_endpoint")
+                )
             else:
                 self.authentication_policy = policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
 
