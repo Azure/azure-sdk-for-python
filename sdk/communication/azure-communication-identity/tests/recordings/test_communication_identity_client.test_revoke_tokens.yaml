@@ -13,28 +13,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 02 Nov 2021 10:40:43 GMT
+      - Wed, 09 Feb 2022 14:02:11 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/identities?api-version=2021-10-31-preview
+    uri: https://sanitized.communication.azure.com/identities?api-version=2022-06-01
   response:
     body:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
-        2021-10-31-preview
+        2021-10-31-preview, 2021-11-01, 2022-06-01
       content-length:
       - '101'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Nov 2021 10:40:44 GMT
+      - Wed, 09 Feb 2022 14:02:11 GMT
       ms-cv:
-      - 8jA6O7iSlUqrWOe9nDaLTQ.0
+      - Yj8aFMyrbUGsSujRXh6jhg.0
       request-context:
       - appId=
       strict-transport-security:
@@ -42,7 +42,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 118ms
+      - 35ms
     status:
       code: 201
       message: Created
@@ -60,28 +60,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 02 Nov 2021 10:40:44 GMT
+      - Wed, 09 Feb 2022 14:02:12 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-10-31-preview
+    uri: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2022-06-01
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-11-03T10:40:45.2206592+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2022-02-10T14:02:12.2627948+00:00"}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
-        2021-10-31-preview
+        2021-10-31-preview, 2021-11-01, 2022-06-01
       content-length:
       - '804'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Nov 2021 10:40:45 GMT
+      - Wed, 09 Feb 2022 14:02:12 GMT
       ms-cv:
-      - JO6cXGW4t0iiNu9I1vU7jA.0
+      - +wDlnFQlFE6Evmj4cj7CNA.0
       request-context:
       - appId=
       strict-transport-security:
@@ -89,7 +89,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 99ms
+      - 64ms
     status:
       code: 200
       message: OK
@@ -105,24 +105,24 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 02 Nov 2021 10:40:45 GMT
+      - Wed, 09 Feb 2022 14:02:12 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/identities/sanitized/:revokeAccessTokens?api-version=2021-10-31-preview
+    uri: https://sanitized.communication.azure.com/identities/sanitized/:revokeAccessTokens?api-version=2022-06-01
   response:
     body:
       string: ''
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
-        2021-10-31-preview
+        2021-10-31-preview, 2021-11-01, 2022-06-01
       date:
-      - Tue, 02 Nov 2021 10:40:45 GMT
+      - Wed, 09 Feb 2022 14:02:12 GMT
       ms-cv:
-      - g3nTgikhR0KPs3uzuRcNXA.0
+      - P8kXr4Yl0EOqfsEgJKPhLQ.0
       request-context:
       - appId=
       strict-transport-security:
@@ -130,7 +130,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 172ms
+      - 105ms
     status:
       code: 204
       message: No Content

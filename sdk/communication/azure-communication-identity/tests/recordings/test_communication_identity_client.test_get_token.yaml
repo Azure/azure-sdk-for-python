@@ -13,28 +13,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 02 Nov 2021 10:40:35 GMT
+      - Wed, 09 Feb 2022 14:02:01 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/identities?api-version=2021-10-31-preview
+    uri: https://sanitized.communication.azure.com/identities?api-version=2022-06-01
   response:
     body:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
-        2021-10-31-preview
+        2021-10-31-preview, 2021-11-01, 2022-06-01
       content-length:
       - '101'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Nov 2021 10:40:36 GMT
+      - Wed, 09 Feb 2022 14:02:02 GMT
       ms-cv:
-      - MrRPDtwghk++UfVStS+bGw.0
+      - DDmR5Y48i0SXiOwK1M65uA.0
       request-context:
       - appId=
       strict-transport-security:
@@ -42,7 +42,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 95ms
+      - 28ms
     status:
       code: 201
       message: Created
@@ -60,28 +60,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 02 Nov 2021 10:40:36 GMT
+      - Wed, 09 Feb 2022 14:02:02 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-10-31-preview
+    uri: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2022-06-01
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-11-03T10:40:37.0202978+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2022-02-10T14:02:02.6905807+00:00"}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
-        2021-10-31-preview
+        2021-10-31-preview, 2021-11-01, 2022-06-01
       content-length:
       - '804'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Nov 2021 10:40:36 GMT
+      - Wed, 09 Feb 2022 14:02:02 GMT
       ms-cv:
-      - oOd88gOi3EyaP3sdJ1+wgQ.0
+      - uwCQXk6Efkm1B5ixFvYVaA.0
       request-context:
       - appId=
       strict-transport-security:
@@ -89,7 +89,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 99ms
+      - 64ms
     status:
       code: 200
       message: OK

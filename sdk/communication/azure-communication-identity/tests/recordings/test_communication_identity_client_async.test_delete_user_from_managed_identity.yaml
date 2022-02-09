@@ -9,50 +9,50 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
     method: POST
-    uri: https://sanitized.communication.azure.com/identities?api-version=2021-10-31-preview
+    uri: https://sanitized.communication.azure.com/identities?api-version=2022-06-01
   response:
     body:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
-        2021-03-31-preview1, 2021-10-31-preview
+        2021-03-31-preview1, 2021-10-31-preview, 2021-11-01, 2022-06-01
       content-length: '101'
       content-type: application/json; charset=utf-8
-      date: Tue, 02 Nov 2021 10:40:53 GMT
-      ms-cv: jBZxVWuiI0ytr5WrXsf4zg.0
+      date: Wed, 09 Feb 2022 14:02:19 GMT
+      ms-cv: O7FdeljRGE6Ix6CgO74tOw.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 92ms
+      x-processing-time: 21ms
     status:
       code: 201
       message: Created
-    url: https://sanitized.communication.azure.com/identities?api-version=2021-10-31-preview
+    url: https://sanitized.communication.azure.com/identities?api-version=2022-06-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
     method: DELETE
-    uri: https://sanitized.communication.azure.com/identities/sanitized?api-version=2021-10-31-preview
+    uri: https://sanitized.communication.azure.com/identities/sanitized?api-version=2022-06-01
   response:
     body:
       string: ''
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
-        2021-03-31-preview1, 2021-10-31-preview
-      date: Tue, 02 Nov 2021 10:40:53 GMT
-      ms-cv: 1seexUgPJUaQFsLh+CFRGA.0
+        2021-03-31-preview1, 2021-10-31-preview, 2021-11-01, 2022-06-01
+      date: Wed, 09 Feb 2022 14:02:20 GMT
+      ms-cv: FJvwBE2oHkS+3CrNLuKlZQ.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 210ms
+      x-processing-time: 153ms
     status:
       code: 204
       message: No Content
-    url: https://sanitized.communication.azure.com/identities/sanitized?api-version=2021-10-31-preview
+    url: https://sanitized.communication.azure.com/identities/sanitized?api-version=2022-06-01
 version: 1

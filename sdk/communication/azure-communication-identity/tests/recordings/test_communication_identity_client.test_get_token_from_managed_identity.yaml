@@ -13,24 +13,24 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
     method: POST
-    uri: https://sanitized.communication.azure.com/identities?api-version=2021-10-31-preview
+    uri: https://sanitized.communication.azure.com/identities?api-version=2022-06-01
   response:
     body:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
-        2021-10-31-preview
+        2021-10-31-preview, 2021-11-01, 2022-06-01
       content-length:
       - '101'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Nov 2021 10:40:42 GMT
+      - Wed, 09 Feb 2022 14:02:08 GMT
       ms-cv:
-      - J9YYFe2y/EOrWAumqWJYuQ.0
+      - wH3fF2N1GkWDrWKfHz4mSA.0
       request-context:
       - appId=
       strict-transport-security:
@@ -38,7 +38,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 222ms
+      - 20ms
     status:
       code: 201
       message: Created
@@ -56,24 +56,24 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0b1 Python/3.9.7 (macOS-11.6-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.2.0 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
     method: POST
-    uri: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2021-10-31-preview
+    uri: https://sanitized.communication.azure.com/identities/sanitized/:issueAccessToken?api-version=2022-06-01
   response:
     body:
-      string: '{"token": "sanitized", "expiresOn": "2021-11-03T10:40:43.3668014+00:00"}'
+      string: '{"token": "sanitized", "expiresOn": "2022-02-10T14:02:09.9058626+00:00"}'
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
-        2021-10-31-preview
+        2021-10-31-preview, 2021-11-01, 2022-06-01
       content-length:
       - '804'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 02 Nov 2021 10:40:43 GMT
+      - Wed, 09 Feb 2022 14:02:09 GMT
       ms-cv:
-      - HIIQElt9h02GBdaavUKLyw.0
+      - 7PXI0KmRmUmWjNeVlHaB4A.0
       request-context:
       - appId=
       strict-transport-security:
@@ -81,7 +81,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 94ms
+      - 52ms
     status:
       code: 200
       message: OK
