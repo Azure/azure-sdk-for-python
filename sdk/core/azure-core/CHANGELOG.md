@@ -1,16 +1,12 @@
 # Release History
 
-## 1.22.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.22.1 (2022-02-09)
 
 ### Bugs Fixed
 
-### Other Changes
+- Limiting `final-state-via` scope to POST until consuming SDKs has been fixed to use this option properly on PUT.  #22989
 
-## 1.22.0 (2022-02-03)
+## 1.22.0 (2022-02-03)  [YANKED]
 
 ### Features Added
 
