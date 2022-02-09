@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Log "WWW-Authenticate" header in `HttpLoggingPolicy`
+
 ## 1.22.0 (2022-02-03)
 
 ### Features Added
