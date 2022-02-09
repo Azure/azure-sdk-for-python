@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Temporarily unblock network by adding back the `POST` method check when handling LROs with `final-state-via` defined.  #22989
+
 ### Other Changes
 
 ## 1.22.0 (2022-02-03)
