@@ -107,36 +107,38 @@ Call is then directed into route's first available trunk, based on the order in 
 
     :ivar trunks: SIP trunks for routing calls.
      Map key is trunk's FQDN (1-249 characters).
-    :vartype trunks: dict[str, ~azure.communication.phonenumbers.siprouting.models.Trunk]
+    :vartype trunks: dict[str,
+     ~azure.communication.phonenumbers.siprouting.models.SipTrunkInternal]
     :ivar routes: Trunk routes for routing calls.
-    :vartype routes: list[~azure.communication.phonenumbers.siprouting.models.TrunkRoute]
+    :vartype routes: list[~azure.communication.phonenumbers.siprouting.models.SipTrunkRoute]
     """
 
     _attribute_map = {
-        'trunks': {'key': 'trunks', 'type': '{Trunk}'},
-        'routes': {'key': 'routes', 'type': '[TrunkRoute]'},
+        'trunks': {'key': 'trunks', 'type': '{SipTrunkInternal}'},
+        'routes': {'key': 'routes', 'type': '[SipTrunkRoute]'},
     }
 
     def __init__(
         self,
         *,
-        trunks: Optional[Dict[str, "Trunk"]] = None,
-        routes: Optional[List["TrunkRoute"]] = None,
+        trunks: Optional[Dict[str, "SipTrunkInternal"]] = None,
+        routes: Optional[List["SipTrunkRoute"]] = None,
         **kwargs
     ):
         """
         :keyword trunks: SIP trunks for routing calls.
          Map key is trunk's FQDN (1-249 characters).
-        :paramtype trunks: dict[str, ~azure.communication.phonenumbers.siprouting.models.Trunk]
+        :paramtype trunks: dict[str,
+         ~azure.communication.phonenumbers.siprouting.models.SipTrunkInternal]
         :keyword routes: Trunk routes for routing calls.
-        :paramtype routes: list[~azure.communication.phonenumbers.siprouting.models.TrunkRoute]
+        :paramtype routes: list[~azure.communication.phonenumbers.siprouting.models.SipTrunkRoute]
         """
         super(SipConfiguration, self).__init__(**kwargs)
         self.trunks = trunks
         self.routes = routes
 
 
-class Trunk(msrest.serialization.Model):
+class SipTrunkInternal(msrest.serialization.Model):
     """Represents a SIP trunk for routing calls. See RFC 4904.
 
     :ivar sip_signaling_port: Gets or sets SIP signaling port of the trunk.
@@ -157,11 +159,11 @@ class Trunk(msrest.serialization.Model):
         :keyword sip_signaling_port: Gets or sets SIP signaling port of the trunk.
         :paramtype sip_signaling_port: int
         """
-        super(Trunk, self).__init__(**kwargs)
+        super(SipTrunkInternal, self).__init__(**kwargs)
         self.sip_signaling_port = sip_signaling_port
 
 
-class TrunkRoute(msrest.serialization.Model):
+class SipTrunkRoute(msrest.serialization.Model):
     """Represents a trunk route for routing calls.
 
     All required parameters must be populated in order to send to Azure.
@@ -216,7 +218,7 @@ class TrunkRoute(msrest.serialization.Model):
          FQDN.
         :paramtype trunks: list[str]
         """
-        super(TrunkRoute, self).__init__(**kwargs)
+        super(SipTrunkRoute, self).__init__(**kwargs)
         self.description = description
         self.name = name
         self.number_pattern = number_pattern

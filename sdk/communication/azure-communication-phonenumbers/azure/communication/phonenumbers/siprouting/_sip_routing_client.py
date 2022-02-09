@@ -13,8 +13,11 @@ except ImportError:
 
 from azure.core.tracing.decorator import distributed_trace
 from ._generated.models import (
-    SipConfiguration
+    SipConfiguration,
+    SipTrunkRoute,
+    SipTrunkInternal
 )
+from._models import SipTrunk
 
 from ._generated._sip_routing_service import (
     SIPRoutingService,
@@ -27,7 +30,7 @@ from .._shared.utils import (
 from .._version import SDK_MONIKER
 
 if TYPE_CHECKING:
-    from typing import Dict, Any
+    from typing import List, Any
     from azure.core.credentials import TokenCredential
 
 
@@ -96,11 +99,11 @@ class SipRoutingClient(object):
         :rtype: ~azure.communication.siprouting.models.SipConfiguration
         """
 
-        acs_resource_calling_configuration = self._rest_service.get_sip_configuration(
+        configuration = self._rest_service.get_sip_configuration(
             **kwargs
         )
 
-        return acs_resource_calling_configuration
+        return configuration
 
     @overload
     @distributed_trace
@@ -174,3 +177,167 @@ class SipRoutingClient(object):
         return self._rest_service.patch_sip_configuration(
             body=configuration, **kwargs
         )
+
+    @distributed_trace
+    def get_routes(
+        self,
+        **kwargs  # type: Any
+    ):  # type: (...) -> List[SipTrunkRoute]
+        """Returns list of currently configured SIP routes.
+
+        :returns: Current SIP routes configuration.
+        :rtype: List[~azure.communication.siprouting.models.SipTrunkRoute]
+        """
+        config = self._rest_service.get_sip_configuration(
+            **kwargs
+        )
+        return config.routes
+
+    @distributed_trace
+    def get_trunks(
+        self,
+        **kwargs  # type: Any
+    ):  # type: (...) -> List[SipTrunk]
+        """Returns list of currently configured SIP trunks.
+
+        :returns: Current SIP trunks configuration.
+        :rtype: List[~azure.communication.siprouting.models.SipTrunk]
+        """
+        return self.__get_trunks__(**kwargs)
+
+    @distributed_trace
+    def replace_routes(
+        self,
+        routes,  # type: List[SipTrunkRoute]
+        **kwargs  # type: Any
+    ):  # type: (...) -> List[SipTrunkRoute]
+        """Replaces the list of SIP routes.
+
+        :returns: 
+        :rtype: List[~azure.communication.siprouting.models.SipTrunkRoute]
+        """
+        old_config = self._rest_service.get_sip_configuration(
+            **kwargs
+        )
+        self._rest_service.patch_sip_configuration(
+            body=SipConfiguration(routes=routes), **kwargs
+        )
+        return old_config.routes
+
+    @distributed_trace
+    def replace_trunks(
+        self,
+        trunks,  # type: List[SipTrunk]
+        **kwargs  # type: Any
+    ):  # type: (...) -> List[SipTrunk]
+        """Replaces the list of SIP trunks.
+
+        :returns: 
+        :rtype: List[~azure.communication.siprouting.models.SipTrunk]
+        """
+        old_trunks = self.__get_trunks__(**kwargs)
+        self.__patch_trunks__(trunks, **kwargs)
+        return old_trunks
+
+    @distributed_trace
+    def delete_route(
+        self,
+        route_name,  # type: str
+        **kwargs  # type: Any
+    ):  # type: (...) -> SipTrunkRoute
+        """Returns list of currently configured SIP routes.
+
+        :returns: Current SIP routes configuration.
+        :rtype: List[~azure.communication.siprouting.models.SipTrunkRoute]
+        """
+        old_config = self._rest_service.get_sip_configuration(
+            **kwargs
+        )
+        
+        modified_routes = [x for x in old_config.routes if x.name != route_name]
+        modified_config = SipConfiguration(routes=modified_routes)
+
+        self._rest_service.patch_sip_configuration(
+            body=modified_config, **kwargs
+        )
+        return [x for x in old_config.routes if x.name == route_name]
+
+    @distributed_trace
+    def delete_trunk(
+        self,
+        trunk_name,  # type: str
+        **kwargs  # type: Any
+    ):  # type: (...) -> SipTrunk
+        """Returns list of currently configured SIP routes.
+
+        :returns: Current SIP routes configuration.
+        :rtype: ~azure.communication.siprouting.models.SipTrunk
+        """
+        old_trunks = self.__get_trunks__(
+            **kwargs)
+        self.__patch_trunks__(
+            {trunk_name: None},
+            **kwargs)
+
+        return [x for x in old_trunks if x.fqdn == trunk_name]
+
+    @distributed_trace
+    def set_route(
+        self,
+        route,  # type: SipTrunkRoute
+        **kwargs  # type: Any
+    ):  # type: (...) -> SipTrunkRoute
+        """Returns list of currently configured SIP routes.
+
+        :returns: Current SIP routes configuration.
+        :rtype: ~azure.communication.siprouting.models.SipTrunk
+        """
+        old_config = self._rest_service.get_sip_configuration(
+            **kwargs
+        )
+
+        if (any(x.name==route.name for x in old_config.routes)):
+            modified_routes = [route if x.name==route.name else x for x in old_config.routes]
+        else:
+            modified_routes = [old_config.routes,route]
+
+        self._rest_service.patch_sip_configuration(
+            body=SipConfiguration(routes=modified_routes), **kwargs
+        )
+
+        return [x for x in old_config.routes if x.name == route.name]
+
+    @distributed_trace
+    def set_trunk(
+        self,
+        trunk,  # type: SipTrunk
+        **kwargs  # type: Any
+    ):  # type: (...) -> SipTrunk
+        """Returns list of currently configured SIP routes.
+
+        :returns: Current SIP routes configuration.
+        :rtype: ~azure.communication.siprouting.models.SipTrunk
+        """
+        old_trunks = self.__get_trunks__(**kwargs)
+        self.__patch_trunks__([trunk],**kwargs)
+
+        return [x for x in old_trunks if x.fqdn == trunk.fqdn]
+
+    def __get_trunks__(self, **kwargs):
+        config = self._rest_service.get_sip_configuration(
+            **kwargs  # type: Any
+        )
+        return [SipTrunk(x.key,x.value) for x in config.trunks.items()]
+
+    def __patch_trunks__(self,
+        trunks,  # type: List[SipTrunk]
+        **kwargs  # type: Any
+        ):  # type: (...) -> SipTrunk
+        trunks_internal = {x.fqdn: SipTrunkInternal(x.sip_signaling_port) for x in trunks}
+        modified_config = SipConfiguration(trunks=trunks_internal)
+
+        new_config = self._rest_service.patch_sip_configuration(
+            body=modified_config, **kwargs
+        )
+        return [SipTrunk(x.key,x.value) for x in new_config.trunks.items()]
+         

@@ -62,6 +62,24 @@ directive:
     delete $.required;
 ```
 
+### Directive renaming "Trunk" model to "SipTrunkInternal"
+``` yaml
+directive:
+  from: swagger-document
+  where: "$.definitions.Trunk"
+  transform: >
+    $["x-ms-client-name"] = "SipTrunkInternal";
+```
+
+### Directive renaming "TrunkRoute" model to "SipTrunkRoute"
+``` yaml
+directive:
+  from: swagger-document
+  where: "$.definitions.TrunkRoute"
+  transform: >
+    $["x-ms-client-name"] = "SipTrunkRoute";
+```
+
 ### Remove additional responses from Swagger, because they should be treated as errors and throw exception
 ``` yaml
 directive:
