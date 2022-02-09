@@ -40,9 +40,7 @@ if __name__ == "__main__":
                 sys.executable,
                 "-m",
                 "mypy",
-                "--install-types",
-                "--non-interactive",
-                "--ignore-missing",
+                "--ignore-missing-imports",
                 os.path.join(args.target_package, "azure"),
             ]
         )
