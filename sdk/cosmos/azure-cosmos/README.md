@@ -114,7 +114,6 @@ Currently the features below are **not supported**. For alternatives options, ch
 * Change Feed: Read from the beggining
 * Change Feed: Pull model
 * Cross-partition ORDER BY for mixed types
-* Integrated Cache using the default consistency level, that is "Session". To take advantage of the new [Cosmos DB Integrated Cache](https://docs.microsoft.com/azure/cosmos-db/integrated-cache), it is required to explicitly set CosmosClient consistency level to "Eventual": `consistency_level= Eventual`.
 * Cross partition queries do not handle partition splits (410 Gone errors)
 
 ### Control Plane Limitations:
@@ -144,10 +143,6 @@ Typically you can use [Azure Portal](https://portal.azure.com/), [Azure Cosmos D
 ### AAD Support Workaround
 
 A possible workaround is to use managed identities to [programmatically](https://docs.microsoft.com/azure/cosmos-db/managed-identity-based-authentication) get the keys.
-
-## Consistency Level
-
-Please be aware that this SDK has "Session" as the default consistency level, and it **overrides** your Cosmos DB database account default option. Click [here](https://docs.microsoft.com/azure/cosmos-db/consistency-levels#eventual-consistency) to learn more about Cosmos DB consistency levels.
 
 ## Boolean Data Type
 
