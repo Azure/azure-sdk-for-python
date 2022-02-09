@@ -192,6 +192,13 @@ class EventData(object):
 
     @classmethod
     def from_message_data(cls, data: bytes, content_type: str) -> "EventData":
+        """
+        Creates an EventData object given content type and a data value to be set as body.
+
+        :param bytes data: The data value to be set as the body of the message.
+        :param str content_type: The content type to be set on the message.
+        :rtype: ~azure.eventhub.EventData
+        """
         event_data = cls(data)
         event_data.content_type = content_type
         return event_data
