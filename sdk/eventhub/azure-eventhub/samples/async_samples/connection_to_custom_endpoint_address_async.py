@@ -70,6 +70,5 @@ async def consumer_connecting_to_custom_endpoint():
         print('Stopped receiving.')
 
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(producer_connecting_to_custom_endpoint())
-loop.run_until_complete(consumer_connecting_to_custom_endpoint())
+asyncio.run(producer_connecting_to_custom_endpoint())
+asyncio.run(consumer_connecting_to_custom_endpoint())
