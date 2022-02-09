@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-- Temporarily unblock network by adding back the `POST` method check when handling LROs with `final-state-via` defined.  #22989
+- Limiting `final-state-via` scope to POST until consuming SDKs has been fixed to use this option properly on PUT.  #22989
 
 ### Other Changes
 
