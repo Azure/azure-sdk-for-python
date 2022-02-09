@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- fix authentication who use a `reverse_proxy_endpoint` with either `WebPubSubServiceClient.from_connection_string` or pass in an `AzureKeyCredential` for authentication #22587
+
 ### Other Changes
 
 ## 1.0.0 (2021-11-10)
