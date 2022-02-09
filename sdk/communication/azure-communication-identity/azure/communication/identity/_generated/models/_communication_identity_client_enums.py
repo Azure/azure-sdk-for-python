@@ -17,3 +17,4 @@ class CommunicationTokenScope(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
 
     CHAT = "chat"
     VOIP = "voip"
+    EMAIL = "email"

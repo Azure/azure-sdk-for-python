@@ -26,8 +26,8 @@ class CommunicationIdentityClient:
     :param endpoint: The communication resource, for example
      https://my-resource.communication.azure.com.
     :type endpoint: str
-    :keyword api_version: Api Version. The default value is "2021-10-31-preview". Note that
-     overriding this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. The default value is "2022-06-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 

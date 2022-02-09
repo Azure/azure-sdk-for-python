@@ -17,8 +17,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._communication_identity_operations import build_create_request, build_delete_request, build_exchange_teams_user_access_token_request, build_issue_access_token_request, build_revoke_access_tokens_request
-
+from ...operations._communication_identity_operations import build_create_request, build_delete_request, build_get_teams_user_access_token_request, build_issue_access_token_request, build_revoke_access_tokens_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -57,9 +56,6 @@ class CommunicationIdentityOperations:
         :param create_token_with_scopes: Also create access token for the created identity.
         :type create_token_with_scopes: list[str or
          ~azure.communication.identity.models.CommunicationTokenScope]
-        :keyword api_version: Api Version. The default value is "2021-10-31-preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CommunicationIdentityAccessTokenResult, or the result of cls(response)
         :rtype: ~azure.communication.identity.models.CommunicationIdentityAccessTokenResult
@@ -71,19 +67,19 @@ class CommunicationIdentityOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-31-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _body = _models.CommunicationIdentityCreateRequest(create_token_with_scopes=create_token_with_scopes)
         if _body is not None:
-            json = self._serialize.body(_body, 'CommunicationIdentityCreateRequest')
+            _json = self._serialize.body(_body, 'CommunicationIdentityCreateRequest')
         else:
-            json = None
+            _json = None
 
         request = build_create_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.create.metadata['url'],
         )
         request = _convert_request(request)
@@ -122,9 +118,6 @@ class CommunicationIdentityOperations:
 
         :param id: Identifier of the identity to be deleted.
         :type id: str
-        :keyword api_version: Api Version. The default value is "2021-10-31-preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -136,7 +129,7 @@ class CommunicationIdentityOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-31-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-01")  # type: str
 
         
         request = build_delete_request(
@@ -176,9 +169,6 @@ class CommunicationIdentityOperations:
 
         :param id: Identifier of the identity.
         :type id: str
-        :keyword api_version: Api Version. The default value is "2021-10-31-preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -190,7 +180,7 @@ class CommunicationIdentityOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-31-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-01")  # type: str
 
         
         request = build_revoke_access_tokens_request(
@@ -219,7 +209,7 @@ class CommunicationIdentityOperations:
 
 
     @distributed_trace_async
-    async def exchange_teams_user_access_token(
+    async def get_teams_user_access_token(
         self,
         token: str,
         **kwargs: Any
@@ -233,9 +223,6 @@ class CommunicationIdentityOperations:
         :param token: AAD access token of a Teams User to acquire a new Communication Identity access
          token.
         :type token: str
-        :keyword api_version: Api Version. The default value is "2021-10-31-preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CommunicationIdentityAccessToken, or the result of cls(response)
         :rtype: ~azure.communication.identity.models.CommunicationIdentityAccessToken
@@ -247,17 +234,17 @@ class CommunicationIdentityOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-31-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _body = _models.TeamsUserAccessTokenRequest(token=token)
-        json = self._serialize.body(_body, 'TeamsUserAccessTokenRequest')
+        _json = self._serialize.body(_body, 'TeamsUserAccessTokenRequest')
 
-        request = build_exchange_teams_user_access_token_request(
+        request = build_get_teams_user_access_token_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
-            template_url=self.exchange_teams_user_access_token.metadata['url'],
+            json=_json,
+            template_url=self.get_teams_user_access_token.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -280,7 +267,7 @@ class CommunicationIdentityOperations:
 
         return deserialized
 
-    exchange_teams_user_access_token.metadata = {'url': '/teamsUser/:exchangeAccessToken'}  # type: ignore
+    get_teams_user_access_token.metadata = {'url': '/teamsUser/:getToken'}  # type: ignore
 
 
     @distributed_trace_async
@@ -298,9 +285,6 @@ class CommunicationIdentityOperations:
         :type id: str
         :param scopes: List of scopes attached to the token.
         :type scopes: list[str or ~azure.communication.identity.models.CommunicationTokenScope]
-        :keyword api_version: Api Version. The default value is "2021-10-31-preview". Note that
-         overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CommunicationIdentityAccessToken, or the result of cls(response)
         :rtype: ~azure.communication.identity.models.CommunicationIdentityAccessToken
@@ -312,17 +296,17 @@ class CommunicationIdentityOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-31-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2022-06-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _body = _models.CommunicationIdentityAccessTokenRequest(scopes=scopes)
-        json = self._serialize.body(_body, 'CommunicationIdentityAccessTokenRequest')
+        _json = self._serialize.body(_body, 'CommunicationIdentityAccessTokenRequest')
 
         request = build_issue_access_token_request(
             id=id,
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.issue_access_token.metadata['url'],
         )
         request = _convert_request(request)
