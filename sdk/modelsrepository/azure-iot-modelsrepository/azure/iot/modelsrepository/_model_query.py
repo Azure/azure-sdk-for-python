@@ -34,13 +34,13 @@ class ModelQuery(object):
         :type content: JSON object
         """
         # Remove trailing commas if needed
-        content = re.sub(r",[ \t\r\n]+}", "}", content.text())
-        content = re.sub(r",[ \t\r\n]+\]", "]", content)
-        self._content = content
+        # content = re.sub(r",[ \t\r\n]+}", "}", content)
+        # content = re.sub(r",[ \t\r\n]+\]", "]", content)
+        self._content = json.loads(content)
 
     def parse_model(self):
         # type: () -> ModelMetadata
-        return self._parse_interface(root=json.loads(self._content))
+        return self._parse_interface(root=self._content)
 
     def _parse_interface(self, root):
         # type: (Dict[str, Any]) -> ModelMetadata
@@ -92,10 +92,9 @@ class ModelQuery(object):
         # type: () -> Dict[str, str]
         """Parse contents from an expanded json using the ModelQuery class."""
         result = {}
-        contents = json.loads(self._content)
-        if isinstance(contents, list):
-            for content in contents:
-                model_metadata = ModelQuery(content=content).parse_model()
+        if isinstance(self._content, list):
+            for content in self._content:
+                model_metadata = ModelQuery(content=json.dumps(content)).parse_model()
                 result[model_metadata.dtmi] = content
         return result
 

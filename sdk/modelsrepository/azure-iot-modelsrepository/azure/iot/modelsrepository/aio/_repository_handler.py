@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import json
 import logging
 import os
 import re
@@ -127,7 +128,7 @@ class RepositoryHandler(object):
                 expanded = ModelQuery(content=fetched_model_result.definition).parse_models_from_list()
                 for item in expanded:
                     if item not in processed_models:
-                        processed_models[item] = expanded[item]
+                        processed_models[item] = json.dumps(expanded[item])
                 continue
 
             model_metadata = ModelQuery(content=fetched_model_result.definition).parse_model()

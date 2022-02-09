@@ -119,8 +119,8 @@ class ModelsRepositoryMetadata(object):
         :rtype: ModelsRepositoryMetadata
         """
         # Remove trailing commas if needed
-        json_str = re.sub(r",[ \t\r\n]+}", "}", json_str.text())
-        json_str = re.sub(r",[ \t\r\n]+\]", "]", json_str)
+        # json_str = re.sub(r",[ \t\r\n]+}", "}", json_str)
+        # json_str = re.sub(r",[ \t\r\n]+\]", "]", json_str)
         content = json.loads(json_str)
         return cls(
             commit_id=content.get("commitId"),

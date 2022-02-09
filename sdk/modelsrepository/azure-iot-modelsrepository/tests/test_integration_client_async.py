@@ -18,7 +18,8 @@ from azure.iot.modelsrepository.aio import (
 from .client_helper import (
     ClientType,
     determine_repo,
-    await_prepared_test
+    await_prepared_test,
+    parse_root_dtmi_from_json
 )
 
 
@@ -106,7 +107,7 @@ class TestIntegrationGetModels(AzureTestCase):
         self.assertTrue(len(model_map) == 1)
         self.assertTrue(dtmi in model_map.keys())
         model = model_map[dtmi]
-        self.assertTrue(model["@id"] == dtmi)
+        self.assertTrue(parse_root_dtmi_from_json(model) == dtmi)
 
     @parameterized.expand(
         [
@@ -134,8 +135,8 @@ class TestIntegrationGetModels(AzureTestCase):
         self.assertTrue(dtmi2 in model_map.keys())
         model1 = model_map[dtmi1]
         model2 = model_map[dtmi2]
-        self.assertTrue(model1["@id"] == dtmi1)
-        self.assertTrue(model2["@id"] == dtmi2)
+        self.assertTrue(parse_root_dtmi_from_json(model1) == dtmi1)
+        self.assertTrue(parse_root_dtmi_from_json(model2) == dtmi2)
 
     @parameterized.expand(
         [
@@ -164,7 +165,7 @@ class TestIntegrationGetModels(AzureTestCase):
         for dtmi in expected_dtmis:
             self.assertTrue(dtmi in model_map.keys())
             model = model_map[dtmi]
-            self.assertTrue(model["@id"] == dtmi)
+            self.assertTrue(parse_root_dtmi_from_json(model) == dtmi)
 
     @await_prepared_test
     async def test_multiple_dtmis_with_component_deps_async(self):
@@ -190,7 +191,7 @@ class TestIntegrationGetModels(AzureTestCase):
         for dtmi in expected_dtmis:
             self.assertTrue(dtmi in model_map.keys())
             model = model_map[dtmi]
-            self.assertTrue(model["@id"] == dtmi)
+            self.assertTrue(parse_root_dtmi_from_json(model) == dtmi)
 
     @await_prepared_test
     async def test_multiple_dtmis_with_extends_deps_single_dtmi_async(self):
@@ -215,7 +216,7 @@ class TestIntegrationGetModels(AzureTestCase):
         for dtmi in expected_dtmis:
             self.assertTrue(dtmi in model_map.keys())
             model = model_map[dtmi]
-            self.assertTrue(model["@id"] == dtmi)
+            self.assertTrue(parse_root_dtmi_from_json(model) == dtmi)
 
     @await_prepared_test
     async def test_multiple_dtmis_with_extends_deps_multiple_dtmi_async(self):
@@ -241,7 +242,7 @@ class TestIntegrationGetModels(AzureTestCase):
         for dtmi in expected_dtmis:
             self.assertTrue(dtmi in model_map.keys())
             model = model_map[dtmi]
-            self.assertTrue(model["@id"] == dtmi)
+            self.assertTrue(parse_root_dtmi_from_json(model) == dtmi)
 
     @await_prepared_test
     async def test_single_dtmi_with_extends_single_model_inline_async(self):
@@ -256,7 +257,7 @@ class TestIntegrationGetModels(AzureTestCase):
         self.assertTrue(len(model_map) == 1)
         self.assertTrue(dtmi in model_map.keys())
         model = model_map[dtmi]
-        self.assertTrue(model["@id"] == dtmi)
+        self.assertTrue(parse_root_dtmi_from_json(model) == dtmi)
 
     @await_prepared_test
     async def test_single_dtmi_with_extends_mixed_inline_and_dtmi_async(self):
@@ -274,7 +275,7 @@ class TestIntegrationGetModels(AzureTestCase):
         for dtmi in expected_dtmis:
             self.assertTrue(dtmi in model_map.keys())
             model = model_map[dtmi]
-            self.assertTrue(model["@id"] == dtmi)
+            self.assertTrue(parse_root_dtmi_from_json(model) == dtmi)
 
     @parameterized.expand(
         [
@@ -299,7 +300,7 @@ class TestIntegrationGetModels(AzureTestCase):
         self.assertTrue(dtmi1 in model_map.keys())
         self.assertTrue(dtmi2 in model_map.keys())
         model = model_map[dtmi1]
-        self.assertTrue(model["@id"] == dtmi1 == dtmi2)
+        self.assertTrue(parse_root_dtmi_from_json(model) == dtmi1 == dtmi2)
 
     @parameterized.expand(
         [
@@ -322,7 +323,7 @@ class TestIntegrationGetModels(AzureTestCase):
         self.assertTrue(len(model_map) == 1)
         self.assertTrue(dtmi in model_map.keys())
         model = model_map[dtmi]
-        self.assertTrue(model["@id"] == dtmi)
+        self.assertTrue(parse_root_dtmi_from_json(model) == dtmi)
 
     @await_prepared_test
     async def test_single_dtmi_with_depdendencies_use_metadata_enabled_dependency_resolution_async(self):
@@ -345,7 +346,7 @@ class TestIntegrationGetModels(AzureTestCase):
         for dtmi in expected_dtmis:
             self.assertTrue(dtmi in model_map.keys())
             model = model_map[dtmi]
-            self.assertTrue(model["@id"] == dtmi)
+            self.assertTrue(parse_root_dtmi_from_json(model) == dtmi)
 
     @parameterized.expand(
         [
@@ -383,7 +384,7 @@ class TestIntegrationGetModels(AzureTestCase):
         for dtmi in total_dtmis:
             self.assertTrue(dtmi in model_map.keys())
             model = model_map[dtmi]
-            self.assertTrue(model["@id"] == dtmi)
+            self.assertTrue(parse_root_dtmi_from_json(model) == dtmi)
 
     @parameterized.expand(
         [
@@ -414,7 +415,7 @@ class TestIntegrationGetModels(AzureTestCase):
                 for dtmi in expected_dtmis:
                     self.assertTrue(dtmi in model_map_with_deps.keys())
                     model = model_map_with_deps[dtmi]
-                    self.assertTrue(model["@id"] == dtmi)
+                    self.assertTrue(parse_root_dtmi_from_json(model) == dtmi)
 
                 model_map_no_deps = await client.get_models(
                     root_dtmi, dependency_resolution=DependencyMode.disabled.value
@@ -423,4 +424,4 @@ class TestIntegrationGetModels(AzureTestCase):
                 self.assertTrue(len(model_map_no_deps) == 1)
                 self.assertTrue(root_dtmi in model_map_no_deps.keys())
                 model = model_map_no_deps[root_dtmi]
-                self.assertTrue(model["@id"] == root_dtmi)
+                self.assertTrue(parse_root_dtmi_from_json(model) == root_dtmi)

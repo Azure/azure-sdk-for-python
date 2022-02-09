@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import json
 import os
 import functools
 import sys
@@ -35,6 +36,10 @@ def determine_repo(
         repo = os.path.join(test_dir, "local_repository")
 
     return repo
+
+
+def parse_root_dtmi_from_json(json_str):
+    return json.loads(json_str).get("@id")
 
 
 def await_prepared_test(test_fn):

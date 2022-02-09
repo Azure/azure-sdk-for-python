@@ -156,7 +156,7 @@ class HttpFetcher(Fetcher):
             raise HttpResponseError(
                 "Failed to fetch from remote endpoint. Status code: {}".format(response.status_code)
             )
-        return response
+        return response.text()
 
 
 class FilesystemFetcher(Fetcher):
