@@ -8,14 +8,15 @@ from threading import Timer, Lock
 
 # Credit to https://stackoverflow.com/questions/3393612/run-certain-code-every-n-seconds
 class RepeatedTimer(object):
-    def __init__(self, interval, function, *args, **kwargs):
+    def __init__(self, interval, function, *args, start_now: bool = True, **kwargs):
         self._timer = None
         self.interval = interval
         self.function = function
         self.args = args
         self.kwargs = kwargs
         self.is_running = False
-        self.start()
+        if start_now:
+            self.start()
 
     def _run(self):
         self.is_running = False
