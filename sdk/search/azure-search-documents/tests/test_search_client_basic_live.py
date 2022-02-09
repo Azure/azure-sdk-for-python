@@ -18,6 +18,11 @@ class TestSearchClient(AzureRecordedTestCase):
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
     def test_get_document_count(self, endpoint, api_key, index_name):
+        print(endpoint)
+        print("#############start###############")
+        for i in endpoint:
+            print(i)
+        print("#############end###############")
         client = SearchClient(endpoint, index_name, api_key)
         assert client.get_document_count() == 10
 
