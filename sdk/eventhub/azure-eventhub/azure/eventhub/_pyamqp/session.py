@@ -212,9 +212,9 @@ class Session(object):
 
     def _outgoing_transfer(self, delivery):
         if self.state != SessionState.MAPPED:
-            delivery.transfer_state = SessionTransferState.Error
+            delivery.transfer_state = SessionTransferState.ERROR
         if self.remote_incoming_window <= 0:
-            delivery.transfer_state = SessionTransferState.Busy
+            delivery.transfer_state = SessionTransferState.BUSY
         else:
             payload = delivery.frame['payload']
             payload_size = len(payload)
@@ -271,7 +271,7 @@ class Session(object):
             self.next_outgoing_id += 1
             self.remote_incoming_window -= 1
             self.outgoing_window -= 1
-            delivery.transfer_state = SessionTransferState.Okay
+            delivery.transfer_state = SessionTransferState.OKAY
 
     def _incoming_transfer(self, frame):
         self.next_incoming_id += 1
@@ -344,7 +344,6 @@ class Session(object):
         except Exception as exc:
             _LOGGER.info("An error occurred when ending the session: %r", exc)
             self._set_state(SessionState.UNMAPPED)
-
 
     def create_receiver_link(self, source_address, **kwargs):
         assigned_handle = self._get_next_output_handle()

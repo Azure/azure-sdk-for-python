@@ -1,6 +1,36 @@
-"""Transport implementation."""
-# pylint: skip-file
+#-------------------------------------------------------------------------
+# This is a fork of the transport.py which was originally written by Barry Pederson and
+# maintained by the Celery project: https://github.com/celery/py-amqp.
+#
 # Copyright (C) 2009 Barry Pederson <bp@barryp.org>
+#
+# The license text can also be found here:
+# http://www.opensource.org/licenses/BSD-3-Clause
+#
+# License
+# =======
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+#     1. Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+#
+#     2. Redistributions in binary form must reproduce the above copyright
+#        notice, this list of conditions and the following disclaimer in the
+#        documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+#-------------------------------------------------------------------------
 
 import asyncio
 import errno
@@ -28,17 +58,34 @@ from .._transport import (
     IPV6_LITERAL,
     SIGNED_INT_MAX,
     _UNAVAIL,
-    set_cloexec
+    set_cloexec,
+    AMQP_PORT
 )
 
 
 _LOGGER = logging.getLogger(__name__)
 
 
+def get_running_loop():
+    try:
+        import asyncio  # pylint: disable=import-error
+        return asyncio.get_running_loop()
+    except AttributeError:  # 3.6
+        loop = None
+        try:
+            loop = asyncio._get_running_loop()  # pylint: disable=protected-access
+        except AttributeError:
+            _LOGGER.warning('This version of Python is deprecated, please upgrade to >= v3.6')
+        if loop is None:
+            _LOGGER.warning('No running event loop')
+            loop = asyncio.get_event_loop()
+        return loop
+
+
 class AsyncTransport(object):
     """Common superclass for TCP and SSL transports."""
 
-    def __init__(self, host, connect_timeout=None,
+    def __init__(self, host, port=AMQP_PORT, connect_timeout=None,
                  read_timeout=None, write_timeout=None, ssl=False,
                  socket_settings=None, raise_on_initial_eintr=True, **kwargs):
         self.connected = False
@@ -47,13 +94,13 @@ class AsyncTransport(object):
         self.writer = None
         self.raise_on_initial_eintr = raise_on_initial_eintr
         self._read_buffer = BytesIO()
-        self.host, self.port = to_host_port(host)
+        self.host, self.port = to_host_port(host, port)
 
         self.connect_timeout = connect_timeout
         self.read_timeout = read_timeout
         self.write_timeout = write_timeout
         self.socket_settings = socket_settings
-        self.loop = asyncio.get_running_loop()
+        self.loop = get_running_loop()
         self.socket_lock = asyncio.Lock()
         self.sslopts = self._build_ssl_opts(ssl)
 
@@ -68,7 +115,8 @@ class AsyncTransport(object):
                 ssl_version = ssl.PROTOCOL_TLS
 
             # Set SNI headers if supported
-            if (hasattr(ssl, 'HAS_SNI') and ssl.HAS_SNI) and (hasattr(ssl, 'SSLContext')):
+            server_hostname = sslopts.get('server_hostname')
+            if (server_hostname is not None) and (hasattr(ssl, 'HAS_SNI') and ssl.HAS_SNI) and (hasattr(ssl, 'SSLContext')):
                 context = ssl.SSLContext(ssl_version)
                 cert_reqs = sslopts.get('cert_reqs', ssl.CERT_REQUIRED)
                 certfile = sslopts.get('certfile')
@@ -102,8 +150,7 @@ class AsyncTransport(object):
             self.reader, self.writer = await asyncio.open_connection(
                 sock=self.sock,
                 ssl=self.sslopts,
-                server_hostname=self.host if self.sslopts else None,
-                loop=self.loop
+                server_hostname=self.host if self.sslopts else None
             )
             # we've sent the banner; signal connect
             # EINTR, EAGAIN, EWOULDBLOCK would signal that the banner
@@ -126,6 +173,7 @@ class AsyncTransport(object):
         # during resolution attempt (either because of system misconfiguration,
         # or network connectivity problem), resolution process locks the
         # _connect call for extended time.
+        e = None
         addr_types = (socket.AF_INET, socket.AF_INET6)
         addr_types_num = len(addr_types)
         for n, family in enumerate(addr_types):
@@ -175,16 +223,17 @@ class AsyncTransport(object):
         self._set_socket_options(socket_settings)
 
         # set socket timeouts
-        for timeout, interval in ((socket.SO_SNDTIMEO, write_timeout),
-                                  (socket.SO_RCVTIMEO, read_timeout)):
-            if interval is not None:
-                sec = int(interval)
-                usec = int((interval - sec) * 1000000)
-                self.sock.setsockopt(
-                    socket.SOL_SOCKET, timeout,
-                    pack('ll', sec, usec),
-                )
-        self.sock.settimeout(0.1)  # set socket back to non-blocking mode
+        # for timeout, interval in ((socket.SO_SNDTIMEO, write_timeout),
+        #                           (socket.SO_RCVTIMEO, read_timeout)):
+        #     if interval is not None:
+        #         sec = int(interval)
+        #         usec = int((interval - sec) * 1000000)
+        #         self.sock.setsockopt(
+        #             socket.SOL_SOCKET, timeout,
+        #             pack('ll', sec, usec),
+        #         )
+
+        self.sock.settimeout(1)  # set socket back to non-blocking mode
 
     def _get_tcp_socket_defaults(self, sock):
         tcp_opts = {}
@@ -227,7 +276,13 @@ class AsyncTransport(object):
         try:
             while toread:
                 try:
-                    view[nbytes:nbytes + toread] = await self.reader.readexactly(toread)
+                    # TODO: await self.reader.readexactly would not return until it has received something which
+                    #  is problematic in the case timeout is required while no frame coming in.
+                    #  asyncio.wait_for is used here for timeout control
+                    #  set socket timeout does not work, not triggering socket error maybe should be a different config?
+                    #  also we could consider using a low level socket instead of high level reader/writer
+                    #  https://docs.python.org/3/library/asyncio-eventloop.html
+                    view[nbytes:nbytes + toread] = await asyncio.wait_for(self.reader.readexactly(toread), timeout=1)
                     nbytes = toread
                 except asyncio.IncompleteReadError as exc:
                     pbytes = len(exc.partial)
@@ -261,6 +316,9 @@ class AsyncTransport(object):
 
     def close(self):
         if self.writer is not None:
+            if self.sslopts:
+                # see issue: https://github.com/encode/httpx/issues/914
+                self.writer.transport.abort()
             self.writer.close()
             self.writer, self.reader = None, None
         self.sock = None
@@ -324,15 +382,15 @@ class AsyncTransport(object):
             else:
                 decoded = decode_frame(payload)
             # TODO: Catch decode error and return amqp:decode-error
-            _LOGGER.info("ICH%d <- %r", channel, decoded)
+            #_LOGGER.info("ICH%d <- %r", channel, decoded)
             return channel, decoded
-        except (socket.timeout, asyncio.IncompleteReadError):
+        except (socket.timeout, asyncio.IncompleteReadError, asyncio.TimeoutError):
             return None, None
 
     async def receive_frame_with_lock(self, *args, **kwargs):
         try:
             async with self.socket_lock:
-                header, channel, payload, await self.read(**kwargs) 
+                header, channel, payload = await self.read(**kwargs)
             if not payload:
                 decoded = decode_empty_frame(header)
             else:
@@ -350,13 +408,13 @@ class AsyncTransport(object):
             data = header + encoded_channel + performative
 
         await self.write(data)
-        _LOGGER.info("OCH%d -> %r", channel, frame)
+        #_LOGGER.info("OCH%d -> %r", channel, frame)
 
     async def negotiate(self):
         if not self.sslopts:
             return
-        await self.wriate(TLS_HEADER_FRAME)
-        channel, returned_header[1] = await self.receive_frame(verify_frame_type=None)
-        if returned_header == TLS_HEADER_FRAME:
+        await self.write(TLS_HEADER_FRAME)
+        channel, returned_header = await self.receive_frame(verify_frame_type=None)
+        if returned_header[1] == TLS_HEADER_FRAME:
             raise ValueError("Mismatching TLS header protocol. Excpected: {}, received: {}".format(
                 TLS_HEADER_FRAME, returned_header[1]))

@@ -186,9 +186,9 @@ class AMQPClient(object):
         retry_settings = self._retry_policy.configure_retries()
         retry_active = True
         absolute_timeout = kwargs.pop("timeout", 0) or 0
+        start_time = time.time()
         while retry_active:
             try:
-                start_time = time.time()
                 if absolute_timeout < 0:
                     raise TimeoutError("Operation timed out.")
                 return operation(*args, timeout=absolute_timeout, **kwargs)
@@ -447,7 +447,7 @@ class SendClient(AMQPClient):
         # TODO: check whether the callback would be called in case of message expiry or link going down
         #  and if so handle the state in the callback
         message_delivery.reason = reason
-        if reason == LinkDeliverySettleReason.DispositionReceived:
+        if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED:
             if state and SEND_DISPOSITION_ACCEPT in state:
                 message_delivery.state = MessageDeliveryState.Ok
             else:
@@ -464,9 +464,9 @@ class SendClient(AMQPClient):
                         message_delivery,
                         condition=ErrorCondition.UnknownError
                     )
-        elif reason == LinkDeliverySettleReason.Settled:
+        elif reason == LinkDeliverySettleReason.SETTLED:
             message_delivery.state = MessageDeliveryState.Ok
-        elif reason == LinkDeliverySettleReason.Timeout:
+        elif reason == LinkDeliverySettleReason.TIMEOUT:
             message_delivery.state = MessageDeliveryState.Timeout
             message_delivery.error = TimeoutError("Sending message timed out.")
         else:
@@ -495,7 +495,7 @@ class SendClient(AMQPClient):
         while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             running = self.do_work()
             if message_delivery.expiry and time.time() > message_delivery.expiry:
-                self._on_send_complete(message_delivery, LinkDeliverySettleReason.Timeout, None)
+                self._on_send_complete(message_delivery, LinkDeliverySettleReason.TIMEOUT, None)
 
         if message_delivery.state in (MessageDeliveryState.Error, MessageDeliveryState.Cancelled, MessageDeliveryState.Timeout):
             try:

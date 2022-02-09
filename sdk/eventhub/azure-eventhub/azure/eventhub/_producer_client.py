@@ -21,7 +21,7 @@ from typing_extensions import Literal
 
 from ._client_base import ClientBase
 from ._producer import EventHubProducer
-from ._constants import ALL_PARTITIONS
+from ._constants import ALL_PARTITIONS, MAX_MESSAGE_LENGTH_BYTES
 from ._common import EventDataBatch, EventData
 from ._buffered_producer import BufferedProducerDispatcher
 from ._utils import set_event_partition_key

@@ -64,6 +64,16 @@
 ### Features Added
 
 - The classmethod `from_message_data` has been added to `EventData` for interoperability with the Schema Registry Avro Encoder library, and takes `data` and `content_type` as positional parameters.
+## 5.8.0a2 (2022-02-09)
+
+### Features Added
+
+- Added support for async `EventHubProducerClient` and `EventHubConsumerClient`.
+
+### Breaking changes
+
+- The following features have been temporarily pulled out of async `EventHubProducerClient` and `EventHubConsumerClient` which will be added back in future previews as we work towards a stable release:
+  - Passing the following keyword arguments to the constructors and `from_connection_string` methods of the `EventHubProducerClient` and `EventHubConsumerClient` is not supported:  `transport_type`, `http_proxy`, `custom_endpoint_address`, and `connection_verify`.
 
 ## 5.8.0a1 (2022-01-13)
 

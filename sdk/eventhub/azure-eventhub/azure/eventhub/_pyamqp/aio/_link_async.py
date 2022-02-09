@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
-
+import asyncio
 import threading
 import struct
 import uuid
@@ -13,7 +13,6 @@ from urllib.parse import urlparse
 from enum import Enum
 from io import BytesIO
 
-from ._anyio import create_task_group, sleep
 from ..endpoints import Source, Target
 from ..constants import (
     DEFAULT_LINK_CREDIT,
@@ -32,6 +31,12 @@ from ..performatives import (
     DispositionFrame,
     FlowFrame,
 )
+from ..error import (
+    AMQPConnectionError,
+    AMQPLinkRedirect,
+    AMQPLinkError,
+    ErrorCondition
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -47,7 +52,9 @@ class Link(object):
         self.handle = handle
         self.remote_handle = None
         self.role = role
-        self.source = Source(
+        source_address = kwargs['source_address']
+        target_address = kwargs["target_address"]
+        self.source = source_address if isinstance(source_address, Source) else Source(
             address=kwargs['source_address'],
             durable=kwargs.get('source_durable'),
             expiry_policy=kwargs.get('source_expiry_policy'),
@@ -59,7 +66,7 @@ class Link(object):
             default_outcome=kwargs.get('source_default_outcome'),
             outcomes=kwargs.get('source_outcomes'),
             capabilities=kwargs.get('source_capabilities'))
-        self.target = Target(
+        self.target = target_address if isinstance(target_address,Target) else Target(
             address=kwargs['target_address'],
             durable=kwargs.get('target_durable'),
             expiry_policy=kwargs.get('target_expiry_policy'),
@@ -93,6 +100,7 @@ class Link(object):
         self._pending_deliveries = {}
         self._received_payload = bytearray()
         self._on_link_state_change = kwargs.get('on_link_state_change')
+        self._error = None
 
     async def __aenter__(self):
         await self.attach()
@@ -105,6 +113,23 @@ class Link(object):
     def from_incoming_frame(cls, session, handle, frame):
         # check link_create_from_endpoint in C lib
         raise NotImplementedError('Pending')  # TODO: Assuming we establish all links for now...
+
+    async def get_state(self):
+        try:
+            raise self._error
+        except TypeError:
+            pass
+        return self.state
+
+    async def _check_if_closed(self):
+        if self._is_closed:
+            try:
+                raise self._error
+            except TypeError:
+                raise AMQPConnectionError(
+                    condition=ErrorCondition.InternalError,
+                    description="Link already closed."
+                )
 
     async def _set_state(self, new_state):
         # type: (LinkState) -> None
@@ -122,9 +147,10 @@ class Link(object):
             _LOGGER.error("Link state change callback failed: '%r'", e, extra=self.network_trace_params)
 
     async def _remove_pending_deliveries(self):  # TODO: move to sender
-        async with create_task_group() as tg:
-            for delivery in self._pending_deliveries.values():
-                await tg.spawn(delivery.on_settled, LinkDeliverySettleReason.NotDelivered, None)
+        futures = []
+        for delivery in self._pending_deliveries.values():
+            futures.append(asyncio.ensure_future(delivery.on_settled(LinkDeliverySettleReason.NOT_DELIVERED, None)))
+        await asyncio.gather(*futures)
         self._pending_deliveries = {}
     
     async def _on_session_state_change(self):
@@ -195,6 +221,9 @@ class Link(object):
     async def _incoming_flow(self, frame):
         pass
 
+    async def _incoming_disposition(self, frame):
+        pass
+
     async def _outgoing_detach(self, close=False, error=None):
         detach_frame = DetachFrame(handle=self.handle, closed=close, error=error)
         if self.network_trace:
@@ -215,7 +244,10 @@ class Link(object):
             await self._outgoing_detach(close=True)
         await self._remove_pending_deliveries()
         # TODO: on_detach_hook
-        if frame[2]:
+        if frame[2]:  # error
+            # frame[2][0] is condition, frame[2][1] is description, frame[2][2] is info
+            error_cls = AMQPLinkRedirect if frame[2][0] == ErrorCondition.LinkRedirect else AMQPLinkError
+            self._error = error_cls(condition=frame[2][0], description=frame[2][1], info=frame[2][2])
             await self._set_state(LinkState.ERROR)
         else:
             await self._set_state(LinkState.DETACHED)
@@ -228,12 +260,17 @@ class Link(object):
         self._received_payload = bytearray()
 
     async def detach(self, close=False, error=None):
-        if self._is_closed:
-            raise ValueError("Link already closed.")
-        await self._remove_pending_deliveries()  # TODO: Keep?
-        if self.state in [LinkState.ATTACH_SENT, LinkState.ATTACH_RCVD]:
-            await self._outgoing_detach(close=close, error=error)
+        if self.state in (LinkState.DETACHED, LinkState.ERROR):
+            return
+        try:
+            await self._check_if_closed()
+            await self._remove_pending_deliveries()  # TODO: Keep?
+            if self.state in [LinkState.ATTACH_SENT, LinkState.ATTACH_RCVD]:
+                await self._outgoing_detach(close=close, error=error)
+                await self._set_state(LinkState.DETACHED)
+            elif self.state == LinkState.ATTACHED:
+                await self._outgoing_detach(close=close, error=error)
+                await self._set_state(LinkState.DETACH_SENT)
+        except Exception as exc:
+            _LOGGER.info("An error occurred when detaching the link: %r", exc)
             await self._set_state(LinkState.DETACHED)
-        elif self.state == LinkState.ATTACHED:
-            await self._outgoing_detach(close=close, error=error)
-            await self._set_state(LinkState.DETACH_SENT)

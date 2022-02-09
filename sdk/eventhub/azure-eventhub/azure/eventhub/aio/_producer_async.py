@@ -22,6 +22,11 @@ from .._constants import TIMEOUT_SYMBOL
 from ..amqp import AmqpAnnotatedMessage
 from ._client_base_async import ConsumerProducerMixin
 from ._async_utils import get_dict_with_loop_if_needed
+from .._pyamqp import (
+    error,
+    utils as pyamqp_utils,
+)
+from .._pyamqp.aio import SendClientAsync
 
 if TYPE_CHECKING:
     from uamqp import types, constants, errors
@@ -141,20 +146,6 @@ class EventHubProducer(
     ) -> None:
         await self._do_retryable_operation(self._send_event_data, timeout=timeout)
 
-    def _on_outcome(
-        self, outcome: constants.MessageSendResult, condition: Optional[Exception]
-    ) -> None:
-        """
-        Called when the outcome is received for a delivery.
-
-        :param outcome: The outcome of the message delivery - success or failure.
-        :type outcome: ~uamqp.constants.MessageSendResult
-        :param condition: Detail information of the outcome.
-
-        """
-        self._outcome = outcome
-        self._condition = condition
-
     def _wrap_eventdata(
         self,
         event_data: Union[
@@ -253,9 +244,13 @@ class EventHubProducer(
                         child
                     )
 
-                await self._send_event_data_with_retry(
-                    timeout=timeout
-                )  # pylint:disable=unexpected-keyword-arg
+                try:
+                    await self._open()
+                    await self._handler.send_message_async(wrapper_event_data.message, timeout=timeout)
+                except TimeoutError as exception:
+                    raise OperationTimeoutError(message=str(exception), details=exception)
+                except Exception as exception:  # pylint:disable=broad-except
+                    raise (await self._handle_exception(exception))
 
     async def close(self) -> None:
         """

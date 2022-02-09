@@ -327,7 +327,6 @@ class EventHubConsumerClient(
             auth_timeout=auth_timeout,
             user_agent=user_agent,
             retry_total=retry_total,
-            transport_type=transport_type,
             checkpoint_store=checkpoint_store,
             load_balancing_interval=load_balancing_interval,
             **kwargs,

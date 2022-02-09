@@ -22,6 +22,11 @@ from .._client_base import (
     _parse_conn_str,
     _get_backoff_time,
 )
+
+from .._pyamqp.message import Message
+from .._pyamqp import constants, error as errors, utils as pyamqp_utils
+from .._pyamqp.aio import AMQPClientAsync
+from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync
 from .._utils import utc_from_timestamp, parse_sas_credential
 from ..exceptions import ClientClosedError
 from .._constants import (
@@ -224,7 +229,6 @@ class ClientBaseAsync(ClientBase):
             amqp_transport=self._amqp_transport,
             **kwargs
         )
-        self._conn_manager_async = get_connection_manager(**kwargs)
 
     def __enter__(self):
         raise TypeError(
@@ -244,7 +248,7 @@ class ClientBaseAsync(ClientBase):
             kwargs["credential"] = EventHubSharedKeyCredential(policy, key)
         return kwargs
 
-    async def _create_auth_async(self) -> authentication.JWTTokenAsync:
+    async def _create_auth_async(self) -> JWTTokenAuthAsync:
         """
         Create an ~uamqp.authentication.SASTokenAuthAsync instance to authenticate
         the session.
@@ -272,7 +276,7 @@ class ClientBaseAsync(ClientBase):
         )
 
     async def _close_connection_async(self) -> None:
-        await self._conn_manager_async.reset_connection_if_broken()
+        pass
 
     async def _backoff_async(
         self,
@@ -413,7 +417,7 @@ class ClientBaseAsync(ClientBase):
         return output
 
     async def _close_async(self) -> None:
-        await self._conn_manager_async.close_connection()
+        pass
 
 
 class ConsumerProducerMixin(_MIXIN_BASE):
