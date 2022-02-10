@@ -970,13 +970,13 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         return None
 
     @property
-    def message_state(self):
-        # type: () -> int
+    def state(self):
+        # type: () -> ServiceBusMessageState
         """
         Defaults to Active. Represents the message state of the message. Can be Active, Deferred.
         or Scheduled.
 
-        :rtype: int
+        :rtype: ~azure.servicebus.ServiceBusMessageState
         """
         try:
             message_state = self._raw_amqp_message.annotations.get(MESSAGE_STATE_NAME)
