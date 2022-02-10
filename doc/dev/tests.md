@@ -15,7 +15,7 @@ In this document we will provide the introduction to the testing framework by:
 
 ## Setup your development environment
 
-The Azure SDK Python team creates libraries that are compatible with Python 3.6 and up. We will set up working Python virtual environments for Python 3.6, and 3.9. It is recommended to do your development work in Python3, however it is helpful to have virtual environments for other versions to make debugging PRs easier locally.
+The Azure SDK Python team creates libraries that are compatible with Python 3.6 and up. We will set up working Python virtual environments for all minor versions of Python after 3.6. It is recommended to do your development work in Python3, however it is helpful to have virtual environments for other versions to make debugging PRs easier locally.
 
 * Python 3.9: Use the [python website](https://www.python.org/downloads/) or the one-click experience from the [Windows store](https://www.microsoft.com/p/python-39/9p7qfqmjrfp7) (Windows only).
 * Python 3.6: Use the [python website](https://www.python.org/downloads/release/python-3614/)
