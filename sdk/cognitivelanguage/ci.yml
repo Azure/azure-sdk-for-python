@@ -29,7 +29,6 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: cognitivelanguage
-    MaxParallel: 1
     Artifacts:
     - name: azure-ai-language-questionanswering
       safeName: azureailanguagequestionanswering
