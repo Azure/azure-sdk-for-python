@@ -3384,6 +3384,9 @@ class ModelOperationInfo(object):
     :vartype api_version: str
     :ivar tags: List of user defined key-value tag attributes associated with the model.
     :vartype tags: dict[str, str]
+
+    .. versionadded:: v2022-01-30-preview
+        The *api_version* and *tags* properties
     """
 
     def __init__(self, **kwargs):
@@ -3502,6 +3505,9 @@ class ModelOperation(ModelOperationInfo):
     :vartype api_version: str
     :ivar tags: List of user defined key-value tag attributes associated with the model.
     :vartype tags: dict[str, str]
+
+    .. versionadded:: v2022-01-30-preview
+        The *api_version* and *tags* properties
     """
 
     def __init__(self, **kwargs):
@@ -3691,6 +3697,9 @@ class AnalyzeResult(object):
     :vartype styles: list[~azure.ai.formrecognizer.DocumentStyle]
     :ivar documents: Extracted documents.
     :vartype documents: list[~azure.ai.formrecognizer.AnalyzedDocument]
+
+    .. versionadded:: v2022-01-30-preview
+        The *languages* property
     """
 
     def __init__(self, **kwargs):
@@ -3842,6 +3851,9 @@ class DocumentModelInfo(object):
     :vartype api_version: str
     :ivar tags: List of user defined key-value tag attributes associated with the model.
     :vartype tags: dict[str, str]
+
+    .. versionadded:: v2022-01-30-preview
+        The *api_version* and *tags* properties
     """
 
     def __init__(
@@ -3921,6 +3933,9 @@ class DocumentModel(DocumentModelInfo):
     :vartype tags: dict[str, str]
     :ivar doc_types: Supported document types, including the fields for each document and their types.
     :vartype doc_types: dict[str, ~azure.ai.formrecognizer.DocTypeInfo]
+
+    .. versionadded:: v2022-01-30-preview
+        The *api_version* and *tags* properties
     """
 
     def __init__(
@@ -4003,6 +4018,9 @@ class DocTypeInfo(object):
     :vartype field_schema: dict[str, Any]
     :ivar field_confidence: Estimated confidence for each field.
     :vartype field_confidence: dict[str, float]
+
+    .. versionadded:: v2022-01-30-preview
+        The *build_mode* property
     """
 
     def __init__(

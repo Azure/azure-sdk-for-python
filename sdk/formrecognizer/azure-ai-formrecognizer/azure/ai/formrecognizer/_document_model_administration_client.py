@@ -126,7 +126,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: v2022-01-30-preview
-            The *tags* keyword argument
+            The required *build_mode* parameter and *tags* keyword argument
 
         .. admonition:: Example:
 
