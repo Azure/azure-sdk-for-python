@@ -381,6 +381,7 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
         "Server",
         "Transfer-Encoding",
         "User-Agent",
+        "WWW-Authenticate", # OAuth Challenge header.
     ])
     REDACTED_PLACEHOLDER = "REDACTED"
     MULTI_RECORD_LOG = "AZURE_SDK_LOGGING_MULTIRECORD"
