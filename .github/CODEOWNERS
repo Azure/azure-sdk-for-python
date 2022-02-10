@@ -39,7 +39,7 @@
 
 # PRLabel: %Communication
 /sdk/communication/                                                  @acsdevx-msft
-/sdk/communication/azure-communication-phonenumbers/                 @RoyHerrod @danielav7 @whisper6284 @AlonsoMondal
+/sdk/communication/azure-communication-phonenumbers/                 @miguhern @whisper6284 @lucasrsant @RoyHerrod @danielav7
 /sdk/communication/azure-communication-sms/                          @RoyHerrod @arifibrahim4
 /sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk
 /sdk/communication/**/_shared/                                       @Azure/acs-identity-sdk
