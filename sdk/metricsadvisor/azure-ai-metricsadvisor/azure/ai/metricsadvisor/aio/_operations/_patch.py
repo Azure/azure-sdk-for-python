@@ -47,7 +47,7 @@ from ..._operations._patch import (
     FeedbackUnion,
     build_get_data_feed_request,
     build_list_data_feeds_request,
-    OperationMixinHelpers
+    OperationMixinHelpers,
 )
 from ...models import *
 
@@ -255,12 +255,12 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
     async def update_detection_configuration(
         self, detection_configuration: Union[str, AnomalyDetectionConfiguration], **kwargs: Any
     ) -> AnomalyDetectionConfiguration:
-        detection_configuration_id, detection_config_patch, kwargs = self._update_detection_configuration_helper(detection_configuration, **kwargs)
+        detection_configuration_id, detection_config_patch, kwargs = self._update_detection_configuration_helper(
+            detection_configuration, **kwargs
+        )
 
         return await super().update_anomaly_detection_configuration(
-            configuration_id=detection_configuration_id,
-            body=detection_config_patch,
-            **kwargs
+            configuration_id=detection_configuration_id, body=detection_config_patch, **kwargs
         )
 
     @distributed_trace_async

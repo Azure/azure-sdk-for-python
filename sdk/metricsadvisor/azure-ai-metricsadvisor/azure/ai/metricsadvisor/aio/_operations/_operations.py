@@ -65,9 +65,9 @@ from ..._operations._operations import (
     build_list_metric_series_definitions_request,
     build_refresh_data_feed_ingestion_request,
     build_update_alert_configuration_request,
-    build_update_anomaly_detection_configuration_request,
     build_update_data_feed_request,
     build_update_datasource_credential_request,
+    build_update_detection_configuration_request,
     build_update_hook_request,
 )
 
@@ -209,7 +209,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         return deserialized
 
     @distributed_trace_async
-    async def delete_alert_configuration(self, configuration_id: str, **kwargs: Any) -> None:
+    async def delete_alert_configuration(  # pylint: disable=inconsistent-return-statements
+        self, configuration_id: str, **kwargs: Any
+    ) -> None:
         """Delete anomaly alerting configuration.
 
         Delete anomaly alerting configuration.
@@ -246,7 +248,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
             return cls(pipeline_response, None, {})
 
     @distributed_trace_async
-    async def create_alert_configuration(self, body: "_models.AnomalyAlertConfiguration", **kwargs: Any) -> None:
+    async def create_alert_configuration(  # pylint: disable=inconsistent-return-statements
+        self, body: "_models.AnomalyAlertConfiguration", **kwargs: Any
+    ) -> None:
         """Create anomaly alerting configuration.
 
         Create anomaly alerting configuration.
@@ -622,7 +626,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         return deserialized
 
     @distributed_trace_async
-    async def update_anomaly_detection_configuration(
+    async def update_detection_configuration(
         self, configuration_id: str, body: "_models.AnomalyDetectionConfiguration", **kwargs: Any
     ) -> "_models.AnomalyDetectionConfiguration":
         """Update anomaly detection configuration.
@@ -645,7 +649,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
 
         _json = self._serialize.body(body, "AnomalyDetectionConfiguration")
 
-        request = build_update_anomaly_detection_configuration_request(
+        request = build_update_detection_configuration_request(
             configuration_id=configuration_id,
             content_type=content_type,
             json=_json,
@@ -673,7 +677,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         return deserialized
 
     @distributed_trace_async
-    async def delete_detection_configuration(self, configuration_id: str, **kwargs: Any) -> None:
+    async def delete_detection_configuration(  # pylint: disable=inconsistent-return-statements
+        self, configuration_id: str, **kwargs: Any
+    ) -> None:
         """Delete anomaly detection configuration.
 
         Delete anomaly detection configuration.
@@ -710,7 +716,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
             return cls(pipeline_response, None, {})
 
     @distributed_trace_async
-    async def create_detection_configuration(
+    async def create_detection_configuration(  # pylint: disable=inconsistent-return-statements
         self, body: "_models.AnomalyDetectionConfiguration", **kwargs: Any
     ) -> None:
         """Create anomaly detection configuration.
@@ -1385,7 +1391,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def create_datasource_credential(self, body: "_models.DataSourceCredential", **kwargs: Any) -> None:
+    async def create_datasource_credential(  # pylint: disable=inconsistent-return-statements
+        self, body: "_models.DataSourceCredential", **kwargs: Any
+    ) -> None:
         """Create a new data source credential.
 
         Create a new data source credential.
@@ -1561,7 +1569,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         return deserialized
 
     @distributed_trace_async
-    async def delete_datasource_credential(self, credential_id: str, **kwargs: Any) -> None:
+    async def delete_datasource_credential(  # pylint: disable=inconsistent-return-statements
+        self, credential_id: str, **kwargs: Any
+    ) -> None:
         """Delete a data source credential.
 
         Delete a data source credential.
@@ -1747,7 +1757,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def create_data_feed(self, body: "_models.DataFeed", **kwargs: Any) -> None:
+    async def create_data_feed(  # pylint: disable=inconsistent-return-statements
+        self, body: "_models.DataFeed", **kwargs: Any
+    ) -> None:
         """Create a new data feed.
 
         Create a new data feed.
@@ -1884,7 +1896,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         return deserialized
 
     @distributed_trace_async
-    async def delete_data_feed(self, data_feed_id: str, **kwargs: Any) -> None:
+    async def delete_data_feed(  # pylint: disable=inconsistent-return-statements
+        self, data_feed_id: str, **kwargs: Any
+    ) -> None:
         """Delete a data feed.
 
         Delete a data feed.
@@ -2057,7 +2071,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def add_feedback(self, body: "_models.MetricFeedback", **kwargs: Any) -> None:
+    async def add_feedback(  # pylint: disable=inconsistent-return-statements
+        self, body: "_models.MetricFeedback", **kwargs: Any
+    ) -> None:
         """Create a new metric feedback.
 
         Create a new metric feedback.
@@ -2190,7 +2206,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def create_hook(self, body: "_models.NotificationHook", **kwargs: Any) -> None:
+    async def create_hook(  # pylint: disable=inconsistent-return-statements
+        self, body: "_models.NotificationHook", **kwargs: Any
+    ) -> None:
         """Create a new hook.
 
         Create a new hook.
@@ -2327,7 +2345,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         return deserialized
 
     @distributed_trace_async
-    async def delete_hook(self, hook_id: str, **kwargs: Any) -> None:
+    async def delete_hook(self, hook_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete a hook.
 
         Delete a hook.
@@ -2464,7 +2482,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def refresh_data_feed_ingestion(
+    async def refresh_data_feed_ingestion(  # pylint: disable=inconsistent-return-statements
         self, data_feed_id: str, body: "_models.IngestionProgressResetOptions", **kwargs: Any
     ) -> None:
         """Reset data ingestion status by data feed to backfill data.

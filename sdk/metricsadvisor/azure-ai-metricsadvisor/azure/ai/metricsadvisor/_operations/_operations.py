@@ -36,30 +36,30 @@ _SERIALIZER.client_side_validation = False
 def build_get_active_series_count_request(**kwargs: Any) -> HttpRequest:
     accept = "application/json"
     # Construct URL
-    url = "/stats/latest"
+    _url = "/stats/latest"
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=url, headers=header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_header_parameters, **kwargs)
 
 
 def build_get_alert_configuration_request(configuration_id: str, **kwargs: Any) -> HttpRequest:
     accept = "application/json"
     # Construct URL
-    url = "/alert/anomaly/configurations/{configurationId}"
+    _url = "/alert/anomaly/configurations/{configurationId}"
     path_format_arguments = {
         "configurationId": _SERIALIZER.url("configuration_id", configuration_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=url, headers=header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_header_parameters, **kwargs)
 
 
 def build_update_alert_configuration_request(
@@ -69,37 +69,37 @@ def build_update_alert_configuration_request(
 
     accept = "application/json"
     # Construct URL
-    url = "/alert/anomaly/configurations/{configurationId}"
+    _url = "/alert/anomaly/configurations/{configurationId}"
     path_format_arguments = {
         "configurationId": _SERIALIZER.url("configuration_id", configuration_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PATCH", url=url, headers=header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="PATCH", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
 
 
 def build_delete_alert_configuration_request(configuration_id: str, **kwargs: Any) -> HttpRequest:
     accept = "application/json"
     # Construct URL
-    url = "/alert/anomaly/configurations/{configurationId}"
+    _url = "/alert/anomaly/configurations/{configurationId}"
     path_format_arguments = {
         "configurationId": _SERIALIZER.url("configuration_id", configuration_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=url, headers=header_parameters, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, headers=_header_parameters, **kwargs)
 
 
 def build_create_alert_configuration_request(
@@ -109,15 +109,15 @@ def build_create_alert_configuration_request(
 
     accept = "application/json"
     # Construct URL
-    url = "/alert/anomaly/configurations"
+    _url = "/alert/anomaly/configurations"
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=url, headers=header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="POST", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
 
 
 def build_list_alerts_request(
@@ -133,28 +133,34 @@ def build_list_alerts_request(
 
     accept = "application/json"
     # Construct URL
-    url = "/alert/anomaly/configurations/{configurationId}/alerts/query"
+    _url = "/alert/anomaly/configurations/{configurationId}/alerts/query"
     path_format_arguments = {
         "configurationId": _SERIALIZER.url("configuration_id", configuration_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if skip is not None:
-        query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(
-        method="POST", url=url, params=query_parameters, headers=header_parameters, json=json, content=content, **kwargs
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        json=json,
+        content=content,
+        **kwargs
     )
 
 
@@ -168,26 +174,26 @@ def build_get_anomalies_from_alert_by_anomaly_alerting_configuration_request(
 ) -> HttpRequest:
     accept = "application/json"
     # Construct URL
-    url = "/alert/anomaly/configurations/{configurationId}/alerts/{alertId}/anomalies"
+    _url = "/alert/anomaly/configurations/{configurationId}/alerts/{alertId}/anomalies"
     path_format_arguments = {
         "configurationId": _SERIALIZER.url("configuration_id", configuration_id, "str"),
         "alertId": _SERIALIZER.url("alert_id", alert_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if skip is not None:
-        query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
 
 
 def build_get_incidents_from_alert_by_anomaly_alerting_configuration_request(
@@ -200,83 +206,83 @@ def build_get_incidents_from_alert_by_anomaly_alerting_configuration_request(
 ) -> HttpRequest:
     accept = "application/json"
     # Construct URL
-    url = "/alert/anomaly/configurations/{configurationId}/alerts/{alertId}/incidents"
+    _url = "/alert/anomaly/configurations/{configurationId}/alerts/{alertId}/incidents"
     path_format_arguments = {
         "configurationId": _SERIALIZER.url("configuration_id", configuration_id, "str"),
         "alertId": _SERIALIZER.url("alert_id", alert_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if skip is not None:
-        query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
 
 
 def build_get_detection_configuration_request(detection_configuration_id: str, **kwargs: Any) -> HttpRequest:
     accept = "application/json"
     # Construct URL
-    url = "/enrichment/anomalyDetection/configurations/{configurationId}"
+    _url = "/enrichment/anomalyDetection/configurations/{configurationId}"
     path_format_arguments = {
         "configurationId": _SERIALIZER.url("detection_configuration_id", detection_configuration_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=url, headers=header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_header_parameters, **kwargs)
 
 
-def build_update_anomaly_detection_configuration_request(
+def build_update_detection_configuration_request(
     configuration_id: str, *, json: JSONType = None, content: Any = None, **kwargs: Any
 ) -> HttpRequest:
     content_type = kwargs.pop("content_type", None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
-    url = "/enrichment/anomalyDetection/configurations/{configurationId}"
+    _url = "/enrichment/anomalyDetection/configurations/{configurationId}"
     path_format_arguments = {
         "configurationId": _SERIALIZER.url("configuration_id", configuration_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PATCH", url=url, headers=header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="PATCH", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
 
 
 def build_delete_detection_configuration_request(configuration_id: str, **kwargs: Any) -> HttpRequest:
     accept = "application/json"
     # Construct URL
-    url = "/enrichment/anomalyDetection/configurations/{configurationId}"
+    _url = "/enrichment/anomalyDetection/configurations/{configurationId}"
     path_format_arguments = {
         "configurationId": _SERIALIZER.url("configuration_id", configuration_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=url, headers=header_parameters, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, headers=_header_parameters, **kwargs)
 
 
 def build_create_detection_configuration_request(
@@ -286,15 +292,15 @@ def build_create_detection_configuration_request(
 
     accept = "application/json"
     # Construct URL
-    url = "/enrichment/anomalyDetection/configurations"
+    _url = "/enrichment/anomalyDetection/configurations"
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=url, headers=header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="POST", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
 
 
 def build_list_alert_configurations_request(
@@ -302,25 +308,25 @@ def build_list_alert_configurations_request(
 ) -> HttpRequest:
     accept = "application/json"
     # Construct URL
-    url = "/enrichment/anomalyDetection/configurations/{configurationId}/alert/anomaly/configurations"
+    _url = "/enrichment/anomalyDetection/configurations/{configurationId}/alert/anomaly/configurations"
     path_format_arguments = {
         "configurationId": _SERIALIZER.url("configuration_id", configuration_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if skip is not None:
-        query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
 
 
 def build_list_metric_enriched_series_data_request(
@@ -330,20 +336,20 @@ def build_list_metric_enriched_series_data_request(
 
     accept = "application/json"
     # Construct URL
-    url = "/enrichment/anomalyDetection/configurations/{configurationId}/series/query"
+    _url = "/enrichment/anomalyDetection/configurations/{configurationId}/series/query"
     path_format_arguments = {
         "configurationId": _SERIALIZER.url("configuration_id", configuration_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=url, headers=header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="POST", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
 
 
 def build_get_anomalies_by_anomaly_detection_configuration_request(
@@ -359,28 +365,34 @@ def build_get_anomalies_by_anomaly_detection_configuration_request(
 
     accept = "application/json"
     # Construct URL
-    url = "/enrichment/anomalyDetection/configurations/{configurationId}/anomalies/query"
+    _url = "/enrichment/anomalyDetection/configurations/{configurationId}/anomalies/query"
     path_format_arguments = {
         "configurationId": _SERIALIZER.url("configuration_id", configuration_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if skip is not None:
-        query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(
-        method="POST", url=url, params=query_parameters, headers=header_parameters, json=json, content=content, **kwargs
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        json=json,
+        content=content,
+        **kwargs
     )
 
 
@@ -397,28 +409,34 @@ def build_list_anomaly_dimension_values_request(
 
     accept = "application/json"
     # Construct URL
-    url = "/enrichment/anomalyDetection/configurations/{configurationId}/anomalies/dimension/query"
+    _url = "/enrichment/anomalyDetection/configurations/{configurationId}/anomalies/dimension/query"
     path_format_arguments = {
         "configurationId": _SERIALIZER.url("configuration_id", configuration_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if skip is not None:
-        query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(
-        method="POST", url=url, params=query_parameters, headers=header_parameters, json=json, content=content, **kwargs
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        json=json,
+        content=content,
+        **kwargs
     )
 
 
@@ -434,26 +452,32 @@ def build_get_incidents_by_anomaly_detection_configuration_request(
 
     accept = "application/json"
     # Construct URL
-    url = "/enrichment/anomalyDetection/configurations/{configurationId}/incidents/query"
+    _url = "/enrichment/anomalyDetection/configurations/{configurationId}/incidents/query"
     path_format_arguments = {
         "configurationId": _SERIALIZER.url("configuration_id", configuration_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if maxpagesize is not None:
-        query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(
-        method="POST", url=url, params=query_parameters, headers=header_parameters, json=json, content=content, **kwargs
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        json=json,
+        content=content,
+        **kwargs
     )
 
 
@@ -462,43 +486,43 @@ def build_get_incidents_by_anomaly_detection_configuration_next_pages_request(
 ) -> HttpRequest:
     accept = "application/json"
     # Construct URL
-    url = "/enrichment/anomalyDetection/configurations/{configurationId}/incidents/query"
+    _url = "/enrichment/anomalyDetection/configurations/{configurationId}/incidents/query"
     path_format_arguments = {
         "configurationId": _SERIALIZER.url("configuration_id", configuration_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if maxpagesize is not None:
-        query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
     if token is not None:
-        query_parameters["$token"] = _SERIALIZER.query("token", token, "str")
+        _query_parameters["$token"] = _SERIALIZER.query("token", token, "str")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
 
 
 def build_list_incident_root_causes_request(configuration_id: str, incident_id: str, **kwargs: Any) -> HttpRequest:
     accept = "application/json"
     # Construct URL
-    url = "/enrichment/anomalyDetection/configurations/{configurationId}/incidents/{incidentId}/rootCause"
+    _url = "/enrichment/anomalyDetection/configurations/{configurationId}/incidents/{incidentId}/rootCause"
     path_format_arguments = {
         "configurationId": _SERIALIZER.url("configuration_id", configuration_id, "str"),
         "incidentId": _SERIALIZER.url("incident_id", incident_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=url, headers=header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_header_parameters, **kwargs)
 
 
 def build_create_datasource_credential_request(
@@ -508,15 +532,15 @@ def build_create_datasource_credential_request(
 
     accept = "application/json"
     # Construct URL
-    url = "/credentials"
+    _url = "/credentials"
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=url, headers=header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="POST", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
 
 
 def build_list_datasource_credentials_request(
@@ -524,20 +548,20 @@ def build_list_datasource_credentials_request(
 ) -> HttpRequest:
     accept = "application/json"
     # Construct URL
-    url = "/credentials"
+    _url = "/credentials"
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if skip is not None:
-        query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
 
 
 def build_update_datasource_credential_request(
@@ -547,54 +571,54 @@ def build_update_datasource_credential_request(
 
     accept = "application/json"
     # Construct URL
-    url = "/credentials/{credentialId}"
+    _url = "/credentials/{credentialId}"
     path_format_arguments = {
         "credentialId": _SERIALIZER.url("credential_id", credential_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PATCH", url=url, headers=header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="PATCH", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
 
 
 def build_delete_datasource_credential_request(credential_id: str, **kwargs: Any) -> HttpRequest:
     accept = "application/json"
     # Construct URL
-    url = "/credentials/{credentialId}"
+    _url = "/credentials/{credentialId}"
     path_format_arguments = {
         "credentialId": _SERIALIZER.url("credential_id", credential_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=url, headers=header_parameters, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, headers=_header_parameters, **kwargs)
 
 
 def build_get_datasource_credential_request(credential_id: str, **kwargs: Any) -> HttpRequest:
     accept = "application/json"
     # Construct URL
-    url = "/credentials/{credentialId}"
+    _url = "/credentials/{credentialId}"
     path_format_arguments = {
         "credentialId": _SERIALIZER.url("credential_id", credential_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=url, headers=header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_header_parameters, **kwargs)
 
 
 def build_list_data_feeds_request(
@@ -610,30 +634,30 @@ def build_list_data_feeds_request(
 ) -> HttpRequest:
     accept = "application/json"
     # Construct URL
-    url = "/dataFeeds"
+    _url = "/dataFeeds"
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if data_feed_name is not None:
-        query_parameters["dataFeedName"] = _SERIALIZER.query("data_feed_name", data_feed_name, "str")
+        _query_parameters["dataFeedName"] = _SERIALIZER.query("data_feed_name", data_feed_name, "str")
     if data_source_type is not None:
-        query_parameters["dataSourceType"] = _SERIALIZER.query("data_source_type", data_source_type, "str")
+        _query_parameters["dataSourceType"] = _SERIALIZER.query("data_source_type", data_source_type, "str")
     if granularity_name is not None:
-        query_parameters["granularityName"] = _SERIALIZER.query("granularity_name", granularity_name, "str")
+        _query_parameters["granularityName"] = _SERIALIZER.query("granularity_name", granularity_name, "str")
     if status is not None:
-        query_parameters["status"] = _SERIALIZER.query("status", status, "str")
+        _query_parameters["status"] = _SERIALIZER.query("status", status, "str")
     if creator is not None:
-        query_parameters["creator"] = _SERIALIZER.query("creator", creator, "str")
+        _query_parameters["creator"] = _SERIALIZER.query("creator", creator, "str")
     if skip is not None:
-        query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
 
 
 def build_create_data_feed_request(*, json: JSONType = None, content: Any = None, **kwargs: Any) -> HttpRequest:
@@ -641,32 +665,32 @@ def build_create_data_feed_request(*, json: JSONType = None, content: Any = None
 
     accept = "application/json"
     # Construct URL
-    url = "/dataFeeds"
+    _url = "/dataFeeds"
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=url, headers=header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="POST", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
 
 
 def build_get_data_feed_request(data_feed_id: str, **kwargs: Any) -> HttpRequest:
     accept = "application/json"
     # Construct URL
-    url = "/dataFeeds/{dataFeedId}"
+    _url = "/dataFeeds/{dataFeedId}"
     path_format_arguments = {
         "dataFeedId": _SERIALIZER.url("data_feed_id", data_feed_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=url, headers=header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_header_parameters, **kwargs)
 
 
 def build_update_data_feed_request(
@@ -676,54 +700,54 @@ def build_update_data_feed_request(
 
     accept = "application/json"
     # Construct URL
-    url = "/dataFeeds/{dataFeedId}"
+    _url = "/dataFeeds/{dataFeedId}"
     path_format_arguments = {
         "dataFeedId": _SERIALIZER.url("data_feed_id", data_feed_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PATCH", url=url, headers=header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="PATCH", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
 
 
 def build_delete_data_feed_request(data_feed_id: str, **kwargs: Any) -> HttpRequest:
     accept = "application/json"
     # Construct URL
-    url = "/dataFeeds/{dataFeedId}"
+    _url = "/dataFeeds/{dataFeedId}"
     path_format_arguments = {
         "dataFeedId": _SERIALIZER.url("data_feed_id", data_feed_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=url, headers=header_parameters, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, headers=_header_parameters, **kwargs)
 
 
 def build_get_feedback_request(feedback_id: str, **kwargs: Any) -> HttpRequest:
     accept = "application/json"
     # Construct URL
-    url = "/feedback/metric/{feedbackId}"
+    _url = "/feedback/metric/{feedbackId}"
     path_format_arguments = {
         "feedbackId": _SERIALIZER.url("feedback_id", feedback_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=url, headers=header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_header_parameters, **kwargs)
 
 
 def build_list_feedback_request(
@@ -738,23 +762,29 @@ def build_list_feedback_request(
 
     accept = "application/json"
     # Construct URL
-    url = "/feedback/metric/query"
+    _url = "/feedback/metric/query"
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if skip is not None:
-        query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(
-        method="POST", url=url, params=query_parameters, headers=header_parameters, json=json, content=content, **kwargs
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        json=json,
+        content=content,
+        **kwargs
     )
 
 
@@ -763,15 +793,15 @@ def build_add_feedback_request(*, json: JSONType = None, content: Any = None, **
 
     accept = "application/json"
     # Construct URL
-    url = "/feedback/metric"
+    _url = "/feedback/metric"
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=url, headers=header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="POST", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
 
 
 def build_list_hooks_request(
@@ -779,22 +809,22 @@ def build_list_hooks_request(
 ) -> HttpRequest:
     accept = "application/json"
     # Construct URL
-    url = "/hooks"
+    _url = "/hooks"
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if hook_name is not None:
-        query_parameters["hookName"] = _SERIALIZER.query("hook_name", hook_name, "str")
+        _query_parameters["hookName"] = _SERIALIZER.query("hook_name", hook_name, "str")
     if skip is not None:
-        query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
 
 
 def build_create_hook_request(*, json: JSONType = None, content: Any = None, **kwargs: Any) -> HttpRequest:
@@ -802,32 +832,32 @@ def build_create_hook_request(*, json: JSONType = None, content: Any = None, **k
 
     accept = "application/json"
     # Construct URL
-    url = "/hooks"
+    _url = "/hooks"
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=url, headers=header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="POST", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
 
 
 def build_get_hook_request(hook_id: str, **kwargs: Any) -> HttpRequest:
     accept = "application/json"
     # Construct URL
-    url = "/hooks/{hookId}"
+    _url = "/hooks/{hookId}"
     path_format_arguments = {
         "hookId": _SERIALIZER.url("hook_id", hook_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=url, headers=header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_header_parameters, **kwargs)
 
 
 def build_update_hook_request(
@@ -837,37 +867,37 @@ def build_update_hook_request(
 
     accept = "application/json"
     # Construct URL
-    url = "/hooks/{hookId}"
+    _url = "/hooks/{hookId}"
     path_format_arguments = {
         "hookId": _SERIALIZER.url("hook_id", hook_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PATCH", url=url, headers=header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="PATCH", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
 
 
 def build_delete_hook_request(hook_id: str, **kwargs: Any) -> HttpRequest:
     accept = "application/json"
     # Construct URL
-    url = "/hooks/{hookId}"
+    _url = "/hooks/{hookId}"
     path_format_arguments = {
         "hookId": _SERIALIZER.url("hook_id", hook_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=url, headers=header_parameters, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, headers=_header_parameters, **kwargs)
 
 
 def build_list_data_feed_ingestion_status_request(
@@ -883,28 +913,34 @@ def build_list_data_feed_ingestion_status_request(
 
     accept = "application/json"
     # Construct URL
-    url = "/dataFeeds/{dataFeedId}/ingestionStatus/query"
+    _url = "/dataFeeds/{dataFeedId}/ingestionStatus/query"
     path_format_arguments = {
         "dataFeedId": _SERIALIZER.url("data_feed_id", data_feed_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if skip is not None:
-        query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(
-        method="POST", url=url, params=query_parameters, headers=header_parameters, json=json, content=content, **kwargs
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        json=json,
+        content=content,
+        **kwargs
     )
 
 
@@ -915,37 +951,37 @@ def build_refresh_data_feed_ingestion_request(
 
     accept = "application/json"
     # Construct URL
-    url = "/dataFeeds/{dataFeedId}/ingestionProgress/reset"
+    _url = "/dataFeeds/{dataFeedId}/ingestionProgress/reset"
     path_format_arguments = {
         "dataFeedId": _SERIALIZER.url("data_feed_id", data_feed_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=url, headers=header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="POST", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
 
 
 def build_get_data_feed_ingestion_progress_request(data_feed_id: str, **kwargs: Any) -> HttpRequest:
     accept = "application/json"
     # Construct URL
-    url = "/dataFeeds/{dataFeedId}/ingestionProgress"
+    _url = "/dataFeeds/{dataFeedId}/ingestionProgress"
     path_format_arguments = {
         "dataFeedId": _SERIALIZER.url("data_feed_id", data_feed_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=url, headers=header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_header_parameters, **kwargs)
 
 
 def build_list_metric_series_data_request(
@@ -955,20 +991,20 @@ def build_list_metric_series_data_request(
 
     accept = "application/json"
     # Construct URL
-    url = "/metrics/{metricId}/data/query"
+    _url = "/metrics/{metricId}/data/query"
     path_format_arguments = {
         "metricId": _SERIALIZER.url("metric_id", metric_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=url, headers=header_parameters, json=json, content=content, **kwargs)
+    return HttpRequest(method="POST", url=_url, headers=_header_parameters, json=json, content=content, **kwargs)
 
 
 def build_list_metric_series_definitions_request(
@@ -984,28 +1020,34 @@ def build_list_metric_series_definitions_request(
 
     accept = "application/json"
     # Construct URL
-    url = "/metrics/{metricId}/series/query"
+    _url = "/metrics/{metricId}/series/query"
     path_format_arguments = {
         "metricId": _SERIALIZER.url("metric_id", metric_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if skip is not None:
-        query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(
-        method="POST", url=url, params=query_parameters, headers=header_parameters, json=json, content=content, **kwargs
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        json=json,
+        content=content,
+        **kwargs
     )
 
 
@@ -1022,28 +1064,34 @@ def build_list_metric_dimension_values_request(
 
     accept = "application/json"
     # Construct URL
-    url = "/metrics/{metricId}/dimension/query"
+    _url = "/metrics/{metricId}/dimension/query"
     path_format_arguments = {
         "metricId": _SERIALIZER.url("metric_id", metric_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if skip is not None:
-        query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(
-        method="POST", url=url, params=query_parameters, headers=header_parameters, json=json, content=content, **kwargs
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        json=json,
+        content=content,
+        **kwargs
     )
 
 
@@ -1052,25 +1100,25 @@ def build_list_detection_configurations_request(
 ) -> HttpRequest:
     accept = "application/json"
     # Construct URL
-    url = "/metrics/{metricId}/enrichment/anomalyDetection/configurations"
+    _url = "/metrics/{metricId}/enrichment/anomalyDetection/configurations"
     path_format_arguments = {
         "metricId": _SERIALIZER.url("metric_id", metric_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if skip is not None:
-        query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=url, params=query_parameters, headers=header_parameters, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
 
 
 def build_list_metric_enrichment_status_request(
@@ -1086,28 +1134,34 @@ def build_list_metric_enrichment_status_request(
 
     accept = "application/json"
     # Construct URL
-    url = "/metrics/{metricId}/status/enrichment/anomalyDetection/query"
+    _url = "/metrics/{metricId}/status/enrichment/anomalyDetection/query"
     path_format_arguments = {
         "metricId": _SERIALIZER.url("metric_id", metric_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if skip is not None:
-        query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
+        _query_parameters["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if maxpagesize is not None:
-        query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+        _query_parameters["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if content_type is not None:
-        header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
+        _header_parameters["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(
-        method="POST", url=url, params=query_parameters, headers=header_parameters, json=json, content=content, **kwargs
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        json=json,
+        content=content,
+        **kwargs
     )
 
 
@@ -1242,7 +1296,9 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         return deserialized
 
     @distributed_trace
-    def delete_alert_configuration(self, configuration_id: str, **kwargs: Any) -> None:
+    def delete_alert_configuration(  # pylint: disable=inconsistent-return-statements
+        self, configuration_id: str, **kwargs: Any
+    ) -> None:
         """Delete anomaly alerting configuration.
 
         Delete anomaly alerting configuration.
@@ -1279,7 +1335,9 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def create_alert_configuration(self, body: "_models.AnomalyAlertConfiguration", **kwargs: Any) -> None:
+    def create_alert_configuration(  # pylint: disable=inconsistent-return-statements
+        self, body: "_models.AnomalyAlertConfiguration", **kwargs: Any
+    ) -> None:
         """Create anomaly alerting configuration.
 
         Create anomaly alerting configuration.
@@ -1654,7 +1712,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         return deserialized
 
     @distributed_trace
-    def update_anomaly_detection_configuration(
+    def update_detection_configuration(
         self, configuration_id: str, body: "_models.AnomalyDetectionConfiguration", **kwargs: Any
     ) -> "_models.AnomalyDetectionConfiguration":
         """Update anomaly detection configuration.
@@ -1677,7 +1735,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         _json = self._serialize.body(body, "AnomalyDetectionConfiguration")
 
-        request = build_update_anomaly_detection_configuration_request(
+        request = build_update_detection_configuration_request(
             configuration_id=configuration_id,
             content_type=content_type,
             json=_json,
@@ -1705,7 +1763,9 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         return deserialized
 
     @distributed_trace
-    def delete_detection_configuration(self, configuration_id: str, **kwargs: Any) -> None:
+    def delete_detection_configuration(  # pylint: disable=inconsistent-return-statements
+        self, configuration_id: str, **kwargs: Any
+    ) -> None:
         """Delete anomaly detection configuration.
 
         Delete anomaly detection configuration.
@@ -1742,7 +1802,9 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def create_detection_configuration(self, body: "_models.AnomalyDetectionConfiguration", **kwargs: Any) -> None:
+    def create_detection_configuration(  # pylint: disable=inconsistent-return-statements
+        self, body: "_models.AnomalyDetectionConfiguration", **kwargs: Any
+    ) -> None:
         """Create anomaly detection configuration.
 
         Create anomaly detection configuration.
@@ -2412,7 +2474,9 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def create_datasource_credential(self, body: "_models.DataSourceCredential", **kwargs: Any) -> None:
+    def create_datasource_credential(  # pylint: disable=inconsistent-return-statements
+        self, body: "_models.DataSourceCredential", **kwargs: Any
+    ) -> None:
         """Create a new data source credential.
 
         Create a new data source credential.
@@ -2588,7 +2652,9 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         return deserialized
 
     @distributed_trace
-    def delete_datasource_credential(self, credential_id: str, **kwargs: Any) -> None:
+    def delete_datasource_credential(  # pylint: disable=inconsistent-return-statements
+        self, credential_id: str, **kwargs: Any
+    ) -> None:
         """Delete a data source credential.
 
         Delete a data source credential.
@@ -2775,7 +2841,9 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def create_data_feed(self, body: "_models.DataFeed", **kwargs: Any) -> None:
+    def create_data_feed(  # pylint: disable=inconsistent-return-statements
+        self, body: "_models.DataFeed", **kwargs: Any
+    ) -> None:
         """Create a new data feed.
 
         Create a new data feed.
@@ -2912,7 +2980,9 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         return deserialized
 
     @distributed_trace
-    def delete_data_feed(self, data_feed_id: str, **kwargs: Any) -> None:
+    def delete_data_feed(  # pylint: disable=inconsistent-return-statements
+        self, data_feed_id: str, **kwargs: Any
+    ) -> None:
         """Delete a data feed.
 
         Delete a data feed.
@@ -3084,7 +3154,9 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def add_feedback(self, body: "_models.MetricFeedback", **kwargs: Any) -> None:
+    def add_feedback(  # pylint: disable=inconsistent-return-statements
+        self, body: "_models.MetricFeedback", **kwargs: Any
+    ) -> None:
         """Create a new metric feedback.
 
         Create a new metric feedback.
@@ -3218,7 +3290,9 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def create_hook(self, body: "_models.NotificationHook", **kwargs: Any) -> None:
+    def create_hook(  # pylint: disable=inconsistent-return-statements
+        self, body: "_models.NotificationHook", **kwargs: Any
+    ) -> None:
         """Create a new hook.
 
         Create a new hook.
@@ -3353,7 +3427,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         return deserialized
 
     @distributed_trace
-    def delete_hook(self, hook_id: str, **kwargs: Any) -> None:
+    def delete_hook(self, hook_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete a hook.
 
         Delete a hook.
@@ -3489,7 +3563,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def refresh_data_feed_ingestion(
+    def refresh_data_feed_ingestion(  # pylint: disable=inconsistent-return-statements
         self, data_feed_id: str, body: "_models.IngestionProgressResetOptions", **kwargs: Any
     ) -> None:
         """Reset data ingestion status by data feed to backfill data.

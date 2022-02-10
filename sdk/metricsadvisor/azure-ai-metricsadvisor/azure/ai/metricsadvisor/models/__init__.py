@@ -79,6 +79,7 @@ from ._models_py3 import IngestionStatusList
 from ._models_py3 import IngestionStatusQueryOptions
 from ._models_py3 import MetricAlertConfiguration
 from ._models_py3 import MetricAnomalyAlertSnoozeCondition
+from ._models_py3 import MetricBoundaryCondition
 from ._models_py3 import MetricDataItem
 from ._models_py3 import MetricDataList
 from ._models_py3 import MetricDataQueryOptions
@@ -113,7 +114,6 @@ from ._models_py3 import SmartDetectionCondition
 from ._models_py3 import SuppressCondition
 from ._models_py3 import TopNGroupScope
 from ._models_py3 import UsageStats
-from ._models_py3 import ValueCondition
 from ._models_py3 import WebNotificationHook
 from ._models_py3 import WebhookHookParameterPatch
 
@@ -131,6 +131,7 @@ from ._metrics_advisor_client_enums import (
     DataFeedAccessMode,
     DataFeedAutoRollupMethod,
     DataFeedGranularityType,
+    DataFeedRollupType,
     DataFeedStatus,
     DataSourceType,
     DatasourceAuthenticationType,
@@ -150,7 +151,7 @@ from ._metrics_advisor_client_enums import (
     ValueType,
 )
 from ._patch import __all__ as _patch_all
-from ._patch import *
+from ._patch import *  # pylint: disable=unused-wildcard-import
 
 __all__ = [
     "AlertResultList",
@@ -226,6 +227,7 @@ __all__ = [
     "IngestionStatusQueryOptions",
     "MetricAlertConfiguration",
     "MetricAnomalyAlertSnoozeCondition",
+    "MetricBoundaryCondition",
     "MetricDataItem",
     "MetricDataList",
     "MetricDataQueryOptions",
@@ -260,7 +262,6 @@ __all__ = [
     "SuppressCondition",
     "TopNGroupScope",
     "UsageStats",
-    "ValueCondition",
     "WebNotificationHook",
     "WebhookHookParameterPatch",
     "AlertQueryTimeMode",
@@ -275,6 +276,7 @@ __all__ = [
     "DataFeedAccessMode",
     "DataFeedAutoRollupMethod",
     "DataFeedGranularityType",
+    "DataFeedRollupType",
     "DataFeedStatus",
     "DataSourceType",
     "DatasourceAuthenticationType",
