@@ -40,7 +40,7 @@ from . import mgmt_settings_fake as fake_settings
 
 try:
     # Try to import the AsyncFakeCredential, if we cannot assume it is Python 2
-    from .fake_async_credential import AsyncFakeCredential
+    from .fake_credentials_async import AsyncFakeCredential
 except SyntaxError:
     pass
 
