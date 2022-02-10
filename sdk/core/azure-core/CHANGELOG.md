@@ -1,6 +1,6 @@
 # Release History
 
-## 1.22.1 (Unreleased)
+## 1.22.2 (Unreleased)
 
 ### Features Added
 
@@ -12,7 +12,14 @@
 
 - Log "WWW-Authenticate" header in `HttpLoggingPolicy`
 
+## 1.22.1 (2022-02-09)
+
+### Bugs Fixed
+
+- Limiting `final-state-via` scope to POST until consuming SDKs has been fixed to use this option properly on PUT.  #22989
+
 ## 1.22.0 (2022-02-03)
+_[**This version is deprecated.**]_
 
 ### Features Added
 

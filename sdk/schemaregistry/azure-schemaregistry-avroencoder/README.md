@@ -94,13 +94,13 @@ If message type or callback function is not provided, and by default, the encode
 The following sections provide several code snippets covering some of the most common Schema Registry tasks, including:
 
 - [Encoding](#encoding)
-- [Deencoding](#decoding)
+- [Decoding](#decoding)
 - [Event Hubs Sending Integration](#event-hubs-sending-integration)
 - [Event Hubs Receiving Integration](#event-hubs-receiving-integration)
 
 ### Encoding
 
-Use `AvroEncoder.encode` method to encode dict data with the given avro schema.
+Use `AvroEncoder.encode` method to encode dict data with the given Avro schema.
 The method will use a schema previously registered to the Schema Registry service and keep the schema cached for future encoding usage. It is also possible to avoid pre-registering the schema to the service and automatically register with the `encode` method by instantiating the `AvroEncoder` with the keyword argument `auto_register_schemas=True`.
 
 ```python
@@ -175,7 +175,7 @@ with encoder:
 
 ### Event Hubs Sending Integration
 
-Integration with [Event Hubs][eventhubs_repo] to send encoded avro dict data as the body of EventData.
+Integration with [Event Hubs][eventhubs_repo] to send encoded Avro dict data as the body of EventData.
 
 ```python
 import os
@@ -219,7 +219,7 @@ with eventhub_producer, avro_encoder:
 
 ### Event Hubs Receiving Integration
 
-Integration with [Event Hubs][eventhubs_repo] to receive `EventData` and decoded raw bytes into avro dict data.
+Integration with [Event Hubs][eventhubs_repo] to receive `EventData` and decoded raw bytes into Avro dict data.
 
 ```python
 import os

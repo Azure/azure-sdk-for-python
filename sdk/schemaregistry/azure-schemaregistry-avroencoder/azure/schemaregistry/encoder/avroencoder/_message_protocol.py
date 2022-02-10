@@ -25,6 +25,14 @@ class MessageType(Protocol):
 
     @classmethod
     def from_message_data(cls, data: bytes, content_type: str, **kwargs: Any) -> "MessageType":
+        """
+        Creates an object that is a subtype of MessageType given content type and
+         a data value to be set as body.
+
+        :param bytes data: The data value to be set as the body of the message.
+        :param str content_type: The content type to be set on the message.
+        :rtype: ~azure.schemaregistry.encoder.avroencoder.MessageType
+        """
         ...
 
     def __message_data__(self) -> MessageMetadataDict:

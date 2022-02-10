@@ -48,7 +48,7 @@ pip install azure-eventhub==5.9.0b1
 
 1. Open a terminal window and `cd` to the directory that the samples are saved in.
 2. Set the environment variables specified in the sample file you wish to run.
-3. Follow the usage described in the file, e.g. `python avro_encoder.py`
+3. Follow the usage described in the file, e.g. `python encode_and_decode_event_data_message.py`
 
 ## Next steps
 
