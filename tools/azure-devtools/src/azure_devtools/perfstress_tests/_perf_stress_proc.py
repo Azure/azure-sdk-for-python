@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 import asyncio
+import time
 from typing import List, Optional
 import multiprocessing
 import threading
@@ -48,30 +49,31 @@ async def _start_tests(index, test_class, num_tests, args, do_setup, test_stages
 
         # Waiting till all procs are ready to start "Setup". This allows one child
         # process to setup any global resources before the rest of setup is run.
-        _synchronize(test_stages)
+        _synchronize(test_stages["Setup"])
         await asyncio.gather(*[test.setup() for test in tests])
 
         # Waiting till all procs are ready to start "Post Setup"
-        _synchronize(test_stages)
+        _synchronize(test_stages["Post Setup"])
         await asyncio.gather(*[test.post_setup() for test in tests])
 
         if args.warmup and not args.profile:
             # Waiting till all procs are ready to start "Warmup"
-            _synchronize(test_stages)
+            _synchronize(test_stages["Warmup"])
             await _run_tests(args.warmup, args, tests, results, status)
 
         # Waiting till all procs are ready to start "Tests"
-        _synchronize(test_stages)
+        _synchronize(test_stages["Tests"])
         await _run_tests(args.duration, args, tests, results, status)
 
         # Waiting till all procs have finished tests, ready to start "Pre Cleaup"
-        _synchronize(test_stages)
+        _synchronize(test_stages["Pre Cleanup"])
     except threading.BrokenBarrierError:
         # A separate process has failed, so all of them are shutting down.
         print("Another test process has aborted - shutting down.")
     except Exception as e:
         print("Test processes failed. Aborting.\n{}".format(e))
-        test_stages.abort()
+        for barrier in test_stages.values():
+            barrier.abort()
     finally:
         try:
             # We'll attempt to clean up the tests using the barrier.
@@ -82,11 +84,11 @@ async def _start_tests(index, test_class, num_tests, args, do_setup, test_stages
                 # Waiting till all procs are ready to start "Cleanup"
                 # If any process has failed earlier, the barrier will be broken - so wait
                 # if we can but otherwise attempt to clean up anyway.
-                _synchronize(test_stages, ignore_error=True)
+                _synchronize(test_stages["Cleanup"], ignore_error=True)
                 await asyncio.gather(*[test.cleanup() for test in tests])
 
             # Waiting till all processes have completed the cleanup stages.
-            _synchronize(test_stages, ignore_error=True)
+            _synchronize(test_stages["Finished"], ignore_error=True)
             if do_setup and not args.no_cleanup:
                 await tests[0].global_cleanup()
         except Exception as e:
@@ -134,6 +136,8 @@ def _report_status(status: multiprocessing.JoinableQueue, tests: List[_PerfTestA
     by the parent processes. This should implicitly synchronize the status reporting across all child
     processes and the parent will dictate the frequence by which status is gathered.
     """
+    # Delay the start a tiny bit to let the tests reset their status after warmup
+    time.sleep(1)
     while not stop.is_set():
         for test in tests:
             status.put((test._parallel_index, test.completed_operations, test.last_completion_time))

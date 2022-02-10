@@ -140,10 +140,7 @@ class _PerfStressRunner:
 
     def _next_stage(self, title: str, track_status: bool = False, report_results: bool = False):
         # Wait for previous stage to complete.
-        self.test_stages.wait()
-
-        # Reset barrier to start next stage.
-        self.test_stages.reset()
+        self.test_stages[title].wait()
 
         # Stop any status tracking of the previous stage.
         if self.status_thread.is_running:
@@ -154,8 +151,7 @@ class _PerfStressRunner:
             self._report_results()
 
         self.logger.info("")
-        if title:
-            self.logger.info("=== {} ===".format(title))
+        self.logger.info("=== {} ===".format(title))
 
         # If next stage status should be tracked, restart tracker.
         if track_status:
@@ -181,7 +177,15 @@ class _PerfStressRunner:
         # The barrier will synchronize each child proc with the parent at each stage of the
         # the testing run. This prevents one proc from running tests while global resources
         # are still being configured or cleaned up.
-        self.test_stages = multiprocessing.Barrier(processes + 1)
+        self.test_stages = {
+            "Setup": multiprocessing.Barrier(processes + 1),
+            "Post Setup": multiprocessing.Barrier(processes + 1),
+            "Warmup": multiprocessing.Barrier(processes + 1),
+            "Tests": multiprocessing.Barrier(processes + 1),
+            "Pre Cleanup": multiprocessing.Barrier(processes + 1),
+            "Cleanup": multiprocessing.Barrier(processes + 1),
+            "Finished": multiprocessing.Barrier(processes + 1)
+        }
 
         try:
             futures = [multiprocessing.Process(
@@ -223,7 +227,7 @@ class _PerfStressRunner:
 
             # Wait till all tests have finished cleaning up, this allows one proc to start
             # the "GlobalCleanup" which may start pulling down resources.
-            self._next_stage(None)
+            self._next_stage("Finished")
 
             # Close all procs.
             [f.join() for f in futures]
