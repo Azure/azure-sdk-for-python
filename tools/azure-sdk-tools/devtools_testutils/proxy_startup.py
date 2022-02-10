@@ -10,6 +10,8 @@ import requests
 import shlex
 import sys
 import time
+import pdb
+import signal
 from typing import TYPE_CHECKING
 
 import pytest
@@ -31,7 +33,8 @@ CONTAINER_STARTUP_TIMEOUT = 6000
 PROXY_MANUALLY_STARTED = os.getenv('PROXY_MANUAL_START', False)
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "..", ".."))
-
+PROXY_CHECK_URL = PROXY_URL.rstrip("/") + "/Info/Available"
+TOOL_ENV_VAR = "PROXY_PID"
 
 def get_image_tag():
     # type: () -> str
@@ -82,6 +85,23 @@ def get_container_info():
         return None
 
 
+def check_proxy_availability():
+        # Wait for the proxy server to become available
+        start = time.time()
+        now = time.time()
+        status_code = 0
+        while now - start < CONTAINER_STARTUP_TIMEOUT and status_code != 200:
+            try:
+                response = requests.get(PROXY_CHECK_URL, timeout=60)
+                status_code = response.status_code
+            # We get an SSLError if the container is started but the endpoint isn't available yet
+            except requests.exceptions.SSLError:
+                pdb.set_trace()
+            except:
+                pdb.set_trace()
+            now = time.time()
+
+
 def create_container():
     # type: () -> None
     """Creates the test proxy Docker container"""
@@ -114,7 +134,14 @@ def start_test_proxy():
     
     if not PROXY_MANUALLY_STARTED:
         if os.getenv("TF_BUILD"):
-            pass
+            _LOGGER.info("Starting the test proxy tool...")
+            if check_proxy_availability():
+                _LOGGER.debug("Tool is responding, exiting...")
+            else:
+                log = open('_proxy_logs.log', 'a')
+                proc = subprocess.Popen(shlex.split("test-proxy --urls {}".format(PROXY_URL)), stdout=log, stderr=log)
+                proc.communicate()
+                os.environ[TOOL_ENV_VAR] = proc.pid
         else:
             _LOGGER.info("Starting the test proxy container...")
 
@@ -136,17 +163,7 @@ def start_test_proxy():
             proc.communicate()
 
         # Wait for the proxy server to become available
-        start = time.time()
-        now = time.time()
-        status_code = 0
-        while now - start < CONTAINER_STARTUP_TIMEOUT and status_code != 200:
-            try:
-                response = requests.get(PROXY_URL.rstrip("/") + "/Info/Available", timeout=60)
-                status_code = response.status_code
-            # We get an SSLError if the container is started but the endpoint isn't available yet
-            except requests.exceptions.SSLError:
-                pass
-            now = time.time()
+        check_proxy_availability()
 
 
 def stop_test_proxy():
@@ -155,10 +172,15 @@ def stop_test_proxy():
 
     if not PROXY_MANUALLY_STARTED:
         if os.getenv("TF_BUILD"):
-            pass
+            _LOGGER.info("Stopping the test proxy tool...")
+
+            try:
+                os.kill(os.get(TOOL_ENV_VAR), signal.SIGTERM)
+            except:
+                pdb.set_trace()
+
         else:
             _LOGGER.info("Stopping the test proxy container...")
-
             container_info = get_container_info()
             if container_info:
                 if container_info["State"] == "running":
