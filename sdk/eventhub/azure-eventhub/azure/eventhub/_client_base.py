@@ -46,7 +46,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
-_Address = collections.namedtuple("Address", "hostname path")
+_Address = collections.namedtuple("Address", "hostname path")   # type: ignore
 
 
 def _parse_conn_str(conn_str, **kwargs):
