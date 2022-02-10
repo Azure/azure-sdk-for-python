@@ -218,7 +218,7 @@ class _PerfStressRunner:
             # Wait will all tests have completed setup and warmup before beginning "Tests".
             self._next_stage("Tests", track_status=True, report_results=True)
 
-            # Wait till all tests have completed before benning cleanup and shutdown.
+            # Wait till all tests have completed before beginning cleanup and shutdown.
             self._next_stage("Pre Cleanup", report_results=True)
 
             # If cleanup is configured, wait till all tests are ready to begin "Cleanup"
@@ -229,7 +229,7 @@ class _PerfStressRunner:
             # the "GlobalCleanup" which may start pulling down resources.
             self._next_stage("Finished")
 
-            # Close all procs.
+            # Close all processes.
             [f.join() for f in futures]
 
         except threading.BrokenBarrierError:
