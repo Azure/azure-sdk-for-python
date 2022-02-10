@@ -25,30 +25,30 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport, HttpTransport
 from azure.core.pipeline.policies import (
-    RedirectPolicy,
+    AzureSasCredentialPolicy,
     ContentDecodePolicy,
-    BearerTokenCredentialPolicy,
-    ProxyPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
+    RedirectPolicy,
+    ProxyPolicy,
     UserAgentPolicy,
-    AzureSasCredentialPolicy
 )
 
-from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, CONNECTION_TIMEOUT, READ_TIMEOUT
+from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT, SERVICE_HOST_BASE
 from .models import LocationMode
 from .authentication import SharedKeyCredentialPolicy
 from .shared_access_signature import QueryStringConstants
 from .request_handlers import serialize_batch_body, _get_batch_request_delimiter
 from .policies import (
-    StorageHeadersPolicy,
+    ExponentialRetry,
+    StorageBearerTokenCredentialPolicy,
     StorageContentValidation,
+    StorageHeadersPolicy,
+    StorageHosts,
+    StorageLoggingPolicy,
     StorageRequestHook,
     StorageResponseHook,
-    StorageLoggingPolicy,
-    StorageHosts,
     QueueMessagePolicy,
-    ExponentialRetry,
 )
 from .._version import VERSION
 from .response_handlers import process_storage_error, PartialBatchErrorException
@@ -219,7 +219,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
         self._credential_policy = None
         if hasattr(credential, "get_token"):
-            self._credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
+            self._credential_policy = StorageBearerTokenCredentialPolicy(credential)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):

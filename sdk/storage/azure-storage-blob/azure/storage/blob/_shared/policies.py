@@ -30,14 +30,17 @@ except ImportError:
     )
 
 from azure.core.pipeline.policies import (
+    BearerTokenCredentialPolicy,
     HeadersPolicy,
-    SansIOHTTPPolicy,
-    NetworkTraceLoggingPolicy,
     HTTPPolicy,
-    RequestHistory
+    NetworkTraceLoggingPolicy,
+    RequestHistory,
+    SansIOHTTPPolicy,
 )
 from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
 
+from .authentication import StorageHttpChallenge
+from .constants import DEFAULT_OAUTH_SCOPE, STORAGE_OAUTH_SCOPE
 from .models import LocationMode
 
 try:
@@ -46,6 +49,7 @@ except NameError:
     _unicode_type = str
 
 if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
     from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 
@@ -620,3 +624,24 @@ class LinearRetry(StorageRetryPolicy):
             if self.backoff > self.random_jitter_range else 0
         random_range_end = self.backoff + self.random_jitter_range
         return random_generator.uniform(random_range_start, random_range_end)
+
+
+class StorageBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
+    """ Custom Bearer token credential policy for following Storage Bearer challenges """
+
+    def __init__(self, credential, **kwargs):
+        # type: (TokenCredential, **Any) -> None
+        super(StorageBearerTokenCredentialPolicy, self).__init__(credential, STORAGE_OAUTH_SCOPE, **kwargs)
+
+    def on_challenge(self, request, response):
+        # type: (PipelineRequest, PipelineResponse) -> bool
+        try:
+            auth_header = response.http_response.headers.get("WWW-Authenticate")
+            challenge = StorageHttpChallenge(auth_header)
+        except ValueError:
+            return False
+
+        scope = challenge.resource_id + DEFAULT_OAUTH_SCOPE
+        self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
+
+        return True

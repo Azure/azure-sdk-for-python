@@ -2021,6 +2021,30 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
 
     @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
+    async def test_token_credential_blob(self, storage_account_name, storage_account_key):
+        # Setup
+        container_name = self._get_container_reference()
+        blob_name = self._get_blob_reference()
+        blob_data = b'Helloworld'
+        token_credential = self.generate_oauth_token()
+
+        service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential)
+        container = service.get_container_client(container_name)
+
+        # Act / Assert
+        try:
+            await container.create_container()
+            blob = await container.upload_blob(blob_name, blob_data)
+
+            data = await (await blob.download_blob()).readall()
+            self.assertEqual(blob_data, data)
+
+            await blob.delete_blob()
+        finally:
+            await container.delete_container()
+
+    @BlobPreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_token_credential_with_batch_operation(self, storage_account_name, storage_account_key):
         # Setup
         container_name = self._get_container_reference()

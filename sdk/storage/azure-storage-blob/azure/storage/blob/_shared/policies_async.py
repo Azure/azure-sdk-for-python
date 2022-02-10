@@ -10,12 +10,15 @@ import random
 import logging
 from typing import Any, TYPE_CHECKING
 
-from azure.core.pipeline.policies import AsyncHTTPPolicy
+from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, AsyncHTTPPolicy
 from azure.core.exceptions import AzureError
 
+from .authentication import StorageHttpChallenge
+from .constants import DEFAULT_OAUTH_SCOPE, STORAGE_OAUTH_SCOPE
 from .policies import is_retry, StorageRetryPolicy
 
 if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 
@@ -218,3 +221,24 @@ class LinearRetry(AsyncStorageRetryPolicy):
             if self.backoff > self.random_jitter_range else 0
         random_range_end = self.backoff + self.random_jitter_range
         return random_generator.uniform(random_range_start, random_range_end)
+
+
+class AsyncStorageBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
+    """ Custom Bearer token credential policy for following Storage Bearer challenges """
+
+    def __init__(self, credential, **kwargs):
+        # type: (AsyncTokenCredential, **Any) -> None
+        super(AsyncStorageBearerTokenCredentialPolicy, self).__init__(credential, STORAGE_OAUTH_SCOPE, **kwargs)
+
+    async def on_challenge(self, request, response):
+        # type: (PipelineRequest, PipelineResponse) -> bool
+        try:
+            auth_header = response.http_response.headers.get("WWW-Authenticate")
+            challenge = StorageHttpChallenge(auth_header)
+        except ValueError:
+            return False
+
+        scope = challenge.resource_id + DEFAULT_OAUTH_SCOPE
+        await self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
+
+        return True
