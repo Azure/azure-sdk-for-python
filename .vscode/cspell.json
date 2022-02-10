@@ -262,7 +262,8 @@
     "wfile",
     "westus",
     "docfx",
-    "Docfx"
+    "Docfx",
+    "RAGRS"
   ],
   "overrides": [
     {
