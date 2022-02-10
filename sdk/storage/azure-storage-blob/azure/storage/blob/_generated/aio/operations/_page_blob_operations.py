@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,9 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import functools
-from typing import Any, Callable, Dict, Generic, IO, Optional, TypeVar, Union
-import warnings
+from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
@@ -45,7 +44,7 @@ class PageBlobOperations:
         self._config = config
 
     @distributed_trace_async
-    async def create(
+    async def create(  # pylint: disable=inconsistent-return-statements
         self,
         content_length: int,
         blob_content_length: int,
@@ -170,7 +169,6 @@ class PageBlobOperations:
             _if_tags = modified_access_conditions.if_tags
 
         request = build_create_request(
-            client_url=self._config.client_url,
             blob_type=blob_type,
             version=self._config.version,
             content_length=content_length,
@@ -203,9 +201,17 @@ class PageBlobOperations:
             template_url=self.create.metadata['url'],
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -230,11 +236,11 @@ class PageBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
+    create.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
 
 
     @distributed_trace_async
-    async def upload_pages(
+    async def upload_pages(  # pylint: disable=inconsistent-return-statements
         self,
         content_length: int,
         body: IO,
@@ -345,7 +351,6 @@ class PageBlobOperations:
         _content = body
 
         request = build_upload_pages_request(
-            client_url=self._config.client_url,
             comp=comp,
             page_write=page_write,
             version=self._config.version,
@@ -373,9 +378,17 @@ class PageBlobOperations:
             template_url=self.upload_pages.metadata['url'],
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -401,11 +414,11 @@ class PageBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    upload_pages.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
+    upload_pages.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
 
 
     @distributed_trace_async
-    async def clear_pages(
+    async def clear_pages(  # pylint: disable=inconsistent-return-statements
         self,
         content_length: int,
         timeout: Optional[int] = None,
@@ -503,7 +516,6 @@ class PageBlobOperations:
             _if_tags = modified_access_conditions.if_tags
 
         request = build_clear_pages_request(
-            client_url=self._config.client_url,
             comp=comp,
             page_write=page_write,
             version=self._config.version,
@@ -527,9 +539,17 @@ class PageBlobOperations:
             template_url=self.clear_pages.metadata['url'],
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -552,11 +572,11 @@ class PageBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    clear_pages.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
+    clear_pages.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
 
 
     @distributed_trace_async
-    async def upload_pages_from_url(
+    async def upload_pages_from_url(  # pylint: disable=inconsistent-return-statements
         self,
         source_url: str,
         source_range: str,
@@ -688,7 +708,6 @@ class PageBlobOperations:
             _source_if_none_match = source_modified_access_conditions.source_if_none_match
 
         request = build_upload_pages_from_url_request(
-            client_url=self._config.client_url,
             comp=comp,
             page_write=page_write,
             version=self._config.version,
@@ -721,9 +740,17 @@ class PageBlobOperations:
             template_url=self.upload_pages_from_url.metadata['url'],
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -748,7 +775,7 @@ class PageBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    upload_pages_from_url.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
+    upload_pages_from_url.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -817,7 +844,6 @@ class PageBlobOperations:
             _if_tags = modified_access_conditions.if_tags
 
         request = build_get_page_ranges_request(
-            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             snapshot=snapshot,
@@ -833,9 +859,17 @@ class PageBlobOperations:
             template_url=self.get_page_ranges.metadata['url'],
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -859,7 +893,7 @@ class PageBlobOperations:
 
         return deserialized
 
-    get_page_ranges.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
+    get_page_ranges.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -942,7 +976,6 @@ class PageBlobOperations:
             _if_tags = modified_access_conditions.if_tags
 
         request = build_get_page_ranges_diff_request(
-            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             snapshot=snapshot,
@@ -960,9 +993,17 @@ class PageBlobOperations:
             template_url=self.get_page_ranges_diff.metadata['url'],
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -986,11 +1027,11 @@ class PageBlobOperations:
 
         return deserialized
 
-    get_page_ranges_diff.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
+    get_page_ranges_diff.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
 
 
     @distributed_trace_async
-    async def resize(
+    async def resize(  # pylint: disable=inconsistent-return-statements
         self,
         blob_content_length: int,
         timeout: Optional[int] = None,
@@ -1064,7 +1105,6 @@ class PageBlobOperations:
             _if_tags = modified_access_conditions.if_tags
 
         request = build_resize_request(
-            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             blob_content_length=blob_content_length,
@@ -1083,9 +1123,17 @@ class PageBlobOperations:
             template_url=self.resize.metadata['url'],
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1106,11 +1154,11 @@ class PageBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    resize.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
+    resize.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
 
 
     @distributed_trace_async
-    async def update_sequence_number(
+    async def update_sequence_number(  # pylint: disable=inconsistent-return-statements
         self,
         sequence_number_action: Union[str, "_models.SequenceNumberActionType"],
         timeout: Optional[int] = None,
@@ -1174,7 +1222,6 @@ class PageBlobOperations:
             _if_tags = modified_access_conditions.if_tags
 
         request = build_update_sequence_number_request(
-            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             sequence_number_action=sequence_number_action,
@@ -1190,9 +1237,17 @@ class PageBlobOperations:
             template_url=self.update_sequence_number.metadata['url'],
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1213,11 +1268,11 @@ class PageBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    update_sequence_number.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
+    update_sequence_number.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
 
 
     @distributed_trace_async
-    async def copy_incremental(
+    async def copy_incremental(  # pylint: disable=inconsistent-return-statements
         self,
         copy_source: str,
         timeout: Optional[int] = None,
@@ -1275,7 +1330,6 @@ class PageBlobOperations:
             _if_tags = modified_access_conditions.if_tags
 
         request = build_copy_incremental_request(
-            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             copy_source=copy_source,
@@ -1289,9 +1343,17 @@ class PageBlobOperations:
             template_url=self.copy_incremental.metadata['url'],
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -1313,5 +1375,5 @@ class PageBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    copy_incremental.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
+    copy_incremental.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
 

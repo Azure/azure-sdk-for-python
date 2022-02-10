@@ -130,15 +130,6 @@ directive:
     }
 ```
 
-### Remove x-ms-parameterized-host and add to each operation
-``` yaml
-directive:
-- from: swagger-document
-  where: $
-  transform: >
-    $["x-ms-parameterized-host"] = undefined;
-```
-
 ### Add url to each url
 ``` yaml
 directive:
@@ -154,7 +145,7 @@ directive:
     }
 ```
 
-### Change Url name to not conflict
+### Add url param to each operation
 ``` yaml
 directive:
 - from: swagger-document
@@ -164,15 +155,6 @@ directive:
     {
         $[property]["parameters"].push({"$ref": "#/parameters/Url"});
     }
-```
-
-### Add url param to each operation
-``` yaml
-directive:
-- from: swagger-document
-  where: $["parameters"]
-  transform: >
-    $["Url"]["x-ms-client-name"] = "clientUrl"
 ```
 
 ### Change to OrMetadata

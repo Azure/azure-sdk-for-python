@@ -8,7 +8,7 @@ import sys
 from .._generated import AzureBlobStorage
 
 
-X_MS_VERSION = AzureBlobStorage("get_api_version")._config.version  # pylint: disable=protected-access
+X_MS_VERSION = AzureBlobStorage(url="get_api_version")._config.version  # pylint: disable=protected-access
 
 # Socket timeout in seconds
 CONNECTION_TIMEOUT = 20

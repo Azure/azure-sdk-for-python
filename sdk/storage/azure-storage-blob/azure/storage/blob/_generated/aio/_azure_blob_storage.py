@@ -7,11 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional
+from typing import Any, Awaitable
+
+from msrest import Deserializer, Serializer
 
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
-from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import AzureBlobStorageConfiguration
@@ -32,11 +33,9 @@ class AzureBlobStorage:
     :vartype append_blob: azure.storage.blob.aio.operations.AppendBlobOperations
     :ivar block_blob: BlockBlobOperations operations
     :vartype block_blob: azure.storage.blob.aio.operations.BlockBlobOperations
-    :param client_url: The URL of the service account, container, or blob that is the target of the
+    :param url: The URL of the service account, container, or blob that is the target of the
      desired operation.
-    :type client_url: str
-    :param base_url: Service URL. Default value is ''.
-    :type base_url: str
+    :type url: str
     :keyword version: Specifies the version of the operation to use for this request. The default
      value is "2021-04-10". Note that overriding this default value may result in unsupported
      behavior.
@@ -45,12 +44,12 @@ class AzureBlobStorage:
 
     def __init__(
         self,
-        client_url: str,
-        base_url: str = "",
+        url: str,
         **kwargs: Any
     ) -> None:
-        self._config = AzureBlobStorageConfiguration(client_url=client_url, **kwargs)
-        self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        _base_url = '{url}'
+        self._config = AzureBlobStorageConfiguration(url=url, **kwargs)
+        self._client = AsyncPipelineClient(base_url=_base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -87,7 +86,11 @@ class AzureBlobStorage:
         """
 
         request_copy = deepcopy(request)
-        request_copy.url = self._client.format_url(request_copy.url)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
     async def close(self) -> None:

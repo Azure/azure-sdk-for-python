@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,23 +7,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import functools
 from typing import TYPE_CHECKING
-import warnings
+
+from msrest import Serializer
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
-from msrest import Serializer
 
 from .. import models as _models
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, IO, Optional, TypeVar, Union
+    from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -31,7 +31,6 @@ _SERIALIZER.client_side_validation = False
 # fmt: off
 
 def build_create_request(
-    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -67,85 +66,79 @@ def build_create_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '{url}/{containerName}/{blob}')
-    path_format_arguments = {
-        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
+    _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if timeout is not None:
-        query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['x-ms-blob-type'] = _SERIALIZER.header("blob_type", blob_type, 'str')
-    header_parameters['Content-Length'] = _SERIALIZER.header("content_length", content_length, 'long')
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['x-ms-blob-type'] = _SERIALIZER.header("blob_type", blob_type, 'str')
+    _header_parameters['Content-Length'] = _SERIALIZER.header("content_length", content_length, 'long')
     if tier is not None:
-        header_parameters['x-ms-access-tier'] = _SERIALIZER.header("tier", tier, 'str')
+        _header_parameters['x-ms-access-tier'] = _SERIALIZER.header("tier", tier, 'str')
     if blob_content_type is not None:
-        header_parameters['x-ms-blob-content-type'] = _SERIALIZER.header("blob_content_type", blob_content_type, 'str')
+        _header_parameters['x-ms-blob-content-type'] = _SERIALIZER.header("blob_content_type", blob_content_type, 'str')
     if blob_content_encoding is not None:
-        header_parameters['x-ms-blob-content-encoding'] = _SERIALIZER.header("blob_content_encoding", blob_content_encoding, 'str')
+        _header_parameters['x-ms-blob-content-encoding'] = _SERIALIZER.header("blob_content_encoding", blob_content_encoding, 'str')
     if blob_content_language is not None:
-        header_parameters['x-ms-blob-content-language'] = _SERIALIZER.header("blob_content_language", blob_content_language, 'str')
+        _header_parameters['x-ms-blob-content-language'] = _SERIALIZER.header("blob_content_language", blob_content_language, 'str')
     if blob_content_md5 is not None:
-        header_parameters['x-ms-blob-content-md5'] = _SERIALIZER.header("blob_content_md5", blob_content_md5, 'bytearray')
+        _header_parameters['x-ms-blob-content-md5'] = _SERIALIZER.header("blob_content_md5", blob_content_md5, 'bytearray')
     if blob_cache_control is not None:
-        header_parameters['x-ms-blob-cache-control'] = _SERIALIZER.header("blob_cache_control", blob_cache_control, 'str')
+        _header_parameters['x-ms-blob-cache-control'] = _SERIALIZER.header("blob_cache_control", blob_cache_control, 'str')
     if metadata is not None:
-        header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
+        _header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
     if lease_id is not None:
-        header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
+        _header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if blob_content_disposition is not None:
-        header_parameters['x-ms-blob-content-disposition'] = _SERIALIZER.header("blob_content_disposition", blob_content_disposition, 'str')
+        _header_parameters['x-ms-blob-content-disposition'] = _SERIALIZER.header("blob_content_disposition", blob_content_disposition, 'str')
     if encryption_key is not None:
-        header_parameters['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
+        _header_parameters['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
     if encryption_key_sha256 is not None:
-        header_parameters['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
+        _header_parameters['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
     if encryption_algorithm is not None:
-        header_parameters['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
+        _header_parameters['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
     if encryption_scope is not None:
-        header_parameters['x-ms-encryption-scope'] = _SERIALIZER.header("encryption_scope", encryption_scope, 'str')
+        _header_parameters['x-ms-encryption-scope'] = _SERIALIZER.header("encryption_scope", encryption_scope, 'str')
     if if_modified_since is not None:
-        header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
     if if_match is not None:
-        header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
     if if_none_match is not None:
-        header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
     if if_tags is not None:
-        header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
-    header_parameters['x-ms-blob-content-length'] = _SERIALIZER.header("blob_content_length", blob_content_length, 'long')
+        _header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+    _header_parameters['x-ms-blob-content-length'] = _SERIALIZER.header("blob_content_length", blob_content_length, 'long')
     if blob_sequence_number is not None:
-        header_parameters['x-ms-blob-sequence-number'] = _SERIALIZER.header("blob_sequence_number", blob_sequence_number, 'long')
-    header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _header_parameters['x-ms-blob-sequence-number'] = _SERIALIZER.header("blob_sequence_number", blob_sequence_number, 'long')
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
     if blob_tags_string is not None:
-        header_parameters['x-ms-tags'] = _SERIALIZER.header("blob_tags_string", blob_tags_string, 'str')
+        _header_parameters['x-ms-tags'] = _SERIALIZER.header("blob_tags_string", blob_tags_string, 'str')
     if immutability_policy_expiry is not None:
-        header_parameters['x-ms-immutability-policy-until-date'] = _SERIALIZER.header("immutability_policy_expiry", immutability_policy_expiry, 'rfc-1123')
+        _header_parameters['x-ms-immutability-policy-until-date'] = _SERIALIZER.header("immutability_policy_expiry", immutability_policy_expiry, 'rfc-1123')
     if immutability_policy_mode is not None:
-        header_parameters['x-ms-immutability-policy-mode'] = _SERIALIZER.header("immutability_policy_mode", immutability_policy_mode, 'str')
+        _header_parameters['x-ms-immutability-policy-mode'] = _SERIALIZER.header("immutability_policy_mode", immutability_policy_mode, 'str')
     if legal_hold is not None:
-        header_parameters['x-ms-legal-hold'] = _SERIALIZER.header("legal_hold", legal_hold, 'bool')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-legal-hold'] = _SERIALIZER.header("legal_hold", legal_hold, 'bool')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
 
 def build_upload_pages_request(
-    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -175,73 +168,67 @@ def build_upload_pages_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '{url}/{containerName}/{blob}')
-    path_format_arguments = {
-        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
+    _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
     if timeout is not None:
-        query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['x-ms-page-write'] = _SERIALIZER.header("page_write", page_write, 'str')
-    header_parameters['Content-Length'] = _SERIALIZER.header("content_length", content_length, 'long')
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['x-ms-page-write'] = _SERIALIZER.header("page_write", page_write, 'str')
+    _header_parameters['Content-Length'] = _SERIALIZER.header("content_length", content_length, 'long')
     if transactional_content_md5 is not None:
-        header_parameters['Content-MD5'] = _SERIALIZER.header("transactional_content_md5", transactional_content_md5, 'bytearray')
+        _header_parameters['Content-MD5'] = _SERIALIZER.header("transactional_content_md5", transactional_content_md5, 'bytearray')
     if transactional_content_crc64 is not None:
-        header_parameters['x-ms-content-crc64'] = _SERIALIZER.header("transactional_content_crc64", transactional_content_crc64, 'bytearray')
+        _header_parameters['x-ms-content-crc64'] = _SERIALIZER.header("transactional_content_crc64", transactional_content_crc64, 'bytearray')
     if range is not None:
-        header_parameters['x-ms-range'] = _SERIALIZER.header("range", range, 'str')
+        _header_parameters['x-ms-range'] = _SERIALIZER.header("range", range, 'str')
     if lease_id is not None:
-        header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
+        _header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if encryption_key is not None:
-        header_parameters['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
+        _header_parameters['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
     if encryption_key_sha256 is not None:
-        header_parameters['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
+        _header_parameters['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
     if encryption_algorithm is not None:
-        header_parameters['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
+        _header_parameters['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
     if encryption_scope is not None:
-        header_parameters['x-ms-encryption-scope'] = _SERIALIZER.header("encryption_scope", encryption_scope, 'str')
+        _header_parameters['x-ms-encryption-scope'] = _SERIALIZER.header("encryption_scope", encryption_scope, 'str')
     if if_sequence_number_less_than_or_equal_to is not None:
-        header_parameters['x-ms-if-sequence-number-le'] = _SERIALIZER.header("if_sequence_number_less_than_or_equal_to", if_sequence_number_less_than_or_equal_to, 'long')
+        _header_parameters['x-ms-if-sequence-number-le'] = _SERIALIZER.header("if_sequence_number_less_than_or_equal_to", if_sequence_number_less_than_or_equal_to, 'long')
     if if_sequence_number_less_than is not None:
-        header_parameters['x-ms-if-sequence-number-lt'] = _SERIALIZER.header("if_sequence_number_less_than", if_sequence_number_less_than, 'long')
+        _header_parameters['x-ms-if-sequence-number-lt'] = _SERIALIZER.header("if_sequence_number_less_than", if_sequence_number_less_than, 'long')
     if if_sequence_number_equal_to is not None:
-        header_parameters['x-ms-if-sequence-number-eq'] = _SERIALIZER.header("if_sequence_number_equal_to", if_sequence_number_equal_to, 'long')
+        _header_parameters['x-ms-if-sequence-number-eq'] = _SERIALIZER.header("if_sequence_number_equal_to", if_sequence_number_equal_to, 'long')
     if if_modified_since is not None:
-        header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
     if if_match is not None:
-        header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
     if if_none_match is not None:
-        header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
     if if_tags is not None:
-        header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
-    header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
     if content_type is not None:
-        header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
 
 def build_clear_pages_request(
-    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -268,67 +255,61 @@ def build_clear_pages_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '{url}/{containerName}/{blob}')
-    path_format_arguments = {
-        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
+    _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
     if timeout is not None:
-        query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['x-ms-page-write'] = _SERIALIZER.header("page_write", page_write, 'str')
-    header_parameters['Content-Length'] = _SERIALIZER.header("content_length", content_length, 'long')
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['x-ms-page-write'] = _SERIALIZER.header("page_write", page_write, 'str')
+    _header_parameters['Content-Length'] = _SERIALIZER.header("content_length", content_length, 'long')
     if range is not None:
-        header_parameters['x-ms-range'] = _SERIALIZER.header("range", range, 'str')
+        _header_parameters['x-ms-range'] = _SERIALIZER.header("range", range, 'str')
     if lease_id is not None:
-        header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
+        _header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if encryption_key is not None:
-        header_parameters['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
+        _header_parameters['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
     if encryption_key_sha256 is not None:
-        header_parameters['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
+        _header_parameters['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
     if encryption_algorithm is not None:
-        header_parameters['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
+        _header_parameters['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
     if encryption_scope is not None:
-        header_parameters['x-ms-encryption-scope'] = _SERIALIZER.header("encryption_scope", encryption_scope, 'str')
+        _header_parameters['x-ms-encryption-scope'] = _SERIALIZER.header("encryption_scope", encryption_scope, 'str')
     if if_sequence_number_less_than_or_equal_to is not None:
-        header_parameters['x-ms-if-sequence-number-le'] = _SERIALIZER.header("if_sequence_number_less_than_or_equal_to", if_sequence_number_less_than_or_equal_to, 'long')
+        _header_parameters['x-ms-if-sequence-number-le'] = _SERIALIZER.header("if_sequence_number_less_than_or_equal_to", if_sequence_number_less_than_or_equal_to, 'long')
     if if_sequence_number_less_than is not None:
-        header_parameters['x-ms-if-sequence-number-lt'] = _SERIALIZER.header("if_sequence_number_less_than", if_sequence_number_less_than, 'long')
+        _header_parameters['x-ms-if-sequence-number-lt'] = _SERIALIZER.header("if_sequence_number_less_than", if_sequence_number_less_than, 'long')
     if if_sequence_number_equal_to is not None:
-        header_parameters['x-ms-if-sequence-number-eq'] = _SERIALIZER.header("if_sequence_number_equal_to", if_sequence_number_equal_to, 'long')
+        _header_parameters['x-ms-if-sequence-number-eq'] = _SERIALIZER.header("if_sequence_number_equal_to", if_sequence_number_equal_to, 'long')
     if if_modified_since is not None:
-        header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
     if if_match is not None:
-        header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
     if if_none_match is not None:
-        header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
     if if_tags is not None:
-        header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
-    header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
 
 def build_upload_pages_from_url_request(
-    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -364,82 +345,76 @@ def build_upload_pages_from_url_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '{url}/{containerName}/{blob}')
-    path_format_arguments = {
-        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
+    _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
     if timeout is not None:
-        query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['x-ms-page-write'] = _SERIALIZER.header("page_write", page_write, 'str')
-    header_parameters['x-ms-copy-source'] = _SERIALIZER.header("source_url", source_url, 'str')
-    header_parameters['x-ms-source-range'] = _SERIALIZER.header("source_range", source_range, 'str')
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters['x-ms-page-write'] = _SERIALIZER.header("page_write", page_write, 'str')
+    _header_parameters['x-ms-copy-source'] = _SERIALIZER.header("source_url", source_url, 'str')
+    _header_parameters['x-ms-source-range'] = _SERIALIZER.header("source_range", source_range, 'str')
     if source_content_md5 is not None:
-        header_parameters['x-ms-source-content-md5'] = _SERIALIZER.header("source_content_md5", source_content_md5, 'bytearray')
+        _header_parameters['x-ms-source-content-md5'] = _SERIALIZER.header("source_content_md5", source_content_md5, 'bytearray')
     if source_contentcrc64 is not None:
-        header_parameters['x-ms-source-content-crc64'] = _SERIALIZER.header("source_contentcrc64", source_contentcrc64, 'bytearray')
-    header_parameters['Content-Length'] = _SERIALIZER.header("content_length", content_length, 'long')
-    header_parameters['x-ms-range'] = _SERIALIZER.header("range", range, 'str')
+        _header_parameters['x-ms-source-content-crc64'] = _SERIALIZER.header("source_contentcrc64", source_contentcrc64, 'bytearray')
+    _header_parameters['Content-Length'] = _SERIALIZER.header("content_length", content_length, 'long')
+    _header_parameters['x-ms-range'] = _SERIALIZER.header("range", range, 'str')
     if encryption_key is not None:
-        header_parameters['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
+        _header_parameters['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
     if encryption_key_sha256 is not None:
-        header_parameters['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
+        _header_parameters['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
     if encryption_algorithm is not None:
-        header_parameters['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
+        _header_parameters['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
     if encryption_scope is not None:
-        header_parameters['x-ms-encryption-scope'] = _SERIALIZER.header("encryption_scope", encryption_scope, 'str')
+        _header_parameters['x-ms-encryption-scope'] = _SERIALIZER.header("encryption_scope", encryption_scope, 'str')
     if lease_id is not None:
-        header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
+        _header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if if_sequence_number_less_than_or_equal_to is not None:
-        header_parameters['x-ms-if-sequence-number-le'] = _SERIALIZER.header("if_sequence_number_less_than_or_equal_to", if_sequence_number_less_than_or_equal_to, 'long')
+        _header_parameters['x-ms-if-sequence-number-le'] = _SERIALIZER.header("if_sequence_number_less_than_or_equal_to", if_sequence_number_less_than_or_equal_to, 'long')
     if if_sequence_number_less_than is not None:
-        header_parameters['x-ms-if-sequence-number-lt'] = _SERIALIZER.header("if_sequence_number_less_than", if_sequence_number_less_than, 'long')
+        _header_parameters['x-ms-if-sequence-number-lt'] = _SERIALIZER.header("if_sequence_number_less_than", if_sequence_number_less_than, 'long')
     if if_sequence_number_equal_to is not None:
-        header_parameters['x-ms-if-sequence-number-eq'] = _SERIALIZER.header("if_sequence_number_equal_to", if_sequence_number_equal_to, 'long')
+        _header_parameters['x-ms-if-sequence-number-eq'] = _SERIALIZER.header("if_sequence_number_equal_to", if_sequence_number_equal_to, 'long')
     if if_modified_since is not None:
-        header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
     if if_match is not None:
-        header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
     if if_none_match is not None:
-        header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
     if if_tags is not None:
-        header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+        _header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
     if source_if_modified_since is not None:
-        header_parameters['x-ms-source-if-modified-since'] = _SERIALIZER.header("source_if_modified_since", source_if_modified_since, 'rfc-1123')
+        _header_parameters['x-ms-source-if-modified-since'] = _SERIALIZER.header("source_if_modified_since", source_if_modified_since, 'rfc-1123')
     if source_if_unmodified_since is not None:
-        header_parameters['x-ms-source-if-unmodified-since'] = _SERIALIZER.header("source_if_unmodified_since", source_if_unmodified_since, 'rfc-1123')
+        _header_parameters['x-ms-source-if-unmodified-since'] = _SERIALIZER.header("source_if_unmodified_since", source_if_unmodified_since, 'rfc-1123')
     if source_if_match is not None:
-        header_parameters['x-ms-source-if-match'] = _SERIALIZER.header("source_if_match", source_if_match, 'str')
+        _header_parameters['x-ms-source-if-match'] = _SERIALIZER.header("source_if_match", source_if_match, 'str')
     if source_if_none_match is not None:
-        header_parameters['x-ms-source-if-none-match'] = _SERIALIZER.header("source_if_none_match", source_if_none_match, 'str')
-    header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _header_parameters['x-ms-source-if-none-match'] = _SERIALIZER.header("source_if_none_match", source_if_none_match, 'str')
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
     if copy_source_authorization is not None:
-        header_parameters['x-ms-copy-source-authorization'] = _SERIALIZER.header("copy_source_authorization", copy_source_authorization, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-copy-source-authorization'] = _SERIALIZER.header("copy_source_authorization", copy_source_authorization, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
 
 def build_get_page_ranges_request(
-    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -458,53 +433,47 @@ def build_get_page_ranges_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '{url}/{containerName}/{blob}')
-    path_format_arguments = {
-        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
+    _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
     if snapshot is not None:
-        query_parameters['snapshot'] = _SERIALIZER.query("snapshot", snapshot, 'str')
+        _query_parameters['snapshot'] = _SERIALIZER.query("snapshot", snapshot, 'str')
     if timeout is not None:
-        query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if range is not None:
-        header_parameters['x-ms-range'] = _SERIALIZER.header("range", range, 'str')
+        _header_parameters['x-ms-range'] = _SERIALIZER.header("range", range, 'str')
     if lease_id is not None:
-        header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
+        _header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if if_modified_since is not None:
-        header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
     if if_match is not None:
-        header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
     if if_none_match is not None:
-        header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
     if if_tags is not None:
-        header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
-    header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
 
 def build_get_page_ranges_diff_request(
-    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -525,57 +494,51 @@ def build_get_page_ranges_diff_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '{url}/{containerName}/{blob}')
-    path_format_arguments = {
-        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
+    _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
     if snapshot is not None:
-        query_parameters['snapshot'] = _SERIALIZER.query("snapshot", snapshot, 'str')
+        _query_parameters['snapshot'] = _SERIALIZER.query("snapshot", snapshot, 'str')
     if timeout is not None:
-        query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
     if prevsnapshot is not None:
-        query_parameters['prevsnapshot'] = _SERIALIZER.query("prevsnapshot", prevsnapshot, 'str')
+        _query_parameters['prevsnapshot'] = _SERIALIZER.query("prevsnapshot", prevsnapshot, 'str')
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if prev_snapshot_url is not None:
-        header_parameters['x-ms-previous-snapshot-url'] = _SERIALIZER.header("prev_snapshot_url", prev_snapshot_url, 'str')
+        _header_parameters['x-ms-previous-snapshot-url'] = _SERIALIZER.header("prev_snapshot_url", prev_snapshot_url, 'str')
     if range is not None:
-        header_parameters['x-ms-range'] = _SERIALIZER.header("range", range, 'str')
+        _header_parameters['x-ms-range'] = _SERIALIZER.header("range", range, 'str')
     if lease_id is not None:
-        header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
+        _header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if if_modified_since is not None:
-        header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
     if if_match is not None:
-        header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
     if if_none_match is not None:
-        header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
     if if_tags is not None:
-        header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
-    header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
 
 def build_resize_request(
-    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -597,58 +560,52 @@ def build_resize_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '{url}/{containerName}/{blob}')
-    path_format_arguments = {
-        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
+    _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
     if timeout is not None:
-        query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if lease_id is not None:
-        header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
+        _header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if encryption_key is not None:
-        header_parameters['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
+        _header_parameters['x-ms-encryption-key'] = _SERIALIZER.header("encryption_key", encryption_key, 'str')
     if encryption_key_sha256 is not None:
-        header_parameters['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
+        _header_parameters['x-ms-encryption-key-sha256'] = _SERIALIZER.header("encryption_key_sha256", encryption_key_sha256, 'str')
     if encryption_algorithm is not None:
-        header_parameters['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
+        _header_parameters['x-ms-encryption-algorithm'] = _SERIALIZER.header("encryption_algorithm", encryption_algorithm, 'str')
     if encryption_scope is not None:
-        header_parameters['x-ms-encryption-scope'] = _SERIALIZER.header("encryption_scope", encryption_scope, 'str')
+        _header_parameters['x-ms-encryption-scope'] = _SERIALIZER.header("encryption_scope", encryption_scope, 'str')
     if if_modified_since is not None:
-        header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
     if if_match is not None:
-        header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
     if if_none_match is not None:
-        header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
     if if_tags is not None:
-        header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
-    header_parameters['x-ms-blob-content-length'] = _SERIALIZER.header("blob_content_length", blob_content_length, 'long')
-    header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+    _header_parameters['x-ms-blob-content-length'] = _SERIALIZER.header("blob_content_length", blob_content_length, 'long')
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
 
 def build_update_sequence_number_request(
-    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -667,52 +624,46 @@ def build_update_sequence_number_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '{url}/{containerName}/{blob}')
-    path_format_arguments = {
-        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
+    _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
     if timeout is not None:
-        query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if lease_id is not None:
-        header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
+        _header_parameters['x-ms-lease-id'] = _SERIALIZER.header("lease_id", lease_id, 'str')
     if if_modified_since is not None:
-        header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
     if if_match is not None:
-        header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
     if if_none_match is not None:
-        header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
     if if_tags is not None:
-        header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
-    header_parameters['x-ms-sequence-number-action'] = _SERIALIZER.header("sequence_number_action", sequence_number_action, 'str')
+        _header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+    _header_parameters['x-ms-sequence-number-action'] = _SERIALIZER.header("sequence_number_action", sequence_number_action, 'str')
     if blob_sequence_number is not None:
-        header_parameters['x-ms-blob-sequence-number'] = _SERIALIZER.header("blob_sequence_number", blob_sequence_number, 'long')
-    header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _header_parameters['x-ms-blob-sequence-number'] = _SERIALIZER.header("blob_sequence_number", blob_sequence_number, 'long')
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
 
 def build_copy_incremental_request(
-    client_url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -729,42 +680,37 @@ def build_copy_incremental_request(
 
     accept = "application/xml"
     # Construct URL
-    url = kwargs.pop("template_url", '{url}/{containerName}/{blob}')
-    path_format_arguments = {
-        "url": _SERIALIZER.url("client_url", client_url, 'str', skip_quote=True),
-    }
-
-    url = _format_url_section(url, **path_format_arguments)
+    _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['comp'] = _SERIALIZER.query("comp", comp, 'str')
     if timeout is not None:
-        query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
+        _query_parameters['timeout'] = _SERIALIZER.query("timeout", timeout, 'int', minimum=0)
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
     if if_modified_since is not None:
-        header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
+        _header_parameters['If-Modified-Since'] = _SERIALIZER.header("if_modified_since", if_modified_since, 'rfc-1123')
     if if_unmodified_since is not None:
-        header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        _header_parameters['If-Unmodified-Since'] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
     if if_match is not None:
-        header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _header_parameters['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
     if if_none_match is not None:
-        header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
+        _header_parameters['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
     if if_tags is not None:
-        header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
-    header_parameters['x-ms-copy-source'] = _SERIALIZER.header("copy_source", copy_source, 'str')
-    header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
+        _header_parameters['x-ms-if-tags'] = _SERIALIZER.header("if_tags", if_tags, 'str')
+    _header_parameters['x-ms-copy-source'] = _SERIALIZER.header("copy_source", copy_source, 'str')
+    _header_parameters['x-ms-version'] = _SERIALIZER.header("version", version, 'str')
     if request_id_parameter is not None:
-        header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _header_parameters['x-ms-client-request-id'] = _SERIALIZER.header("request_id_parameter", request_id_parameter, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
         **kwargs
     )
 
@@ -792,7 +738,7 @@ class PageBlobOperations(object):
         self._config = config
 
     @distributed_trace
-    def create(
+    def create(  # pylint: disable=inconsistent-return-statements
         self,
         content_length,  # type: int
         blob_content_length,  # type: int
@@ -918,7 +864,6 @@ class PageBlobOperations(object):
             _if_tags = modified_access_conditions.if_tags
 
         request = build_create_request(
-            client_url=self._config.client_url,
             blob_type=blob_type,
             version=self._config.version,
             content_length=content_length,
@@ -951,9 +896,17 @@ class PageBlobOperations(object):
             template_url=self.create.metadata['url'],
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -978,11 +931,11 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
+    create.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
 
 
     @distributed_trace
-    def upload_pages(
+    def upload_pages(  # pylint: disable=inconsistent-return-statements
         self,
         content_length,  # type: int
         body,  # type: IO
@@ -1094,7 +1047,6 @@ class PageBlobOperations(object):
         _content = body
 
         request = build_upload_pages_request(
-            client_url=self._config.client_url,
             comp=comp,
             page_write=page_write,
             version=self._config.version,
@@ -1122,9 +1074,17 @@ class PageBlobOperations(object):
             template_url=self.upload_pages.metadata['url'],
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -1150,11 +1110,11 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    upload_pages.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
+    upload_pages.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
 
 
     @distributed_trace
-    def clear_pages(
+    def clear_pages(  # pylint: disable=inconsistent-return-statements
         self,
         content_length,  # type: int
         timeout=None,  # type: Optional[int]
@@ -1253,7 +1213,6 @@ class PageBlobOperations(object):
             _if_tags = modified_access_conditions.if_tags
 
         request = build_clear_pages_request(
-            client_url=self._config.client_url,
             comp=comp,
             page_write=page_write,
             version=self._config.version,
@@ -1277,9 +1236,17 @@ class PageBlobOperations(object):
             template_url=self.clear_pages.metadata['url'],
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -1302,11 +1269,11 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    clear_pages.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
+    clear_pages.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
 
 
     @distributed_trace
-    def upload_pages_from_url(
+    def upload_pages_from_url(  # pylint: disable=inconsistent-return-statements
         self,
         source_url,  # type: str
         source_range,  # type: str
@@ -1439,7 +1406,6 @@ class PageBlobOperations(object):
             _source_if_none_match = source_modified_access_conditions.source_if_none_match
 
         request = build_upload_pages_from_url_request(
-            client_url=self._config.client_url,
             comp=comp,
             page_write=page_write,
             version=self._config.version,
@@ -1472,9 +1438,17 @@ class PageBlobOperations(object):
             template_url=self.upload_pages_from_url.metadata['url'],
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -1499,7 +1473,7 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    upload_pages_from_url.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
+    upload_pages_from_url.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
 
 
     @distributed_trace
@@ -1569,7 +1543,6 @@ class PageBlobOperations(object):
             _if_tags = modified_access_conditions.if_tags
 
         request = build_get_page_ranges_request(
-            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             snapshot=snapshot,
@@ -1585,9 +1558,17 @@ class PageBlobOperations(object):
             template_url=self.get_page_ranges.metadata['url'],
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1611,7 +1592,7 @@ class PageBlobOperations(object):
 
         return deserialized
 
-    get_page_ranges.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
+    get_page_ranges.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
 
 
     @distributed_trace
@@ -1695,7 +1676,6 @@ class PageBlobOperations(object):
             _if_tags = modified_access_conditions.if_tags
 
         request = build_get_page_ranges_diff_request(
-            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             snapshot=snapshot,
@@ -1713,9 +1693,17 @@ class PageBlobOperations(object):
             template_url=self.get_page_ranges_diff.metadata['url'],
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1739,11 +1727,11 @@ class PageBlobOperations(object):
 
         return deserialized
 
-    get_page_ranges_diff.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
+    get_page_ranges_diff.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
 
 
     @distributed_trace
-    def resize(
+    def resize(  # pylint: disable=inconsistent-return-statements
         self,
         blob_content_length,  # type: int
         timeout=None,  # type: Optional[int]
@@ -1818,7 +1806,6 @@ class PageBlobOperations(object):
             _if_tags = modified_access_conditions.if_tags
 
         request = build_resize_request(
-            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             blob_content_length=blob_content_length,
@@ -1837,9 +1824,17 @@ class PageBlobOperations(object):
             template_url=self.resize.metadata['url'],
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1860,11 +1855,11 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    resize.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
+    resize.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
 
 
     @distributed_trace
-    def update_sequence_number(
+    def update_sequence_number(  # pylint: disable=inconsistent-return-statements
         self,
         sequence_number_action,  # type: Union[str, "_models.SequenceNumberActionType"]
         timeout=None,  # type: Optional[int]
@@ -1929,7 +1924,6 @@ class PageBlobOperations(object):
             _if_tags = modified_access_conditions.if_tags
 
         request = build_update_sequence_number_request(
-            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             sequence_number_action=sequence_number_action,
@@ -1945,9 +1939,17 @@ class PageBlobOperations(object):
             template_url=self.update_sequence_number.metadata['url'],
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1968,11 +1970,11 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    update_sequence_number.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
+    update_sequence_number.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
 
 
     @distributed_trace
-    def copy_incremental(
+    def copy_incremental(  # pylint: disable=inconsistent-return-statements
         self,
         copy_source,  # type: str
         timeout=None,  # type: Optional[int]
@@ -2031,7 +2033,6 @@ class PageBlobOperations(object):
             _if_tags = modified_access_conditions.if_tags
 
         request = build_copy_incremental_request(
-            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             copy_source=copy_source,
@@ -2045,9 +2046,17 @@ class PageBlobOperations(object):
             template_url=self.copy_incremental.metadata['url'],
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
@@ -2069,5 +2078,5 @@ class PageBlobOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    copy_incremental.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
+    copy_incremental.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
 

@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,9 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import functools
-from typing import Any, Callable, Dict, Generic, IO, Optional, TypeVar, Union
-import warnings
+from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
@@ -45,7 +44,7 @@ class BlockBlobOperations:
         self._config = config
 
     @distributed_trace_async
-    async def upload(
+    async def upload(  # pylint: disable=inconsistent-return-statements
         self,
         content_length: int,
         body: IO,
@@ -174,7 +173,6 @@ class BlockBlobOperations:
         _content = body
 
         request = build_upload_request(
-            client_url=self._config.client_url,
             blob_type=blob_type,
             version=self._config.version,
             content_type=content_type,
@@ -208,9 +206,17 @@ class BlockBlobOperations:
             template_url=self.upload.metadata['url'],
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -235,11 +241,11 @@ class BlockBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    upload.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
+    upload.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
 
 
     @distributed_trace_async
-    async def put_blob_from_url(
+    async def put_blob_from_url(  # pylint: disable=inconsistent-return-statements
         self,
         content_length: int,
         copy_source: str,
@@ -386,7 +392,6 @@ class BlockBlobOperations:
             _source_if_tags = source_modified_access_conditions.source_if_tags
 
         request = build_put_blob_from_url_request(
-            client_url=self._config.client_url,
             blob_type=blob_type,
             version=self._config.version,
             content_length=content_length,
@@ -424,9 +429,17 @@ class BlockBlobOperations:
             template_url=self.put_blob_from_url.metadata['url'],
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -451,11 +464,11 @@ class BlockBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    put_blob_from_url.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
+    put_blob_from_url.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
 
 
     @distributed_trace_async
-    async def stage_block(
+    async def stage_block(  # pylint: disable=inconsistent-return-statements
         self,
         block_id: str,
         content_length: int,
@@ -532,7 +545,6 @@ class BlockBlobOperations:
         _content = body
 
         request = build_stage_block_request(
-            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             content_type=content_type,
@@ -551,9 +563,17 @@ class BlockBlobOperations:
             template_url=self.stage_block.metadata['url'],
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -576,11 +596,11 @@ class BlockBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    stage_block.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
+    stage_block.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
 
 
     @distributed_trace_async
-    async def stage_block_from_url(
+    async def stage_block_from_url(  # pylint: disable=inconsistent-return-statements
         self,
         block_id: str,
         content_length: int,
@@ -676,7 +696,6 @@ class BlockBlobOperations:
             _source_if_none_match = source_modified_access_conditions.source_if_none_match
 
         request = build_stage_block_from_url_request(
-            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             block_id=block_id,
@@ -700,9 +719,17 @@ class BlockBlobOperations:
             template_url=self.stage_block_from_url.metadata['url'],
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -725,11 +752,11 @@ class BlockBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    stage_block_from_url.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
+    stage_block_from_url.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
 
 
     @distributed_trace_async
-    async def commit_block_list(
+    async def commit_block_list(  # pylint: disable=inconsistent-return-statements
         self,
         blocks: "_models.BlockLookupList",
         timeout: Optional[int] = None,
@@ -860,7 +887,6 @@ class BlockBlobOperations:
         _content = self._serialize.body(blocks, 'BlockLookupList', is_xml=True)
 
         request = build_commit_block_list_request(
-            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             content_type=content_type,
@@ -894,9 +920,17 @@ class BlockBlobOperations:
             template_url=self.commit_block_list.metadata['url'],
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
@@ -922,7 +956,7 @@ class BlockBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    commit_block_list.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
+    commit_block_list.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
 
 
     @distributed_trace_async
@@ -984,7 +1018,6 @@ class BlockBlobOperations:
             _if_tags = modified_access_conditions.if_tags
 
         request = build_get_block_list_request(
-            client_url=self._config.client_url,
             comp=comp,
             version=self._config.version,
             snapshot=snapshot,
@@ -996,9 +1029,17 @@ class BlockBlobOperations:
             template_url=self.get_block_list.metadata['url'],
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1023,5 +1064,5 @@ class BlockBlobOperations:
 
         return deserialized
 
-    get_block_list.metadata = {'url': '{url}/{containerName}/{blob}'}  # type: ignore
+    get_block_list.metadata = {'url': "{url}/{containerName}/{blob}"}  # type: ignore
 
