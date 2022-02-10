@@ -1,8 +1,8 @@
-# Guide for migrating from azure-applicationinsights  v0.1.0 to azure-monitor-query v1.0.x
+# Guide for migrating from azure-applicationinsights v0.1.0 to azure-monitor-query v1.0.x
 
-This guide assists you in the migration from [azure-applicationinsights ](https://pypi.org/project/azure-applicationinsights /) v0.1.0 to [azure-monitor-query](https://pypi.org/project/azure-monitor-query/) v1.0.x. Side-by-side comparisons are provided for similar operations between the two packages.
+This guide assists you in the migration from [azure-applicationinsights](https://pypi.org/project/azure-applicationinsights/) v0.1.0 to [azure-monitor-query](https://pypi.org/project/azure-monitor-query/) v1.0.x. Side-by-side comparisons are provided for similar operations between the two packages.
 
-Familiarity with the `azure-applicationinsights ` v0.1.0 package is assumed. If you're new to the Azure Monitor Query client library for Python, see the [README for `azure-monitor-query`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/README.md) instead of this guide.
+Familiarity with the `azure-applicationinsights` v0.1.0 package is assumed. If you're new to the Azure Monitor Query client library for Python, see the [README for `azure-monitor-query`](https://docs.microsoft.com/python/api/overview/azure/monitor-query-readme?view=azure-python) instead of this guide.
 
 ## Table of contents
 
@@ -44,10 +44,12 @@ For more new features, changes, and bug fixes, see the [change log](https://gith
 
 ### The client
 
-To provide a more intuitive experience, the top-level client to `ApplicationInsightsDataClient` has been split into tow different clients:
-- `LogsQueryClient` which serves as a single point of entry to execute a single Kusto query or a batch of Kusto queries.
-- `MetricsQueryClient` which can be used to query metrics, list metric namespaces and to list metric defintions. 
-Both of these clients can be authenticated using Azure AD.
+To provide a more intuitive experience, the top-level client to `ApplicationInsightsDataClient` has been split into two different clients:
+
+- [LogsQueryClient](https://docs.microsoft.com/python/api/azure-monitor-query/azure.monitor.query.logsqueryclient?view=azure-python) serves as a single point of entry to execute a single Kusto query or a batch of Kusto queries.
+- [MetricsQueryClient](https://docs.microsoft.com/python/api/azure-monitor-query/azure.monitor.query.metricsqueryclient?view=azure-python) is used to query metrics, list metric namespaces, and to list metric definitions.
+
+Both clients can be authenticated using Azure AD.
 
 #### Consistency
 
@@ -55,7 +57,7 @@ There are now methods with similar names, signatures, and locations to create se
 
 ### Client constructors and authentication
 
-In `azure-applicationinsights ` v0.1.0:
+In `azure-applicationinsights` v0.1.0:
 
 ```python
 from azure.applicationinsights import ApplicationInsightsDataClient
@@ -83,7 +85,7 @@ In version 1.0 of the Monitor Query library:
 - The `QueryBody` is flattened. Users are expected to pass the Kusto query directly to the API.
 - The `timespan` attribute is now required, which helped to avoid querying over the entire data set.
 
-In `azure-applicationinsights ` v0.1.0:
+In `azure-applicationinsights` v0.1.0:
 
 ```python
 from azure.applicationinsights.models import QueryBody
@@ -100,13 +102,13 @@ query = 'AppRequests | take 5'
 logs_query_client.query(workspace_id, query, timespan=timedelta(days=1))
 ```
 
-### A Note about the events API
+### A note about the Events API
 
-***It is important to note that the Events API is just a different "API head" on the same data. It allows to query some logs in App Insights without writing Kusto queries. The API translates to Kusto queries in the background. The same data can be accessed via regular Kusto queries as shown in the above example.***
+The `azure-applicationinsights` package includes an Events API. Note that the Events API is just a different "API head" on the same logs data. It enables the querying of some logs in Application Insights without writing Kusto queries. The API translates to Kusto queries in the background. The same data can be accessed via regular Kusto queries, as shown in the preceding example.
 
 ### Query metrics from a resource
 
-In `azure-applicationinsights ` v0.1.0:
+In `azure-applicationinsights` v0.1.0:
 
 ```python
 metricId = 'availabilityResults/count'
