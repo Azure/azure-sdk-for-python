@@ -1811,7 +1811,17 @@ class RecognizeEntitiesAction(DictMixin):
         ]
 
     def _to_generated(self, api_version, task_id):
-        if api_version == DEFAULT_API_VERSION:
+        if api_version == "2022-02-01-preview":
+            from ._generated.v2022_02_01_preview.models import EntitiesLROTask, EntitiesTaskParameters
+            return EntitiesLROTask(
+                task_name=task_id,
+                parameters=EntitiesTaskParameters(
+                    model_version=self.model_version,
+                    string_index_type=self.string_index_type,
+                    logging_opt_out=self.disable_service_logs,
+                )
+            )
+        elif api_version == "v3.2-preview.2":
             from ._generated.v3_2_preview_2 import models
         else:
             from ._generated.v3_1 import models
@@ -1889,7 +1899,18 @@ class AnalyzeSentimentAction(DictMixin):
         )
 
     def _to_generated(self, api_version, task_id):
-        if api_version == DEFAULT_API_VERSION:
+        if api_version == "2022-02-01-preview":
+            from ._generated.v2022_02_01_preview.models import SentimentAnalysisLROTask, SentimentAnalysisTaskParameters
+            return SentimentAnalysisLROTask(
+                task_name=task_id,
+                parameters=SentimentAnalysisTaskParameters(
+                    model_version=self.model_version,
+                    opinion_mining=self.show_opinion_mining,
+                    string_index_type=self.string_index_type,
+                    logging_opt_out=self.disable_service_logs,
+                )
+            )
+        elif api_version == "v3.2-preview.2":
             from ._generated.v3_2_preview_2 import models
         else:
             from ._generated.v3_1 import models
@@ -1972,7 +1993,19 @@ class RecognizePiiEntitiesAction(DictMixin):
         )
 
     def _to_generated(self, api_version, task_id):
-        if api_version == DEFAULT_API_VERSION:
+        if api_version == "2022-02-01-preview":
+            from ._generated.v2022_02_01_preview.models import PiiLROTask, PiiLROTaskParameters
+            return PiiLROTask(
+                task_name=task_id,
+                parameters=PiiLROTaskParameters(
+                    model_version=self.model_version,
+                    domain=self.domain_filter,
+                    pii_categories=self.categories_filter,
+                    string_index_type=self.string_index_type,
+                    logging_opt_out=self.disable_service_logs,
+                )
+            )
+        elif api_version == "v3.2-preview.2":
             from ._generated.v3_2_preview_2 import models
         else:
             from ._generated.v3_1 import models
@@ -2028,7 +2061,16 @@ class ExtractKeyPhrasesAction(DictMixin):
         )
 
     def _to_generated(self, api_version, task_id):
-        if api_version == DEFAULT_API_VERSION:
+        if api_version == "2022-02-01-preview":
+            from ._generated.v2022_02_01_preview.models import KeyPhraseLROTask, KeyPhraseTaskParameters
+            return KeyPhraseLROTask(
+                task_name=task_id,
+                parameters=KeyPhraseTaskParameters(
+                    model_version=self.model_version,
+                    logging_opt_out=self.disable_service_logs,
+                )
+            )
+        elif api_version == "v3.2-preview.2":
             from ._generated.v3_2_preview_2 import models
         else:
             from ._generated.v3_1 import models
@@ -2091,7 +2133,17 @@ class RecognizeLinkedEntitiesAction(DictMixin):
         )
 
     def _to_generated(self, api_version, task_id):
-        if api_version == DEFAULT_API_VERSION:
+        if api_version == "2022-02-01-preview":
+            from ._generated.v2022_02_01_preview.models import EntityLinkingLROTask, EntityLinkingTaskParameters
+            return EntityLinkingLROTask(
+                task_name=task_id,
+                parameters=EntityLinkingTaskParameters(
+                    model_version=self.model_version,
+                    string_index_type=self.string_index_type,
+                    logging_opt_out=self.disable_service_logs,
+                )
+            )
+        elif api_version == "v3.2-preview.2":
             from ._generated.v3_2_preview_2 import models
         else:
             from ._generated.v3_1 import models
@@ -2162,16 +2214,29 @@ class ExtractSummaryAction(DictMixin):
         )
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
-        return _v3_2_preview_models.ExtractiveSummarizationTask(
-            parameters=_v3_2_preview_models.ExtractiveSummarizationTaskParameters(
-                model_version=self.model_version,
-                string_index_type=self.string_index_type,
-                logging_opt_out=self.disable_service_logs,
-                sentence_count=self.max_sentence_count,
-                sort_by=self.order_by,
-            ),
-            task_name=task_id
-        )
+        if api_version == "2022-02-01-preview":
+            from ._generated.v2022_02_01_preview.models import ExtractiveSummarizationLROTask, ExtractiveSummarizationTaskParameters
+            return ExtractiveSummarizationLROTask(
+                task_name=task_id,
+                parameters=ExtractiveSummarizationTaskParameters(
+                    model_version=self.model_version,
+                    string_index_type=self.string_index_type,
+                    logging_opt_out=self.disable_service_logs,
+                    sentence_count=self.max_sentence_count,
+                    sort_by=self.order_by,
+                )
+            )
+        else:
+            return _v3_2_preview_models.ExtractiveSummarizationTask(
+                parameters=_v3_2_preview_models.ExtractiveSummarizationTaskParameters(
+                    model_version=self.model_version,
+                    string_index_type=self.string_index_type,
+                    logging_opt_out=self.disable_service_logs,
+                    sentence_count=self.max_sentence_count,
+                    sort_by=self.order_by,
+                ),
+                task_name=task_id
+            )
 
 
 class ExtractSummaryResult(DictMixin):
@@ -2324,15 +2389,27 @@ class RecognizeCustomEntitiesAction(DictMixin):
         )[:1024]
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
-        return _v3_2_preview_models.CustomEntitiesTask(
-            parameters=_v3_2_preview_models.CustomEntitiesTaskParameters(
-                project_name=self.project_name,
-                deployment_name=self.deployment_name,
-                string_index_type=self.string_index_type,
-                logging_opt_out=self.disable_service_logs,
-            ),
-            task_name=task_id
-        )
+        if api_version == "2022-02-01-preview":
+            from ._generated.v2022_02_01_preview.models import CustomEntitiesLROTask, CustomEntitiesTaskParameters
+            return CustomEntitiesLROTask(
+                task_name=task_id,
+                parameters=CustomEntitiesTaskParameters(
+                    project_name=self.project_name,
+                    deployment_name=self.deployment_name,
+                    string_index_type=self.string_index_type,
+                    logging_opt_out=self.disable_service_logs,
+                )
+            )
+        else:
+            return _v3_2_preview_models.CustomEntitiesTask(
+                parameters=_v3_2_preview_models.CustomEntitiesTaskParameters(
+                    project_name=self.project_name,
+                    deployment_name=self.deployment_name,
+                    string_index_type=self.string_index_type,
+                    logging_opt_out=self.disable_service_logs,
+                ),
+                task_name=task_id
+            )
 
 
 class RecognizeCustomEntitiesResult(DictMixin):
@@ -2438,14 +2515,25 @@ class MultiCategoryClassifyAction(DictMixin):
         )[:1024]
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
-        return _v3_2_preview_models.CustomMultiClassificationTask(
-            parameters=_v3_2_preview_models.CustomMultiClassificationTaskParameters(
-                project_name=self.project_name,
-                deployment_name=self.deployment_name,
-                logging_opt_out=self.disable_service_logs,
-            ),
-            task_name=task_id
-        )
+        if api_version == "2022-02-01-preview":
+            from ._generated.v2022_02_01_preview.models import CustomMultiClassificationLROTask, CustomMultiClassificationTaskParameters
+            return CustomMultiClassificationLROTask(
+                task_name=task_id,
+                parameters=CustomMultiClassificationTaskParameters(
+                    project_name=self.project_name,
+                    deployment_name=self.deployment_name,
+                    logging_opt_out=self.disable_service_logs,
+                )
+            )
+        else:
+            return _v3_2_preview_models.CustomMultiClassificationTask(
+                parameters=_v3_2_preview_models.CustomMultiClassificationTaskParameters(
+                    project_name=self.project_name,
+                    deployment_name=self.deployment_name,
+                    logging_opt_out=self.disable_service_logs,
+                ),
+                task_name=task_id
+            )
 
 
 class MultiCategoryClassifyResult(DictMixin):
@@ -2552,14 +2640,25 @@ class SingleCategoryClassifyAction(DictMixin):
         )[:1024]
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
-        return _v3_2_preview_models.CustomSingleClassificationTask(
-            parameters=_v3_2_preview_models.CustomSingleClassificationTaskParameters(
-                project_name=self.project_name,
-                deployment_name=self.deployment_name,
-                logging_opt_out=self.disable_service_logs,
-            ),
-            task_name=task_id
-        )
+        if api_version == "2022-02-01-preview":
+            from ._generated.v2022_02_01_preview.models import CustomSingleClassificationLROTask, CustomSingleClassificationTaskParameters
+            return CustomSingleClassificationLROTask(
+                task_name=task_id,
+                parameters=CustomSingleClassificationTaskParameters(
+                    project_name=self.project_name,
+                    deployment_name=self.deployment_name,
+                    logging_opt_out=self.disable_service_logs,
+                )
+            )
+        else:
+            return _v3_2_preview_models.CustomSingleClassificationTask(
+                parameters=_v3_2_preview_models.CustomSingleClassificationTaskParameters(
+                    project_name=self.project_name,
+                    deployment_name=self.deployment_name,
+                    logging_opt_out=self.disable_service_logs,
+                ),
+                task_name=task_id
+            )
 
 
 class SingleCategoryClassifyResult(DictMixin):
@@ -2683,4 +2782,12 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
         self.disable_service_logs = kwargs.get("disable_service_logs", None)
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
-        pass
+        from ._generated.v2022_02_01_preview.models import HealthcareLROTask, HealthcareTaskParameters
+        return HealthcareLROTask(
+            task_name=task_id,
+            parameters=HealthcareTaskParameters(
+                model_version=self.model_version,
+                string_index_type=self.string_index_type,
+                logging_opt_out=self.disable_service_logs,
+            )
+        )

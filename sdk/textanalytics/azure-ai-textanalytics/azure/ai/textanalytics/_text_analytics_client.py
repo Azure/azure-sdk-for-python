@@ -626,6 +626,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
             https://www.microsoft.com/ai/responsible-ai.
+        :keyword str display_name: An optional display name to set for the requested analysis.
         :return: An instance of an AnalyzeHealthcareEntitiesLROPoller. Call `result()` on the this
             object to return a heterogeneous pageable of
             :class:`~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult` and
@@ -637,6 +638,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         .. versionadded:: v3.1
             The *begin_analyze_healthcare_entities* client method.
+        .. versionadded:: v2022-02-01-preview
+            The *display_name* keyword argument.
 
         .. admonition:: Example:
 
@@ -657,6 +660,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             "string_index_type", self._string_index_type_default
         )
         disable_service_logs = kwargs.pop("disable_service_logs", None)
+        display_name = kwargs.pop("display_name", None)
 
         if continuation_token:
             def get_result_from_cont_token(initial_response, pipeline_response):
@@ -687,6 +691,40 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
 
         try:
+            if self._api_version == "2022-02-01-preview":
+                from azure.ai.textanalytics._generated.v2022_02_01_preview.models import AnalyzeTextJobsInput, HealthcareLROTask, HealthcareTaskParameters
+                return self._client.begin_analyze_text_submit_job(
+                    body=AnalyzeTextJobsInput(
+                        analysis_input={"documents": docs},
+                        display_name=display_name,
+                        tasks=[
+                            HealthcareLROTask(
+                                task_name="0",
+                                parameters=HealthcareTaskParameters(
+                                    logging_opt_out=disable_service_logs,
+                                    model_version=model_version,
+                                    string_index_type=string_index_type
+                                )
+                            )
+                        ]
+                    ),
+                    cls=my_cls,
+                    polling=AnalyzeHealthcareEntitiesLROPollingMethod(
+                        text_analytics_client=self._client,
+                        timeout=polling_interval,
+                        doc_id_order=doc_id_order,
+                        show_stats=show_stats,
+                        lro_algorithms=[
+                            TextAnalyticsOperationResourcePolling(
+                                show_stats=show_stats,
+                            )
+                        ],
+                        **kwargs
+                    ),
+                    continuation_token=continuation_token,
+                    **kwargs
+                )
+
             return self._client.begin_health(
                 docs,
                 model_version=model_version,
@@ -1069,14 +1107,47 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         doc_id_order = [doc.get("id") for doc in docs.documents]
         try:
             generated_tasks = [
-                action._to_generated(self._api_version, str(idx))  # pylint: disable=protected-access
+                action._to_generated(self._api_version, str(idx))  # pylint: disable=protected-access  # TODO _to_generated per api_version will need to be fixed
                 for idx, action in enumerate(actions)
             ]
         except AttributeError:
             raise TypeError("Unsupported action type in list.")
-        task_order = [(_determine_action_type(a), a.task_name) for a in generated_tasks]
+        task_order = [(_determine_action_type(a), a.task_name) for a in generated_tasks]  # TODO
 
         try:
+            if self._api_version == "2022-02-01-preview":
+                from azure.ai.textanalytics._generated.v2022_02_01_preview.models import AnalyzeTextJobsInput
+                return self._client.begin_analyze_text_submit_job(
+                    body=AnalyzeTextJobsInput(
+                        analysis_input={"documents": docs},
+                        display_name=display_name,
+                        tasks=generated_tasks
+                    ),
+                    cls=kwargs.pop(
+                        "cls",
+                        partial(
+                            self._analyze_result_callback,
+                            doc_id_order,
+                            task_order,
+                            show_stats=show_stats,
+                        ),
+                    ),
+                    polling=AnalyzeActionsLROPollingMethod(
+                        timeout=polling_interval,
+                        show_stats=show_stats,
+                        doc_id_order=doc_id_order,
+                        task_id_order=task_order,
+                        lro_algorithms=[
+                            TextAnalyticsOperationResourcePolling(
+                                show_stats=show_stats,
+                            )
+                        ],
+                        **kwargs
+                    ),
+                    continuation_token=continuation_token,
+                    **kwargs
+                )
+
             analyze_tasks = self._client.models(
                 api_version=self._api_version
             ).JobManifestTasks(
@@ -1196,6 +1267,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             Call `continuation_token()` on the poller object to save the long-running operation (LRO)
             state into an opaque token. Pass the value as the `continuation_token` keyword argument
             to restart the LRO from a saved state.
+        :keyword str display_name: An optional display name to set for the requested analysis.
         :return: An instance of an TextAnalyticsLROPoller. Call `result()` on the this
             object to return a heterogeneous pageable of
             :class:`~azure.ai.textanalytics.ExtractSummaryResult` and
@@ -1205,6 +1277,95 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             ~azure.ai.textanalytics.ExtractSummaryResult or ~azure.ai.textanalytics.DocumentError]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
         """
+
+        model_version = kwargs.pop("model_version", None)
+        string_index_type = kwargs.pop("string_index_type", None)
+        disable_service_logs = kwargs.pop("disable_service_logs", None)
+        max_sentence_count = kwargs.pop("max_sentence_count", None)
+        order_by = kwargs.pop("order_by", None)
+        continuation_token = kwargs.pop("continuation_token", None)
+        display_name = kwargs.pop("display_name", None)
+        language_arg = kwargs.pop("language", None)
+        show_stats = kwargs.pop("show_stats", None)
+        polling_interval = kwargs.pop("polling_interval", 5)
+        language = language_arg if language_arg is not None else self._default_language
+
+        if continuation_token:
+            def get_result_from_cont_token(initial_response, pipeline_response):
+                doc_id_order = initial_response.context.options["doc_id_order"]
+                task_id_order = initial_response.context.options["task_id_order"]
+                show_stats = initial_response.context.options["show_stats"]
+                return self._analyze_result_callback(
+                    doc_id_order, task_id_order, pipeline_response, None, {}, show_stats=show_stats
+                )
+
+            return AnalyzeActionsLROPoller.from_continuation_token(
+                polling_method=AnalyzeActionsLROPollingMethod(
+                    timeout=polling_interval,
+                    **kwargs
+                ),
+                client=self._client._client,  # pylint: disable=protected-access
+                deserialization_callback=get_result_from_cont_token,
+                continuation_token=continuation_token
+            )
+
+        docs = self._client.models(
+            api_version=self._api_version
+        ).MultiLanguageBatchInput(
+            documents=_validate_input(documents, "language", language)
+        )
+        doc_id_order = [doc.get("id") for doc in docs.documents]
+
+        from ._generated.v2022_02_01_preview.models import ExtractiveSummarizationLROTask, \
+            ExtractiveSummarizationTaskParameters
+        generated_tasks = [ExtractiveSummarizationLROTask(
+            task_name="0",
+            parameters=ExtractiveSummarizationTaskParameters(
+                model_version=model_version,
+                string_index_type=string_index_type,
+                logging_opt_out=disable_service_logs,
+                sentence_count=max_sentence_count,
+                sort_by=order_by,
+            )
+        )]
+
+        task_order = [(_determine_action_type(a), a.task_name) for a in generated_tasks]
+
+        try:
+            if self._api_version == "2022-02-01-preview":
+                from azure.ai.textanalytics._generated.v2022_02_01_preview.models import AnalyzeTextJobsInput
+                return self._client.begin_analyze_text_submit_job(  # TODO regen so this returns a TextAnalyticsLROPoller
+                    body=AnalyzeTextJobsInput(
+                        analysis_input={"documents": docs},
+                        display_name=display_name,
+                        tasks=generated_tasks
+                    ),
+                    cls=kwargs.pop(
+                        "cls",
+                        partial(
+                            self._analyze_result_callback,
+                            doc_id_order,
+                            task_order,
+                            show_stats=show_stats,
+                        ),
+                    ),
+                    polling=AnalyzeActionsLROPollingMethod(
+                        timeout=polling_interval,
+                        show_stats=show_stats,
+                        doc_id_order=doc_id_order,
+                        task_id_order=task_order,
+                        lro_algorithms=[
+                            TextAnalyticsOperationResourcePolling(
+                                show_stats=show_stats,
+                            )
+                        ],
+                        **kwargs
+                    ),
+                    continuation_token=continuation_token,
+                    **kwargs
+                )
+        except HttpResponseError as error:
+            process_http_response_error(error)
 
     @distributed_trace
     def begin_recognize_custom_entities(  # type: ignore
