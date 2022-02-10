@@ -31,6 +31,7 @@ from typing import List, Dict, Any, Optional, Union, cast, overload
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged, AsyncList
+from azure.core.rest import HttpRequest
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -47,12 +48,44 @@ from ..._operations._patch import (
     FeedbackUnion,
     build_get_data_feed_request,
     build_list_data_feeds_request,
-    OperationMixinHelpers
+    build_get_alert_configuration_request,
+    build_list_alert_configurations_request,
+    OperationMixinHelpers,
 )
 from ...models import *
 
 
 class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGenerated, OperationMixinHelpers):
+    def _paging_helper(
+        self,
+        *,
+        extract_data,
+        initial_request: HttpRequest,
+        next_request: HttpRequest,
+        **kwargs
+    ) -> AsyncItemPaged:
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
+        prepare_request = self._get_paging_prepare_request(initial_request=initial_request, next_request=next_request, **kwargs)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
     @distributed_trace_async
     async def create_alert_configuration(
         self, name: str, metric_alert_configurations: List[MetricAlertConfiguration], hook_ids: List[str], **kwargs: Any
@@ -167,8 +200,28 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
 
     @distributed_trace_async
     async def get_alert_configuration(self, alert_configuration_id: str, **kwargs: Any) -> AnomalyAlertConfiguration:
-        config = await super().get_alert_configuration(alert_configuration_id, **kwargs)
-        return AnomalyAlertConfiguration._from_generated(config)
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
+        request = build_get_alert_configuration_request(
+            configuration_id=alert_configuration_id,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        return self._deserialize_anomaly_detection_configuration(pipeline_response.http_response, **kwargs)
 
     @distributed_trace_async
     async def refresh_data_feed_ingestion(
@@ -223,44 +276,22 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
     async def update_alert_configuration(
         self, alert_configuration: Union[str, AnomalyAlertConfiguration], **kwargs: Any
     ) -> AnomalyAlertConfiguration:
-        unset = object()
-        update_kwargs = {}
-        update_kwargs["name"] = kwargs.pop("name", unset)
-        update_kwargs["hookIds"] = kwargs.pop("hook_ids", unset)
-        update_kwargs["crossMetricsOperator"] = kwargs.pop("cross_metrics_operator", unset)
-        update_kwargs["metricAlertingConfigurations"] = kwargs.pop("metric_alert_configurations", unset)
-        update_kwargs["description"] = kwargs.pop("description", unset)
-
-        update = {key: value for key, value in update_kwargs.items() if value != unset}
-        if isinstance(alert_configuration, six.string_types):
-            alert_configuration_id = alert_configuration
-            alert_configuration_patch = self._construct_alert_config_dict(update)
-
-        else:
-            alert_configuration_id = alert_configuration.id
-            alert_configuration_patch = alert_configuration._to_generated_patch(
-                name=update.pop("name", None),
-                metric_alert_configurations=update.pop("metricAlertingConfigurations", None),
-                hook_ids=update.pop("hookIds", None),
-                cross_metrics_operator=update.pop("crossMetricsOperator", None),
-                description=update.pop("description", None),
-            )
-        alerting_config = await super().update_alert_configuration(
-            alert_configuration_id, alert_configuration_patch, **kwargs
+        request, kwargs = self._update_alert_configuration_helper(alert_configuration, **kwargs)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **kwargs
         )
-
-        return AnomalyAlertConfiguration._from_generated(alerting_config)
+        return self._deserialize_anomaly_detection_configuration(pipeline_response.http_response, **kwargs)
 
     @distributed_trace_async
     async def update_detection_configuration(
         self, detection_configuration: Union[str, AnomalyDetectionConfiguration], **kwargs: Any
     ) -> AnomalyDetectionConfiguration:
-        detection_configuration_id, detection_config_patch, kwargs = self._update_detection_configuration_helper(detection_configuration, **kwargs)
+        detection_configuration_id, detection_config_patch, kwargs = self._update_detection_configuration_helper(
+            detection_configuration, **kwargs
+        )
 
         return await super().update_anomaly_detection_configuration(
-            configuration_id=detection_configuration_id,
-            body=detection_config_patch,
-            **kwargs
+            configuration_id=detection_configuration_id, body=detection_config_patch, **kwargs
         )
 
     @distributed_trace_async
@@ -284,26 +315,6 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         maxpagesize: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[DataFeed]:
-        cls = kwargs.pop("cls", None)
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
-
-        def prepare_request(next_link=None):
-            request = build_list_data_feeds_request(
-                data_feed_name=data_feed_name,
-                data_source_type=data_source_type,
-                granularity_name=granularity_type,
-                status=status,
-                creator=creator,
-                skip=skip,
-                maxpagesize=maxpagesize,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            request.url = self._client.format_url(request.url, **path_format_arguments)
-            return request
-
         deserializer = functools.partial(self._deserialize, generated_models.DataFeed)
 
         async def extract_data(deserializer, pipeline_response):
@@ -321,33 +332,49 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
                 )
             return response_json.get("@nextLink", None) or None, AsyncList(list_of_elem)
 
-        async def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, functools.partial(extract_data, deserializer))
+        return self._paging_helper(
+            extract_data=functools.partial(extract_data, deserializer),
+            initial_request=build_list_data_feeds_request(
+                data_feed_name=data_feed_name,
+                data_source_type=data_source_type,
+                granularity_name=granularity_type,
+                status=status,
+                creator=creator,
+                skip=skip,
+                maxpagesize=maxpagesize,
+            ),
+            next_request=build_list_data_feeds_request(),
+            **kwargs
+        )
 
     @distributed_trace
     def list_alert_configurations(
         self, detection_configuration_id: str, **kwargs: Any
     ) -> AsyncItemPaged[AnomalyAlertConfiguration]:
-        return super().list_alert_configurations(  # type: ignore
-            detection_configuration_id,
-            cls=kwargs.pop(
-                "cls",
-                lambda confs: [AnomalyAlertConfiguration._from_generated(conf) for conf in confs],
+        deserializer = self._deserialize
+        async def extract_data(deserializer, pipeline_response):
+            response_json = pipeline_response.http_response.json()
+            list_of_elem = []
+            for l in response_json["value"]:
+                config_to_generated = functools.partial(deserializer, generated_models.MetricAlertConfiguration)
+                l['metricAlertingConfigurations'] = [
+                    config_to_generated(config)
+                    for config in l.get('metricAlertingConfigurations', [])
+                ]
+                list_of_elem.append(
+                    AnomalyAlertConfiguration._from_generated(
+                        deserializer(generated_models.AnomalyAlertConfiguration, l)
+                    )
+                )
+            return response_json.get("@nextLink", None) or None, AsyncList(list_of_elem)
+        return self._paging_helper(
+            extract_data=functools.partial(extract_data, deserializer),
+            initial_request=build_list_alert_configurations_request(
+                configuration_id=detection_configuration_id,
+                skip=kwargs.pop("skip", None),
+                maxpagesize=kwargs.pop("maxpagesize", None),
             ),
+            next_request=build_list_alert_configurations_request(configuration_id=detection_configuration_id),
             **kwargs
         )
 

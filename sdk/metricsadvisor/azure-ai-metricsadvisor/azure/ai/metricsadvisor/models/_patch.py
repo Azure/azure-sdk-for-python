@@ -13,7 +13,7 @@ from this import d
 from typing import Any, Tuple, Union, List, Dict, Optional, TYPE_CHECKING
 from enum import Enum
 import msrest
-from . import _models_py3 as generated_models
+from . import _models_py3 as generated_models, _metrics_advisor_client_enums as generated_enums
 
 if TYPE_CHECKING:
     from ._models_py3 import (
@@ -127,7 +127,7 @@ class DetectionConditionOperator(str, Enum):
     OR = "OR"
 
 
-class DataFeedGranularity(object):
+class DataFeedGranularity:
     """Data feed granularity
 
     :param granularity_type: Granularity of the time series. Possible values include:
@@ -154,7 +154,7 @@ class DataFeedGranularity(object):
         )
 
 
-class DataFeedIngestionSettings(object):
+class DataFeedIngestionSettings:
     """Data feed ingestion settings.
 
     :param ~datetime.datetime ingestion_begin_time: Ingestion start time.
@@ -188,7 +188,7 @@ class DataFeedIngestionSettings(object):
         )
 
 
-class DataFeedMissingDataPointFillSettings(object):
+class DataFeedMissingDataPointFillSettings:
     """Data feed missing data point fill settings
 
     :keyword fill_type: The type of fill missing point for anomaly detection. Possible
@@ -210,7 +210,7 @@ class DataFeedMissingDataPointFillSettings(object):
         )[:1024]
 
 
-class DataFeedRollupSettings(object):
+class DataFeedRollupSettings:
     """Data feed rollup settings
 
     :keyword str rollup_identification_value: The identification value for the row of calculated all-up value.
@@ -241,7 +241,7 @@ class DataFeedRollupSettings(object):
         )
 
 
-class DataFeedSchema(object):
+class DataFeedSchema:
     """Data feed schema
 
     :param metrics: List of metrics.
@@ -436,7 +436,7 @@ class DataFeed(generated_models.DataFeed):  # pylint:disable=too-many-instance-a
         return retval
 
 
-class MetricAnomalyAlertScope(object):
+class MetricAnomalyAlertScope:
     """MetricAnomalyAlertScope
 
     :param scope_type: Required. Anomaly scope. Possible values include: "WholeSeries",
@@ -448,8 +448,7 @@ class MetricAnomalyAlertScope(object):
     :paramtype top_n_group_in_scope: ~azure.ai.metricsadvisor.models.TopNGroupScope
     """
 
-    def __init__(self, scope_type, **kwargs):
-        # type: (Union[str, MetricAnomalyAlertScopeType], Any) -> None
+    def __init__(self, scope_type: Union[str, "MetricAnomalyAlertScopeType"], **kwargs: Any) -> None:
         self.scope_type = scope_type
         self.series_group_in_scope = kwargs.get("series_group_in_scope", None)
         self.top_n_group_in_scope = kwargs.get("top_n_group_in_scope", None)
@@ -474,7 +473,7 @@ class MetricAnomalyAlertScope(object):
         )
 
 
-class TopNGroupScope(object):
+class TopNGroupScope(generated_models.TopNGroupScope):
     """TopNGroupScope.
 
     :param top: Required. top N, value range : [1, +∞).
@@ -486,11 +485,8 @@ class TopNGroupScope(object):
     :type min_top_count: int
     """
 
-    def __init__(self, top, period, min_top_count, **kwargs):  # pylint: disable=unused-argument
-        # type: (int, int, int, Any) -> None
-        self.top = top
-        self.period = period
-        self.min_top_count = min_top_count
+    def __init__(self, top: int, period: int, min_top_count: int, **kwargs: Any):
+        super().__init__(top=top, period=period, min_top_count=min_top_count, **kwargs)
 
     def __repr__(self):
         return "TopNGroupScope(top={}, period={}, min_top_count={})".format(self.top, self.period, self.min_top_count)[
@@ -498,7 +494,7 @@ class TopNGroupScope(object):
         ]
 
 
-class SeverityCondition(object):
+class SeverityCondition(generated_models.SeverityCondition):
     """SeverityCondition.
 
     :param min_alert_severity: Required. min alert severity. Possible values include: "Low",
@@ -509,10 +505,10 @@ class SeverityCondition(object):
     :type max_alert_severity: str or ~azure.ai.metricsadvisor.models.AnomalySeverity
     """
 
-    def __init__(self, min_alert_severity, max_alert_severity, **kwargs):  # pylint: disable=unused-argument
-        # type: (Union[str, AnomalySeverity], Union[str, AnomalySeverity], Any) -> None
-        self.min_alert_severity = min_alert_severity
-        self.max_alert_severity = max_alert_severity
+    def __init__(self, min_alert_severity: Union[str, "AnomalySeverity"], max_alert_severity: Union[str, "AnomalySeverity"], **kwargs: Any) -> None:
+        super().__init__(
+            min_alert_severity=min_alert_severity, max_alert_severity=max_alert_severity
+        )
 
     def __repr__(self):
         return "SeverityCondition(min_alert_severity={}, max_alert_severity={})".format(
@@ -520,7 +516,7 @@ class SeverityCondition(object):
         )[:1024]
 
 
-class MetricAnomalyAlertSnoozeCondition(object):
+class MetricAnomalyAlertSnoozeCondition(generated_models.MetricAnomalyAlertSnoozeCondition):
     """MetricAnomalyAlertSnoozeCondition.
 
     :param auto_snooze: Required. snooze point count, value range : [0, +∞).
@@ -531,11 +527,13 @@ class MetricAnomalyAlertSnoozeCondition(object):
     :type only_for_successive: bool
     """
 
-    def __init__(self, auto_snooze, snooze_scope, only_for_successive, **kwargs):  # pylint: disable=unused-argument
-        # type: (int, Union[str, SnoozeScope], bool, Any) -> None
-        self.auto_snooze = auto_snooze
-        self.snooze_scope = snooze_scope
-        self.only_for_successive = only_for_successive
+    def __init__(self, auto_snooze: int, snooze_scope: Union[str, "SnoozeScope"], only_for_successive: bool, **kwargs: Any) -> None:
+        super().__init__(
+            auto_snooze=auto_snooze,
+            snooze_scope=snooze_scope,
+            only_for_successive=only_for_successive,
+            **kwargs
+        )
 
     def __repr__(self):
         return "MetricAnomalyAlertSnoozeCondition(auto_snooze={}, snooze_scope={}, only_for_successive={})".format(
@@ -543,7 +541,7 @@ class MetricAnomalyAlertSnoozeCondition(object):
         )[:1024]
 
 
-class MetricAnomalyAlertConditions(object):
+class MetricAnomalyAlertConditions:
     """MetricAnomalyAlertConditions
 
     :keyword metric_boundary_condition:
@@ -561,8 +559,15 @@ class MetricAnomalyAlertConditions(object):
             repr(self.metric_boundary_condition), repr(self.severity_condition)
         )[:1024]
 
+    @classmethod
+    def _from_generated(cls, config: generated_models.MetricAlertConfiguration):
+        return cls(
+            metric_boundary_condition=config.value_filter,
+            severity_condition=config.severity_filter,
+        )
 
-class MetricBoundaryCondition(object):
+
+class MetricBoundaryCondition(generated_models.MetricBoundaryCondition):
     """MetricBoundaryCondition.
 
     :param direction: Required. value filter direction. Possible values include: "Both", "Down",
@@ -575,13 +580,8 @@ class MetricBoundaryCondition(object):
      metric should be specified only when using other metric to filter.
     """
 
-    def __init__(self, direction, **kwargs):
-        # type: (Union[str, AnomalyDetectorDirection], Any) -> None
-        self.direction = direction
-        self.lower = kwargs.get("lower", None)
-        self.upper = kwargs.get("upper", None)
-        self.companion_metric_id = kwargs.get("companion_metric_id", None)
-        self.trigger_for_missing = kwargs.get("trigger_for_missing", None)
+    def __init__(self, direction: Union[str, "AnomalyDetectorDirection"], **kwargs: Any) -> None:
+        super().__init__(direction=direction, **kwargs)
 
     def __repr__(self):
         return (
@@ -611,10 +611,6 @@ class MetricAlertConfiguration(generated_models.MetricAlertConfiguration):
     :paramtype alert_snooze_condition: ~azure.ai.metricsadvisor.models.MetricAnomalyAlertSnoozeCondition
     """
 
-    _attribute_map = generated_models.MetricAlertConfiguration._attribute_map.update(
-        {"alert_conditions": {"key": "alertConditions", "type": "MetricAnomalyAlertConditions"}}
-    )
-
     def __init__(self, detection_configuration_id: str, alert_scope: MetricAnomalyAlertScope, **kwargs: Any) -> None:
         self.detection_configuration_id = detection_configuration_id
         self.alert_scope = alert_scope
@@ -632,6 +628,28 @@ class MetricAlertConfiguration(generated_models.MetricAlertConfiguration):
                 repr(self.alert_conditions),
                 repr(self.alert_snooze_condition),
             )[:1024]
+        )
+
+    @classmethod
+    def _from_generated(cls, config: generated_models.MetricAlertConfiguration):
+        return cls(
+            detection_configuration_id=config.detection_configuration_id,
+            alert_scope=MetricAnomalyAlertScope._from_generated(config),
+            negation_operation=config.negation_operation,
+            alert_snooze_condition=config.alert_snooze_condition,
+            alert_conditions=MetricAnomalyAlertConditions._from_generated(config),
+        )
+
+    def _to_generated(self) -> generated_models.MetricAlertConfiguration:
+        return generated_models.MetricAlertConfiguration(
+            detection_configuration_id=self.detection_configuration_id,
+            anomaly_scope_type=MetricAnomalyAlertScopeType._to_generated(self.alert_scope.scope_type),
+            dimension_anomaly_scope=self.alert_scope.series_group_in_scope,
+            top_n_anomaly_scope=self.alert_scope.top_n_group_in_scope,
+            negation_operation=self.negation_operation,
+            severity_filter=self.alert_conditions.severity_condition if self.alert_conditions else None,
+            alert_snooze_condition=self.alert_snooze_condition,
+            value_filter=self.alert_conditions.metric_boundary_condition if self.alert_conditions else None,
         )
 
 
@@ -675,6 +693,32 @@ class AnomalyAlertConfiguration(generated_models.AnomalyAlertConfiguration):
                 repr(self.metric_alert_configurations),
                 self.dimensions_to_split_alert,
             )[:1024]
+        )
+
+    @classmethod
+    def _from_generated(cls, config: generated_models.AnomalyAlertConfiguration):
+        return cls(
+            id=config.id,
+            name=config.name,
+            description=config.description,
+            cross_metrics_operator=config.cross_metrics_operator,
+            hook_ids=config.hook_ids,
+            metric_alert_configurations=[
+                MetricAlertConfiguration._from_generated(c) for c in config.metric_alert_configurations
+            ],
+            dimensions_to_split_alert=config.dimensions_to_split_alert,
+        )
+
+    def _to_generated(self):
+        return generated_models.AnomalyAlertConfiguration(
+            name=self.name,
+            metric_alert_configurations=[  # type: ignore
+                config._to_generated() for config in self.metric_alert_configurations
+            ],
+            hook_ids=self.hook_ids,
+            cross_metrics_operator=self.cross_metrics_operator,
+            description=self.description,
+            dimensions_to_split_alert=self.dimensions_to_split_alert,
         )
 
 
@@ -1702,8 +1746,7 @@ class DataFeedIngestionProgress(generated_models.DataFeedIngestionProgress):
         )[:1024]
 
 
-
-class MetricSeriesData(object):
+class MetricSeriesData:
     """MetricSeriesData.
 
     :ivar metric_id: metric unique id.
@@ -1737,7 +1780,7 @@ class MetricSeriesData(object):
         )
 
 
-class MetricEnrichedSeriesData(object):
+class MetricEnrichedSeriesData:
     """MetricEnrichedSeriesData.
 
     All required parameters must be populated in order to send to Azure.
@@ -1801,7 +1844,7 @@ class MetricEnrichedSeriesData(object):
         )
 
 
-class AnomalyAlert(object):
+class AnomalyAlert:
     """AnomalyAlert
 
     :ivar id: alert id.

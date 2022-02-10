@@ -1,4 +1,4 @@
-# Azure Purview for Python
+# Azure Metrics Advisor for Python
 
 > see https://aka.ms/autorest
 
@@ -40,58 +40,6 @@ black: true
 models-mode: msrest
 modelerfour:
     flatten-models: true
-```
-
-### Make get_root_cause_of_incident_by_anomaly_detection_configuration pageable
-
-```yaml
-directive:
-  - from: swagger-document
-    where: '$.paths["/enrichment/anomalyDetection/configurations/{configurationId}/incidents/{incidentId}/rootCause"].get'
-    transform: >
-      $["x-ms-pageable"] = {"nextLinkName": null};
-```
-
-### Make get_series_by_anomaly_detection_configuration pageable
-
-```yaml
-directive:
-  - from: swagger-document
-    where: '$.paths["/enrichment/anomalyDetection/configurations/{configurationId}/series/query"].post'
-    transform: >
-      $["x-ms-pageable"] = {"nextLinkName": null};
-```
-
-### Make get_metric_data pageable
-
-```yaml
-directive:
-  - from: swagger-document
-    where: '$.paths["/metrics/{metricId}/data/query"].post'
-    transform: >
-      $["x-ms-pageable"] = {"nextLinkName": null};
-```
-
-### anomalyScopeType enum -> metricAnomalyAlertScopeType, change enum values
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["MetricAlertingConfiguration"]["properties"]["anomalyScopeType"]
-    transform: >
-      $["x-ms-enum"]["name"] = "metricAnomalyAlertScopeType";
-      $["enum"] = ["WholeSeries", "SeriesGroup", "TopN"];
-```
-
-### NeedRollupEnum -> DataFeedRollupType, change enum values
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["DataFeed"]["properties"]["needRollup"]
-    transform: >
-      $["x-ms-enum"]["name"] = "DataFeedRollupType";
-      $["enum"] = ["NoRollup", "AutoRollup", "AlreadyRollup"];
 ```
 
 ```yaml
@@ -186,16 +134,6 @@ directive:
   - rename-operation:
       from: updateAnomalyDetectionConfiguration
       to: updateDetectionConfiguration
-```
-
-### MetricAlertingConfiguration -> MetricAlertConfiguration
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["MetricAlertingConfiguration"]
-    transform: >
-      $["x-ms-client-name"] = "MetricAlertConfiguration";
 ```
 
 ### Severity -> AnomalySeverity
@@ -428,6 +366,62 @@ directive:
   - rename-model:
       from: MongoDBParameter
       to: MongoDbDataFeedSource
+  - rename-model:
+      from: MetricAlertingConfiguration
+      to: MetricAlertConfiguration
+  - rename-model:
+      from: ValueCondition
+      to: MetricBoundaryCondition
+```
+
+### Make get_root_cause_of_incident_by_anomaly_detection_configuration pageable
+
+```yaml
+directive:
+  - from: swagger-document
+    where: '$.paths["/enrichment/anomalyDetection/configurations/{configurationId}/incidents/{incidentId}/rootCause"].get'
+    transform: >
+      $["x-ms-pageable"] = {"nextLinkName": null};
+```
+
+### Make get_series_by_anomaly_detection_configuration pageable
+
+```yaml
+directive:
+  - from: swagger-document
+    where: '$.paths["/enrichment/anomalyDetection/configurations/{configurationId}/series/query"].post'
+    transform: >
+      $["x-ms-pageable"] = {"nextLinkName": null};
+```
+
+### Make get_metric_data pageable
+
+```yaml
+directive:
+  - from: swagger-document
+    where: '$.paths["/metrics/{metricId}/data/query"].post'
+    transform: >
+      $["x-ms-pageable"] = {"nextLinkName": null};
+```
+
+### anomalyScopeType enum -> metricAnomalyAlertScopeType, change enum values
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["MetricAlertConfiguration"]["properties"]["anomalyScopeType"]
+    transform: >
+      $["x-ms-enum"]["name"] = "MetricAnomalyAlertScopeType";
+```
+
+### NeedRollupEnum -> DataFeedRollupType, change enum values
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["DataFeed"]["properties"]["needRollup"]
+    transform: >
+      $["x-ms-enum"]["name"] = "DataFeedRollupType";
 ```
 
 ```yaml
@@ -471,7 +465,7 @@ directive:
   - where-operation: updateHook
     transform: >
       $["parameters"][1]["schema"]["$ref"] = "#/definitions/NotificationHook";
-  - where-operation: updateAnomalyDetectionConfiguration
+  - where-operation: updateDetectionConfiguration
     transform: >
       $["parameters"][1]["schema"]["$ref"] = "#/definitions/AnomalyDetectionConfiguration";
 ```
@@ -556,15 +550,11 @@ directive:
     rename-property:
       from: splitAlertByDimensions
       to: dimensionsToSplitAlert
-  - where-model: MetricAlertingConfiguration
+  - where-model: MetricAlertConfiguration
     rename-property:
       from: anomalyDetectionConfigurationId
       to: detectionConfigurationId
-  - where-model: MetricAlertingConfiguration
-    rename-property:
-      from: anomalyScopeType
-      to: alertScope
-  - where-model: MetricAlertingConfiguration
+  - where-model: MetricAlertConfiguration
     rename-property:
       from: snoozeFilter
       to: alertSnoozeCondition
@@ -638,14 +628,14 @@ directive:
     rename-property:
       from: seriesOverrideConfigurations
       to: seriesDetectionConditions
-  - where-model: DimensionGroupIdentity
-    rename-property:
-      from: dimension
-      to: seriesGroupKey
   - where-model: SeriesIdentity
     rename-property:
       from: dimension
       to: seriesKey
+  - where-model: MetricBoundaryCondition
+    rename-property:
+      from: metricId
+      to: companionMetricId
 ```
 
 ```yaml
@@ -762,4 +752,14 @@ directive:
     where: $["definitions"]["DataFeed"]
     transform: >
         $.properties["dataSourceParameter"] = {"type": "object"};
+```
+
+### Make AnomalyAlertConfiguration id property not readonly
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["AnomalyAlertConfiguration"]
+    transform: >
+        $.properties["anomalyAlertingConfigurationId"]["readOnly"] = false;
 ```

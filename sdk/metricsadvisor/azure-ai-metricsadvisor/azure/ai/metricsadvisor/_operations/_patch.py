@@ -27,12 +27,17 @@
 import functools
 import six
 import datetime
-from typing import Any, List, Tuple, Union, cast, overload, Dict, Optional
+from typing import Any, Callable, List, Tuple, Union, cast, overload, Dict, Optional
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.rest import HttpRequest
+from azure.core import PipelineClient
 from ._operations import (
     MetricsAdvisorClientOperationsMixin as _MetricsAdvisorClientOperationsMixin,
     build_get_data_feed_request,
     build_list_data_feeds_request,
+    build_get_alert_configuration_request,
+    build_list_alert_configurations_request,
+    build_update_alert_configuration_request,
     JSONType,
 )
 from ..models import *
@@ -78,11 +83,11 @@ FeedbackUnion = Union[
     PeriodFeedback,
 ]
 
+UpdateHelperRetval = Tuple[str, Union[JSONType, DataFeed], Any]
+
 ########################### HELPERS ###########################
 
-
 class OperationMixinHelpers:
-
     def _convert_to_sub_feedback(self, feedback):
         # type: (MetricFeedback) -> Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]
         if feedback.feedback_type == "Anomaly":
@@ -95,7 +100,6 @@ class OperationMixinHelpers:
             return PeriodFeedback._from_generated(feedback)  # type: ignore
         raise HttpResponseError("Invalid feedback type returned in the response.")
 
-
     def _convert_to_datasource_credential(self, datasource_credential):
         if datasource_credential.data_source_credential_type == "AzureSQLConnectionString":
             return DatasourceSqlConnectionString._from_generated(datasource_credential)
@@ -104,7 +108,6 @@ class OperationMixinHelpers:
         if datasource_credential.data_source_credential_type == "ServicePrincipal":
             return DatasourceServicePrincipal._from_generated(datasource_credential)
         return DatasourceServicePrincipalInKeyVault._from_generated(datasource_credential)
-
 
     def _construct_alert_config_dict(self, **update_kwargs):
 
@@ -116,7 +119,6 @@ class OperationMixinHelpers:
             )
 
         return update_kwargs
-
 
     def _construct_data_feed(self, **kwargs):
         granularity = kwargs.pop("granularity", None)
@@ -132,7 +134,22 @@ class OperationMixinHelpers:
             ingestion_settings = DataFeedIngestionSettings(ingestion_begin_time=ingestion_settings)
         return DataFeed(granularity=granularity, schema=schema, ingestion_settings=ingestion_settings, **kwargs)
 
-    def _update_detection_configuration_helper(self, detection_configuration, **kwargs) -> Tuple[str, Union[JSONType, AnomalyDetectionConfiguration], Any]:
+    def _deserialize_anomaly_detection_configuration(self, http_response, **kwargs) -> AnomalyAlertConfiguration:
+        cls = kwargs.pop("cls", None)
+        response_json = http_response.json()
+        response_json["metricAlertingConfigurations"] = [
+            self._deserialize(generated_models.MetricAlertConfiguration, m)
+            for m in response_json["metricAlertingConfigurations"]
+        ]
+        deserialized = self._deserialize(generated_models.AnomalyAlertConfiguration, response_json)
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return AnomalyAlertConfiguration._from_generated(deserialized)
+
+    def _update_detection_configuration_helper(
+        self, detection_configuration, **kwargs
+    ) -> Tuple[str, Union[JSONType, AnomalyDetectionConfiguration], Any]:
 
         unset = object()
         update_kwargs = {}
@@ -156,39 +173,35 @@ class OperationMixinHelpers:
                 metric_id=detection_configuration.metric_id,
                 id=detection_configuration.id,
                 description=update.pop("description", detection_configuration.description),
-                whole_series_detection_condition=update.pop("whole_series_detection_condition", detection_configuration.whole_series_detection_condition),
-                series_group_detection_conditions=update.pop("series_group_detection_conditions", detection_configuration.series_group_detection_conditions),
-                series_detection_conditions=update.pop("series_detection_conditions", detection_configuration.series_detection_conditions)
+                whole_series_detection_condition=update.pop(
+                    "whole_series_detection_condition", detection_configuration.whole_series_detection_condition
+                ),
+                series_group_detection_conditions=update.pop(
+                    "series_group_detection_conditions", detection_configuration.series_group_detection_conditions
+                ),
+                series_detection_conditions=update.pop(
+                    "series_detection_conditions", detection_configuration.series_detection_conditions
+                ),
             )
         return detection_configuration_id, detection_config_patch, kwargs
 
-    def _update_data_feed_helper(self, data_feed: Union[str, DataFeed], **kwargs) -> Tuple[str, Union[JSONType, DataFeed], Any]:
+    def _update_data_feed_helper(
+        self, data_feed: Union[str, DataFeed], **kwargs
+    ) -> UpdateHelperRetval:
         unset = object()
         update_kwargs = {}
         update_kwargs["dataFeedName"] = kwargs.pop("name", unset)
-        update_kwargs["dataFeedDescription"] = kwargs.pop(
-            "data_feed_description", unset
-        )
+        update_kwargs["dataFeedDescription"] = kwargs.pop("data_feed_description", unset)
         update_kwargs["timestampColumn"] = kwargs.pop("timestamp_column", unset)
         update_kwargs["dataStartFrom"] = kwargs.pop("ingestion_begin_time", unset)
-        update_kwargs["startOffsetInSeconds"] = kwargs.pop(
-            "ingestion_start_offset", unset
-        )
-        update_kwargs["maxConcurrency"] = kwargs.pop(
-            "data_source_request_concurrency", unset
-        )
-        update_kwargs["minRetryIntervalInSeconds"] = kwargs.pop(
-            "ingestion_retry_delay", unset
-        )
+        update_kwargs["startOffsetInSeconds"] = kwargs.pop("ingestion_start_offset", unset)
+        update_kwargs["maxConcurrency"] = kwargs.pop("data_source_request_concurrency", unset)
+        update_kwargs["minRetryIntervalInSeconds"] = kwargs.pop("ingestion_retry_delay", unset)
         update_kwargs["stopRetryAfterInSeconds"] = kwargs.pop("stop_retry_after", unset)
         update_kwargs["needRollup"] = kwargs.pop("rollup_type", unset)
         update_kwargs["rollUpMethod"] = kwargs.pop("rollup_method", unset)
-        update_kwargs["rollUpColumns"] = kwargs.pop(
-            "auto_rollup_group_by_column_names", unset
-        )
-        update_kwargs["allUpIdentification"] = kwargs.pop(
-            "rollup_identification_value", unset
-        )
+        update_kwargs["rollUpColumns"] = kwargs.pop("auto_rollup_group_by_column_names", unset)
+        update_kwargs["allUpIdentification"] = kwargs.pop("rollup_identification_value", unset)
         update_kwargs["fillMissingPointType"] = kwargs.pop("fill_type", unset)
         update_kwargs["fillMissingPointValue"] = kwargs.pop("custom_fill_value", unset)
         update_kwargs["viewMode"] = kwargs.pop("access_mode", unset)
@@ -211,10 +224,67 @@ class OperationMixinHelpers:
             data_feed_patch = data_feed._to_generated()
         return data_feed_id, data_feed_patch, kwargs
 
+    def _update_alert_configuration_helper(self, alert_configuration: Union[str, AnomalyAlertConfiguration], **kwargs) -> Tuple[HttpRequest, Any]:
+        unset = object()
+        update_kwargs = {}
+        update_kwargs["name"] = kwargs.pop("name", unset)
+        update_kwargs["hookIds"] = kwargs.pop("hook_ids", unset)
+        update_kwargs["crossMetricsOperator"] = kwargs.pop("cross_metrics_operator", unset)
+        update_kwargs["metricAlertingConfigurations"] = kwargs.pop("metric_alert_configurations", unset)
+        update_kwargs["description"] = kwargs.pop("description", unset)
+
+        update = {key: value for key, value in update_kwargs.items() if value != unset}
+        if isinstance(alert_configuration, str):
+            alert_configuration_id = alert_configuration
+            if "metricAlertingConfigurations" in update:
+                update["metricAlertingConfigurations"] = (
+                    [
+                        config._to_generated()
+                        for config in update["metricAlertingConfigurations"]
+                    ]
+                    if update["metricAlertingConfigurations"]
+                    else None
+                )
+            alert_configuration_patch = update
+
+        else:
+            alert_configuration_id = alert_configuration.id
+            alert_configuration_patch = alert_configuration._to_generated()
+        content_type = kwargs.pop("content_type", "application/merge-patch+json")  # type: Optional[str]
+
+        _json = self._serialize.body(alert_configuration_patch, "AnomalyAlertingConfigurationPatch")
+
+        request = build_update_alert_configuration_request(
+            configuration_id=alert_configuration_id,
+            content_type=content_type,
+            json=_json,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+        return request, kwargs
+
+    def _update_alert_configuration_deserialize(self, pipeline_response, **kwargs: Any):
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.AnomalyAlertConfiguration"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize(generated_models.AnomalyAlertConfiguration, pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
     def _update_hook_helper(
-        self,
-        hook: Union[str, EmailNotificationHook, WebNotificationHook],
-        **kwargs: Any
+        self, hook: Union[str, EmailNotificationHook, WebNotificationHook], **kwargs: Any
     ) -> Tuple[str, Union[JSONType, NotificationHook], Any]:
         hook_patch = None
         hook_type = kwargs.get("hook_type")
@@ -244,7 +314,6 @@ class OperationMixinHelpers:
                 kwargs.pop(k)
         return hook_id, hook_patch, kwargs
 
-
     def _convert_datetime(self, date_time):
         # type: (Union[str, datetime.datetime]) -> datetime.datetime
         if isinstance(date_time, datetime.datetime):
@@ -259,8 +328,62 @@ class OperationMixinHelpers:
                     return datetime.datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")
         raise TypeError("Bad datetime type")
 
+    def _get_paging_prepare_request(
+        self,
+        initial_request: HttpRequest,
+        next_request: HttpRequest,
+        next_link=None,
+        **kwargs
+    ) -> Callable:
+        def prepare_request(next_link=None):
+            path_format_arguments = {
+                "endpoint": self._serialize.url(
+                    "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                ),
+            }
+            if not next_link:
+                request = initial_request
+                request.url = self._client.format_url(request.url, **path_format_arguments)
+            else:
+                request = next_request
+                request.url = self._client.format_url(next_link, **path_format_arguments)
+            return request
+
+        return prepare_request
+
 
 class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, OperationMixinHelpers):
+
+    def _paging_helper(
+        self,
+        *,
+        extract_data,
+        initial_request: HttpRequest,
+        next_request: HttpRequest,
+        **kwargs
+    ) -> ItemPaged:
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
+        prepare_request = self._get_paging_prepare_request(initial_request=initial_request, next_request=next_request, **kwargs)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
     @distributed_trace
     def create_alert_configuration(
         self,
@@ -273,7 +396,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         response_headers = super().create_alert_configuration(  # type: ignore
             AnomalyAlertConfiguration(
                 name=name,
-                metric_alert_configurations=metric_alert_configurations,
+                metric_alert_configurations=[m._to_generated() for m in metric_alert_configurations],
                 hook_ids=hook_ids,
                 cross_metrics_operator=cross_metrics_operator,
                 description=kwargs.pop("description", None),
@@ -385,9 +508,28 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
     @distributed_trace
     def get_alert_configuration(self, alert_configuration_id, **kwargs):
         # type: (str, Any) -> AnomalyAlertConfiguration
-        config = super().get_alert_configuration(alert_configuration_id, **kwargs)
-        return AnomalyAlertConfiguration._from_generated(config)
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
+        request = build_get_alert_configuration_request(
+            configuration_id=alert_configuration_id,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        return self._deserialize_anomaly_detection_configuration(pipeline_response.http_response, **kwargs)
 
     @distributed_trace
     def refresh_data_feed_ingestion(
@@ -446,56 +588,30 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
     @distributed_trace
     def update_alert_configuration(
         self,
-        alert_configuration,  # type: Union[str, AnomalyAlertConfiguration]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> AnomalyAlertConfiguration
-        unset = object()
-        update_kwargs = {}
-        update_kwargs["name"] = kwargs.pop("name", unset)
-        update_kwargs["hookIds"] = kwargs.pop("hook_ids", unset)
-        update_kwargs["crossMetricsOperator"] = kwargs.pop("cross_metrics_operator", unset)
-        update_kwargs["metricAlertingConfigurations"] = kwargs.pop("metric_alert_configurations", unset)
-        update_kwargs["description"] = kwargs.pop("description", unset)
-
-        update = {key: value for key, value in update_kwargs.items() if value != unset}
-        if isinstance(alert_configuration, str):
-            alert_configuration_id = alert_configuration
-            alert_configuration_patch = construct_alert_config_dict(update)
-
-        else:
-            alert_configuration_id = alert_configuration.id
-            alert_configuration_patch = alert_configuration._to_generated_patch(
-                name=update.pop("name", None),
-                metric_alert_configurations=update.pop("metricAlertingConfigurations", None),
-                hook_ids=update.pop("hookIds", None),
-                cross_metrics_operator=update.pop("crossMetricsOperator", None),
-                description=update.pop("description", None),
-            )
-
-        return AnomalyAlertConfiguration._from_generated(
-            super().update_alert_configuration(alert_configuration_id, alert_configuration_patch, **kwargs)
+        alert_configuration: Union[str, AnomalyAlertConfiguration],
+        **kwargs: Any
+    ) -> AnomalyAlertConfiguration:
+        request, kwargs = self._update_alert_configuration_helper(alert_configuration, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **kwargs
         )
+        return self._deserialize_anomaly_detection_configuration(pipeline_response.http_response, **kwargs)
 
     @distributed_trace
     def update_detection_configuration(
-        self,
-        detection_configuration: Union[str, AnomalyDetectionConfiguration],
-        **kwargs: Any
+        self, detection_configuration: Union[str, AnomalyDetectionConfiguration], **kwargs: Any
     ) -> AnomalyDetectionConfiguration:
-        detection_configuration_id, detection_config_patch, kwargs = self._update_detection_configuration_helper(detection_configuration, **kwargs)
+        detection_configuration_id, detection_config_patch, kwargs = self._update_detection_configuration_helper(
+            detection_configuration, **kwargs
+        )
 
         return super().update_anomaly_detection_configuration(
-            configuration_id=detection_configuration_id,
-            body=detection_config_patch,
-            **kwargs
+            configuration_id=detection_configuration_id, body=detection_config_patch, **kwargs
         )
 
     @distributed_trace
     def update_hook(
-        self,
-        hook: Union[str, EmailNotificationHook, WebNotificationHook],
-        **kwargs: Any
+        self, hook: Union[str, EmailNotificationHook, WebNotificationHook], **kwargs: Any
     ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
         hook_id, hook_patch, kwargs = self._update_hook_helper(hook, **kwargs)
 
@@ -514,28 +630,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         maxpagesize: Optional[int] = None,
         **kwargs: Any
     ) -> ItemPaged[DataFeed]:
-        cls = kwargs.pop("cls", None)
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
-
-        def prepare_request(next_link=None):
-            request = build_list_data_feeds_request(
-                data_feed_name=data_feed_name,
-                data_source_type=data_source_type,
-                granularity_name=granularity_type,
-                status=status,
-                creator=creator,
-                skip=skip,
-                maxpagesize=maxpagesize,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            request.url = self._client.format_url(request.url, **path_format_arguments)
-            return request
-
         deserializer = functools.partial(self._deserialize, generated_models.DataFeed)
-
         def extract_data(deserializer, pipeline_response):
             response_json = pipeline_response.http_response.json()
             list_of_elem = []
@@ -551,38 +646,54 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
                 )
             return response_json.get("@nextLink", None) or None, iter(list_of_elem)
 
-        def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, functools.partial(extract_data, deserializer))
+        return self._paging_helper(
+            extract_data=functools.partial(extract_data, deserializer),
+            initial_request=build_list_data_feeds_request(
+                data_feed_name=data_feed_name,
+                data_source_type=data_source_type,
+                granularity_name=granularity_type,
+                status=status,
+                creator=creator,
+                skip=skip,
+                maxpagesize=maxpagesize,
+            ),
+            next_request=build_list_data_feeds_request(),
+            **kwargs
+        )
 
     @distributed_trace
     def list_alert_configurations(
         self,
-        detection_configuration_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> ItemPaged[AnomalyAlertConfiguration]
-        return super().list_alert_configurations(  # type: ignore
-            detection_configuration_id,
-            cls=kwargs.pop(
-                "cls",
-                lambda confs: [AnomalyAlertConfiguration._from_generated(conf) for conf in confs],
+        detection_configuration_id: str,
+        **kwargs: Any
+    ) -> ItemPaged[AnomalyAlertConfiguration]:
+        deserializer = self._deserialize
+        def extract_data(deserializer, pipeline_response):
+            response_json = pipeline_response.http_response.json()
+            list_of_elem = []
+            for l in response_json["value"]:
+                config_to_generated = functools.partial(deserializer, generated_models.MetricAlertConfiguration)
+                l['metricAlertingConfigurations'] = [
+                    config_to_generated(config)
+                    for config in l.get('metricAlertingConfigurations', [])
+                ]
+                list_of_elem.append(
+                    AnomalyAlertConfiguration._from_generated(
+                        deserializer(generated_models.AnomalyAlertConfiguration, l)
+                    )
+                )
+            return response_json.get("@nextLink", None) or None, iter(list_of_elem)
+        return self._paging_helper(
+            extract_data=functools.partial(extract_data, deserializer),
+            initial_request=build_list_alert_configurations_request(
+                configuration_id=detection_configuration_id,
+                skip=kwargs.pop("skip", None),
+                maxpagesize=kwargs.pop("maxpagesize", None),
             ),
+            next_request=build_list_alert_configurations_request(configuration_id=detection_configuration_id),
             **kwargs
         )
+
 
     @distributed_trace
     def list_data_feed_ingestion_status(

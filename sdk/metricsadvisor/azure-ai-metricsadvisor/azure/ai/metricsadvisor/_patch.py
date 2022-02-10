@@ -1578,12 +1578,13 @@ class MetricsAdvisorClient(object):
         )
 
 
+def patch_sdk():
+    pass
+
+
 __all__ = [
     "MetricsAdvisorKeyCredential",
     "MetricsAdvisorAdministrationClient",
     "MetricsAdvisorClient",
+    "patch_sdk",
 ]
-
-
-def patch_sdk():
-    pass

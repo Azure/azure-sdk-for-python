@@ -41,6 +41,7 @@ if TYPE_CHECKING:
         IncidentRootCause,
         MetricAlertConfiguration,
         MetricAnomalyAlertSnoozeCondition,
+        MetricBoundaryCondition,
         MetricDetectionCondition,
         MetricEnrichedSeriesData,
         MetricSeriesDefinition,
@@ -57,7 +58,6 @@ if TYPE_CHECKING:
         SmartDetectionCondition,
         SuppressCondition,
         TopNGroupScope,
-        ValueCondition,
     )
     import __init__ as _models
 
@@ -185,8 +185,6 @@ class AnomalyAlert(msrest.serialization.Model):
 class AnomalyAlertConfiguration(msrest.serialization.Model):
     """AnomalyAlertConfiguration.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :ivar id: anomaly alerting configuration unique id.
@@ -211,7 +209,6 @@ class AnomalyAlertConfiguration(msrest.serialization.Model):
     """
 
     _validation = {
-        "id": {"readonly": True},
         "name": {"required": True},
         "dimensions_to_split_alert": {"unique": True},
         "hook_ids": {"required": True, "unique": True},
@@ -234,12 +231,15 @@ class AnomalyAlertConfiguration(msrest.serialization.Model):
         name: str,
         hook_ids: List[str],
         metric_alert_configurations: List["_models.MetricAlertConfiguration"],
+        id: Optional[str] = None,
         description: Optional[str] = "",
         cross_metrics_operator: Optional[Union[str, "_models.AnomalyAlertingConfigurationLogicType"]] = None,
         dimensions_to_split_alert: Optional[List[str]] = None,
         **kwargs
     ):
         """
+        :keyword id: anomaly alerting configuration unique id.
+        :paramtype id: str
         :keyword name: Required. anomaly alerting configuration name.
         :paramtype name: str
         :keyword description: anomaly alerting configuration description.
@@ -259,7 +259,7 @@ class AnomalyAlertConfiguration(msrest.serialization.Model):
          list[~azure.ai.metricsadvisor.models.MetricAlertConfiguration]
         """
         super(AnomalyAlertConfiguration, self).__init__(**kwargs)
-        self.id = None
+        self.id = id
         self.name = name
         self.description = description
         self.cross_metrics_operator = cross_metrics_operator
@@ -1783,8 +1783,8 @@ class DataFeed(msrest.serialization.Model):
      schedule time in seconds.
     :vartype stop_retry_after_in_seconds: long
     :ivar need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup".
-    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+     "NeedRollup", "AlreadyRollup". Default value: "NoRollup".
+    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
     :ivar roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
      "Avg", "Count".
     :vartype roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedAutoRollupMethod
@@ -1894,7 +1894,7 @@ class DataFeed(msrest.serialization.Model):
         max_concurrency: Optional[int] = -1,
         min_retry_interval_in_seconds: Optional[int] = -1,
         stop_retry_after_in_seconds: Optional[int] = -1,
-        need_rollup: Optional[Union[str, "_models.NeedRollupEnum"]] = None,
+        need_rollup: Optional[Union[str, "_models.DataFeedRollupType"]] = "NoRollup",
         roll_up_method: Optional[Union[str, "_models.DataFeedAutoRollupMethod"]] = None,
         roll_up_columns: Optional[List[str]] = None,
         all_up_identification: Optional[str] = None,
@@ -1940,8 +1940,8 @@ class DataFeed(msrest.serialization.Model):
          schedule time in seconds.
         :paramtype stop_retry_after_in_seconds: long
         :keyword need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-         "NeedRollup", "AlreadyRollup".
-        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
+         "NeedRollup", "AlreadyRollup". Default value: "NoRollup".
+        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
         :keyword roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
          "Avg", "Count".
         :paramtype roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedAutoRollupMethod
@@ -3111,25 +3111,25 @@ class DimensionGroupIdentity(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar series_group_key: Required. dimension specified for series group.
-    :vartype series_group_key: dict[str, str]
+    :ivar dimension: Required. dimension specified for series group.
+    :vartype dimension: dict[str, str]
     """
 
     _validation = {
-        "series_group_key": {"required": True},
+        "dimension": {"required": True},
     }
 
     _attribute_map = {
-        "series_group_key": {"key": "dimension", "type": "{str}"},
+        "dimension": {"key": "dimension", "type": "{str}"},
     }
 
-    def __init__(self, *, series_group_key: Dict[str, str], **kwargs):
+    def __init__(self, *, dimension: Dict[str, str], **kwargs):
         """
-        :keyword series_group_key: Required. dimension specified for series group.
-        :paramtype series_group_key: dict[str, str]
+        :keyword dimension: Required. dimension specified for series group.
+        :paramtype dimension: dict[str, str]
         """
         super(DimensionGroupIdentity, self).__init__(**kwargs)
-        self.series_group_key = series_group_key
+        self.dimension = dimension
 
 
 class EmailHookParameterPatch(msrest.serialization.Model):
@@ -3817,9 +3817,9 @@ class MetricAlertConfiguration(msrest.serialization.Model):
 
     :ivar detection_configuration_id: Required. Anomaly detection configuration unique id.
     :vartype detection_configuration_id: str
-    :ivar alert_scope: Required. Anomaly scope. Possible values include: "WholeSeries",
-     "SeriesGroup", "TopN".
-    :vartype alert_scope: str or ~azure.ai.metricsadvisor.models.MetricAnomalyAlertScopeType
+    :ivar anomaly_scope_type: Required. Anomaly scope. Possible values include: "All", "Dimension",
+     "TopN".
+    :vartype anomaly_scope_type: str or ~azure.ai.metricsadvisor.models.MetricAnomalyAlertScopeType
     :ivar negation_operation: Negation operation.
     :vartype negation_operation: bool
     :ivar dimension_anomaly_scope:
@@ -3832,44 +3832,45 @@ class MetricAlertConfiguration(msrest.serialization.Model):
     :vartype alert_snooze_condition:
      ~azure.ai.metricsadvisor.models.MetricAnomalyAlertSnoozeCondition
     :ivar value_filter:
-    :vartype value_filter: ~azure.ai.metricsadvisor.models.ValueCondition
+    :vartype value_filter: ~azure.ai.metricsadvisor.models.MetricBoundaryCondition
     """
 
     _validation = {
         "detection_configuration_id": {"required": True},
-        "alert_scope": {"required": True},
+        "anomaly_scope_type": {"required": True},
     }
 
     _attribute_map = {
         "detection_configuration_id": {"key": "anomalyDetectionConfigurationId", "type": "str"},
-        "alert_scope": {"key": "anomalyScopeType", "type": "str"},
+        "anomaly_scope_type": {"key": "anomalyScopeType", "type": "str"},
         "negation_operation": {"key": "negationOperation", "type": "bool"},
         "dimension_anomaly_scope": {"key": "dimensionAnomalyScope", "type": "DimensionGroupIdentity"},
         "top_n_anomaly_scope": {"key": "topNAnomalyScope", "type": "TopNGroupScope"},
         "severity_filter": {"key": "severityFilter", "type": "SeverityCondition"},
         "alert_snooze_condition": {"key": "snoozeFilter", "type": "MetricAnomalyAlertSnoozeCondition"},
-        "value_filter": {"key": "valueFilter", "type": "ValueCondition"},
+        "value_filter": {"key": "valueFilter", "type": "MetricBoundaryCondition"},
     }
 
     def __init__(
         self,
         *,
         detection_configuration_id: str,
-        alert_scope: Union[str, "_models.MetricAnomalyAlertScopeType"],
+        anomaly_scope_type: Union[str, "_models.MetricAnomalyAlertScopeType"],
         negation_operation: Optional[bool] = False,
         dimension_anomaly_scope: Optional["_models.DimensionGroupIdentity"] = None,
         top_n_anomaly_scope: Optional["_models.TopNGroupScope"] = None,
         severity_filter: Optional["_models.SeverityCondition"] = None,
         alert_snooze_condition: Optional["_models.MetricAnomalyAlertSnoozeCondition"] = None,
-        value_filter: Optional["_models.ValueCondition"] = None,
+        value_filter: Optional["_models.MetricBoundaryCondition"] = None,
         **kwargs
     ):
         """
         :keyword detection_configuration_id: Required. Anomaly detection configuration unique id.
         :paramtype detection_configuration_id: str
-        :keyword alert_scope: Required. Anomaly scope. Possible values include: "WholeSeries",
-         "SeriesGroup", "TopN".
-        :paramtype alert_scope: str or ~azure.ai.metricsadvisor.models.MetricAnomalyAlertScopeType
+        :keyword anomaly_scope_type: Required. Anomaly scope. Possible values include: "All",
+         "Dimension", "TopN".
+        :paramtype anomaly_scope_type: str or
+         ~azure.ai.metricsadvisor.models.MetricAnomalyAlertScopeType
         :keyword negation_operation: Negation operation.
         :paramtype negation_operation: bool
         :keyword dimension_anomaly_scope:
@@ -3882,11 +3883,11 @@ class MetricAlertConfiguration(msrest.serialization.Model):
         :paramtype alert_snooze_condition:
          ~azure.ai.metricsadvisor.models.MetricAnomalyAlertSnoozeCondition
         :keyword value_filter:
-        :paramtype value_filter: ~azure.ai.metricsadvisor.models.ValueCondition
+        :paramtype value_filter: ~azure.ai.metricsadvisor.models.MetricBoundaryCondition
         """
         super(MetricAlertConfiguration, self).__init__(**kwargs)
         self.detection_configuration_id = detection_configuration_id
-        self.alert_scope = alert_scope
+        self.anomaly_scope_type = anomaly_scope_type
         self.negation_operation = negation_operation
         self.dimension_anomaly_scope = dimension_anomaly_scope
         self.top_n_anomaly_scope = top_n_anomaly_scope
@@ -3935,6 +3936,90 @@ class MetricAnomalyAlertSnoozeCondition(msrest.serialization.Model):
         self.auto_snooze = auto_snooze
         self.snooze_scope = snooze_scope
         self.only_for_successive = only_for_successive
+
+
+class MetricBoundaryCondition(msrest.serialization.Model):
+    """MetricBoundaryCondition.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar lower: lower bound
+
+     should be specified when direction is Both or Down.
+    :vartype lower: float
+    :ivar upper: upper bound
+
+     should be specified when direction is Both or Up.
+    :vartype upper: float
+    :ivar direction: Required. value filter direction. Possible values include: "Both", "Down",
+     "Up".
+    :vartype direction: str or ~azure.ai.metricsadvisor.models.Direction
+    :ivar type: data used to implement value filter. Possible values include: "Value", "Mean".
+     Default value: "Value".
+    :vartype type: str or ~azure.ai.metricsadvisor.models.ValueType
+    :ivar companion_metric_id: the other metric unique id used for value filter.
+    :vartype companion_metric_id: str
+    :ivar trigger_for_missing: trigger alert when the corresponding point is missing in the other
+     metric
+
+     should be specified only when using other metric to filter.
+    :vartype trigger_for_missing: bool
+    """
+
+    _validation = {
+        "direction": {"required": True},
+    }
+
+    _attribute_map = {
+        "lower": {"key": "lower", "type": "float"},
+        "upper": {"key": "upper", "type": "float"},
+        "direction": {"key": "direction", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "companion_metric_id": {"key": "metricId", "type": "str"},
+        "trigger_for_missing": {"key": "triggerForMissing", "type": "bool"},
+    }
+
+    def __init__(
+        self,
+        *,
+        direction: Union[str, "_models.Direction"],
+        lower: Optional[float] = None,
+        upper: Optional[float] = None,
+        type: Optional[Union[str, "_models.ValueType"]] = "Value",
+        companion_metric_id: Optional[str] = None,
+        trigger_for_missing: Optional[bool] = None,
+        **kwargs
+    ):
+        """
+        :keyword lower: lower bound
+
+         should be specified when direction is Both or Down.
+        :paramtype lower: float
+        :keyword upper: upper bound
+
+         should be specified when direction is Both or Up.
+        :paramtype upper: float
+        :keyword direction: Required. value filter direction. Possible values include: "Both", "Down",
+         "Up".
+        :paramtype direction: str or ~azure.ai.metricsadvisor.models.Direction
+        :keyword type: data used to implement value filter. Possible values include: "Value", "Mean".
+         Default value: "Value".
+        :paramtype type: str or ~azure.ai.metricsadvisor.models.ValueType
+        :keyword companion_metric_id: the other metric unique id used for value filter.
+        :paramtype companion_metric_id: str
+        :keyword trigger_for_missing: trigger alert when the corresponding point is missing in the
+         other metric
+
+         should be specified only when using other metric to filter.
+        :paramtype trigger_for_missing: bool
+        """
+        super(MetricBoundaryCondition, self).__init__(**kwargs)
+        self.lower = lower
+        self.upper = upper
+        self.direction = direction
+        self.type = type
+        self.companion_metric_id = companion_metric_id
+        self.trigger_for_missing = trigger_for_missing
 
 
 class MetricDataItem(msrest.serialization.Model):
@@ -4387,12 +4472,12 @@ class MetricSeriesGroupDetectionCondition(msrest.serialization.Model):
     :vartype hard_threshold_condition: ~azure.ai.metricsadvisor.models.HardThresholdCondition
     :ivar change_threshold_condition:
     :vartype change_threshold_condition: ~azure.ai.metricsadvisor.models.ChangeThresholdCondition
-    :ivar series_group_key: Required. dimension specified for series group.
-    :vartype series_group_key: dict[str, str]
+    :ivar dimension: Required. dimension specified for series group.
+    :vartype dimension: dict[str, str]
     """
 
     _validation = {
-        "series_group_key": {"required": True},
+        "dimension": {"required": True},
     }
 
     _attribute_map = {
@@ -4400,13 +4485,13 @@ class MetricSeriesGroupDetectionCondition(msrest.serialization.Model):
         "smart_detection_condition": {"key": "smartDetectionCondition", "type": "SmartDetectionCondition"},
         "hard_threshold_condition": {"key": "hardThresholdCondition", "type": "HardThresholdCondition"},
         "change_threshold_condition": {"key": "changeThresholdCondition", "type": "ChangeThresholdCondition"},
-        "series_group_key": {"key": "group.dimension", "type": "{str}"},
+        "dimension": {"key": "group.dimension", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
-        series_group_key: Dict[str, str],
+        dimension: Dict[str, str],
         condition_operator: Optional[Union[str, "_models.AnomalyDetectionConfigurationLogicType"]] = None,
         smart_detection_condition: Optional["_models.SmartDetectionCondition"] = None,
         hard_threshold_condition: Optional["_models.HardThresholdCondition"] = None,
@@ -4426,15 +4511,15 @@ class MetricSeriesGroupDetectionCondition(msrest.serialization.Model):
         :paramtype hard_threshold_condition: ~azure.ai.metricsadvisor.models.HardThresholdCondition
         :keyword change_threshold_condition:
         :paramtype change_threshold_condition: ~azure.ai.metricsadvisor.models.ChangeThresholdCondition
-        :keyword series_group_key: Required. dimension specified for series group.
-        :paramtype series_group_key: dict[str, str]
+        :keyword dimension: Required. dimension specified for series group.
+        :paramtype dimension: dict[str, str]
         """
         super(MetricSeriesGroupDetectionCondition, self).__init__(**kwargs)
         self.condition_operator = condition_operator
         self.smart_detection_condition = smart_detection_condition
         self.hard_threshold_condition = hard_threshold_condition
         self.change_threshold_condition = change_threshold_condition
-        self.series_group_key = series_group_key
+        self.dimension = dimension
 
 
 class MetricSeriesList(msrest.serialization.Model):
@@ -5345,90 +5430,6 @@ class UsageStats(msrest.serialization.Model):
         self.all_series_count = None
         self.metrics_count = None
         self.data_feed_count = None
-
-
-class ValueCondition(msrest.serialization.Model):
-    """ValueCondition.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar lower: lower bound
-
-     should be specified when direction is Both or Down.
-    :vartype lower: float
-    :ivar upper: upper bound
-
-     should be specified when direction is Both or Up.
-    :vartype upper: float
-    :ivar direction: Required. value filter direction. Possible values include: "Both", "Down",
-     "Up".
-    :vartype direction: str or ~azure.ai.metricsadvisor.models.Direction
-    :ivar type: data used to implement value filter. Possible values include: "Value", "Mean".
-     Default value: "Value".
-    :vartype type: str or ~azure.ai.metricsadvisor.models.ValueType
-    :ivar metric_id: the other metric unique id used for value filter.
-    :vartype metric_id: str
-    :ivar trigger_for_missing: trigger alert when the corresponding point is missing in the other
-     metric
-
-     should be specified only when using other metric to filter.
-    :vartype trigger_for_missing: bool
-    """
-
-    _validation = {
-        "direction": {"required": True},
-    }
-
-    _attribute_map = {
-        "lower": {"key": "lower", "type": "float"},
-        "upper": {"key": "upper", "type": "float"},
-        "direction": {"key": "direction", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "metric_id": {"key": "metricId", "type": "str"},
-        "trigger_for_missing": {"key": "triggerForMissing", "type": "bool"},
-    }
-
-    def __init__(
-        self,
-        *,
-        direction: Union[str, "_models.Direction"],
-        lower: Optional[float] = None,
-        upper: Optional[float] = None,
-        type: Optional[Union[str, "_models.ValueType"]] = "Value",
-        metric_id: Optional[str] = None,
-        trigger_for_missing: Optional[bool] = None,
-        **kwargs
-    ):
-        """
-        :keyword lower: lower bound
-
-         should be specified when direction is Both or Down.
-        :paramtype lower: float
-        :keyword upper: upper bound
-
-         should be specified when direction is Both or Up.
-        :paramtype upper: float
-        :keyword direction: Required. value filter direction. Possible values include: "Both", "Down",
-         "Up".
-        :paramtype direction: str or ~azure.ai.metricsadvisor.models.Direction
-        :keyword type: data used to implement value filter. Possible values include: "Value", "Mean".
-         Default value: "Value".
-        :paramtype type: str or ~azure.ai.metricsadvisor.models.ValueType
-        :keyword metric_id: the other metric unique id used for value filter.
-        :paramtype metric_id: str
-        :keyword trigger_for_missing: trigger alert when the corresponding point is missing in the
-         other metric
-
-         should be specified only when using other metric to filter.
-        :paramtype trigger_for_missing: bool
-        """
-        super(ValueCondition, self).__init__(**kwargs)
-        self.lower = lower
-        self.upper = upper
-        self.direction = direction
-        self.type = type
-        self.metric_id = metric_id
-        self.trigger_for_missing = trigger_for_missing
 
 
 class WebhookHookParameterPatch(msrest.serialization.Model):

@@ -116,6 +116,14 @@ class DataFeedGranularityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
     CUSTOM = "Custom"
 
 
+class DataFeedRollupType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """mark if the data feed need rollup"""
+
+    NO_ROLLUP = "NoRollup"
+    NEED_ROLLUP = "NeedRollup"
+    ALREADY_ROLLUP = "AlreadyRollup"
+
+
 class DataFeedStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """data feed status"""
 
@@ -246,8 +254,8 @@ class IngestionStatusType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 class MetricAnomalyAlertScopeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Anomaly scope"""
 
-    WHOLE_SERIES = "WholeSeries"
-    SERIES_GROUP = "SeriesGroup"
+    ALL = "All"
+    DIMENSION = "Dimension"
     TOP_N = "TopN"
 
 
