@@ -1574,7 +1574,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
                 _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES,
                 _AnalyzeActionsType.ANALYZE_SENTIMENT,
-                _AnalyzeActionsType.EXTRACT_SUMMARY
             ]
             for doc_idx, document_results in enumerate(results):
                 assert len(document_results) == 5
