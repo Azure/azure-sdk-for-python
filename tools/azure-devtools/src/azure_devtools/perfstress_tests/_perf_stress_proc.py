@@ -47,25 +47,25 @@ async def _start_tests(index, test_class, num_tests, args, do_setup, test_stages
         if do_setup:
             await tests[0].global_setup()
 
-        # Waiting till all procs are ready to start "Setup". This allows one child
+        # Waiting till all processes are ready to start "Setup". This allows one child
         # process to setup any global resources before the rest of setup is run.
         _synchronize(test_stages["Setup"])
         await asyncio.gather(*[test.setup() for test in tests])
 
-        # Waiting till all procs are ready to start "Post Setup"
+        # Waiting till all processes are ready to start "Post Setup"
         _synchronize(test_stages["Post Setup"])
         await asyncio.gather(*[test.post_setup() for test in tests])
 
         if args.warmup and not args.profile:
-            # Waiting till all procs are ready to start "Warmup"
+            # Waiting till all processes are ready to start "Warmup"
             _synchronize(test_stages["Warmup"])
             await _run_tests(args.warmup, args, tests, results, status)
 
-        # Waiting till all procs are ready to start "Tests"
+        # Waiting till all processes are ready to start "Tests"
         _synchronize(test_stages["Tests"])
         await _run_tests(args.duration, args, tests, results, status)
 
-        # Waiting till all procs have finished tests, ready to start "Pre Cleaup"
+        # Waiting till all processes have finished tests, ready to start "Pre Cleanup"
         _synchronize(test_stages["Pre Cleanup"])
     except threading.BrokenBarrierError:
         # A separate process has failed, so all of them are shutting down.
@@ -81,7 +81,7 @@ async def _start_tests(index, test_class, num_tests, args, do_setup, test_stages
             # If one process has failed, we'll still attempt to clean up without the barrier.
             await asyncio.gather(*[test.pre_cleanup() for test in tests])
             if not args.no_cleanup:
-                # Waiting till all procs are ready to start "Cleanup"
+                # Waiting till all processes are ready to start "Cleanup"
                 # If any process has failed earlier, the barrier will be broken - so wait
                 # if we can but otherwise attempt to clean up anyway.
                 _synchronize(test_stages["Cleanup"], ignore_error=True)
@@ -134,7 +134,7 @@ def _report_status(status: multiprocessing.JoinableQueue, tests: List[_PerfTestA
     
     This is achieved by adding status to a joinable queue then waiting for that queue to be cleared
     by the parent processes. This should implicitly synchronize the status reporting across all child
-    processes and the parent will dictate the frequence by which status is gathered.
+    processes and the parent will dictate the frequency by which status is gathered.
     """
     # Delay the start a tiny bit to let the tests reset their status after warmup
     time.sleep(1)
