@@ -15,9 +15,11 @@ In this document we will provide the introduction to the testing framework by:
 
 ## Setup your development environment
 
-The Azure SDK Python team creates libraries that are compatible with Python 3.6 and up. We will set up working Python virtual environments for all minor versions of Python after 3.6. It is recommended to do your development work in Python3, however it is helpful to have virtual environments for other versions to make debugging PRs easier locally.
+The Azure SDK Python team creates libraries that are compatible with Python 3.6 and up. We walk through setting up a
+Python virtual environment for Python 3.6, but having a virtual environment for each minor version can make it
+easier to debug PRs locally.
 
-* Python 3.9: Use the [python website](https://www.python.org/downloads/) or the one-click experience from the [Windows store](https://www.microsoft.com/p/python-39/9p7qfqmjrfp7) (Windows only).
+* Python 3.7+: Use the [python website](https://www.python.org/downloads/) or the one-click experience from the Windows store ([3.7](https://www.microsoft.com/p/python-37/9nj46sx7x90p), [3.8](https://www.microsoft.com/p/python-38/9mssztt1n39l), [3.9](https://www.microsoft.com/p/python-39/9p7qfqmjrfp7), [3.10](https://www.microsoft.com/p/python-310/9pjpw5ldxlz5)) (Windows only).
 * Python 3.6: Use the [python website](https://www.python.org/downloads/release/python-3614/)
 ```cmd
 C:\Users> python -m venv env
@@ -124,17 +126,32 @@ A quick description of the five commands above:
 * apistub: runs the [apistubgenerator](https://github.com/Azure/azure-sdk-tools/tree/main/packages/python-packages/api-stub-generator) tool on your code
 
 ## `devtools_testutils` Package
-The Azure SDK team has created some in house tools to help with easier testing. These additional tools are located in the `devtools_testutils` package that was installed with your `dev_requirements.txt`. In this package is the [`AzureTestCase`](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/azure_testcase.py#L99-L350) object which every test case object should inherit from. This management object takes care of creating and scrubbing recordings to make sure secrets are not added to the recordings files (and subsequently to the git history) and authenticating clients for test methods.
+The Azure SDK team has created some in house tools to make testing easier. These additional tools are located in the
+`devtools_testutils` package that was installed with your `dev_requirements.txt`. In this package is the
+[`AzureRecordedTestCase`](https://github.com/Azure/azure-sdk-for-python/blob/7e66e3877519a15c1d4304eb69abf0a2281773detools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L44)
+class that every service test class should inherit from. `AzureRecordedTestCase` provides a number of utility functions
+for authenticating clients during tests, naming test resources, and sanitizing credentials in recordings.
 
+The `devtools_testutils` package also has other classes and functions to provide test utility, which are documented in
+the
+[package README](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/README.md).
 
 ## Writing New Tests
-Newer SDK tests utilize the test proxy service to record and playback HTTP interactions. See [Azure SDK Tools Test Proxy](https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md)
+Newer SDK tests utilize the
+[Azure SDK Tools Test Proxy](https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md)
+to record and playback HTTP interactions. To migrate an existing test suite to use the test proxy, or to learn more
+about using the test proxy, refer to the
+[test proxy migration guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md).
 
 Older SDK tests are based on the `scenario_tests` subpackage located in [`azure-sdk-for-python/tools/azure-devtools/src/azure_devtools`](https://pypi.org/project/azure-devtools/). `scenario_tests` is a general, mostly abstracted framework which provides several useful features for writing SDK tests, ie:
 * HTTP interaction recording and playback using [vcrpy](https://pypi.python.org/pypi/vcrpy)
 * Creation and cleanup of helper resources, such as resource groups, storage accounts, etc. which can be used in order to test services
 * Processors for modifying requests and responses when writing or reading recordings (for example, to to avoid recording credential information)
 * Patches for overriding functions and methods that don't work well with testing frameworks (such as long-running operations)
+
+Older tests that used `vcrpy` for recording relied on the
+[`AzureTestCase`](https://github.com/Azure/azure-sdk-for-python/blob/c4cbcee52fbe486472c6b28af68f751dd3e2d016/tools/azure-sdk-tools/devtools_testutils/azure_testcase.py#L104)
+class, which was a precursor to today's `AzureRecordedTestCase`.
 
 Code in the [`azure-sdk-tools/devtools_testutils`](https://github.com/Azure/azure-sdk-for-python/tree/main/tools/azure-sdk-tools/devtools_testutils) directory provides concrete implementations of the features provided in `scenario_tests` that are oriented around use in SDK testing and that you can use directly in your unit tests.
 
