@@ -3,8 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from turtle import st
-from typing import TYPE_CHECKING, Union, Any
+from typing import TYPE_CHECKING
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
@@ -637,5 +636,3 @@ class SearchIndexClient(HeadersMixin):
             **kwargs
         )
         return result  # pylint:disable=protected-access
-
-    
