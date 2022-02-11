@@ -31,7 +31,8 @@ python: true
 python3-only: false
 title: QuestionAnsweringProjectsClient
 version-tolerant: true
-keep-version-file: true
+keep-version-file: false
+package-version: 1.1.0b1
 add-credential: true
 credential-default-policy-type: AzureKeyCredentialPolicy
 credential-key-header-name: Ocp-Apim-Subscription-Key
