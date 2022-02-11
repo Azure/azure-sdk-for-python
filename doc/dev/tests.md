@@ -1,19 +1,23 @@
-# Setup Python Development Environment
-In this document we will provide the introduction to the testing framework by:
+# Python SDK testing guide
 
-- [Setting up your development environment](#setup-the-development-environment)
-- [Integrating with pytest](#integrate-with-the-pytest-test-framework)
-- [Using Tox](#tox)
+This guide walks through the setup necessary to run tests in the Azure SDK for Python, gives an overview of the shared
+testing infrastructure, and demonstrates how to write and run tests for a service.
+
+### Table of contents
+
+- [Set up your development environment](#set-up-your-development-environment)
+- [Integrate with pytest](#integrate-with-the-pytest-test-framework)
+- [Use Tox](#tox)
 - [The `devtools_testutils` package](#devtools_testutils-package)
-- [Writing New Tests](#writing-new-tests)
-- [Define our credentials and settings](#define-credentials)
-- [Create live test resources](#create-live-test-resources)
-- [Write our test](#writing-your-test)
-- [An example test](#an-example-test)
-- [Run and record our tests](#run-and-record-the-test)
-    -[Purging secrets from recording files](#purging-secrets)
+- [Write or run tests](#write-or-run-tests)
+  - [Set up the test proxy](#perform-one-time-test-proxy-setup)
+  - [Set up test resources](#set-up-test-resources)
+  - [Configure credentials](#configure-credentials)
+  - [Deliver environment variables to tests](#deliver-environment-variables-to-tests)
+  - [Configure live or playback testing mode](#configure-live-or-playback-testing-mode)
+- [Deprecated testing instructions](#deprecated-testing-instructions)
 
-## Setup your development environment
+## Set up your development environment
 
 The Azure SDK Python team creates libraries that are compatible with Python 3.6 and up. We walk through setting up a
 Python virtual environment for Python 3.6, but having a virtual environment for each minor version can make it
@@ -76,7 +80,8 @@ Open the directory for your library in your preferred editor, for example VSCode
 (env)azure-sdk-for-python\sdk\my-directory\my-library> code .
 ```
 
-## Integrate with the pytest Test Framework
+## Integrate with the pytest test framework
+
 As a quick background, the Azure SDK uses the [pytest](https://docs.pytest.org/en/latest/) test runner to support creating unit and functional tests for Track 2 Azure libraries. To intall `pytest` run `pip install pytest` from your virtual environment, you can confirm the installation was successful by running `pytest -V`. The commands will run all files of the form `test_*.py` or `*_test.py` in the provided directory and its subdirectories, for more information check out the [docs](https://docs.pytest.org/en/stable/getting-started.html#run-multiple-tests).
 
 With the pytest test suite you can provide directories or specific tests to run rather than running the entire test suite:
@@ -103,6 +108,7 @@ azure-sdk-for-python\sdk\my-directory\my-library> pytest sdk/storage/azure-mgmt-
 ```
 
 ## Tox
+
 The Python SDK uses the [tox project](https://tox.readthedocs.io/en/latest/) to automate releases, run tests, run linters, and build our documentation. The `tox.ini` file is located at `azure-sdk-for-python/eng/tox/tox.ini` for reference. You do not need to make any changes to the tox file for tox to work with your project. Tox will create a directory (`.tox`) in the head of your branch. The first time you run tox commands it may take several moments, but subsequent runs will be quicker. To install tox run the following command from within your virtual environment.
 `(env) > pip install tox tox-monorepo`.
 
@@ -126,22 +132,94 @@ A quick description of the five commands above:
 * apistub: runs the [apistubgenerator](https://github.com/Azure/azure-sdk-tools/tree/main/packages/python-packages/api-stub-generator) tool on your code
 
 ## `devtools_testutils` Package
+
 The Azure SDK team has created some in house tools to make testing easier. These additional tools are located in the
 `devtools_testutils` package that was installed with your `dev_requirements.txt`. In this package is the
-[`AzureRecordedTestCase`](https://github.com/Azure/azure-sdk-for-python/blob/7e66e3877519a15c1d4304eb69abf0a2281773detools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L44)
-class that every service test class should inherit from. `AzureRecordedTestCase` provides a number of utility functions
+[AzureRecordedTestCase](https://github.com/Azure/azure-sdk-for-python/blob/7e66e3877519a15c1d4304eb69abf0a2281773detools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L44)
+class that every service test class should inherit from. AzureRecordedTestCase provides a number of utility functions
 for authenticating clients during tests, naming test resources, and sanitizing credentials in recordings.
 
 The `devtools_testutils` package also has other classes and functions to provide test utility, which are documented in
 the
 [package README](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/README.md).
 
-## Writing New Tests
-Newer SDK tests utilize the
-[Azure SDK Tools Test Proxy](https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md)
-to record and playback HTTP interactions. To migrate an existing test suite to use the test proxy, or to learn more
-about using the test proxy, refer to the
-[test proxy migration guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md).
+## Write or run tests
+
+Newer SDK tests utilize the [Azure SDK Tools Test Proxy][proxy_general_docs] to record and playback HTTP interactions.
+To migrate an existing test suite to use the test proxy, or to learn more about using the test proxy, refer to the
+[test proxy migration guide][proxy_migration_guide].
+
+### Perform one-time test proxy setup
+
+1. Docker is a requirement for using the test proxy. You can install Docker from [docs.docker.com][docker_install].
+2. After installing, make sure Docker is running and is using Linux containers before running tests.
+3. Follow the instructions [here][proxy_cert_docs] to complete setup. You need to trust a certificate on your machine in
+order to communicate with the test proxy over a secure connection.
+
+### Set up test resources
+
+Live Azure resources will be necessary in order to run live tests and produce recordings. There are PowerShell test
+resource management commands, documented in [/eng/common/TestResources][test_resources], that streamline this process.
+
+If you haven't yet set up a `test-resources.json` file for test resource deployment and/or want to use test resources of
+your own, you can just configure credentials to target these resources instead.
+
+### Configure credentials
+
+Python SDK tests use a `.env` file to store test credentials. This `.env` file should be placed at either the root of
+`azure-sdk-for-python` repository in your local file system, or in the directory containing the repo. The
+`python-dotenv` package is used to read this file -- documentation of the package and how to format a `.env` file can be
+found in the [package's README][python-dotenv_readme].
+
+If using a `New-TestResources` script from [/eng/common/TestResources][test_resources], the script should output any
+environment variables necessary to run live tests for the service. After storing these variables in your `.env` file
+-- with appropriate formatting -- your credentials and test configuration variables will be set in your environment when
+running tests.
+
+### Deliver environment variables to tests
+
+To target the correct resources in tests, use the [EnvironmentVariableLoader][env_var_loader] from `devtools_testutils`
+to fetch environment variables and provide them to tests. The EnvironmentVariableLoader is meant to decorate test
+methods and inject environment variables particular to a given service. Below is an example of how to create a custom
+decorator, using the EnvironmentVariableLoader, that provides the values of environment variables `AZURE_TEST_ENDPOINT`
+and `AZURE_TEST_SECRET` to tests for a service called "testservice":
+
+```python
+import functools
+from devtools_testutils import EnvironmentVariableLoader
+
+ServicePreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "testservice",
+    azure_test_endpoint="https://fake_endpoint.testservice.windows.net/",
+    azure_test_secret="fakesecret"
+)
+```
+
+The parameters for the `functools.partial` method are:
+* The EnvironmentVariableLoader class
+* The library folder that holds your code (in this example, `sdk/testservice`). This value is used to search your
+  environment variables for the appropriate values.
+* The remaining arguments are key-value kwargs, with the keys being the environment variables needed for the tests, and
+  the value being a fake value to use in recordings.
+  * These values should have the same formatting as the real values because they are used in playback mode and will need
+  to pass any client side validation. The fake value should also be a unique value to the other key-value pairs.
+
+A method that's decorated by the ServicePreparer from the example would be called with `azure_test_endpoint` and
+`azure_test_secret` as keyword arguments, with the real values from your `.env` file as the variable values in live
+mode, and the fake values specified in the decorator in playback mode.
+
+### Configure live or playback testing mode
+
+"Live" tests refer to tests that make requests to actual Azure resources. "Playback" tests require a recording for each
+test; the test proxy will compare the requests/responses that would be made during each test with requests/responses in
+the recording.
+
+To run live tests, set the environment variable `AZURE_TEST_RUN_LIVE` to "true" in your environment or `.env` file.
+Live test runs will produce recordings unless the environment variable `AZURE_SKIP_LIVE_RECORDING` is set to "true" as
+well. To run tests in playback, either set `AZURE_TEST_RUN_LIVE` to "false" or leave it unset.
+
+## Deprecated testing instructions
 
 Older SDK tests are based on the `scenario_tests` subpackage located in [`azure-sdk-for-python/tools/azure-devtools/src/azure_devtools`](https://pypi.org/project/azure-devtools/). `scenario_tests` is a general, mostly abstracted framework which provides several useful features for writing SDK tests, ie:
 * HTTP interaction recording and playback using [vcrpy](https://pypi.python.org/pypi/vcrpy)
@@ -156,6 +234,7 @@ class, which was a precursor to today's `AzureRecordedTestCase`.
 Code in the [`azure-sdk-tools/devtools_testutils`](https://github.com/Azure/azure-sdk-for-python/tree/main/tools/azure-sdk-tools/devtools_testutils) directory provides concrete implementations of the features provided in `scenario_tests` that are oriented around use in SDK testing and that you can use directly in your unit tests.
 
 ## Define credentials
+
 When you run tests in playback mode, they use a fake credentials file, located at [`tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py`][mgmt_settings_fake] to simulate authenticating with Azure.
 
 In live mode, the credentials need to be real so that the tests are able to connect to the service. Create a `.env` file at the root of the repository (in the same directory as the `sdk`, `tools`, `eng` folders). In this file you can define any environment variables you need for a test and that will be loaded by the `AzureTestCase` file.
@@ -168,6 +247,7 @@ live-mode: true
 ```
 
 ## Create Live Test Resources
+
 The Azure Python SDK library has two ways of providing live resources to our tests:
 * Using an ArmTemplate and the EnvironmentVariableLoader (we will demonstrate this one)
     * [EnvironmentVariableLoader implementation](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py)
@@ -176,7 +256,7 @@ The Azure Python SDK library has two ways of providing live resources to our tes
     * [Storage preparer implementation](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/storage_testcase.py)
     * [In line use](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob/tests/test_blob_client.py#L49-L61) for the blob client
 
-If your library has a management plane library, you can build a preparer specific to your service using the storage preparer as an example. It is recommended that you use a EnvironmentVariableLoader for new libraries and those without management plane libraries. The `EnvironmentVariableLoader` is compatible with the `New-TestResources.ps1` script to deploy resources using an ARM Template. This script and information about running it can be found in the [`eng/common/TestResources`](https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/TestResources#live-test-resource-management) directory. For more information about the engineering systems in Azure SDK, check out their [wiki][engsys_wiki]
+If your library has a management plane library, you can build a preparer specific to your service using the storage preparer as an example. It is recommended that you use a EnvironmentVariableLoader for new libraries and those without management plane libraries. The `EnvironmentVariableLoader` is compatible with the `New-TestResources.ps1` script to deploy resources using an ARM Template. This script and information about running it can be found in the [`eng/common/TestResources`][test_resources] directory. For more information about the engineering systems in Azure SDK, check out their [wiki][engsys_wiki]
 
 1. Create an Azure Resource Management Template for your specific service and the configuration you need. This can be done in the portal by creating the resources and at the very last step (Review + Create) clicking "Download a template for automation". Save this template to a `test-resources.json` file under the directory that contains your library (`sdk/<my-library>/test-resources.json`).
 2. Use the [`New-TestResources.ps1`](https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/TestResources#on-the-desktop) script to deploy those resources.
@@ -358,6 +438,18 @@ For more information, refer to the [advanced tests notes][advanced_tests_notes] 
 <!-- Links -->
 [advanced_tests_notes]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests-advanced.md
 [azure_devtools]: https://pypi.org/project/azure-devtools/
+
+[docker_install]: https://docs.docker.com/get-docker/
+
 [engsys_wiki]: https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/48/Create-a-new-Live-Test-pipeline?anchor=test-resources.json
+[env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
+
 [mgmt_settings_fake]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py
+
 [packaging]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/packaging.md
+[proxy_cert_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/trusting-cert-per-language.md
+[proxy_general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/README.md
+[proxy_migration_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
+[python-dotenv_readme]:https://github.com/theskumar/python-dotenv
+
+[test_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/TestResources#readme
