@@ -87,6 +87,7 @@ class ServiceOperations:
         _content = self._serialize.body(storage_service_properties, 'StorageServiceProperties', is_xml=True)
 
         request = build_set_properties_request(
+            url=self._config.url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -97,11 +98,7 @@ class ServiceOperations:
             template_url=self.set_properties.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
@@ -167,6 +164,7 @@ class ServiceOperations:
 
         
         request = build_get_properties_request(
+            url=self._config.url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -175,11 +173,7 @@ class ServiceOperations:
             template_url=self.get_properties.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
@@ -249,6 +243,7 @@ class ServiceOperations:
 
         
         request = build_get_statistics_request(
+            url=self._config.url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -257,11 +252,7 @@ class ServiceOperations:
             template_url=self.get_statistics.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
@@ -351,6 +342,7 @@ class ServiceOperations:
 
         
         request = build_list_containers_segment_request(
+            url=self._config.url,
             comp=comp,
             version=self._config.version,
             prefix=prefix,
@@ -362,11 +354,7 @@ class ServiceOperations:
             template_url=self.list_containers_segment.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
@@ -440,6 +428,7 @@ class ServiceOperations:
         _content = self._serialize.body(key_info, 'KeyInfo', is_xml=True)
 
         request = build_get_user_delegation_key_request(
+            url=self._config.url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -450,11 +439,7 @@ class ServiceOperations:
             template_url=self.get_user_delegation_key.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
@@ -513,17 +498,14 @@ class ServiceOperations:
 
         
         request = build_get_account_info_request(
+            url=self._config.url,
             restype=restype,
             comp=comp,
             version=self._config.version,
             template_url=self.get_account_info.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
@@ -599,6 +581,7 @@ class ServiceOperations:
         _content = self._serialize.body(body, 'IO')
 
         request = build_submit_batch_request(
+            url=self._config.url,
             multipart_content_type=multipart_content_type,
             comp=comp,
             version=self._config.version,
@@ -609,11 +592,7 @@ class ServiceOperations:
             template_url=self.submit_batch.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
@@ -699,6 +678,7 @@ class ServiceOperations:
 
         
         request = build_filter_blobs_request(
+            url=self._config.url,
             comp=comp,
             version=self._config.version,
             timeout=timeout,
@@ -709,11 +689,7 @@ class ServiceOperations:
             template_url=self.filter_blobs.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,

@@ -18,7 +18,7 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 
 from .. import models as _models
-from .._vendor import _convert_request
+from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -31,6 +31,7 @@ _SERIALIZER.client_side_validation = False
 # fmt: off
 
 def build_create_request(
+    url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -64,6 +65,11 @@ def build_create_request(
     accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
+    path_format_arguments = {
+        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -131,6 +137,7 @@ def build_create_request(
 
 
 def build_append_block_request(
+    url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -158,6 +165,11 @@ def build_append_block_request(
     accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
+    path_format_arguments = {
+        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -213,6 +225,7 @@ def build_append_block_request(
 
 
 def build_append_block_from_url_request(
+    url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -247,6 +260,11 @@ def build_append_block_from_url_request(
     accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
+    path_format_arguments = {
+        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -315,6 +333,7 @@ def build_append_block_from_url_request(
 
 
 def build_seal_request(
+    url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -332,6 +351,11 @@ def build_seal_request(
     accept = "application/xml"
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
+    path_format_arguments = {
+        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -504,6 +528,7 @@ class AppendBlobOperations(object):
             _if_tags = modified_access_conditions.if_tags
 
         request = build_create_request(
+            url=self._config.url,
             blob_type=blob_type,
             version=self._config.version,
             content_length=content_length,
@@ -533,11 +558,7 @@ class AppendBlobOperations(object):
             template_url=self.create.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
@@ -670,6 +691,7 @@ class AppendBlobOperations(object):
         _content = body
 
         request = build_append_block_request(
+            url=self._config.url,
             comp=comp,
             version=self._config.version,
             content_type=content_type,
@@ -694,11 +716,7 @@ class AppendBlobOperations(object):
             template_url=self.append_block.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
@@ -856,6 +874,7 @@ class AppendBlobOperations(object):
             _source_if_none_match = source_modified_access_conditions.source_if_none_match
 
         request = build_append_block_from_url_request(
+            url=self._config.url,
             comp=comp,
             version=self._config.version,
             source_url=source_url,
@@ -886,11 +905,7 @@ class AppendBlobOperations(object):
             template_url=self.append_block_from_url.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
@@ -987,6 +1002,7 @@ class AppendBlobOperations(object):
             _append_position = append_position_access_conditions.append_position
 
         request = build_seal_request(
+            url=self._config.url,
             comp=comp,
             version=self._config.version,
             timeout=timeout,
@@ -1000,11 +1016,7 @@ class AppendBlobOperations(object):
             template_url=self.seal.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,

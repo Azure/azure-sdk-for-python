@@ -99,6 +99,7 @@ class ContainerOperations:
             _prevent_encryption_scope_override = container_cpk_scope_info.prevent_encryption_scope_override
 
         request = build_create_request(
+            url=self._config.url,
             restype=restype,
             version=self._config.version,
             timeout=timeout,
@@ -110,11 +111,7 @@ class ContainerOperations:
             template_url=self.create.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
@@ -185,6 +182,7 @@ class ContainerOperations:
             _lease_id = lease_access_conditions.lease_id
 
         request = build_get_properties_request(
+            url=self._config.url,
             restype=restype,
             version=self._config.version,
             timeout=timeout,
@@ -193,11 +191,7 @@ class ContainerOperations:
             template_url=self.get_properties.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
@@ -286,6 +280,7 @@ class ContainerOperations:
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_delete_request(
+            url=self._config.url,
             restype=restype,
             version=self._config.version,
             timeout=timeout,
@@ -296,11 +291,7 @@ class ContainerOperations:
             template_url=self.delete.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
@@ -387,6 +378,7 @@ class ContainerOperations:
             _if_modified_since = modified_access_conditions.if_modified_since
 
         request = build_set_metadata_request(
+            url=self._config.url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -398,11 +390,7 @@ class ContainerOperations:
             template_url=self.set_metadata.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
@@ -477,6 +465,7 @@ class ContainerOperations:
             _lease_id = lease_access_conditions.lease_id
 
         request = build_get_access_policy_request(
+            url=self._config.url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -486,11 +475,7 @@ class ContainerOperations:
             template_url=self.get_access_policy.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
@@ -590,6 +575,7 @@ class ContainerOperations:
             _content = None
 
         request = build_set_access_policy_request(
+            url=self._config.url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -604,11 +590,7 @@ class ContainerOperations:
             template_url=self.set_access_policy.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
@@ -684,6 +666,7 @@ class ContainerOperations:
 
         
         request = build_restore_request(
+            url=self._config.url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -694,11 +677,7 @@ class ContainerOperations:
             template_url=self.restore.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
@@ -771,6 +750,7 @@ class ContainerOperations:
 
         
         request = build_rename_request(
+            url=self._config.url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -781,11 +761,7 @@ class ContainerOperations:
             template_url=self.rename.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
@@ -862,6 +838,7 @@ class ContainerOperations:
         _content = self._serialize.body(body, 'IO')
 
         request = build_submit_batch_request(
+            url=self._config.url,
             multipart_content_type=multipart_content_type,
             restype=restype,
             comp=comp,
@@ -873,11 +850,7 @@ class ContainerOperations:
             template_url=self.submit_batch.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
@@ -966,6 +939,7 @@ class ContainerOperations:
 
         
         request = build_filter_blobs_request(
+            url=self._config.url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -977,11 +951,7 @@ class ContainerOperations:
             template_url=self.filter_blobs.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
@@ -1073,6 +1043,7 @@ class ContainerOperations:
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_acquire_lease_request(
+            url=self._config.url,
             comp=comp,
             restype=restype,
             action=action,
@@ -1086,11 +1057,7 @@ class ContainerOperations:
             template_url=self.acquire_lease.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
@@ -1175,6 +1142,7 @@ class ContainerOperations:
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_release_lease_request(
+            url=self._config.url,
             comp=comp,
             restype=restype,
             action=action,
@@ -1187,11 +1155,7 @@ class ContainerOperations:
             template_url=self.release_lease.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
@@ -1275,6 +1239,7 @@ class ContainerOperations:
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_renew_lease_request(
+            url=self._config.url,
             comp=comp,
             restype=restype,
             action=action,
@@ -1287,11 +1252,7 @@ class ContainerOperations:
             template_url=self.renew_lease.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
@@ -1382,6 +1343,7 @@ class ContainerOperations:
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_break_lease_request(
+            url=self._config.url,
             comp=comp,
             restype=restype,
             action=action,
@@ -1394,11 +1356,7 @@ class ContainerOperations:
             template_url=self.break_lease.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
@@ -1488,6 +1446,7 @@ class ContainerOperations:
             _if_unmodified_since = modified_access_conditions.if_unmodified_since
 
         request = build_change_lease_request(
+            url=self._config.url,
             comp=comp,
             restype=restype,
             action=action,
@@ -1501,11 +1460,7 @@ class ContainerOperations:
             template_url=self.change_lease.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
@@ -1598,6 +1553,7 @@ class ContainerOperations:
 
         
         request = build_list_blob_flat_segment_request(
+            url=self._config.url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -1610,11 +1566,7 @@ class ContainerOperations:
             template_url=self.list_blob_flat_segment.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
@@ -1714,6 +1666,7 @@ class ContainerOperations:
 
         
         request = build_list_blob_hierarchy_segment_request(
+            url=self._config.url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -1727,11 +1680,7 @@ class ContainerOperations:
             template_url=self.list_blob_hierarchy_segment.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
@@ -1791,17 +1740,14 @@ class ContainerOperations:
 
         
         request = build_get_account_info_request(
+            url=self._config.url,
             restype=restype,
             comp=comp,
             version=self._config.version,
             template_url=self.get_account_info.metadata['url'],
         )
         request = _convert_request(request)
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request,
