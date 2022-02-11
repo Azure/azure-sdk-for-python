@@ -1,5 +1,6 @@
 parameters:
   rootFolder: '$(Build.SourcesDirectory)'
+  runProxy: true
 
 steps:
   - pwsh: |
@@ -12,23 +13,23 @@ steps:
         --add-source https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json `
         --version 1.0.0-dev.20220119.2
     displayName: "Install test-proxy"
+  - ${{ if eq(parameters.runProxy, 'true') }}:
+    - pwsh: |
+        Write-Host "##vso[task.setvariable variable=ASPNETCORE_Kestrel__Certificates__Default__Path]$(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.pfx"
+        Write-Host "##vso[task.setvariable variable=ASPNETCORE_Kestrel__Certificates__Default__Password]password"
+        Write-Host "##vso[task.setvariable variable=PROXY_MANUAL_START]true"
+      displayName: 'Configure Kestrel and PROXY_MANUAL_START Variables'
 
-  - pwsh: |
-      Write-Host "##vso[task.setvariable variable=ASPNETCORE_Kestrel__Certificates__Default__Path]$(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.pfx"
-      Write-Host "##vso[task.setvariable variable=ASPNETCORE_Kestrel__Certificates__Default__Password]password"
-      Write-Host "##vso[task.setvariable variable=PROXY_MANUAL_START]true"
-    displayName: 'Configure Kestrel and PROXY_MANUAL_START Variables'
+    - pwsh: |
+        Start-Process $(Build.BinariesDirectory)/test-proxy/test-proxy.exe `
+          -ArgumentList "--storage-location ${{ parameters.rootFolder }}" `
+          -NoNewWindow -PassThru -RedirectStandardOutput $(Build.SourcesDirectory)/test-proxy.log
+      displayName: 'Run the testproxy - windows'
+      condition: and(succeeded(), eq(variables['Agent.OS'],'Windows_NT'))
 
-  - pwsh: |
-      Start-Process $(Build.BinariesDirectory)/test-proxy/test-proxy.exe `
-        -ArgumentList "--storage-location ${{ parameters.rootFolder }}" `
-        -NoNewWindow -PassThru -RedirectStandardOutput $(Build.SourcesDirectory)/test-proxy.log
-    displayName: 'Run the testproxy - windows'
-    condition: and(succeeded(), eq(variables['Agent.OS'],'Windows_NT'))
-
-  # nohup does NOT continue beyond the current session if you use it within powershell
-  - bash: |
-      nohup $(Build.BinariesDirectory)/test-proxy/test-proxy > $(Build.SourcesDirectory)/test-proxy.log &
-    displayName: "Run the testproxy - linux/mac"
-    condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
-    workingDirectory: "${{ parameters.rootFolder }}"
+    # nohup does NOT continue beyond the current session if you use it within powershell
+    - bash: |
+        nohup $(Build.BinariesDirectory)/test-proxy/test-proxy > $(Build.SourcesDirectory)/test-proxy.log &
+      displayName: "Run the testproxy - linux/mac"
+      condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'))
+      workingDirectory: "${{ parameters.rootFolder }}"
