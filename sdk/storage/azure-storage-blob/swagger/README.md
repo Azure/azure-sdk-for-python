@@ -122,7 +122,7 @@ directive:
         if (property.includes('/{containerName}/{blob}'))
         {
             $[property]["parameters"] = $[property]["parameters"].filter(function(param) { return (typeof param['$ref'] === "undefined") || (false == param['$ref'].endsWith("#/parameters/ContainerName") && false == param['$ref'].endsWith("#/parameters/Blob"))});
-        } 
+        }
         else if (property.includes('/{containerName}'))
         {
             $[property]["parameters"] = $[property]["parameters"].filter(function(param) { return (typeof param['$ref'] === "undefined") || (false == param['$ref'].endsWith("#/parameters/ContainerName"))});
@@ -166,4 +166,13 @@ directive:
     $.properties.OrMetadata = $.properties.ObjectReplicationMetadata;
     $.properties.OrMetadata["x-ms-client-name"] = "ObjectReplicationMetadata";
     delete $.properties.ObjectReplicationMetadata;
+```
+
+### Remove x-ms-parameterized-host
+``` yaml
+directive:
+- from: swagger-document
+  where: $
+  transform: >
+    $["x-ms-parameterized-host"] = undefined;
 ```
