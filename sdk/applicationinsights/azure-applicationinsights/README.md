@@ -1,5 +1,5 @@
 ## Microsoft Azure SDK for Python
 
-This package is no longer being maintained. Please use our latest package [azure-monitor-query](https://pypi.org/project/azure-monitor-query/).
+This package is no longer being maintained. Use the [azure-monitor-query](https://pypi.org/project/azure-monitor-query/) package instead.
 
-A [migration guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/migration_guide_app_insights.md) has been provided for the same.
+For migration instructions, see the [migration guide](https://aka.ms/azsdk/python/migrate/ai-to-monitor-query).
