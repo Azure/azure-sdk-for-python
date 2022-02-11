@@ -1,0 +1,8 @@
+include *.md
+include azure/__init__.py
+include azure/messaging/__init__.py
+include azure/messaging/webpubsub/__init__.py
+include azure/messaging/webpubsub/upstream/__init__.py
+include LICENSE.txt
+recursive-include tests *.py
+recursive-include samples *.py *.md
