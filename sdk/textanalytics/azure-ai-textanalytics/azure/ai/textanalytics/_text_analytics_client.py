@@ -1073,6 +1073,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     actions over a batch of documents.
         """
 
+        bespoke = kwargs.pop("bespoke", False)
         continuation_token = kwargs.pop("continuation_token", None)
         display_name = kwargs.pop("display_name", None)
         language_arg = kwargs.pop("language", None)
@@ -1101,7 +1102,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         docs = self._client.models(
             api_version=self._api_version
-        ).MultiLanguageBatchInput(
+        ).MultiLanguageBatchInput(  # TODO different model in language API
             documents=_validate_input(documents, "language", language)
         )
         doc_id_order = [doc.get("id") for doc in docs.documents]
@@ -1112,7 +1113,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             ]
         except AttributeError:
             raise TypeError("Unsupported action type in list.")
-        task_order = [(_determine_action_type(a), a.task_name) for a in generated_tasks]  # TODO
+        task_order = [(_determine_action_type(a), a.task_name) for a in generated_tasks]  # TODO + add healthcare
 
         try:
             if self._api_version == "2022-02-01-preview":
@@ -1145,6 +1146,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                         **kwargs
                     ),
                     continuation_token=continuation_token,
+                    bespoke=bespoke,
                     **kwargs
                 )
 
@@ -1283,87 +1285,21 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         disable_service_logs = kwargs.pop("disable_service_logs", None)
         max_sentence_count = kwargs.pop("max_sentence_count", None)
         order_by = kwargs.pop("order_by", None)
-        continuation_token = kwargs.pop("continuation_token", None)
-        display_name = kwargs.pop("display_name", None)
-        language_arg = kwargs.pop("language", None)
-        show_stats = kwargs.pop("show_stats", None)
-        polling_interval = kwargs.pop("polling_interval", 5)
-        language = language_arg if language_arg is not None else self._default_language
 
-        if continuation_token:
-            def get_result_from_cont_token(initial_response, pipeline_response):
-                doc_id_order = initial_response.context.options["doc_id_order"]
-                task_id_order = initial_response.context.options["task_id_order"]
-                show_stats = initial_response.context.options["show_stats"]
-                return self._analyze_result_callback(
-                    doc_id_order, task_id_order, pipeline_response, None, {}, show_stats=show_stats
-                )
-
-            return AnalyzeActionsLROPoller.from_continuation_token(
-                polling_method=AnalyzeActionsLROPollingMethod(
-                    timeout=polling_interval,
-                    **kwargs
-                ),
-                client=self._client._client,  # pylint: disable=protected-access
-                deserialization_callback=get_result_from_cont_token,
-                continuation_token=continuation_token
-            )
-
-        docs = self._client.models(
-            api_version=self._api_version
-        ).MultiLanguageBatchInput(
-            documents=_validate_input(documents, "language", language)
-        )
-        doc_id_order = [doc.get("id") for doc in docs.documents]
-
-        from ._generated.v2022_02_01_preview.models import ExtractiveSummarizationLROTask, \
-            ExtractiveSummarizationTaskParameters
-        generated_tasks = [ExtractiveSummarizationLROTask(
-            task_name="0",
-            parameters=ExtractiveSummarizationTaskParameters(
-                model_version=model_version,
-                string_index_type=string_index_type,
-                logging_opt_out=disable_service_logs,
-                sentence_count=max_sentence_count,
-                sort_by=order_by,
-            )
+        action = [ExtractSummaryAction(
+            model_version=model_version,
+            string_index_type=string_index_type,
+            disable_service_logs=disable_service_logs,
+            max_sentence_count=max_sentence_count,
+            order_by=order_by,
         )]
-
-        task_order = [(_determine_action_type(a), a.task_name) for a in generated_tasks]
-
         try:
-            if self._api_version == "2022-02-01-preview":
-                from azure.ai.textanalytics._generated.v2022_02_01_preview.models import AnalyzeTextJobsInput
-                return self._client.begin_analyze_text_submit_job(  # TODO regen so this returns a TextAnalyticsLROPoller
-                    body=AnalyzeTextJobsInput(
-                        analysis_input={"documents": docs},
-                        display_name=display_name,
-                        tasks=generated_tasks
-                    ),
-                    cls=kwargs.pop(
-                        "cls",
-                        partial(
-                            self._analyze_result_callback,
-                            doc_id_order,
-                            task_order,
-                            show_stats=show_stats,
-                        ),
-                    ),
-                    polling=AnalyzeActionsLROPollingMethod(
-                        timeout=polling_interval,
-                        show_stats=show_stats,
-                        doc_id_order=doc_id_order,
-                        task_id_order=task_order,
-                        lro_algorithms=[
-                            TextAnalyticsOperationResourcePolling(
-                                show_stats=show_stats,
-                            )
-                        ],
-                        **kwargs
-                    ),
-                    continuation_token=continuation_token,
-                    **kwargs
-                )
+            return self.begin_analyze_actions(
+                documents=documents,
+                actions=action,
+                bespoke=True,
+                **kwargs
+            )
         except HttpResponseError as error:
             process_http_response_error(error)
 
@@ -1399,6 +1335,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             additional details, and Microsoft Responsible AI principles at
             https://www.microsoft.com/ai/responsible-ai.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token:
@@ -1414,6 +1351,25 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             ~azure.ai.textanalytics.RecognizeCustomEntitiesResult or ~azure.ai.textanalytics.DocumentError]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
         """
+
+        string_index_type = kwargs.pop("string_index_type", None)
+        disable_service_logs = kwargs.pop("disable_service_logs", None)
+
+        action = [RecognizeCustomEntitiesAction(
+            project_name=project_name,
+            deployment_name=deployment_name,
+            disable_service_logs=disable_service_logs,
+            string_index_type=string_index_type,
+        )]
+        try:
+            return self.begin_analyze_actions(
+                documents=documents,
+                actions=action,
+                bespoke=True,
+                **kwargs
+            )
+        except HttpResponseError as error:
+            process_http_response_error(error)
 
     @distributed_trace
     def begin_single_category_classify(  # type: ignore
@@ -1443,6 +1399,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             additional details, and Microsoft Responsible AI principles at
             https://www.microsoft.com/ai/responsible-ai.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token:
@@ -1458,6 +1415,23 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             ~azure.ai.textanalytics.SingleCategoryClassifyResult or ~azure.ai.textanalytics.DocumentError]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
         """
+
+        disable_service_logs = kwargs.pop("disable_service_logs", None)
+
+        action = [SingleCategoryClassifyAction(
+            project_name=project_name,
+            deployment_name=deployment_name,
+            disable_service_logs=disable_service_logs,
+        )]
+        try:
+            return self.begin_analyze_actions(
+                documents=documents,
+                actions=action,
+                bespoke=True,
+                **kwargs
+            )
+        except HttpResponseError as error:
+            process_http_response_error(error)
 
     @distributed_trace
     def begin_multi_category_classify(  # type: ignore
@@ -1487,6 +1461,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             additional details, and Microsoft Responsible AI principles at
             https://www.microsoft.com/ai/responsible-ai.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
         :keyword str continuation_token:
@@ -1502,3 +1477,20 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             ~azure.ai.textanalytics.MultiCategoryClassifyResult or ~azure.ai.textanalytics.DocumentError]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
         """
+
+        disable_service_logs = kwargs.pop("disable_service_logs", None)
+
+        action = [MultiCategoryClassifyAction(
+            project_name=project_name,
+            deployment_name=deployment_name,
+            disable_service_logs=disable_service_logs,
+        )]
+        try:
+            return self.begin_analyze_actions(
+                documents=documents,
+                actions=action,
+                bespoke=True,
+                **kwargs
+            )
+        except HttpResponseError as error:
+            process_http_response_error(error)
