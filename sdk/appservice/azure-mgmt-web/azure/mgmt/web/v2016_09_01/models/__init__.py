@@ -6,164 +6,85 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AddressResponse
-    from ._models_py3 import ApiDefinitionInfo
-    from ._models_py3 import AppServiceEnvironmentCollection
-    from ._models_py3 import AppServiceEnvironmentPatchResource
-    from ._models_py3 import AppServiceEnvironmentResource
-    from ._models_py3 import AppServicePlan
-    from ._models_py3 import AppServicePlanCollection
-    from ._models_py3 import AppServicePlanPatchResource
-    from ._models_py3 import AutoHealActions
-    from ._models_py3 import AutoHealCustomAction
-    from ._models_py3 import AutoHealRules
-    from ._models_py3 import AutoHealTriggers
-    from ._models_py3 import Capability
-    from ._models_py3 import CloningInfo
-    from ._models_py3 import ConnStringInfo
-    from ._models_py3 import CorsSettings
-    from ._models_py3 import CsmUsageQuota
-    from ._models_py3 import CsmUsageQuotaCollection
-    from ._models_py3 import ErrorEntity
-    from ._models_py3 import Experiments
-    from ._models_py3 import HandlerMapping
-    from ._models_py3 import HostNameSslState
-    from ._models_py3 import HostingEnvironmentDiagnostics
-    from ._models_py3 import HostingEnvironmentProfile
-    from ._models_py3 import HybridConnection
-    from ._models_py3 import HybridConnectionCollection
-    from ._models_py3 import HybridConnectionKey
-    from ._models_py3 import HybridConnectionLimits
-    from ._models_py3 import IpSecurityRestriction
-    from ._models_py3 import LocalizableString
-    from ._models_py3 import ManagedServiceIdentity
-    from ._models_py3 import MetricAvailabilily
-    from ._models_py3 import MetricDefinition
-    from ._models_py3 import NameValuePair
-    from ._models_py3 import NetworkAccessControlEntry
-    from ._models_py3 import Operation
-    from ._models_py3 import ProxyOnlyResource
-    from ._models_py3 import PushSettings
-    from ._models_py3 import RampUpRule
-    from ._models_py3 import RequestsBasedTrigger
-    from ._models_py3 import Resource
-    from ._models_py3 import ResourceCollection
-    from ._models_py3 import ResourceMetric
-    from ._models_py3 import ResourceMetricAvailability
-    from ._models_py3 import ResourceMetricCollection
-    from ._models_py3 import ResourceMetricDefinition
-    from ._models_py3 import ResourceMetricDefinitionCollection
-    from ._models_py3 import ResourceMetricName
-    from ._models_py3 import ResourceMetricProperty
-    from ._models_py3 import ResourceMetricValue
-    from ._models_py3 import Site
-    from ._models_py3 import SiteConfig
-    from ._models_py3 import SiteLimits
-    from ._models_py3 import SiteMachineKey
-    from ._models_py3 import SkuCapacity
-    from ._models_py3 import SkuDescription
-    from ._models_py3 import SkuInfo
-    from ._models_py3 import SkuInfoCollection
-    from ._models_py3 import SlotSwapStatus
-    from ._models_py3 import SlowRequestsBasedTrigger
-    from ._models_py3 import SnapshotRecoveryRequest
-    from ._models_py3 import SnapshotRecoveryTarget
-    from ._models_py3 import StampCapacity
-    from ._models_py3 import StampCapacityCollection
-    from ._models_py3 import StatusCodesBasedTrigger
-    from ._models_py3 import Usage
-    from ._models_py3 import UsageCollection
-    from ._models_py3 import VirtualApplication
-    from ._models_py3 import VirtualDirectory
-    from ._models_py3 import VirtualIPMapping
-    from ._models_py3 import VirtualNetworkProfile
-    from ._models_py3 import VnetGateway
-    from ._models_py3 import VnetInfo
-    from ._models_py3 import VnetRoute
-    from ._models_py3 import WebAppCollection
-    from ._models_py3 import WorkerPool
-    from ._models_py3 import WorkerPoolCollection
-    from ._models_py3 import WorkerPoolResource
-except (SyntaxError, ImportError):
-    from ._models import AddressResponse  # type: ignore
-    from ._models import ApiDefinitionInfo  # type: ignore
-    from ._models import AppServiceEnvironmentCollection  # type: ignore
-    from ._models import AppServiceEnvironmentPatchResource  # type: ignore
-    from ._models import AppServiceEnvironmentResource  # type: ignore
-    from ._models import AppServicePlan  # type: ignore
-    from ._models import AppServicePlanCollection  # type: ignore
-    from ._models import AppServicePlanPatchResource  # type: ignore
-    from ._models import AutoHealActions  # type: ignore
-    from ._models import AutoHealCustomAction  # type: ignore
-    from ._models import AutoHealRules  # type: ignore
-    from ._models import AutoHealTriggers  # type: ignore
-    from ._models import Capability  # type: ignore
-    from ._models import CloningInfo  # type: ignore
-    from ._models import ConnStringInfo  # type: ignore
-    from ._models import CorsSettings  # type: ignore
-    from ._models import CsmUsageQuota  # type: ignore
-    from ._models import CsmUsageQuotaCollection  # type: ignore
-    from ._models import ErrorEntity  # type: ignore
-    from ._models import Experiments  # type: ignore
-    from ._models import HandlerMapping  # type: ignore
-    from ._models import HostNameSslState  # type: ignore
-    from ._models import HostingEnvironmentDiagnostics  # type: ignore
-    from ._models import HostingEnvironmentProfile  # type: ignore
-    from ._models import HybridConnection  # type: ignore
-    from ._models import HybridConnectionCollection  # type: ignore
-    from ._models import HybridConnectionKey  # type: ignore
-    from ._models import HybridConnectionLimits  # type: ignore
-    from ._models import IpSecurityRestriction  # type: ignore
-    from ._models import LocalizableString  # type: ignore
-    from ._models import ManagedServiceIdentity  # type: ignore
-    from ._models import MetricAvailabilily  # type: ignore
-    from ._models import MetricDefinition  # type: ignore
-    from ._models import NameValuePair  # type: ignore
-    from ._models import NetworkAccessControlEntry  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import ProxyOnlyResource  # type: ignore
-    from ._models import PushSettings  # type: ignore
-    from ._models import RampUpRule  # type: ignore
-    from ._models import RequestsBasedTrigger  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ResourceCollection  # type: ignore
-    from ._models import ResourceMetric  # type: ignore
-    from ._models import ResourceMetricAvailability  # type: ignore
-    from ._models import ResourceMetricCollection  # type: ignore
-    from ._models import ResourceMetricDefinition  # type: ignore
-    from ._models import ResourceMetricDefinitionCollection  # type: ignore
-    from ._models import ResourceMetricName  # type: ignore
-    from ._models import ResourceMetricProperty  # type: ignore
-    from ._models import ResourceMetricValue  # type: ignore
-    from ._models import Site  # type: ignore
-    from ._models import SiteConfig  # type: ignore
-    from ._models import SiteLimits  # type: ignore
-    from ._models import SiteMachineKey  # type: ignore
-    from ._models import SkuCapacity  # type: ignore
-    from ._models import SkuDescription  # type: ignore
-    from ._models import SkuInfo  # type: ignore
-    from ._models import SkuInfoCollection  # type: ignore
-    from ._models import SlotSwapStatus  # type: ignore
-    from ._models import SlowRequestsBasedTrigger  # type: ignore
-    from ._models import SnapshotRecoveryRequest  # type: ignore
-    from ._models import SnapshotRecoveryTarget  # type: ignore
-    from ._models import StampCapacity  # type: ignore
-    from ._models import StampCapacityCollection  # type: ignore
-    from ._models import StatusCodesBasedTrigger  # type: ignore
-    from ._models import Usage  # type: ignore
-    from ._models import UsageCollection  # type: ignore
-    from ._models import VirtualApplication  # type: ignore
-    from ._models import VirtualDirectory  # type: ignore
-    from ._models import VirtualIPMapping  # type: ignore
-    from ._models import VirtualNetworkProfile  # type: ignore
-    from ._models import VnetGateway  # type: ignore
-    from ._models import VnetInfo  # type: ignore
-    from ._models import VnetRoute  # type: ignore
-    from ._models import WebAppCollection  # type: ignore
-    from ._models import WorkerPool  # type: ignore
-    from ._models import WorkerPoolCollection  # type: ignore
-    from ._models import WorkerPoolResource  # type: ignore
+from ._models_py3 import AddressResponse
+from ._models_py3 import ApiDefinitionInfo
+from ._models_py3 import AppServiceEnvironmentCollection
+from ._models_py3 import AppServiceEnvironmentPatchResource
+from ._models_py3 import AppServiceEnvironmentResource
+from ._models_py3 import AppServicePlan
+from ._models_py3 import AppServicePlanCollection
+from ._models_py3 import AppServicePlanPatchResource
+from ._models_py3 import AutoHealActions
+from ._models_py3 import AutoHealCustomAction
+from ._models_py3 import AutoHealRules
+from ._models_py3 import AutoHealTriggers
+from ._models_py3 import Capability
+from ._models_py3 import CloningInfo
+from ._models_py3 import ConnStringInfo
+from ._models_py3 import CorsSettings
+from ._models_py3 import CsmUsageQuota
+from ._models_py3 import CsmUsageQuotaCollection
+from ._models_py3 import ErrorEntity
+from ._models_py3 import Experiments
+from ._models_py3 import HandlerMapping
+from ._models_py3 import HostNameSslState
+from ._models_py3 import HostingEnvironmentDiagnostics
+from ._models_py3 import HostingEnvironmentProfile
+from ._models_py3 import HybridConnection
+from ._models_py3 import HybridConnectionCollection
+from ._models_py3 import HybridConnectionKey
+from ._models_py3 import HybridConnectionLimits
+from ._models_py3 import IpSecurityRestriction
+from ._models_py3 import LocalizableString
+from ._models_py3 import ManagedServiceIdentity
+from ._models_py3 import MetricAvailabilily
+from ._models_py3 import MetricDefinition
+from ._models_py3 import NameValuePair
+from ._models_py3 import NetworkAccessControlEntry
+from ._models_py3 import Operation
+from ._models_py3 import ProxyOnlyResource
+from ._models_py3 import PushSettings
+from ._models_py3 import RampUpRule
+from ._models_py3 import RequestsBasedTrigger
+from ._models_py3 import Resource
+from ._models_py3 import ResourceCollection
+from ._models_py3 import ResourceMetric
+from ._models_py3 import ResourceMetricAvailability
+from ._models_py3 import ResourceMetricCollection
+from ._models_py3 import ResourceMetricDefinition
+from ._models_py3 import ResourceMetricDefinitionCollection
+from ._models_py3 import ResourceMetricName
+from ._models_py3 import ResourceMetricProperty
+from ._models_py3 import ResourceMetricValue
+from ._models_py3 import Site
+from ._models_py3 import SiteConfig
+from ._models_py3 import SiteLimits
+from ._models_py3 import SiteMachineKey
+from ._models_py3 import SkuCapacity
+from ._models_py3 import SkuDescription
+from ._models_py3 import SkuInfo
+from ._models_py3 import SkuInfoCollection
+from ._models_py3 import SlotSwapStatus
+from ._models_py3 import SlowRequestsBasedTrigger
+from ._models_py3 import SnapshotRecoveryRequest
+from ._models_py3 import SnapshotRecoveryTarget
+from ._models_py3 import StampCapacity
+from ._models_py3 import StampCapacityCollection
+from ._models_py3 import StatusCodesBasedTrigger
+from ._models_py3 import Usage
+from ._models_py3 import UsageCollection
+from ._models_py3 import VirtualApplication
+from ._models_py3 import VirtualDirectory
+from ._models_py3 import VirtualIPMapping
+from ._models_py3 import VirtualNetworkProfile
+from ._models_py3 import VnetGateway
+from ._models_py3 import VnetInfo
+from ._models_py3 import VnetRoute
+from ._models_py3 import WebAppCollection
+from ._models_py3 import WorkerPool
+from ._models_py3 import WorkerPoolCollection
+from ._models_py3 import WorkerPoolResource
+
 
 from ._web_site_management_client_enums import (
     AccessControlEntryAction,

@@ -14,7 +14,7 @@ import json
 from unittest import mock
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
-from testcase import TextAnalyticsTest, TextAnalyticsPreparer
+from testcase import TextAnalyticsTest, TextAnalyticsPreparer, is_public_cloud
 from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.ai.textanalytics import (
@@ -47,6 +47,17 @@ from azure.ai.textanalytics import (
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
 TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, TextAnalyticsClient)
 
+TextAnalyticsCustomPreparer = functools.partial(
+    TextAnalyticsPreparer,
+    textanalytics_custom_text_endpoint="https://fakeendpoint.cognitiveservices.azure.com",
+    textanalytics_custom_text_key="fakeZmFrZV9hY29jdW50X2tleQ==",
+    textanalytics_single_category_classify_project_name="single_category_classify_project_name",
+    textanalytics_single_category_classify_deployment_name="single_category_classify_deployment_name",
+    textanalytics_multi_category_classify_project_name="multi_category_classify_project_name",
+    textanalytics_multi_category_classify_deployment_name="multi_category_classify_deployment_name",
+    textanalytics_custom_entities_project_name="custom_entities_project_name",
+    textanalytics_custom_entities_deployment_name="custom_entities_deployment_name",
+)
 
 class TestAnalyze(TextAnalyticsTest):
 
@@ -627,7 +638,8 @@ class TestAnalyze(TextAnalyticsTest):
             )
         assert excinfo.value.status_code == 400
 
-    @TextAnalyticsPreparer()
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
+    @TextAnalyticsCustomPreparer()
     @recorded_by_proxy
     def test_disable_service_logs(
             self,
@@ -989,7 +1001,8 @@ class TestAnalyze(TextAnalyticsTest):
         assert not document_results[1][0].is_error
         assert isinstance(document_results[1][0], ExtractSummaryResult)
 
-    @TextAnalyticsPreparer()
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
+    @TextAnalyticsCustomPreparer()
     @recorded_by_proxy
     def test_single_category_classify(
             self,
@@ -1028,7 +1041,8 @@ class TestAnalyze(TextAnalyticsTest):
                 assert result.classification.category
                 assert result.classification.confidence_score
 
-    @TextAnalyticsPreparer()
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
+    @TextAnalyticsCustomPreparer()
     @recorded_by_proxy
     def test_multi_category_classify(
             self,
@@ -1068,7 +1082,8 @@ class TestAnalyze(TextAnalyticsTest):
                     assert classification.category
                     assert classification.confidence_score
 
-    @TextAnalyticsPreparer()
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
+    @TextAnalyticsCustomPreparer()
     @recorded_by_proxy
     def test_recognize_custom_entities(
             self,
@@ -1216,18 +1231,20 @@ class TestAnalyze(TextAnalyticsTest):
 
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
-    @TextAnalyticsPreparer()
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
+    @TextAnalyticsCustomPreparer()
     def test_generic_action_error_no_target(
         self,
-        textanalytics_custom_text_endpoint,
-        textanalytics_custom_text_key,
-        textanalytics_single_category_classify_project_name,
-        textanalytics_single_category_classify_deployment_name,
-        textanalytics_multi_category_classify_project_name,
-        textanalytics_multi_category_classify_deployment_name,
-        textanalytics_custom_entities_project_name,
-        textanalytics_custom_entities_deployment_name
+        **kwargs
     ):
+        textanalytics_custom_text_endpoint = kwargs.pop("textanalytics_custom_text_endpoint")
+        textanalytics_custom_text_key = kwargs.pop("textanalytics_custom_text_key")
+        textanalytics_single_category_classify_project_name = kwargs.pop("textanalytics_single_category_classify_project_name")
+        textanalytics_single_category_classify_deployment_name = kwargs.pop("textanalytics_single_category_classify_deployment_name")
+        textanalytics_multi_category_classify_project_name = kwargs.pop("textanalytics_multi_category_classify_project_name")
+        textanalytics_multi_category_classify_deployment_name = kwargs.pop("textanalytics_multi_category_classify_deployment_name")
+        textanalytics_custom_entities_project_name = kwargs.pop("textanalytics_custom_entities_project_name")
+        textanalytics_custom_entities_deployment_name = kwargs.pop("textanalytics_custom_entities_deployment_name")
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": ""},
@@ -1276,18 +1293,20 @@ class TestAnalyze(TextAnalyticsTest):
             ).result())
         assert e.value.message == "(InternalServerError) 1 out of 3 job tasks failed. Failed job tasks : v3.2-preview.2/custom/entities/general."
 
-    @TextAnalyticsPreparer()
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
+    @TextAnalyticsCustomPreparer()
     def test_action_errors_with_targets(
         self,
-        textanalytics_custom_text_endpoint,
-        textanalytics_custom_text_key,
-        textanalytics_single_category_classify_project_name,
-        textanalytics_single_category_classify_deployment_name,
-        textanalytics_multi_category_classify_project_name,
-        textanalytics_multi_category_classify_deployment_name,
-        textanalytics_custom_entities_project_name,
-        textanalytics_custom_entities_deployment_name
+        **kwargs
     ):
+        textanalytics_custom_text_endpoint = kwargs.pop("textanalytics_custom_text_endpoint")
+        textanalytics_custom_text_key = kwargs.pop("textanalytics_custom_text_key")
+        textanalytics_single_category_classify_project_name = kwargs.pop("textanalytics_single_category_classify_project_name")
+        textanalytics_single_category_classify_deployment_name = kwargs.pop("textanalytics_single_category_classify_deployment_name")
+        textanalytics_multi_category_classify_project_name = kwargs.pop("textanalytics_multi_category_classify_project_name")
+        textanalytics_multi_category_classify_deployment_name = kwargs.pop("textanalytics_multi_category_classify_deployment_name")
+        textanalytics_custom_entities_project_name = kwargs.pop("textanalytics_custom_entities_project_name")
+        textanalytics_custom_entities_deployment_name = kwargs.pop("textanalytics_custom_entities_deployment_name")
         docs = [
             {"id": "1", "language": "en", "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
             {"id": "2", "language": "en", "text": ""},
@@ -1366,14 +1385,16 @@ class TestAnalyze(TextAnalyticsTest):
                 assert result.error.code == "InvalidRequest"
                 assert result.error.message == "Some error" + str(idx)  # confirms correct doc error order
 
-    @TextAnalyticsPreparer()
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
+    @TextAnalyticsCustomPreparer()
     def test_action_job_failure(
             self,
-            textanalytics_custom_text_endpoint,
-            textanalytics_custom_text_key,
-            textanalytics_custom_entities_project_name,
-            textanalytics_custom_entities_deployment_name
+            **kwargs
     ):
+        textanalytics_custom_text_endpoint = kwargs.pop("textanalytics_custom_text_endpoint")
+        textanalytics_custom_text_key = kwargs.pop("textanalytics_custom_text_key")
+        textanalytics_custom_entities_project_name = kwargs.pop("textanalytics_custom_entities_project_name")
+        textanalytics_custom_entities_deployment_name = kwargs.pop("textanalytics_custom_entities_deployment_name")
         docs = [
             {"id": "1", "language": "en",
              "text": "A recent report by the Government Accountability Office (GAO) found that the dramatic increase in oil and natural gas development on federal lands over the past six years has stretched the staff of the BLM to a point that it has been unable to meet its environmental protection responsibilities."},
@@ -1417,3 +1438,42 @@ class TestAnalyze(TextAnalyticsTest):
             ).result())
             assert len(response) == len(docs)
         assert e.value.message == "(InternalServerError) 1 out of 1 job tasks failed. Failed job tasks : v3.2-preview.2/custom/entities/general."
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.1"})
+    @recorded_by_proxy
+    def test_analyze_works_with_v3_1(self, client):
+        docs = [{"id": "56", "text": ":)"},
+                {"id": "0", "text": ":("},
+                {"id": "19", "text": ":P"},
+                {"id": "1", "text": ":D"}]
+
+        response = client.begin_analyze_actions(
+            docs,
+            actions=[
+                RecognizeEntitiesAction(),
+                ExtractKeyPhrasesAction(),
+                RecognizePiiEntitiesAction(),
+                RecognizeLinkedEntitiesAction(),
+                AnalyzeSentimentAction()
+            ],
+            polling_interval=self._interval(),
+        ).result()
+
+        results = list(response)
+        assert len(results) == len(docs)
+
+        document_order = ["56", "0", "19", "1"]
+        action_order = [
+            _AnalyzeActionsType.RECOGNIZE_ENTITIES,
+            _AnalyzeActionsType.EXTRACT_KEY_PHRASES,
+            _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
+            _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES,
+            _AnalyzeActionsType.ANALYZE_SENTIMENT,
+        ]
+        for doc_idx, document_results in enumerate(results):
+            assert len(document_results) == 5
+            for action_idx, document_result in enumerate(document_results):
+                assert document_result.id == document_order[doc_idx]
+                assert not document_result.is_error
+                assert self.document_result_to_action_type(document_result) == action_order[action_idx]

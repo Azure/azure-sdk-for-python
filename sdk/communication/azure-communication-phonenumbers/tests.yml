@@ -19,3 +19,5 @@ stages:
               - $(sub-config-communication-int-test-resources-common)
               - $(sub-config-communication-int-test-resources-python)
       Clouds: Public,Int
+      EnvVars:
+        COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST: true

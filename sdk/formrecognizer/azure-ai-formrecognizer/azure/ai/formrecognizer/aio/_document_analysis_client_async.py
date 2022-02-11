@@ -68,7 +68,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         **kwargs: Any
     ) -> None:
         api_version = kwargs.pop(
-            "api_version", DocumentAnalysisApiVersion.V2021_09_30_PREVIEW
+            "api_version", DocumentAnalysisApiVersion.V2022_01_30_PREVIEW
         )
         super(DocumentAnalysisClient, self).__init__(
             endpoint=endpoint,

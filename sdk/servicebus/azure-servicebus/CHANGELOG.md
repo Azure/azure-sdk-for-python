@@ -1,15 +1,31 @@
 # Release History
 
-## 7.5.0 (Unreleased)
+## 7.6.1 (Unreleased)
 
-This version and all future versions will require Python 3.7+. Python 2.7 and 3.6 are no longer supported.
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 7.6.0 (2022-02-10)
+
+### Features Added
+
+- Introduce `ServiceBusMessageState` enum that can assume the values of `active`, `scheduled` or `deferred`.
+- Add `state` property in `ServiceBusReceivedMessage`.
+
+## 7.5.0 (2022-01-12)
+
+This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
 
 ### Features Added
 
 - Added support for fixed (linear) retry backoff:
   - Sync/async `ServiceBusClient` constructors and `from_connection_string` take `retry_mode` as a keyword argument.
-
-### Breaking Changes
+- Added new enum class `ServiceBusSessionFilter`, which is the type of existing `NEXT_AVAILABLE_SESSION` value.
 
 ### Bugs Fixed
 
@@ -18,7 +34,7 @@ This version and all future versions will require Python 3.7+. Python 2.7 and 3.
 ### Other Changes
 
 - Improved token refresh timing to prevent potentially blocking main flow when the token is about to get expired soon.
-- Updated uAMQP dependency to 1.5.0.
+- Updated uAMQP dependency to 1.5.1.
 
 ## 7.4.0 (2021-11-09)
 

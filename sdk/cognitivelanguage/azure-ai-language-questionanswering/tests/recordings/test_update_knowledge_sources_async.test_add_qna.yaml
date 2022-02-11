@@ -1,0 +1,163 @@
+interactions:
+- request:
+    body: '{"description": "biography of Sir Issac Newton", "language": "en", "multilingualResource":
+      true, "settings": {"defaultAnswer": "no answer"}}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '140'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+    method: PATCH
+    uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton?api-version=2021-10-01
+  response:
+    body:
+      string: "{\n  \"projectName\": \"IssacNewton\",\n  \"description\": \"biography
+        of Sir Issac Newton\",\n  \"language\": \"en\",\n  \"multilingualResource\":
+        false,\n  \"createdDateTime\": \"2022-02-10T19:42:15Z\",\n  \"lastModifiedDateTime\":
+        \"2022-02-10T19:43:51Z\",\n  \"settings\": {\n    \"defaultAnswer\": \"no
+        answer\"\n  }\n}"
+    headers:
+      apim-request-id: e0775bde-dd0c-4e94-a2ab-ac1c1a7ae448
+      content-length: '286'
+      content-type: application/json; charset=utf-8
+      date: Thu, 10 Feb 2022 19:43:50 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '17'
+    status:
+      code: 200
+      message: OK
+    url: https://leithyta-sdktesting.cognitiveservices.azure.com/language/query-knowledgebases/projects/IssacNewton?api-version=2021-10-01
+- request:
+    body: '[{"op": "add", "value": {"questions": ["What is the easiest way to use
+      azure services in my .NET project?"], "answer": "Using Microsoft''s Azure SDKs"}}]'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '152'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+    method: PATCH
+    uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/qnas?api-version=2021-10-01
+  response:
+    body:
+      string: ''
+    headers:
+      apim-request-id: 633b0af7-eae2-4dd7-8cb6-790eeb6539b4
+      content-length: '0'
+      date: Thu, 10 Feb 2022 19:43:51 GMT
+      operation-location: https://test-resource.api.cognitive.microsoft.com:443/language/query-knowledgebases/projects/IssacNewton/qnas/jobs/ac41f2be-353c-42d7-9889-408154c099c5?api-version=2021-10-01
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '46'
+    status:
+      code: 202
+      message: Accepted
+    url: https://leithyta-sdktesting.cognitiveservices.azure.com/language/query-knowledgebases/projects/IssacNewton/qnas?api-version=2021-10-01
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+    method: GET
+    uri: https://test-resource.api.cognitive.microsoft.com:443/language/query-knowledgebases/projects/IssacNewton/qnas/jobs/ac41f2be-353c-42d7-9889-408154c099c5?api-version=2021-10-01
+  response:
+    body:
+      string: "{\n  \"createdDateTime\": \"2022-02-10T19:43:51+00:00\",\n  \"expirationDateTime\":
+        \"2022-02-11T01:43:51+00:00\",\n  \"jobId\": \"ac41f2be-353c-42d7-9889-408154c099c5\",\n
+        \ \"lastUpdatedDateTime\": \"2022-02-10T19:43:56+00:00\",\n  \"status\": \"succeeded\",\n
+        \ \"resultUrl\": \"/knowledgebases/IssacNewton\"\n}"
+    headers:
+      apim-request-id: 887bed78-34d5-45c1-a02d-5c97232ddec7
+      content-length: '281'
+      content-type: application/json; charset=utf-8
+      date: Thu, 10 Feb 2022 19:44:21 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '16'
+    status:
+      code: 200
+      message: OK
+    url: https://leithyta-sdktesting.cognitiveservices.azure.com:443/language/query-knowledgebases/projects/IssacNewton/qnas/jobs/ac41f2be-353c-42d7-9889-408154c099c5?api-version=2021-10-01
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+    method: GET
+    uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/qnas?api-version=2021-10-01
+  response:
+    body:
+      string: "{\n  \"value\": [\n    {\n      \"id\": 1,\n      \"answer\": \"Using
+        Microsoft's Azure SDKs\",\n      \"source\": \"Editorial\",\n      \"questions\":
+        [\n        \"What is the easiest way to use azure services in my .NET project?\"\n
+        \     ],\n      \"metadata\": {\n        \"system_metadata_qna_edited_manually\":
+        \"true\"\n      },\n      \"dialog\": {\n        \"isContextOnly\": false,\n
+        \       \"prompts\": []\n      },\n      \"activeLearningSuggestions\": [],\n
+        \     \"isDocumentText\": false,\n      \"lastUpdatedDateTime\": \"02/10/2022
+        19:42:48 +00:00\"\n    },\n    {\n      \"id\": 3,\n      \"answer\": \"Using
+        Microsoft's Azure SDKs\",\n      \"source\": \"Editorial\",\n      \"questions\":
+        [\n        \"What is the easiest way to use azure services in my .NET project?\"\n
+        \     ],\n      \"metadata\": {\n        \"system_metadata_qna_edited_manually\":
+        \"true\"\n      },\n      \"dialog\": {\n        \"isContextOnly\": false,\n
+        \       \"prompts\": []\n      },\n      \"activeLearningSuggestions\": [],\n
+        \     \"isDocumentText\": false,\n      \"lastUpdatedDateTime\": \"02/10/2022
+        19:43:54 +00:00\"\n    }\n  ]\n}"
+    headers:
+      apim-request-id: 98c585f2-6ed6-4c50-9b28-c8197f07539a
+      content-length: '1025'
+      content-type: application/json; charset=utf-8
+      date: Thu, 10 Feb 2022 19:44:21 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '443'
+    status:
+      code: 200
+      message: OK
+    url: https://leithyta-sdktesting.cognitiveservices.azure.com/language/query-knowledgebases/projects/IssacNewton/qnas?api-version=2021-10-01
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
+    method: GET
+    uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/qnas?api-version=2021-10-01
+  response:
+    body:
+      string: "{\n  \"value\": [\n    {\n      \"id\": 1,\n      \"answer\": \"Using
+        Microsoft's Azure SDKs\",\n      \"source\": \"Editorial\",\n      \"questions\":
+        [\n        \"What is the easiest way to use azure services in my .NET project?\"\n
+        \     ],\n      \"metadata\": {\n        \"system_metadata_qna_edited_manually\":
+        \"true\"\n      },\n      \"dialog\": {\n        \"isContextOnly\": false,\n
+        \       \"prompts\": []\n      },\n      \"activeLearningSuggestions\": [],\n
+        \     \"isDocumentText\": false,\n      \"lastUpdatedDateTime\": \"02/10/2022
+        19:42:48 +00:00\"\n    },\n    {\n      \"id\": 3,\n      \"answer\": \"Using
+        Microsoft's Azure SDKs\",\n      \"source\": \"Editorial\",\n      \"questions\":
+        [\n        \"What is the easiest way to use azure services in my .NET project?\"\n
+        \     ],\n      \"metadata\": {\n        \"system_metadata_qna_edited_manually\":
+        \"true\"\n      },\n      \"dialog\": {\n        \"isContextOnly\": false,\n
+        \       \"prompts\": []\n      },\n      \"activeLearningSuggestions\": [],\n
+        \     \"isDocumentText\": false,\n      \"lastUpdatedDateTime\": \"02/10/2022
+        19:43:54 +00:00\"\n    }\n  ]\n}"
+    headers:
+      apim-request-id: 24452004-b37e-4b81-8051-ee373e526178
+      content-length: '1025'
+      content-type: application/json; charset=utf-8
+      date: Thu, 10 Feb 2022 19:44:22 GMT
+      strict-transport-security: max-age=31536000; includeSubDomains; preload
+      x-content-type-options: nosniff
+      x-envoy-upstream-service-time: '224'
+    status:
+      code: 200
+      message: OK
+    url: https://leithyta-sdktesting.cognitiveservices.azure.com/language/query-knowledgebases/projects/IssacNewton/qnas?api-version=2021-10-01
+version: 1

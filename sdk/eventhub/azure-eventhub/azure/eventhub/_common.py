@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import json
 import logging
+import uuid
 from typing import (
     Union,
     Dict,
@@ -59,6 +60,17 @@ from .amqp import (
 if TYPE_CHECKING:
     import datetime
 
+PrimitiveTypes = Optional[Union[
+    int,
+    float,
+    bytes,
+    bool,
+    str,
+    Dict,
+    List,
+    uuid.UUID,
+]]
+
 _LOGGER = logging.getLogger(__name__)
 
 # event_data.encoded_size < 255, batch encode overhead is 5, >=256, overhead is 8 each
@@ -98,8 +110,10 @@ class EventData(object):
 
     """
 
-    def __init__(self, body=None):
-        # type: (Union[str, bytes, List[AnyStr]]) -> None
+    def __init__(
+        self,
+        body: Optional[Union[str, bytes, List[AnyStr]]] = None,
+    ) -> None:
         self._last_enqueued_event_properties = {}  # type: Dict[str, Any]
         self._sys_properties = None  # type: Optional[Dict[bytes, Any]]
         if body is None:
@@ -167,6 +181,27 @@ class EventData(object):
             pass
         event_str += " }"
         return event_str
+
+    def __message_data__(self) -> Dict:
+        if self.body_type != AmqpMessageBodyType.DATA:
+            raise TypeError('`body_type` must be `AmqpMessageBodyType.DATA`.')
+        data = bytearray()
+        for d in self.body: # type: ignore
+            data += d   # type: ignore
+        return {"data": bytes(data), "content_type": self.content_type}
+
+    @classmethod
+    def from_message_data(cls, data: bytes, content_type: str) -> "EventData":
+        """
+        Creates an EventData object given content type and a data value to be set as body.
+
+        :param bytes data: The data value to be set as the body of the message.
+        :param str content_type: The content type to be set on the message.
+        :rtype: ~azure.eventhub.EventData
+        """
+        event_data = cls(data)
+        event_data.content_type = content_type
+        return event_data
 
     @classmethod
     def _from_message(cls, message, raw_amqp_message=None):
@@ -319,7 +354,7 @@ class EventData(object):
 
     @property
     def body(self):
-        # type: () -> Any
+        # type: () -> PrimitiveTypes
         """The body of the Message. The format may vary depending on the body type:
         For :class:`azure.eventhub.amqp.AmqpMessageBodyType.DATA<azure.eventhub.amqp.AmqpMessageBodyType.DATA>`,
         the body could be bytes or Iterable[bytes].
@@ -328,7 +363,7 @@ class EventData(object):
         For :class:`azure.eventhub.amqp.AmqpMessageBodyType.VALUE<azure.eventhub.amqp.AmqpMessageBodyType.VALUE>`,
         the body could be any type.
 
-        :rtype: Any
+        :rtype: int or bool or float or bytes or str or dict or list or uuid.UUID
         """
         try:
             return self._raw_amqp_message.body
@@ -374,7 +409,7 @@ class EventData(object):
 
         :param encoding: The encoding to use for decoding event data.
          Default is 'UTF-8'
-        :rtype: dict
+        :rtype: Dict[str, Any]
         """
         data_str = self.body_as_str(encoding=encoding)
         try:

@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.2 (Unreleased)
+## 1.2.0 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,18 @@
 ### Bugs Fixed
 
 ### Other Changes
+Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+
+## 1.1.0b1 (2022-01-24)
+
+- Users can now purchase United Kingdom (GB) toll free and geographic phone numbers for PSTN Calling
+- Users can now purchase Denmark (DK) toll free and geographic phone numbers for PSTN Calling
+
+### Features Added
+- Adds support for API verion `2022-01-11-preview2`
+
+### Other Changes
+- Updates dependency `azure-core` to `1.20.0`
 
 ## 1.0.1 (2021-06-08)
 ### Bug Fixes

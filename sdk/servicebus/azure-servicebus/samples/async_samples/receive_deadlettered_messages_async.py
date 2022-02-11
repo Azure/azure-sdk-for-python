@@ -9,8 +9,6 @@
 Example to show receiving dead-lettered messages from a Service Bus Queue asynchronously.
 """
 
-# pylint: disable=C0111
-
 import os
 import asyncio
 from azure.servicebus import ServiceBusMessage, ServiceBusSubQueue

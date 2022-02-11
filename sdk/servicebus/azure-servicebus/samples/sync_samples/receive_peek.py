@@ -9,8 +9,6 @@
 Example to show browsing messages currently pending in the queue.
 """
 
-# pylint: disable=C0111
-
 import os
 from azure.servicebus import ServiceBusClient
 

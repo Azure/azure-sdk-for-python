@@ -22,7 +22,7 @@ USAGE:
 from dotenv import find_dotenv, load_dotenv
 import os
 
-from azure.containerregistry import ContainerRegistryClient, ManifestOrder
+from azure.containerregistry import ContainerRegistryClient, ArtifactManifestOrder
 from azure.identity import DefaultAzureCredential
 
 class DeleteImages(object):
@@ -30,25 +30,22 @@ class DeleteImages(object):
         load_dotenv(find_dotenv())
 
     def delete_images(self):
-        # [START list_repository_names]
+        # Instantiate an instance of ContainerRegistryClient
         audience = "https://management.azure.com"
         endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
         with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience=audience) as client:
             for repository in client.list_repository_names():
                 print(repository)
-                # [END list_repository_names]
 
-                # [START list_manifest_properties]
                 # Keep the three most recent images, delete everything else
                 manifest_count = 0
                 for manifest in client.list_manifest_properties(
-                    repository, order_by=ManifestOrder.LAST_UPDATE_TIME_DESCENDING):
+                    repository, order_by=ArtifactManifestOrder.LAST_UPDATED_ON_DESCENDING):
                     manifest_count += 1
                     if manifest_count > 3:
                         print("Deleting {}:{}".format(repository, manifest.digest))
                         client.delete_manifest(repository, manifest.digest)
-                # [END list_manifest_properties]
 
 
 if __name__ == "__main__":

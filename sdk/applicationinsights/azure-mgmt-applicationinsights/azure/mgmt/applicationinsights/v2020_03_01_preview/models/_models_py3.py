@@ -43,6 +43,8 @@ class Resource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -80,6 +82,8 @@ class ProxyResource(Resource):
         self,
         **kwargs
     ):
+        """
+        """
         super(ProxyResource, self).__init__(**kwargs)
 
 
@@ -96,8 +100,8 @@ class ComponentLinkedStorageAccounts(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param linked_storage_account: Linked storage account resource ID.
-    :type linked_storage_account: str
+    :ivar linked_storage_account: Linked storage account resource ID.
+    :vartype linked_storage_account: str
     """
 
     _validation = {
@@ -119,6 +123,10 @@ class ComponentLinkedStorageAccounts(ProxyResource):
         linked_storage_account: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword linked_storage_account: Linked storage account resource ID.
+        :paramtype linked_storage_account: str
+        """
         super(ComponentLinkedStorageAccounts, self).__init__(**kwargs)
         self.linked_storage_account = linked_storage_account
 
@@ -126,8 +134,8 @@ class ComponentLinkedStorageAccounts(ProxyResource):
 class ComponentLinkedStorageAccountsPatch(msrest.serialization.Model):
     """An Application Insights component linked storage accounts patch.
 
-    :param linked_storage_account: Linked storage account resource ID.
-    :type linked_storage_account: str
+    :ivar linked_storage_account: Linked storage account resource ID.
+    :vartype linked_storage_account: str
     """
 
     _attribute_map = {
@@ -140,6 +148,10 @@ class ComponentLinkedStorageAccountsPatch(msrest.serialization.Model):
         linked_storage_account: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword linked_storage_account: Linked storage account resource ID.
+        :paramtype linked_storage_account: str
+        """
         super(ComponentLinkedStorageAccountsPatch, self).__init__(**kwargs)
         self.linked_storage_account = linked_storage_account
 
@@ -147,9 +159,9 @@ class ComponentLinkedStorageAccountsPatch(msrest.serialization.Model):
 class ErrorResponseLinkedStorage(msrest.serialization.Model):
     """ErrorResponseLinkedStorage.
 
-    :param error: Error response indicates Insights service is not able to process the incoming
+    :ivar error: Error response indicates Insights service is not able to process the incoming
      request. The reason is provided in the error message.
-    :type error:
+    :vartype error:
      ~azure.mgmt.applicationinsights.v2020_03_01_preview.models.ErrorResponseLinkedStorageError
     """
 
@@ -163,6 +175,12 @@ class ErrorResponseLinkedStorage(msrest.serialization.Model):
         error: Optional["ErrorResponseLinkedStorageError"] = None,
         **kwargs
     ):
+        """
+        :keyword error: Error response indicates Insights service is not able to process the incoming
+         request. The reason is provided in the error message.
+        :paramtype error:
+         ~azure.mgmt.applicationinsights.v2020_03_01_preview.models.ErrorResponseLinkedStorageError
+        """
         super(ErrorResponseLinkedStorage, self).__init__(**kwargs)
         self.error = error
 
@@ -192,6 +210,8 @@ class ErrorResponseLinkedStorageError(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorResponseLinkedStorageError, self).__init__(**kwargs)
         self.code = None
         self.message = None

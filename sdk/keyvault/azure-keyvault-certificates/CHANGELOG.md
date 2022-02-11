@@ -1,6 +1,6 @@
 # Release History
 
-## 4.4.0b3 (Unreleased)
+## 4.4.0b4 (Unreleased)
 
 ### Features Added
 
@@ -9,7 +9,14 @@
 ### Bugs Fixed
 
 ### Other Changes
-- Python 2.7 and 3.6 are no longer supported. Please use Python version 3.7 or later.
+
+## 4.4.0b3 (2022-02-08)
+
+### Other Changes
+- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+- (From 4.4.0b2) To support multi-tenant authentication, `get_token` calls during challenge
+  authentication requests now pass in a `tenant_id` keyword argument
+  ([#20698](https://github.com/Azure/azure-sdk-for-python/issues/20698))
 
 ## 4.4.0b2 (2021-11-11)
 
