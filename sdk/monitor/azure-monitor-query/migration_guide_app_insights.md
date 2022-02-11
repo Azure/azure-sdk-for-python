@@ -27,7 +27,7 @@ To improve the development experience across Azure services, a set of uniform [d
 
 The Azure Monitor Query client library also takes advantage of the cross-service improvements made to the Azure development experience. Examples include:
 
-- Using the new [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md) library to share a single authentication approach between clients.
+- Using the new [Azure Identity](https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python) library to share a single authentication approach between clients.
 - A unified logging and diagnostics pipeline offering a common view of the activities across each of the client libraries.
 
 ### New features
@@ -36,7 +36,7 @@ There are a variety of new features in version 1.0 of the Monitor Query library.
 
 - The ability to execute a batch of queries with the `LogsQueryClient.query_batch()` API.
 - The ability to configure the retry policy used by the operations on the client.
-- Authentication with Azure Active Directory (Azure AD) credentials using [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md).
+- Authentication with Azure Active Directory (Azure AD) credentials using [azure-identity](https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python).
 
 For more new features, changes, and bug fixes, see the [change log](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-query/CHANGELOG.md).
 
@@ -44,7 +44,7 @@ For more new features, changes, and bug fixes, see the [change log](https://gith
 
 ### The client
 
-To provide a more intuitive experience, the top-level client to `ApplicationInsightsDataClient` has been split into two different clients:
+To provide a more intuitive experience, the top-level client to [ApplicationInsightsDataClient](https://docs.microsoft.com/python/api/azure-applicationinsights/azure.applicationinsights.applicationinsightsdataclient?view=azure-python) has been split into two different clients:
 
 - [LogsQueryClient](https://docs.microsoft.com/python/api/azure-monitor-query/azure.monitor.query.logsqueryclient?view=azure-python) serves as a single point of entry to execute a single Kusto query or a batch of Kusto queries.
 - [MetricsQueryClient](https://docs.microsoft.com/python/api/azure-monitor-query/azure.monitor.query.metricsqueryclient?view=azure-python) is used to query metrics, list metric namespaces, and to list metric definitions.
@@ -104,7 +104,7 @@ logs_query_client.query(workspace_id, query, timespan=timedelta(days=1))
 
 ### A note about the Events API
 
-The `azure-applicationinsights` package includes an Events API. Note that the Events API is just a different "API head" on the same logs data. It enables the querying of some logs in Application Insights without writing Kusto queries. The API translates to Kusto queries in the background. The same data can be accessed via regular Kusto queries, as shown in the preceding example.
+The `azure-applicationinsights` package includes an Events API, which is just a different "API head" on the same logs data. It enables the querying of some logs in Application Insights without writing Kusto queries. The API translates to Kusto queries in the background. The same data can be accessed via regular Kusto queries, as shown in the preceding example.
 
 ### Query metrics from a resource
 
