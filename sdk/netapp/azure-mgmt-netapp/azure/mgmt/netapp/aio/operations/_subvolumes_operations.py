@@ -22,12 +22,12 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._snapshots_operations import build_create_request_initial, build_delete_request_initial, build_get_request, build_list_request, build_restore_files_request_initial, build_update_request_initial
+from ...operations._subvolumes_operations import build_create_request_initial, build_delete_request_initial, build_get_metadata_request_initial, build_get_request, build_list_by_volume_request, build_update_request_initial
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class SnapshotsOperations:
-    """SnapshotsOperations async operations.
+class SubvolumesOperations:
+    """SubvolumesOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -49,17 +49,17 @@ class SnapshotsOperations:
         self._config = config
 
     @distributed_trace
-    def list(
+    def list_by_volume(
         self,
         resource_group_name: str,
         account_name: str,
         pool_name: str,
         volume_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.SnapshotsList"]:
-        """Describe all snapshots.
+    ) -> AsyncIterable["_models.SubvolumesList"]:
+        """List of all the subvolumes.
 
-        List all snapshots associated with the volume.
+        Returns a list of the subvolumes in the volume.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -70,11 +70,11 @@ class SnapshotsOperations:
         :param volume_name: The name of the volume.
         :type volume_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either SnapshotsList or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.netapp.models.SnapshotsList]
+        :return: An iterator like instance of either SubvolumesList or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.netapp.models.SubvolumesList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SnapshotsList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SubvolumesList"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -82,20 +82,20 @@ class SnapshotsOperations:
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_request(
+                request = build_list_by_volume_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     account_name=account_name,
                     pool_name=pool_name,
                     volume_name=volume_name,
-                    template_url=self.list.metadata['url'],
+                    template_url=self.list_by_volume.metadata['url'],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
                 
-                request = build_list_request(
+                request = build_list_by_volume_request(
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     account_name=account_name,
@@ -109,11 +109,11 @@ class SnapshotsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("SnapshotsList", pipeline_response)
+            deserialized = self._deserialize("SubvolumesList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -131,7 +131,7 @@ class SnapshotsOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots'}  # type: ignore
+    list_by_volume.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/subvolumes'}  # type: ignore
 
     @distributed_trace_async
     async def get(
@@ -140,12 +140,12 @@ class SnapshotsOperations:
         account_name: str,
         pool_name: str,
         volume_name: str,
-        snapshot_name: str,
+        subvolume_name: str,
         **kwargs: Any
-    ) -> "_models.Snapshot":
-        """Describe a snapshot.
+    ) -> "_models.SubvolumeInfo":
+        """Get the path associated with the subvolumeName.
 
-        Get details of the specified snapshot.
+        Returns the path associated with the subvolumeName provided.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -155,14 +155,14 @@ class SnapshotsOperations:
         :type pool_name: str
         :param volume_name: The name of the volume.
         :type volume_name: str
-        :param snapshot_name: The name of the snapshot.
-        :type snapshot_name: str
+        :param subvolume_name: The name of the subvolume.
+        :type subvolume_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Snapshot, or the result of cls(response)
-        :rtype: ~azure.mgmt.netapp.models.Snapshot
+        :return: SubvolumeInfo, or the result of cls(response)
+        :rtype: ~azure.mgmt.netapp.models.SubvolumeInfo
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Snapshot"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SubvolumeInfo"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -175,7 +175,7 @@ class SnapshotsOperations:
             account_name=account_name,
             pool_name=pool_name,
             volume_name=volume_name,
-            snapshot_name=snapshot_name,
+            subvolume_name=subvolume_name,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
@@ -188,14 +188,14 @@ class SnapshotsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Snapshot', pipeline_response)
+        deserialized = self._deserialize('SubvolumeInfo', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/subvolumes/{subvolumeName}'}  # type: ignore
 
 
     async def _create_initial(
@@ -204,11 +204,11 @@ class SnapshotsOperations:
         account_name: str,
         pool_name: str,
         volume_name: str,
-        snapshot_name: str,
-        body: "_models.Snapshot",
+        subvolume_name: str,
+        body: "_models.SubvolumeInfo",
         **kwargs: Any
-    ) -> Optional["_models.Snapshot"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Snapshot"]]
+    ) -> Optional["_models.SubvolumeInfo"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SubvolumeInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -216,7 +216,7 @@ class SnapshotsOperations:
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'Snapshot')
+        _json = self._serialize.body(body, 'SubvolumeInfo')
 
         request = build_create_request_initial(
             subscription_id=self._config.subscription_id,
@@ -224,7 +224,7 @@ class SnapshotsOperations:
             account_name=account_name,
             pool_name=pool_name,
             volume_name=volume_name,
-            snapshot_name=snapshot_name,
+            subvolume_name=subvolume_name,
             content_type=content_type,
             json=_json,
             template_url=self._create_initial.metadata['url'],
@@ -235,20 +235,23 @@ class SnapshotsOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [201, 202]:
+        if response.status_code not in [200, 201, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('SubvolumeInfo', pipeline_response)
+
         if response.status_code == 201:
-            deserialized = self._deserialize('Snapshot', pipeline_response)
+            deserialized = self._deserialize('SubvolumeInfo', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _create_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}'}  # type: ignore
+    _create_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/subvolumes/{subvolumeName}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -258,13 +261,13 @@ class SnapshotsOperations:
         account_name: str,
         pool_name: str,
         volume_name: str,
-        snapshot_name: str,
-        body: "_models.Snapshot",
+        subvolume_name: str,
+        body: "_models.SubvolumeInfo",
         **kwargs: Any
-    ) -> AsyncLROPoller["_models.Snapshot"]:
-        """Create a snapshot.
+    ) -> AsyncLROPoller["_models.SubvolumeInfo"]:
+        """Create or clone a new subvolume.
 
-        Create the specified snapshot within the given volume.
+        Creates a subvolume in the path or clones the subvolume mentioned in the parentPath.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -274,10 +277,10 @@ class SnapshotsOperations:
         :type pool_name: str
         :param volume_name: The name of the volume.
         :type volume_name: str
-        :param snapshot_name: The name of the snapshot.
-        :type snapshot_name: str
-        :param body: Snapshot object supplied in the body of the operation.
-        :type body: ~azure.mgmt.netapp.models.Snapshot
+        :param subvolume_name: The name of the subvolume.
+        :type subvolume_name: str
+        :param body: Subvolume object supplied in the body of the operation.
+        :type body: ~azure.mgmt.netapp.models.SubvolumeInfo
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -286,14 +289,14 @@ class SnapshotsOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either Snapshot or the result of
+        :return: An instance of AsyncLROPoller that returns either SubvolumeInfo or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.Snapshot]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.SubvolumeInfo]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Snapshot"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SubvolumeInfo"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -305,7 +308,7 @@ class SnapshotsOperations:
                 account_name=account_name,
                 pool_name=pool_name,
                 volume_name=volume_name,
-                snapshot_name=snapshot_name,
+                subvolume_name=subvolume_name,
                 body=body,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
@@ -315,13 +318,13 @@ class SnapshotsOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('Snapshot', pipeline_response)
+            deserialized = self._deserialize('SubvolumeInfo', pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -334,7 +337,7 @@ class SnapshotsOperations:
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}'}  # type: ignore
+    begin_create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/subvolumes/{subvolumeName}'}  # type: ignore
 
     async def _update_initial(
         self,
@@ -342,11 +345,11 @@ class SnapshotsOperations:
         account_name: str,
         pool_name: str,
         volume_name: str,
-        snapshot_name: str,
-        body: Any,
+        subvolume_name: str,
+        body: "_models.SubvolumePatchRequest",
         **kwargs: Any
-    ) -> Optional["_models.Snapshot"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Snapshot"]]
+    ) -> Optional["_models.SubvolumeInfo"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SubvolumeInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -354,7 +357,7 @@ class SnapshotsOperations:
 
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'object')
+        _json = self._serialize.body(body, 'SubvolumePatchRequest')
 
         request = build_update_request_initial(
             subscription_id=self._config.subscription_id,
@@ -362,7 +365,7 @@ class SnapshotsOperations:
             account_name=account_name,
             pool_name=pool_name,
             volume_name=volume_name,
-            snapshot_name=snapshot_name,
+            subvolume_name=subvolume_name,
             content_type=content_type,
             json=_json,
             template_url=self._update_initial.metadata['url'],
@@ -379,14 +382,14 @@ class SnapshotsOperations:
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('Snapshot', pipeline_response)
+            deserialized = self._deserialize('SubvolumeInfo', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}'}  # type: ignore
+    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/subvolumes/{subvolumeName}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -396,13 +399,13 @@ class SnapshotsOperations:
         account_name: str,
         pool_name: str,
         volume_name: str,
-        snapshot_name: str,
-        body: Any,
+        subvolume_name: str,
+        body: "_models.SubvolumePatchRequest",
         **kwargs: Any
-    ) -> AsyncLROPoller["_models.Snapshot"]:
-        """Update a snapshot.
+    ) -> AsyncLROPoller["_models.SubvolumeInfo"]:
+        """Update a subvolume.
 
-        Patch a snapshot.
+        Patch a subvolume.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -412,10 +415,10 @@ class SnapshotsOperations:
         :type pool_name: str
         :param volume_name: The name of the volume.
         :type volume_name: str
-        :param snapshot_name: The name of the snapshot.
-        :type snapshot_name: str
-        :param body: Snapshot object supplied in the body of the operation.
-        :type body: any
+        :param subvolume_name: The name of the subvolume.
+        :type subvolume_name: str
+        :param body: Subvolume object supplied in the body of the operation.
+        :type body: ~azure.mgmt.netapp.models.SubvolumePatchRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -424,14 +427,14 @@ class SnapshotsOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either Snapshot or the result of
+        :return: An instance of AsyncLROPoller that returns either SubvolumeInfo or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.Snapshot]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.SubvolumeInfo]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Snapshot"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SubvolumeInfo"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -443,7 +446,7 @@ class SnapshotsOperations:
                 account_name=account_name,
                 pool_name=pool_name,
                 volume_name=volume_name,
-                snapshot_name=snapshot_name,
+                subvolume_name=subvolume_name,
                 body=body,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
@@ -453,13 +456,13 @@ class SnapshotsOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('Snapshot', pipeline_response)
+            deserialized = self._deserialize('SubvolumeInfo', pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -472,7 +475,7 @@ class SnapshotsOperations:
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}'}  # type: ignore
+    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/subvolumes/{subvolumeName}'}  # type: ignore
 
     async def _delete_initial(
         self,
@@ -480,7 +483,7 @@ class SnapshotsOperations:
         account_name: str,
         pool_name: str,
         volume_name: str,
-        snapshot_name: str,
+        subvolume_name: str,
         **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -496,7 +499,7 @@ class SnapshotsOperations:
             account_name=account_name,
             pool_name=pool_name,
             volume_name=volume_name,
-            snapshot_name=snapshot_name,
+            subvolume_name=subvolume_name,
             template_url=self._delete_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -512,7 +515,7 @@ class SnapshotsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}'}  # type: ignore
+    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/subvolumes/{subvolumeName}'}  # type: ignore
 
 
     @distributed_trace_async
@@ -522,12 +525,12 @@ class SnapshotsOperations:
         account_name: str,
         pool_name: str,
         volume_name: str,
-        snapshot_name: str,
+        subvolume_name: str,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Delete a snapshot.
+        """Delete a subvolume.
 
-        Delete snapshot.
+        Delete subvolume.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -537,8 +540,8 @@ class SnapshotsOperations:
         :type pool_name: str
         :param volume_name: The name of the volume.
         :type volume_name: str
-        :param snapshot_name: The name of the snapshot.
-        :type snapshot_name: str
+        :param subvolume_name: The name of the subvolume.
+        :type subvolume_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -564,7 +567,7 @@ class SnapshotsOperations:
                 account_name=account_name,
                 pool_name=pool_name,
                 volume_name=volume_name,
-                snapshot_name=snapshot_name,
+                subvolume_name=subvolume_name,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
@@ -575,7 +578,7 @@ class SnapshotsOperations:
                 return cls(pipeline_response, None, {})
 
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -588,38 +591,32 @@ class SnapshotsOperations:
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}'}  # type: ignore
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/subvolumes/{subvolumeName}'}  # type: ignore
 
-    async def _restore_files_initial(
+    async def _get_metadata_initial(
         self,
         resource_group_name: str,
         account_name: str,
         pool_name: str,
         volume_name: str,
-        snapshot_name: str,
-        body: "_models.SnapshotRestoreFiles",
+        subvolume_name: str,
         **kwargs: Any
-    ) -> None:
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+    ) -> Optional["_models.SubvolumeModel"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.SubvolumeModel"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-
-        _json = self._serialize.body(body, 'SnapshotRestoreFiles')
-
-        request = build_restore_files_request_initial(
+        
+        request = build_get_metadata_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             account_name=account_name,
             pool_name=pool_name,
             volume_name=volume_name,
-            snapshot_name=snapshot_name,
-            content_type=content_type,
-            json=_json,
-            template_url=self._restore_files_initial.metadata['url'],
+            subvolume_name=subvolume_name,
+            template_url=self._get_metadata_initial.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -631,26 +628,31 @@ class SnapshotsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if cls:
-            return cls(pipeline_response, None, {})
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('SubvolumeModel', pipeline_response)
 
-    _restore_files_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}/restoreFiles'}  # type: ignore
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    _get_metadata_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/subvolumes/{subvolumeName}/getMetadata'}  # type: ignore
 
 
     @distributed_trace_async
-    async def begin_restore_files(
+    async def begin_get_metadata(
         self,
         resource_group_name: str,
         account_name: str,
         pool_name: str,
         volume_name: str,
-        snapshot_name: str,
-        body: "_models.SnapshotRestoreFiles",
+        subvolume_name: str,
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Create a new Snapshot Restore Files request.
+    ) -> AsyncLROPoller["_models.SubvolumeModel"]:
+        """Describe a subvolume.
 
-        Restore the specified files from the specified snapshot to the active filesystem.
+        Get details of the specified subvolume.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -660,10 +662,8 @@ class SnapshotsOperations:
         :type pool_name: str
         :param volume_name: The name of the volume.
         :type volume_name: str
-        :param snapshot_name: The name of the snapshot.
-        :type snapshot_name: str
-        :param body: Restore payload supplied in the body of the operation.
-        :type body: ~azure.mgmt.netapp.models.SnapshotRestoreFiles
+        :param subvolume_name: The name of the subvolume.
+        :type subvolume_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -672,38 +672,39 @@ class SnapshotsOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns either SubvolumeModel or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.SubvolumeModel]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SubvolumeModel"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = await self._restore_files_initial(
+            raw_result = await self._get_metadata_initial(
                 resource_group_name=resource_group_name,
                 account_name=account_name,
                 pool_name=pool_name,
                 volume_name=volume_name,
-                snapshot_name=snapshot_name,
-                body=body,
-                content_type=content_type,
+                subvolume_name=subvolume_name,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
         kwargs.pop('error_map', None)
 
         def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = self._deserialize('SubvolumeModel', pipeline_response)
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -716,4 +717,4 @@ class SnapshotsOperations:
         else:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_restore_files.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}/restoreFiles'}  # type: ignore
+    begin_get_metadata.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/subvolumes/{subvolumeName}/getMetadata'}  # type: ignore

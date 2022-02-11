@@ -462,6 +462,7 @@ class VolumesOperations:
         account_name: str,
         pool_name: str,
         volume_name: str,
+        force_delete: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -477,6 +478,7 @@ class VolumesOperations:
             account_name=account_name,
             pool_name=pool_name,
             volume_name=volume_name,
+            force_delete=force_delete,
             template_url=self._delete_initial.metadata['url'],
         )
         request = _convert_request(request)
@@ -502,6 +504,7 @@ class VolumesOperations:
         account_name: str,
         pool_name: str,
         volume_name: str,
+        force_delete: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete a volume.
@@ -516,6 +519,9 @@ class VolumesOperations:
         :type pool_name: str
         :param volume_name: The name of the volume.
         :type volume_name: str
+        :param force_delete: An option to force delete the volume. Will cleanup resources connected to
+         the particular volume.
+        :type force_delete: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -541,6 +547,7 @@ class VolumesOperations:
                 account_name=account_name,
                 pool_name=pool_name,
                 volume_name=volume_name,
+                force_delete=force_delete,
                 cls=lambda x,y,z: x,
                 **kwargs
             )
