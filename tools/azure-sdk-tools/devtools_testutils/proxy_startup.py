@@ -88,22 +88,22 @@ def get_container_info():
 def check_availability():
     try:
         response = requests.get(PROXY_CHECK_URL, timeout=60)
-        status_code = response.status_code
+        return response.status_code
     # We get an SSLError if the container is started but the endpoint isn't available yet
     except requests.exceptions.SSLError as sslError:
         print(sslError)
-        pdb.set_trace()
+        return 404
     except Exception as ex:
         print(ex)
-        pdb.set_trace()
+        return 404
 
-def check_proxy_availability():
+def check_proxy_availability(retry = True):
         # Wait for the proxy server to become available
         start = time.time()
         now = time.time()
         status_code = 0
         while now - start < CONTAINER_STARTUP_TIMEOUT and status_code != 200:
-            check_availability()
+            status_code = check_availability()
             now = time.time()
 
 
@@ -140,13 +140,17 @@ def start_test_proxy():
     if not PROXY_MANUALLY_STARTED:
         if os.getenv("TF_BUILD"):
             _LOGGER.info("Starting the test proxy tool...")
-            if check_availability():
+            if check_availability() == 200:
                 _LOGGER.debug("Tool is responding, exiting...")
             else:
-                log = open('_proxy_logs.log', 'a')
-                proc = subprocess.Popen(shlex.split("test-proxy --storage-location=\"{}\"--urls {}".format(REPO_ROOT, PROXY_URL)), stdout=log, stderr=log)
-                proc.communicate()
-                os.environ[TOOL_ENV_VAR] = proc.pid
+                envname = os.getenv("TOX_ENV_NAME", "_default")
+                log = open('_proxy_log_{}.log'.format(envname), 'a')
+                proc = subprocess.Popen(
+                    shlex.split("test-proxy --storage-location=\"{}\" --urls {}".format(REPO_ROOT, PROXY_URL)),
+                    stdout=log,
+                    stderr=log
+                )
+                os.environ[TOOL_ENV_VAR] = str(proc.pid)
         else:
             _LOGGER.info("Starting the test proxy container...")
 
@@ -180,9 +184,9 @@ def stop_test_proxy():
             _LOGGER.info("Stopping the test proxy tool...")
 
             try:
-                os.kill(os.getenv(TOOL_ENV_VAR), signal.SIGTERM)
+                os.kill(int(os.getenv(TOOL_ENV_VAR)), signal.SIGTERM)
             except:
-                pdb.set_trace()
+                _LOGGER.debug("Unable to kill running test-proxy process.")
 
         else:
             _LOGGER.info("Stopping the test proxy container...")
