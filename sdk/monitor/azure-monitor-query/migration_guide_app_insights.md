@@ -7,12 +7,12 @@ Familiarity with the `azure-applicationinsights` v0.1.0 package is assumed. If y
 ## Table of contents
 
 - [Migration benefits](#migration-benefits)
-    - [Cross-service SDK improvements](#cross-service-sdk-improvements)
-    - [New features](#new-features)
+  - [Cross-service SDK improvements](#cross-service-sdk-improvements)
+  - [New features](#new-features)
 - [Important changes](#important-changes)
-    - [The client](#the-client)
-    - [Client constructors and authentication](#client-constructors-and-authentication)
-    - [Send a single query request](#sending-a-single-query-request)
+  - [The client](#the-client)
+  - [Client constructors and authentication](#client-constructors-and-authentication)
+  - [Send a single query request](#sending-a-single-query-request)
 - [Additional samples](#additional-samples)
 
 ## Migration benefits
@@ -32,7 +32,7 @@ The Azure Monitor Query client library also takes advantage of the cross-service
 
 ### New features
 
-There are a variety of new features in version 1.0 of the Monitor Query library. Some include:
+There are various new features in version 1.0 of the Monitor Query library. Some include:
 
 - The ability to execute a batch of queries with the `LogsQueryClient.query_batch()` API.
 - The ability to configure the retry policy used by the operations on the client.
