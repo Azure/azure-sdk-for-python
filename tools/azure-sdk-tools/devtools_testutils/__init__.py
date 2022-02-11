@@ -33,7 +33,7 @@ from .sanitizers import (
     set_bodiless_matcher,
 )
 from .helpers import ResponseCallback, RetryCounter
-from .fake_credential import FakeTokenCredential, ACCOUNT_FAKE_KEY
+from .fake_credentials import FakeTokenCredential
 
 __all__ = [
     "add_body_key_sanitizer",
@@ -71,5 +71,4 @@ __all__ = [
     "ResponseCallback",
     "RetryCounter",
     "FakeTokenCredential",
-    "ACCOUNT_FAKE_KEY"
 ]
