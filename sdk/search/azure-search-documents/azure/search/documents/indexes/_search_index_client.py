@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Union
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
