@@ -48,7 +48,7 @@ def _get_client_args(**kwargs):
         kwargs,
         _content_callback=_parse_app_service_expires_on,
         identity_config=identity_config,
-        base_headers={"secret": secret},
+        base_headers={"X-IDENTITY-HEADER": secret},
         request_factory=functools.partial(_get_request, url),
     )
 
@@ -56,7 +56,7 @@ def _get_client_args(**kwargs):
 def _get_request(url, scope, identity_config):
     # type: (str, str, dict) -> HttpRequest
     request = HttpRequest("GET", url)
-    request.format_parameters(dict({"api-version": "2017-09-01", "resource": scope}, **identity_config))
+    request.format_parameters(dict({"api-version": "2019-08-01", "resource": scope}, **identity_config))
     return request
 
 
