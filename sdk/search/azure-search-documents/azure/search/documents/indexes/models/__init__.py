@@ -185,7 +185,7 @@ from ._models import (
 
 
 __all__ = (
-    "SearchAlias"
+    "SearchAlias",
     "AzureMachineLearningSkill",
     "AnalyzeTextOptions",
     "AnalyzeResult",
