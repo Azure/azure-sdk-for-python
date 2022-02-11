@@ -1539,3 +1539,45 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 async for resp in response:
                     results.append(resp)
             assert e.value.message == "(InternalServerError) 1 out of 1 job tasks failed. Failed job tasks : v3.2-preview.2/custom/entities/general."
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.1"})
+    @recorded_by_proxy_async
+    async def test_analyze_works_with_v3_1(self, client):
+        docs = [{"id": "56", "text": ":)"},
+                {"id": "0", "text": ":("},
+                {"id": "19", "text": ":P"},
+                {"id": "1", "text": ":D"}]
+
+        async with client:
+            response = await (await client.begin_analyze_actions(
+                docs,
+                actions=[
+                    RecognizeEntitiesAction(),
+                    ExtractKeyPhrasesAction(),
+                    RecognizePiiEntitiesAction(),
+                    RecognizeLinkedEntitiesAction(),
+                    AnalyzeSentimentAction()
+                ],
+                polling_interval=self._interval()
+            )).result()
+
+            results = []
+            async for p in response:
+                results.append(p)
+            assert len(results) == len(docs)
+
+            document_order = ["56", "0", "19", "1"]
+            action_order = [
+                _AnalyzeActionsType.RECOGNIZE_ENTITIES,
+                _AnalyzeActionsType.EXTRACT_KEY_PHRASES,
+                _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES,
+                _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES,
+                _AnalyzeActionsType.ANALYZE_SENTIMENT,
+            ]
+            for doc_idx, document_results in enumerate(results):
+                assert len(document_results) == 5
+                for action_idx, document_result in enumerate(document_results):
+                    assert document_result.id == document_order[doc_idx]
+                    assert not document_result.is_error
+                    assert self.document_result_to_action_type(document_result) == action_order[action_idx]
