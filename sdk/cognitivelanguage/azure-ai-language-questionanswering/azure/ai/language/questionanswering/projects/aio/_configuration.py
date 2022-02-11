@@ -12,19 +12,22 @@ from azure.core.configuration import Configuration
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 
-VERSION = "unknown"
+from .._version import VERSION
 
-class QuestionAnsweringProjectsClientConfiguration(Configuration):
+
+class QuestionAnsweringProjectsClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for QuestionAnsweringProjectsClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: Supported Cognitive Services endpoint (e.g., https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
+    :param endpoint: Supported Cognitive Services endpoint (e.g.,
+     https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
