@@ -13,7 +13,6 @@ from azure.core.paging import ItemPaged
 
 from .._api_versions import DEFAULT_VERSION
 from ._generated import SearchClient as _SearchServiceClient
-from ._generated.models import SearchAlias
 from ._utils import (
     get_access_conditions,
     normalize_endpoint,
@@ -22,7 +21,7 @@ from .._headers_mixin import HeadersMixin
 from .._utils import get_authentication_policy
 from .._version import SDK_MONIKER
 from .._search_client import SearchClient
-from .models import SearchIndex, SynonymMap
+from .models import SearchIndex, SynonymMap, SearchAlias
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
