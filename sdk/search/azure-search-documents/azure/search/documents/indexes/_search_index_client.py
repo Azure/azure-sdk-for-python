@@ -609,7 +609,7 @@ class SearchIndexClient(HeadersMixin):
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: The index created or updated
-        :rtype: :class:`~azure.search.documents.indexes.models.SearchIndex`
+        :rtype: :class:`~azure.search.documents.indexes.models.SearchAlias`
         :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`, \
         :class:`~azure.core.exceptions.ResourceModifiedError`, \
         :class:`~azure.core.exceptions.ResourceNotModifiedError`, \
