@@ -30,11 +30,12 @@ CONTAINER_NAME = "ambitious_azsdk_test_proxy"
 LINUX_IMAGE_SOURCE_PREFIX = "azsdkengsys.azurecr.io/engsys/testproxy-lin"
 WINDOWS_IMAGE_SOURCE_PREFIX = "azsdkengsys.azurecr.io/engsys/testproxy-win"
 CONTAINER_STARTUP_TIMEOUT = 6000
-PROXY_MANUALLY_STARTED = os.getenv('PROXY_MANUAL_START', False)
+PROXY_MANUALLY_STARTED = os.getenv("PROXY_MANUAL_START", False)
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "..", ".."))
 PROXY_CHECK_URL = PROXY_URL.rstrip("/") + "/Info/Available"
 TOOL_ENV_VAR = "PROXY_PID"
+
 
 def get_image_tag():
     # type: () -> str
@@ -86,25 +87,25 @@ def get_container_info():
 
 
 def check_availability():
+    # type: () -> None
+    """Attempts request to /Info/Available. If a test-proxy instance is responding, we should get a response."""
     try:
         response = requests.get(PROXY_CHECK_URL, timeout=60)
         return response.status_code
     # We get an SSLError if the container is started but the endpoint isn't available yet
     except requests.exceptions.SSLError as sslError:
-        print(sslError)
-        return 404
-    except Exception as ex:
-        print(ex)
-        return 404
+        return response.status_code
 
-def check_proxy_availability(retry = True):
-        # Wait for the proxy server to become available
-        start = time.time()
+
+def check_proxy_availability():
+    # type: () -> None
+    """Waits for the availability of the test-proxy."""
+    start = time.time()
+    now = time.time()
+    status_code = 0
+    while now - start < CONTAINER_STARTUP_TIMEOUT and status_code != 200:
+        status_code = check_availability()
         now = time.time()
-        status_code = 0
-        while now - start < CONTAINER_STARTUP_TIMEOUT and status_code != 200:
-            status_code = check_availability()
-            now = time.time()
 
 
 def create_container():
@@ -135,8 +136,10 @@ def create_container():
 
 def start_test_proxy():
     # type: () -> None
-    """Starts the test proxy and returns when the proxy server is ready to receive requests"""
-    
+    """Starts the test proxy and returns when the proxy server is ready to receive requests. In regular use
+    cases, this will auto-start the test-proxy docker container. In CI, or when environment variable TF_BUILD is set, this
+    function will start the test-proxy .NET tool."""
+
     if not PROXY_MANUALLY_STARTED:
         if os.getenv("TF_BUILD"):
             _LOGGER.info("Starting the test proxy tool...")
@@ -144,11 +147,11 @@ def start_test_proxy():
                 _LOGGER.debug("Tool is responding, exiting...")
             else:
                 envname = os.getenv("TOX_ENV_NAME", "_default")
-                log = open('_proxy_log_{}.log'.format(envname), 'a')
+                log = open("_proxy_log_{}.log".format(envname), "a")
                 proc = subprocess.Popen(
-                    shlex.split("test-proxy --storage-location=\"{}\" --urls {}".format(REPO_ROOT, PROXY_URL)),
+                    shlex.split('test-proxy --storage-location="{}" --urls {}'.format(REPO_ROOT, PROXY_URL)),
                     stdout=log,
-                    stderr=log
+                    stderr=log,
                 )
                 os.environ[TOOL_ENV_VAR] = str(proc.pid)
         else:
