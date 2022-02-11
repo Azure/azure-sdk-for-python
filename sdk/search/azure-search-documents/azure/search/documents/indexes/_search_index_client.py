@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from turtle import st
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union, Any
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
@@ -481,7 +481,7 @@ class SearchIndexClient(HeadersMixin):
         return result.as_dict()
 
     @distributed_trace
-    def list_aliases(self, **kwargs:Any) -> ItemPaged[SearchAlias]:
+    def list_aliases(self, **kwargs: Any) -> ItemPaged[SearchAlias]:
         # type: (**Any) -> ItemPaged[SearchAlias]
         """List the aliases in an Azure Search service.
 
@@ -503,7 +503,7 @@ class SearchIndexClient(HeadersMixin):
         )
 
     @distributed_trace
-    def list_alias_names(self, **kwargs:Any) -> ItemPaged[str]:
+    def list_alias_names(self, **kwargs: Any) -> ItemPaged[str]:
         # type: (**Any) -> ItemPaged[str]
         """List the alias names in an Azure Search service.
 
@@ -544,7 +544,7 @@ class SearchIndexClient(HeadersMixin):
 
     @distributed_trace
     def delete_alias(self, alias: Union[str, SearchAlias], **kwargs: Any) -> None:
-        # type: (Union[str, SearchIndex], **Any) -> None
+        # type: (Union[str, SearchAlias], **Any) -> None
         """Deletes a search alias and its associated mapping to an index. This operation is permanent,
         with no recovery option. The mapped index is untouched by this operation
 
