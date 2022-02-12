@@ -1239,11 +1239,11 @@ class DetectLanguageInput(LanguageInput):
     :vartype country_hint: str
     """
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.id = kwargs.get("id", None)
-        self.text = kwargs.get("text", None)
-        self.country_hint = kwargs.get("country_hint", None)
+    def __init__(self, *, id: str, text: str, country_hint: Optional[str] = None):
+        super().__init__(id=id, text=text, country_hint=country_hint)
+        self.id = id
+        self.text = text
+        self.country_hint = country_hint
 
     def __repr__(self):
         return "DetectLanguageInput(id={}, text={}, country_hint={})".format(
@@ -1390,11 +1390,11 @@ class TextDocumentInput(DictMixin, MultiLanguageInput):
     :vartype language: str
     """
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.id = kwargs.get("id", None)
-        self.text = kwargs.get("text", None)
-        self.language = kwargs.get("language", None)
+    def __init__(self, *, id: str, text: str, language: Optional[str] = None):
+        super().__init__(id=id, text=text, language=language)
+        self.id = id
+        self.text = text
+        self.language = language
 
     def __repr__(self):
         return "TextDocumentInput(id={}, text={}, language={})".format(
@@ -1774,7 +1774,7 @@ class RecognizeEntitiesAction(DictMixin):
     :keyword str model_version: The model version to use for the analysis.
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        you can also pass in `"Utf16CodeUnit` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -1787,7 +1787,7 @@ class RecognizeEntitiesAction(DictMixin):
     :ivar str model_version: The model version to use for the analysis.
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        you can also pass in `"Utf16CodeUnit` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -1848,7 +1848,7 @@ class AnalyzeSentimentAction(DictMixin):
         will have property `mined_opinions` containing the result of this analysis.
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        you can also pass in `"Utf16CodeUnit` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -1866,7 +1866,7 @@ class AnalyzeSentimentAction(DictMixin):
         will have property `mined_opinions` containing the result of this analysis.
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        you can also pass in `"Utf16CodeUnit` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -1936,7 +1936,7 @@ class RecognizePiiEntitiesAction(DictMixin):
     :paramtype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategory]
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        you can also pass in `"Utf16CodeUnit` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :keyword bool disable_service_logs: Defaults to true, meaning that Text Analytics will not log your
         input text on the service side for troubleshooting. If set to False, Text Analytics logs your
@@ -1955,7 +1955,7 @@ class RecognizePiiEntitiesAction(DictMixin):
     :vartype categories_filter: list[~azure.ai.textanalytics.PiiEntityCategory]
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        you can also pass in `"Utf16CodeUnit` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :ivar bool disable_service_logs: Defaults to true, meaning that Text Analytics will not log your
         input text on the service side for troubleshooting. If set to False, Text Analytics logs your
@@ -2079,7 +2079,7 @@ class RecognizeLinkedEntitiesAction(DictMixin):
     :keyword str model_version: The model version to use for the analysis.
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        you can also pass in `"Utf16CodeUnit` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -2092,7 +2092,7 @@ class RecognizeLinkedEntitiesAction(DictMixin):
     :ivar str model_version: The model version to use for the analysis.
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        you can also pass in `"Utf16CodeUnit` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -2146,7 +2146,7 @@ class ExtractSummaryAction(DictMixin):
     :keyword str model_version: The model version to use for the analysis.
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        you can also pass in `"Utf16CodeUnit` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -2161,7 +2161,7 @@ class ExtractSummaryAction(DictMixin):
     :ivar str model_version: The model version to use for the analysis.
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        you can also pass in `"Utf16CodeUnit` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -2318,7 +2318,7 @@ class RecognizeCustomEntitiesAction(DictMixin):
     :param str deployment_name: This field indicates the deployment name for the model.
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        you can also pass in `"Utf16CodeUnit` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -2332,7 +2332,7 @@ class RecognizeCustomEntitiesAction(DictMixin):
     :ivar str deployment_name: This field indicates the deployment name for the model.
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+        you can also pass in `"Utf16CodeUnit` or TextElement_v8`. For additional information
         see https://aka.ms/text-analytics-offsets
     :ivar bool disable_service_logs: If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, Text Analytics logs your

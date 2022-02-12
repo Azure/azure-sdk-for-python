@@ -243,7 +243,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             level statistics in the `statistics` field of the document-level response.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-            you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+            you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
             see https://aka.ms/text-analytics-offsets
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
             logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -344,7 +344,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :paramtype categories_filter: list[str] or list[~azure.ai.textanalytics.PiiEntityCategory]
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-            you can also pass in `Utf16CodePoint` or `TextElement_v8`. For additional information
+            you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
             see https://aka.ms/text-analytics-offsets
         :keyword bool disable_service_logs: Defaults to true, meaning that Text Analytics will not log your
             input text on the service side for troubleshooting. If set to False, Text Analytics logs your
@@ -449,7 +449,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             level statistics in the `statistics` field of the document-level response.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-            you can also pass in `Utf16CodePoint` or `TextElement_v8`. For additional information
+            you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
             see https://aka.ms/text-analytics-offsets
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
             logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -627,7 +627,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             level statistics in the `statistics` field of the document-level response.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-            you can also pass in `Utf16CodePoint` or `TextElement_v8`. For additional information
+            you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
             see https://aka.ms/text-analytics-offsets
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
             logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -739,7 +739,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
-            Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElement_v8'.
+            Can be one of 'UnicodeCodePoint' (default), 'Utf16CodeUnit', or 'TextElement_v8'.
             For additional information see https://aka.ms/text-analytics-offsets
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
