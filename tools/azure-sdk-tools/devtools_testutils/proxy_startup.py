@@ -95,6 +95,9 @@ def check_availability():
     # We get an SSLError if the container is started but the endpoint isn't available yet
     except requests.exceptions.SSLError as sslError:
         return response.status_code
+    except Exception as e:
+        _LOGGER.error(e)
+        return response.status_code
 
 
 def check_proxy_availability():
