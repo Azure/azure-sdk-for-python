@@ -40,7 +40,8 @@ steps:
 
   - ${{if eq(parameters.TestProxy, true) }}:
     - template: /eng/common/testproxy/test-proxy-tool.yml
-      runProxy: false
+      parameters:
+        runProxy: false
 
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - template: ../steps/auth-dev-feed.yml
