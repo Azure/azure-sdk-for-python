@@ -16,6 +16,7 @@ testing infrastructure, and demonstrates how to write and run tests for a servic
   - [Deliver environment variables to tests](#deliver-environment-variables-to-tests)
   - [Configure live or playback testing mode](#configure-live-or-playback-testing-mode)
 - [Deprecated testing instructions](#deprecated-testing-instructions)
+- [Functional vs. unit tests](#functional-vs-unit-tests)
 
 ## Set up your development environment
 
@@ -164,25 +165,52 @@ resource management commands, documented in [/eng/common/TestResources][test_res
 If you haven't yet set up a `test-resources.json` file for test resource deployment and/or want to use test resources of
 your own, you can just configure credentials to target these resources instead.
 
+To create a `test-resources.json` file:
+1. Create an Azure Resource Management Template for your specific service and the configuration you need. This can be
+done in the [Portal][azure_portal] by creating a resource, and at the very last step (Review + Create), clicking
+"Download a template for automation".
+2. Save this template to a `test-resources.json` file under the directory that contains your library
+(`sdk/<my-library>/test-resources.json`). You can refer to [Key Vault's][kv_test_resources] as an example.
+3. Add templates for any additional resources in a grouped `"resources"` section of `test-resources.json`
+([example][kv_test_resources_resources]).
+4. Add an `"outputs"` section to `test-resources.json` that describes any environment variables necessary for accessing
+these resources ([example][kv_test_resources_outputs]).
+
 ### Configure credentials
 
 Python SDK tests use a `.env` file to store test credentials. This `.env` file should be placed at either the root of
-`azure-sdk-for-python` repository in your local file system, or in the directory containing the repo. The
-`python-dotenv` package is used to read this file -- documentation of the package and how to format a `.env` file can be
-found in the [package's README][python-dotenv_readme].
+`azure-sdk-for-python` in your local file system, or in the directory containing the repo. The `python-dotenv` package
+is used to read this file -- documentation of the package and how to format a `.env` file can be found in the
+[package's README][python-dotenv_readme].
 
 If using a `New-TestResources` script from [/eng/common/TestResources][test_resources], the script should output any
 environment variables necessary to run live tests for the service. After storing these variables in your `.env` file
 -- with appropriate formatting -- your credentials and test configuration variables will be set in your environment when
 running tests.
 
+If your service doesn't have a `test-resources.json` file for test deployment, you'll need to set environment variables
+for `AZURE_SUBSCRIPTION_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, and `AZURE_CLIENT_SECRET` at minimum.
+
+1. Set the `AZURE_SUBSCRIPTION_ID` variable to your organization's subscription ID. You can find it in the "Overview"
+section of the "Subscriptions" blade in the [Azure Portal][azure_portal].
+2. Define the `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, and `AZURE_CLIENT_SECRET` of a test service principal. If you do not
+have a service principal, use the Azure CLI's [az ad sp create-for-rbac][azure_cli_service_principal] command (ideally,
+using your alias as the service principal's name prefix):
+```
+az login
+az ad sp create-for-rbac --name "{your alias}-tests" --role Contributor
+```
+
+The command will output a set of credentials. Set `AZURE_TENANT_ID` to the value of `"tenant"`, `AZURE_CLIENT_ID` to the
+value of `"appId"`, and `AZURE_CLIENT_SECRET` to the value of `"password"`.
+
 ### Deliver environment variables to tests
 
 To target the correct resources in tests, use the [EnvironmentVariableLoader][env_var_loader] from `devtools_testutils`
 to fetch environment variables and provide them to tests. The EnvironmentVariableLoader is meant to decorate test
 methods and inject environment variables particular to a given service. Below is an example of how to create a custom
-decorator, using the EnvironmentVariableLoader, that provides the values of environment variables `AZURE_TEST_ENDPOINT`
-and `AZURE_TEST_SECRET` to tests for a service called "testservice":
+decorator, using the EnvironmentVariableLoader, that provides the values of environment variables `TESTSERVICE_ENDPOINT`
+and `TESTSERVICE_SECRET` to tests for a service called "testservice":
 
 ```python
 import functools
@@ -191,8 +219,8 @@ from devtools_testutils import EnvironmentVariableLoader
 ServicePreparer = functools.partial(
     EnvironmentVariableLoader,
     "testservice",
-    azure_test_endpoint="https://fake_endpoint.testservice.windows.net/",
-    azure_test_secret="fakesecret"
+    testservice_endpoint="https://fake_endpoint.testservice.windows.net",
+    testservice_secret="fakesecret"
 )
 ```
 
@@ -205,9 +233,14 @@ The parameters for the `functools.partial` method are:
   * These values should have the same formatting as the real values because they are used in playback mode and will need
   to pass any client side validation. The fake value should also be a unique value to the other key-value pairs.
 
-A method that's decorated by the ServicePreparer from the example would be called with `azure_test_endpoint` and
-`azure_test_secret` as keyword arguments, with the real values from your `.env` file as the variable values in live
-mode, and the fake values specified in the decorator in playback mode.
+A method that's decorated by the ServicePreparer from the example would be called with `testservice_endpoint` and
+`testservice_secret` as keyword arguments. These arguments use the real values from your `.env` file as the variable
+values in live mode, and the fake values specified in the decorator in playback mode.
+
+> **Note:** The EnvironmentVariableLoader expects environment variables for service tests to be prefixed with the
+> service name (e.g. `KEYVAULT_` for Key Vault tests). You'll need to set environment variables for
+> `{SERVICE}_TENANT_ID`, `{SERVICE}_CLIENT_ID`, and `{SERVICE}_CLIENT_SECRET` for a service principal when using this
+> class.
 
 ### Configure live or playback testing mode
 
@@ -233,7 +266,7 @@ class, which was a precursor to today's `AzureRecordedTestCase`.
 
 Code in the [`azure-sdk-tools/devtools_testutils`](https://github.com/Azure/azure-sdk-for-python/tree/main/tools/azure-sdk-tools/devtools_testutils) directory provides concrete implementations of the features provided in `scenario_tests` that are oriented around use in SDK testing and that you can use directly in your unit tests.
 
-## Define credentials
+### Define credentials
 
 When you run tests in playback mode, they use a fake credentials file, located at [`tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py`][mgmt_settings_fake] to simulate authenticating with Azure.
 
@@ -246,7 +279,7 @@ In live mode, the credentials need to be real so that the tests are able to conn
 live-mode: true
 ```
 
-## Create Live Test Resources
+### Create Live Test Resources
 
 The Azure Python SDK library has two ways of providing live resources to our tests:
 * Using an ArmTemplate and the EnvironmentVariableLoader (we will demonstrate this one)
@@ -279,7 +312,7 @@ The parameters for the `functools.partial` method are:
 * The library folder that holds your code (ie. `sdk/schemaregistry`). This value is used to search your environment variables for the appropriate values.
 * The remaining arguments are key-value kwargs, with the keys being the environment variables needed for the tests, and the value being a fake value for replacing the actual value in the recordings. The fake value in this implementation will replace the real value in the recording to make sure the secret keys are not committed to the recordings. These values should closely resemble the values because they are used in playback mode and will need to pass any client side validation. The fake value should also be a unique value to the other key-value pairs.
 
-## Write your tests
+### Write your tests
 
 In the `tests` directory create a file with the naming pattern `test_<what_you_are_testing>.py`. The base of each testing file will be roughly the same:
 
@@ -328,7 +361,7 @@ There's a lot going on in the example so we'll take this piece by piece:
 
 If you need logging functionality for your testing, pytest also offers [logging](https://docs.pytest.org/en/stable/logging.html) capabilities either inline through the `caplog` fixture or with command line flags.
 
-## An example test
+### An example test
 An example test for schemaregistry looks like:
 ```python
 class SchemaRegistryTestCase(AzureTestCase):
@@ -355,7 +388,7 @@ The `AzureTestCase` class has the ability to define a client by passing in the c
 
 The test infrastructure heavily leverages the `assert` keyword, which tests if the condition following it is true, and if it is not the program will raise an `AssertionError`. When writing tests, any uncaught exception results in a failure, from an assert or from the code itself (ie. `TypeError`, `ValueError`, `HttpResponseError`, etc.). The assert statements are testing that all the exected properties of the returned object are not `None`, and the last two assert statements verify that the tested properties are a given value. The last two lines of the test use a [context manager](https://docs.python.org/3/library/contextlib.html) used from the `pytest` library that tests whether the following block of code will raise a certain exception. The `client.get_schema('a' * 32)` is expected to fail because it does not exist, and we expect this test to raise an error that is an instance of `HttpResponseError`.
 
-## Run and record the test
+### Run and record the test
 
 From your terminal run the `pytest` command to run all the tests that you have written so far.
 
@@ -373,7 +406,7 @@ The `yaml` files created from running tests in live mode store the request and r
 
 Tests that use the Shared Access Signature (SAS) to authenticate a client should use the [`AzureTestCase.generate_sas`](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/azure_testcase.py#L357-L370) method to generate the SAS and purge the value from the recordings. An example of using this method can be found [here](https://github.com/Azure/azure-sdk-for-python/blob/78650ba08523c14227ce8139cba5f4d1e6ed7956/sdk/tables/azure-data-tables/tests/test_table_entity.py#L1628-L1636). The method takes any number of positional arguments, with the first being the method that creates the SAS, and any number of keyword arguments (**kwargs). The method will be purged appropriately and allow for these tests to be run in playback mode.
 
-## Functional vs. Unit Tests
+## Functional vs. unit tests
 
 The test written above is a functional test, it generates HTTP traffic and sends data to the service. Most of our clients have some client-side validation for account names, formatting, or properties that do not generate HTTP traffic. For unit tests, the best practice is to have a separate test class from the `AzureTestCase` class which tests client side validation methods. For example, the `azure-data-tables` library has client-side validation for the table name and properties of the entity, below is an example of how these could be tested:
 
@@ -428,7 +461,7 @@ class TestTablesUnitTest(object):
 ```
 
 
-## More Test Examples
+## More test examples
 
 This section will demonstrate how to write tests with the `devtools_testutils` package with a few samples to showcase the features of the test framework.
 
@@ -437,12 +470,18 @@ For more information, refer to the [advanced tests notes][advanced_tests_notes] 
 
 <!-- Links -->
 [advanced_tests_notes]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests-advanced.md
+[azure_cli_service_principal]: https://docs.microsoft.com/cli/azure/ad/sp?view=azure-cli-latest#az-ad-sp-create-for-rbac
 [azure_devtools]: https://pypi.org/project/azure-devtools/
+[azure_portal]: https://portal.azure.com/
 
 [docker_install]: https://docs.docker.com/get-docker/
 
 [engsys_wiki]: https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/48/Create-a-new-Live-Test-pipeline?anchor=test-resources.json
 [env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
+
+[kv_test_resources]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/test-resources.json
+[kv_test_resources_outputs]: https://github.com/Azure/azure-sdk-for-python/blob/fbdb860630bcc13c1e355828231161849a9bd5a4/sdk/keyvault/test-resources.json#L255
+[kv_test_resources_resources]: https://github.com/Azure/azure-sdk-for-python/blob/fbdb860630bcc13c1e355828231161849a9bd5a4/sdk/keyvault/test-resources.json#L116
 
 [mgmt_settings_fake]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py
 
