@@ -22,6 +22,9 @@ if TYPE_CHECKING:
             :keyword str claims: Additional claims required in the token, such as those returned in a resource
                 provider's claims challenge following an authorization failure.
             :keyword str tenant_id: Optional tenant to include in the token request.
+
+            :rtype: AccessToken
+            :return: An AccessToken instance containing the token string and its expiration time in Unix time.
             """
 
         async def close(self) -> None:
