@@ -531,7 +531,7 @@ Clients from the Azure SDK often require a `TokenCredential` instance in their c
 meant to provide OAuth tokens to authenticate service requests and can be implemented in a number of ways.
 
 The `TokenCredential` protocol specifies a class that has a single method -- `get_token` -- which returns an
-`AccessToken`: a `NamedTuple` containing a `token` string and an `expires_on` integer.
+`AccessToken`: a `NamedTuple` containing a `token` string and an `expires_on` integer (in Unix time).
 
 ```python
 AccessToken = NamedTuple("AccessToken", [("token", str), ("expires_on", int)])
@@ -556,6 +556,10 @@ A `TokenCredential` implementation needs to implement the `get_token` method to 
 implement additional methods. The [`azure-identity`][identity_github] package has a number of `TokenCredential`
 implementations that can be used for reference. For example, the [`InteractiveCredential`][interactive_cred] is used as
 a base class for multiple credentials and uses `claims` and `tenant_id` in token requests.
+
+There is also an async protocol -- the `AsyncTokenCredential` protocol -- that specifies a class with an aysnc
+`get_token` method with the same arguments. An `AsyncTokenCredential` implementation additionally needs to be a context
+manager, with `__aenter__`, `__aexit__`, and `close` methods.
 
 #### Known uses of `get_token` keyword-only parameters
 
