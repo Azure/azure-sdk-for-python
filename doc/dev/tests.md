@@ -8,13 +8,14 @@ testing infrastructure, and demonstrates how to write and run tests for a servic
 - [Set up your development environment](#set-up-your-development-environment)
 - [Integrate with pytest](#integrate-with-the-pytest-test-framework)
 - [Use Tox](#tox)
-- [The `devtools_testutils` package](#devtools_testutils-package)
+- [The `devtools_testutils` package](#the-devtoolstestutils-package)
 - [Write or run tests](#write-or-run-tests)
   - [Set up the test proxy](#perform-one-time-test-proxy-setup)
   - [Set up test resources](#set-up-test-resources)
   - [Configure credentials](#configure-credentials)
   - [Deliver environment variables to tests](#deliver-environment-variables-to-tests)
   - [Configure live or playback testing mode](#configure-live-or-playback-testing-mode)
+  - [Write your tests](#write-your-tests)
 - [Deprecated testing instructions](#deprecated-testing-instructions)
 - [Functional vs. unit tests](#functional-vs-unit-tests)
 
@@ -132,7 +133,7 @@ A quick description of the five commands above:
 * samples: runs all of the samples in the `samples` directory and verifies they are working correctly
 * apistub: runs the [apistubgenerator](https://github.com/Azure/azure-sdk-tools/tree/main/packages/python-packages/api-stub-generator) tool on your code
 
-## `devtools_testutils` Package
+## The `devtools_testutils` package
 
 The Azure SDK team has created some in house tools to make testing easier. These additional tools are located in the
 `devtools_testutils` package that was installed with your `dev_requirements.txt`. In this package is the
@@ -252,6 +253,67 @@ To run live tests, set the environment variable `AZURE_TEST_RUN_LIVE` to "true" 
 Live test runs will produce recordings unless the environment variable `AZURE_SKIP_LIVE_RECORDING` is set to "true" as
 well. To run tests in playback, either set `AZURE_TEST_RUN_LIVE` to "false" or leave it unset.
 
+### Write your tests
+
+In the `tests` directory at the root of your package (`sdk/{library}/{package}/tests`), create a file with the naming
+pattern `test_<what_you_are_testing>.py`. The base of each testing file will be roughly the same (in this example we use
+Schema Registry for the sake of demonstration):
+
+```python
+import functools
+
+from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
+
+from azure.schemaregistry import SchemaRegistryClient
+
+SchemaRegistryPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    'schemaregistry',
+    schemaregistry_endpoint="https://fake_resource.servicebus.windows.net",
+    schemaregistry_group="fakegroup",
+)
+
+# The test class name needs to start with "Test" to get collected by pytest
+class TestSchemaRegistry(AzureRecordedTestCase):
+
+    # Start with any helper functions you might need, for example a client creation method:
+    def create_schemareg_client(self, endpoint):
+        credential = self.get_credential(SchemaRegistryClient)
+        client = self.create_client_from_credential(SchemaRegistryClient, credential=credential, endpoint=endpoint)
+        return client
+
+    ...
+
+    # Write your test cases, each starting with "test_":
+    @SchemaRegistryPreparer()
+    @recorded_by_proxy
+    def test_client_creation(self, schemaregistry_endpoint):
+        client = self.create_schemareg_client(schemaregistry_endpoint)
+        assert client is not None
+
+```
+
+There's a lot going on in the example, so we'll take this piece by piece:
+
+* Import everything you will need in your tests, and include the line `from devtools_testutils import
+AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy`.
+  * AzureRecordedTestCase was touched on in the [`devtools_testutils` package](#the-devtoolstestutils-package) section,
+  and EnvironmentVariableLoader was touched on in the
+  [Deliver environment variables to tests](#deliver-environment-variables-to-tests) section.
+  * `recorded_by_proxy` is a decorator that must be used directly on top of recorded test methods in order to
+  produce recordings. Unit tests, which aren't recorded, don't need to use this decorator. Unit tests are discussed in
+  [Functional vs. unit tests](#functional-vs-unit-tests).
+* At the top of your test class you should include any helper methods you will need. Most libraries will have a client
+creation method to eliminate repetitive code.
+* Following your helper methods will be your actual tests. All test method names must start with "test_". The preparer
+defined at the top of the file should decorate your test in the fashion: `@MyPreparer()`.
+  * The signature of your test method will always contain `self`, and following `self` will be all the keys that you
+  need from your preparer. A test does not need to accept every key from the preparer; the test framework will only pass
+  in the parameters specifically requested in the test method signature.
+
+If you need logging functionality for your testing, pytest also offers [logging][pytest_logging] capabilities either
+inline through the `caplog` fixture or with command line flags.
+
 ## Deprecated testing instructions
 
 Older SDK tests are based on the `scenario_tests` subpackage located in [`azure-sdk-for-python/tools/azure-devtools/src/azure_devtools`](https://pypi.org/project/azure-devtools/). `scenario_tests` is a general, mostly abstracted framework which provides several useful features for writing SDK tests, ie:
@@ -266,7 +328,7 @@ class, which was a precursor to today's `AzureRecordedTestCase`.
 
 Code in the [`azure-sdk-tools/devtools_testutils`](https://github.com/Azure/azure-sdk-for-python/tree/main/tools/azure-sdk-tools/devtools_testutils) directory provides concrete implementations of the features provided in `scenario_tests` that are oriented around use in SDK testing and that you can use directly in your unit tests.
 
-### Define credentials
+### Define credentials (deprecated)
 
 When you run tests in playback mode, they use a fake credentials file, located at [`tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py`][mgmt_settings_fake] to simulate authenticating with Azure.
 
@@ -279,7 +341,7 @@ In live mode, the credentials need to be real so that the tests are able to conn
 live-mode: true
 ```
 
-### Create Live Test Resources
+### Create Live Test Resources (deprecated)
 
 The Azure Python SDK library has two ways of providing live resources to our tests:
 * Using an ArmTemplate and the EnvironmentVariableLoader (we will demonstrate this one)
@@ -312,7 +374,7 @@ The parameters for the `functools.partial` method are:
 * The library folder that holds your code (ie. `sdk/schemaregistry`). This value is used to search your environment variables for the appropriate values.
 * The remaining arguments are key-value kwargs, with the keys being the environment variables needed for the tests, and the value being a fake value for replacing the actual value in the recordings. The fake value in this implementation will replace the real value in the recording to make sure the secret keys are not committed to the recordings. These values should closely resemble the values because they are used in playback mode and will need to pass any client side validation. The fake value should also be a unique value to the other key-value pairs.
 
-### Write your tests
+### Write your tests (deprecated)
 
 In the `tests` directory create a file with the naming pattern `test_<what_you_are_testing>.py`. The base of each testing file will be roughly the same:
 
@@ -361,7 +423,7 @@ There's a lot going on in the example so we'll take this piece by piece:
 
 If you need logging functionality for your testing, pytest also offers [logging](https://docs.pytest.org/en/stable/logging.html) capabilities either inline through the `caplog` fixture or with command line flags.
 
-### An example test
+### An example test (deprecated)
 An example test for schemaregistry looks like:
 ```python
 class SchemaRegistryTestCase(AzureTestCase):
@@ -388,7 +450,7 @@ The `AzureTestCase` class has the ability to define a client by passing in the c
 
 The test infrastructure heavily leverages the `assert` keyword, which tests if the condition following it is true, and if it is not the program will raise an `AssertionError`. When writing tests, any uncaught exception results in a failure, from an assert or from the code itself (ie. `TypeError`, `ValueError`, `HttpResponseError`, etc.). The assert statements are testing that all the exected properties of the returned object are not `None`, and the last two assert statements verify that the tested properties are a given value. The last two lines of the test use a [context manager](https://docs.python.org/3/library/contextlib.html) used from the `pytest` library that tests whether the following block of code will raise a certain exception. The `client.get_schema('a' * 32)` is expected to fail because it does not exist, and we expect this test to raise an error that is an instance of `HttpResponseError`.
 
-### Run and record the test
+### Run and record the test (deprecated)
 
 From your terminal run the `pytest` command to run all the tests that you have written so far.
 
@@ -398,11 +460,11 @@ From your terminal run the `pytest` command to run all the tests that you have w
 
 Your update should run smooth and have green dots representing passing tests. Now if you look at the contents of your `tests` directory there should be a new directory called `recording` with four `.yaml` files. Each `yaml` file is a recording for a single test. To run a test in playback mode change the `testsettings_local.cfg` to `live-mode: false` and rerun the tests with the same command. The test infrastructure will use the automatically created `.yaml` recordings to mock the HTTP traffic and run the tests.
 
-### Purging Secrets
+### Purging Secrets (deprecated)
 
 The `yaml` files created from running tests in live mode store the request and response interactions between the library and the service and this can include authorization, account names, shared access signatures, and other secrets. The recordings are included in our public GitHub repository, making it important for us to remove any secrets from these recordings before committing them to the repository. There are two easy ways to remove secrets. The first is the `EnvironmentVariableLoader` implementation, discussed above. This method will automatically purge the keys with the provided fake values. The second way is to use the `self.scrubber.register_name_pair(key, fake_key)` method (This method is a function of the base `AzureTestCase` class), which is used when a secret is dynamically created during a test. For example, [Tables](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/tests/_shared/cosmos_testcase.py#L86-L89) uses this method to replace storage account names with standard names.
 
-#### Special Case: Shared Access Signature
+#### Special Case: Shared Access Signature (deprecated)
 
 Tests that use the Shared Access Signature (SAS) to authenticate a client should use the [`AzureTestCase.generate_sas`](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/azure_testcase.py#L357-L370) method to generate the SAS and purge the value from the recordings. An example of using this method can be found [here](https://github.com/Azure/azure-sdk-for-python/blob/78650ba08523c14227ce8139cba5f4d1e6ed7956/sdk/tables/azure-data-tables/tests/test_table_entity.py#L1628-L1636). The method takes any number of positional arguments, with the first being the method that creates the SAS, and any number of keyword arguments (**kwargs). The method will be purged appropriately and allow for these tests to be run in playback mode.
 
@@ -489,6 +551,7 @@ For more information, refer to the [advanced tests notes][advanced_tests_notes] 
 [proxy_cert_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/trusting-cert-per-language.md
 [proxy_general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/README.md
 [proxy_migration_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
+[pytest_logging]: https://docs.pytest.org/en/stable/logging.html
 [python-dotenv_readme]:https://github.com/theskumar/python-dotenv
 
 [test_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/TestResources#readme
