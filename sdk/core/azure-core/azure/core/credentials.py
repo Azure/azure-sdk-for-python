@@ -8,21 +8,28 @@ from typing import TYPE_CHECKING
 import six
 
 if TYPE_CHECKING:
-    from typing import Any, NamedTuple
+    from typing import Any, Optional, NamedTuple
     from typing_extensions import Protocol
 
     AccessToken = NamedTuple("AccessToken", [("token", str), ("expires_on", int)])
 
     class TokenCredential(Protocol):
-        """Protocol for classes able to provide OAuth tokens.
+        """Protocol for classes able to provide OAuth tokens."""
 
-        :param str scopes: Lets you specify the type of access needed.
-        """
+        def get_token(
+            self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        ) -> AccessToken:
+            """Request an access token for `scopes`.
 
-        # pylint:disable=too-few-public-methods
-        def get_token(self, *scopes, **kwargs):
-            # type: (*str, **Any) -> AccessToken
-            pass
+            :param str scopes: The type of access needed.
+
+            :keyword str claims: Additional claims required in the token, such as those returned in a resource
+                provider's claims challenge following an authorization failure.
+            :keyword str tenant_id: Optional tenant to include in the token request.
+
+            :rtype: AccessToken
+            :return: An AccessToken instance containing the token string and its expiration time in Unix time.
+            """
 
 
 else:
@@ -122,6 +129,7 @@ class AzureNamedKeyCredential(object):
     :param str key: The key used to authenticate to an Azure service.
     :raises: TypeError
     """
+
     def __init__(self, name, key):
         # type: (str, str) -> None
         if not isinstance(name, six.string_types) or not isinstance(key, six.string_types):
