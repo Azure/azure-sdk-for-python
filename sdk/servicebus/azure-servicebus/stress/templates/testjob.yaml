@@ -12,6 +12,4 @@ spec:
       imagePullPolicy: Always
       command: ['bash', '-c', 'python3 test_stress_queues.py']
       {{- include "stress-test-addons.container-env" . | nindent 6 }}
-      # async test command
-      # command: ['bash', '-c', 'python3 azure_eventhub_producer_stress.py -m stress_send_list_async & python3 azure_eventhub_consumer_stress_async.py']
 {{- end -}}
