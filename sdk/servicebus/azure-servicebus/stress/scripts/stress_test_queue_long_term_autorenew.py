@@ -38,11 +38,9 @@ def receive_process_and_complete_message(client, queue_name):
             break
 
 
-def stress_test_queue_long_term_autorenew(sb_config, queue_name):
-    client = ServiceBusClient(
-        service_namespace=sb_config['hostname'],
-        shared_access_key_name=sb_config['key_name'],
-        shared_access_key_value=sb_config['access_key'],
+def stress_test_queue_long_term_autorenew(sb_conn_str, queue_name):
+    client = ServiceBusClient.from_connection_string(
+        sb_conn_str,
         debug=False)
 
     send_message(client, queue_name)
