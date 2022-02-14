@@ -13,6 +13,11 @@ steps:
         --add-source https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json `
         --version 1.0.0-dev.20220119.2
     displayName: "Install test-proxy"
+
+  - pwsh: |
+      Write-Host "##vso[task.prependpath]$(Build.BinariesDirectory)/test-proxy"
+    displayName: "Prepend path with test-proxy tool install location"
+
   - ${{ if eq(parameters.runProxy, 'true') }}:
     - pwsh: |
         Write-Host "##vso[task.setvariable variable=ASPNETCORE_Kestrel__Certificates__Default__Path]$(Build.SourcesDirectory)/eng/common/testproxy/dotnet-devcert.pfx"
