@@ -162,19 +162,20 @@ order to communicate with the test proxy over a secure connection.
 
 Live Azure resources will be necessary in order to run live tests and produce recordings. There are PowerShell test
 resource management commands, documented in [/eng/common/TestResources][test_resources], that streamline this process.
+Both pure ARM templates (`test-resources.json`) and BICEP files (`test-resources.bicep`) are supported.
 
-If you haven't yet set up a `test-resources.json` file for test resource deployment and/or want to use test resources of
+If you haven't yet set up a `test-resources` file for test resource deployment and/or want to use test resources of
 your own, you can just configure credentials to target these resources instead.
 
-To create a `test-resources.json` file:
+To create a `test-resources` file:
 1. Create an Azure Resource Management Template for your specific service and the configuration you need. This can be
 done in the [Portal][azure_portal] by creating a resource, and at the very last step (Review + Create), clicking
 "Download a template for automation".
 2. Save this template to a `test-resources.json` file under the directory that contains your library
-(`sdk/<my-library>/test-resources.json`). You can refer to [Key Vault's][kv_test_resources] as an example.
-3. Add templates for any additional resources in a grouped `"resources"` section of `test-resources.json`
+(`sdk/<my-library>/test-resources.json`) or create `test-resouces.bicep` file. You can refer to [Key Vault's][kv_test_resources] as an example.
+3. Add templates for any additional resources in a grouped `"resources"` section of `test-resources`
 ([example][kv_test_resources_resources]).
-4. Add an `"outputs"` section to `test-resources.json` that describes any environment variables necessary for accessing
+4. Add an `"outputs"` section to `test-resources` that describes any environment variables necessary for accessing
 these resources ([example][kv_test_resources_outputs]).
 
 ### Configure credentials
@@ -189,7 +190,7 @@ environment variables necessary to run live tests for the service. After storing
 -- with appropriate formatting -- your credentials and test configuration variables will be set in your environment when
 running tests.
 
-If your service doesn't have a `test-resources.json` file for test deployment, you'll need to set environment variables
+If your service doesn't have a `test-resources` file for test deployment, you'll need to set environment variables
 for `AZURE_SUBSCRIPTION_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, and `AZURE_CLIENT_SECRET` at minimum.
 
 1. Set the `AZURE_SUBSCRIPTION_ID` variable to your organization's subscription ID. You can find it in the "Overview"
