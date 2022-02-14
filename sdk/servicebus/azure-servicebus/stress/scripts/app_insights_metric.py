@@ -88,6 +88,9 @@ class AzureMonitorMetric(AbstractMonitorMetric):
         self.mmap = self.stats_recorder.new_measurement_map()
 
     def record_messages_cpu_memory(self, number_of_messages, cpu_usage, memory_usage):
+        if not number_of_messages:
+            # if not batch size, then only single message being sent
+            number_of_messages = 1
         self.mmap.measure_int_put(self.messages_measure, number_of_messages)
         self.mmap.measure_float_put(self.memory_measure, memory_usage)
         self.mmap.measure_float_put(self.cpu_measure, cpu_usage)
