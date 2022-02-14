@@ -2477,6 +2477,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         return partitionKey
 
+    def refresh_routing_map_provider(self):
+        # re-initializes the routing map provider, effectively refreshing the current partition key range cache
+        self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
+
     async def _GetQueryPlanThroughGateway(self, query, resource_link, **kwargs):
         supported_query_features = (documents._QueryFeature.Aggregate + "," +
                                     documents._QueryFeature.CompositeAggregate + "," +

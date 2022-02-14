@@ -1,5 +1,10 @@
 # Release History
 
+## 2.2.1 (2022-02-14)
+
+**Fixes**
+  - Fix parameter public_network_access mapping type in Model FactoryUpdateParameters
+
 ## 2.2.0 (2022-01-06)
 
 **Features**

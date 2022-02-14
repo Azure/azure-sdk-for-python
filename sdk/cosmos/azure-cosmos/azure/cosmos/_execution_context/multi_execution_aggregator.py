@@ -100,7 +100,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
                 self._orderByPQ.push(targetQueryExContext)
 
             except exceptions.CosmosHttpResponseError as e:
-                if exceptions.partition_range_is_gone(e):
+                if exceptions._partition_range_is_gone(e):
                     # repairing document producer context on partition split
                     self._repair_document_producer()
                 else:
