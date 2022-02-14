@@ -1239,7 +1239,7 @@ class DetectLanguageInput(LanguageInput):
     :vartype country_hint: str
     """
 
-    def __init__(self, *, id: str, text: str, country_hint: Optional[str] = None):
+    def __init__(self, *, id: str, text: str, country_hint: Optional[str] = None):  # pylint: disable=redefined-builtin
         super().__init__(id=id, text=text, country_hint=country_hint)
         self.id = id
         self.text = text
@@ -1390,7 +1390,7 @@ class TextDocumentInput(DictMixin, MultiLanguageInput):
     :vartype language: str
     """
 
-    def __init__(self, *, id: str, text: str, language: Optional[str] = None):
+    def __init__(self, *, id: str, text: str, language: Optional[str] = None):  # pylint: disable=redefined-builtin
         super().__init__(id=id, text=text, language=language)
         self.id = id
         self.text = text
@@ -1933,7 +1933,7 @@ class RecognizePiiEntitiesAction(DictMixin):
         the specific PII entity categories you want to filter out. For example, if you only want to filter out
         U.S. social security numbers in a document, you can pass in
         `[PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
-    :paramtype categories_filter: list[str] or list[~azure.ai.textanalytics.PiiEntityCategory]
+    :paramtype categories_filter: list[str or ~azure.ai.textanalytics.PiiEntityCategory]
     :keyword str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `"Utf16CodeUnit` or TextElement_v8`. For additional information
@@ -1952,7 +1952,7 @@ class RecognizePiiEntitiesAction(DictMixin):
         the specific PII entity categories you want to filter out. For example, if you only want to filter out
         U.S. social security numbers in a document, you can pass in
         `[PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
-    :vartype categories_filter: list[str] or list[~azure.ai.textanalytics.PiiEntityCategory]
+    :vartype categories_filter: list[str or ~azure.ai.textanalytics.PiiEntityCategory]
     :ivar str string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `"Utf16CodeUnit` or TextElement_v8`. For additional information

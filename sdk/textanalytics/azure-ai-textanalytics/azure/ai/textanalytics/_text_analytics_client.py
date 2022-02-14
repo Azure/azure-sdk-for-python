@@ -321,7 +321,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         show_stats: Optional[bool] = None,
         language: Optional[str] = None,
         domain_filter: Optional[str] = None,
-        categories_filter: Optional[Union[List[str], List[PiiEntityCategory]]] = None,
+        categories_filter: Optional[List[Union[str, PiiEntityCategory]]] = None,
         model_version: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
         **kwargs: Any,
@@ -362,7 +362,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             the specific PII entity categories you want to filter out. For example, if you only want to filter out
             U.S. social security numbers in a document, you can pass in
             `[PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
-        :paramtype categories_filter: list[str] or list[~azure.ai.textanalytics.PiiEntityCategory]
+        :paramtype categories_filter: list[str or ~azure.ai.textanalytics.PiiEntityCategory]
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
             you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
