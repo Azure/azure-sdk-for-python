@@ -149,8 +149,8 @@ def start_test_proxy():
             if check_availability() == 200:
                 _LOGGER.debug("Tool is responding, exiting...")
             else:
-                envname = os.getenv("TOX_ENV_NAME", "_default")
-                log = open("_proxy_log_{}.log".format(envname), "a")
+                envname = os.getenv("TOX_ENV_NAME", "default")
+                log = open(os.path.join(REPO_ROOT, "_proxy_log_{}.log".format(envname)), "a")
                 proc = subprocess.Popen(
                     shlex.split('test-proxy --storage-location="{}" --urls {}'.format(REPO_ROOT, PROXY_URL)),
                     stdout=log,

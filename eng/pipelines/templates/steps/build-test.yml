@@ -67,7 +67,12 @@ steps:
 
   - ${{if eq(parameters.TestProxy, true) }}:
     - pwsh: |
-        cat $(Build.SourcesDirectory)/test-proxy.log
+        $files = Get-ChildItem -Path $(Build.SourcesDirectory)
+        Write-Host "hello there"
+
+        foreach($file in $files){
+            cat $file
+        }
       displayName: Dump Test-Proxy Logs
       condition: succeededOrFailed()
 
