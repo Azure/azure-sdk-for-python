@@ -1,20 +1,6 @@
-param environmentEndPoints object = {
-  AzureCloud:{
-    searchEndpointSuffix: 'search.windows.net'
-  }
-  AzureChinaCloud:{
-    searchEndpointSuffix: 'search.chinacloudapi.cn'
-  }
-
-  AzureUSGovernment:{
-    searchEndpointSuffix: 'search.windows.us'
-  }
-}
-
-
 param isPublicCloud bool = environment().name == 'AzureCloud'
-param searchEndpointSuffix string = environmentEndPoints[environment().name].searchEndpointSuffix
-param storageEndpointSuffix string = environment().suffixes.storage
+param searchEndpointSuffix string = 'search.windows.net'
+param storageEndpointSuffix string = 'core.windows.net'
 param location string = isPublicCloud ? 'eastus2' : resourceGroup().location
 param searchSku string = 'standard'
 param searchServiceName string = 'search-${uniqueString(resourceGroup().id)}'
