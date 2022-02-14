@@ -16,7 +16,7 @@ and require Python 3.6 or later.
 
 ## Prerequisites
 
-* Python 2.7, or 3.6 or later is required to use this package (3.5 or later if using asyncio)
+* Python 3.6 or later is required to use this package
 * You need an [Azure subscription][azure_sub], and a [Azure WebPubSub service instance][webpubsubservice_docs] to use this package.
 
 ## Setup
