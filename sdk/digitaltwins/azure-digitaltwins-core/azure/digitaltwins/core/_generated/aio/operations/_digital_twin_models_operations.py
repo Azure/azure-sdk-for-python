@@ -83,7 +83,7 @@ class DigitalTwinModelsOperations:
         if digital_twin_models_add_options is not None:
             _traceparent = digital_twin_models_add_options.traceparent
             _tracestate = digital_twin_models_add_options.tracestate
-        api_version = "2020-10-31"
+        api_version = self._config.api_version
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -174,7 +174,7 @@ class DigitalTwinModelsOperations:
             _traceparent = digital_twin_models_list_options.traceparent
             _tracestate = digital_twin_models_list_options.tracestate
             _max_items_per_page = digital_twin_models_list_options.max_items_per_page
-        api_version = "2020-10-31"
+        api_version = self._config.api_version
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -275,7 +275,7 @@ class DigitalTwinModelsOperations:
         if digital_twin_models_get_by_id_options is not None:
             _traceparent = digital_twin_models_get_by_id_options.traceparent
             _tracestate = digital_twin_models_get_by_id_options.tracestate
-        api_version = "2020-10-31"
+        api_version = self._config.api_version
         accept = "application/json"
 
         # Construct URL
@@ -365,7 +365,7 @@ class DigitalTwinModelsOperations:
         if digital_twin_models_update_options is not None:
             _traceparent = digital_twin_models_update_options.traceparent
             _tracestate = digital_twin_models_update_options.tracestate
-        api_version = "2020-10-31"
+        api_version = self._config.api_version
         content_type = kwargs.pop("content_type", "application/json-patch+json")
         accept = "application/json"
 
@@ -450,7 +450,7 @@ class DigitalTwinModelsOperations:
         if digital_twin_models_delete_options is not None:
             _traceparent = digital_twin_models_delete_options.traceparent
             _tracestate = digital_twin_models_delete_options.tracestate
-        api_version = "2020-10-31"
+        api_version = self._config.api_version
         accept = "application/json"
 
         # Construct URL

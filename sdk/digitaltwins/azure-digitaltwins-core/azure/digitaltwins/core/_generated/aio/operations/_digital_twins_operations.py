@@ -79,7 +79,7 @@ class DigitalTwinsOperations:
         if digital_twins_get_by_id_options is not None:
             _traceparent = digital_twins_get_by_id_options.traceparent
             _tracestate = digital_twins_get_by_id_options.tracestate
-        api_version = "2020-10-31"
+        api_version = self._config.api_version
         accept = "application/json"
 
         # Construct URL
@@ -167,7 +167,7 @@ class DigitalTwinsOperations:
             _traceparent = digital_twins_add_options.traceparent
             _tracestate = digital_twins_add_options.tracestate
             _if_none_match = digital_twins_add_options.if_none_match
-        api_version = "2020-10-31"
+        api_version = self._config.api_version
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -263,7 +263,7 @@ class DigitalTwinsOperations:
             _traceparent = digital_twins_delete_options.traceparent
             _tracestate = digital_twins_delete_options.tracestate
             _if_match = digital_twins_delete_options.if_match
-        api_version = "2020-10-31"
+        api_version = self._config.api_version
         accept = "application/json"
 
         # Construct URL
@@ -353,7 +353,7 @@ class DigitalTwinsOperations:
             _traceparent = digital_twins_update_options.traceparent
             _tracestate = digital_twins_update_options.tracestate
             _if_match = digital_twins_update_options.if_match
-        api_version = "2020-10-31"
+        api_version = self._config.api_version
         content_type = kwargs.pop("content_type", "application/json-patch+json")
         accept = "application/json"
 
@@ -444,7 +444,7 @@ class DigitalTwinsOperations:
         if digital_twins_get_relationship_by_id_options is not None:
             _traceparent = digital_twins_get_relationship_by_id_options.traceparent
             _tracestate = digital_twins_get_relationship_by_id_options.tracestate
-        api_version = "2020-10-31"
+        api_version = self._config.api_version
         accept = "application/json"
 
         # Construct URL
@@ -542,7 +542,7 @@ class DigitalTwinsOperations:
             _traceparent = digital_twins_add_relationship_options.traceparent
             _tracestate = digital_twins_add_relationship_options.tracestate
             _if_none_match = digital_twins_add_relationship_options.if_none_match
-        api_version = "2020-10-31"
+        api_version = self._config.api_version
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -641,7 +641,7 @@ class DigitalTwinsOperations:
             _traceparent = digital_twins_delete_relationship_options.traceparent
             _tracestate = digital_twins_delete_relationship_options.tracestate
             _if_match = digital_twins_delete_relationship_options.if_match
-        api_version = "2020-10-31"
+        api_version = self._config.api_version
         accept = "application/json"
 
         # Construct URL
@@ -740,7 +740,7 @@ class DigitalTwinsOperations:
             _traceparent = digital_twins_update_relationship_options.traceparent
             _tracestate = digital_twins_update_relationship_options.tracestate
             _if_match = digital_twins_update_relationship_options.if_match
-        api_version = "2020-10-31"
+        api_version = self._config.api_version
         content_type = kwargs.pop("content_type", "application/json-patch+json")
         accept = "application/json"
 
@@ -829,7 +829,7 @@ class DigitalTwinsOperations:
         if digital_twins_list_relationships_options is not None:
             _traceparent = digital_twins_list_relationships_options.traceparent
             _tracestate = digital_twins_list_relationships_options.tracestate
-        api_version = "2020-10-31"
+        api_version = self._config.api_version
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -925,7 +925,7 @@ class DigitalTwinsOperations:
         if digital_twins_list_incoming_relationships_options is not None:
             _traceparent = digital_twins_list_incoming_relationships_options.traceparent
             _tracestate = digital_twins_list_incoming_relationships_options.tracestate
-        api_version = "2020-10-31"
+        api_version = self._config.api_version
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -1031,7 +1031,7 @@ class DigitalTwinsOperations:
         if digital_twins_send_telemetry_options is not None:
             _traceparent = digital_twins_send_telemetry_options.traceparent
             _tracestate = digital_twins_send_telemetry_options.tracestate
-        api_version = "2020-10-31"
+        api_version = self._config.api_version
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1130,7 +1130,7 @@ class DigitalTwinsOperations:
         if digital_twins_send_component_telemetry_options is not None:
             _traceparent = digital_twins_send_component_telemetry_options.traceparent
             _tracestate = digital_twins_send_component_telemetry_options.tracestate
-        api_version = "2020-10-31"
+        api_version = self._config.api_version
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -1218,7 +1218,7 @@ class DigitalTwinsOperations:
         if digital_twins_get_component_options is not None:
             _traceparent = digital_twins_get_component_options.traceparent
             _tracestate = digital_twins_get_component_options.tracestate
-        api_version = "2020-10-31"
+        api_version = self._config.api_version
         accept = "application/json"
 
         # Construct URL
@@ -1315,7 +1315,7 @@ class DigitalTwinsOperations:
             _traceparent = digital_twins_update_component_options.traceparent
             _tracestate = digital_twins_update_component_options.tracestate
             _if_match = digital_twins_update_component_options.if_match
-        api_version = "2020-10-31"
+        api_version = self._config.api_version
         content_type = kwargs.pop("content_type", "application/json-patch+json")
         accept = "application/json"
 

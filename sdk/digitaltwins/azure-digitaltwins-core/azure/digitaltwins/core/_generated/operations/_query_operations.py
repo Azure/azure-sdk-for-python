@@ -86,7 +86,7 @@ class QueryOperations(object):
             _traceparent = query_twins_options.traceparent
             _tracestate = query_twins_options.tracestate
             _max_items_per_page = query_twins_options.max_items_per_page
-        api_version = "2020-10-31"
+        api_version = self._config.api_version
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 

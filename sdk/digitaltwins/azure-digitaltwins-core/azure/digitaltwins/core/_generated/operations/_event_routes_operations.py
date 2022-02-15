@@ -76,7 +76,7 @@ class EventRoutesOperations(object):
             _traceparent = event_routes_list_options.traceparent
             _tracestate = event_routes_list_options.tracestate
             _max_items_per_page = event_routes_list_options.max_items_per_page
-        api_version = "2020-10-31"
+        api_version = self._config.api_version
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -165,7 +165,7 @@ class EventRoutesOperations(object):
         if event_routes_get_by_id_options is not None:
             _traceparent = event_routes_get_by_id_options.traceparent
             _tracestate = event_routes_get_by_id_options.tracestate
-        api_version = "2020-10-31"
+        api_version = self._config.api_version
         accept = "application/json"
 
         # Construct URL
@@ -246,7 +246,7 @@ class EventRoutesOperations(object):
         if event_routes_add_options is not None:
             _traceparent = event_routes_add_options.traceparent
             _tracestate = event_routes_add_options.tracestate
-        api_version = "2020-10-31"
+        api_version = self._config.api_version
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -326,7 +326,7 @@ class EventRoutesOperations(object):
         if event_routes_delete_options is not None:
             _traceparent = event_routes_delete_options.traceparent
             _tracestate = event_routes_delete_options.tracestate
-        api_version = "2020-10-31"
+        api_version = self._config.api_version
         accept = "application/json"
 
         # Construct URL
