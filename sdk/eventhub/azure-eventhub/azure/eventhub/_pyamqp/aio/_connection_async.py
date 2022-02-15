@@ -126,7 +126,9 @@ class Connection(object):
         self.state = new_state
         _LOGGER.info("Connection '%s' state changed: %r -> %r", self._container_id, previous_state, new_state)
 
-        await asyncio.gather(*[session._on_connection_state_change() for session in self.outgoing_endpoints.values()])
+        for session in self.outgoing_endpoints.values():
+            await session._on_connection_state_change()
+        #await asyncio.gather(*[session._on_connection_state_change() for session in self.outgoing_endpoints.values()])
 
     async def _connect(self):
         try:
@@ -162,7 +164,8 @@ class Connection(object):
         return self.state not in (ConnectionState.CLOSE_RCVD, ConnectionState.END)
 
     async def _read_frame(self, **kwargs):
-        if self._can_read():
+        #if self._can_read():
+        if self.state not in (ConnectionState.CLOSE_RCVD, ConnectionState.END):
             return await self.transport.receive_frame(**kwargs)
         _LOGGER.warning("Cannot read frame in current state: %r", self.state)
 
@@ -205,11 +208,11 @@ class Connection(object):
 
     async def _outgoing_empty(self):
         if self.network_trace:
-            _LOGGER.info("<- empty()", extra=self.network_trace_params)
+            _LOGGER.info("-> empty()", extra=self.network_trace_params)
         try:
             if self._can_write():
                 await self.transport.write(EMPTY_FRAME)
-                self._last_frame_sent_time = time.time()
+                self.last_frame_sent_time = time.time()
         except (OSError, IOError, SSLError, socket.error) as exc:
             self._error = AMQPConnectionError(
                 ErrorCondition.SocketError,
@@ -451,11 +454,16 @@ class Connection(object):
                 )
                 return
             try:
-                tasks = [asyncio.ensure_future(self._listen_one_frame(**kwargs)) for _ in range(batch)]
-                await asyncio.gather(*tasks)
+                for _ in range(batch):
+                    await self._listen_one_frame(**kwargs)
             except ValueError:
-                for task in tasks:
-                    task.cancel()
+                pass
+            # try:
+            #     tasks = [asyncio.ensure_future(self._listen_one_frame(**kwargs)) for _ in range(batch)]
+            #     await asyncio.gather(*tasks)
+            # except ValueError:
+            #     for task in tasks:
+            #         task.cancel()
         except (OSError, IOError, SSLError, socket.error) as exc:
             self._error = AMQPConnectionError(
                 ErrorCondition.SocketError,
