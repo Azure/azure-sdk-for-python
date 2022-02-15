@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -20,28 +20,22 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_list_request(
-    vault_name,  # type: str
-    resource_group_name,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    filter = kwargs.pop('filter', None)  # type: Optional[str]
-    skip_token = kwargs.pop('skip_token', None)  # type: Optional[str]
-
-    api_version = "2021-10-01"
+    vault_name: str,
+    resource_group_name: str,
+    subscription_id: str,
+    *,
+    filter: Optional[str] = None,
+    skip_token: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupProtectedItems')
@@ -73,7 +67,6 @@ def build_list_request(
         **kwargs
     )
 
-# fmt: on
 class BackupProtectedItemsOperations(object):
     """BackupProtectedItemsOperations operations.
 
@@ -99,13 +92,12 @@ class BackupProtectedItemsOperations(object):
     @distributed_trace
     def list(
         self,
-        vault_name,  # type: str
-        resource_group_name,  # type: str
-        filter=None,  # type: Optional[str]
-        skip_token=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.ProtectedItemResourceList"]
+        vault_name: str,
+        resource_group_name: str,
+        filter: Optional[str] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.ProtectedItemResourceList"]:
         """Provides a pageable list of all items that are backed up within a vault.
 
         :param vault_name: The name of the recovery services vault.
