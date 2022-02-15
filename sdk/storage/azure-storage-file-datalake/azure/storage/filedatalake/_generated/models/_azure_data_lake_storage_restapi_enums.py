@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class ListBlobsIncludeItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ListBlobsIncludeItem(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     COPY = "copy"
     DELETED = "deleted"
@@ -36,19 +21,19 @@ class ListBlobsIncludeItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     VERSIONS = "versions"
     TAGS = "tags"
 
-class PathExpiryOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PathExpiryOptions(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     NEVER_EXPIRE = "NeverExpire"
     RELATIVE_TO_CREATION = "RelativeToCreation"
     RELATIVE_TO_NOW = "RelativeToNow"
     ABSOLUTE = "Absolute"
 
-class PathGetPropertiesAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PathGetPropertiesAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     GET_ACCESS_CONTROL = "getAccessControl"
     GET_STATUS = "getStatus"
 
-class PathLeaseAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PathLeaseAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     ACQUIRE = "acquire"
     BREAK_ENUM = "break"
@@ -56,23 +41,23 @@ class PathLeaseAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RENEW = "renew"
     RELEASE = "release"
 
-class PathRenameMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PathRenameMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     LEGACY = "legacy"
     POSIX = "posix"
 
-class PathResourceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PathResourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     DIRECTORY = "directory"
     FILE = "file"
 
-class PathSetAccessControlRecursiveMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PathSetAccessControlRecursiveMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     SET = "set"
     MODIFY = "modify"
     REMOVE = "remove"
 
-class PathUpdateAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PathUpdateAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     APPEND = "append"
     FLUSH = "flush"
