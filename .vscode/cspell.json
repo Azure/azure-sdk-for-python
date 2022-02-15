@@ -111,7 +111,8 @@
     "eng/*.txt",
     "eng/tox/tox.ini",
     "eng/common/docgeneration/Generate-DocIndex.ps1",
-    "eng/**/*.py"
+    "eng/**/*.py",
+    ".gitignore"
   ],
   "words": [
     "aad",
