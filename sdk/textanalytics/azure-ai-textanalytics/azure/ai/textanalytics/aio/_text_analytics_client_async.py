@@ -417,7 +417,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             ):
                 raise ValueError(
                     "'recognize_pii_entities' endpoint is only available for API version V3_1 and up"
-                )
+                ) from error
             raise error
         except HttpResponseError as error:
             process_http_response_error(error)
@@ -857,7 +857,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             if "API version v3.0 does not have operation 'begin_health'" in str(error):
                 raise ValueError(
                     "'begin_analyze_healthcare_entities' endpoint is only available for API version V3_1 and up"
-                )
+                ) from error
             raise error
 
         except HttpResponseError as error:
@@ -1028,8 +1028,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 action._to_generated(self._api_version, str(idx))  # pylint: disable=protected-access
                 for idx, action in enumerate(actions)
             ]
-        except AttributeError:
-            raise TypeError("Unsupported action type in list.")
+        except AttributeError as e:
+            raise TypeError("Unsupported action type in list.") from e
         task_order = [(_determine_action_type(a), a.task_name) for a in generated_tasks]
 
         try:
@@ -1109,7 +1109,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             if "API version v3.0 does not have operation 'begin_analyze'" in str(error):
                 raise ValueError(
                     "'begin_analyze_actions' endpoint is only available for API version V3_1 and up"
-                )
+                ) from error
             raise error
 
         except HttpResponseError as error:

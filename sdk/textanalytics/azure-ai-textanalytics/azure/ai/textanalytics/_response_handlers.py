@@ -59,7 +59,7 @@ def process_http_response_error(error):
         raise_error = ClientAuthenticationError
     if error.status_code == 404:
         raise_error = ResourceNotFoundError
-    raise raise_error(response=error.response, error_format=CSODataV4Format)
+    raise raise_error(response=error.response, error_format=CSODataV4Format) from error
 
 
 def order_results(response, combined):

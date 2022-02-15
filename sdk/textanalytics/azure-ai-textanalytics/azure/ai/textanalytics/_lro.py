@@ -104,8 +104,8 @@ class TextAnalyticsLROPollingMethod(LROBasePolling):
                 for err in job["errors"]:
                     error_message += "({}) {}".format(err["code"], err["message"])
                 raise HttpResponseError(message=error_message, response=self._pipeline_response.http_response)
-            except KeyError:
-                raise OperationFailed("Operation failed or canceled")
+            except KeyError as e:
+                raise OperationFailed("Operation failed or canceled") from e
 
         final_get_url = self._operation.get_final_get_url(self._pipeline_response)
         if final_get_url:
