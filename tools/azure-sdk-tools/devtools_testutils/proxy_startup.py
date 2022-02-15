@@ -150,10 +150,12 @@ def start_test_proxy():
                 _LOGGER.debug("Tool is responding, exiting...")
             else:
                 envname = os.getenv("TOX_ENV_NAME", "default")
-                log = open(os.path.join(REPO_ROOT, "_proxy_log_{}.log".format(envname)), "a")
-                _LOGGER.info("{} is calculated repo root".format(REPO_ROOT))
+                root = os.getenv('BUILD_SOURCESDIRECTORY', REPO_ROOT)
+                log = open(os.path.join(root, "_proxy_log_{}.log".format(envname)), "a")
+
+                _LOGGER.info("{} is calculated repo root".format(root))
                 proc = subprocess.Popen(
-                    shlex.split('test-proxy --storage-location="{}" --urls "{}"'.format(REPO_ROOT, PROXY_URL)),
+                    shlex.split('test-proxy --storage-location="{}" --urls "{}"'.format(root, PROXY_URL)),
                     stdout=log,
                     stderr=log,
                 )
