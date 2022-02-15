@@ -8,16 +8,19 @@ testing infrastructure, and demonstrates how to write and run tests for a servic
 - [Set up your development environment](#set-up-your-development-environment)
 - [Integrate with pytest](#integrate-with-the-pytest-test-framework)
 - [Use Tox](#tox)
-- [The `devtools_testutils` package](#the-devtoolstestutils-package)
+- [The `devtools_testutils` package](#the-devtools_testutils-package)
 - [Write or run tests](#write-or-run-tests)
   - [Set up the test proxy](#perform-one-time-test-proxy-setup)
   - [Set up test resources](#set-up-test-resources)
   - [Configure credentials](#configure-credentials)
+  - [Start the test proxy server](#start-the-test-proxy-server)
   - [Deliver environment variables to tests](#deliver-environment-variables-to-tests)
-  - [Configure live or playback testing mode](#configure-live-or-playback-testing-mode)
   - [Write your tests](#write-your-tests)
+  - [Configure live or playback testing mode](#configure-live-or-playback-testing-mode)
   - [Run and record tests](#run-and-record-tests)
+  - [Sanitize secrets](#sanitize-secrets)
 - [Functional vs. unit tests](#functional-vs-unit-tests)
+- [Further reading](#further-reading)
 - [Deprecated testing instructions](#deprecated-testing-instructions)
 
 ## Set up your development environment
@@ -87,13 +90,13 @@ Open the directory for your package in your preferred editor, for example VSCode
 
 As a quick background, the Azure SDK uses the [pytest](https://docs.pytest.org/en/latest/) test runner to support creating unit and functional tests for Track 2 Azure libraries. To intall `pytest` run `pip install pytest` from your virtual environment, you can confirm the installation was successful by running `pytest -V`. The commands will run all files of the form `test_*.py` or `*_test.py` in the provided directory and its subdirectories; for more information check out the [docs][pytest_invocation].
 
-With the pytest test suite you can provide directories or specific tests to run rather than running the entire test suite:
+With `pytest` you can provide a either a directory or a specific test file to run:
 ```cmd
 (env) azure-sdk-for-python\sdk\my-service\my-package> pytest tests
 (env) azure-sdk-for-python\sdk\my-service\my-package> pytest tests\<test_file.py>
 ```
 
-In addition you can provide keywords to run specific tests within the suite or within a specific file
+In addition you can provide keywords to run specific tests within the suite or within a specific file:
 ```cmd
 (env) azure-sdk-for-python\sdk\my-service\my-package> pytest tests -k <keyword>
 (env) azure-sdk-for-python\sdk\my-service\my-package> pytest <test_file.py> -k <keyword>
@@ -202,6 +205,25 @@ az ad sp create-for-rbac --name "{your alias}-tests" --role Contributor
 The command will output a set of credentials. Set `AZURE_TENANT_ID` to the value of `"tenant"`, `AZURE_CLIENT_ID` to the
 value of `"appId"`, and `AZURE_CLIENT_SECRET` to the value of `"password"`.
 
+### Start the test proxy server
+
+The test proxy has to be available in order for tests to work; this is done automatically with a `pytest` fixture.
+
+Create a `conftest.py` file within your package's test directory (`sdk/{service}/{package}/tests`), and inside it add a
+session-level fixture that accepts `devtools_testutils.test_proxy` as a parameter (and has `autouse` set to `True`):
+
+```python
+from devtools_testutils import test_proxy
+
+# autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
+@pytest.fixture(scope="session", autouse=True)
+def start_proxy(test_proxy):
+    return
+```
+
+For more details about how this fixture starts up the test proxy, or the test proxy itself, refer to the
+[test proxy migration guide][test_proxy_startup].
+
 ### Deliver environment variables to tests
 
 To target the correct resources in tests, use the [EnvironmentVariableLoader][env_var_loader] from `devtools_testutils`
@@ -240,21 +262,11 @@ values in live mode, and the fake values specified in the decorator in playback 
 > `{SERVICE}_TENANT_ID`, `{SERVICE}_CLIENT_ID`, and `{SERVICE}_CLIENT_SECRET` for a service principal when using this
 > class.
 
-### Configure live or playback testing mode
-
-"Live" tests refer to tests that make requests to actual Azure resources. "Playback" tests require a recording for each
-test; the test proxy will compare the requests/responses that would be made during each test with requests/responses in
-the recording.
-
-To run live tests, set the environment variable `AZURE_TEST_RUN_LIVE` to "true" in your environment or `.env` file.
-Live test runs will produce recordings unless the environment variable `AZURE_SKIP_LIVE_RECORDING` is set to "true" as
-well. To run tests in playback, either set `AZURE_TEST_RUN_LIVE` to "false" or leave it unset.
-
 ### Write your tests
 
-In the `tests` directory at the root of your package (`sdk/{service}/{package}/tests`), create a file with the naming
-pattern `test_<what_you_are_testing>.py`. The base of each testing file will be roughly the same (in this example we use
-Schema Registry for the sake of demonstration):
+In your package's `tests` directory (`sdk/{service}/{package}/tests`), create a file with the naming pattern
+`test_<what_you_are_testing>.py`. The base of each testing file will be roughly the same (in this example we use Schema
+Registry for the sake of demonstration):
 
 ```python
 import functools
@@ -312,6 +324,16 @@ AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy`.
 If you need logging functionality for your testing, pytest also offers [logging][pytest_logging] capabilities either
 inline through the `caplog` fixture or with command line flags.
 
+### Configure live or playback testing mode
+
+"Live" tests refer to tests that make requests to actual Azure resources. "Playback" tests require a recording for each
+test; the test proxy will compare the requests/responses that would be made during each test with requests/responses in
+the recording.
+
+To run live tests, set the environment variable `AZURE_TEST_RUN_LIVE` to "true" in your environment or `.env` file.
+Live test runs will produce recordings unless the environment variable `AZURE_SKIP_LIVE_RECORDING` is set to "true" as
+well. To run tests in playback, either set `AZURE_TEST_RUN_LIVE` to "false" or leave it unset.
+
 ### Run and record tests
 
 With the `AZURE_TEST_RUN_LIVE` environment variable set to "true", use `pytest` to run your test(s) in live mode.
@@ -324,6 +346,65 @@ After tests finish running, there should folder called `recordings` inside your 
 recording in this folder will be a `.json` file that captures the HTTP traffic that was generated while running the test
 matching the file's name. If you set the `AZURE_TEST_RUN_LIVE` environment variable to "false" and re-run tests, they
 should pass again -- this time, in playback mode (i.e. without making actual HTTP requests).
+
+### Sanitize secrets
+
+The `.json` files created from running tests in live mode can include authorization details, account names, shared
+access signatures, and other secrets. The recordings are included in our public GitHub repository, making it important
+for us to remove any secrets from these recordings before committing them to the repository.
+
+There are two primary ways to keep secrets from being written into recordings:
+
+1. The `EnvironmentVariableLoader` will automatically sanitize the values of captured environment variables with the
+  provided fake values.
+2. Sanitizers can be registered via `add_*_sanitizer` methods in `devtools_testutils`. For example, the general-use
+  method for sanitizing recording bodies, headers, and URIs is `add_general_regex_sanitizer`. Other sanitizers are
+  available for more specific scenarios and can be found at [devtools_testutils/sanitizers.py][py_sanitizers].
+
+As a simple example of registering a sanitizer, you can provide the exact value you want to sanitize from recordings as
+the `regex` in the general regex sanitizer. To replace all instances of the string "my-key-vault" with "fake-vault" in
+recordings, you could add something like the following in the package's `conftest.py` file:
+
+```python
+from devtools_testutils import add_general_regex_sanitizer, test_proxy
+
+# autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
+@pytest.fixture(scope="session", autouse=True)
+def add_sanitizers(test_proxy):
+    add_general_regex_sanitizer(regex="my-key-vault", value="fake-vault")
+```
+
+Note that the sanitizer fixture accepts the `test_proxy` fixture as a parameter to ensure the proxy is started
+beforehand (see [Start the test proxy server](#start-the-test-proxy-server)).
+
+For a more advanced scenario, where we want to sanitize the account names of all storage endpoints in recordings, we
+could instead call
+
+```python
+add_general_regex_sanitizer(
+    regex="(?<=\\/\\/)[a-z]+(?=(?:|-secondary)\\.(?:table|blob|queue)\\.core\\.windows\\.net)",
+    value="fakeendpoint",
+)
+```
+
+`add_general_regex_sanitizer` accepts a regex, replacement value, and capture group as keyword-only arguments. In the
+snippet above, any storage endpoint URIs that match the specified URI regex will have their account name replaced with
+"fakeendpoint". A request made to `https://tableaccount-secondary.table.core.windows.net` will be recorded as being
+made to `https://fakeendpoint-secondary.table.core.windows.net`, and URIs will also be sanitized in bodies and headers.
+
+For more details about sanitizers and their options, please refer to [devtools_testutils/sanitizers.py][py_sanitizers].
+
+#### Special case: SAS tokens
+
+Tests that use a Shared Access Signature (SAS) token to authenticate a client should use the
+[`AzureRecordedTestCase.generate_sas`][generate_sas] method to generate the token. This will automatically register a
+sanitizer to keep this token out of test recordings. An example of using this method can be found
+[here][generate_sas_example].
+
+`generate_sas` accepts any number of positional arguments: the first being the method that creates the SAS, and the
+remaining positional arguments being positional arguments for the SAS-generating method. Any keyword arguments given to
+`generate_sas` will be passed to the SAS-generating method as well. The generated token will be returned and its value
+will be sanitized.
 
 ## Functional vs. unit tests
 
@@ -383,14 +464,16 @@ class TestTablesUnitTest(object):
 ```
 
 
-## More test examples
+## Further reading
 
-This section will demonstrate how to write tests with the `devtools_testutils` package with a few samples to showcase the features of the test framework.
-
-For more information, refer to the [advanced tests notes][advanced_tests_notes] on more advanced scenarios and additional information.
+For information about more advanced testing scenarios, refer to the [advanced tests notes][advanced_tests_notes].
 
 
 ## Deprecated testing instructions
+
+> The testing framework described in this section was used before today's test proxy was adopted. These instructions are
+> deprecated and shouldn't be used to write new tests, but may be helpful in understanding and working with test suites
+> that haven't migrated to the new system.
 
 Older SDK tests are based on the `scenario_tests` subpackage located in [`azure-sdk-for-python/tools/azure-devtools/src/azure_devtools`](https://pypi.org/project/azure-devtools/). `scenario_tests` is a general, mostly abstracted framework which provides several useful features for writing SDK tests, ie:
 * HTTP interaction recording and playback using [vcrpy](https://pypi.python.org/pypi/vcrpy)
@@ -556,6 +639,9 @@ Tests that use the Shared Access Signature (SAS) to authenticate a client should
 [engsys_wiki]: https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/48/Create-a-new-Live-Test-pipeline?anchor=test-resources.json
 [env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
 
+[generate_sas]: https://github.com/Azure/azure-sdk-for-python/blob/6e1f7c02af0c28d5725a532ebe4fc7125256858c/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L200
+[generate_sas_example]: https://github.com/Azure/azure-sdk-for-python/blob/3e3fbe818eb3c80ffdf6f9f1a86affd7e879b6ce/sdk/tables/azure-data-tables/tests/test_table_entity.py#L1691
+
 [kv_test_resources]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/test-resources.json
 [kv_test_resources_outputs]: https://github.com/Azure/azure-sdk-for-python/blob/fbdb860630bcc13c1e355828231161849a9bd5a4/sdk/keyvault/test-resources.json#L255
 [kv_test_resources_resources]: https://github.com/Azure/azure-sdk-for-python/blob/fbdb860630bcc13c1e355828231161849a9bd5a4/sdk/keyvault/test-resources.json#L116
@@ -566,8 +652,10 @@ Tests that use the Shared Access Signature (SAS) to authenticate a client should
 [proxy_cert_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/trusting-cert-per-language.md
 [proxy_general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/README.md
 [proxy_migration_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
+[py_sanitizers]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/sanitizers.py
 [pytest_invocation]: https://pytest.org/latest/how-to/usage.html
 [pytest_logging]: https://docs.pytest.org/en/stable/logging.html
 [python-dotenv_readme]:https://github.com/theskumar/python-dotenv
 
+[test_proxy_startup]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md#start-the-proxy-server
 [test_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/TestResources#readme
