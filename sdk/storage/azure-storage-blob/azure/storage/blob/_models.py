@@ -1136,7 +1136,7 @@ class DelimitedTextDialect(DictMixin):
     :keyword str quotechar:
         Field quote, defaults to '"'.
     :keyword str lineterminator:
-        Record separator, defaults to '\n'.
+        Record separator, defaults to '\\\\n'.
     :keyword str escapechar:
         Escape char, defaults to empty.
     :keyword bool has_header:
