@@ -16,8 +16,9 @@ testing infrastructure, and demonstrates how to write and run tests for a servic
   - [Deliver environment variables to tests](#deliver-environment-variables-to-tests)
   - [Configure live or playback testing mode](#configure-live-or-playback-testing-mode)
   - [Write your tests](#write-your-tests)
-- [Deprecated testing instructions](#deprecated-testing-instructions)
+  - [Run and record tests](#run-and-record-tests)
 - [Functional vs. unit tests](#functional-vs-unit-tests)
+- [Deprecated testing instructions](#deprecated-testing-instructions)
 
 ## Set up your development environment
 
@@ -32,7 +33,7 @@ C:\Users> python -m venv env
 C:\Users> env\scripts\activate       # PowerShell only
 C:\Users> source env\bin\activate    # Linux shell (Bash, ZSH, etc.) only
 C:\Users> env\scripts\activate.bat   # Windows CMD only
-(env)C:\Users>
+(env) C:\Users>
 ```
 To create virtual environment for different versions of Python use the `-p` flag to pass the specific Python executable you want to use
 ```cmd
@@ -58,55 +59,49 @@ Our SDK will have dependencies on other packages in the Azure Python SDK ecosyst
 The libraries currently listed in this file include `azure-core` and `azure-identity` as well as some internal tooling packages and our testing framework libraries.
 These dependencies can be installed with the following command:
 
-```cmd
-(env)azure-sdk-for-python\sdk\my-directory\my-library> pip install -r dev_requirements.txt
+```
+(env) azure-sdk-for-python\sdk\my-service\my-package> pip install -r dev_requirements.txt
 ```
 Next we will install our Python SDK to the virtual environment as an 'editable install' - this means that as we work on the implementation, we will be able to run the package as it develops, as opposed to having to periodically rebuild and reinstall.
-```cmd
-(env)azure-sdk-for-python\sdk\my-directory\my-library> pip install -e .
+```
+(env) azure-sdk-for-python\sdk\my-service\my-package> pip install -e .
 ```
 
 We should now be able to open an interactive Python terminal, and execute code from our new SDK
-```cmd
-(env)azure-sdk-for-python\sdk\my-directory\my-library> python
+```
+(env) azure-sdk-for-python\sdk\my-service\my-package> python
 
->>> import azure.my_library
->>> print(azure.my_library.__version__)
+>>> import azure.my_package
+>>> print(azure.my_package.__version__)
 0.0.1
 ```
 
 ### Open code in IDE
 
-Open the directory for your library in your preferred editor, for example VSCode.
+Open the directory for your package in your preferred editor, for example VSCode.
 ```cmd
-(env)azure-sdk-for-python\sdk\my-directory\my-library> code .
+(env) azure-sdk-for-python\sdk\my-service\my-package> code .
 ```
 
 ## Integrate with the pytest test framework
 
-As a quick background, the Azure SDK uses the [pytest](https://docs.pytest.org/en/latest/) test runner to support creating unit and functional tests for Track 2 Azure libraries. To intall `pytest` run `pip install pytest` from your virtual environment, you can confirm the installation was successful by running `pytest -V`. The commands will run all files of the form `test_*.py` or `*_test.py` in the provided directory and its subdirectories, for more information check out the [docs](https://docs.pytest.org/en/stable/getting-started.html#run-multiple-tests).
+As a quick background, the Azure SDK uses the [pytest](https://docs.pytest.org/en/latest/) test runner to support creating unit and functional tests for Track 2 Azure libraries. To intall `pytest` run `pip install pytest` from your virtual environment, you can confirm the installation was successful by running `pytest -V`. The commands will run all files of the form `test_*.py` or `*_test.py` in the provided directory and its subdirectories; for more information check out the [docs][pytest_invocation].
 
 With the pytest test suite you can provide directories or specific tests to run rather than running the entire test suite:
 ```cmd
-azure-sdk-for-python\sdk\my-directory\my-library> pytest
-azure-sdk-for-python\sdk\my-directory\my-library> pytest <test_file.py>
-```
-
-If your tests are broken up into multiple folders for organization, you can run specific folders:
-```cmd
-azure-sdk-for-python\sdk\my-directory\my-library> pytest .\tests\async_tests\
-azure-sdk-for-python\sdk\my-directory\my-library> pytest .\tests\async_tests\<test_file.py>
+(env) azure-sdk-for-python\sdk\my-service\my-package> pytest tests
+(env) azure-sdk-for-python\sdk\my-service\my-package> pytest tests\<test_file.py>
 ```
 
 In addition you can provide keywords to run specific tests within the suite or within a specific file
 ```cmd
-azure-sdk-for-python\sdk\my-directory\my-library> pytest -k <keyword>
-azure-sdk-for-python\sdk\my-directory\my-library> pytest <test_file.py> -k <keyword>
+(env) azure-sdk-for-python\sdk\my-service\my-package> pytest tests -k <keyword>
+(env) azure-sdk-for-python\sdk\my-service\my-package> pytest <test_file.py> -k <keyword>
 ```
 
 If you have print statements in your tests for debugging you can add the `-s` flag to send those print statements to standard output:
 ```cmd
-azure-sdk-for-python\sdk\my-directory\my-library> pytest sdk/storage/azure-mgmt-storage/ -s
+(env) azure-sdk-for-python\sdk\my-service\my-package> pytest <test_file.py> -s
 ```
 
 ## Tox
@@ -116,13 +111,13 @@ The Python SDK uses the [tox project](https://tox.readthedocs.io/en/latest/) to 
 
 To run a tox command from your directory use the following commands:
 ```cmd
-azure-sdk-for-python\sdk\my-directory\my-library> tox -c ../../../eng/tox/tox.ini -e sphinx
-azure-sdk-for-python\sdk\my-directory\my-library> tox -c ../../../eng/tox/tox.ini -e lint
-azure-sdk-for-python\sdk\my-directory\my-library> tox -c ../../../eng/tox/tox.ini -e mypy
-azure-sdk-for-python\sdk\my-directory\my-library> tox -c ../../../eng/tox/tox.ini -e whl
-azure-sdk-for-python\sdk\my-directory\my-library> tox -c ../../../eng/tox/tox.ini -e sdist
-azure-sdk-for-python\sdk\my_directory\my_library> tox -c ../../../eng/tox/tox.ini -e samples
-azure-sdk-for-python\sdk\my_directory\my_library> tox -c ../../../eng/tox/tox.ini -e apistub
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e sphinx
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e lint
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e mypy
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e whl
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e sdist
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e samples
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e apistub
 ```
 A quick description of the five commands above:
 * sphinx: documentation generation using the inline comments written in our code
@@ -171,8 +166,9 @@ To create a `test-resources` file:
 1. Create an Azure Resource Management Template for your specific service and the configuration you need. This can be
 done in the [Portal][azure_portal] by creating a resource, and at the very last step (Review + Create), clicking
 "Download a template for automation".
-2. Save this template to a `test-resources.json` file under the directory that contains your library
-(`sdk/<my-library>/test-resources.json`) or create `test-resouces.bicep` file. You can refer to [Key Vault's][kv_test_resources] as an example.
+2. Save this template to a `test-resources.json` file under the directory that contains your package
+(`sdk/<my-service>/test-resources.json`) or create a `test-resouces.bicep` file. You can refer to
+[Key Vault's][kv_test_resources] as an example.
 3. Add templates for any additional resources in a grouped `"resources"` section of `test-resources`
 ([example][kv_test_resources_resources]).
 4. Add an `"outputs"` section to `test-resources` that describes any environment variables necessary for accessing
@@ -228,7 +224,7 @@ ServicePreparer = functools.partial(
 
 The parameters for the `functools.partial` method are:
 * The EnvironmentVariableLoader class
-* The library folder that holds your code (in this example, `sdk/testservice`). This value is used to search your
+* The service folder that holds your code (in this example, `sdk/testservice`). This value is used to search your
   environment variables for the appropriate values.
 * The remaining arguments are key-value kwargs, with the keys being the environment variables needed for the tests, and
   the value being a fake value to use in recordings.
@@ -256,7 +252,7 @@ well. To run tests in playback, either set `AZURE_TEST_RUN_LIVE` to "false" or l
 
 ### Write your tests
 
-In the `tests` directory at the root of your package (`sdk/{library}/{package}/tests`), create a file with the naming
+In the `tests` directory at the root of your package (`sdk/{service}/{package}/tests`), create a file with the naming
 pattern `test_<what_you_are_testing>.py`. The base of each testing file will be roughly the same (in this example we use
 Schema Registry for the sake of demonstration):
 
@@ -304,16 +300,95 @@ AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy`.
   * `recorded_by_proxy` is a decorator that must be used directly on top of recorded test methods in order to
   produce recordings. Unit tests, which aren't recorded, don't need to use this decorator. Unit tests are discussed in
   [Functional vs. unit tests](#functional-vs-unit-tests).
-* At the top of your test class you should include any helper methods you will need. Most libraries will have a client
-creation method to eliminate repetitive code.
+* Include any helper methods you will need at the top of your test class. Most libraries will have a client creation
+  method to eliminate repetitive code.
 * Following your helper methods will be your actual tests. All test method names must start with "test_". The preparer
-defined at the top of the file should decorate your test in the fashion: `@MyPreparer()`.
+  defined at the top of the file should decorate your test in the fashion: `@MyPreparer()`.
   * The signature of your test method will always contain `self`, and following `self` will be all the keys that you
   need from your preparer. A test does not need to accept every key from the preparer; the test framework will only pass
   in the parameters specifically requested in the test method signature.
+* Within tests, use the `assert` keyword to assert conditions that you expect to be true.
 
 If you need logging functionality for your testing, pytest also offers [logging][pytest_logging] capabilities either
 inline through the `caplog` fixture or with command line flags.
+
+### Run and record tests
+
+With the `AZURE_TEST_RUN_LIVE` environment variable set to "true", use `pytest` to run your test(s) in live mode.
+
+```
+(env) azure-sdk-for-python\sdk\my-service\my-package> pytest tests
+```
+
+After tests finish running, there should folder called `recordings` inside your package's `tests` directory. Each
+recording in this folder will be a `.json` file that captures the HTTP traffic that was generated while running the test
+matching the file's name. If you set the `AZURE_TEST_RUN_LIVE` environment variable to "false" and re-run tests, they
+should pass again -- this time, in playback mode (i.e. without making actual HTTP requests).
+
+## Functional vs. unit tests
+
+The tests written above are functional tests: they generate HTTP traffic and send data to the service. For tests that
+don't need to make HTTP requests -- i.e. unit tests -- the best practice is to have a separate test class from the one
+containing functional tests. For example, the `azure-data-tables` package has client-side validation for the table name
+and properties of the entity; below is an example of how these could be tested:
+
+```python
+import pytest
+from azure.data.tables import TableServiceClient, EntityProperty, EdmType
+
+class TestTablesUnitTest(object):
+
+    def test_invalid_table_name(self):
+        account_name = 'fake_account_name'
+        account_key = 'fake_account_key1234567890'
+        tsc = TableServiceClient(
+            account_url='https://{}.table.core.windows.net/'.format(account_name),
+            credential=account_key
+        )
+
+        invalid_table_name = "bad_table_name" # table name cannot have an '_' character
+
+        with pytest.raises(ValueError):
+            tsc.create_table(invalid_table_name)
+
+    def test_entity_properties(self):
+        ep = EntityProperty('abc', EdmType.STRING)
+        ep = EntityProperty(b'abc', EdmType.BINARY)
+        ep = EntityProperty(1.2345, EdmType.DOUBLE)
+
+        with pytest.raises(ValueError):
+            ep = EntityProperty(2 ** 75, EdmType.Int64) # Tables can only handle integers up to 2 ^ 63
+```
+
+Async tests need to be marked with a `@pytest.mark.asyncio` to be properly handled. For example:
+```python
+import pytest
+from azure.data.tables.aio import TableServiceClient
+
+class TestTablesUnitTest(object):
+
+    @pytest.mark.asyncio
+    async def test_invalid_table_name(self):
+        account_name = 'fake_account_name'
+        account_key = 'fake_account_key1234567890'
+        tsc = TableServiceClient(
+            account_url='https://{}.table.core.windows.net/'.format(account_name),
+            credential=account_key
+        )
+
+        invalid_table_name = "bad_table_name" # table name cannot have an '_' character
+
+        with pytest.raises(ValueError):
+            await tsc.create_table(invalid_table_name)
+```
+
+
+## More test examples
+
+This section will demonstrate how to write tests with the `devtools_testutils` package with a few samples to showcase the features of the test framework.
+
+For more information, refer to the [advanced tests notes][advanced_tests_notes] on more advanced scenarios and additional information.
+
 
 ## Deprecated testing instructions
 
@@ -342,7 +417,7 @@ In live mode, the credentials need to be real so that the tests are able to conn
 live-mode: true
 ```
 
-### Create Live Test Resources (deprecated)
+### Create live test resources (deprecated)
 
 The Azure Python SDK library has two ways of providing live resources to our tests:
 * Using an ArmTemplate and the EnvironmentVariableLoader (we will demonstrate this one)
@@ -416,7 +491,7 @@ There's a lot going on in the example so we'll take this piece by piece:
 * Import everything you will need in your tests as normal, add to your imports the line `from devtools_testutils import AzureTestCase, EnvironmentVariableLoader`. These two objects give our tests a lot of the desired powers.
 * `AzureTestCase`: the test class should inherit from this object (`class TestSchemaRegistry(AzureTestCase)`), doing so sets up the recording infrastructure and the client creation methods.
 * `EnvironmentVariableLoader`: this loader serves two purposes.
-    * First, it will provide the live keys we need to test our library against live resources.
+    * First, it will provide the live keys we need to test our package against live resources.
     * Second, it will keep those same live keys out of our recordings to make sure that we are not leaking our secrets into the recordings.
 * At the top of your test class you should include any helper methods you will need. Most libraries will have a client creation method to eliminate repetitive code.
 * Following your helper methods will be your actual tests. All test methods must start with "test". The preparer built at the top of the file should decorate your test in the fashion: `@MyPreparer()`.
@@ -461,74 +536,13 @@ From your terminal run the `pytest` command to run all the tests that you have w
 
 Your update should run smooth and have green dots representing passing tests. Now if you look at the contents of your `tests` directory there should be a new directory called `recording` with four `.yaml` files. Each `yaml` file is a recording for a single test. To run a test in playback mode change the `testsettings_local.cfg` to `live-mode: false` and rerun the tests with the same command. The test infrastructure will use the automatically created `.yaml` recordings to mock the HTTP traffic and run the tests.
 
-### Purging Secrets (deprecated)
+### Purging secrets (deprecated)
 
 The `yaml` files created from running tests in live mode store the request and response interactions between the library and the service and this can include authorization, account names, shared access signatures, and other secrets. The recordings are included in our public GitHub repository, making it important for us to remove any secrets from these recordings before committing them to the repository. There are two easy ways to remove secrets. The first is the `EnvironmentVariableLoader` implementation, discussed above. This method will automatically purge the keys with the provided fake values. The second way is to use the `self.scrubber.register_name_pair(key, fake_key)` method (This method is a function of the base `AzureTestCase` class), which is used when a secret is dynamically created during a test. For example, [Tables](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/tests/_shared/cosmos_testcase.py#L86-L89) uses this method to replace storage account names with standard names.
 
-#### Special Case: Shared Access Signature (deprecated)
+#### Special case: Shared Access Signature (deprecated)
 
 Tests that use the Shared Access Signature (SAS) to authenticate a client should use the [`AzureTestCase.generate_sas`](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/azure_testcase.py#L357-L370) method to generate the SAS and purge the value from the recordings. An example of using this method can be found [here](https://github.com/Azure/azure-sdk-for-python/blob/78650ba08523c14227ce8139cba5f4d1e6ed7956/sdk/tables/azure-data-tables/tests/test_table_entity.py#L1628-L1636). The method takes any number of positional arguments, with the first being the method that creates the SAS, and any number of keyword arguments (**kwargs). The method will be purged appropriately and allow for these tests to be run in playback mode.
-
-## Functional vs. unit tests
-
-The test written above is a functional test, it generates HTTP traffic and sends data to the service. Most of our clients have some client-side validation for account names, formatting, or properties that do not generate HTTP traffic. For unit tests, the best practice is to have a separate test class from the `AzureTestCase` class which tests client side validation methods. For example, the `azure-data-tables` library has client-side validation for the table name and properties of the entity, below is an example of how these could be tested:
-
-```python
-import pytest
-from azure.data.tables import TableServiceClient, EntityProperty, EdmType
-
-class TestTablesUnitTest(object):
-
-    def test_invalid_table_name(self):
-        account_name = 'fake_account_name'
-        account_key = 'fake_account_key1234567890'
-        tsc = TableServiceClient(
-            account_url='https://{}.table.core.windows.net/'.format(account_name),
-            credential=account_key
-        )
-
-        invalid_table_name = "bad_table_name" # table name cannot have an '_' character
-
-        with pytest.raises(ValueError):
-            tsc.create_table(invalid_table_name)
-
-    def test_entity_properties(self):
-        ep = EntityProperty('abc', EdmType.STRING)
-        ep = EntityProperty(b'abc', EdmType.BINARY)
-        ep = EntityProperty(1.2345, EdmType.DOUBLE)
-
-        with pytest.raises(ValueError):
-            ep = EntityProperty(2 ** 75, EdmType.Int64) # Tables can only handle integers up to 2 ^ 63
-```
-
-Async tests need to be marked with a `@pytest.mark.asyncio` to be properly handled. For example:
-```python
-import pytest
-from azure.data.tables.aio import TableServiceClient
-
-class TestTablesUnitTest(object):
-
-    @pytest.mark.asyncio
-    async def test_invalid_table_name(self):
-        account_name = 'fake_account_name'
-        account_key = 'fake_account_key1234567890'
-        tsc = TableServiceClient(
-            account_url='https://{}.table.core.windows.net/'.format(account_name),
-            credential=account_key
-        )
-
-        invalid_table_name = "bad_table_name" # table name cannot have an '_' character
-
-        with pytest.raises(ValueError):
-            await tsc.create_table(invalid_table_name)
-```
-
-
-## More test examples
-
-This section will demonstrate how to write tests with the `devtools_testutils` package with a few samples to showcase the features of the test framework.
-
-For more information, refer to the [advanced tests notes][advanced_tests_notes] on more advanced scenarios and additional information.
 
 
 <!-- Links -->
@@ -552,6 +566,7 @@ For more information, refer to the [advanced tests notes][advanced_tests_notes] 
 [proxy_cert_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/trusting-cert-per-language.md
 [proxy_general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/README.md
 [proxy_migration_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
+[pytest_invocation]: https://pytest.org/latest/how-to/usage.html
 [pytest_logging]: https://docs.pytest.org/en/stable/logging.html
 [python-dotenv_readme]:https://github.com/theskumar/python-dotenv
 
