@@ -588,7 +588,7 @@ class HealthcareRelationRole(DictMixin):
 
     For example, in "The subject took 100 mg of ibuprofen",
     "100 mg" is a dosage entity fulfilling the role "Dosage"
-    in the extracted relation "DosageofMedication".
+    in the extracted relation "DosageOfMedication".
 
     :ivar name: The role of the entity in the relationship. I.e., in the relation
         "The subject took 100 mg of ibuprofen", the dosage entity "100 mg" has role
@@ -606,10 +606,10 @@ class HealthcareRelationRole(DictMixin):
 
     @staticmethod
     def _get_entity(healthcare_role_result, entities):
-        nums = _get_indices(healthcare_role_result.ref)
-        entity_index = nums[
+        numbers = _get_indices(healthcare_role_result.ref)
+        entity_index = numbers[
             1
-        ]  # first num parsed from index is document #, second is entity index
+        ]  # first number parsed from index is document #, second is entity index
         return entities[entity_index]
 
     @classmethod
@@ -1559,9 +1559,9 @@ class MinedOpinion(DictMixin):
         ]
         assessments = []
         for assessment_relation in assessment_relations:
-            nums = _get_indices(assessment_relation)
-            sentence_index = nums[1]
-            assessment_index = nums[2]
+            numbers = _get_indices(assessment_relation)
+            sentence_index = numbers[1]
+            assessment_index = numbers[2]
             assessments.append(
                 sentiment.sentences[sentence_index].assessments[assessment_index]
             )

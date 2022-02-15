@@ -350,7 +350,7 @@ This version uses a next-generation code generator that *might* introduce breaki
   At a glance:
 
   - "is" should not be used at all.
-  - "format" will return the string value, where "%s" string formatting will return `NameOfEnum.stringvalue`. Format syntax should be prefered.
+  - "format" will return the string value, where "%s" string formatting will return `NameOfEnum.stringvalue`. Format syntax should be preferred.
 
 **Bugfixes**
 
