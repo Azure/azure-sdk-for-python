@@ -3,7 +3,7 @@
 ### 4.3.0b3 (Unreleased)
 
 #### Features Added
-- Added new **provisional** `max_integrated_cache_staleness_in_ms` parameter to item read and query methods in order
+- Added new **provisional** `max_integrated_cache_staleness_in_ms` parameter to read item and query items APIs in order
   to make use of the **preview** CosmosDB integrated cache functionality.
   Please see [Azure Cosmos DB integrated cache](https://docs.microsoft.com/azure/cosmos-db/integrated-cache) for more details.
 - Added support for split-proof queries for the async client
