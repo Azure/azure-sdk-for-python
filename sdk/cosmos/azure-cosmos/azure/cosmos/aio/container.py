@@ -212,6 +212,8 @@ class ContainerProxy(object):
         :param partition_key: Partition key for the item to retrieve.
         **Provisional** parameter max_integrated_cache_staleness_in_ms
         :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
+            For accounts configured to use the integrated cache, using Session or Eventual consistency,
+            responses are guaranteed to be no staler than this value.
         :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
@@ -257,6 +259,8 @@ class ContainerProxy(object):
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         **Provisional** parameter max_integrated_cache_staleness_in_ms
         :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
+            For accounts configured to use the integrated cache, using Session or Eventual consistency,
+            responses are guaranteed to be no staler than this value.
         :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
@@ -314,6 +318,8 @@ class ContainerProxy(object):
         :param populate_query_metrics: Enable returning query metrics in response headers.
         **Provisional** parameter max_integrated_cache_staleness_in_ms
         :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
+            For accounts configured to use the integrated cache, using Session or Eventual consistency,
+            responses are guaranteed to be no staler than this value.
         :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
