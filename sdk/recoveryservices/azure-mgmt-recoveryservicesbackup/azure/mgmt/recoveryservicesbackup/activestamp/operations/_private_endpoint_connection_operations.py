@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -21,26 +21,21 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_get_request(
-    vault_name,  # type: str
-    resource_group_name,  # type: str
-    subscription_id,  # type: str
-    private_endpoint_connection_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-10-01"
+    vault_name: str,
+    resource_group_name: str,
+    subscription_id: str,
+    private_endpoint_connection_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/privateEndpointConnections/{privateEndpointConnectionName}')
@@ -71,16 +66,18 @@ def build_get_request(
 
 
 def build_put_request_initial(
-    vault_name,  # type: str
-    resource_group_name,  # type: str
-    subscription_id,  # type: str
-    private_endpoint_connection_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    vault_name: str,
+    resource_group_name: str,
+    subscription_id: str,
+    private_endpoint_connection_name: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-10-01"
+    api_version = "2021-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/privateEndpointConnections/{privateEndpointConnectionName}')
@@ -108,19 +105,20 @@ def build_put_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_delete_request_initial(
-    vault_name,  # type: str
-    resource_group_name,  # type: str
-    subscription_id,  # type: str
-    private_endpoint_connection_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-10-01"
+    vault_name: str,
+    resource_group_name: str,
+    subscription_id: str,
+    private_endpoint_connection_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/privateEndpointConnections/{privateEndpointConnectionName}')
@@ -149,7 +147,6 @@ def build_delete_request_initial(
         **kwargs
     )
 
-# fmt: on
 class PrivateEndpointConnectionOperations(object):
     """PrivateEndpointConnectionOperations operations.
 
@@ -175,12 +172,11 @@ class PrivateEndpointConnectionOperations(object):
     @distributed_trace
     def get(
         self,
-        vault_name,  # type: str
-        resource_group_name,  # type: str
-        private_endpoint_connection_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.PrivateEndpointConnectionResource"
+        vault_name: str,
+        resource_group_name: str,
+        private_endpoint_connection_name: str,
+        **kwargs: Any
+    ) -> "_models.PrivateEndpointConnectionResource":
         """Get Private Endpoint Connection. This call is made by Backup Admin.
 
         :param vault_name: The name of the recovery services vault.
@@ -232,13 +228,12 @@ class PrivateEndpointConnectionOperations(object):
 
     def _put_initial(
         self,
-        vault_name,  # type: str
-        resource_group_name,  # type: str
-        private_endpoint_connection_name,  # type: str
-        parameters,  # type: "_models.PrivateEndpointConnectionResource"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.PrivateEndpointConnectionResource"
+        vault_name: str,
+        resource_group_name: str,
+        private_endpoint_connection_name: str,
+        parameters: "_models.PrivateEndpointConnectionResource",
+        **kwargs: Any
+    ) -> "_models.PrivateEndpointConnectionResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateEndpointConnectionResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -285,13 +280,12 @@ class PrivateEndpointConnectionOperations(object):
     @distributed_trace
     def begin_put(
         self,
-        vault_name,  # type: str
-        resource_group_name,  # type: str
-        private_endpoint_connection_name,  # type: str
-        parameters,  # type: "_models.PrivateEndpointConnectionResource"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.PrivateEndpointConnectionResource"]
+        vault_name: str,
+        resource_group_name: str,
+        private_endpoint_connection_name: str,
+        parameters: "_models.PrivateEndpointConnectionResource",
+        **kwargs: Any
+    ) -> LROPoller["_models.PrivateEndpointConnectionResource"]:
         """Approve or Reject Private Endpoint requests. This call is made by Backup Admin.
 
         :param vault_name: The name of the recovery services vault.
@@ -363,12 +357,11 @@ class PrivateEndpointConnectionOperations(object):
 
     def _delete_initial(
         self,
-        vault_name,  # type: str
-        resource_group_name,  # type: str
-        private_endpoint_connection_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        vault_name: str,
+        resource_group_name: str,
+        private_endpoint_connection_name: str,
+        **kwargs: Any
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -402,12 +395,11 @@ class PrivateEndpointConnectionOperations(object):
     @distributed_trace
     def begin_delete(
         self,
-        vault_name,  # type: str
-        resource_group_name,  # type: str
-        private_endpoint_connection_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        vault_name: str,
+        resource_group_name: str,
+        private_endpoint_connection_name: str,
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Delete Private Endpoint requests. This call is made by Backup Admin.
 
         :param vault_name: The name of the recovery services vault.

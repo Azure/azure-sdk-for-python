@@ -1,14 +1,14 @@
 # Release History
 
-## 1.0.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.0.1 (2022-02-15)
 
 ### Bugs Fixed
 
+- fix authentication who use a `reverse_proxy_endpoint` with either `WebPubSubServiceClient.from_connection_string` or pass in an `AzureKeyCredential` for authentication #22587
+
 ### Other Changes
+
+- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
 
 ## 1.0.0 (2021-11-10)
 

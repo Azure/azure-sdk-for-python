@@ -4,16 +4,6 @@
 # ------------------------------------
 
 
-from ._generated.models import (
-    EntitiesTask,
-    PiiTask,
-    EntityLinkingTask,
-    SentimentAnalysisTask,
-    ExtractiveSummarizationTask,
-    CustomEntitiesTask,
-    CustomSingleClassificationTask,
-    CustomMultiClassificationTask,
-)
 from ._models import (
     DetectLanguageInput,
     TextDocumentInput,
@@ -91,21 +81,21 @@ def _validate_input(documents, hint, whole_input_hint):
 
 
 def _determine_action_type(action):  # pylint: disable=too-many-return-statements
-    if isinstance(action, EntitiesTask):
+    if action.__class__.__name__ == "EntitiesTask":
         return _AnalyzeActionsType.RECOGNIZE_ENTITIES
-    if isinstance(action, PiiTask):
+    if action.__class__.__name__ == "PiiTask":
         return _AnalyzeActionsType.RECOGNIZE_PII_ENTITIES
-    if isinstance(action, EntityLinkingTask):
+    if action.__class__.__name__ == "EntityLinkingTask":
         return _AnalyzeActionsType.RECOGNIZE_LINKED_ENTITIES
-    if isinstance(action, SentimentAnalysisTask):
+    if action.__class__.__name__ == "SentimentAnalysisTask":
         return _AnalyzeActionsType.ANALYZE_SENTIMENT
-    if isinstance(action, ExtractiveSummarizationTask):
+    if action.__class__.__name__ == "ExtractiveSummarizationTask":
         return _AnalyzeActionsType.EXTRACT_SUMMARY
-    if isinstance(action, CustomEntitiesTask):
+    if action.__class__.__name__ == "CustomEntitiesTask":
         return _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES
-    if isinstance(action, CustomSingleClassificationTask):
+    if action.__class__.__name__ == "CustomSingleClassificationTask":
         return _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY
-    if isinstance(action, CustomMultiClassificationTask):
+    if action.__class__.__name__ == "CustomMultiClassificationTask":
         return _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY
     return _AnalyzeActionsType.EXTRACT_KEY_PHRASES
 
