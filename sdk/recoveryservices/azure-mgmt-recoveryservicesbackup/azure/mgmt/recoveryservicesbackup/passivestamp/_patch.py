@@ -24,7 +24,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import copy
 from typing import List
 import importlib
 import urllib.parse
@@ -39,12 +38,11 @@ class RemoveDuplicateParamsPolicy(SansIOHTTPPolicy):
     def on_request(self, request):
         parsed_url = urllib.parse.urlparse(request.http_request.url)
         query_params = urllib.parse.parse_qs(parsed_url.query)
-        updated_query_params = copy.copy(query_params)
-        for query in query_params:
-            if query in self.duplicate_param_names and (isinstance(query_params[query], list) and len(query_params[query]) > 1):
-                updated_query_params[query] = [query_params[query][-1]]
-        # service returned will be later in the url because of how we format
-        request.http_request.url = request.http_request.url.replace(parsed_url.query, "") + urllib.parse.urlencode(updated_query_params, doseq=True)
+        filtered_query_params = {
+            k: v[-1:] if k in self.duplicate_param_names else v
+            for k, v in query_params.items()
+        }
+        request.http_request.url = request.http_request.url.replace(parsed_url.query, "") + urllib.parse.urlencode(filtered_query_params, doseq=True)
         return super().on_request(request)
 
 DUPLICATE_PARAMS_POLICY = RemoveDuplicateParamsPolicy(duplicate_param_names=["$filter", "$skiptoken", "api-version"])
