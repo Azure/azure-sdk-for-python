@@ -412,7 +412,7 @@ class CodegenTestPR:
 
     @property
     def whether_single_path(self) -> bool:
-        path = sum([os.path.isdir(listx) for listx in os.listdir(str(Path(f'sdk/{self.sdk_folder}'))])
+        path = sum([os.path.isdir(listx) for listx in os.listdir(str(Path(f'sdk/{self.sdk_folder}')))])
         return True if path==1 else False
 
     @return_origin_path
