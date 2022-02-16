@@ -1076,7 +1076,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         CosmosClientConnection.__ValidateResource(udf)
         udf = udf.copy()
         if udf.get("serverScript"):
-            udf["body"] = str(udf["serverScript"])
+            udf["body"] = str(udf.pop("serverScript", ""))
         elif udf.get("body"):
             udf["body"] = str(udf["body"])
 
@@ -1105,7 +1105,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         CosmosClientConnection.__ValidateResource(trigger)
         trigger = trigger.copy()
         if trigger.get("serverScript"):
-            trigger["body"] = str(trigger["serverScript"])
+            trigger["body"] = str(trigger.pop("serverScript", ""))
         elif trigger.get("body"):
             trigger["body"] = str(trigger["body"])
 
@@ -1187,7 +1187,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         CosmosClientConnection.__ValidateResource(sproc)
         sproc = sproc.copy()
         if sproc.get("serverScript"):
-            sproc["body"] = str(sproc["serverScript"])
+            sproc["body"] = str(sproc.pop("serverScript", ""))
         elif sproc.get("body"):
             sproc["body"] = str(sproc["body"])
 
