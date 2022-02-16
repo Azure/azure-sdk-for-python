@@ -1,6 +1,6 @@
 {
-    "chosen_version": "2018-12-20",
-    "total_api_version_list": ["2018-12-20"],
+    "chosen_version": "2021-11-15",
+    "total_api_version_list": ["2021-11-15"],
     "client": {
         "name": "RecoveryServicesBackupPassiveClient",
         "filename": "_recovery_services_backup_passive_client",
