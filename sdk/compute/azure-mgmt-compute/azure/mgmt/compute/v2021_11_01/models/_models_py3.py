@@ -3315,7 +3315,11 @@ class ImageReference(SubResource):
      the virtual machine. The allowed formats are Major.Minor.Build or 'latest'. Major, Minor, and
      Build are decimal numbers. Specify 'latest' to use the latest version of an image available at
      deploy time. Even if you use 'latest', the VM image will not automatically update after deploy
-     time even if a new version becomes available.
+     time even if a new version becomes available. Please do not use field 'version' for gallery
+     image deployment, gallery image should always use 'id' field for deployment, to use 'latest'
+     version of gallery image, just set
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageName}'
+     in the 'id' field without version input.
     :vartype version: str
     :ivar exact_version: Specifies in decimal numbers, the version of platform image or marketplace
      image used to create the virtual machine. This readonly field differs from 'version', only if
@@ -3370,7 +3374,11 @@ class ImageReference(SubResource):
          create the virtual machine. The allowed formats are Major.Minor.Build or 'latest'. Major,
          Minor, and Build are decimal numbers. Specify 'latest' to use the latest version of an image
          available at deploy time. Even if you use 'latest', the VM image will not automatically update
-         after deploy time even if a new version becomes available.
+         after deploy time even if a new version becomes available. Please do not use field 'version'
+         for gallery image deployment, gallery image should always use 'id' field for deployment, to use
+         'latest' version of gallery image, just set
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageName}'
+         in the 'id' field without version input.
         :paramtype version: str
         :keyword shared_gallery_image_id: Specified the shared gallery image unique id for vm
          deployment. This can be fetched from shared gallery image GET call.
