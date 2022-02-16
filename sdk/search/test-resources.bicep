@@ -1,7 +1,7 @@
 param isPublicCloud bool = environment().name == 'AzureCloud'
 param searchEndpointSuffix string = 'search.windows.net'
 param storageEndpointSuffix string = 'core.windows.net'
-param location string = isPublicCloud ? 'eastus2' : resourceGroup().location
+param location string = '${resourceGroup().location}'
 param searchSku string = 'standard'
 param searchServiceName string = 'search-${uniqueString(resourceGroup().id)}'
 param searchApiVersion string = '2021-04-01-Preview'
