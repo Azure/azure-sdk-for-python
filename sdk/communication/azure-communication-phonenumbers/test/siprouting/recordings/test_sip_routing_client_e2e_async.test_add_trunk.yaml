@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       Date:
-      - Tue, 15 Feb 2022 15:44:43 GMT
+      - Tue, 15 Feb 2022 15:44:34 GMT
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)
       x-ms-return-client-request-id:
@@ -17,12 +17,12 @@ interactions:
       string: '{"trunks":{"sbs1.sipconfigtest.com":{"sipSignalingPort":1122},"sbs2.sipconfigtest.com":{"sipSignalingPort":1123}},"routes":[]}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Tue, 15 Feb 2022 15:44:43 GMT
-      ms-cv: Ud8h5CVSF0+sLVd4ROe+pg.0
+      date: Tue, 15 Feb 2022 15:44:35 GMT
+      ms-cv: 6gM+AfrucUabRNY1/s9H4w.0
       request-context: appId=
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 277ms
+      x-processing-time: 279ms
     status:
       code: 200
       message: OK
@@ -37,7 +37,7 @@ interactions:
       Content-Type:
       - application/merge-patch+json
       Date:
-      - Tue, 15 Feb 2022 15:44:44 GMT
+      - Tue, 15 Feb 2022 15:44:35 GMT
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)
       x-ms-return-client-request-id:
@@ -49,12 +49,12 @@ interactions:
       string: '{"trunks":{"sbs1.sipconfigtest.com":{"sipSignalingPort":1122},"sbs2.sipconfigtest.com":{"sipSignalingPort":1123}},"routes":[]}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Tue, 15 Feb 2022 15:44:44 GMT
-      ms-cv: KdLTuXELk0mtjyFvRRPh8Q.0
+      date: Tue, 15 Feb 2022 15:44:35 GMT
+      ms-cv: LuZzZTOSmUqfZuRLdyj7iA.0
       request-context: appId=
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 271ms
+      x-processing-time: 363ms
     status:
       code: 200
       message: OK
@@ -65,7 +65,7 @@ interactions:
       Accept:
       - application/json
       Date:
-      - Tue, 15 Feb 2022 15:44:44 GMT
+      - Tue, 15 Feb 2022 15:44:36 GMT
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)
       x-ms-return-client-request-id:
@@ -77,12 +77,12 @@ interactions:
       string: '{"trunks":{"sbs1.sipconfigtest.com":{"sipSignalingPort":1122},"sbs2.sipconfigtest.com":{"sipSignalingPort":1123}},"routes":[]}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Tue, 15 Feb 2022 15:44:45 GMT
-      ms-cv: f22ml9fvtkC3Pqxwc3SMOQ.0
+      date: Tue, 15 Feb 2022 15:44:36 GMT
+      ms-cv: 8A8tXgli0U+wb2lLBAqtUw.0
       request-context: appId=
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 363ms
+      x-processing-time: 243ms
     status:
       code: 200
       message: OK
@@ -97,7 +97,7 @@ interactions:
       Content-Type:
       - application/merge-patch+json
       Date:
-      - Tue, 15 Feb 2022 15:44:45 GMT
+      - Tue, 15 Feb 2022 15:44:36 GMT
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)
       x-ms-return-client-request-id:
@@ -109,12 +109,12 @@ interactions:
       string: '{"trunks":{},"routes":[]}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Tue, 15 Feb 2022 15:44:45 GMT
-      ms-cv: ojZpcbnD6Ea4hbGXLwnoCA.0
+      date: Tue, 15 Feb 2022 15:44:36 GMT
+      ms-cv: djvz7+Qa+k6dQycfMZGGfw.0
       request-context: appId=
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 582ms
+      x-processing-time: 697ms
     status:
       code: 200
       message: OK
@@ -130,7 +130,7 @@ interactions:
       Content-Type:
       - application/merge-patch+json
       Date:
-      - Tue, 15 Feb 2022 15:44:46 GMT
+      - Tue, 15 Feb 2022 15:44:37 GMT
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)
       x-ms-return-client-request-id:
@@ -142,72 +142,12 @@ interactions:
       string: '{"trunks":{"sbs1.sipconfigtest.com":{"sipSignalingPort":1122},"sbs2.sipconfigtest.com":{"sipSignalingPort":1123}},"routes":[]}'
     headers:
       content-type: application/json; charset=utf-8
-      date: Tue, 15 Feb 2022 15:44:46 GMT
-      ms-cv: AZRDb4ALZUCgritop8Aoiw.0
+      date: Tue, 15 Feb 2022 15:44:38 GMT
+      ms-cv: P/w2wfcVtkKhIEsInEk9FQ.0
       request-context: appId=
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 1079ms
-    status:
-      code: 200
-      message: OK
-    url: https://sanitized.communication.azure.com/sip?api-version=2021-05-01-preview
-- request:
-    body: '{"trunks": {"sbs2.sipconfigtest.com": null}}'
-    headers:
-      Accept:
-      - application/json
-      Content-Length:
-      - '44'
-      Content-Type:
-      - application/merge-patch+json
-      Date:
-      - Tue, 15 Feb 2022 15:44:47 GMT
-      User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)
-      x-ms-return-client-request-id:
-      - 'true'
-    method: PATCH
-    uri: https://sanitized.communication.azure.com/sip?api-version=2021-05-01-preview
-  response:
-    body:
-      string: '{"trunks":{"sbs1.sipconfigtest.com":{"sipSignalingPort":1122}},"routes":[]}'
-    headers:
-      content-type: application/json; charset=utf-8
-      date: Tue, 15 Feb 2022 15:44:47 GMT
-      ms-cv: gOW43VhlaEarnpMTec0CqQ.0
-      request-context: appId=
-      transfer-encoding: chunked
-      x-cache: CONFIG_NOCACHE
-      x-processing-time: 909ms
-    status:
-      code: 200
-      message: OK
-    url: https://sanitized.communication.azure.com/sip?api-version=2021-05-01-preview
-- request:
-    body: ''
-    headers:
-      Accept:
-      - application/json
-      Date:
-      - Tue, 15 Feb 2022 15:44:48 GMT
-      User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)
-      x-ms-return-client-request-id:
-      - 'true'
-    method: GET
-    uri: https://sanitized.communication.azure.com/sip?api-version=2021-05-01-preview
-  response:
-    body:
-      string: '{"trunks":{"sbs1.sipconfigtest.com":{"sipSignalingPort":1122}},"routes":[]}'
-    headers:
-      content-type: application/json; charset=utf-8
-      date: Tue, 15 Feb 2022 15:44:48 GMT
-      ms-cv: oIZWNHhG4EeBf46tegx2qA.0
-      request-context: appId=
-      transfer-encoding: chunked
-      x-cache: CONFIG_NOCACHE
-      x-processing-time: 678ms
+      x-processing-time: 1272ms
     status:
       code: 200
       message: OK
