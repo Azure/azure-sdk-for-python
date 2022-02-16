@@ -40,7 +40,7 @@ from . import mgmt_settings_fake as fake_settings
 
 try:
     # Try to import the AsyncFakeCredential, if we cannot assume it is Python 2
-    from .fake_async_credential import AsyncFakeCredential
+    from .fake_credentials_async import AsyncFakeCredential
 except SyntaxError:
     pass
 
@@ -94,7 +94,8 @@ def get_region_override(default="westus"):
 
 
 def _is_autorest_v3(client_class):
-    """IS this client a autorestv3/track2 one?.
+    """Is this client a autorest v3/track2 one?
+
     Could be refined later if necessary.
     """
     args = get_arg_spec(client_class.__init__).args

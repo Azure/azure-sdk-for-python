@@ -7,6 +7,7 @@ stages:
       ServiceDirectory: cognitivelanguage
       MatrixReplace:
         - TestSamples=.*/true
+      MaxParallel: 1
       EnvVars:
         AZURE_QUESTIONANSWERING_KEY: $(qna-key)
         AZURE_QUESTIONANSWERING_PROJECT: 190a9e13-8ede-4e4b-a8fd-c4d7f2aeab6c

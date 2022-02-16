@@ -7,6 +7,7 @@ REQUEST_REPO = 'Azure/sdk-release-request'
 REST_REPO = 'Azure/azure-rest-api-specs'
 AUTO_ASSIGN_LABEL = 'assigned'
 AUTO_PARSE_LABEL = 'auto-link'
+MULTI_LINK_LABEL = 'MultiLink'
 
 _LOG = logging.getLogger(__name__)
 

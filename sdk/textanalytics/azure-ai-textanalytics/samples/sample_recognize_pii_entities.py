@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -30,7 +28,7 @@ import os
 def sample_recognize_pii_entities():
     print(
         "In this sample we will be going through our customer's loan payment information and redacting "
-        "all PII (personally identifable information) before storing this information on our public website. "
+        "all PII (personally identifiable information) before storing this information on our public website. "
         "I'm also looking to explicitly extract the SSN information, so I can update my database with SSNs for "
         "our customers"
     )
@@ -58,8 +56,8 @@ def sample_recognize_pii_entities():
         "I also want to comb through all of the entities that got redacted"
     )
     for idx, doc in enumerate(docs):
-        print("Document text: {}".format(documents[idx]))
-        print("Redacted document text: {}".format(doc.redacted_text))
+        print(f"Document text: {documents[idx]}")
+        print(f"Redacted document text: {doc.redacted_text}")
         for entity in doc.entities:
             print("...Entity '{}' with category '{}' got redacted".format(
                 entity.text, entity.category
@@ -73,14 +71,14 @@ def sample_recognize_pii_entities():
         "I also want to be fairly confident that what I'm storing is an SSN, so let's also "
         "ensure that we're > 60% positive the entity is a SSN"
     )
-    ssns = []
+    social_security_numbers = []
     for doc in docs:
         for entity in doc.entities:
             if entity.category == 'USSocialSecurityNumber' and entity.confidence_score >= 0.6:
-                ssns.append(entity.text)
+                social_security_numbers.append(entity.text)
 
     print("We have extracted the following SSNs as well: '{}'".format(
-        "', '".join(ssns)
+        "', '".join(social_security_numbers)
     ))
 
 

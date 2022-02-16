@@ -64,10 +64,8 @@ class DetectEntireAnomalySample(object):
 
         try:
             response = client.detect_entire_series(request)
-        except AnomalyDetectorError as e:
-            print('Error code: {}'.format(e.error.code), 'Error message: {}'.format(e.error.message))
         except Exception as e:
-            print(e)
+            print('Error code: {}'.format(e.error.code), 'Error message: {}'.format(e.error.message))
 
         if any(response.is_anomaly):
             print('An anomaly was detected at index:')

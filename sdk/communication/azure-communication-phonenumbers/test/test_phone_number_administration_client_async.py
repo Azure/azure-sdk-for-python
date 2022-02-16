@@ -23,6 +23,9 @@ PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON = "Phone numbers shouldn't be purchased i
 SKIP_INT_PHONE_NUMBER_TESTS = os.getenv("COMMUNICATION_SKIP_INT_PHONENUMBERS_TEST", "false") == "true"
 INT_PHONE_NUMBER_TEST_SKIP_REASON = "Phone numbers setting SMS capability does not support in INT. Skip these tests in INT."
 
+SKIP_UPDATE_CAPABILITIES_TESTS = os.getenv("COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST", "false") == "true"
+SKIP_UPDATE_CAPABILITIES_TESTS_REASON = "Phone number capabilities update does not currently support parallel execution. Skip these tests from live test pipeline."
+
 class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
     def setUp(self):
         super(PhoneNumbersClientTestAsync, self).setUp()
@@ -129,6 +132,7 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
         assert poller.result()
 
     @pytest.mark.skipif(SKIP_INT_PHONE_NUMBER_TESTS, reason=INT_PHONE_NUMBER_TEST_SKIP_REASON)
+    @pytest.mark.skipif(SKIP_UPDATE_CAPABILITIES_TESTS, reason=SKIP_UPDATE_CAPABILITIES_TESTS_REASON)
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_update_phone_number_capabilities(self):
         async with self.phone_number_client:
@@ -145,6 +149,7 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
             assert poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
 
     @pytest.mark.skipif(SKIP_INT_PHONE_NUMBER_TESTS, reason=INT_PHONE_NUMBER_TEST_SKIP_REASON)
+    @pytest.mark.skipif(SKIP_UPDATE_CAPABILITIES_TESTS, reason=SKIP_UPDATE_CAPABILITIES_TESTS_REASON)
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_update_phone_number_capabilities_from_managed_identity(self):
         endpoint, access_key = parse_connection_str(self.connection_str)

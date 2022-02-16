@@ -73,14 +73,6 @@ class ClearRange(msrest.serialization.Model):
 class CopyFileSmbInfo(msrest.serialization.Model):
     """Parameter group.
 
-    :param file_permission_copy_mode: Specifies the option to copy file security descriptor from
-     source file or to set it using the value which is defined by the header value of
-     x-ms-file-permission or x-ms-file-permission-key. Possible values include: "source",
-     "override".
-    :type file_permission_copy_mode: str or ~azure.storage.fileshare.models.PermissionCopyModeType
-    :param ignore_read_only: Specifies the option to overwrite the target file if it already exists
-     and has read-only attribute set.
-    :type ignore_read_only: bool
     :param file_attributes: Specifies either the option to copy file attributes from a source
      file(source) to a target file or a list of attributes to set on a target file.
     :type file_attributes: str
@@ -92,6 +84,14 @@ class CopyFileSmbInfo(msrest.serialization.Model):
      source file(source) to a target file or a time value in ISO 8601 format to set as last write
      time on a target file.
     :type file_last_write_time: str
+    :param file_permission_copy_mode: Specifies the option to copy file security descriptor from
+     source file or to set it using the value which is defined by the header value of
+     x-ms-file-permission or x-ms-file-permission-key. Possible values include: "source",
+     "override".
+    :type file_permission_copy_mode: str or ~azure.storage.fileshare.models.PermissionCopyModeType
+    :param ignore_read_only: Specifies the option to overwrite the target file if it already exists
+     and has read-only attribute set.
+    :type ignore_read_only: bool
     :param set_archive_attribute: Specifies the option to set archive attribute on a target file.
      True means archive attribute will be set on a target file despite attribute overrides or a
      source file state.
@@ -99,11 +99,11 @@ class CopyFileSmbInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'file_permission_copy_mode': {'key': 'filePermissionCopyMode', 'type': 'str'},
-        'ignore_read_only': {'key': 'ignoreReadOnly', 'type': 'bool'},
         'file_attributes': {'key': 'fileAttributes', 'type': 'str'},
         'file_creation_time': {'key': 'fileCreationTime', 'type': 'str'},
         'file_last_write_time': {'key': 'fileLastWriteTime', 'type': 'str'},
+        'file_permission_copy_mode': {'key': 'filePermissionCopyMode', 'type': 'str'},
+        'ignore_read_only': {'key': 'ignoreReadOnly', 'type': 'bool'},
         'set_archive_attribute': {'key': 'setArchiveAttribute', 'type': 'bool'},
     }
 
@@ -112,11 +112,11 @@ class CopyFileSmbInfo(msrest.serialization.Model):
         **kwargs
     ):
         super(CopyFileSmbInfo, self).__init__(**kwargs)
-        self.file_permission_copy_mode = kwargs.get('file_permission_copy_mode', None)
-        self.ignore_read_only = kwargs.get('ignore_read_only', None)
         self.file_attributes = kwargs.get('file_attributes', None)
         self.file_creation_time = kwargs.get('file_creation_time', None)
         self.file_last_write_time = kwargs.get('file_last_write_time', None)
+        self.file_permission_copy_mode = kwargs.get('file_permission_copy_mode', None)
+        self.ignore_read_only = kwargs.get('ignore_read_only', None)
         self.set_archive_attribute = kwargs.get('set_archive_attribute', None)
 
 
@@ -171,6 +171,30 @@ class CorsRule(msrest.serialization.Model):
         self.allowed_headers = kwargs['allowed_headers']
         self.exposed_headers = kwargs['exposed_headers']
         self.max_age_in_seconds = kwargs['max_age_in_seconds']
+
+
+class DestinationLeaseAccessConditions(msrest.serialization.Model):
+    """Parameter group.
+
+    :param destination_lease_id: Required if the destination file has an active infinite lease. The
+     lease ID specified for this header must match the lease ID of the destination file. If the
+     request does not include the lease ID or it is not valid, the operation fails with status code
+     412 (Precondition Failed). If this header is specified and the destination file does not
+     currently have an active lease, the operation will also fail with status code 412 (Precondition
+     Failed).
+    :type destination_lease_id: str
+    """
+
+    _attribute_map = {
+        'destination_lease_id': {'key': 'destinationLeaseId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(DestinationLeaseAccessConditions, self).__init__(**kwargs)
+        self.destination_lease_id = kwargs.get('destination_lease_id', None)
 
 
 class DirectoryItem(msrest.serialization.Model):
@@ -1040,6 +1064,25 @@ class SmbMultichannel(msrest.serialization.Model):
     ):
         super(SmbMultichannel, self).__init__(**kwargs)
         self.enabled = kwargs.get('enabled', None)
+
+
+class SourceLeaseAccessConditions(msrest.serialization.Model):
+    """Parameter group.
+
+    :param source_lease_id: Required if the source file has an active infinite lease.
+    :type source_lease_id: str
+    """
+
+    _attribute_map = {
+        'source_lease_id': {'key': 'sourceLeaseId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        super(SourceLeaseAccessConditions, self).__init__(**kwargs)
+        self.source_lease_id = kwargs.get('source_lease_id', None)
 
 
 class SourceModifiedAccessConditions(msrest.serialization.Model):

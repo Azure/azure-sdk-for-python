@@ -7,8 +7,9 @@
 import pytest
 import functools
 import uuid
+from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import HttpResponseError
-from azure.ai.formrecognizer._generated.v2021_09_30_preview.models import GetOperationResponse, ModelInfo
+from azure.ai.formrecognizer._generated.v2022_01_30_preview.models import GetOperationResponse, ModelInfo
 from azure.ai.formrecognizer import DocumentModel
 from azure.ai.formrecognizer.aio import FormTrainingClient, DocumentModelAdministrationClient
 from preparers import FormRecognizerPreparer
@@ -19,6 +20,7 @@ from preparers import GlobalClientPreparer as _GlobalClientPreparer
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
 
+@pytest.mark.skip()
 class TestCopyModelAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
@@ -38,12 +40,13 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @pytest.mark.skip()
-    async def test_copy_model_successful(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy_async
+    async def test_copy_model_successful(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         async with client:
             training_poller = await client.begin_build_model(formrecognizer_storage_container_sas_url)
             model = await training_poller.result()
 
-            target = await client.get_copy_authorization()
+            target = await client.get_copy_authorization(tags={"frtests": "testvalue"})
 
             copy_poller = await client.begin_copy_model(model.model_id, target=target)
             copy = await copy_poller.result()
@@ -51,6 +54,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             assert copy.model_id == target["targetModelId"]
             assert copy.description is None
             assert copy.created_on
+            assert copy.tags == {"frtests": "testvalue"}
             for name, doc_type in copy.doc_types.items():
                 assert name == target["targetModelId"]
                 for key, field in doc_type.field_schema.items():
@@ -61,7 +65,8 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @pytest.mark.skip()
-    async def test_copy_model_with_model_id_and_desc(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy_async
+    async def test_copy_model_with_model_id_and_desc(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         async with client:
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url)
             model = await poller.result()
@@ -87,7 +92,8 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_copy_model_fail_bad_model_id(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy_async
+    async def test_copy_model_fail_bad_model_id(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         async with client:
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url)
             model = await poller.result()
@@ -102,7 +108,8 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @pytest.mark.skip()
-    async def test_copy_model_transform(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy_async
+    async def test_copy_model_transform(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         raw_response = []
 
         def callback(response, _, headers):
@@ -126,7 +133,8 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_copy_authorization(self, client, formrecognizer_region, formrecognizer_resource_id):
+    @recorded_by_proxy_async
+    async def test_copy_authorization(self, client, formrecognizer_region, formrecognizer_resource_id, **kwargs):
         async with client:
             target = await client.get_copy_authorization()
 
@@ -140,7 +148,8 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @pytest.mark.skip()
-    async def test_copy_model_with_composed_model(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy_async
+    async def test_copy_model_with_composed_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         async with client:
             poller_1 = await client.begin_build_model(formrecognizer_storage_container_sas_url)
             model_1 = await poller_1.result()
@@ -172,7 +181,9 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @pytest.mark.skip()
-    async def test_copy_continuation_token(self, client, formrecognizer_storage_container_sas_url):
+    async def test_copy_continuation_token(self, **kwargs):
+        client = kwargs.pop("client")
+        formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
         async with client:
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url)
             model = await poller.result()
@@ -190,7 +201,8 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @pytest.mark.skip()
-    async def test_poller_metadata(self, client, formrecognizer_storage_container_sas_url):
+    @recorded_by_proxy_async
+    async def test_poller_metadata(self, client, formrecognizer_storage_container_sas_url, **kwargs):
         async with client:
             poller = await client.begin_build_model(formrecognizer_storage_container_sas_url)
             model = await poller.result()

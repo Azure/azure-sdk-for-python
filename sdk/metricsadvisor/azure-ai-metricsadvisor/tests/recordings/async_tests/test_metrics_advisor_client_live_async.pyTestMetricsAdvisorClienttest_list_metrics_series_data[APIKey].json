@@ -1,0 +1,44 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/metrics/metrics_advisor_metric_id/data/query",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "143",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "66601ecb-5e0d-11ec-ad56-6245b51668de"
+      },
+      "RequestBody": "{\u0022startTime\u0022: \u00222021-01-01T00:00:00.000Z\u0022, \u0022endTime\u0022: \u00222021-09-09T00:00:00.000Z\u0022, \u0022series\u0022: [{\u0022region\u0022: \u0022Los Angeles\u0022, \u0022category\u0022: \u0022Homemade\u0022}]}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "6abaf2aa-a79e-45d9-bdac-7454242001f4",
+        "Content-Length": "152",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 01:13:38 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "313",
+        "X-Request-ID": "6abaf2aa-a79e-45d9-bdac-7454242001f4"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": {
+              "metricId": "metrics_advisor_metric_id",
+              "dimension": {
+                "category": "Homemade",
+                "region": "Los Angeles"
+              }
+            },
+            "timestampList": [],
+            "valueList": []
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}
