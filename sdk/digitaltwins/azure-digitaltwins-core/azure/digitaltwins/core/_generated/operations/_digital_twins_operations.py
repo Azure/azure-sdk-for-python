@@ -174,7 +174,6 @@ class DigitalTwinsOperations(object):
             _tracestate = digital_twins_add_options.tracestate
             _if_none_match = digital_twins_add_options.if_none_match
         api_version = self._config.api_version
-        print("***************************************************add")
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
