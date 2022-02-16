@@ -60,7 +60,6 @@ def get_current_utc_time():
     return str(datetime.now(tz=TZ_UTC).strftime("%a, %d %b %Y %H:%M:%S ")) + "GMT"
 
 
-
 def get_current_utc_as_int():
     # type: () -> int
     current_utc_datetime = datetime.utcnow()

@@ -6,9 +6,9 @@
 import re
 import base64
 from azure_devtools.scenario_tests import RecordingProcessor
-from urllib.parse import urlparse
 from datetime import datetime, timedelta
 from functools import wraps
+from urllib.parse import urlparse
 import sys
 
 if sys.version_info[0] < 3 or sys.version_info[1] < 4:
@@ -30,7 +30,6 @@ def generate_token_with_custom_expiry_epoch(expires_on_epoch):
     token_template = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +\
         base64expiry + ".adM-ddBZZlQ1WlN3pdPBOF5G4Wh9iZpxNP_fSvpF4cWs"
     return token_template
-
 
 class URIIdentityReplacer(RecordingProcessor):
     """Replace the identity in request uri"""

@@ -6,9 +6,9 @@
 import re
 import base64
 from azure_devtools.scenario_tests import RecordingProcessor
-from urllib.parse import urlparse
 from datetime import datetime, timedelta
 from functools import wraps
+from urllib.parse import urlparse
 import sys
 
 if sys.version_info[0] < 3 or sys.version_info[1] < 4:

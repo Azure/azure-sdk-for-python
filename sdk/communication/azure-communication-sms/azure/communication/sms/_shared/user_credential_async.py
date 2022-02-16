@@ -7,7 +7,6 @@
 from asyncio import Condition, Lock
 from datetime import timedelta
 from typing import Any
-import sys
 import six
 from .utils import get_current_utc_as_int
 from .utils import create_access_token

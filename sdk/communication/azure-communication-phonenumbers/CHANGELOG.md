@@ -1,9 +1,6 @@
 # Release History
 
-## 1.1.0 (Unreleased)
-
-- Added support for proactive refreshing of tokens
-  - `CommunicationTokenCredential` exposes a new boolean keyword argument `refresh_proactively` that defaults to `False`. If set to `True`, the refreshing of the token will be scheduled in the background ensuring continuous authentication state.
+## 1.2.0 (Unreleased)
 
 ### Features Added
 
@@ -18,6 +15,8 @@ Python 2.7 is no longer supported. Please use Python version 3.6 or later.
 
 - Users can now purchase United Kingdom (GB) toll free and geographic phone numbers for PSTN Calling
 - Users can now purchase Denmark (DK) toll free and geographic phone numbers for PSTN Calling
+- Added support for proactive refreshing of tokens
+  - `CommunicationTokenCredential` exposes a new boolean keyword argument `refresh_proactively` that defaults to `False`. If set to `True`, the refreshing of the token will be scheduled in the background ensuring continuous authentication state.
 
 ### Features Added
 - Adds support for API verion `2022-01-11-preview2`

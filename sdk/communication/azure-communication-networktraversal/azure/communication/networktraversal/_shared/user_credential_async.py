@@ -39,9 +39,6 @@ class CommunicationTokenCredential(object):
         if self._refresh_proactively:
             self._schedule_refresh()
 
-    async def __aenter__(self):
-        return self
-
     async def get_token(self, *scopes, **kwargs):  # pylint: disable=unused-argument
         # type (*str, **Any) -> AccessToken
         """The value of the configured token.
@@ -127,4 +124,6 @@ class CommunicationTokenCredential(object):
         return self
 
     async def __aexit__(self, *args):
+        if self._timer is not None:
+            self._timer.cancel()
         await self.close()

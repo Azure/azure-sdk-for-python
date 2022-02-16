@@ -62,7 +62,7 @@ def get_current_utc_time():
 
 def get_current_utc_as_int():
     # type: () -> int
-    current_utc_datetime = datetime.now(tz=TZ_UTC)
+    current_utc_datetime = datetime.utcnow()
     return _convert_datetime_to_utc_int(current_utc_datetime)
 
 
@@ -131,7 +131,3 @@ def get_authentication_policy(
 
     raise TypeError("Unsupported credential: {}. Use an access token string to use HMACCredentialsPolicy"
                     "or a token credential from azure.identity".format(type(credential)))
-
-def _convert_expires_on_datetime_to_utc_int(expires_on):
-    epoch = time.mktime(datetime(1970, 1, 1).timetuple())
-    return epoch-time.mktime(expires_on.timetuple())
