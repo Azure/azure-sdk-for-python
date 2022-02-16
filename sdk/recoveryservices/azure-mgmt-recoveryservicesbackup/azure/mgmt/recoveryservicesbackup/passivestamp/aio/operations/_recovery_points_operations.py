@@ -55,7 +55,7 @@ class RecoveryPointsOperations:
         recovery_point_id: str,
         parameters: "_models.AADPropertiesResource",
         **kwargs: Any
-    ) -> Optional["_models.CrrAccessTokenResource"]:
+    ) -> "_models.CrrAccessTokenResource":
         """Returns the Access token for communication between BMS and Protection service.
 
         Returns the Access token for communication between BMS and Protection service.
@@ -77,10 +77,10 @@ class RecoveryPointsOperations:
         :type parameters: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.AADPropertiesResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CrrAccessTokenResource, or the result of cls(response)
-        :rtype: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CrrAccessTokenResource or None
+        :rtype: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CrrAccessTokenResource
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.CrrAccessTokenResource"]]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CrrAccessTokenResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -108,14 +108,12 @@ class RecoveryPointsOperations:
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 400]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.NewErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('CrrAccessTokenResource', pipeline_response)
+        deserialized = self._deserialize('CrrAccessTokenResource', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
