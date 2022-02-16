@@ -923,7 +923,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     RecognizeCustomEntitiesResult,
                     SingleCategoryClassifyResult,
                     MultiCategoryClassifyResult,
-                    DocumentError
+                    DocumentError,
                 ]
             ]
         ]

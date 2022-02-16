@@ -1803,11 +1803,11 @@ class RecognizeEntitiesAction(DictMixin):
         self,
         *,
         model_version: Optional[str] = None,
-        string_index_type: Optional[str] = "UnicodeCodePoint",
-        disable_service_logs: Optional[bool] = None
+        disable_service_logs: Optional[bool] = None,
+        **kwargs
     ) -> None:
         self.model_version = model_version
-        self.string_index_type = string_index_type
+        self.string_index_type = kwargs.pop("string_index_type", "UnicodeCodePoint")
         self.disable_service_logs = disable_service_logs
 
     def __repr__(self, **kwargs):
@@ -1883,12 +1883,12 @@ class AnalyzeSentimentAction(DictMixin):
         *,
         show_opinion_mining: Optional[bool] = None,
         model_version: Optional[str] = None,
-        string_index_type: Optional[str] = "UnicodeCodePoint",
-        disable_service_logs: Optional[bool] = None
+        disable_service_logs: Optional[bool] = None,
+        **kwargs
     ) -> None:
         self.model_version = model_version
         self.show_opinion_mining = show_opinion_mining
-        self.string_index_type = string_index_type
+        self.string_index_type = kwargs.pop("string_index_type", "UnicodeCodePoint")
         self.disable_service_logs = disable_service_logs
 
     def __repr__(self, **kwargs):
@@ -1972,13 +1972,13 @@ class RecognizePiiEntitiesAction(DictMixin):
         domain_filter: Optional[str] = None,
         categories_filter: Optional[Union[List[str], List[PiiEntityCategory]]] = None,
         model_version: Optional[str] = None,
-        string_index_type: Optional[str] = "UnicodeCodePoint",
-        disable_service_logs: Optional[bool] = None
+        disable_service_logs: Optional[bool] = None,
+        **kwargs
     ) -> None:
         self.model_version = model_version
         self.domain_filter = domain_filter
         self.categories_filter = categories_filter
-        self.string_index_type = string_index_type
+        self.string_index_type = kwargs.pop("string_index_type", "UnicodeCodePoint")
         self.disable_service_logs = disable_service_logs
 
     def __repr__(self, **kwargs):
@@ -2108,11 +2108,11 @@ class RecognizeLinkedEntitiesAction(DictMixin):
         self,
         *,
         model_version: Optional[str] = None,
-        string_index_type: Optional[str] = "UnicodeCodePoint",
-        disable_service_logs: Optional[bool] = None
+        disable_service_logs: Optional[bool] = None,
+        **kwargs
     ) -> None:
         self.model_version = model_version
-        self.string_index_type = string_index_type
+        self.string_index_type = kwargs.pop("string_index_type", "UnicodeCodePoint")
         self.disable_service_logs = disable_service_logs
 
     def __repr__(self, **kwargs):
@@ -2181,11 +2181,11 @@ class ExtractSummaryAction(DictMixin):
         max_sentence_count: Optional[int] = None,
         order_by: Optional[str] = None,
         model_version: Optional[str] = None,
-        string_index_type: Optional[str] = "UnicodeCodePoint",
-        disable_service_logs: Optional[bool] = None
+        disable_service_logs: Optional[bool] = None,
+        **kwargs
     ) -> None:
         self.model_version = model_version
-        self.string_index_type = string_index_type
+        self.string_index_type = kwargs.pop("string_index_type", "UnicodeCodePoint")
         self.disable_service_logs = disable_service_logs
         self.max_sentence_count = max_sentence_count
         self.order_by = order_by
@@ -2348,13 +2348,13 @@ class RecognizeCustomEntitiesAction(DictMixin):
         project_name: str,
         deployment_name: str,
         *,
-        string_index_type: Optional[str] = "UnicodeCodePoint",
-        disable_service_logs: Optional[bool] = None
+        disable_service_logs: Optional[bool] = None,
+        **kwargs
     ) -> None:
         self.project_name = project_name
         self.deployment_name = deployment_name
         self.disable_service_logs = disable_service_logs
-        self.string_index_type = string_index_type
+        self.string_index_type = kwargs.pop("string_index_type", "UnicodeCodePoint")
 
     def __repr__(self):
         return "RecognizeCustomEntitiesAction(project_name={}, deployment_name={}, disable_service_logs={}, " \
