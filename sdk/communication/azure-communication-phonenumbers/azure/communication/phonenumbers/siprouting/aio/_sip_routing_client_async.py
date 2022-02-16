@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from distutils.command.config import config
 from typing import TYPE_CHECKING, overload  # pylint: disable=unused-import
 
 try:
@@ -92,94 +91,6 @@ class SipRoutingClient(object):
         return cls(endpoint, credential, **kwargs)
 
     @distributed_trace_async
-    async def get_sip_configuration(
-        self, **kwargs  # type: Any
-    ):  # type: (...) -> SipConfiguration
-        """Returns current SIP routing configuration.
-
-        :returns: Current SIP routing configuration.
-        :rtype: ~azure.communication.siprouting.models.SipConfiguration
-        """
-
-        config = (
-            await self._rest_service.get_sip_configuration(**kwargs)
-        )
-
-        return config
-
-    @overload
-    @distributed_trace_async
-    async def update_sip_configuration(
-        self,
-        configuration, # type: SipConfiguration
-        **kwargs # type: any
-    ):  # type: (...) -> SipConfiguration
-        """Updates SIP routing configuration with new SIP trunks and trunk routes.
-
-        :param configuration: new SIP configuration
-        :type configuration: ~azure.communication.siprouting.models.SipConfiguration
-        :returns: Updated SIP configuration.
-        :rtype: ~azure.communication.siprouting.models.SipConfiguration
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
-        """
-    @overload
-    @distributed_trace_async
-    async def update_sip_configuration(
-        self,
-        **kwargs
-    ):  # type: (**Any) -> SipConfiguration
-        """Updates SIP routing configuration with new SIP trunks and SIP trunk routes.
-
-        :keyword trunks: SIP trunks for routing calls
-        :paramtype trunks: Dict[str, ~azure.communication.siprouting.models.Trunk]
-        :keyword routes: Trunk routes for routing calls. Route's name is used as the key.
-        :paramtype routes: list[~azure.communication.siprouting.models.TrunkRoute]
-        :returns: Updated SIP configuration.
-        :rtype: ~azure.communication.siprouting.models.SipConfiguration
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
-        """
-
-    @distributed_trace_async
-    async def update_sip_configuration(
-        self,
-        *args, # type: SipConfiguration
-        **kwargs # type: any
-    ):  # type: (...) -> SipConfiguration
-        """Updates SIP routing configuration with new SIP trunks and SIP trunk routes.
-
-        :param args: new SIP configuration
-        :type args: ~azure.communication.siprouting.models.SipConfiguration
-        :keyword trunks: SIP trunks for routing calls
-        :paramtype trunks: Dict[str, ~azure.communication.siprouting.models.Trunk]
-        :keyword routes: Trunk routes for routing calls. Route's name is used as the key.
-        :paramtype routes: list[~azure.communication.siprouting.models.TrunkRoute]
-        :returns: Updated SIP configuration.
-        :rtype: ~azure.communication.siprouting.models.SipConfiguration
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
-        """
-        if len(args) > 1:
-            raise TypeError("There can only be one positional argument, which is the SIP configuration.")
-        if args and "configuration" in kwargs:
-            raise TypeError(
-            "You have already supplied the configuration as a positional parameter, "
-            "you can not supply it as a keyword argument as well."
-        )
-
-        if not args and not kwargs:
-            raise ValueError
-
-        configuration = args[0] if args else None
-
-        if not configuration:
-            configuration = SipConfiguration(
-                trunks=kwargs.pop("trunks", {}),
-                routes=kwargs.pop("routes", {}))
-
-        return await self._rest_service.patch_sip_configuration(
-            body=configuration, **kwargs
-        )
-
-    @distributed_trace_async
     async def get_routes(
         self,
         **kwargs  # type: Any
@@ -204,7 +115,7 @@ class SipRoutingClient(object):
         :returns: Current SIP trunks configuration.
         :rtype: List[~azure.communication.siprouting.models.SipTrunk]
         """
-        return await self.__get_trunks__(**kwargs)
+        return await self._get_trunks_(**kwargs)
 
     @distributed_trace_async
     async def replace_routes(
@@ -214,7 +125,9 @@ class SipRoutingClient(object):
     ):  # type: (...) -> List[SipTrunkRoute]
         """Replaces the list of SIP routes.
 
-        :returns: 
+        :param routes: New list of routes to be set.
+        :type routes: List[SipTrunkRoute]
+        :returns:
         :rtype: List[~azure.communication.siprouting.models.SipTrunkRoute]
         """
         old_config = await self._rest_service.get_sip_configuration(
@@ -234,11 +147,18 @@ class SipRoutingClient(object):
     ):  # type: (...) -> List[SipTrunk]
         """Replaces the list of SIP trunks.
 
-        :returns: 
+        :param trunks: New list of trunks to be set.
+        :type trunks: List[SipTrunk]
+        :returns:
         :rtype: List[~azure.communication.siprouting.models.SipTrunk]
         """
-        old_trunks = await self.__get_trunks__(**kwargs)
-        await self.__patch_trunks__(trunks, **kwargs)
+        old_trunks = await self._get_trunks_(**kwargs)
+
+        if len(old_trunks) > 0:
+            await self._rest_service.patch_sip_configuration(
+                body=SipConfiguration(trunks={x.fqdn: None for x in old_trunks}), **kwargs
+            )
+        await self._patch_trunks_(trunks, **kwargs)
         return old_trunks
 
     @distributed_trace_async
@@ -246,42 +166,41 @@ class SipRoutingClient(object):
         self,
         route_name,  # type: str
         **kwargs  # type: Any
-    ):  # type: (...) -> SipTrunkRoute
-        """Returns list of currently configured SIP routes.
+    ):  # type: (...) -> None
+        """Deletes a route.
 
-        :returns: Current SIP routes configuration.
-        :rtype: List[~azure.communication.siprouting.models.SipTrunkRoute]
+        :param route_name: Name of the route to be deleted.
+        :type route_name: str
+        :returns: None
+        :rtype: None
         """
         old_config = await self._rest_service.get_sip_configuration(
             **kwargs
         )
-        
+
         modified_routes = [x for x in old_config.routes if x.name != route_name]
         modified_config = SipConfiguration(routes=modified_routes)
 
         await self._rest_service.patch_sip_configuration(
             body=modified_config, **kwargs
         )
-        return [x for x in old_config.routes if x.name == route_name]
 
     @distributed_trace_async
     async def delete_trunk(
         self,
-        trunk_name,  # type: str
+        trunk_fqdn,  # type: str
         **kwargs  # type: Any
-    ):  # type: (...) -> SipTrunk
-        """Returns list of currently configured SIP routes.
+    ):  # type: (...) -> None
+        """Deletes a trunk.
 
-        :returns: Current SIP routes configuration.
-        :rtype: ~azure.communication.siprouting.models.SipTrunk
+        :param trunk_fqdn: FQDN of the trunk to be deleted.
+        :type trunk_fqdn: str
+        :returns: None
+        :rtype: None
         """
-        old_trunks = await self.__get_trunks__(
+        await self._rest_service.patch_sip_configuration(
+            body=SipConfiguration(trunks={trunk_fqdn:None}),
             **kwargs)
-        await self.__patch_trunks__(
-            {trunk_name: None},
-            **kwargs)
-
-        return [x for x in old_trunks if x.fqdn == trunk_name]
 
     @distributed_trace_async
     async def set_route(
@@ -289,25 +208,27 @@ class SipRoutingClient(object):
         route,  # type: SipTrunkRoute
         **kwargs  # type: Any
     ):  # type: (...) -> SipTrunkRoute
-        """Returns list of currently configured SIP routes.
+        """Sets route. Modifies route with the same name if it exists, otherwise adds a new route.
 
-        :returns: Current SIP routes configuration.
-        :rtype: ~azure.communication.siprouting.models.SipTrunk
+        :param route: Route object to be set.
+        :type route: ~azure.communication.siprouting.models.SipTrunkRoute
+        :returns:
+        :rtype: ~azure.communication.siprouting.models.SipTrunkRoute
         """
         old_config = await self._rest_service.get_sip_configuration(
             **kwargs
         )
 
-        if (any(x.name==route.name for x in old_config.routes)):
+        if any(x.name==route.name for x in old_config.routes):
             modified_routes = [route if x.name==route.name else x for x in old_config.routes]
         else:
-            modified_routes = [old_config.routes,route]
+            modified_routes = old_config.routes
+            modified_routes.append(route)
 
         await self._rest_service.patch_sip_configuration(
             body=SipConfiguration(routes=modified_routes), **kwargs
         )
-
-        return [x for x in old_config.routes if x.name == route.name]
+        return __find_route__(old_config.routes,route.name)
 
     @distributed_trace_async
     async def set_trunk(
@@ -315,33 +236,35 @@ class SipRoutingClient(object):
         trunk,  # type: SipTrunk
         **kwargs  # type: Any
     ):  # type: (...) -> SipTrunk
-        """Returns list of currently configured SIP routes.
+        """Sets trunk. Modifies trunk with the same FQDN if it exists, otherwise adds a new trunk.
 
-        :returns: Current SIP routes configuration.
+        :param trunk: Trunk object to be set.
+        :type trunk: ~azure.communication.siprouting.models.SipTrunk
+        :returns:
         :rtype: ~azure.communication.siprouting.models.SipTrunk
         """
-        old_trunks = await self.__get_trunks__(**kwargs)
-        await self.__patch_trunks__([trunk],**kwargs)
+        old_trunks = await self._get_trunks_(**kwargs)
+        await self._patch_trunks_([trunk],**kwargs)
 
-        return [x for x in old_trunks if x.fqdn == trunk.fqdn]
+        return __find_trunk__(old_trunks, trunk.fqdn)
 
-    async def __get_trunks__(self, **kwargs):
+    async def _get_trunks_(self, **kwargs):
         config = await self._rest_service.get_sip_configuration(
-            **kwargs  # type: Any
+            **kwargs
         )
-        return [SipTrunk(x.key,x.value) for x in config.trunks.items()]
+        return [SipTrunk(fqdn=k,sip_signaling_port=v.sip_signaling_port) for k,v in config.trunks.items()]
 
-    async def __patch_trunks__(self,
+    async def _patch_trunks_(self,
         trunks,  # type: List[SipTrunk]
         **kwargs  # type: Any
         ):  # type: (...) -> SipTrunk
-        trunks_internal = {x.fqdn: SipTrunkInternal(x.sip_signaling_port) for x in trunks}
+        trunks_internal = {x.fqdn: SipTrunkInternal(sip_signaling_port=x.sip_signaling_port) for x in trunks}
         modified_config = SipConfiguration(trunks=trunks_internal)
 
         new_config = await self._rest_service.patch_sip_configuration(
             body=modified_config, **kwargs
         )
-        return [SipTrunk(x.key,x.value) for x in new_config.trunks.items()]
+        return [SipTrunk(fqdn=k,sip_signaling_port=v.sip_signaling_port) for k,v in new_config.trunks.items()]
 
     async def close(self) -> None:
         await self._rest_service.close()
@@ -352,3 +275,15 @@ class SipRoutingClient(object):
 
     async def __aexit__(self, *args) -> None:
         await self._rest_service.__aexit__(*args)
+
+def __find_trunk__(trunks, trunk_fqdn):
+    for x in trunks:
+        if x.fqdn == trunk_fqdn:
+            return x
+    return None
+
+def __find_route__(routes, route_name):
+    for x in routes:
+        if x.name == route_name:
+            return x
+    return None
