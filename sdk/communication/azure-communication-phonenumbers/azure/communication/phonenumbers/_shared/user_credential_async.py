@@ -35,9 +35,6 @@ class CommunicationTokenCredential(object):
         self._refresh_proactively = kwargs.pop('refresh_proactively', False)
         self._timer = None
         self._async_mutex = Lock()
-        if sys.version_info[:3] == (3, 10, 0):
-            # Workaround for Python 3.10 bug(https://bugs.python.org/issue45416):
-            getattr(self._async_mutex, '_get_loop', lambda: None)()
         self._lock = Condition(self._async_mutex)
         self._some_thread_refreshing = False
         if self._refresh_proactively:
