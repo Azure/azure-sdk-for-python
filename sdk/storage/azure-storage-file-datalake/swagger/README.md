@@ -83,7 +83,8 @@ directive:
   transform: >
     for (const property in $)
     {
-        if ($[property]["parameters"] === undefined) {
+        if ($[property]["parameters"] === undefined)
+        {
             $[property]["parameters"] = []
         }
         $[property]["parameters"].push({"$ref": "#/parameters/Url"});

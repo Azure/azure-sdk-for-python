@@ -30,7 +30,6 @@ _SERIALIZER.client_side_validation = False
 # fmt: off
 
 def build_update_request(
-    messageid,  # type: str
     url,  # type: str
     **kwargs  # type: Any
 ):
@@ -46,7 +45,6 @@ def build_update_request(
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{queueName}/messages/{messageid}")
     path_format_arguments = {
-        "messageid": _SERIALIZER.url("messageid", messageid, 'str'),
         "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
     }
 
@@ -78,7 +76,6 @@ def build_update_request(
 
 
 def build_delete_request(
-    messageid,  # type: str
     url,  # type: str
     **kwargs  # type: Any
 ):
@@ -92,7 +89,6 @@ def build_delete_request(
     # Construct URL
     _url = kwargs.pop("template_url", "{url}/{queueName}/messages/{messageid}")
     path_format_arguments = {
-        "messageid": _SERIALIZER.url("messageid", messageid, 'str'),
         "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
     }
 
@@ -145,7 +141,6 @@ class MessageIdOperations(object):
     @distributed_trace
     def update(  # pylint: disable=inconsistent-return-statements
         self,
-        messageid,  # type: str
         pop_receipt,  # type: str
         visibilitytimeout,  # type: int
         timeout=None,  # type: Optional[int]
@@ -160,8 +155,6 @@ class MessageIdOperations(object):
         included in an XML request with UTF-8 encoding, and the encoded message can be up to 64KB in
         size.
 
-        :param messageid: The container name.
-        :type messageid: str
         :param pop_receipt: Required. Specifies the valid pop receipt value returned from an earlier
          call to the Get Messages or Update Message operation.
         :type pop_receipt: str
@@ -199,7 +192,6 @@ class MessageIdOperations(object):
             _content = None
 
         request = build_update_request(
-            messageid=messageid,
             url=self._config.url,
             version=self._config.version,
             content_type=content_type,
@@ -242,7 +234,6 @@ class MessageIdOperations(object):
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
         self,
-        messageid,  # type: str
         pop_receipt,  # type: str
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
@@ -251,8 +242,6 @@ class MessageIdOperations(object):
         # type: (...) -> None
         """The Delete operation deletes the specified message.
 
-        :param messageid: The container name.
-        :type messageid: str
         :param pop_receipt: Required. Specifies the valid pop receipt value returned from an earlier
          call to the Get Messages or Update Message operation.
         :type pop_receipt: str
@@ -276,7 +265,6 @@ class MessageIdOperations(object):
 
         
         request = build_delete_request(
-            messageid=messageid,
             url=self._config.url,
             version=self._config.version,
             pop_receipt=pop_receipt,

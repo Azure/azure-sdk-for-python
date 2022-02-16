@@ -45,7 +45,6 @@ class MessageIdOperations:
     @distributed_trace_async
     async def update(  # pylint: disable=inconsistent-return-statements
         self,
-        messageid: str,
         pop_receipt: str,
         visibilitytimeout: int,
         timeout: Optional[int] = None,
@@ -59,8 +58,6 @@ class MessageIdOperations:
         included in an XML request with UTF-8 encoding, and the encoded message can be up to 64KB in
         size.
 
-        :param messageid: The container name.
-        :type messageid: str
         :param pop_receipt: Required. Specifies the valid pop receipt value returned from an earlier
          call to the Get Messages or Update Message operation.
         :type pop_receipt: str
@@ -98,7 +95,6 @@ class MessageIdOperations:
             _content = None
 
         request = build_update_request(
-            messageid=messageid,
             url=self._config.url,
             version=self._config.version,
             content_type=content_type,
@@ -141,7 +137,6 @@ class MessageIdOperations:
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
         self,
-        messageid: str,
         pop_receipt: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -149,8 +144,6 @@ class MessageIdOperations:
     ) -> None:
         """The Delete operation deletes the specified message.
 
-        :param messageid: The container name.
-        :type messageid: str
         :param pop_receipt: Required. Specifies the valid pop receipt value returned from an earlier
          call to the Get Messages or Update Message operation.
         :type pop_receipt: str
@@ -174,7 +167,6 @@ class MessageIdOperations:
 
         
         request = build_delete_request(
-            messageid=messageid,
             url=self._config.url,
             version=self._config.version,
             pop_receipt=pop_receipt,
