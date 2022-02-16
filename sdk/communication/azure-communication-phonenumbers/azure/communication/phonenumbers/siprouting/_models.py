@@ -28,6 +28,6 @@ class SipTrunk(object):
         :keyword sip_signaling_port: Gets or sets SIP signaling port of the trunk.
         :paramtype sip_signaling_port: int
         """
-        super(SipTrunk, self).__init__(**kwargs)
-        self.sip_signaling_port = kwargs.get('fqdn', None)
+        self.fqdn = kwargs.get('fqdn', None)
         self.sip_signaling_port = kwargs.get('sip_signaling_port', None)
+        

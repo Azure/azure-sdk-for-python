@@ -171,7 +171,7 @@ class SIPRoutingServiceOperationsMixin(object):
             _json = self._serialize.body(body, 'SipConfiguration')
         else:
             _json = None
-
+        
         request = build_patch_sip_configuration_request(
             api_version=api_version,
             content_type=content_type,
