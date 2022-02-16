@@ -455,7 +455,8 @@ class Connection(object):
                 return
             try:
                 for _ in range(batch):
-                    await self._listen_one_frame(**kwargs)
+                    await asyncio.ensure_future(self._listen_one_frame(**kwargs))
+                    # await self._listen_one_frame(**kwargs)
             except ValueError:
                 pass
             # try:
