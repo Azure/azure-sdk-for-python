@@ -112,7 +112,8 @@
     "eng/tox/tox.ini",
     "eng/common/docgeneration/Generate-DocIndex.ps1",
     "eng/**/*.py",
-    ".gitignore"
+    ".gitignore",
+    
   ],
   "words": [
     "aad",
@@ -263,7 +264,9 @@
     "wfile",
     "westus",
     "docfx",
-    "Docfx"
+    "Docfx",
+    "azurecr",
+    "envname"
   ],
   "overrides": [
     {
