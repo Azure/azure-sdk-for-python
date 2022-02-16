@@ -7,19 +7,19 @@
 import sys
 import threading
 import time
-
 import warnings
 from io import BytesIO
-from typing import Iterator
+from typing import Iterator, Union
 
 import requests
 from azure.core.exceptions import HttpResponseError, ServiceResponseError
-
 from azure.core.tracing.common import with_current_context
+
+from ._deserialize import get_page_ranges_result
 from ._shared.encryption import decrypt_blob
 from ._shared.request_handlers import validate_and_format_range_headers
-from ._shared.response_handlers import process_storage_error, parse_length_from_content_range
-from ._deserialize import get_page_ranges_result
+from ._shared.response_handlers import (parse_length_from_content_range,
+                                        process_storage_error)
 
 
 def process_range_and_offset(start_range, end_range, length, encryption):
@@ -510,6 +510,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             chunk_size=self._config.max_chunk_get_size)
 
     def readall(self):
+        # type: () -> Union[str, bytes]
         """Download the contents of this blob.
 
         This operation is blocking until all data is downloaded.
