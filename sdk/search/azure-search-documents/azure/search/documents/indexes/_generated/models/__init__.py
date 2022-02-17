@@ -7,12 +7,12 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._models_py3 import AmlSkill
     from ._models_py3 import AnalyzeRequest
     from ._models_py3 import AnalyzeResult
     from ._models_py3 import AnalyzedTokenInfo
     from ._models_py3 import AsciiFoldingTokenFilter
     from ._models_py3 import AzureActiveDirectoryApplicationCredentials
+    from ._models_py3 import AzureMachineLearningSkill
     from ._models_py3 import BM25Similarity
     from ._models_py3 import CharFilter
     from ._models_py3 import CjkBigramTokenFilter
@@ -158,12 +158,12 @@ try:
     from ._models_py3 import WebApiSkill
     from ._models_py3 import WordDelimiterTokenFilter
 except (SyntaxError, ImportError):
-    from ._models import AmlSkill  # type: ignore
     from ._models import AnalyzeRequest  # type: ignore
     from ._models import AnalyzeResult  # type: ignore
     from ._models import AnalyzedTokenInfo  # type: ignore
     from ._models import AsciiFoldingTokenFilter  # type: ignore
     from ._models import AzureActiveDirectoryApplicationCredentials  # type: ignore
+    from ._models import AzureMachineLearningSkill  # type: ignore
     from ._models import BM25Similarity  # type: ignore
     from ._models import CharFilter  # type: ignore
     from ._models import CjkBigramTokenFilter  # type: ignore
@@ -355,12 +355,12 @@ from ._search_client_enums import (
 )
 
 __all__ = [
-    'AmlSkill',
     'AnalyzeRequest',
     'AnalyzeResult',
     'AnalyzedTokenInfo',
     'AsciiFoldingTokenFilter',
     'AzureActiveDirectoryApplicationCredentials',
+    'AzureMachineLearningSkill',
     'BM25Similarity',
     'CharFilter',
     'CjkBigramTokenFilter',

@@ -51,7 +51,7 @@ class CommunicationRelayClientSamples(object):
 
         async with relay_client:
             print("Getting relay configuration")
-            relay_configuration = await relay_client.get_relay_configuration(user)
+            relay_configuration = await relay_client.get_relay_configuration(user=user)
 
         for iceServer in relay_configuration.ice_servers:
             print("Icer server:")
@@ -62,5 +62,4 @@ async def main():
     await sample.get_relay_config()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

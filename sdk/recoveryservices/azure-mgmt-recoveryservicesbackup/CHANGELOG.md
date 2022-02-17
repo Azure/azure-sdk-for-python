@@ -1,5 +1,11 @@
 # Release History
 
+## 4.1.0 (2022-02-15)
+
+**Features**
+
+  - Model AzureIaaSVMProtectionPolicy has a new parameter policy_type
+
 ## 4.0.0 (2021-12-21)
 
 **Breaking changes**

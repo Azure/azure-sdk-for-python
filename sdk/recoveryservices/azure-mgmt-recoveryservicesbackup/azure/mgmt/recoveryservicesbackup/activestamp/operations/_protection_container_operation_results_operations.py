@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -19,28 +19,22 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_get_request(
-    vault_name,  # type: str
-    resource_group_name,  # type: str
-    subscription_id,  # type: str
-    fabric_name,  # type: str
-    container_name,  # type: str
-    operation_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-10-01"
+    vault_name: str,
+    resource_group_name: str,
+    subscription_id: str,
+    fabric_name: str,
+    container_name: str,
+    operation_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/operationResults/{operationId}')
@@ -71,7 +65,6 @@ def build_get_request(
         **kwargs
     )
 
-# fmt: on
 class ProtectionContainerOperationResultsOperations(object):
     """ProtectionContainerOperationResultsOperations operations.
 
@@ -97,14 +90,13 @@ class ProtectionContainerOperationResultsOperations(object):
     @distributed_trace
     def get(
         self,
-        vault_name,  # type: str
-        resource_group_name,  # type: str
-        fabric_name,  # type: str
-        container_name,  # type: str
-        operation_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional["_models.ProtectionContainerResource"]
+        vault_name: str,
+        resource_group_name: str,
+        fabric_name: str,
+        container_name: str,
+        operation_id: str,
+        **kwargs: Any
+    ) -> Optional["_models.ProtectionContainerResource"]:
         """Fetches the result of any operation on the container.
 
         :param vault_name: The name of the recovery services vault.

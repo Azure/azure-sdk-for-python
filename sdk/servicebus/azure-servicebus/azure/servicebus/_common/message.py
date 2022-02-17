@@ -19,6 +19,7 @@ import uamqp.message
 from .constants import (
     _BATCH_MESSAGE_OVERHEAD_COST,
     ServiceBusReceiveMode,
+    ServiceBusMessageState,
     _X_OPT_ENQUEUED_TIME,
     _X_OPT_SEQUENCE_NUMBER,
     _X_OPT_ENQUEUE_SEQUENCE_NUMBER,
@@ -35,6 +36,7 @@ from .constants import (
     MESSAGE_PROPERTY_MAX_LENGTH,
     MAX_ABSOLUTE_EXPIRY_TIME,
     MAX_DURATION_VALUE,
+    MESSAGE_STATE_NAME
 )
 from ..amqp import (
     AmqpAnnotatedMessage,
@@ -966,6 +968,24 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             except AttributeError:
                 pass
         return None
+
+    @property
+    def state(self):
+        # type: () -> ServiceBusMessageState
+        """
+        Defaults to Active. Represents the message state of the message. Can be Active, Deferred.
+        or Scheduled.
+
+        :rtype: ~azure.servicebus.ServiceBusMessageState
+        """
+        try:
+            message_state = self._raw_amqp_message.annotations.get(MESSAGE_STATE_NAME)
+            try:
+                return ServiceBusMessageState(message_state)
+            except ValueError:
+                return ServiceBusMessageState.ACTIVE if not message_state else message_state
+        except AttributeError:
+            return ServiceBusMessageState.ACTIVE
 
     @property
     def delivery_count(self):

@@ -6,81 +6,48 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AsyncOperationResult
-    from ._models_py3 import CertificateBodyDescription
-    from ._models_py3 import CertificateListDescription
-    from ._models_py3 import CertificateProperties
-    from ._models_py3 import CertificateResponse
-    from ._models_py3 import ErrorDetails
-    from ._models_py3 import ErrorMesssage
-    from ._models_py3 import GroupIdInformation
-    from ._models_py3 import GroupIdInformationProperties
-    from ._models_py3 import IotDpsPropertiesDescription
-    from ._models_py3 import IotDpsSkuDefinition
-    from ._models_py3 import IotDpsSkuDefinitionListResult
-    from ._models_py3 import IotDpsSkuInfo
-    from ._models_py3 import IotHubDefinitionDescription
-    from ._models_py3 import IpFilterRule
-    from ._models_py3 import NameAvailabilityInfo
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationInputs
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import PrivateEndpoint
-    from ._models_py3 import PrivateEndpointConnection
-    from ._models_py3 import PrivateEndpointConnectionProperties
-    from ._models_py3 import PrivateLinkResources
-    from ._models_py3 import PrivateLinkServiceConnectionState
-    from ._models_py3 import ProvisioningServiceDescription
-    from ._models_py3 import ProvisioningServiceDescriptionListResult
-    from ._models_py3 import Resource
-    from ._models_py3 import SharedAccessSignatureAuthorizationRuleAccessRightsDescription
-    from ._models_py3 import SharedAccessSignatureAuthorizationRuleListResult
-    from ._models_py3 import TagsResource
-    from ._models_py3 import VerificationCodeRequest
-    from ._models_py3 import VerificationCodeResponse
-    from ._models_py3 import VerificationCodeResponseProperties
-except (SyntaxError, ImportError):
-    from ._models import AsyncOperationResult  # type: ignore
-    from ._models import CertificateBodyDescription  # type: ignore
-    from ._models import CertificateListDescription  # type: ignore
-    from ._models import CertificateProperties  # type: ignore
-    from ._models import CertificateResponse  # type: ignore
-    from ._models import ErrorDetails  # type: ignore
-    from ._models import ErrorMesssage  # type: ignore
-    from ._models import GroupIdInformation  # type: ignore
-    from ._models import GroupIdInformationProperties  # type: ignore
-    from ._models import IotDpsPropertiesDescription  # type: ignore
-    from ._models import IotDpsSkuDefinition  # type: ignore
-    from ._models import IotDpsSkuDefinitionListResult  # type: ignore
-    from ._models import IotDpsSkuInfo  # type: ignore
-    from ._models import IotHubDefinitionDescription  # type: ignore
-    from ._models import IpFilterRule  # type: ignore
-    from ._models import NameAvailabilityInfo  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationInputs  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import PrivateEndpoint  # type: ignore
-    from ._models import PrivateEndpointConnection  # type: ignore
-    from ._models import PrivateEndpointConnectionProperties  # type: ignore
-    from ._models import PrivateLinkResources  # type: ignore
-    from ._models import PrivateLinkServiceConnectionState  # type: ignore
-    from ._models import ProvisioningServiceDescription  # type: ignore
-    from ._models import ProvisioningServiceDescriptionListResult  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import SharedAccessSignatureAuthorizationRuleAccessRightsDescription  # type: ignore
-    from ._models import SharedAccessSignatureAuthorizationRuleListResult  # type: ignore
-    from ._models import TagsResource  # type: ignore
-    from ._models import VerificationCodeRequest  # type: ignore
-    from ._models import VerificationCodeResponse  # type: ignore
-    from ._models import VerificationCodeResponseProperties  # type: ignore
+from ._models_py3 import AsyncOperationResult
+from ._models_py3 import CertificateBodyDescription
+from ._models_py3 import CertificateListDescription
+from ._models_py3 import CertificateProperties
+from ._models_py3 import CertificateResponse
+from ._models_py3 import ErrorDetails
+from ._models_py3 import ErrorMesssage
+from ._models_py3 import GroupIdInformation
+from ._models_py3 import GroupIdInformationProperties
+from ._models_py3 import IotDpsPropertiesDescription
+from ._models_py3 import IotDpsSkuDefinition
+from ._models_py3 import IotDpsSkuDefinitionListResult
+from ._models_py3 import IotDpsSkuInfo
+from ._models_py3 import IotHubDefinitionDescription
+from ._models_py3 import IpFilterRule
+from ._models_py3 import NameAvailabilityInfo
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationInputs
+from ._models_py3 import OperationListResult
+from ._models_py3 import PrivateEndpoint
+from ._models_py3 import PrivateEndpointConnection
+from ._models_py3 import PrivateEndpointConnectionProperties
+from ._models_py3 import PrivateLinkResources
+from ._models_py3 import PrivateLinkServiceConnectionState
+from ._models_py3 import ProvisioningServiceDescription
+from ._models_py3 import ProvisioningServiceDescriptionListResult
+from ._models_py3 import Resource
+from ._models_py3 import SharedAccessSignatureAuthorizationRuleAccessRightsDescription
+from ._models_py3 import SharedAccessSignatureAuthorizationRuleListResult
+from ._models_py3 import SystemData
+from ._models_py3 import TagsResource
+from ._models_py3 import VerificationCodeRequest
+from ._models_py3 import VerificationCodeResponse
+from ._models_py3 import VerificationCodeResponseProperties
+
 
 from ._iot_dps_client_enums import (
     AccessRightsDescription,
     AllocationPolicy,
     CertificatePurpose,
+    CreatedByType,
     IotDpsSku,
     IpFilterActionType,
     IpFilterTargetType,
@@ -121,6 +88,7 @@ __all__ = [
     'Resource',
     'SharedAccessSignatureAuthorizationRuleAccessRightsDescription',
     'SharedAccessSignatureAuthorizationRuleListResult',
+    'SystemData',
     'TagsResource',
     'VerificationCodeRequest',
     'VerificationCodeResponse',
@@ -128,6 +96,7 @@ __all__ = [
     'AccessRightsDescription',
     'AllocationPolicy',
     'CertificatePurpose',
+    'CreatedByType',
     'IotDpsSku',
     'IpFilterActionType',
     'IpFilterTargetType',
