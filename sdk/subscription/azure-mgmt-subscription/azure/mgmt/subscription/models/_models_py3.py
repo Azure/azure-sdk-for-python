@@ -1142,17 +1142,11 @@ class SubscriptionAliasResponseProperties(msrest.serialization.Model):
 class SubscriptionListResult(msrest.serialization.Model):
     """Subscription list operation response.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar value: An array of subscriptions.
     :vartype value: list[~azure.mgmt.subscription.models.Subscription]
-    :ivar next_link: Required. The URL to get the next set of results.
+    :ivar next_link: The URL to get the next set of results.
     :vartype next_link: str
     """
-
-    _validation = {
-        'next_link': {'required': True},
-    }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[Subscription]'},
@@ -1162,14 +1156,14 @@ class SubscriptionListResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        next_link: str,
         value: Optional[List["Subscription"]] = None,
+        next_link: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword value: An array of subscriptions.
         :paramtype value: list[~azure.mgmt.subscription.models.Subscription]
-        :keyword next_link: Required. The URL to get the next set of results.
+        :keyword next_link: The URL to get the next set of results.
         :paramtype next_link: str
         """
         super(SubscriptionListResult, self).__init__(**kwargs)
