@@ -1032,7 +1032,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             assert count == 3
 
 
-    @pytest.mark.skip(reasion="Needs list sessions")
+    @pytest.mark.skip(reason="Needs list sessions")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
