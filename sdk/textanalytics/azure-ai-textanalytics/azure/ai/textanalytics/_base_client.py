@@ -21,6 +21,11 @@ class TextAnalyticsApiVersion(str, Enum):
     V3_0 = "v3.0"
 
 
+def is_date_based(api_version):
+    import re
+    return re.search(r'\d{4}-\d{2}-\d{2}', api_version)
+
+
 def _authentication_policy(credential):
     authentication_policy = None
     if credential is None:

@@ -15,7 +15,7 @@ from functools import partial
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
-from ._base_client import TextAnalyticsClientBase, TextAnalyticsApiVersion
+from ._base_client import TextAnalyticsClientBase, TextAnalyticsApiVersion, is_date_based
 from ._lro import AnalyzeActionsLROPoller, AnalyzeHealthcareEntitiesLROPoller, TextAnalyticsLROPoller
 from ._request_handlers import (
     _validate_input,
@@ -200,12 +200,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         if disable_service_logs is not None:
             kwargs["logging_opt_out"] = disable_service_logs
         try:
-            from ._generated.v2022_02_01_preview.models import AnalyzeTextLanguageDetectionInput, LanguageDetectionTaskParameters
-            if self._api_version == "2022-02-01-preview":
+            if is_date_based(self._api_version):
+                models = self._client.models(api_version=self._api_version)
                 return self._client.analyze_text(
-                    body=AnalyzeTextLanguageDetectionInput(
+                    body=models.AnalyzeTextLanguageDetectionInput(
                         analysis_input={"documents": docs},
-                        parameters=LanguageDetectionTaskParameters(
+                        parameters=models.LanguageDetectionTaskParameters(
                             logging_opt_out=kwargs.pop("logging_opt_out", None),
                             model_version=model_version
                         )
@@ -305,12 +305,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             kwargs["logging_opt_out"] = disable_service_logs
 
         try:
-            from ._generated.v2022_02_01_preview.models import AnalyzeTextEntityRecognitionInput, EntitiesTaskParameters
-            if self._api_version == "2022-02-01-preview":
+            if is_date_based(self._api_version):
+                models = self._client.models(api_version=self._api_version)
                 return self._client.analyze_text(
-                    body=AnalyzeTextEntityRecognitionInput(
+                    body=models.AnalyzeTextEntityRecognitionInput(
                         analysis_input={"documents": docs},
-                        parameters=EntitiesTaskParameters(
+                        parameters=models.EntitiesTaskParameters(
                             logging_opt_out=kwargs.pop("logging_opt_out", None),
                             model_version=model_version,
                             string_index_type=kwargs.pop("string_index_type", None)
@@ -422,12 +422,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             kwargs["logging_opt_out"] = disable_service_logs
 
         try:
-            from ._generated.v2022_02_01_preview.models import AnalyzeTextPiiEntitiesRecognitionInput, PiiTaskParameters
-            if self._api_version == "2022-02-01-preview":
+            if is_date_based(self._api_version):
+                models = self._client.models(api_version=self._api_version)
                 return self._client.analyze_text(
-                    body=AnalyzeTextPiiEntitiesRecognitionInput(
+                    body=models.AnalyzeTextPiiEntitiesRecognitionInput(
                         analysis_input={"documents": docs},
-                        parameters=PiiTaskParameters(
+                        parameters=models.PiiTaskParameters(
                             logging_opt_out=kwargs.pop("logging_opt_out", None),
                             model_version=model_version,
                             domain=domain_filter,
@@ -543,12 +543,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             kwargs.update({"string_index_type": string_index_type})
 
         try:
-            from ._generated.v2022_02_01_preview.models import AnalyzeTextEntityLinkingInput, EntityLinkingTaskParameters
-            if self._api_version == "2022-02-01-preview":
+            if is_date_based(self._api_version):
+                models = self._client.models(api_version=self._api_version)
                 return self._client.analyze_text(
-                    body=AnalyzeTextEntityLinkingInput(
+                    body=models.AnalyzeTextEntityLinkingInput(
                         analysis_input={"documents": docs},
-                        parameters=EntityLinkingTaskParameters(
+                        parameters=models.EntityLinkingTaskParameters(
                             logging_opt_out=kwargs.pop("logging_opt_out", None),
                             model_version=model_version,
                             string_index_type=kwargs.pop("string_index_type", None)
@@ -691,16 +691,16 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
 
         try:
-            if self._api_version == "2022-02-01-preview":
-                from azure.ai.textanalytics._generated.v2022_02_01_preview.models import AnalyzeTextJobsInput, HealthcareLROTask, HealthcareTaskParameters
+            if is_date_based(self._api_version):
+                models = self._client.models(api_version=self._api_version)
                 return self._client.begin_analyze_text_submit_job(
-                    body=AnalyzeTextJobsInput(
+                    body=models.AnalyzeTextJobsInput(
                         analysis_input={"documents": docs},
                         display_name=display_name,
                         tasks=[
-                            HealthcareLROTask(
+                            models.HealthcareLROTask(
                                 task_name="0",
-                                parameters=HealthcareTaskParameters(
+                                parameters=models.HealthcareTaskParameters(
                                     logging_opt_out=disable_service_logs,
                                     model_version=model_version,
                                     string_index_type=string_index_type
@@ -829,12 +829,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             kwargs["logging_opt_out"] = disable_service_logs
 
         try:
-            from ._generated.v2022_02_01_preview.models import AnalyzeTextKeyPhraseExtractionInput, KeyPhraseTaskParameters
-            if self._api_version == "2022-02-01-preview":
+            if is_date_based(self._api_version):
+                models = self._client.models(api_version=self._api_version)
                 return self._client.analyze_text(
-                    body=AnalyzeTextKeyPhraseExtractionInput(
+                    body=models.AnalyzeTextKeyPhraseExtractionInput(
                         analysis_input={"documents": docs},
-                        parameters=KeyPhraseTaskParameters(
+                        parameters=models.KeyPhraseTaskParameters(
                             logging_opt_out=kwargs.pop("logging_opt_out", None),
                             model_version=model_version,
                         )
@@ -952,12 +952,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             kwargs.update({"opinion_mining": show_opinion_mining})
 
         try:
-            from ._generated.v2022_02_01_preview.models import AnalyzeTextSentimentAnalysisInput, SentimentAnalysisTaskParameters
-            if self._api_version == "2022-02-01-preview":
+            if is_date_based(self._api_version):
+                models = self._client.models(api_version=self._api_version)
                 return self._client.analyze_text(
-                    body=AnalyzeTextSentimentAnalysisInput(
+                    body=models.AnalyzeTextSentimentAnalysisInput(
                         analysis_input={"documents": docs},
-                        parameters=SentimentAnalysisTaskParameters(
+                        parameters=models.SentimentAnalysisTaskParameters(
                             logging_opt_out=kwargs.pop("logging_opt_out", None),
                             model_version=model_version,
                             string_index_type=kwargs.pop("string_index_type", None),
@@ -1090,7 +1090,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     doc_id_order, task_id_order, pipeline_response, None, {}, show_stats=show_stats
                 )
 
-            return AnalyzeActionsLROPoller.from_continuation_token(
+            poller_cls = TextAnalyticsLROPoller if bespoke else AnalyzeActionsLROPoller
+
+            return poller_cls.from_continuation_token(
                 polling_method=AnalyzeActionsLROPollingMethod(
                     timeout=polling_interval,
                     **kwargs
@@ -1100,11 +1102,15 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 continuation_token=continuation_token
             )
 
-        docs = self._client.models(
-            api_version=self._api_version
-        ).MultiLanguageBatchInput(  # TODO different model in language API
-            documents=_validate_input(documents, "language", language)
-        )
+        models = self._client.models(api_version=self._api_version)
+        if is_date_based(self._api_version):
+            docs = models.MultiLanguageAnalysisInput(
+                documents=_validate_input(documents, "language", language)
+            )
+        else:
+            docs = models.MultiLanguageBatchInput(
+                documents=_validate_input(documents, "language", language)
+            )
         doc_id_order = [doc.get("id") for doc in docs.documents]
         try:
             generated_tasks = [
@@ -1116,10 +1122,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         task_order = [(_determine_action_type(a), a.task_name) for a in generated_tasks]  # TODO + add healthcare
 
         try:
-            if self._api_version == "2022-02-01-preview":
-                from azure.ai.textanalytics._generated.v2022_02_01_preview.models import AnalyzeTextJobsInput
+            if is_date_based(self._api_version):
                 return self._client.begin_analyze_text_submit_job(
-                    body=AnalyzeTextJobsInput(
+                    body=models.AnalyzeTextJobsInput(
                         analysis_input={"documents": docs},
                         display_name=display_name,
                         tasks=generated_tasks
@@ -1150,9 +1155,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     **kwargs
                 )
 
-            analyze_tasks = self._client.models(
-                api_version=self._api_version
-            ).JobManifestTasks(
+            analyze_tasks = models.JobManifestTasks(
                 entity_recognition_tasks=[
                     a for a in generated_tasks
                     if _determine_action_type(a) == _AnalyzeActionsType.RECOGNIZE_ENTITIES
@@ -1190,9 +1193,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     if _determine_action_type(a) == _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY
                 ],
             )
-            analyze_body = self._client.models(
-                api_version=self._api_version
-            ).AnalyzeBatchInput(
+            analyze_body = models.AnalyzeBatchInput(
                 display_name=display_name, tasks=analyze_tasks, analysis_input=docs
             )
             return self._client.begin_analyze(
