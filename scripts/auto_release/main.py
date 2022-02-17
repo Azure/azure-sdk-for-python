@@ -410,6 +410,12 @@ class CodegenTestPR:
     def sdk_code_path(self) -> str:
         return str(Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}'))
 
+    @property
+    def is_single_path(self) -> bool:
+        path = str(Path(f'sdk/{self.sdk_folder}'))
+        num = sum([os.path.isdir(str(Path(f'{path}/{listx}'))) for listx in os.listdir(path)])
+        return num == 1
+
     @return_origin_path
     def install_package_locally(self):
         os.chdir(self.sdk_code_path())
@@ -454,6 +460,8 @@ class CodegenTestPR:
         pr_head = "{}:{}".format(os.getenv('USR_NAME'), self.new_branch)
         pr_base = 'main'
         pr_body = "{} \n{} \n{}".format(self.issue_link, self.test_result, self.pipeline_link)
+        if not self.is_single_path:
+            pr_body += f'\nBuildTargetingString\n  azure-mgmt-{self.package_name}\nSkip.CreateApiReview\ntrue'
         res_create = api.pulls.create(pr_title, pr_head, pr_base, pr_body)
 
         # Add issue link on PR
