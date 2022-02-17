@@ -73,6 +73,7 @@ def get_container_info():
         shlex.split("docker container ls -a --format '{{json .}}' --filter name=" + CONTAINER_NAME),
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
+        stdin=subprocess.DEVNULL
     )
 
     output, stderr = proc.communicate()
