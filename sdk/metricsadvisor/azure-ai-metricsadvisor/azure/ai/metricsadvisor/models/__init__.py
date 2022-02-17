@@ -28,7 +28,6 @@ from ._models_py3 import AzureDataLakeStorageGen2DataFeedSource
 from ._models_py3 import AzureEventHubsDataFeedSource
 from ._models_py3 import AzureLogAnalyticsDataFeedSource
 from ._models_py3 import AzureSQLConnectionStringCredentialPatch
-from ._models_py3 import AzureSQLConnectionStringParam
 from ._models_py3 import AzureSQLConnectionStringParamPatch
 from ._models_py3 import AzureTableDataFeedSource
 from ._models_py3 import ChangePointFeedback
@@ -42,7 +41,6 @@ from ._models_py3 import DataFeedIngestionStatus
 from ._models_py3 import DataFeedList
 from ._models_py3 import DataFeedMetric
 from ._models_py3 import DataLakeGen2SharedKeyCredentialPatch
-from ._models_py3 import DataLakeGen2SharedKeyParam
 from ._models_py3 import DataLakeGen2SharedKeyParamPatch
 from ._models_py3 import DataPointAnomaly
 from ._models_py3 import DataSourceCredential
@@ -100,9 +98,7 @@ from ._models_py3 import SeriesIdentity
 from ._models_py3 import SeriesResultList
 from ._models_py3 import ServicePrincipalCredentialPatch
 from ._models_py3 import ServicePrincipalInKVCredentialPatch
-from ._models_py3 import ServicePrincipalInKVParam
 from ._models_py3 import ServicePrincipalInKVParamPatch
-from ._models_py3 import ServicePrincipalParam
 from ._models_py3 import ServicePrincipalParamPatch
 from ._models_py3 import SeverityCondition
 from ._models_py3 import SeverityFilterCondition
@@ -172,7 +168,6 @@ __all__ = [
     "AzureEventHubsDataFeedSource",
     "AzureLogAnalyticsDataFeedSource",
     "AzureSQLConnectionStringCredentialPatch",
-    "AzureSQLConnectionStringParam",
     "AzureSQLConnectionStringParamPatch",
     "AzureTableDataFeedSource",
     "ChangePointFeedback",
@@ -186,7 +181,6 @@ __all__ = [
     "DataFeedList",
     "DataFeedMetric",
     "DataLakeGen2SharedKeyCredentialPatch",
-    "DataLakeGen2SharedKeyParam",
     "DataLakeGen2SharedKeyParamPatch",
     "DataPointAnomaly",
     "DataSourceCredential",
@@ -244,9 +238,7 @@ __all__ = [
     "SeriesResultList",
     "ServicePrincipalCredentialPatch",
     "ServicePrincipalInKVCredentialPatch",
-    "ServicePrincipalInKVParam",
     "ServicePrincipalInKVParamPatch",
-    "ServicePrincipalParam",
     "ServicePrincipalParamPatch",
     "SeverityCondition",
     "SeverityFilterCondition",

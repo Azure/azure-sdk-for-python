@@ -397,73 +397,31 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         )
 
     @distributed_trace_async
-    async def get_datasource_credential(
-        self,
-        credential_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> DatasourceCredentialUnion
-        datasource_credential = await super().get_datasource_credential(credential_id, **kwargs)
-        return self._convert_to_datasource_credential(datasource_credential)
-
-    @distributed_trace_async
     async def create_datasource_credential(
         self,
         datasource_credential,  # type: DatasourceCredentialUnion
         **kwargs  # type: Any
     ):
         # type: (...) -> DatasourceCredentialUnion
-        datasource_credential_request = None
-        if datasource_credential.credential_type in [
-            "AzureSQLConnectionString",
-            "DataLakeGen2SharedKey",
-            "ServicePrincipal",
-            "ServicePrincipalInKV",
-        ]:
-            datasource_credential_request = datasource_credential._to_generated()
-
         response_headers = await super().create_datasource_credential(  # type: ignore
-            datasource_credential_request,  # type: ignore
+            datasource_credential,  # type: ignore
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
         credential_id = response_headers["Location"].split("credentials/")[1]  # type: ignore
         return await self.get_datasource_credential(credential_id)
 
-    @distributed_trace
-    def list_datasource_credentials(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> AsyncItemPaged[DatasourceCredentialUnion]
-        return super().list_datasource_credentials(  # type: ignore
-            cls=kwargs.pop(
-                "cls",
-                lambda credentials: [self._convert_to_datasource_credential(credential) for credential in credentials],
-            ),
-            **kwargs
-        )
-
     @distributed_trace_async
     async def update_datasource_credential(
         self,
-        datasource_credential,  # type: DatasourceCredentialUnion
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> DatasourceCredentialUnion
-        datasource_credential_request = None
-        if datasource_credential.credential_type in [
-            "AzureSQLConnectionString",
-            "DataLakeGen2SharedKey",
-            "ServicePrincipal",
-            "ServicePrincipalInKV",
-        ]:
-            datasource_credential_request = datasource_credential._to_generated_patch()
-
-        updated_datasource_credential = await super().update_datasource_credential(  # type: ignore
-            datasource_credential.id, datasource_credential_request, **kwargs  # type: ignore
+        datasource_credential: DatasourceCredentialUnion,
+        **kwargs: Any
+    ) -> DatasourceCredentialUnion:
+        return await super().update_datasource_credential(
+            datasource_credential.id,
+            datasource_credential,
+            **kwargs
         )
-
-        return self._convert_to_datasource_credential(updated_datasource_credential)
 
     @distributed_trace_async
     async def delete_datasource_credential(self, *credential_id: str, **kwargs: Any) -> None:

@@ -21,12 +21,10 @@ if TYPE_CHECKING:
         AnomalyDetectionConfiguration,
         AnomalyIncident,
         AnomalyProperty,
-        AzureSQLConnectionStringParam,
         AzureSQLConnectionStringParamPatch,
         ChangeThresholdCondition,
         DataFeedDimension,
         DataFeedMetric,
-        DataLakeGen2SharedKeyParam,
         DataLakeGen2SharedKeyParamPatch,
         DataPointAnomaly,
         DetectionAnomalyFilterCondition,
@@ -45,9 +43,7 @@ if TYPE_CHECKING:
         MetricSeriesGroupDetectionCondition,
         MetricSingleSeriesDetectionCondition,
         SeriesIdentity,
-        ServicePrincipalInKVParam,
         ServicePrincipalInKVParamPatch,
-        ServicePrincipalParam,
         ServicePrincipalParamPatch,
         SeverityCondition,
         SeverityFilterCondition,
@@ -1345,26 +1341,6 @@ class AzureSQLConnectionStringCredentialPatch(DataSourceCredentialPatch):
         self.parameters = parameters
 
 
-class AzureSQLConnectionStringParam(msrest.serialization.Model):
-    """AzureSQLConnectionStringParam.
-
-    :ivar connection_string: The connection string to access the Azure SQL.
-    :vartype connection_string: str
-    """
-
-    _attribute_map = {
-        "connection_string": {"key": "connectionString", "type": "str"},
-    }
-
-    def __init__(self, *, connection_string: Optional[str] = None, **kwargs):
-        """
-        :keyword connection_string: The connection string to access the Azure SQL.
-        :paramtype connection_string: str
-        """
-        super(AzureSQLConnectionStringParam, self).__init__(**kwargs)
-        self.connection_string = connection_string
-
-
 class AzureSQLConnectionStringParamPatch(msrest.serialization.Model):
     """AzureSQLConnectionStringParamPatch.
 
@@ -2361,26 +2337,6 @@ class DataLakeGen2SharedKeyCredentialPatch(DataSourceCredentialPatch):
         self.parameters = parameters
 
 
-class DataLakeGen2SharedKeyParam(msrest.serialization.Model):
-    """DataLakeGen2SharedKeyParam.
-
-    :ivar account_key: The account key to access the Azure Data Lake Storage Gen2.
-    :vartype account_key: str
-    """
-
-    _attribute_map = {
-        "account_key": {"key": "accountKey", "type": "str"},
-    }
-
-    def __init__(self, *, account_key: Optional[str] = None, **kwargs):
-        """
-        :keyword account_key: The account key to access the Azure Data Lake Storage Gen2.
-        :paramtype account_key: str
-        """
-        super(DataLakeGen2SharedKeyParam, self).__init__(**kwargs)
-        self.account_key = account_key
-
-
 class DataLakeGen2SharedKeyParamPatch(msrest.serialization.Model):
     """DataLakeGen2SharedKeyParamPatch.
 
@@ -2490,34 +2446,33 @@ class DataSourceCredential(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar data_source_credential_type: Required. Type of data source credential.Constant filled by
-     server. Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+    :ivar credential_type: Required. Type of data source credential.Constant filled by server.
+     Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV".
-    :vartype data_source_credential_type: str or
-     ~azure.ai.metricsadvisor.models.DatasourceCredentialType
-    :ivar data_source_credential_id: Unique id of data source credential.
-    :vartype data_source_credential_id: str
-    :ivar data_source_credential_name: Required. Name of data source credential.
-    :vartype data_source_credential_name: str
-    :ivar data_source_credential_description: Description of data source credential.
-    :vartype data_source_credential_description: str
+    :vartype credential_type: str or ~azure.ai.metricsadvisor.models.DatasourceCredentialType
+    :ivar id: Unique id of data source credential.
+    :vartype id: str
+    :ivar name: Required. Name of data source credential.
+    :vartype name: str
+    :ivar description: Description of data source credential.
+    :vartype description: str
     """
 
     _validation = {
-        "data_source_credential_type": {"required": True},
-        "data_source_credential_id": {"readonly": True},
-        "data_source_credential_name": {"required": True},
+        "credential_type": {"required": True},
+        "id": {"readonly": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        "data_source_credential_type": {"key": "dataSourceCredentialType", "type": "str"},
-        "data_source_credential_id": {"key": "dataSourceCredentialId", "type": "str"},
-        "data_source_credential_name": {"key": "dataSourceCredentialName", "type": "str"},
-        "data_source_credential_description": {"key": "dataSourceCredentialDescription", "type": "str"},
+        "credential_type": {"key": "dataSourceCredentialType", "type": "str"},
+        "id": {"key": "dataSourceCredentialId", "type": "str"},
+        "name": {"key": "dataSourceCredentialName", "type": "str"},
+        "description": {"key": "dataSourceCredentialDescription", "type": "str"},
     }
 
     _subtype_map = {
-        "data_source_credential_type": {
+        "credential_type": {
             "AzureSQLConnectionString": "DatasourceSqlConnectionString",
             "DataLakeGen2SharedKey": "DatasourceDataLakeGen2SharedKey",
             "ServicePrincipal": "DatasourceServicePrincipal",
@@ -2525,20 +2480,18 @@ class DataSourceCredential(msrest.serialization.Model):
         }
     }
 
-    def __init__(
-        self, *, data_source_credential_name: str, data_source_credential_description: Optional[str] = None, **kwargs
-    ):
+    def __init__(self, *, name: str, description: Optional[str] = None, **kwargs):
         """
-        :keyword data_source_credential_name: Required. Name of data source credential.
-        :paramtype data_source_credential_name: str
-        :keyword data_source_credential_description: Description of data source credential.
-        :paramtype data_source_credential_description: str
+        :keyword name: Required. Name of data source credential.
+        :paramtype name: str
+        :keyword description: Description of data source credential.
+        :paramtype description: str
         """
         super(DataSourceCredential, self).__init__(**kwargs)
-        self.data_source_credential_type = None  # type: Optional[str]
-        self.data_source_credential_id = None
-        self.data_source_credential_name = data_source_credential_name
-        self.data_source_credential_description = data_source_credential_description
+        self.credential_type = None  # type: Optional[str]
+        self.id = None
+        self.name = name
+        self.description = description
 
 
 class DataSourceCredentialList(msrest.serialization.Model):
@@ -2576,59 +2529,46 @@ class DatasourceDataLakeGen2SharedKey(DataSourceCredential):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar data_source_credential_type: Required. Type of data source credential.Constant filled by
-     server. Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+    :ivar credential_type: Required. Type of data source credential.Constant filled by server.
+     Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV".
-    :vartype data_source_credential_type: str or
-     ~azure.ai.metricsadvisor.models.DatasourceCredentialType
-    :ivar data_source_credential_id: Unique id of data source credential.
-    :vartype data_source_credential_id: str
-    :ivar data_source_credential_name: Required. Name of data source credential.
-    :vartype data_source_credential_name: str
-    :ivar data_source_credential_description: Description of data source credential.
-    :vartype data_source_credential_description: str
-    :ivar parameters: Required.
-    :vartype parameters: ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyParam
+    :vartype credential_type: str or ~azure.ai.metricsadvisor.models.DatasourceCredentialType
+    :ivar id: Unique id of data source credential.
+    :vartype id: str
+    :ivar name: Required. Name of data source credential.
+    :vartype name: str
+    :ivar description: Description of data source credential.
+    :vartype description: str
+    :ivar account_key: The account key to access the Azure Data Lake Storage Gen2.
+    :vartype account_key: str
     """
 
     _validation = {
-        "data_source_credential_type": {"required": True},
-        "data_source_credential_id": {"readonly": True},
-        "data_source_credential_name": {"required": True},
-        "parameters": {"required": True},
+        "credential_type": {"required": True},
+        "id": {"readonly": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        "data_source_credential_type": {"key": "dataSourceCredentialType", "type": "str"},
-        "data_source_credential_id": {"key": "dataSourceCredentialId", "type": "str"},
-        "data_source_credential_name": {"key": "dataSourceCredentialName", "type": "str"},
-        "data_source_credential_description": {"key": "dataSourceCredentialDescription", "type": "str"},
-        "parameters": {"key": "parameters", "type": "DataLakeGen2SharedKeyParam"},
+        "credential_type": {"key": "dataSourceCredentialType", "type": "str"},
+        "id": {"key": "dataSourceCredentialId", "type": "str"},
+        "name": {"key": "dataSourceCredentialName", "type": "str"},
+        "description": {"key": "dataSourceCredentialDescription", "type": "str"},
+        "account_key": {"key": "parameters.accountKey", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        data_source_credential_name: str,
-        parameters: "_models.DataLakeGen2SharedKeyParam",
-        data_source_credential_description: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, description: Optional[str] = None, account_key: Optional[str] = None, **kwargs):
         """
-        :keyword data_source_credential_name: Required. Name of data source credential.
-        :paramtype data_source_credential_name: str
-        :keyword data_source_credential_description: Description of data source credential.
-        :paramtype data_source_credential_description: str
-        :keyword parameters: Required.
-        :paramtype parameters: ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyParam
+        :keyword name: Required. Name of data source credential.
+        :paramtype name: str
+        :keyword description: Description of data source credential.
+        :paramtype description: str
+        :keyword account_key: The account key to access the Azure Data Lake Storage Gen2.
+        :paramtype account_key: str
         """
-        super(DatasourceDataLakeGen2SharedKey, self).__init__(
-            data_source_credential_name=data_source_credential_name,
-            data_source_credential_description=data_source_credential_description,
-            **kwargs
-        )
-        self.data_source_credential_type = "DataLakeGen2SharedKey"  # type: str
-        self.parameters = parameters
+        super(DatasourceDataLakeGen2SharedKey, self).__init__(name=name, description=description, **kwargs)
+        self.credential_type = "DataLakeGen2SharedKey"  # type: str
+        self.account_key = account_key
 
 
 class DatasourceServicePrincipal(DataSourceCredential):
@@ -2638,59 +2578,69 @@ class DatasourceServicePrincipal(DataSourceCredential):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar data_source_credential_type: Required. Type of data source credential.Constant filled by
-     server. Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+    :ivar credential_type: Required. Type of data source credential.Constant filled by server.
+     Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV".
-    :vartype data_source_credential_type: str or
-     ~azure.ai.metricsadvisor.models.DatasourceCredentialType
-    :ivar data_source_credential_id: Unique id of data source credential.
-    :vartype data_source_credential_id: str
-    :ivar data_source_credential_name: Required. Name of data source credential.
-    :vartype data_source_credential_name: str
-    :ivar data_source_credential_description: Description of data source credential.
-    :vartype data_source_credential_description: str
-    :ivar parameters: Required.
-    :vartype parameters: ~azure.ai.metricsadvisor.models.ServicePrincipalParam
+    :vartype credential_type: str or ~azure.ai.metricsadvisor.models.DatasourceCredentialType
+    :ivar id: Unique id of data source credential.
+    :vartype id: str
+    :ivar name: Required. Name of data source credential.
+    :vartype name: str
+    :ivar description: Description of data source credential.
+    :vartype description: str
+    :ivar client_id: Required. The client id of the service principal.
+    :vartype client_id: str
+    :ivar client_secret: The client secret of the service principal.
+    :vartype client_secret: str
+    :ivar tenant_id: Required. The tenant id of the service principal.
+    :vartype tenant_id: str
     """
 
     _validation = {
-        "data_source_credential_type": {"required": True},
-        "data_source_credential_id": {"readonly": True},
-        "data_source_credential_name": {"required": True},
-        "parameters": {"required": True},
+        "credential_type": {"required": True},
+        "id": {"readonly": True},
+        "name": {"required": True},
+        "client_id": {"required": True},
+        "tenant_id": {"required": True},
     }
 
     _attribute_map = {
-        "data_source_credential_type": {"key": "dataSourceCredentialType", "type": "str"},
-        "data_source_credential_id": {"key": "dataSourceCredentialId", "type": "str"},
-        "data_source_credential_name": {"key": "dataSourceCredentialName", "type": "str"},
-        "data_source_credential_description": {"key": "dataSourceCredentialDescription", "type": "str"},
-        "parameters": {"key": "parameters", "type": "ServicePrincipalParam"},
+        "credential_type": {"key": "dataSourceCredentialType", "type": "str"},
+        "id": {"key": "dataSourceCredentialId", "type": "str"},
+        "name": {"key": "dataSourceCredentialName", "type": "str"},
+        "description": {"key": "dataSourceCredentialDescription", "type": "str"},
+        "client_id": {"key": "parameters.clientId", "type": "str"},
+        "client_secret": {"key": "parameters.clientSecret", "type": "str"},
+        "tenant_id": {"key": "parameters.tenantId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        data_source_credential_name: str,
-        parameters: "_models.ServicePrincipalParam",
-        data_source_credential_description: Optional[str] = None,
+        name: str,
+        client_id: str,
+        tenant_id: str,
+        description: Optional[str] = None,
+        client_secret: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword data_source_credential_name: Required. Name of data source credential.
-        :paramtype data_source_credential_name: str
-        :keyword data_source_credential_description: Description of data source credential.
-        :paramtype data_source_credential_description: str
-        :keyword parameters: Required.
-        :paramtype parameters: ~azure.ai.metricsadvisor.models.ServicePrincipalParam
+        :keyword name: Required. Name of data source credential.
+        :paramtype name: str
+        :keyword description: Description of data source credential.
+        :paramtype description: str
+        :keyword client_id: Required. The client id of the service principal.
+        :paramtype client_id: str
+        :keyword client_secret: The client secret of the service principal.
+        :paramtype client_secret: str
+        :keyword tenant_id: Required. The tenant id of the service principal.
+        :paramtype tenant_id: str
         """
-        super(DatasourceServicePrincipal, self).__init__(
-            data_source_credential_name=data_source_credential_name,
-            data_source_credential_description=data_source_credential_description,
-            **kwargs
-        )
-        self.data_source_credential_type = "ServicePrincipal"  # type: str
-        self.parameters = parameters
+        super(DatasourceServicePrincipal, self).__init__(name=name, description=description, **kwargs)
+        self.credential_type = "ServicePrincipal"  # type: str
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.tenant_id = tenant_id
 
 
 class DatasourceServicePrincipalInKeyVault(DataSourceCredential):
@@ -2700,59 +2650,98 @@ class DatasourceServicePrincipalInKeyVault(DataSourceCredential):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar data_source_credential_type: Required. Type of data source credential.Constant filled by
-     server. Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+    :ivar credential_type: Required. Type of data source credential.Constant filled by server.
+     Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV".
-    :vartype data_source_credential_type: str or
-     ~azure.ai.metricsadvisor.models.DatasourceCredentialType
-    :ivar data_source_credential_id: Unique id of data source credential.
-    :vartype data_source_credential_id: str
-    :ivar data_source_credential_name: Required. Name of data source credential.
-    :vartype data_source_credential_name: str
-    :ivar data_source_credential_description: Description of data source credential.
-    :vartype data_source_credential_description: str
-    :ivar parameters: Required.
-    :vartype parameters: ~azure.ai.metricsadvisor.models.ServicePrincipalInKVParam
+    :vartype credential_type: str or ~azure.ai.metricsadvisor.models.DatasourceCredentialType
+    :ivar id: Unique id of data source credential.
+    :vartype id: str
+    :ivar name: Required. Name of data source credential.
+    :vartype name: str
+    :ivar description: Description of data source credential.
+    :vartype description: str
+    :ivar key_vault_endpoint: Required. The Key Vault endpoint that storing the service principal.
+    :vartype key_vault_endpoint: str
+    :ivar key_vault_client_id: Required. The Client Id to access the Key Vault.
+    :vartype key_vault_client_id: str
+    :ivar key_vault_client_secret: The Client Secret to access the Key Vault.
+    :vartype key_vault_client_secret: str
+    :ivar service_principal_id_name_in_kv: Required. The secret name of the service principal's
+     client Id in the Key Vault.
+    :vartype service_principal_id_name_in_kv: str
+    :ivar service_principal_secret_name_in_kv: Required. The secret name of the service principal's
+     client secret in the Key Vault.
+    :vartype service_principal_secret_name_in_kv: str
+    :ivar tenant_id: Required. The tenant id of your service principal.
+    :vartype tenant_id: str
     """
 
     _validation = {
-        "data_source_credential_type": {"required": True},
-        "data_source_credential_id": {"readonly": True},
-        "data_source_credential_name": {"required": True},
-        "parameters": {"required": True},
+        "credential_type": {"required": True},
+        "id": {"readonly": True},
+        "name": {"required": True},
+        "key_vault_endpoint": {"required": True},
+        "key_vault_client_id": {"required": True},
+        "service_principal_id_name_in_kv": {"required": True},
+        "service_principal_secret_name_in_kv": {"required": True},
+        "tenant_id": {"required": True},
     }
 
     _attribute_map = {
-        "data_source_credential_type": {"key": "dataSourceCredentialType", "type": "str"},
-        "data_source_credential_id": {"key": "dataSourceCredentialId", "type": "str"},
-        "data_source_credential_name": {"key": "dataSourceCredentialName", "type": "str"},
-        "data_source_credential_description": {"key": "dataSourceCredentialDescription", "type": "str"},
-        "parameters": {"key": "parameters", "type": "ServicePrincipalInKVParam"},
+        "credential_type": {"key": "dataSourceCredentialType", "type": "str"},
+        "id": {"key": "dataSourceCredentialId", "type": "str"},
+        "name": {"key": "dataSourceCredentialName", "type": "str"},
+        "description": {"key": "dataSourceCredentialDescription", "type": "str"},
+        "key_vault_endpoint": {"key": "parameters.keyVaultEndpoint", "type": "str"},
+        "key_vault_client_id": {"key": "parameters.keyVaultClientId", "type": "str"},
+        "key_vault_client_secret": {"key": "parameters.keyVaultClientSecret", "type": "str"},
+        "service_principal_id_name_in_kv": {"key": "parameters.servicePrincipalIdNameInKV", "type": "str"},
+        "service_principal_secret_name_in_kv": {"key": "parameters.servicePrincipalSecretNameInKV", "type": "str"},
+        "tenant_id": {"key": "parameters.tenantId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        data_source_credential_name: str,
-        parameters: "_models.ServicePrincipalInKVParam",
-        data_source_credential_description: Optional[str] = None,
+        name: str,
+        key_vault_endpoint: str,
+        key_vault_client_id: str,
+        service_principal_id_name_in_kv: str,
+        service_principal_secret_name_in_kv: str,
+        tenant_id: str,
+        description: Optional[str] = None,
+        key_vault_client_secret: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword data_source_credential_name: Required. Name of data source credential.
-        :paramtype data_source_credential_name: str
-        :keyword data_source_credential_description: Description of data source credential.
-        :paramtype data_source_credential_description: str
-        :keyword parameters: Required.
-        :paramtype parameters: ~azure.ai.metricsadvisor.models.ServicePrincipalInKVParam
+        :keyword name: Required. Name of data source credential.
+        :paramtype name: str
+        :keyword description: Description of data source credential.
+        :paramtype description: str
+        :keyword key_vault_endpoint: Required. The Key Vault endpoint that storing the service
+         principal.
+        :paramtype key_vault_endpoint: str
+        :keyword key_vault_client_id: Required. The Client Id to access the Key Vault.
+        :paramtype key_vault_client_id: str
+        :keyword key_vault_client_secret: The Client Secret to access the Key Vault.
+        :paramtype key_vault_client_secret: str
+        :keyword service_principal_id_name_in_kv: Required. The secret name of the service principal's
+         client Id in the Key Vault.
+        :paramtype service_principal_id_name_in_kv: str
+        :keyword service_principal_secret_name_in_kv: Required. The secret name of the service
+         principal's client secret in the Key Vault.
+        :paramtype service_principal_secret_name_in_kv: str
+        :keyword tenant_id: Required. The tenant id of your service principal.
+        :paramtype tenant_id: str
         """
-        super(DatasourceServicePrincipalInKeyVault, self).__init__(
-            data_source_credential_name=data_source_credential_name,
-            data_source_credential_description=data_source_credential_description,
-            **kwargs
-        )
-        self.data_source_credential_type = "ServicePrincipalInKV"  # type: str
-        self.parameters = parameters
+        super(DatasourceServicePrincipalInKeyVault, self).__init__(name=name, description=description, **kwargs)
+        self.credential_type = "ServicePrincipalInKV"  # type: str
+        self.key_vault_endpoint = key_vault_endpoint
+        self.key_vault_client_id = key_vault_client_id
+        self.key_vault_client_secret = key_vault_client_secret
+        self.service_principal_id_name_in_kv = service_principal_id_name_in_kv
+        self.service_principal_secret_name_in_kv = service_principal_secret_name_in_kv
+        self.tenant_id = tenant_id
 
 
 class DatasourceSqlConnectionString(DataSourceCredential):
@@ -2762,59 +2751,48 @@ class DatasourceSqlConnectionString(DataSourceCredential):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar data_source_credential_type: Required. Type of data source credential.Constant filled by
-     server. Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
+    :ivar credential_type: Required. Type of data source credential.Constant filled by server.
+     Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
      "ServicePrincipal", "ServicePrincipalInKV".
-    :vartype data_source_credential_type: str or
-     ~azure.ai.metricsadvisor.models.DatasourceCredentialType
-    :ivar data_source_credential_id: Unique id of data source credential.
-    :vartype data_source_credential_id: str
-    :ivar data_source_credential_name: Required. Name of data source credential.
-    :vartype data_source_credential_name: str
-    :ivar data_source_credential_description: Description of data source credential.
-    :vartype data_source_credential_description: str
-    :ivar parameters: Required.
-    :vartype parameters: ~azure.ai.metricsadvisor.models.AzureSQLConnectionStringParam
+    :vartype credential_type: str or ~azure.ai.metricsadvisor.models.DatasourceCredentialType
+    :ivar id: Unique id of data source credential.
+    :vartype id: str
+    :ivar name: Required. Name of data source credential.
+    :vartype name: str
+    :ivar description: Description of data source credential.
+    :vartype description: str
+    :ivar connection_string: The connection string to access the Azure SQL.
+    :vartype connection_string: str
     """
 
     _validation = {
-        "data_source_credential_type": {"required": True},
-        "data_source_credential_id": {"readonly": True},
-        "data_source_credential_name": {"required": True},
-        "parameters": {"required": True},
+        "credential_type": {"required": True},
+        "id": {"readonly": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        "data_source_credential_type": {"key": "dataSourceCredentialType", "type": "str"},
-        "data_source_credential_id": {"key": "dataSourceCredentialId", "type": "str"},
-        "data_source_credential_name": {"key": "dataSourceCredentialName", "type": "str"},
-        "data_source_credential_description": {"key": "dataSourceCredentialDescription", "type": "str"},
-        "parameters": {"key": "parameters", "type": "AzureSQLConnectionStringParam"},
+        "credential_type": {"key": "dataSourceCredentialType", "type": "str"},
+        "id": {"key": "dataSourceCredentialId", "type": "str"},
+        "name": {"key": "dataSourceCredentialName", "type": "str"},
+        "description": {"key": "dataSourceCredentialDescription", "type": "str"},
+        "connection_string": {"key": "parameters.connectionString", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        data_source_credential_name: str,
-        parameters: "_models.AzureSQLConnectionStringParam",
-        data_source_credential_description: Optional[str] = None,
-        **kwargs
+        self, *, name: str, description: Optional[str] = None, connection_string: Optional[str] = None, **kwargs
     ):
         """
-        :keyword data_source_credential_name: Required. Name of data source credential.
-        :paramtype data_source_credential_name: str
-        :keyword data_source_credential_description: Description of data source credential.
-        :paramtype data_source_credential_description: str
-        :keyword parameters: Required.
-        :paramtype parameters: ~azure.ai.metricsadvisor.models.AzureSQLConnectionStringParam
+        :keyword name: Required. Name of data source credential.
+        :paramtype name: str
+        :keyword description: Description of data source credential.
+        :paramtype description: str
+        :keyword connection_string: The connection string to access the Azure SQL.
+        :paramtype connection_string: str
         """
-        super(DatasourceSqlConnectionString, self).__init__(
-            data_source_credential_name=data_source_credential_name,
-            data_source_credential_description=data_source_credential_description,
-            **kwargs
-        )
-        self.data_source_credential_type = "AzureSQLConnectionString"  # type: str
-        self.parameters = parameters
+        super(DatasourceSqlConnectionString, self).__init__(name=name, description=description, **kwargs)
+        self.credential_type = "AzureSQLConnectionString"  # type: str
+        self.connection_string = connection_string
 
 
 class DetectionAnomalyFilterCondition(msrest.serialization.Model):
@@ -4870,81 +4848,6 @@ class ServicePrincipalInKVCredentialPatch(DataSourceCredentialPatch):
         self.parameters = parameters
 
 
-class ServicePrincipalInKVParam(msrest.serialization.Model):
-    """ServicePrincipalInKVParam.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar key_vault_endpoint: Required. The Key Vault endpoint that storing the service principal.
-    :vartype key_vault_endpoint: str
-    :ivar key_vault_client_id: Required. The Client Id to access the Key Vault.
-    :vartype key_vault_client_id: str
-    :ivar key_vault_client_secret: The Client Secret to access the Key Vault.
-    :vartype key_vault_client_secret: str
-    :ivar service_principal_id_name_in_kv: Required. The secret name of the service principal's
-     client Id in the Key Vault.
-    :vartype service_principal_id_name_in_kv: str
-    :ivar service_principal_secret_name_in_kv: Required. The secret name of the service principal's
-     client secret in the Key Vault.
-    :vartype service_principal_secret_name_in_kv: str
-    :ivar tenant_id: Required. The tenant id of your service principal.
-    :vartype tenant_id: str
-    """
-
-    _validation = {
-        "key_vault_endpoint": {"required": True},
-        "key_vault_client_id": {"required": True},
-        "service_principal_id_name_in_kv": {"required": True},
-        "service_principal_secret_name_in_kv": {"required": True},
-        "tenant_id": {"required": True},
-    }
-
-    _attribute_map = {
-        "key_vault_endpoint": {"key": "keyVaultEndpoint", "type": "str"},
-        "key_vault_client_id": {"key": "keyVaultClientId", "type": "str"},
-        "key_vault_client_secret": {"key": "keyVaultClientSecret", "type": "str"},
-        "service_principal_id_name_in_kv": {"key": "servicePrincipalIdNameInKV", "type": "str"},
-        "service_principal_secret_name_in_kv": {"key": "servicePrincipalSecretNameInKV", "type": "str"},
-        "tenant_id": {"key": "tenantId", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        key_vault_endpoint: str,
-        key_vault_client_id: str,
-        service_principal_id_name_in_kv: str,
-        service_principal_secret_name_in_kv: str,
-        tenant_id: str,
-        key_vault_client_secret: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword key_vault_endpoint: Required. The Key Vault endpoint that storing the service
-         principal.
-        :paramtype key_vault_endpoint: str
-        :keyword key_vault_client_id: Required. The Client Id to access the Key Vault.
-        :paramtype key_vault_client_id: str
-        :keyword key_vault_client_secret: The Client Secret to access the Key Vault.
-        :paramtype key_vault_client_secret: str
-        :keyword service_principal_id_name_in_kv: Required. The secret name of the service principal's
-         client Id in the Key Vault.
-        :paramtype service_principal_id_name_in_kv: str
-        :keyword service_principal_secret_name_in_kv: Required. The secret name of the service
-         principal's client secret in the Key Vault.
-        :paramtype service_principal_secret_name_in_kv: str
-        :keyword tenant_id: Required. The tenant id of your service principal.
-        :paramtype tenant_id: str
-        """
-        super(ServicePrincipalInKVParam, self).__init__(**kwargs)
-        self.key_vault_endpoint = key_vault_endpoint
-        self.key_vault_client_id = key_vault_client_id
-        self.key_vault_client_secret = key_vault_client_secret
-        self.service_principal_id_name_in_kv = service_principal_id_name_in_kv
-        self.service_principal_secret_name_in_kv = service_principal_secret_name_in_kv
-        self.tenant_id = tenant_id
-
-
 class ServicePrincipalInKVParamPatch(msrest.serialization.Model):
     """ServicePrincipalInKVParamPatch.
 
@@ -5006,45 +4909,6 @@ class ServicePrincipalInKVParamPatch(msrest.serialization.Model):
         self.key_vault_client_secret = key_vault_client_secret
         self.service_principal_id_name_in_kv = service_principal_id_name_in_kv
         self.service_principal_secret_name_in_kv = service_principal_secret_name_in_kv
-        self.tenant_id = tenant_id
-
-
-class ServicePrincipalParam(msrest.serialization.Model):
-    """ServicePrincipalParam.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar client_id: Required. The client id of the service principal.
-    :vartype client_id: str
-    :ivar client_secret: The client secret of the service principal.
-    :vartype client_secret: str
-    :ivar tenant_id: Required. The tenant id of the service principal.
-    :vartype tenant_id: str
-    """
-
-    _validation = {
-        "client_id": {"required": True},
-        "tenant_id": {"required": True},
-    }
-
-    _attribute_map = {
-        "client_id": {"key": "clientId", "type": "str"},
-        "client_secret": {"key": "clientSecret", "type": "str"},
-        "tenant_id": {"key": "tenantId", "type": "str"},
-    }
-
-    def __init__(self, *, client_id: str, tenant_id: str, client_secret: Optional[str] = None, **kwargs):
-        """
-        :keyword client_id: Required. The client id of the service principal.
-        :paramtype client_id: str
-        :keyword client_secret: The client secret of the service principal.
-        :paramtype client_secret: str
-        :keyword tenant_id: Required. The tenant id of the service principal.
-        :paramtype tenant_id: str
-        """
-        super(ServicePrincipalParam, self).__init__(**kwargs)
-        self.client_id = client_id
-        self.client_secret = client_secret
         self.tenant_id = tenant_id
 
 

@@ -660,6 +660,22 @@ directive:
     rename-property:
       from: periodValue
       to: value
+  - where-model: DataSourceCredential
+    rename-property:
+      from: dataSourceCredentialType
+      to: credentialType
+  - where-model: DataSourceCredential
+    rename-property:
+      from: dataSourceCredentialName
+      to: name
+  - where-model: DataSourceCredential
+    rename-property:
+      from: dataSourceCredentialId
+      to: id
+  - where-model: DataSourceCredential
+    rename-property:
+      from: dataSourceCredentialDescription
+      to: description
 ```
 
 ```yaml
@@ -754,6 +770,14 @@ directive:
     flatten-property: value
   - where-model: PeriodFeedback
     flatten-property: value
+  - where-model: DatasourceSqlConnectionString
+    flatten-property: parameters
+  - where-model: DatasourceDataLakeGen2SharedKey
+    flatten-property: parameters
+  - where-model: DatasourceServicePrincipal
+    flatten-property: parameters
+  - where-model: DatasourceServicePrincipalInKeyVault
+    flatten-property: parameters
 ```
 
 ```yaml

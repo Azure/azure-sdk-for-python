@@ -30,6 +30,7 @@ if TYPE_CHECKING:
 _SERIALIZER = msrest.Serializer()
 _DESERIALIZER = msrest.Deserializer()
 
+
 class DictMixin:
     def __setitem__(self, key, item):
         self.__dict__[key] = item
@@ -840,9 +841,7 @@ class DataFeedSource(DictMixin):
         self.credential_id = kwargs.get("credential_id", None)
 
 
-class AzureApplicationInsightsDataFeedSource(
-    DataFeedSource, generated_models.AzureApplicationInsightsDataFeedSource
-):
+class AzureApplicationInsightsDataFeedSource(DataFeedSource, generated_models.AzureApplicationInsightsDataFeedSource):
     """AzureApplicationInsightsDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1244,9 +1243,7 @@ class SqlServerDataFeedSource(DataFeedSource, generated_models.AzureDataExplorer
         )
 
 
-class AzureDataLakeStorageGen2DataFeedSource(
-    DataFeedSource, generated_models.AzureDataLakeStorageGen2DataFeedSource
-):
+class AzureDataLakeStorageGen2DataFeedSource(DataFeedSource, generated_models.AzureDataLakeStorageGen2DataFeedSource):
     """AzureDataLakeStorageGen2DataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -2210,6 +2207,7 @@ class MetricFeedback(generated_models.MetricFeedback, DictMixin):
             )[:1024]
         )
 
+
 class AnomalyFeedback(generated_models.AnomalyFeedback, DictMixin):  # pylint:disable=too-many-instance-attributes
     """AnomalyFeedback.
 
@@ -2270,6 +2268,7 @@ class AnomalyFeedback(generated_models.AnomalyFeedback, DictMixin):  # pylint:di
                 self.anomaly_detection_configuration_snapshot,
             )[:1024]
         )
+
 
 class ChangePointFeedback(generated_models.ChangePointFeedback, DictMixin):
     """ChangePointFeedback.
@@ -2426,7 +2425,7 @@ class PeriodFeedback(generated_models.PeriodFeedback, DictMixin):
         )
 
 
-class DatasourceCredential(DictMixin):
+class DatasourceCredential(generated_models.DataSourceCredential, DictMixin):
     """DatasourceCredential base class.
 
     :param credential_type: Required. Type of data source credential.Constant filled by
@@ -2441,31 +2440,16 @@ class DatasourceCredential(DictMixin):
     :keyword str description: Description of data source credential.
     """
 
-    _attribute_map = {
-        "credential_type": {"key": "credentialType", "type": "str"},
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-    }
-
-    def __init__(self, name, credential_type, **kwargs):
-        # type: (str, str, Any) -> None
-        super().__init__(name=name, credential_type=credential_type, **kwargs)
-        self.credential_type = credential_type
-        self.name = name
-        self.id = kwargs.get("id", None)
-        self.description = kwargs.get("description", None)
+    def __init__(self, name: str, credential_type: str, **kwargs: Any) -> None:
+        super().__init__(name=name, credential_type=credential_type, id=id, **kwargs)
 
     def __repr__(self):
         return "DatasourceCredential(id={}, credential_type={}, name={}, description={})".format(
             self.id, self.credential_type, self.name, self.description
         )[:1024]
 
-    def _to_generated_patch(self):
-        pass
 
-
-class DatasourceSqlConnectionString(DatasourceCredential):
+class DatasourceSqlConnectionString(DatasourceCredential, generated_models.DatasourceSqlConnectionString):
     """DatasourceSqlConnectionString.
 
     All required parameters must be populated in order to send to Azure.
@@ -2484,18 +2468,10 @@ class DatasourceSqlConnectionString(DatasourceCredential):
     :type connection_string: str
     """
 
-    _attribute_map = {
-        "credential_type": {"key": "credentialType", "type": "str"},
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-        "connection_string": {"key": "connectionString", "type": "str"},
-    }
-
-    def __init__(self, name, connection_string, **kwargs):
-        # type: (str, str, Any) -> None
-        super().__init__(name=name, credential_type="AzureSQLConnectionString", **kwargs)
-        self.connection_string = connection_string
+    def __init__(self, name: str, connection_string: str, **kwargs: Any) -> None:
+        super().__init__(
+            name=name, credential_type="AzureSQLConnectionString", connection_string=connection_string, **kwargs
+        )
 
     def __repr__(self):
         return (
@@ -2510,7 +2486,7 @@ class DatasourceSqlConnectionString(DatasourceCredential):
         )
 
 
-class DatasourceDataLakeGen2SharedKey(DatasourceCredential):
+class DatasourceDataLakeGen2SharedKey(DatasourceCredential, generated_models.DatasourceDataLakeGen2SharedKey):
     """DatasourceDataLakeGen2SharedKey.
 
     All required parameters must be populated in order to send to Azure.
@@ -2529,18 +2505,8 @@ class DatasourceDataLakeGen2SharedKey(DatasourceCredential):
     :type account_key: str
     """
 
-    _attribute_map = {
-        "credential_type": {"key": "credentialType", "type": "str"},
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-        "account_key": {"key": "accountKey", "type": "str"},
-    }
-
-    def __init__(self, name, account_key, **kwargs):
-        # type: (str, str, Any) -> None
-        super().__init__(name=name, credential_type="DataLakeGen2SharedKey", **kwargs)
-        self.account_key = account_key
+    def __init__(self, name: str, account_key: str, **kwargs: Any) -> None:
+        super().__init__(name=name, credential_type="DataLakeGen2SharedKey", account_key=account_key, **kwargs)
 
     def __repr__(self):
         return (
@@ -2555,7 +2521,7 @@ class DatasourceDataLakeGen2SharedKey(DatasourceCredential):
         )
 
 
-class DatasourceServicePrincipal(DatasourceCredential):
+class DatasourceServicePrincipal(DatasourceCredential, generated_models.DatasourceServicePrincipal):
     """DatasourceServicePrincipal.
 
     All required parameters must be populated in order to send to Azure.
@@ -2578,22 +2544,15 @@ class DatasourceServicePrincipal(DatasourceCredential):
     :type tenant_id: str
     """
 
-    _attribute_map = {
-        "credential_type": {"key": "credentialType", "type": "str"},
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-        "client_id": {"key": "clientId", "type": "str"},
-        "client_secret": {"key": "clientSecret", "type": "str"},
-        "tenant_id": {"key": "tenantId", "type": "str"},
-    }
-
-    def __init__(self, name, client_id, client_secret, tenant_id, **kwargs):
-        # type: (str, str, str, str, Any) -> None
-        super().__init__(name=name, credential_type="ServicePrincipal", **kwargs)
-        self.client_id = client_id
-        self.client_secret = client_secret
-        self.tenant_id = tenant_id
+    def __init__(self, name: str, client_id: str, client_secret: str, tenant_id: str, **kwargs: Any) -> None:
+        super().__init__(
+            name=name,
+            credential_type="ServicePrincipal",
+            client_id=client_id,
+            client_secret=client_secret,
+            tenant_id=tenant_id,
+            **kwargs
+        )
 
     def __repr__(self):
         return (
@@ -2610,7 +2569,7 @@ class DatasourceServicePrincipal(DatasourceCredential):
         )
 
 
-class DatasourceServicePrincipalInKeyVault(DatasourceCredential):
+class DatasourceServicePrincipalInKeyVault(DatasourceCredential, generated_models.DatasourceServicePrincipalInKeyVault):
     """DatasourceServicePrincipalInKeyVault.
 
     All required parameters must be populated in order to send to Azure.
@@ -2635,46 +2594,29 @@ class DatasourceServicePrincipalInKeyVault(DatasourceCredential):
     :keyword str tenant_id: Required. The tenant id of your service principal.
     """
 
-    _attribute_map = {
-        "credential_type": {"key": "credentialType", "type": "str"},
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-        "key_vault_endpoint": {"key": "keyVaultEndpoint", "type": "str"},
-        "key_vault_client_id": {"key": "keyVaultClientId", "type": "str"},
-        "key_vault_client_secret": {"key": "keyVaultClientSecret", "type": "str"},
-        "service_principal_id_name_in_kv": {
-            "key": "servicePrincipalIdNameInKV",
-            "type": "str",
-        },
-        "service_principal_secret_name_in_kv": {
-            "key": "servicePrincipalSecretNameInKV",
-            "type": "str",
-        },
-        "tenant_id": {"key": "tenantId", "type": "str"},
-    }
-
-    def __init__(self, name, **kwargs):
-        # type: (str, Any) -> None
-        if "key_vault_endpoint" not in kwargs:
-            raise ValueError("key_vault_endpoint is required.")
-        if "key_vault_client_id" not in kwargs:
-            raise ValueError("key_vault_client_id is required.")
-        if "key_vault_client_secret" not in kwargs:
-            raise ValueError("key_vault_client_secret is required.")
-        if "service_principal_id_name_in_kv" not in kwargs:
-            raise ValueError("service_principal_id_name_in_kv is required.")
-        if "service_principal_secret_name_in_kv" not in kwargs:
-            raise ValueError("service_principal_secret_name_in_kv is required.")
-        if "tenant_id" not in kwargs:
-            raise ValueError("tenant_id is required.")
-        super().__init__(name=name, credential_type="ServicePrincipalInKV", **kwargs)
-        self.key_vault_endpoint = kwargs["key_vault_endpoint"]
-        self.key_vault_client_id = kwargs["key_vault_client_id"]
-        self.key_vault_client_secret = kwargs["key_vault_client_secret"]
-        self.service_principal_id_name_in_kv = kwargs["service_principal_id_name_in_kv"]
-        self.service_principal_secret_name_in_kv = kwargs["service_principal_secret_name_in_kv"]
-        self.tenant_id = kwargs["tenant_id"]
+    def __init__(
+        self,
+        name: str,
+        *,
+        key_vault_endpoint: str,
+        key_vault_client_id: str,
+        key_vault_client_secret: str,
+        service_principal_id_name_in_kv: str,
+        service_principal_secret_name_in_kv: str,
+        tenant_id: str,
+        **kwargs: Any
+    ) -> None:
+        super().__init__(
+            name=name,
+            credential_type="ServicePrincipalInKV",
+            key_vault_endpoint=key_vault_endpoint,
+            key_vault_client_id=key_vault_client_id,
+            key_vault_client_secret=key_vault_client_secret,
+            service_principal_id_name_in_kv=service_principal_id_name_in_kv,
+            service_principal_secret_name_in_kv=service_principal_secret_name_in_kv,
+            tenant_id=tenant_id,
+            **kwargs
+        )
 
     def __repr__(self):
         return (

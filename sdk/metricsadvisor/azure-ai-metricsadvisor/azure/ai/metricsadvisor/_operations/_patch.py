@@ -301,7 +301,9 @@ class OperationMixinHelpers:
             error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized =  self._convert_to_sub_feedback(self._deserialize(generated_models.MetricFeedback, pipeline_response))
+        deserialized = self._convert_to_sub_feedback(
+            self._deserialize(generated_models.MetricFeedback, pipeline_response)
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -728,33 +730,11 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         )
 
     @distributed_trace
-    def get_datasource_credential(
-        self,
-        credential_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> DatasourceCredentialUnion
-        datasource_credential = super().get_datasource_credential(credential_id, **kwargs)
-        return convert_to_datasource_credential(datasource_credential)
-
-    @distributed_trace
     def create_datasource_credential(
-        self,
-        datasource_credential,  # type: DatasourceCredentialUnion
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> DatasourceCredentialUnion
-        datasource_credential_request = None
-        if datasource_credential.credential_type in [
-            "AzureSQLConnectionString",
-            "DataLakeGen2SharedKey",
-            "ServicePrincipal",
-            "ServicePrincipalInKV",
-        ]:
-            datasource_credential_request = datasource_credential._to_generated()
-
+        self, datasource_credential: DatasourceCredentialUnion, **kwargs: Any
+    ) -> DatasourceCredentialUnion:
         response_headers = super().create_datasource_credential(  # type: ignore
-            datasource_credential_request,  # type: ignore
+            datasource_credential,  # type: ignore
             cls=lambda pipeline_response, _, response_headers: response_headers,
             **kwargs
         )
@@ -762,39 +742,12 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         return self.get_datasource_credential(credential_id)
 
     @distributed_trace
-    def list_datasource_credentials(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> ItemPaged[DatasourceCredential]
-        return super().list_credentials(  # type: ignore
-            cls=kwargs.pop(
-                "cls",
-                lambda credentials: [convert_to_datasource_credential(credential) for credential in credentials],
-            ),
-            **kwargs
-        )
-
-    @distributed_trace
     def update_datasource_credential(
         self,
         datasource_credential,  # type: DatasourceCredential
         **kwargs  # type: Any
     ):
-        # type: (...) -> DatasourceCredential
-        datasource_credential_request = None
-        if datasource_credential.credential_type in [
-            "AzureSQLConnectionString",
-            "DataLakeGen2SharedKey",
-            "ServicePrincipal",
-            "ServicePrincipalInKV",
-        ]:
-            datasource_credential_request = datasource_credential._to_generated_patch()
-
-        updated_datasource_credential = super().update_credential(  # type: ignore
-            datasource_credential.id, datasource_credential_request, **kwargs  # type: ignore
-        )
-
-        return convert_to_datasource_credential(updated_datasource_credential)
+        return super().update_datasource_credential(datasource_credential.id, datasource_credential, **kwargs)
 
     @distributed_trace
     def delete_datasource_credential(self, *credential_id, **kwargs):
