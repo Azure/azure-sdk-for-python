@@ -17,7 +17,6 @@ from ._models_py3 import AnomalyDetectionConfigurationList
 from ._models_py3 import AnomalyDimensionList
 from ._models_py3 import AnomalyDimensionQuery
 from ._models_py3 import AnomalyFeedback
-from ._models_py3 import AnomalyFeedbackValue
 from ._models_py3 import AnomalyIncident
 from ._models_py3 import AnomalyProperty
 from ._models_py3 import AnomalyResultList
@@ -33,10 +32,8 @@ from ._models_py3 import AzureSQLConnectionStringParam
 from ._models_py3 import AzureSQLConnectionStringParamPatch
 from ._models_py3 import AzureTableDataFeedSource
 from ._models_py3 import ChangePointFeedback
-from ._models_py3 import ChangePointFeedbackValue
 from ._models_py3 import ChangeThresholdCondition
 from ._models_py3 import CommentFeedback
-from ._models_py3 import CommentFeedbackValue
 from ._models_py3 import DataFeed
 from ._models_py3 import DataFeedDetailPatch
 from ._models_py3 import DataFeedDimension
@@ -98,7 +95,6 @@ from ._models_py3 import MetricSingleSeriesDetectionCondition
 from ._models_py3 import MongoDbDataFeedSource
 from ._models_py3 import NotificationHook
 from ._models_py3 import PeriodFeedback
-from ._models_py3 import PeriodFeedbackValue
 from ._models_py3 import RootCauseList
 from ._models_py3 import SeriesIdentity
 from ._models_py3 import SeriesResultList
@@ -165,7 +161,6 @@ __all__ = [
     "AnomalyDimensionList",
     "AnomalyDimensionQuery",
     "AnomalyFeedback",
-    "AnomalyFeedbackValue",
     "AnomalyIncident",
     "AnomalyProperty",
     "AnomalyResultList",
@@ -181,10 +176,8 @@ __all__ = [
     "AzureSQLConnectionStringParamPatch",
     "AzureTableDataFeedSource",
     "ChangePointFeedback",
-    "ChangePointFeedbackValue",
     "ChangeThresholdCondition",
     "CommentFeedback",
-    "CommentFeedbackValue",
     "DataFeed",
     "DataFeedDetailPatch",
     "DataFeedDimension",
@@ -246,7 +239,6 @@ __all__ = [
     "MongoDbDataFeedSource",
     "NotificationHook",
     "PeriodFeedback",
-    "PeriodFeedbackValue",
     "RootCauseList",
     "SeriesIdentity",
     "SeriesResultList",

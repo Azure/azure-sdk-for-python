@@ -558,6 +558,10 @@ directive:
     rename-property:
       from: snoozeFilter
       to: alertSnoozeCondition
+  - where-model: FeedbackDimensionFilter
+    rename-property:
+      from: dimension
+      to: dimensionKey
   - where-model: NotificationHook
     rename-property:
       from: hookName
@@ -636,6 +640,26 @@ directive:
     rename-property:
       from: metricId
       to: companionMetricId
+  - where-model: MetricFeedback
+    rename-property:
+      from: feedbackId
+      to: id
+  - where-model: AnomalyFeedbackValue
+    rename-property:
+      from: anomalyValue
+      to: value
+  - where-model: ChangePointFeedbackValue
+    rename-property:
+      from: changePointValue
+      to: value
+  - where-model: CommentFeedbackValue
+    rename-property:
+      from: commentValue
+      to: value
+  - where-model: PeriodFeedbackValue
+    rename-property:
+      from: periodValue
+      to: value
 ```
 
 ```yaml
@@ -720,6 +744,16 @@ directive:
     flatten-property: group
   - where-model: MetricSingleSeriesDetectionCondition
     flatten-property: series
+  - where-model: MetricFeedback
+    flatten-property: dimensionFilter
+  - where-model: AnomalyFeedback
+    flatten-property: value
+  - where-model: ChangePointFeedback
+    flatten-property: value
+  - where-model: CommentFeedback
+    flatten-property: value
+  - where-model: PeriodFeedback
+    flatten-property: value
 ```
 
 ```yaml

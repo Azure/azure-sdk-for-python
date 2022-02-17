@@ -8,12 +8,16 @@
 
 from ._metrics_advisor_client import MetricsAdvisorClient
 
-from ._patch import __all__ as _patch_all
-from ._patch import *  # pylint: disable=unused-wildcard-import
+try:
+    from ._patch import __all__ as _patch_all
+    from ._patch import *  # pylint: disable=unused-wildcard-import
+except ImportError:
+    _patch_all = []
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = ["MetricsAdvisorClient"]
 __all__.extend(_patch_all)
 
 # `._patch.py` is used for handwritten extensions to the generated code
 # Example: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md
-patch_sdk()
+_patch_sdk()

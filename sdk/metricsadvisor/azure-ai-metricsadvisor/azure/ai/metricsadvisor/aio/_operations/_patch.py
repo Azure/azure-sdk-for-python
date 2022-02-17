@@ -57,17 +57,14 @@ from ...models import *
 
 class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGenerated, OperationMixinHelpers):
     def _paging_helper(
-        self,
-        *,
-        extract_data,
-        initial_request: HttpRequest,
-        next_request: HttpRequest,
-        **kwargs
+        self, *, extract_data, initial_request: HttpRequest, next_request: HttpRequest, **kwargs
     ) -> AsyncItemPaged:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
-        prepare_request = self._get_paging_prepare_request(initial_request=initial_request, next_request=next_request, **kwargs)
+        prepare_request = self._get_paging_prepare_request(
+            initial_request=initial_request, next_request=next_request, **kwargs
+        )
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -352,14 +349,14 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         self, detection_configuration_id: str, **kwargs: Any
     ) -> AsyncItemPaged[AnomalyAlertConfiguration]:
         deserializer = self._deserialize
+
         async def extract_data(deserializer, pipeline_response):
             response_json = pipeline_response.http_response.json()
             list_of_elem = []
             for l in response_json["value"]:
                 config_to_generated = functools.partial(deserializer, generated_models.MetricAlertConfiguration)
-                l['metricAlertingConfigurations'] = [
-                    config_to_generated(config)
-                    for config in l.get('metricAlertingConfigurations', [])
+                l["metricAlertingConfigurations"] = [
+                    config_to_generated(config) for config in l.get("metricAlertingConfigurations", [])
                 ]
                 list_of_elem.append(
                     AnomalyAlertConfiguration._from_generated(
@@ -367,6 +364,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
                     )
                 )
             return response_json.get("@nextLink", None) or None, AsyncList(list_of_elem)
+
         return self._paging_helper(
             extract_data=functools.partial(extract_data, deserializer),
             initial_request=build_list_alert_configurations_request(
@@ -482,9 +480,15 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
     @distributed_trace_async
     async def get_feedback(self, feedback_id, **kwargs):
         # type: (str, Any) -> Union[MetricFeedback, FeedbackUnion]
-        feedback = await super().get_feedback(feedback_id=feedback_id, **kwargs)
+        cls = kwargs.pop("cls", None)
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        return self._convert_to_sub_feedback(feedback)
+        request = self._get_feedback_request(feedback_id=feedback_id)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+        return self._get_feedback_deserialize(pipeline_response, cls=cls, error_map=error_map, **kwargs)
 
     @distributed_trace
     def list_feedback(

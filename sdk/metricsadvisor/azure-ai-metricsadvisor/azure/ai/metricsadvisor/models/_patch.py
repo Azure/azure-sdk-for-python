@@ -30,6 +30,58 @@ if TYPE_CHECKING:
 _SERIALIZER = msrest.Serializer()
 _DESERIALIZER = msrest.Deserializer()
 
+class DictMixin:
+    def __setitem__(self, key, item):
+        self.__dict__[key] = item
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+    def __repr__(self):
+        return str(self)
+
+    def __len__(self):
+        return len(self.keys())
+
+    def __delitem__(self, key):
+        self.__dict__[key] = None
+
+    def __eq__(self, other):
+        """Compare objects by comparing all attributes."""
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other):
+        """Compare objects by comparing all attributes."""
+        return not self.__eq__(other)
+
+    def __contains__(self, key):
+        return key in self.__dict__
+
+    def __str__(self):
+        return str({k: v for k, v in self.__dict__.items() if not k.startswith("_")})
+
+    def has_key(self, k):
+        return k in self.__dict__
+
+    def update(self, *args, **kwargs):
+        return self.__dict__.update(*args, **kwargs)
+
+    def keys(self):
+        return [k for k in self.__dict__ if not k.startswith("_")]
+
+    def values(self):
+        return [v for k, v in self.__dict__.items() if not k.startswith("_")]
+
+    def items(self):
+        return [(k, v) for k, v in self.__dict__.items() if not k.startswith("_")]
+
+    def get(self, key, default=None):
+        if key in self.__dict__:
+            return self.__dict__[key]
+        return default
+
 
 def get_auth_from_datasource_kwargs(
     *, default_authentication_type: str, check_msi_kwarg: bool = True, **kwargs
@@ -505,10 +557,13 @@ class SeverityCondition(generated_models.SeverityCondition):
     :type max_alert_severity: str or ~azure.ai.metricsadvisor.models.AnomalySeverity
     """
 
-    def __init__(self, min_alert_severity: Union[str, "AnomalySeverity"], max_alert_severity: Union[str, "AnomalySeverity"], **kwargs: Any) -> None:
-        super().__init__(
-            min_alert_severity=min_alert_severity, max_alert_severity=max_alert_severity
-        )
+    def __init__(
+        self,
+        min_alert_severity: Union[str, "AnomalySeverity"],
+        max_alert_severity: Union[str, "AnomalySeverity"],
+        **kwargs: Any
+    ) -> None:
+        super().__init__(min_alert_severity=min_alert_severity, max_alert_severity=max_alert_severity)
 
     def __repr__(self):
         return "SeverityCondition(min_alert_severity={}, max_alert_severity={})".format(
@@ -527,12 +582,11 @@ class MetricAnomalyAlertSnoozeCondition(generated_models.MetricAnomalyAlertSnooz
     :type only_for_successive: bool
     """
 
-    def __init__(self, auto_snooze: int, snooze_scope: Union[str, "SnoozeScope"], only_for_successive: bool, **kwargs: Any) -> None:
+    def __init__(
+        self, auto_snooze: int, snooze_scope: Union[str, "SnoozeScope"], only_for_successive: bool, **kwargs: Any
+    ) -> None:
         super().__init__(
-            auto_snooze=auto_snooze,
-            snooze_scope=snooze_scope,
-            only_for_successive=only_for_successive,
-            **kwargs
+            auto_snooze=auto_snooze, snooze_scope=snooze_scope, only_for_successive=only_for_successive, **kwargs
         )
 
     def __repr__(self):
@@ -764,7 +818,7 @@ class AnomalyDetectionConfiguration(generated_models.AnomalyDetectionConfigurati
         )
 
 
-class DataFeedSource:
+class DataFeedSource(DictMixin):
     """DataFeedSource base class
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -787,7 +841,7 @@ class DataFeedSource:
 
 
 class AzureApplicationInsightsDataFeedSource(
-    DataFeedSource, generated_models.AzureApplicationInsightsDataFeedSource, dict
+    DataFeedSource, generated_models.AzureApplicationInsightsDataFeedSource
 ):
     """AzureApplicationInsightsDataFeedSource.
 
@@ -828,7 +882,7 @@ class AzureApplicationInsightsDataFeedSource(
         )
 
 
-class AzureBlobDataFeedSource(DataFeedSource, generated_models.AzureBlobDataFeedSource, dict):
+class AzureBlobDataFeedSource(DataFeedSource, generated_models.AzureBlobDataFeedSource):
     """AzureBlobDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -873,7 +927,7 @@ class AzureBlobDataFeedSource(DataFeedSource, generated_models.AzureBlobDataFeed
         )
 
 
-class AzureCosmosDbDataFeedSource(DataFeedSource, generated_models.AzureCosmosDbDataFeedSource, dict):
+class AzureCosmosDbDataFeedSource(DataFeedSource, generated_models.AzureCosmosDbDataFeedSource):
     """AzureCosmosDbDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -920,7 +974,7 @@ class AzureCosmosDbDataFeedSource(DataFeedSource, generated_models.AzureCosmosDb
         )
 
 
-class AzureDataExplorerDataFeedSource(DataFeedSource, generated_models.AzureDataExplorerDataFeedSource, dict):
+class AzureDataExplorerDataFeedSource(DataFeedSource, generated_models.AzureDataExplorerDataFeedSource):
     """AzureDataExplorerDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -966,7 +1020,7 @@ class AzureDataExplorerDataFeedSource(DataFeedSource, generated_models.AzureData
         )
 
 
-class AzureTableDataFeedSource(DataFeedSource, generated_models.AzureTableDataFeedSource, dict):
+class AzureTableDataFeedSource(DataFeedSource, generated_models.AzureTableDataFeedSource):
     """AzureTableDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1001,7 +1055,7 @@ class AzureTableDataFeedSource(DataFeedSource, generated_models.AzureTableDataFe
         )
 
 
-class AzureEventHubsDataFeedSource(DataFeedSource, generated_models.AzureEventHubsDataFeedSource, dict):
+class AzureEventHubsDataFeedSource(DataFeedSource, generated_models.AzureEventHubsDataFeedSource):
     """AzureEventHubsDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1036,7 +1090,7 @@ class AzureEventHubsDataFeedSource(DataFeedSource, generated_models.AzureEventHu
         )
 
 
-class InfluxDbDataFeedSource(DataFeedSource, generated_models.InfluxDbDataFeedSource, dict):
+class InfluxDbDataFeedSource(DataFeedSource, generated_models.InfluxDbDataFeedSource):
     """InfluxDbDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1075,7 +1129,7 @@ class InfluxDbDataFeedSource(DataFeedSource, generated_models.InfluxDbDataFeedSo
         )
 
 
-class MySqlDataFeedSource(DataFeedSource, generated_models.AzureDataExplorerDataFeedSource, dict):
+class MySqlDataFeedSource(DataFeedSource, generated_models.AzureDataExplorerDataFeedSource):
     """MySqlDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1108,7 +1162,7 @@ class MySqlDataFeedSource(DataFeedSource, generated_models.AzureDataExplorerData
         )
 
 
-class PostgreSqlDataFeedSource(DataFeedSource, generated_models.AzureDataExplorerDataFeedSource, dict):
+class PostgreSqlDataFeedSource(DataFeedSource, generated_models.AzureDataExplorerDataFeedSource):
     """PostgreSqlDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1141,7 +1195,7 @@ class PostgreSqlDataFeedSource(DataFeedSource, generated_models.AzureDataExplore
         )
 
 
-class SqlServerDataFeedSource(DataFeedSource, generated_models.AzureDataExplorerDataFeedSource, dict):
+class SqlServerDataFeedSource(DataFeedSource, generated_models.AzureDataExplorerDataFeedSource):
     """SqlServerDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1191,7 +1245,7 @@ class SqlServerDataFeedSource(DataFeedSource, generated_models.AzureDataExplorer
 
 
 class AzureDataLakeStorageGen2DataFeedSource(
-    DataFeedSource, generated_models.AzureDataLakeStorageGen2DataFeedSource, dict
+    DataFeedSource, generated_models.AzureDataLakeStorageGen2DataFeedSource
 ):
     """AzureDataLakeStorageGen2DataFeedSource.
 
@@ -1251,7 +1305,7 @@ class AzureDataLakeStorageGen2DataFeedSource(
         )
 
 
-class AzureLogAnalyticsDataFeedSource(DataFeedSource, generated_models.AzureLogAnalyticsDataFeedSource, dict):
+class AzureLogAnalyticsDataFeedSource(DataFeedSource, generated_models.AzureLogAnalyticsDataFeedSource):
     """AzureLogAnalyticsDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1318,7 +1372,7 @@ class AzureLogAnalyticsDataFeedSource(DataFeedSource, generated_models.AzureLogA
         )
 
 
-class MongoDbDataFeedSource(DataFeedSource, generated_models.MongoDbDataFeedSource, dict):
+class MongoDbDataFeedSource(DataFeedSource, generated_models.MongoDbDataFeedSource):
     """MongoDbDataFeedSource.
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -1354,7 +1408,7 @@ class MongoDbDataFeedSource(DataFeedSource, generated_models.MongoDbDataFeedSour
         )
 
 
-class NotificationHook(generated_models.NotificationHook, dict):
+class NotificationHook(generated_models.NotificationHook):
     """NotificationHook.
 
     :param str name: Hook unique name.
@@ -2121,7 +2175,7 @@ class IncidentRootCause(msrest.serialization.Model):
         )
 
 
-class MetricFeedback(dict):
+class MetricFeedback(generated_models.MetricFeedback, DictMixin):
     """Feedback base class
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2140,23 +2194,8 @@ class MetricFeedback(dict):
     :ivar dict[str, str] dimension_key: Required. metric dimension filter.
     """
 
-    _attribute_map = {
-        "feedback_type": {"key": "feedbackType", "type": "str"},
-        "id": {"key": "id", "type": "str"},
-        "created_time": {"key": "createdTime", "type": "iso-8601"},
-        "user_principal": {"key": "userPrincipal", "type": "str"},
-        "metric_id": {"key": "metricId", "type": "str"},
-        "dimension_key": {"key": "dimensionKey", "type": "{str}"},
-    }
-
     def __init__(self, feedback_type, metric_id, dimension_key, **kwargs):
-        super().__init__(**kwargs)
-        self.feedback_type = feedback_type  # type: str
-        self.id = kwargs.get("id", None)
-        self.created_time = kwargs.get("created_time", None)
-        self.user_principal = kwargs.get("user_principal", None)
-        self.metric_id = metric_id
-        self.dimension_key = dimension_key
+        super().__init__(feedback_type=feedback_type, metric_id=metric_id, dimension_key=dimension_key, **kwargs)
 
     def __repr__(self):
         return (
@@ -2171,11 +2210,7 @@ class MetricFeedback(dict):
             )[:1024]
         )
 
-    def _to_generated_patch(self):
-        pass
-
-
-class AnomalyFeedback(MetricFeedback):  # pylint:disable=too-many-instance-attributes
+class AnomalyFeedback(generated_models.AnomalyFeedback, DictMixin):  # pylint:disable=too-many-instance-attributes
     """AnomalyFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2206,33 +2241,16 @@ class AnomalyFeedback(MetricFeedback):  # pylint:disable=too-many-instance-attri
      ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
     """
 
-    _attribute_map = {
-        "feedback_type": {"key": "feedbackType", "type": "str"},
-        "id": {"key": "id", "type": "str"},
-        "created_time": {"key": "createdTime", "type": "iso-8601"},
-        "user_principal": {"key": "userPrincipal", "type": "str"},
-        "metric_id": {"key": "metricId", "type": "str"},
-        "dimension_key": {"key": "dimensionKey", "type": "{str}"},
-        "start_time": {"key": "startTime", "type": "iso-8601"},
-        "end_time": {"key": "endTime", "type": "iso-8601"},
-        "value": {"key": "value", "type": "str"},
-        "anomaly_detection_configuration_id": {
-            "key": "anomalyDetectionConfigurationId",
-            "type": "str",
-        },
-        "anomaly_detection_configuration_snapshot": {
-            "key": "anomalyDetectionConfigurationSnapshot",
-            "type": "AnomalyDetectionConfiguration",
-        },
-    }
-
     def __init__(self, metric_id, dimension_key, start_time, end_time, value, **kwargs):
-        super().__init__(feedback_type="Anomaly", metric_id=metric_id, dimension_key=dimension_key, **kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
-        self.value = value
-        self.anomaly_detection_configuration_id = kwargs.get("anomaly_detection_configuration_id", None)
-        self.anomaly_detection_configuration_snapshot = kwargs.get("anomaly_detection_configuration_snapshot", None)
+        super().__init__(
+            feedback_type="Anomaly",
+            metric_id=metric_id,
+            dimension_key=dimension_key,
+            start_time=start_time,
+            end_time=end_time,
+            value=value,
+            **kwargs
+        )
 
     def __repr__(self):
         return (
@@ -2253,8 +2271,7 @@ class AnomalyFeedback(MetricFeedback):  # pylint:disable=too-many-instance-attri
             )[:1024]
         )
 
-
-class ChangePointFeedback(MetricFeedback):
+class ChangePointFeedback(generated_models.ChangePointFeedback, DictMixin):
     """ChangePointFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2279,23 +2296,16 @@ class ChangePointFeedback(MetricFeedback):
     :type value: str or ~azure.ai.metricsadvisor.models.ChangePointValue
     """
 
-    _attribute_map = {
-        "feedback_type": {"key": "feedbackType", "type": "str"},
-        "id": {"key": "id", "type": "str"},
-        "created_time": {"key": "createdTime", "type": "iso-8601"},
-        "user_principal": {"key": "userPrincipal", "type": "str"},
-        "metric_id": {"key": "metricId", "type": "str"},
-        "dimension_key": {"key": "dimensionKey", "type": "{str}"},
-        "start_time": {"key": "startTime", "type": "iso-8601"},
-        "end_time": {"key": "endTime", "type": "iso-8601"},
-        "value": {"key": "value", "type": "str"},
-    }
-
     def __init__(self, metric_id, dimension_key, start_time, end_time, value, **kwargs):
-        super().__init__(feedback_type="ChangePoint", metric_id=metric_id, dimension_key=dimension_key, **kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
-        self.value = value
+        super().__init__(
+            feedback_type="ChangePoint",
+            metric_id=metric_id,
+            dimension_key=dimension_key,
+            start_time=start_time,
+            end_time=end_time,
+            value=value,
+            **kwargs
+        )
 
     def __repr__(self):
         return (
@@ -2314,7 +2324,7 @@ class ChangePointFeedback(MetricFeedback):
         )
 
 
-class CommentFeedback(MetricFeedback):
+class CommentFeedback(generated_models.CommentFeedback, DictMixin):
     """CommentFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2339,23 +2349,16 @@ class CommentFeedback(MetricFeedback):
     :type value: str
     """
 
-    _attribute_map = {
-        "feedback_type": {"key": "feedbackType", "type": "str"},
-        "id": {"key": "id", "type": "str"},
-        "created_time": {"key": "createdTime", "type": "iso-8601"},
-        "user_principal": {"key": "userPrincipal", "type": "str"},
-        "metric_id": {"key": "metricId", "type": "str"},
-        "dimension_key": {"key": "dimensionKey", "type": "{str}"},
-        "start_time": {"key": "startTime", "type": "iso-8601"},
-        "end_time": {"key": "endTime", "type": "iso-8601"},
-        "value": {"key": "value", "type": "str"},
-    }
-
     def __init__(self, metric_id, dimension_key, start_time, end_time, value, **kwargs):
-        super().__init__(feedback_type="Comment", metric_id=metric_id, dimension_key=dimension_key, **kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
-        self.value = value
+        super().__init__(
+            feedback_type="Comment",
+            metric_id=metric_id,
+            dimension_key=dimension_key,
+            start_time=start_time,
+            end_time=end_time,
+            value=value,
+            **kwargs
+        )
 
     def __repr__(self):
         return (
@@ -2374,7 +2377,7 @@ class CommentFeedback(MetricFeedback):
         )
 
 
-class PeriodFeedback(MetricFeedback):
+class PeriodFeedback(generated_models.PeriodFeedback, DictMixin):
     """PeriodFeedback.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2397,21 +2400,15 @@ class PeriodFeedback(MetricFeedback):
     :type period_type: str or ~azure.ai.metricsadvisor.models.PeriodType
     """
 
-    _attribute_map = {
-        "feedback_type": {"key": "feedbackType", "type": "str"},
-        "id": {"key": "id", "type": "str"},
-        "created_time": {"key": "createdTime", "type": "iso-8601"},
-        "user_principal": {"key": "userPrincipal", "type": "str"},
-        "metric_id": {"key": "metricId", "type": "str"},
-        "dimension_key": {"key": "dimensionKey", "type": "{str}"},
-        "value": {"key": "value", "type": "int"},
-        "period_type": {"key": "periodType", "type": "str"},
-    }
-
     def __init__(self, metric_id, dimension_key, value, period_type, **kwargs):
-        super().__init__(feedback_type="Period", metric_id=metric_id, dimension_key=dimension_key, **kwargs)
-        self.value = value
-        self.period_type = period_type
+        super().__init__(
+            feedback_type="Period",
+            metric_id=metric_id,
+            dimension_key=dimension_key,
+            value=value,
+            period_type=period_type,
+            **kwargs
+        )
 
     def __repr__(self):
         return (
@@ -2429,7 +2426,7 @@ class PeriodFeedback(MetricFeedback):
         )
 
 
-class DatasourceCredential(dict):
+class DatasourceCredential(DictMixin):
     """DatasourceCredential base class.
 
     :param credential_type: Required. Type of data source credential.Constant filled by

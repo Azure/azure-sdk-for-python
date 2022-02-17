@@ -19,14 +19,11 @@ if TYPE_CHECKING:
     from . import (
         AnomalyAlert,
         AnomalyDetectionConfiguration,
-        AnomalyFeedbackValue,
         AnomalyIncident,
         AnomalyProperty,
         AzureSQLConnectionStringParam,
         AzureSQLConnectionStringParamPatch,
-        ChangePointFeedbackValue,
         ChangeThresholdCondition,
-        CommentFeedbackValue,
         DataFeedDimension,
         DataFeedMetric,
         DataLakeGen2SharedKeyParam,
@@ -47,7 +44,6 @@ if TYPE_CHECKING:
         MetricSeriesDefinition,
         MetricSeriesGroupDetectionCondition,
         MetricSingleSeriesDetectionCondition,
-        PeriodFeedbackValue,
         SeriesIdentity,
         ServicePrincipalInKVParam,
         ServicePrincipalInKVParamPatch,
@@ -585,34 +581,34 @@ class MetricFeedback(msrest.serialization.Model):
     :ivar feedback_type: Required. feedback type.Constant filled by server. Possible values
      include: "Anomaly", "ChangePoint", "Period", "Comment".
     :vartype feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
-    :ivar feedback_id: feedback unique id.
-    :vartype feedback_id: str
+    :ivar id: feedback unique id.
+    :vartype id: str
     :ivar created_time: feedback created time.
     :vartype created_time: ~datetime.datetime
     :ivar user_principal: user who gives this feedback.
     :vartype user_principal: str
     :ivar metric_id: Required. metric unique id.
     :vartype metric_id: str
-    :ivar dimension_filter: Required.
-    :vartype dimension_filter: ~azure.ai.metricsadvisor.models.FeedbackDimensionFilter
+    :ivar dimension_key: Required. metric dimension filter.
+    :vartype dimension_key: dict[str, str]
     """
 
     _validation = {
         "feedback_type": {"required": True},
-        "feedback_id": {"readonly": True},
+        "id": {"readonly": True},
         "created_time": {"readonly": True},
         "user_principal": {"readonly": True},
         "metric_id": {"required": True},
-        "dimension_filter": {"required": True},
+        "dimension_key": {"required": True},
     }
 
     _attribute_map = {
         "feedback_type": {"key": "feedbackType", "type": "str"},
-        "feedback_id": {"key": "feedbackId", "type": "str"},
+        "id": {"key": "feedbackId", "type": "str"},
         "created_time": {"key": "createdTime", "type": "iso-8601"},
         "user_principal": {"key": "userPrincipal", "type": "str"},
         "metric_id": {"key": "metricId", "type": "str"},
-        "dimension_filter": {"key": "dimensionFilter", "type": "FeedbackDimensionFilter"},
+        "dimension_key": {"key": "dimensionFilter.dimension", "type": "{str}"},
     }
 
     _subtype_map = {
@@ -624,20 +620,20 @@ class MetricFeedback(msrest.serialization.Model):
         }
     }
 
-    def __init__(self, *, metric_id: str, dimension_filter: "_models.FeedbackDimensionFilter", **kwargs):
+    def __init__(self, *, metric_id: str, dimension_key: Dict[str, str], **kwargs):
         """
         :keyword metric_id: Required. metric unique id.
         :paramtype metric_id: str
-        :keyword dimension_filter: Required.
-        :paramtype dimension_filter: ~azure.ai.metricsadvisor.models.FeedbackDimensionFilter
+        :keyword dimension_key: Required. metric dimension filter.
+        :paramtype dimension_key: dict[str, str]
         """
         super(MetricFeedback, self).__init__(**kwargs)
         self.feedback_type = None  # type: Optional[str]
-        self.feedback_id = None
+        self.id = None
         self.created_time = None
         self.user_principal = None
         self.metric_id = metric_id
-        self.dimension_filter = dimension_filter
+        self.dimension_key = dimension_key
 
 
 class AnomalyFeedback(MetricFeedback):
@@ -650,38 +646,38 @@ class AnomalyFeedback(MetricFeedback):
     :ivar feedback_type: Required. feedback type.Constant filled by server. Possible values
      include: "Anomaly", "ChangePoint", "Period", "Comment".
     :vartype feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
-    :ivar feedback_id: feedback unique id.
-    :vartype feedback_id: str
+    :ivar id: feedback unique id.
+    :vartype id: str
     :ivar created_time: feedback created time.
     :vartype created_time: ~datetime.datetime
     :ivar user_principal: user who gives this feedback.
     :vartype user_principal: str
     :ivar metric_id: Required. metric unique id.
     :vartype metric_id: str
-    :ivar dimension_filter: Required.
-    :vartype dimension_filter: ~azure.ai.metricsadvisor.models.FeedbackDimensionFilter
+    :ivar dimension_key: Required. metric dimension filter.
+    :vartype dimension_key: dict[str, str]
     :ivar start_time: Required. the start timestamp of feedback time range.
     :vartype start_time: ~datetime.datetime
     :ivar end_time: Required. the end timestamp of feedback time range, when equals to startTime
      means only one timestamp.
     :vartype end_time: ~datetime.datetime
-    :ivar value: Required.
-    :vartype value: ~azure.ai.metricsadvisor.models.AnomalyFeedbackValue
     :ivar anomaly_detection_configuration_id: the corresponding anomaly detection configuration of
      this feedback.
     :vartype anomaly_detection_configuration_id: str
     :ivar anomaly_detection_configuration_snapshot:
     :vartype anomaly_detection_configuration_snapshot:
      ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
+    :ivar value: Required. Possible values include: "AutoDetect", "Anomaly", "NotAnomaly".
+    :vartype value: str or ~azure.ai.metricsadvisor.models.AnomalyValue
     """
 
     _validation = {
         "feedback_type": {"required": True},
-        "feedback_id": {"readonly": True},
+        "id": {"readonly": True},
         "created_time": {"readonly": True},
         "user_principal": {"readonly": True},
         "metric_id": {"required": True},
-        "dimension_filter": {"required": True},
+        "dimension_key": {"required": True},
         "start_time": {"required": True},
         "end_time": {"required": True},
         "value": {"required": True},
@@ -689,29 +685,29 @@ class AnomalyFeedback(MetricFeedback):
 
     _attribute_map = {
         "feedback_type": {"key": "feedbackType", "type": "str"},
-        "feedback_id": {"key": "feedbackId", "type": "str"},
+        "id": {"key": "feedbackId", "type": "str"},
         "created_time": {"key": "createdTime", "type": "iso-8601"},
         "user_principal": {"key": "userPrincipal", "type": "str"},
         "metric_id": {"key": "metricId", "type": "str"},
-        "dimension_filter": {"key": "dimensionFilter", "type": "FeedbackDimensionFilter"},
+        "dimension_key": {"key": "dimensionFilter.dimension", "type": "{str}"},
         "start_time": {"key": "startTime", "type": "iso-8601"},
         "end_time": {"key": "endTime", "type": "iso-8601"},
-        "value": {"key": "value", "type": "AnomalyFeedbackValue"},
         "anomaly_detection_configuration_id": {"key": "anomalyDetectionConfigurationId", "type": "str"},
         "anomaly_detection_configuration_snapshot": {
             "key": "anomalyDetectionConfigurationSnapshot",
             "type": "AnomalyDetectionConfiguration",
         },
+        "value": {"key": "value.anomalyValue", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         metric_id: str,
-        dimension_filter: "_models.FeedbackDimensionFilter",
+        dimension_key: Dict[str, str],
         start_time: datetime.datetime,
         end_time: datetime.datetime,
-        value: "_models.AnomalyFeedbackValue",
+        value: Union[str, "_models.AnomalyValue"],
         anomaly_detection_configuration_id: Optional[str] = None,
         anomaly_detection_configuration_snapshot: Optional["_models.AnomalyDetectionConfiguration"] = None,
         **kwargs
@@ -719,56 +715,29 @@ class AnomalyFeedback(MetricFeedback):
         """
         :keyword metric_id: Required. metric unique id.
         :paramtype metric_id: str
-        :keyword dimension_filter: Required.
-        :paramtype dimension_filter: ~azure.ai.metricsadvisor.models.FeedbackDimensionFilter
+        :keyword dimension_key: Required. metric dimension filter.
+        :paramtype dimension_key: dict[str, str]
         :keyword start_time: Required. the start timestamp of feedback time range.
         :paramtype start_time: ~datetime.datetime
         :keyword end_time: Required. the end timestamp of feedback time range, when equals to startTime
          means only one timestamp.
         :paramtype end_time: ~datetime.datetime
-        :keyword value: Required.
-        :paramtype value: ~azure.ai.metricsadvisor.models.AnomalyFeedbackValue
         :keyword anomaly_detection_configuration_id: the corresponding anomaly detection configuration
          of this feedback.
         :paramtype anomaly_detection_configuration_id: str
         :keyword anomaly_detection_configuration_snapshot:
         :paramtype anomaly_detection_configuration_snapshot:
          ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
+        :keyword value: Required. Possible values include: "AutoDetect", "Anomaly", "NotAnomaly".
+        :paramtype value: str or ~azure.ai.metricsadvisor.models.AnomalyValue
         """
-        super(AnomalyFeedback, self).__init__(metric_id=metric_id, dimension_filter=dimension_filter, **kwargs)
+        super(AnomalyFeedback, self).__init__(metric_id=metric_id, dimension_key=dimension_key, **kwargs)
         self.feedback_type = "Anomaly"  # type: str
         self.start_time = start_time
         self.end_time = end_time
-        self.value = value
         self.anomaly_detection_configuration_id = anomaly_detection_configuration_id
         self.anomaly_detection_configuration_snapshot = anomaly_detection_configuration_snapshot
-
-
-class AnomalyFeedbackValue(msrest.serialization.Model):
-    """AnomalyFeedbackValue.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar anomaly_value: Required. Possible values include: "AutoDetect", "Anomaly", "NotAnomaly".
-    :vartype anomaly_value: str or ~azure.ai.metricsadvisor.models.AnomalyValue
-    """
-
-    _validation = {
-        "anomaly_value": {"required": True},
-    }
-
-    _attribute_map = {
-        "anomaly_value": {"key": "anomalyValue", "type": "str"},
-    }
-
-    def __init__(self, *, anomaly_value: Union[str, "_models.AnomalyValue"], **kwargs):
-        """
-        :keyword anomaly_value: Required. Possible values include: "AutoDetect", "Anomaly",
-         "NotAnomaly".
-        :paramtype anomaly_value: str or ~azure.ai.metricsadvisor.models.AnomalyValue
-        """
-        super(AnomalyFeedbackValue, self).__init__(**kwargs)
-        self.anomaly_value = anomaly_value
+        self.value = value
 
 
 class AnomalyIncident(msrest.serialization.Model):
@@ -1467,32 +1436,32 @@ class ChangePointFeedback(MetricFeedback):
     :ivar feedback_type: Required. feedback type.Constant filled by server. Possible values
      include: "Anomaly", "ChangePoint", "Period", "Comment".
     :vartype feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
-    :ivar feedback_id: feedback unique id.
-    :vartype feedback_id: str
+    :ivar id: feedback unique id.
+    :vartype id: str
     :ivar created_time: feedback created time.
     :vartype created_time: ~datetime.datetime
     :ivar user_principal: user who gives this feedback.
     :vartype user_principal: str
     :ivar metric_id: Required. metric unique id.
     :vartype metric_id: str
-    :ivar dimension_filter: Required.
-    :vartype dimension_filter: ~azure.ai.metricsadvisor.models.FeedbackDimensionFilter
+    :ivar dimension_key: Required. metric dimension filter.
+    :vartype dimension_key: dict[str, str]
     :ivar start_time: Required. the start timestamp of feedback time range.
     :vartype start_time: ~datetime.datetime
     :ivar end_time: Required. the end timestamp of feedback time range, when equals to startTime
      means only one timestamp.
     :vartype end_time: ~datetime.datetime
-    :ivar value: Required.
-    :vartype value: ~azure.ai.metricsadvisor.models.ChangePointFeedbackValue
+    :ivar value: Required. Possible values include: "AutoDetect", "ChangePoint", "NotChangePoint".
+    :vartype value: str or ~azure.ai.metricsadvisor.models.ChangePointValue
     """
 
     _validation = {
         "feedback_type": {"required": True},
-        "feedback_id": {"readonly": True},
+        "id": {"readonly": True},
         "created_time": {"readonly": True},
         "user_principal": {"readonly": True},
         "metric_id": {"required": True},
-        "dimension_filter": {"required": True},
+        "dimension_key": {"required": True},
         "start_time": {"required": True},
         "end_time": {"required": True},
         "value": {"required": True},
@@ -1500,72 +1469,45 @@ class ChangePointFeedback(MetricFeedback):
 
     _attribute_map = {
         "feedback_type": {"key": "feedbackType", "type": "str"},
-        "feedback_id": {"key": "feedbackId", "type": "str"},
+        "id": {"key": "feedbackId", "type": "str"},
         "created_time": {"key": "createdTime", "type": "iso-8601"},
         "user_principal": {"key": "userPrincipal", "type": "str"},
         "metric_id": {"key": "metricId", "type": "str"},
-        "dimension_filter": {"key": "dimensionFilter", "type": "FeedbackDimensionFilter"},
+        "dimension_key": {"key": "dimensionFilter.dimension", "type": "{str}"},
         "start_time": {"key": "startTime", "type": "iso-8601"},
         "end_time": {"key": "endTime", "type": "iso-8601"},
-        "value": {"key": "value", "type": "ChangePointFeedbackValue"},
+        "value": {"key": "value.changePointValue", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         metric_id: str,
-        dimension_filter: "_models.FeedbackDimensionFilter",
+        dimension_key: Dict[str, str],
         start_time: datetime.datetime,
         end_time: datetime.datetime,
-        value: "_models.ChangePointFeedbackValue",
+        value: Union[str, "_models.ChangePointValue"],
         **kwargs
     ):
         """
         :keyword metric_id: Required. metric unique id.
         :paramtype metric_id: str
-        :keyword dimension_filter: Required.
-        :paramtype dimension_filter: ~azure.ai.metricsadvisor.models.FeedbackDimensionFilter
+        :keyword dimension_key: Required. metric dimension filter.
+        :paramtype dimension_key: dict[str, str]
         :keyword start_time: Required. the start timestamp of feedback time range.
         :paramtype start_time: ~datetime.datetime
         :keyword end_time: Required. the end timestamp of feedback time range, when equals to startTime
          means only one timestamp.
         :paramtype end_time: ~datetime.datetime
-        :keyword value: Required.
-        :paramtype value: ~azure.ai.metricsadvisor.models.ChangePointFeedbackValue
+        :keyword value: Required. Possible values include: "AutoDetect", "ChangePoint",
+         "NotChangePoint".
+        :paramtype value: str or ~azure.ai.metricsadvisor.models.ChangePointValue
         """
-        super(ChangePointFeedback, self).__init__(metric_id=metric_id, dimension_filter=dimension_filter, **kwargs)
+        super(ChangePointFeedback, self).__init__(metric_id=metric_id, dimension_key=dimension_key, **kwargs)
         self.feedback_type = "ChangePoint"  # type: str
         self.start_time = start_time
         self.end_time = end_time
         self.value = value
-
-
-class ChangePointFeedbackValue(msrest.serialization.Model):
-    """ChangePointFeedbackValue.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar change_point_value: Required. Possible values include: "AutoDetect", "ChangePoint",
-     "NotChangePoint".
-    :vartype change_point_value: str or ~azure.ai.metricsadvisor.models.ChangePointValue
-    """
-
-    _validation = {
-        "change_point_value": {"required": True},
-    }
-
-    _attribute_map = {
-        "change_point_value": {"key": "changePointValue", "type": "str"},
-    }
-
-    def __init__(self, *, change_point_value: Union[str, "_models.ChangePointValue"], **kwargs):
-        """
-        :keyword change_point_value: Required. Possible values include: "AutoDetect", "ChangePoint",
-         "NotChangePoint".
-        :paramtype change_point_value: str or ~azure.ai.metricsadvisor.models.ChangePointValue
-        """
-        super(ChangePointFeedbackValue, self).__init__(**kwargs)
-        self.change_point_value = change_point_value
 
 
 class ChangeThresholdCondition(msrest.serialization.Model):
@@ -1639,53 +1581,53 @@ class CommentFeedback(MetricFeedback):
     :ivar feedback_type: Required. feedback type.Constant filled by server. Possible values
      include: "Anomaly", "ChangePoint", "Period", "Comment".
     :vartype feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
-    :ivar feedback_id: feedback unique id.
-    :vartype feedback_id: str
+    :ivar id: feedback unique id.
+    :vartype id: str
     :ivar created_time: feedback created time.
     :vartype created_time: ~datetime.datetime
     :ivar user_principal: user who gives this feedback.
     :vartype user_principal: str
     :ivar metric_id: Required. metric unique id.
     :vartype metric_id: str
-    :ivar dimension_filter: Required.
-    :vartype dimension_filter: ~azure.ai.metricsadvisor.models.FeedbackDimensionFilter
+    :ivar dimension_key: Required. metric dimension filter.
+    :vartype dimension_key: dict[str, str]
     :ivar start_time: the start timestamp of feedback time range.
     :vartype start_time: ~datetime.datetime
     :ivar end_time: the end timestamp of feedback time range, when equals to startTime means only
      one timestamp.
     :vartype end_time: ~datetime.datetime
-    :ivar value: Required.
-    :vartype value: ~azure.ai.metricsadvisor.models.CommentFeedbackValue
+    :ivar value: Required. the comment string.
+    :vartype value: str
     """
 
     _validation = {
         "feedback_type": {"required": True},
-        "feedback_id": {"readonly": True},
+        "id": {"readonly": True},
         "created_time": {"readonly": True},
         "user_principal": {"readonly": True},
         "metric_id": {"required": True},
-        "dimension_filter": {"required": True},
+        "dimension_key": {"required": True},
         "value": {"required": True},
     }
 
     _attribute_map = {
         "feedback_type": {"key": "feedbackType", "type": "str"},
-        "feedback_id": {"key": "feedbackId", "type": "str"},
+        "id": {"key": "feedbackId", "type": "str"},
         "created_time": {"key": "createdTime", "type": "iso-8601"},
         "user_principal": {"key": "userPrincipal", "type": "str"},
         "metric_id": {"key": "metricId", "type": "str"},
-        "dimension_filter": {"key": "dimensionFilter", "type": "FeedbackDimensionFilter"},
+        "dimension_key": {"key": "dimensionFilter.dimension", "type": "{str}"},
         "start_time": {"key": "startTime", "type": "iso-8601"},
         "end_time": {"key": "endTime", "type": "iso-8601"},
-        "value": {"key": "value", "type": "CommentFeedbackValue"},
+        "value": {"key": "value.commentValue", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         metric_id: str,
-        dimension_filter: "_models.FeedbackDimensionFilter",
-        value: "_models.CommentFeedbackValue",
+        dimension_key: Dict[str, str],
+        value: str,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         **kwargs
@@ -1693,47 +1635,21 @@ class CommentFeedback(MetricFeedback):
         """
         :keyword metric_id: Required. metric unique id.
         :paramtype metric_id: str
-        :keyword dimension_filter: Required.
-        :paramtype dimension_filter: ~azure.ai.metricsadvisor.models.FeedbackDimensionFilter
+        :keyword dimension_key: Required. metric dimension filter.
+        :paramtype dimension_key: dict[str, str]
         :keyword start_time: the start timestamp of feedback time range.
         :paramtype start_time: ~datetime.datetime
         :keyword end_time: the end timestamp of feedback time range, when equals to startTime means
          only one timestamp.
         :paramtype end_time: ~datetime.datetime
-        :keyword value: Required.
-        :paramtype value: ~azure.ai.metricsadvisor.models.CommentFeedbackValue
+        :keyword value: Required. the comment string.
+        :paramtype value: str
         """
-        super(CommentFeedback, self).__init__(metric_id=metric_id, dimension_filter=dimension_filter, **kwargs)
+        super(CommentFeedback, self).__init__(metric_id=metric_id, dimension_key=dimension_key, **kwargs)
         self.feedback_type = "Comment"  # type: str
         self.start_time = start_time
         self.end_time = end_time
         self.value = value
-
-
-class CommentFeedbackValue(msrest.serialization.Model):
-    """CommentFeedbackValue.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar comment_value: Required. the comment string.
-    :vartype comment_value: str
-    """
-
-    _validation = {
-        "comment_value": {"required": True},
-    }
-
-    _attribute_map = {
-        "comment_value": {"key": "commentValue", "type": "str"},
-    }
-
-    def __init__(self, *, comment_value: str, **kwargs):
-        """
-        :keyword comment_value: Required. the comment string.
-        :paramtype comment_value: str
-        """
-        super(CommentFeedbackValue, self).__init__(**kwargs)
-        self.comment_value = comment_value
 
 
 class DataFeed(msrest.serialization.Model):
@@ -3421,25 +3337,25 @@ class FeedbackDimensionFilter(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar dimension: Required. metric dimension filter.
-    :vartype dimension: dict[str, str]
+    :ivar dimension_key: Required. metric dimension filter.
+    :vartype dimension_key: dict[str, str]
     """
 
     _validation = {
-        "dimension": {"required": True},
+        "dimension_key": {"required": True},
     }
 
     _attribute_map = {
-        "dimension": {"key": "dimension", "type": "{str}"},
+        "dimension_key": {"key": "dimension", "type": "{str}"},
     }
 
-    def __init__(self, *, dimension: Dict[str, str], **kwargs):
+    def __init__(self, *, dimension_key: Dict[str, str], **kwargs):
         """
-        :keyword dimension: Required. metric dimension filter.
-        :paramtype dimension: dict[str, str]
+        :keyword dimension_key: Required. metric dimension filter.
+        :paramtype dimension_key: dict[str, str]
         """
         super(FeedbackDimensionFilter, self).__init__(**kwargs)
-        self.dimension = dimension
+        self.dimension_key = dimension_key
 
 
 class HardThresholdCondition(msrest.serialization.Model):
@@ -4703,96 +4619,69 @@ class PeriodFeedback(MetricFeedback):
     :ivar feedback_type: Required. feedback type.Constant filled by server. Possible values
      include: "Anomaly", "ChangePoint", "Period", "Comment".
     :vartype feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
-    :ivar feedback_id: feedback unique id.
-    :vartype feedback_id: str
+    :ivar id: feedback unique id.
+    :vartype id: str
     :ivar created_time: feedback created time.
     :vartype created_time: ~datetime.datetime
     :ivar user_principal: user who gives this feedback.
     :vartype user_principal: str
     :ivar metric_id: Required. metric unique id.
     :vartype metric_id: str
-    :ivar dimension_filter: Required.
-    :vartype dimension_filter: ~azure.ai.metricsadvisor.models.FeedbackDimensionFilter
-    :ivar value: Required.
-    :vartype value: ~azure.ai.metricsadvisor.models.PeriodFeedbackValue
+    :ivar dimension_key: Required. metric dimension filter.
+    :vartype dimension_key: dict[str, str]
+    :ivar period_type: Required. the type of setting period. Possible values include: "AutoDetect",
+     "AssignValue".
+    :vartype period_type: str or ~azure.ai.metricsadvisor.models.PeriodType
+    :ivar value: Required. the number of intervals a period contains, when no period set to 0.
+    :vartype value: int
     """
 
     _validation = {
         "feedback_type": {"required": True},
-        "feedback_id": {"readonly": True},
+        "id": {"readonly": True},
         "created_time": {"readonly": True},
         "user_principal": {"readonly": True},
         "metric_id": {"required": True},
-        "dimension_filter": {"required": True},
+        "dimension_key": {"required": True},
+        "period_type": {"required": True},
         "value": {"required": True},
     }
 
     _attribute_map = {
         "feedback_type": {"key": "feedbackType", "type": "str"},
-        "feedback_id": {"key": "feedbackId", "type": "str"},
+        "id": {"key": "feedbackId", "type": "str"},
         "created_time": {"key": "createdTime", "type": "iso-8601"},
         "user_principal": {"key": "userPrincipal", "type": "str"},
         "metric_id": {"key": "metricId", "type": "str"},
-        "dimension_filter": {"key": "dimensionFilter", "type": "FeedbackDimensionFilter"},
-        "value": {"key": "value", "type": "PeriodFeedbackValue"},
+        "dimension_key": {"key": "dimensionFilter.dimension", "type": "{str}"},
+        "period_type": {"key": "value.periodType", "type": "str"},
+        "value": {"key": "value.periodValue", "type": "int"},
     }
 
     def __init__(
         self,
         *,
         metric_id: str,
-        dimension_filter: "_models.FeedbackDimensionFilter",
-        value: "_models.PeriodFeedbackValue",
+        dimension_key: Dict[str, str],
+        period_type: Union[str, "_models.PeriodType"],
+        value: int,
         **kwargs
     ):
         """
         :keyword metric_id: Required. metric unique id.
         :paramtype metric_id: str
-        :keyword dimension_filter: Required.
-        :paramtype dimension_filter: ~azure.ai.metricsadvisor.models.FeedbackDimensionFilter
-        :keyword value: Required.
-        :paramtype value: ~azure.ai.metricsadvisor.models.PeriodFeedbackValue
-        """
-        super(PeriodFeedback, self).__init__(metric_id=metric_id, dimension_filter=dimension_filter, **kwargs)
-        self.feedback_type = "Period"  # type: str
-        self.value = value
-
-
-class PeriodFeedbackValue(msrest.serialization.Model):
-    """PeriodFeedbackValue.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar period_type: Required. the type of setting period. Possible values include: "AutoDetect",
-     "AssignValue".
-    :vartype period_type: str or ~azure.ai.metricsadvisor.models.PeriodType
-    :ivar period_value: Required. the number of intervals a period contains, when no period set to
-     0.
-    :vartype period_value: int
-    """
-
-    _validation = {
-        "period_type": {"required": True},
-        "period_value": {"required": True},
-    }
-
-    _attribute_map = {
-        "period_type": {"key": "periodType", "type": "str"},
-        "period_value": {"key": "periodValue", "type": "int"},
-    }
-
-    def __init__(self, *, period_type: Union[str, "_models.PeriodType"], period_value: int, **kwargs):
-        """
+        :keyword dimension_key: Required. metric dimension filter.
+        :paramtype dimension_key: dict[str, str]
         :keyword period_type: Required. the type of setting period. Possible values include:
          "AutoDetect", "AssignValue".
         :paramtype period_type: str or ~azure.ai.metricsadvisor.models.PeriodType
-        :keyword period_value: Required. the number of intervals a period contains, when no period set
-         to 0.
-        :paramtype period_value: int
+        :keyword value: Required. the number of intervals a period contains, when no period set to 0.
+        :paramtype value: int
         """
-        super(PeriodFeedbackValue, self).__init__(**kwargs)
+        super(PeriodFeedback, self).__init__(metric_id=metric_id, dimension_key=dimension_key, **kwargs)
+        self.feedback_type = "Period"  # type: str
         self.period_type = period_type
-        self.period_value = period_value
+        self.value = value
 
 
 class RootCauseList(msrest.serialization.Model):

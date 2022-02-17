@@ -38,6 +38,7 @@ from ._operations import (
     build_get_alert_configuration_request,
     build_list_alert_configurations_request,
     build_update_alert_configuration_request,
+    build_get_feedback_request,
     JSONType,
 )
 from ..models import *
@@ -87,17 +88,18 @@ UpdateHelperRetval = Tuple[str, Union[JSONType, DataFeed], Any]
 
 ########################### HELPERS ###########################
 
+
 class OperationMixinHelpers:
     def _convert_to_sub_feedback(self, feedback):
         # type: (MetricFeedback) -> Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]
         if feedback.feedback_type == "Anomaly":
-            return AnomalyFeedback._from_generated(feedback)  # type: ignore
+            return AnomalyFeedback.from_dict(feedback.serialize())
         if feedback.feedback_type == "ChangePoint":
-            return ChangePointFeedback._from_generated(feedback)  # type: ignore
+            return ChangePointFeedback.from_dict(feedback.serialize())  # type: ignore
         if feedback.feedback_type == "Comment":
-            return CommentFeedback._from_generated(feedback)  # type: ignore
+            return CommentFeedback.from_dict(feedback.serialize())  # type: ignore
         if feedback.feedback_type == "Period":
-            return PeriodFeedback._from_generated(feedback)  # type: ignore
+            return PeriodFeedback.from_dict(feedback.serialize())  # type: ignore
         raise HttpResponseError("Invalid feedback type returned in the response.")
 
     def _convert_to_datasource_credential(self, datasource_credential):
@@ -185,9 +187,7 @@ class OperationMixinHelpers:
             )
         return detection_configuration_id, detection_config_patch, kwargs
 
-    def _update_data_feed_helper(
-        self, data_feed: Union[str, DataFeed], **kwargs
-    ) -> UpdateHelperRetval:
+    def _update_data_feed_helper(self, data_feed: Union[str, DataFeed], **kwargs) -> UpdateHelperRetval:
         unset = object()
         update_kwargs = {}
         update_kwargs["dataFeedName"] = kwargs.pop("name", unset)
@@ -224,7 +224,9 @@ class OperationMixinHelpers:
             data_feed_patch = data_feed._to_generated()
         return data_feed_id, data_feed_patch, kwargs
 
-    def _update_alert_configuration_helper(self, alert_configuration: Union[str, AnomalyAlertConfiguration], **kwargs) -> Tuple[HttpRequest, Any]:
+    def _update_alert_configuration_helper(
+        self, alert_configuration: Union[str, AnomalyAlertConfiguration], **kwargs
+    ) -> Tuple[HttpRequest, Any]:
         unset = object()
         update_kwargs = {}
         update_kwargs["name"] = kwargs.pop("name", unset)
@@ -238,10 +240,7 @@ class OperationMixinHelpers:
             alert_configuration_id = alert_configuration
             if "metricAlertingConfigurations" in update:
                 update["metricAlertingConfigurations"] = (
-                    [
-                        config._to_generated()
-                        for config in update["metricAlertingConfigurations"]
-                    ]
+                    [config._to_generated() for config in update["metricAlertingConfigurations"]]
                     if update["metricAlertingConfigurations"]
                     else None
                 )
@@ -277,6 +276,32 @@ class OperationMixinHelpers:
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize(generated_models.AnomalyAlertConfiguration, pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    def _get_feedback_request(self, feedback_id: str) -> HttpRequest:
+        request = build_get_feedback_request(
+            feedback_id=feedback_id,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+        return request
+
+    def _get_feedback_deserialize(self, pipeline_response, **kwargs) -> MetricFeedback:
+        cls = kwargs.pop("cls", None)
+        error_map = kwargs.pop("error_map", None)
+        response = pipeline_response.http_response
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized =  self._convert_to_sub_feedback(self._deserialize(generated_models.MetricFeedback, pipeline_response))
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -329,17 +354,11 @@ class OperationMixinHelpers:
         raise TypeError("Bad datetime type")
 
     def _get_paging_prepare_request(
-        self,
-        initial_request: HttpRequest,
-        next_request: HttpRequest,
-        next_link=None,
-        **kwargs
+        self, initial_request: HttpRequest, next_request: HttpRequest, next_link=None, **kwargs
     ) -> Callable:
         def prepare_request(next_link=None):
             path_format_arguments = {
-                "endpoint": self._serialize.url(
-                    "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                ),
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
             }
             if not next_link:
                 request = initial_request
@@ -353,19 +372,15 @@ class OperationMixinHelpers:
 
 
 class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, OperationMixinHelpers):
-
     def _paging_helper(
-        self,
-        *,
-        extract_data,
-        initial_request: HttpRequest,
-        next_request: HttpRequest,
-        **kwargs
+        self, *, extract_data, initial_request: HttpRequest, next_request: HttpRequest, **kwargs
     ) -> ItemPaged:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
-        prepare_request = self._get_paging_prepare_request(initial_request=initial_request, next_request=next_request, **kwargs)
+        prepare_request = self._get_paging_prepare_request(
+            initial_request=initial_request, next_request=next_request, **kwargs
+        )
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -587,9 +602,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
 
     @distributed_trace
     def update_alert_configuration(
-        self,
-        alert_configuration: Union[str, AnomalyAlertConfiguration],
-        **kwargs: Any
+        self, alert_configuration: Union[str, AnomalyAlertConfiguration], **kwargs: Any
     ) -> AnomalyAlertConfiguration:
         request, kwargs = self._update_alert_configuration_helper(alert_configuration, **kwargs)
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
@@ -631,6 +644,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         **kwargs: Any
     ) -> ItemPaged[DataFeed]:
         deserializer = functools.partial(self._deserialize, generated_models.DataFeed)
+
         def extract_data(deserializer, pipeline_response):
             response_json = pipeline_response.http_response.json()
             list_of_elem = []
@@ -663,19 +677,17 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
 
     @distributed_trace
     def list_alert_configurations(
-        self,
-        detection_configuration_id: str,
-        **kwargs: Any
+        self, detection_configuration_id: str, **kwargs: Any
     ) -> ItemPaged[AnomalyAlertConfiguration]:
         deserializer = self._deserialize
+
         def extract_data(deserializer, pipeline_response):
             response_json = pipeline_response.http_response.json()
             list_of_elem = []
             for l in response_json["value"]:
                 config_to_generated = functools.partial(deserializer, generated_models.MetricAlertConfiguration)
-                l['metricAlertingConfigurations'] = [
-                    config_to_generated(config)
-                    for config in l.get('metricAlertingConfigurations', [])
+                l["metricAlertingConfigurations"] = [
+                    config_to_generated(config) for config in l.get("metricAlertingConfigurations", [])
                 ]
                 list_of_elem.append(
                     AnomalyAlertConfiguration._from_generated(
@@ -683,6 +695,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
                     )
                 )
             return response_json.get("@nextLink", None) or None, iter(list_of_elem)
+
         return self._paging_helper(
             extract_data=functools.partial(extract_data, deserializer),
             initial_request=build_list_alert_configurations_request(
@@ -693,7 +706,6 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
             next_request=build_list_alert_configurations_request(configuration_id=detection_configuration_id),
             **kwargs
         )
-
 
     @distributed_trace
     def list_data_feed_ingestion_status(
@@ -795,12 +807,20 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
     @distributed_trace
     def add_feedback(self, feedback, **kwargs):
         # type: (FeedbackUnion, Any) -> None
-        return super().add_feedback(body=feedback._to_generated(), **kwargs)
+        return super().add_feedback(body=feedback, **kwargs)
 
     @distributed_trace
     def get_feedback(self, feedback_id, **kwargs):
         # type: (str, Any) -> Union[MetricFeedback, FeedbackUnion]
-        return convert_to_sub_feedback(super().get_feedback(feedback_id=feedback_id, **kwargs))
+        cls = kwargs.pop("cls", None)
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
+        request = self._get_feedback_request(feedback_id=feedback_id)
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+        return self._get_feedback_deserialize(pipeline_response, cls=cls, error_map=error_map, **kwargs)
 
     @distributed_trace
     def list_feedback(self, metric_id, **kwargs):
@@ -828,7 +848,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         return super().list_feedback(  # type: ignore
             skip=skip,
             body=feedback_filter,
-            cls=kwargs.pop("cls", lambda result: [convert_to_sub_feedback(x) for x in result]),
+            cls=kwargs.pop("cls", lambda result: [self._convert_to_sub_feedback(x) for x in result]),
             **kwargs
         )
 
