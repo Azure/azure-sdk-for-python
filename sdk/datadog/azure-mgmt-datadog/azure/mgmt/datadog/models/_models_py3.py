@@ -18,23 +18,23 @@ from ._microsoft_datadog_client_enums import *
 class DatadogAgreementProperties(msrest.serialization.Model):
     """Terms properties.
 
-    :param publisher: Publisher identifier string.
-    :type publisher: str
-    :param product: Product identifier string.
-    :type product: str
-    :param plan: Plan identifier string.
-    :type plan: str
-    :param license_text_link: Link to HTML with Microsoft and Publisher terms.
-    :type license_text_link: str
-    :param privacy_policy_link: Link to the privacy policy of the publisher.
-    :type privacy_policy_link: str
-    :param retrieve_datetime: Date and time in UTC of when the terms were accepted. This is empty
-     if Accepted is false.
-    :type retrieve_datetime: ~datetime.datetime
-    :param signature: Terms signature.
-    :type signature: str
-    :param accepted: If any version of the terms have been accepted, otherwise false.
-    :type accepted: bool
+    :ivar publisher: Publisher identifier string.
+    :vartype publisher: str
+    :ivar product: Product identifier string.
+    :vartype product: str
+    :ivar plan: Plan identifier string.
+    :vartype plan: str
+    :ivar license_text_link: Link to HTML with Microsoft and Publisher terms.
+    :vartype license_text_link: str
+    :ivar privacy_policy_link: Link to the privacy policy of the publisher.
+    :vartype privacy_policy_link: str
+    :ivar retrieve_datetime: Date and time in UTC of when the terms were accepted. This is empty if
+     Accepted is false.
+    :vartype retrieve_datetime: ~datetime.datetime
+    :ivar signature: Terms signature.
+    :vartype signature: str
+    :ivar accepted: If any version of the terms have been accepted, otherwise false.
+    :vartype accepted: bool
     """
 
     _attribute_map = {
@@ -61,6 +61,25 @@ class DatadogAgreementProperties(msrest.serialization.Model):
         accepted: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword publisher: Publisher identifier string.
+        :paramtype publisher: str
+        :keyword product: Product identifier string.
+        :paramtype product: str
+        :keyword plan: Plan identifier string.
+        :paramtype plan: str
+        :keyword license_text_link: Link to HTML with Microsoft and Publisher terms.
+        :paramtype license_text_link: str
+        :keyword privacy_policy_link: Link to the privacy policy of the publisher.
+        :paramtype privacy_policy_link: str
+        :keyword retrieve_datetime: Date and time in UTC of when the terms were accepted. This is empty
+         if Accepted is false.
+        :paramtype retrieve_datetime: ~datetime.datetime
+        :keyword signature: Terms signature.
+        :paramtype signature: str
+        :keyword accepted: If any version of the terms have been accepted, otherwise false.
+        :paramtype accepted: bool
+        """
         super(DatadogAgreementProperties, self).__init__(**kwargs)
         self.publisher = publisher
         self.product = product
@@ -83,8 +102,8 @@ class DatadogAgreementResource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param properties: Represents the properties of the resource.
-    :type properties: ~microsoft_datadog_client.models.DatadogAgreementProperties
+    :ivar properties: Represents the properties of the resource.
+    :vartype properties: ~microsoft_datadog_client.models.DatadogAgreementProperties
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~microsoft_datadog_client.models.SystemData
     """
@@ -110,6 +129,10 @@ class DatadogAgreementResource(msrest.serialization.Model):
         properties: Optional["DatadogAgreementProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword properties: Represents the properties of the resource.
+        :paramtype properties: ~microsoft_datadog_client.models.DatadogAgreementProperties
+        """
         super(DatadogAgreementResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -121,10 +144,10 @@ class DatadogAgreementResource(msrest.serialization.Model):
 class DatadogAgreementResourceListResponse(msrest.serialization.Model):
     """Response of a list operation.
 
-    :param value: Results of a list operation.
-    :type value: list[~microsoft_datadog_client.models.DatadogAgreementResource]
-    :param next_link: Link to the next set of results, if any.
-    :type next_link: str
+    :ivar value: Results of a list operation.
+    :vartype value: list[~microsoft_datadog_client.models.DatadogAgreementResource]
+    :ivar next_link: Link to the next set of results, if any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -139,6 +162,12 @@ class DatadogAgreementResourceListResponse(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Results of a list operation.
+        :paramtype value: list[~microsoft_datadog_client.models.DatadogAgreementResource]
+        :keyword next_link: Link to the next set of results, if any.
+        :paramtype next_link: str
+        """
         super(DatadogAgreementResourceListResponse, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -149,14 +178,14 @@ class DatadogApiKey(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param created_by: The user that created the API key.
-    :type created_by: str
-    :param name: The name of the API key.
-    :type name: str
-    :param key: Required. The value of the API key.
-    :type key: str
-    :param created: The time of creation of the API key.
-    :type created: str
+    :ivar created_by: The user that created the API key.
+    :vartype created_by: str
+    :ivar name: The name of the API key.
+    :vartype name: str
+    :ivar key: Required. The value of the API key.
+    :vartype key: str
+    :ivar created: The time of creation of the API key.
+    :vartype created: str
     """
 
     _validation = {
@@ -179,6 +208,16 @@ class DatadogApiKey(msrest.serialization.Model):
         created: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The user that created the API key.
+        :paramtype created_by: str
+        :keyword name: The name of the API key.
+        :paramtype name: str
+        :keyword key: Required. The value of the API key.
+        :paramtype key: str
+        :keyword created: The time of creation of the API key.
+        :paramtype created: str
+        """
         super(DatadogApiKey, self).__init__(**kwargs)
         self.created_by = created_by
         self.name = name
@@ -189,10 +228,10 @@ class DatadogApiKey(msrest.serialization.Model):
 class DatadogApiKeyListResponse(msrest.serialization.Model):
     """Response of a list operation.
 
-    :param value: Results of a list operation.
-    :type value: list[~microsoft_datadog_client.models.DatadogApiKey]
-    :param next_link: Link to the next set of results, if any.
-    :type next_link: str
+    :ivar value: Results of a list operation.
+    :vartype value: list[~microsoft_datadog_client.models.DatadogApiKey]
+    :ivar next_link: Link to the next set of results, if any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -207,6 +246,12 @@ class DatadogApiKeyListResponse(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Results of a list operation.
+        :paramtype value: list[~microsoft_datadog_client.models.DatadogApiKey]
+        :keyword next_link: Link to the next set of results, if any.
+        :paramtype next_link: str
+        """
         super(DatadogApiKeyListResponse, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -215,14 +260,14 @@ class DatadogApiKeyListResponse(msrest.serialization.Model):
 class DatadogHost(msrest.serialization.Model):
     """DatadogHost.
 
-    :param name: The name of the host.
-    :type name: str
-    :param aliases: The aliases for the host.
-    :type aliases: list[str]
-    :param apps: The Datadog integrations reporting metrics for the host.
-    :type apps: list[str]
-    :param meta:
-    :type meta: ~microsoft_datadog_client.models.DatadogHostMetadata
+    :ivar name: The name of the host.
+    :vartype name: str
+    :ivar aliases: The aliases for the host.
+    :vartype aliases: list[str]
+    :ivar apps: The Datadog integrations reporting metrics for the host.
+    :vartype apps: list[str]
+    :ivar meta:
+    :vartype meta: ~microsoft_datadog_client.models.DatadogHostMetadata
     """
 
     _attribute_map = {
@@ -241,6 +286,16 @@ class DatadogHost(msrest.serialization.Model):
         meta: Optional["DatadogHostMetadata"] = None,
         **kwargs
     ):
+        """
+        :keyword name: The name of the host.
+        :paramtype name: str
+        :keyword aliases: The aliases for the host.
+        :paramtype aliases: list[str]
+        :keyword apps: The Datadog integrations reporting metrics for the host.
+        :paramtype apps: list[str]
+        :keyword meta:
+        :paramtype meta: ~microsoft_datadog_client.models.DatadogHostMetadata
+        """
         super(DatadogHost, self).__init__(**kwargs)
         self.name = name
         self.aliases = aliases
@@ -251,10 +306,10 @@ class DatadogHost(msrest.serialization.Model):
 class DatadogHostListResponse(msrest.serialization.Model):
     """Response of a list operation.
 
-    :param value: Results of a list operation.
-    :type value: list[~microsoft_datadog_client.models.DatadogHost]
-    :param next_link: Link to the next set of results, if any.
-    :type next_link: str
+    :ivar value: Results of a list operation.
+    :vartype value: list[~microsoft_datadog_client.models.DatadogHost]
+    :ivar next_link: Link to the next set of results, if any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -269,6 +324,12 @@ class DatadogHostListResponse(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Results of a list operation.
+        :paramtype value: list[~microsoft_datadog_client.models.DatadogHost]
+        :keyword next_link: Link to the next set of results, if any.
+        :paramtype next_link: str
+        """
         super(DatadogHostListResponse, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -277,12 +338,12 @@ class DatadogHostListResponse(msrest.serialization.Model):
 class DatadogHostMetadata(msrest.serialization.Model):
     """DatadogHostMetadata.
 
-    :param agent_version: The agent version.
-    :type agent_version: str
-    :param install_method:
-    :type install_method: ~microsoft_datadog_client.models.DatadogInstallMethod
-    :param logs_agent:
-    :type logs_agent: ~microsoft_datadog_client.models.DatadogLogsAgent
+    :ivar agent_version: The agent version.
+    :vartype agent_version: str
+    :ivar install_method:
+    :vartype install_method: ~microsoft_datadog_client.models.DatadogInstallMethod
+    :ivar logs_agent:
+    :vartype logs_agent: ~microsoft_datadog_client.models.DatadogLogsAgent
     """
 
     _attribute_map = {
@@ -299,6 +360,14 @@ class DatadogHostMetadata(msrest.serialization.Model):
         logs_agent: Optional["DatadogLogsAgent"] = None,
         **kwargs
     ):
+        """
+        :keyword agent_version: The agent version.
+        :paramtype agent_version: str
+        :keyword install_method:
+        :paramtype install_method: ~microsoft_datadog_client.models.DatadogInstallMethod
+        :keyword logs_agent:
+        :paramtype logs_agent: ~microsoft_datadog_client.models.DatadogLogsAgent
+        """
         super(DatadogHostMetadata, self).__init__(**kwargs)
         self.agent_version = agent_version
         self.install_method = install_method
@@ -308,12 +377,12 @@ class DatadogHostMetadata(msrest.serialization.Model):
 class DatadogInstallMethod(msrest.serialization.Model):
     """DatadogInstallMethod.
 
-    :param tool: The tool.
-    :type tool: str
-    :param tool_version: The tool version.
-    :type tool_version: str
-    :param installer_version: The installer version.
-    :type installer_version: str
+    :ivar tool: The tool.
+    :vartype tool: str
+    :ivar tool_version: The tool version.
+    :vartype tool_version: str
+    :ivar installer_version: The installer version.
+    :vartype installer_version: str
     """
 
     _attribute_map = {
@@ -330,6 +399,14 @@ class DatadogInstallMethod(msrest.serialization.Model):
         installer_version: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword tool: The tool.
+        :paramtype tool: str
+        :keyword tool_version: The tool version.
+        :paramtype tool_version: str
+        :keyword installer_version: The installer version.
+        :paramtype installer_version: str
+        """
         super(DatadogInstallMethod, self).__init__(**kwargs)
         self.tool = tool
         self.tool_version = tool_version
@@ -339,8 +416,8 @@ class DatadogInstallMethod(msrest.serialization.Model):
 class DatadogLogsAgent(msrest.serialization.Model):
     """DatadogLogsAgent.
 
-    :param transport: The transport.
-    :type transport: str
+    :ivar transport: The transport.
+    :vartype transport: str
     """
 
     _attribute_map = {
@@ -353,6 +430,10 @@ class DatadogLogsAgent(msrest.serialization.Model):
         transport: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword transport: The transport.
+        :paramtype transport: str
+        """
         super(DatadogLogsAgent, self).__init__(**kwargs)
         self.transport = transport
 
@@ -370,16 +451,16 @@ class DatadogMonitorResource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The type of the monitor resource.
     :vartype type: str
-    :param sku:
-    :type sku: ~microsoft_datadog_client.models.ResourceSku
-    :param properties: Properties specific to the monitor resource.
-    :type properties: ~microsoft_datadog_client.models.MonitorProperties
-    :param identity:
-    :type identity: ~microsoft_datadog_client.models.IdentityProperties
-    :param tags: A set of tags. Dictionary of :code:`<string>`.
-    :type tags: dict[str, str]
-    :param location: Required.
-    :type location: str
+    :ivar sku:
+    :vartype sku: ~microsoft_datadog_client.models.ResourceSku
+    :ivar properties: Properties specific to the monitor resource.
+    :vartype properties: ~microsoft_datadog_client.models.MonitorProperties
+    :ivar identity:
+    :vartype identity: ~microsoft_datadog_client.models.IdentityProperties
+    :ivar tags: A set of tags. Dictionary of :code:`<string>`.
+    :vartype tags: dict[str, str]
+    :ivar location: Required.
+    :vartype location: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~microsoft_datadog_client.models.SystemData
     """
@@ -414,6 +495,18 @@ class DatadogMonitorResource(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword sku:
+        :paramtype sku: ~microsoft_datadog_client.models.ResourceSku
+        :keyword properties: Properties specific to the monitor resource.
+        :paramtype properties: ~microsoft_datadog_client.models.MonitorProperties
+        :keyword identity:
+        :paramtype identity: ~microsoft_datadog_client.models.IdentityProperties
+        :keyword tags: A set of tags. Dictionary of :code:`<string>`.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required.
+        :paramtype location: str
+        """
         super(DatadogMonitorResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -429,10 +522,10 @@ class DatadogMonitorResource(msrest.serialization.Model):
 class DatadogMonitorResourceListResponse(msrest.serialization.Model):
     """Response of a list operation.
 
-    :param value: Results of a list operation.
-    :type value: list[~microsoft_datadog_client.models.DatadogMonitorResource]
-    :param next_link: Link to the next set of results, if any.
-    :type next_link: str
+    :ivar value: Results of a list operation.
+    :vartype value: list[~microsoft_datadog_client.models.DatadogMonitorResource]
+    :ivar next_link: Link to the next set of results, if any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -447,6 +540,12 @@ class DatadogMonitorResourceListResponse(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Results of a list operation.
+        :paramtype value: list[~microsoft_datadog_client.models.DatadogMonitorResource]
+        :keyword next_link: Link to the next set of results, if any.
+        :paramtype next_link: str
+        """
         super(DatadogMonitorResourceListResponse, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -455,13 +554,13 @@ class DatadogMonitorResourceListResponse(msrest.serialization.Model):
 class DatadogMonitorResourceUpdateParameters(msrest.serialization.Model):
     """The parameters for a PATCH request to a monitor resource.
 
-    :param properties: The set of properties that can be update in a PATCH request to a monitor
+    :ivar properties: The set of properties that can be update in a PATCH request to a monitor
      resource.
-    :type properties: ~microsoft_datadog_client.models.MonitorUpdateProperties
-    :param tags: A set of tags. The new tags of the monitor resource.
-    :type tags: dict[str, str]
-    :param sku:
-    :type sku: ~microsoft_datadog_client.models.ResourceSku
+    :vartype properties: ~microsoft_datadog_client.models.MonitorUpdateProperties
+    :ivar tags: A set of tags. The new tags of the monitor resource.
+    :vartype tags: dict[str, str]
+    :ivar sku:
+    :vartype sku: ~microsoft_datadog_client.models.ResourceSku
     """
 
     _attribute_map = {
@@ -478,6 +577,15 @@ class DatadogMonitorResourceUpdateParameters(msrest.serialization.Model):
         sku: Optional["ResourceSku"] = None,
         **kwargs
     ):
+        """
+        :keyword properties: The set of properties that can be update in a PATCH request to a monitor
+         resource.
+        :paramtype properties: ~microsoft_datadog_client.models.MonitorUpdateProperties
+        :keyword tags: A set of tags. The new tags of the monitor resource.
+        :paramtype tags: dict[str, str]
+        :keyword sku:
+        :paramtype sku: ~microsoft_datadog_client.models.ResourceSku
+        """
         super(DatadogMonitorResourceUpdateParameters, self).__init__(**kwargs)
         self.properties = properties
         self.tags = tags
@@ -493,19 +601,19 @@ class DatadogOrganizationProperties(msrest.serialization.Model):
     :vartype name: str
     :ivar id: Id of the Datadog organization.
     :vartype id: str
-    :param linking_auth_code: The auth code used to linking to an existing datadog organization.
-    :type linking_auth_code: str
-    :param linking_client_id: The client_id from an existing in exchange for an auth token to link
+    :ivar linking_auth_code: The auth code used to linking to an existing datadog organization.
+    :vartype linking_auth_code: str
+    :ivar linking_client_id: The client_id from an existing in exchange for an auth token to link
      organization.
-    :type linking_client_id: str
-    :param redirect_uri: The redirect uri for linking.
-    :type redirect_uri: str
-    :param api_key: Api key associated to the Datadog organization.
-    :type api_key: str
-    :param application_key: Application key associated to the Datadog organization.
-    :type application_key: str
-    :param enterprise_app_id: The Id of the Enterprise App used for Single sign on.
-    :type enterprise_app_id: str
+    :vartype linking_client_id: str
+    :ivar redirect_uri: The redirect uri for linking.
+    :vartype redirect_uri: str
+    :ivar api_key: Api key associated to the Datadog organization.
+    :vartype api_key: str
+    :ivar application_key: Application key associated to the Datadog organization.
+    :vartype application_key: str
+    :ivar enterprise_app_id: The Id of the Enterprise App used for Single sign on.
+    :vartype enterprise_app_id: str
     """
 
     _validation = {
@@ -535,6 +643,21 @@ class DatadogOrganizationProperties(msrest.serialization.Model):
         enterprise_app_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword linking_auth_code: The auth code used to linking to an existing datadog organization.
+        :paramtype linking_auth_code: str
+        :keyword linking_client_id: The client_id from an existing in exchange for an auth token to
+         link organization.
+        :paramtype linking_client_id: str
+        :keyword redirect_uri: The redirect uri for linking.
+        :paramtype redirect_uri: str
+        :keyword api_key: Api key associated to the Datadog organization.
+        :paramtype api_key: str
+        :keyword application_key: Application key associated to the Datadog organization.
+        :paramtype application_key: str
+        :keyword enterprise_app_id: The Id of the Enterprise App used for Single sign on.
+        :paramtype enterprise_app_id: str
+        """
         super(DatadogOrganizationProperties, self).__init__(**kwargs)
         self.name = None
         self.id = None
@@ -549,8 +672,8 @@ class DatadogOrganizationProperties(msrest.serialization.Model):
 class DatadogSetPasswordLink(msrest.serialization.Model):
     """DatadogSetPasswordLink.
 
-    :param set_password_link:
-    :type set_password_link: str
+    :ivar set_password_link:
+    :vartype set_password_link: str
     """
 
     _attribute_map = {
@@ -563,6 +686,10 @@ class DatadogSetPasswordLink(msrest.serialization.Model):
         set_password_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword set_password_link:
+        :paramtype set_password_link: str
+        """
         super(DatadogSetPasswordLink, self).__init__(**kwargs)
         self.set_password_link = set_password_link
 
@@ -572,14 +699,14 @@ class DatadogSingleSignOnProperties(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar provisioning_state:  Possible values include: "Accepted", "Creating", "Updating",
+    :ivar provisioning_state: Possible values include: "Accepted", "Creating", "Updating",
      "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", "NotSpecified".
     :vartype provisioning_state: str or ~microsoft_datadog_client.models.ProvisioningState
-    :param single_sign_on_state: Various states of the SSO resource. Possible values include:
+    :ivar single_sign_on_state: Various states of the SSO resource. Possible values include:
      "Initial", "Enable", "Disable", "Existing".
-    :type single_sign_on_state: str or ~microsoft_datadog_client.models.SingleSignOnStates
-    :param enterprise_app_id: The Id of the Enterprise App used for Single sign-on.
-    :type enterprise_app_id: str
+    :vartype single_sign_on_state: str or ~microsoft_datadog_client.models.SingleSignOnStates
+    :ivar enterprise_app_id: The Id of the Enterprise App used for Single sign-on.
+    :vartype enterprise_app_id: str
     :ivar single_sign_on_url: The login URL specific to this Datadog Organization.
     :vartype single_sign_on_url: str
     """
@@ -603,6 +730,13 @@ class DatadogSingleSignOnProperties(msrest.serialization.Model):
         enterprise_app_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword single_sign_on_state: Various states of the SSO resource. Possible values include:
+         "Initial", "Enable", "Disable", "Existing".
+        :paramtype single_sign_on_state: str or ~microsoft_datadog_client.models.SingleSignOnStates
+        :keyword enterprise_app_id: The Id of the Enterprise App used for Single sign-on.
+        :paramtype enterprise_app_id: str
+        """
         super(DatadogSingleSignOnProperties, self).__init__(**kwargs)
         self.provisioning_state = None
         self.single_sign_on_state = single_sign_on_state
@@ -621,8 +755,8 @@ class DatadogSingleSignOnResource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param properties:
-    :type properties: ~microsoft_datadog_client.models.DatadogSingleSignOnProperties
+    :ivar properties:
+    :vartype properties: ~microsoft_datadog_client.models.DatadogSingleSignOnProperties
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~microsoft_datadog_client.models.SystemData
     """
@@ -648,6 +782,10 @@ class DatadogSingleSignOnResource(msrest.serialization.Model):
         properties: Optional["DatadogSingleSignOnProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword properties:
+        :paramtype properties: ~microsoft_datadog_client.models.DatadogSingleSignOnProperties
+        """
         super(DatadogSingleSignOnResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -659,10 +797,10 @@ class DatadogSingleSignOnResource(msrest.serialization.Model):
 class DatadogSingleSignOnResourceListResponse(msrest.serialization.Model):
     """Response of a list operation.
 
-    :param value: Results of a list operation.
-    :type value: list[~microsoft_datadog_client.models.DatadogSingleSignOnResource]
-    :param next_link: Link to the next set of results, if any.
-    :type next_link: str
+    :ivar value: Results of a list operation.
+    :vartype value: list[~microsoft_datadog_client.models.DatadogSingleSignOnResource]
+    :ivar next_link: Link to the next set of results, if any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -677,6 +815,12 @@ class DatadogSingleSignOnResourceListResponse(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Results of a list operation.
+        :paramtype value: list[~microsoft_datadog_client.models.DatadogSingleSignOnResource]
+        :keyword next_link: Link to the next set of results, if any.
+        :paramtype next_link: str
+        """
         super(DatadogSingleSignOnResourceListResponse, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -707,6 +851,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -749,6 +895,8 @@ class ErrorDetail(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -760,8 +908,8 @@ class ErrorDetail(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~microsoft_datadog_client.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~microsoft_datadog_client.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -774,6 +922,10 @@ class ErrorResponse(msrest.serialization.Model):
         error: Optional["ErrorDetail"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~microsoft_datadog_client.models.ErrorDetail
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -781,13 +933,13 @@ class ErrorResponse(msrest.serialization.Model):
 class FilteringTag(msrest.serialization.Model):
     """The definition of a filtering tag. Filtering tags are used for capturing resources and include/exclude them from being monitored.
 
-    :param name: The name (also known as the key) of the tag.
-    :type name: str
-    :param value: The value of the tag.
-    :type value: str
-    :param action: Valid actions for a filtering tag. Exclusion takes priority over inclusion.
+    :ivar name: The name (also known as the key) of the tag.
+    :vartype name: str
+    :ivar value: The value of the tag.
+    :vartype value: str
+    :ivar action: Valid actions for a filtering tag. Exclusion takes priority over inclusion.
      Possible values include: "Include", "Exclude".
-    :type action: str or ~microsoft_datadog_client.models.TagAction
+    :vartype action: str or ~microsoft_datadog_client.models.TagAction
     """
 
     _attribute_map = {
@@ -804,6 +956,15 @@ class FilteringTag(msrest.serialization.Model):
         action: Optional[Union[str, "TagAction"]] = None,
         **kwargs
     ):
+        """
+        :keyword name: The name (also known as the key) of the tag.
+        :paramtype name: str
+        :keyword value: The value of the tag.
+        :paramtype value: str
+        :keyword action: Valid actions for a filtering tag. Exclusion takes priority over inclusion.
+         Possible values include: "Include", "Exclude".
+        :paramtype action: str or ~microsoft_datadog_client.models.TagAction
+        """
         super(FilteringTag, self).__init__(**kwargs)
         self.name = name
         self.value = value
@@ -819,8 +980,8 @@ class IdentityProperties(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :param type: Identity type. Possible values include: "SystemAssigned", "UserAssigned".
-    :type type: str or ~microsoft_datadog_client.models.ManagedIdentityTypes
+    :ivar type: Identity type. Possible values include: "SystemAssigned", "UserAssigned".
+    :vartype type: str or ~microsoft_datadog_client.models.ManagedIdentityTypes
     """
 
     _validation = {
@@ -840,6 +1001,10 @@ class IdentityProperties(msrest.serialization.Model):
         type: Optional[Union[str, "ManagedIdentityTypes"]] = None,
         **kwargs
     ):
+        """
+        :keyword type: Identity type. Possible values include: "SystemAssigned", "UserAssigned".
+        :paramtype type: str or ~microsoft_datadog_client.models.ManagedIdentityTypes
+        """
         super(IdentityProperties, self).__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
@@ -849,8 +1014,8 @@ class IdentityProperties(msrest.serialization.Model):
 class LinkedResource(msrest.serialization.Model):
     """The definition of a linked resource.
 
-    :param id: The ARM id of the linked resource.
-    :type id: str
+    :ivar id: The ARM id of the linked resource.
+    :vartype id: str
     """
 
     _attribute_map = {
@@ -863,6 +1028,10 @@ class LinkedResource(msrest.serialization.Model):
         id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: The ARM id of the linked resource.
+        :paramtype id: str
+        """
         super(LinkedResource, self).__init__(**kwargs)
         self.id = id
 
@@ -870,10 +1039,10 @@ class LinkedResource(msrest.serialization.Model):
 class LinkedResourceListResponse(msrest.serialization.Model):
     """Response of a list operation.
 
-    :param value: Results of a list operation.
-    :type value: list[~microsoft_datadog_client.models.LinkedResource]
-    :param next_link: Link to the next set of results, if any.
-    :type next_link: str
+    :ivar value: Results of a list operation.
+    :vartype value: list[~microsoft_datadog_client.models.LinkedResource]
+    :ivar next_link: Link to the next set of results, if any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -888,6 +1057,12 @@ class LinkedResourceListResponse(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Results of a list operation.
+        :paramtype value: list[~microsoft_datadog_client.models.LinkedResource]
+        :keyword next_link: Link to the next set of results, if any.
+        :paramtype next_link: str
+        """
         super(LinkedResourceListResponse, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -896,19 +1071,19 @@ class LinkedResourceListResponse(msrest.serialization.Model):
 class LogRules(msrest.serialization.Model):
     """Set of rules for sending logs for the Monitor resource.
 
-    :param send_aad_logs: Flag specifying if AAD logs should be sent for the Monitor resource.
-    :type send_aad_logs: bool
-    :param send_subscription_logs: Flag specifying if Azure subscription logs should be sent for
-     the Monitor resource.
-    :type send_subscription_logs: bool
-    :param send_resource_logs: Flag specifying if Azure resource logs should be sent for the
+    :ivar send_aad_logs: Flag specifying if AAD logs should be sent for the Monitor resource.
+    :vartype send_aad_logs: bool
+    :ivar send_subscription_logs: Flag specifying if Azure subscription logs should be sent for the
      Monitor resource.
-    :type send_resource_logs: bool
-    :param filtering_tags: List of filtering tags to be used for capturing logs. This only takes
+    :vartype send_subscription_logs: bool
+    :ivar send_resource_logs: Flag specifying if Azure resource logs should be sent for the Monitor
+     resource.
+    :vartype send_resource_logs: bool
+    :ivar filtering_tags: List of filtering tags to be used for capturing logs. This only takes
      effect if SendResourceLogs flag is enabled. If empty, all resources will be captured. If only
      Exclude action is specified, the rules will apply to the list of all available resources. If
      Include actions are specified, the rules will only include resources with the associated tags.
-    :type filtering_tags: list[~microsoft_datadog_client.models.FilteringTag]
+    :vartype filtering_tags: list[~microsoft_datadog_client.models.FilteringTag]
     """
 
     _attribute_map = {
@@ -927,6 +1102,21 @@ class LogRules(msrest.serialization.Model):
         filtering_tags: Optional[List["FilteringTag"]] = None,
         **kwargs
     ):
+        """
+        :keyword send_aad_logs: Flag specifying if AAD logs should be sent for the Monitor resource.
+        :paramtype send_aad_logs: bool
+        :keyword send_subscription_logs: Flag specifying if Azure subscription logs should be sent for
+         the Monitor resource.
+        :paramtype send_subscription_logs: bool
+        :keyword send_resource_logs: Flag specifying if Azure resource logs should be sent for the
+         Monitor resource.
+        :paramtype send_resource_logs: bool
+        :keyword filtering_tags: List of filtering tags to be used for capturing logs. This only takes
+         effect if SendResourceLogs flag is enabled. If empty, all resources will be captured. If only
+         Exclude action is specified, the rules will apply to the list of all available resources. If
+         Include actions are specified, the rules will only include resources with the associated tags.
+        :paramtype filtering_tags: list[~microsoft_datadog_client.models.FilteringTag]
+        """
         super(LogRules, self).__init__(**kwargs)
         self.send_aad_logs = send_aad_logs
         self.send_subscription_logs = send_subscription_logs
@@ -937,11 +1127,11 @@ class LogRules(msrest.serialization.Model):
 class MetricRules(msrest.serialization.Model):
     """Set of rules for sending metrics for the Monitor resource.
 
-    :param filtering_tags: List of filtering tags to be used for capturing metrics. If empty, all
+    :ivar filtering_tags: List of filtering tags to be used for capturing metrics. If empty, all
      resources will be captured. If only Exclude action is specified, the rules will apply to the
      list of all available resources. If Include actions are specified, the rules will only include
      resources with the associated tags.
-    :type filtering_tags: list[~microsoft_datadog_client.models.FilteringTag]
+    :vartype filtering_tags: list[~microsoft_datadog_client.models.FilteringTag]
     """
 
     _attribute_map = {
@@ -954,6 +1144,13 @@ class MetricRules(msrest.serialization.Model):
         filtering_tags: Optional[List["FilteringTag"]] = None,
         **kwargs
     ):
+        """
+        :keyword filtering_tags: List of filtering tags to be used for capturing metrics. If empty, all
+         resources will be captured. If only Exclude action is specified, the rules will apply to the
+         list of all available resources. If Include actions are specified, the rules will only include
+         resources with the associated tags.
+        :paramtype filtering_tags: list[~microsoft_datadog_client.models.FilteringTag]
+        """
         super(MetricRules, self).__init__(**kwargs)
         self.filtering_tags = filtering_tags
 
@@ -961,18 +1158,18 @@ class MetricRules(msrest.serialization.Model):
 class MonitoredResource(msrest.serialization.Model):
     """The properties of a resource currently being monitored by the Datadog monitor resource.
 
-    :param id: The ARM id of the resource.
-    :type id: str
-    :param sending_metrics: Flag indicating if resource is sending metrics to Datadog.
-    :type sending_metrics: bool
-    :param reason_for_metrics_status: Reason for why the resource is sending metrics (or why it is
+    :ivar id: The ARM id of the resource.
+    :vartype id: str
+    :ivar sending_metrics: Flag indicating if resource is sending metrics to Datadog.
+    :vartype sending_metrics: bool
+    :ivar reason_for_metrics_status: Reason for why the resource is sending metrics (or why it is
      not sending).
-    :type reason_for_metrics_status: str
-    :param sending_logs: Flag indicating if resource is sending logs to Datadog.
-    :type sending_logs: bool
-    :param reason_for_logs_status: Reason for why the resource is sending logs (or why it is not
+    :vartype reason_for_metrics_status: str
+    :ivar sending_logs: Flag indicating if resource is sending logs to Datadog.
+    :vartype sending_logs: bool
+    :ivar reason_for_logs_status: Reason for why the resource is sending logs (or why it is not
      sending).
-    :type reason_for_logs_status: str
+    :vartype reason_for_logs_status: str
     """
 
     _attribute_map = {
@@ -993,6 +1190,20 @@ class MonitoredResource(msrest.serialization.Model):
         reason_for_logs_status: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: The ARM id of the resource.
+        :paramtype id: str
+        :keyword sending_metrics: Flag indicating if resource is sending metrics to Datadog.
+        :paramtype sending_metrics: bool
+        :keyword reason_for_metrics_status: Reason for why the resource is sending metrics (or why it
+         is not sending).
+        :paramtype reason_for_metrics_status: str
+        :keyword sending_logs: Flag indicating if resource is sending logs to Datadog.
+        :paramtype sending_logs: bool
+        :keyword reason_for_logs_status: Reason for why the resource is sending logs (or why it is not
+         sending).
+        :paramtype reason_for_logs_status: str
+        """
         super(MonitoredResource, self).__init__(**kwargs)
         self.id = id
         self.sending_metrics = sending_metrics
@@ -1004,10 +1215,10 @@ class MonitoredResource(msrest.serialization.Model):
 class MonitoredResourceListResponse(msrest.serialization.Model):
     """Response of a list operation.
 
-    :param value: Results of a list operation.
-    :type value: list[~microsoft_datadog_client.models.MonitoredResource]
-    :param next_link: Link to the next set of results, if any.
-    :type next_link: str
+    :ivar value: Results of a list operation.
+    :vartype value: list[~microsoft_datadog_client.models.MonitoredResource]
+    :ivar next_link: Link to the next set of results, if any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -1022,6 +1233,12 @@ class MonitoredResourceListResponse(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Results of a list operation.
+        :paramtype value: list[~microsoft_datadog_client.models.MonitoredResource]
+        :keyword next_link: Link to the next set of results, if any.
+        :paramtype next_link: str
+        """
         super(MonitoredResourceListResponse, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -1038,8 +1255,8 @@ class MonitoringTagRules(msrest.serialization.Model):
     :vartype id: str
     :ivar type: The type of the rule set.
     :vartype type: str
-    :param properties: Definition of the properties for a TagRules resource.
-    :type properties: ~microsoft_datadog_client.models.MonitoringTagRulesProperties
+    :ivar properties: Definition of the properties for a TagRules resource.
+    :vartype properties: ~microsoft_datadog_client.models.MonitoringTagRulesProperties
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~microsoft_datadog_client.models.SystemData
     """
@@ -1065,6 +1282,10 @@ class MonitoringTagRules(msrest.serialization.Model):
         properties: Optional["MonitoringTagRulesProperties"] = None,
         **kwargs
     ):
+        """
+        :keyword properties: Definition of the properties for a TagRules resource.
+        :paramtype properties: ~microsoft_datadog_client.models.MonitoringTagRulesProperties
+        """
         super(MonitoringTagRules, self).__init__(**kwargs)
         self.name = None
         self.id = None
@@ -1076,10 +1297,10 @@ class MonitoringTagRules(msrest.serialization.Model):
 class MonitoringTagRulesListResponse(msrest.serialization.Model):
     """Response of a list operation.
 
-    :param value: Results of a list operation.
-    :type value: list[~microsoft_datadog_client.models.MonitoringTagRules]
-    :param next_link: Link to the next set of results, if any.
-    :type next_link: str
+    :ivar value: Results of a list operation.
+    :vartype value: list[~microsoft_datadog_client.models.MonitoringTagRules]
+    :ivar next_link: Link to the next set of results, if any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -1094,6 +1315,12 @@ class MonitoringTagRulesListResponse(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Results of a list operation.
+        :paramtype value: list[~microsoft_datadog_client.models.MonitoringTagRules]
+        :keyword next_link: Link to the next set of results, if any.
+        :paramtype next_link: str
+        """
         super(MonitoringTagRulesListResponse, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -1104,13 +1331,13 @@ class MonitoringTagRulesProperties(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar provisioning_state:  Possible values include: "Accepted", "Creating", "Updating",
+    :ivar provisioning_state: Possible values include: "Accepted", "Creating", "Updating",
      "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", "NotSpecified".
     :vartype provisioning_state: str or ~microsoft_datadog_client.models.ProvisioningState
-    :param log_rules: Set of rules for sending logs for the Monitor resource.
-    :type log_rules: ~microsoft_datadog_client.models.LogRules
-    :param metric_rules: Set of rules for sending metrics for the Monitor resource.
-    :type metric_rules: ~microsoft_datadog_client.models.MetricRules
+    :ivar log_rules: Set of rules for sending logs for the Monitor resource.
+    :vartype log_rules: ~microsoft_datadog_client.models.LogRules
+    :ivar metric_rules: Set of rules for sending metrics for the Monitor resource.
+    :vartype metric_rules: ~microsoft_datadog_client.models.MetricRules
     """
 
     _validation = {
@@ -1130,6 +1357,12 @@ class MonitoringTagRulesProperties(msrest.serialization.Model):
         metric_rules: Optional["MetricRules"] = None,
         **kwargs
     ):
+        """
+        :keyword log_rules: Set of rules for sending logs for the Monitor resource.
+        :paramtype log_rules: ~microsoft_datadog_client.models.LogRules
+        :keyword metric_rules: Set of rules for sending metrics for the Monitor resource.
+        :paramtype metric_rules: ~microsoft_datadog_client.models.MetricRules
+        """
         super(MonitoringTagRulesProperties, self).__init__(**kwargs)
         self.provisioning_state = None
         self.log_rules = log_rules
@@ -1141,23 +1374,23 @@ class MonitorProperties(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar provisioning_state:  Possible values include: "Accepted", "Creating", "Updating",
+    :ivar provisioning_state: Possible values include: "Accepted", "Creating", "Updating",
      "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", "NotSpecified".
     :vartype provisioning_state: str or ~microsoft_datadog_client.models.ProvisioningState
-    :param monitoring_status: Flag specifying if the resource monitoring is enabled or disabled.
+    :ivar monitoring_status: Flag specifying if the resource monitoring is enabled or disabled.
      Possible values include: "Enabled", "Disabled". Default value: "Enabled".
-    :type monitoring_status: str or ~microsoft_datadog_client.models.MonitoringStatus
+    :vartype monitoring_status: str or ~microsoft_datadog_client.models.MonitoringStatus
     :ivar marketplace_subscription_status: Flag specifying the Marketplace Subscription Status of
      the resource. If payment is not made in time, the resource will go in Suspended state. Possible
      values include: "Provisioning", "Active", "Suspended", "Unsubscribed".
     :vartype marketplace_subscription_status: str or
      ~microsoft_datadog_client.models.MarketplaceSubscriptionStatus
-    :param datadog_organization_properties: Datadog organization properties.
-    :type datadog_organization_properties:
+    :ivar datadog_organization_properties: Datadog organization properties.
+    :vartype datadog_organization_properties:
      ~microsoft_datadog_client.models.DatadogOrganizationProperties
-    :param user_info: User info.
-    :type user_info: ~microsoft_datadog_client.models.UserInfo
-    :ivar liftr_resource_category:  Possible values include: "Unknown", "MonitorLogs".
+    :ivar user_info: User info.
+    :vartype user_info: ~microsoft_datadog_client.models.UserInfo
+    :ivar liftr_resource_category: Possible values include: "Unknown", "MonitorLogs".
     :vartype liftr_resource_category: str or
      ~microsoft_datadog_client.models.LiftrResourceCategories
     :ivar liftr_resource_preference: The priority of the resource.
@@ -1189,6 +1422,16 @@ class MonitorProperties(msrest.serialization.Model):
         user_info: Optional["UserInfo"] = None,
         **kwargs
     ):
+        """
+        :keyword monitoring_status: Flag specifying if the resource monitoring is enabled or disabled.
+         Possible values include: "Enabled", "Disabled". Default value: "Enabled".
+        :paramtype monitoring_status: str or ~microsoft_datadog_client.models.MonitoringStatus
+        :keyword datadog_organization_properties: Datadog organization properties.
+        :paramtype datadog_organization_properties:
+         ~microsoft_datadog_client.models.DatadogOrganizationProperties
+        :keyword user_info: User info.
+        :paramtype user_info: ~microsoft_datadog_client.models.UserInfo
+        """
         super(MonitorProperties, self).__init__(**kwargs)
         self.provisioning_state = None
         self.monitoring_status = monitoring_status
@@ -1202,9 +1445,9 @@ class MonitorProperties(msrest.serialization.Model):
 class MonitorUpdateProperties(msrest.serialization.Model):
     """The set of properties that can be update in a PATCH request to a monitor resource.
 
-    :param monitoring_status: Flag specifying if the resource monitoring is enabled or disabled.
+    :ivar monitoring_status: Flag specifying if the resource monitoring is enabled or disabled.
      Possible values include: "Enabled", "Disabled". Default value: "Enabled".
-    :type monitoring_status: str or ~microsoft_datadog_client.models.MonitoringStatus
+    :vartype monitoring_status: str or ~microsoft_datadog_client.models.MonitoringStatus
     """
 
     _attribute_map = {
@@ -1217,6 +1460,11 @@ class MonitorUpdateProperties(msrest.serialization.Model):
         monitoring_status: Optional[Union[str, "MonitoringStatus"]] = "Enabled",
         **kwargs
     ):
+        """
+        :keyword monitoring_status: Flag specifying if the resource monitoring is enabled or disabled.
+         Possible values include: "Enabled", "Disabled". Default value: "Enabled".
+        :paramtype monitoring_status: str or ~microsoft_datadog_client.models.MonitoringStatus
+        """
         super(MonitorUpdateProperties, self).__init__(**kwargs)
         self.monitoring_status = monitoring_status
 
@@ -1224,14 +1472,14 @@ class MonitorUpdateProperties(msrest.serialization.Model):
 class OperationDisplay(msrest.serialization.Model):
     """The object that represents the operation.
 
-    :param provider: Service provider, i.e., Microsoft.Datadog.
-    :type provider: str
-    :param resource: Type on which the operation is performed, e.g., 'monitors'.
-    :type resource: str
-    :param operation: Operation type, e.g., read, write, delete, etc.
-    :type operation: str
-    :param description: Description of the operation, e.g., 'Write monitors'.
-    :type description: str
+    :ivar provider: Service provider, i.e., Microsoft.Datadog.
+    :vartype provider: str
+    :ivar resource: Type on which the operation is performed, e.g., 'monitors'.
+    :vartype resource: str
+    :ivar operation: Operation type, e.g., read, write, delete, etc.
+    :vartype operation: str
+    :ivar description: Description of the operation, e.g., 'Write monitors'.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -1250,6 +1498,16 @@ class OperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: Service provider, i.e., Microsoft.Datadog.
+        :paramtype provider: str
+        :keyword resource: Type on which the operation is performed, e.g., 'monitors'.
+        :paramtype resource: str
+        :keyword operation: Operation type, e.g., read, write, delete, etc.
+        :paramtype operation: str
+        :keyword description: Description of the operation, e.g., 'Write monitors'.
+        :paramtype description: str
+        """
         super(OperationDisplay, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
@@ -1260,10 +1518,10 @@ class OperationDisplay(msrest.serialization.Model):
 class OperationListResult(msrest.serialization.Model):
     """Result of GET request to list the Microsoft.Datadog operations.
 
-    :param value: List of operations supported by the Microsoft.Datadog provider.
-    :type value: list[~microsoft_datadog_client.models.OperationResult]
-    :param next_link: URL to get the next set of operation list results if there are any.
-    :type next_link: str
+    :ivar value: List of operations supported by the Microsoft.Datadog provider.
+    :vartype value: list[~microsoft_datadog_client.models.OperationResult]
+    :ivar next_link: URL to get the next set of operation list results if there are any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -1278,6 +1536,12 @@ class OperationListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: List of operations supported by the Microsoft.Datadog provider.
+        :paramtype value: list[~microsoft_datadog_client.models.OperationResult]
+        :keyword next_link: URL to get the next set of operation list results if there are any.
+        :paramtype next_link: str
+        """
         super(OperationListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -1286,12 +1550,12 @@ class OperationListResult(msrest.serialization.Model):
 class OperationResult(msrest.serialization.Model):
     """A Microsoft.Datadog REST API operation.
 
-    :param name: Operation name, i.e., {provider}/{resource}/{operation}.
-    :type name: str
-    :param display: The object that represents the operation.
-    :type display: ~microsoft_datadog_client.models.OperationDisplay
-    :param is_data_action: Indicates whether the operation is a data action.
-    :type is_data_action: bool
+    :ivar name: Operation name, i.e., {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar display: The object that represents the operation.
+    :vartype display: ~microsoft_datadog_client.models.OperationDisplay
+    :ivar is_data_action: Indicates whether the operation is a data action.
+    :vartype is_data_action: bool
     """
 
     _attribute_map = {
@@ -1308,6 +1572,14 @@ class OperationResult(msrest.serialization.Model):
         is_data_action: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword name: Operation name, i.e., {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword display: The object that represents the operation.
+        :paramtype display: ~microsoft_datadog_client.models.OperationDisplay
+        :keyword is_data_action: Indicates whether the operation is a data action.
+        :paramtype is_data_action: bool
+        """
         super(OperationResult, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -1319,8 +1591,8 @@ class ResourceSku(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Name of the SKU.
-    :type name: str
+    :ivar name: Required. Name of the SKU.
+    :vartype name: str
     """
 
     _validation = {
@@ -1337,6 +1609,10 @@ class ResourceSku(msrest.serialization.Model):
         name: str,
         **kwargs
     ):
+        """
+        :keyword name: Required. Name of the SKU.
+        :paramtype name: str
+        """
         super(ResourceSku, self).__init__(**kwargs)
         self.name = name
 
@@ -1344,20 +1620,20 @@ class ResourceSku(msrest.serialization.Model):
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~microsoft_datadog_client.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~microsoft_datadog_client.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~microsoft_datadog_client.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :vartype last_modified_by_type: str or ~microsoft_datadog_client.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -1380,6 +1656,22 @@ class SystemData(msrest.serialization.Model):
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or ~microsoft_datadog_client.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or ~microsoft_datadog_client.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
@@ -1392,12 +1684,12 @@ class SystemData(msrest.serialization.Model):
 class UserInfo(msrest.serialization.Model):
     """User info.
 
-    :param name: Name of the user.
-    :type name: str
-    :param email_address: Email of the user used by Datadog for contacting them if needed.
-    :type email_address: str
-    :param phone_number: Phone number of the user used by Datadog for contacting them if needed.
-    :type phone_number: str
+    :ivar name: Name of the user.
+    :vartype name: str
+    :ivar email_address: Email of the user used by Datadog for contacting them if needed.
+    :vartype email_address: str
+    :ivar phone_number: Phone number of the user used by Datadog for contacting them if needed.
+    :vartype phone_number: str
     """
 
     _validation = {
@@ -1420,6 +1712,14 @@ class UserInfo(msrest.serialization.Model):
         phone_number: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of the user.
+        :paramtype name: str
+        :keyword email_address: Email of the user used by Datadog for contacting them if needed.
+        :paramtype email_address: str
+        :keyword phone_number: Phone number of the user used by Datadog for contacting them if needed.
+        :paramtype phone_number: str
+        """
         super(UserInfo, self).__init__(**kwargs)
         self.name = name
         self.email_address = email_address
