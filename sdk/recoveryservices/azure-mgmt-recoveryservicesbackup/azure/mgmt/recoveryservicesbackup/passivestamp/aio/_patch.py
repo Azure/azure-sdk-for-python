@@ -33,6 +33,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 class RecoveryServicesBackupPassiveClient(RecoveryServicesBackupPassiveClientGenerated):
+    __doc__ = RecoveryServicesBackupPassiveClientGenerated.__doc__
     def __init__(
         self,
         credential: "AsyncTokenCredential",

@@ -51,6 +51,7 @@ class RemoveDuplicateParamsPolicy(SansIOHTTPPolicy):
 DUPLICATE_PARAMS_POLICY = RemoveDuplicateParamsPolicy(duplicate_param_names=["$filter", "$skiptoken", "api-version"])
 
 class RecoveryServicesBackupPassiveClient(RecoveryServicesBackupPassiveClientGenerated):
+    __doc__ = RecoveryServicesBackupPassiveClientGenerated.__doc__
     def __init__(
         self,
         credential: "TokenCredential",
