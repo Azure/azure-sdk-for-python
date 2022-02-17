@@ -4,7 +4,9 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=no-self-use
-from typing import Any, Dict, Optional, Tuple, Union, TYPE_CHECKING
+from typing import (  # pylint: disable=unused-import
+    Any, Dict, Optional, Tuple, Union,
+    TYPE_CHECKING)
 
 try:
     from urllib.parse import quote
