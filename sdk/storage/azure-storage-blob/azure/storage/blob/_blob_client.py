@@ -64,6 +64,7 @@ if TYPE_CHECKING:
     from ._generated.models import BlockList
     from ._models import (  # pylint: disable=unused-import
         ContentSettings,
+        ImmutabilityPolicy,
         PremiumPageBlobTier,
         StandardBlobTier,
         SequenceNumberAction
@@ -1407,7 +1408,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @distributed_trace
     def set_immutability_policy(self, immutability_policy, **kwargs):
-        # type: (azure.storage.blob.ImmutabilityPolicy, **Any) -> Dict[str, str]
+        # type: (ImmutabilityPolicy, **Any) -> Dict[str, str]
         """The Set Immutability Policy operation sets the immutability policy on the blob.
 
         .. versionadded:: 12.10.0
