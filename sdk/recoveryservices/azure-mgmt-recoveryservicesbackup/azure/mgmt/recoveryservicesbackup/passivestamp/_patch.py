@@ -48,13 +48,13 @@ class RemoveDuplicateParamsPolicy(SansIOHTTPPolicy):
 DUPLICATE_PARAMS_POLICY = RemoveDuplicateParamsPolicy(duplicate_param_names=["$filter", "$skiptoken", "api-version"])
 
 class RecoveryServicesBackupPassiveClient(RecoveryServicesBackupPassiveClientGenerated):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, credential, *args, **kwargs):
         per_call_policies = kwargs.pop("per_call_policies", [])
         try:
             per_call_policies.append(DUPLICATE_PARAMS_POLICY)
         except AttributeError:
             per_call_policies = [per_call_policies, DUPLICATE_PARAMS_POLICY]
-        super().__init__(*args, per_call_policies=per_call_policies, **kwargs)
+        super().__init__(credential, *args, per_call_policies=per_call_policies, **kwargs)
 
 # This file is used for handwritten extensions to the generated code. Example:
 # https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md
