@@ -1,17 +1,21 @@
 # Release History
 
-## 7.6.0 (Unreleased)
+## 7.6.1 (Unreleased)
 
 ### Features Added
-
-- Introduce `ServiceBusMessageState` enum that can assume the values of `active`, `scheduled` or `deferred`.
-- Add `ServiceBusMessageState` property in `ServiceBusReceivedMessage`.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 7.6.0 (2022-02-10)
+
+### Features Added
+
+- Introduce `ServiceBusMessageState` enum that can assume the values of `active`, `scheduled` or `deferred`.
+- Add `state` property in `ServiceBusReceivedMessage`.
 
 ## 7.5.0 (2022-01-12)
 

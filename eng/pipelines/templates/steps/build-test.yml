@@ -40,6 +40,8 @@ steps:
 
   - ${{if eq(parameters.TestProxy, true) }}:
     - template: /eng/common/testproxy/test-proxy-tool.yml
+      parameters:
+        runProxy: false
 
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - template: ../steps/auth-dev-feed.yml
@@ -65,7 +67,12 @@ steps:
 
   - ${{if eq(parameters.TestProxy, true) }}:
     - pwsh: |
-        cat $(Build.SourcesDirectory)/test-proxy.log
+        $files = Get-ChildItem -Path $(Build.SourcesDirectory) -Filter _proxy_log_*.log
+        foreach($file in $files){
+            Write-Host "##[group]$file"
+            cat $file
+            Write-Host "##[endgroup]"
+        }
       displayName: Dump Test-Proxy Logs
       condition: succeededOrFailed()
 

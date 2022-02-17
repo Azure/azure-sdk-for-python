@@ -1,14 +1,20 @@
 # Release History
 
-## 11.3.0b7 (Unreleased)
+## 11.3.0b8 (Unreleased)
 
 ### Features Added
-
-- Added models: `AzureMachineLearningSkill`
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 11.3.0b7 (2022-02-08)
+
+### Features Added
+
+- Added models: `AzureMachineLearningSkill`
 
 ### Other Changes
 
