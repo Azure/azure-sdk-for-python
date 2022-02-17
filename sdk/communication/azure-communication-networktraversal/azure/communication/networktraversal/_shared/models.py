@@ -25,7 +25,7 @@ class CommunicationIdentifierKind(with_metaclass(CaseInsensitiveEnumMeta, str, E
 
 
 class CommunicationCloudEnvironment(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The cloud enviornment that the identifier belongs to"""
+    """The cloud environment that the identifier belongs to"""
 
     PUBLIC = "PUBLIC"
     DOD = "DOD"
