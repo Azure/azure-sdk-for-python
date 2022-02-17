@@ -10,6 +10,7 @@ import requests
 import shlex
 import sys
 import time
+import signal
 from typing import TYPE_CHECKING
 
 import pytest
@@ -28,9 +29,11 @@ CONTAINER_NAME = "ambitious_azsdk_test_proxy"
 LINUX_IMAGE_SOURCE_PREFIX = "azsdkengsys.azurecr.io/engsys/testproxy-lin"
 WINDOWS_IMAGE_SOURCE_PREFIX = "azsdkengsys.azurecr.io/engsys/testproxy-win"
 CONTAINER_STARTUP_TIMEOUT = 6000
-PROXY_MANUALLY_STARTED = os.getenv('PROXY_MANUAL_START', False)
+PROXY_MANUALLY_STARTED = os.getenv("PROXY_MANUAL_START", False)
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "..", ".."))
+PROXY_CHECK_URL = PROXY_URL.rstrip("/") + "/Info/Available"
+TOOL_ENV_VAR = "PROXY_PID"
 
 
 def get_image_tag():
@@ -82,6 +85,32 @@ def get_container_info():
         return None
 
 
+def check_availability():
+    # type: () -> None
+    """Attempts request to /Info/Available. If a test-proxy instance is responding, we should get a response."""
+    try:
+        response = requests.get(PROXY_CHECK_URL, timeout=60)
+        return response.status_code
+    # We get an SSLError if the container is started but the endpoint isn't available yet
+    except requests.exceptions.SSLError as sslError:
+        _LOGGER.error(sslError)
+        return 404
+    except Exception as e:
+        _LOGGER.error(e)
+        return 404
+
+
+def check_proxy_availability():
+    # type: () -> None
+    """Waits for the availability of the test-proxy."""
+    start = time.time()
+    now = time.time()
+    status_code = 0
+    while now - start < CONTAINER_STARTUP_TIMEOUT and status_code != 200:
+        status_code = check_availability()
+        now = time.time()
+
+
 def create_container():
     # type: () -> None
     """Creates the test proxy Docker container"""
@@ -110,40 +139,49 @@ def create_container():
 
 def start_test_proxy():
     # type: () -> None
-    """Starts the test proxy and returns when the proxy server is ready to receive requests"""
-    
+    """Starts the test proxy and returns when the proxy server is ready to receive requests. In regular use
+    cases, this will auto-start the test-proxy docker container. In CI, or when environment variable TF_BUILD is set, this
+    function will start the test-proxy .NET tool."""
+
     if not PROXY_MANUALLY_STARTED:
-        _LOGGER.info("Starting the test proxy container...")
+        if os.getenv("TF_BUILD"):
+            _LOGGER.info("Starting the test proxy tool...")
+            if check_availability() == 200:
+                _LOGGER.debug("Tool is responding, exiting...")
+            else:
+                envname = os.getenv("TOX_ENV_NAME", "default")
+                root = os.getenv('BUILD_SOURCESDIRECTORY', REPO_ROOT)
+                log = open(os.path.join(root, "_proxy_log_{}.log".format(envname)), "a")
 
-        container_info = get_container_info()
-        if container_info:
-            _LOGGER.debug("Found an existing instance of the test proxy container.")
-
-            if container_info["State"] == "running":
-                _LOGGER.debug("Proxy container is already running. Exiting...")
-                return
-
+                _LOGGER.info("{} is calculated repo root".format(root))
+                proc = subprocess.Popen(
+                    shlex.split('test-proxy --storage-location="{}" --urls "{}"'.format(root, PROXY_URL)),
+                    stdout=log,
+                    stderr=log,
+                )
+                os.environ[TOOL_ENV_VAR] = str(proc.pid)
         else:
-            _LOGGER.debug("No instance of the test proxy container found. Attempting creation...")
-            create_container()
+            _LOGGER.info("Starting the test proxy container...")
 
-        _LOGGER.debug("Attempting to start the test proxy container...")
+            container_info = get_container_info()
+            if container_info:
+                _LOGGER.debug("Found an existing instance of the test proxy container.")
 
-        proc = subprocess.Popen(shlex.split("docker container start " + CONTAINER_NAME))
-        proc.communicate()
+                if container_info["State"] == "running":
+                    _LOGGER.debug("Proxy container is already running. Exiting...")
+                    return
+
+            else:
+                _LOGGER.debug("No instance of the test proxy container found. Attempting creation...")
+                create_container()
+
+            _LOGGER.debug("Attempting to start the test proxy container...")
+
+            proc = subprocess.Popen(shlex.split("docker container start " + CONTAINER_NAME))
+            proc.communicate()
 
         # Wait for the proxy server to become available
-        start = time.time()
-        now = time.time()
-        status_code = 0
-        while now - start < CONTAINER_STARTUP_TIMEOUT and status_code != 200:
-            try:
-                response = requests.get(PROXY_URL.rstrip("/") + "/Info/Available", timeout=60)
-                status_code = response.status_code
-            # We get an SSLError if the container is started but the endpoint isn't available yet
-            except requests.exceptions.SSLError:
-                pass
-            now = time.time()
+        check_proxy_availability()
 
 
 def stop_test_proxy():
@@ -151,17 +189,25 @@ def stop_test_proxy():
     """Stops any running instance of the test proxy"""
 
     if not PROXY_MANUALLY_STARTED:
-        _LOGGER.info("Stopping the test proxy container...")
+        if os.getenv("TF_BUILD"):
+            _LOGGER.info("Stopping the test proxy tool...")
 
-        container_info = get_container_info()
-        if container_info:
-            if container_info["State"] == "running":
-                _LOGGER.debug("Found a running instance of the test proxy container; shutting it down...")
+            try:
+                os.kill(int(os.getenv(TOOL_ENV_VAR)), signal.SIGTERM)
+            except:
+                _LOGGER.debug("Unable to kill running test-proxy process.")
 
-                proc = subprocess.Popen(shlex.split("docker container stop " + CONTAINER_NAME))
-                proc.communicate()
         else:
-            _LOGGER.debug("No running instance of the test proxy container found. Exiting...")
+            _LOGGER.info("Stopping the test proxy container...")
+            container_info = get_container_info()
+            if container_info:
+                if container_info["State"] == "running":
+                    _LOGGER.debug("Found a running instance of the test proxy container; shutting it down...")
+
+                    proc = subprocess.Popen(shlex.split("docker container stop " + CONTAINER_NAME))
+                    proc.communicate()
+            else:
+                _LOGGER.debug("No running instance of the test proxy container found. Exiting...")
 
 
 @pytest.fixture(scope="session")
