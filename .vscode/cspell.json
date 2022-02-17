@@ -51,7 +51,6 @@
     "sdk/cognitiveservices/azure-cognitiveservices-search-visualsearch/**",
     "sdk/communication/azure-communication-networktraversal/**",
     "sdk/communication/azure-communication-chat/**",
-    "sdk/communication/azure-communication-identity/**",
     "sdk/communication/azure-communication-phonenumbers/**",
     "sdk/communication/azure-communication-sms/**",
     "sdk/confidentialledger/azure-confidentialledger/**",
@@ -155,6 +154,7 @@
     "fqdns",
     "fstat",
     "gbps",
+    "GCCH",
     "graphrbac",
     "guids",
     "hanaonazure",
@@ -326,6 +326,16 @@
         "skrivet",
         "verfasst",
         "engelska"
+      ]
+    },
+    {
+      "filename": "sdk/communication/azure-communication-identity/tests/*.py",
+      "words": [
+        "XVCJ",
+        "Njgw",
+        "FNNHHJT",
+        "Zwiz",
+        "nypg"
       ]
     }
   ],
