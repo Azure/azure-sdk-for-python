@@ -1103,14 +1103,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             )
 
         models = self._client.models(api_version=self._api_version)
-        if is_date_based(self._api_version):
-            docs = models.MultiLanguageAnalysisInput(
-                documents=_validate_input(documents, "language", language)
-            )
-        else:
-            docs = models.MultiLanguageBatchInput(
-                documents=_validate_input(documents, "language", language)
-            )
+
+        input_model_cls = \
+            models.MultiLanguageAnalysisInput if is_date_based(self._api_version) else models.MultiLanguageBatchInput
+        docs = input_model_cls(
+            documents=_validate_input(documents, "language", language)
+        )
         doc_id_order = [doc.get("id") for doc in docs.documents]
         try:
             generated_tasks = [
