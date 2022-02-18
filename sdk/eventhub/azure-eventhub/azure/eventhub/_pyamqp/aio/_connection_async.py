@@ -128,7 +128,6 @@ class Connection(object):
 
         for session in self.outgoing_endpoints.values():
             await session._on_connection_state_change()
-        #await asyncio.gather(*[session._on_connection_state_change() for session in self.outgoing_endpoints.values()])
 
     async def _connect(self):
         try:
@@ -164,8 +163,7 @@ class Connection(object):
         return self.state not in (ConnectionState.CLOSE_RCVD, ConnectionState.END)
 
     async def _read_frame(self, **kwargs):
-        #if self._can_read():
-        if self.state not in (ConnectionState.CLOSE_RCVD, ConnectionState.END):
+        if self._can_read():
             return await self.transport.receive_frame(**kwargs)
         _LOGGER.warning("Cannot read frame in current state: %r", self.state)
 
@@ -456,15 +454,8 @@ class Connection(object):
             try:
                 for _ in range(batch):
                     await asyncio.ensure_future(self._listen_one_frame(**kwargs))
-                    # await self._listen_one_frame(**kwargs)
             except ValueError:
                 pass
-            # try:
-            #     tasks = [asyncio.ensure_future(self._listen_one_frame(**kwargs)) for _ in range(batch)]
-            #     await asyncio.gather(*tasks)
-            # except ValueError:
-            #     for task in tasks:
-            #         task.cancel()
         except (OSError, IOError, SSLError, socket.error) as exc:
             self._error = AMQPConnectionError(
                 ErrorCondition.SocketError,
