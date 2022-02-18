@@ -954,8 +954,6 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 except Exception as e:
                     # TODO: may be service error, remove later
                     if isinstance(e, ServiceBusError) and "Cannot open log for source 'Microsoft.ServiceBus'" in e.value:
-                        print('service error;ignore')
-                        print(e.value)
                         return
                     errors.append(e)
                     raise
