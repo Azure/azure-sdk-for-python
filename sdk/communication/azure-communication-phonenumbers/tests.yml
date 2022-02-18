@@ -19,7 +19,7 @@ stages:
             - $(sub-config-communication-int-test-resources-common)
             - $(sub-config-communication-int-test-resources-python)
           MatrixReplace:
-            - SKIP_UPDATE_CAPABILITIES_TESTS=false/true
+            - COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST=false/true
       Clouds: Public,Int
       MatrixConfigs:
         - Name: PhoneNumbers_python_livetest_matrix
