@@ -1,0 +1,111 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json; serialization=Avro
+      User-Agent:
+      - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
+    method: POST
+    uri: https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema:get-id?api-version=2021-10
+  response:
+    body:
+      string: '{"Code":400,"Detail":"Error when consuming request body: The body of
+        the message cannot be read because it is empty. TrackingId:d91cdf47-717c-482c-b8eb-84e7132f0645_G10,
+        SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups\/fakegroup\/schemas\/test-schema:get-id,
+        Timestamp:2022-02-18T21:39:18"}'
+    headers:
+      content-type:
+      - application/json
+      date:
+      - Fri, 18 Feb 2022 21:39:17 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000
+      transfer-encoding:
+      - chunked
+    status:
+      code: 400
+      message: Bad Request
+- request:
+    body: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '179'
+      Content-Type:
+      - application/json; serialization=Invalid-format
+      User-Agent:
+      - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
+    method: POST
+    uri: https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema:get-id?api-version=2021-10
+  response:
+    body:
+      string: '{"Code":415,"Detail":"Invalid schema type for POST request. ''invalid-format''
+        is not supported. TrackingId:a8f8f976-dd14-4ebc-ad6c-acd6fca562c6_G10, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups\/fakegroup\/schemas\/test-schema:get-id,
+        Timestamp:2022-02-18T21:39:18"}'
+    headers:
+      content-type:
+      - application/json
+      date:
+      - Fri, 18 Feb 2022 21:39:17 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000
+      transfer-encoding:
+      - chunked
+    status:
+      code: 415
+      message: Unsupported Media Type
+- request:
+    body: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '179'
+      Content-Type:
+      - application/json; serialization=Avro
+      User-Agent:
+      - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
+    method: POST
+    uri: https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroup/schemas/never-registered:get-id?api-version=2021-10
+  response:
+    body:
+      string: '{"Code":404,"Detail":"Schema fakegroup\/never-registered does not exist.
+        TrackingId:6cf404d0-5cf4-41ed-aca6-62aff745664b_G10, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups\/fakegroup\/schemas\/never-registered:get-id,
+        Timestamp:2022-02-18T21:39:19"}'
+    headers:
+      content-type:
+      - application/json
+      date:
+      - Fri, 18 Feb 2022 21:39:18 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000
+      transfer-encoding:
+      - chunked
+    status:
+      code: 404
+      message: Not Found
+version: 1

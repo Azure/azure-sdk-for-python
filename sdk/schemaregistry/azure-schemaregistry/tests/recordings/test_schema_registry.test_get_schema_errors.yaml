@@ -1,0 +1,35 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json; serialization=Avro
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
+    method: GET
+    uri: https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/fakeschemaid?api-version=2021-10
+  response:
+    body:
+      string: '{"Code":400,"Detail":"SubCode=40000, UnknownType:The request is invalid.
+        [MGResponseHttpError=BadRequest]. TrackingId:23cde249-49db-4669-91aa-d7c5041d245f_G8,
+        SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups\/$schemas\/fakeschemaid,
+        Timestamp:2022-02-18T21:39:16"}'
+    headers:
+      content-type:
+      - application/json
+      date:
+      - Fri, 18 Feb 2022 21:39:16 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000
+      transfer-encoding:
+      - chunked
+    status:
+      code: 400
+      message: Bad Request
+version: 1

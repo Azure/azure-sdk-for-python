@@ -1,0 +1,75 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/json; serialization=Avro
+      User-Agent:
+      - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
+    method: PUT
+    uri: https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema?api-version=2021-10
+  response:
+    body:
+      string: '{"Code":400,"Detail":"Error when consuming request body: The body of
+        the message cannot be read because it is empty. TrackingId:1d877116-1d1b-44f1-81c7-b7112920a242_G28,
+        SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups\/fakegroup\/schemas\/test-schema,
+        Timestamp:2022-02-18T21:39:20"}'
+    headers:
+      content-type:
+      - application/json
+      date:
+      - Fri, 18 Feb 2022 21:39:20 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000
+      transfer-encoding:
+      - chunked
+    status:
+      code: 400
+      message: Bad Request
+- request:
+    body: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '179'
+      Content-Type:
+      - application/json; serialization=Invalid-format
+      User-Agent:
+      - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
+    method: PUT
+    uri: https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema?api-version=2021-10
+  response:
+    body:
+      string: '{"Code":415,"Detail":"Invalid schema type for PUT request. ''invalid-format''
+        is not supported. TrackingId:1b65de1c-f157-4dc2-95c6-34ab867a8625_G28, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups\/fakegroup\/schemas\/test-schema,
+        Timestamp:2022-02-18T21:39:20"}'
+    headers:
+      content-type:
+      - application/json
+      date:
+      - Fri, 18 Feb 2022 21:39:20 GMT
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000
+      transfer-encoding:
+      - chunked
+    status:
+      code: 415
+      message: Unsupported Media Type
+version: 1
