@@ -2,13 +2,9 @@
 
 ## 1.0.2 (Unreleased)
 
-### Features Added
-
-### Breaking Changes
-
 ### Bugs Fixed
 
-### Other Changes
+- Fixed a bug where having a None value in datetime throws
 
 ## 1.0.1 (2021-11-09)
 
