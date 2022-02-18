@@ -185,7 +185,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
         async with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
 
-            receiver = sb_client.get_queue_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE_SESSION, max_wait_time=5)
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE_SESSION, max_wait_time=10)
             with pytest.raises(OperationTimeoutError):
                 await receiver._open_with_retry()
 
@@ -815,8 +815,8 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             messages = []
             async with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id) as receiver:
                 renewer.register(receiver, receiver.session, max_lock_renewal_duration=140)
-                messages.extend(await receiver.receive_messages(max_wait_time=120))
-                messages.extend(await receiver.receive_messages(max_wait_time=5))
+                messages.extend(await receiver.receive_messages(max_wait_time=115))
+                messages.extend(await receiver.receive_messages(max_wait_time=10))
                 try:
                     assert len(messages) == 0
                 except AssertionError:

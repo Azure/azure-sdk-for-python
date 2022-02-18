@@ -978,7 +978,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     if not messages:
                         messages.append(message)
                         assert not message._lock_expired
-                        renewer.register(receiver, message, max_lock_renewal_duration=10)
+                        renewer.register(receiver, message, max_lock_renewal_duration=30)
                         print("Registered lock renew thread", message.locked_until_utc, utc_now())
                         time.sleep(10)
                         print("Finished first sleep", message.locked_until_utc)
@@ -1018,7 +1018,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                                                  prefetch_count=10) as receiver:
                 received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
                 for msg in received_msgs:
-                    renewer.register(receiver, msg, max_lock_renewal_duration=10)
+                    renewer.register(receiver, msg, max_lock_renewal_duration=30)
                 time.sleep(10)
 
                 for msg in received_msgs:
@@ -1039,7 +1039,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                                                  prefetch_count=3) as receiver:
                 received_msgs = receiver.receive_messages(max_message_count=3, max_wait_time=5)
                 for msg in received_msgs:
-                    renewer.register(receiver, msg, max_lock_renewal_duration=10)
+                    renewer.register(receiver, msg, max_lock_renewal_duration=30)
                 time.sleep(10)
 
                 for msg in received_msgs:
@@ -1061,7 +1061,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                                                  prefetch_count=3) as receiver:
                 received_msgs = receiver.receive_messages(max_message_count=3, max_wait_time=5)
                 for msg in received_msgs:
-                    renewer.register(receiver, msg, max_lock_renewal_duration=10)
+                    renewer.register(receiver, msg, max_lock_renewal_duration=30)
                 time.sleep(10)
 
                 for msg in received_msgs:
@@ -1086,7 +1086,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     message = ServiceBusMessage("{}".format(i))
                     sender.send_messages(message)
     
-            renewer = AutoLockRenewer(max_lock_renewal_duration=10)
+            renewer = AutoLockRenewer(max_lock_renewal_duration=30)
             messages = []
             with sb_client.get_queue_receiver(servicebus_queue.name,
                                                  max_wait_time=5, 

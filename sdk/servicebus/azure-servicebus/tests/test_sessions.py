@@ -258,7 +258,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
             with pytest.raises(OperationTimeoutError):
                 with sb_client.get_queue_receiver(servicebus_queue.name, 
                                                   session_id=NEXT_AVAILABLE_SESSION, 
-                                                  max_wait_time=5,) as session:
+                                                  max_wait_time=10,) as session:
                     pass
 
     @pytest.mark.liveTest
@@ -998,7 +998,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 messages = []
                 count = 0
                 while not messages and count < 13:
-                    messages = receiver.receive_messages(max_wait_time=10)
+                    messages = receiver.receive_messages(max_wait_time=20)
                     receiver.session.renew_lock()
                     count += 1
                 assert len(messages) == 0
@@ -1106,7 +1106,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
         def message_processing(sb_client):
             while True:
                 try:
-                    with sb_client.get_queue_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE_SESSION, max_wait_time=5) as receiver:
+                    with sb_client.get_queue_receiver(servicebus_queue.name, session_id=NEXT_AVAILABLE_SESSION, max_wait_time=10) as receiver:
                         for message in receiver:
                             print("ServiceBusReceivedMessage: {}".format(message))
                             messages.append(message)
@@ -1114,6 +1114,11 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 except OperationTimeoutError:
                     return
                 except Exception as e:
+                    # TODO: after service fixes error, remove
+                    if isinstance(e, ServiceBusError) and "Cannot open log for source 'Microsoft.ServiceBus'" in e.value:
+                        print('service error;ignore')
+                        print(e.value)
+                        return
                     errors.append(e)
                     raise
                 
@@ -1136,6 +1141,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
     
             assert not errors
             assert len(messages) == 100
+            assert 1 == 2
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only

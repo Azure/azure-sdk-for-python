@@ -795,7 +795,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     if not messages:
                         messages.append(message)
                         assert not message._lock_expired
-                        renewer.register(receiver, message, max_lock_renewal_duration=10)
+                        renewer.register(receiver, message, max_lock_renewal_duration=30)
                         print("Registered lock renew thread", message.locked_until_utc, utc_now())
                         await asyncio.sleep(10)
                         print("Finished first sleep", message.locked_until_utc)
@@ -838,7 +838,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     message = ServiceBusMessage("{}".format(i))
                     await sender.send_messages(message)
 
-            renewer = AutoLockRenewer(max_lock_renewal_duration=10)
+            renewer = AutoLockRenewer(max_lock_renewal_duration=30)
             messages = []
             async with sb_client.get_queue_receiver(servicebus_queue.name,
                                                     max_wait_time=5,
@@ -1624,7 +1624,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 await sender.send_messages(batch_message)
                 await sender.send_messages(batch_message)
                 messages = []
-                async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
+                async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10) as receiver:
                     async for message in receiver:
                         messages.append(message)
                 assert len(messages) == 4
@@ -1632,7 +1632,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 await sender.send_messages(message)
                 await sender.send_messages(message)
                 messages = []
-                async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
+                async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10) as receiver:
                     async for message in receiver:
                         messages.append(message)
                 assert len(messages) == 2
