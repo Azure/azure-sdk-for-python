@@ -5,6 +5,7 @@ setuptools==46.4.0; python_version >= '3.5'
 virtualenv==20.0.23
 wheel==0.37.0
 Jinja2==2.11.2
+markupsafe==2.0.1
 packaging==20.4
 tox==3.15.0
 tox-monorepo==0.1.2
