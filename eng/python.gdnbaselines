@@ -3,11 +3,27 @@
   "baselines": {
     "baseline": {
       "name": "baseline",
-      "createdDate": "2022-02-17 23:05:12Z",
-      "lastUpdatedDate": "2022-02-17 23:05:12Z"
+      "createdDate": "2022-02-18 01:42:17Z",
+      "lastUpdatedDate": "2022-02-18 01:42:17Z"
     }
   },
   "results": {
+    "de11fc12d40404736083c6119db42fe4c92d7346f77c943b602a93366151459b": {
+      "signature": "de11fc12d40404736083c6119db42fe4c92d7346f77c943b602a93366151459b",
+      "alternativeSignatures": [
+        "0bf6d1b4c9dee32ec2d22783a9f7bf98d5383510b51886edf72828d005cf2598"
+      ],
+      "target": "sdk/batch/azure-batch/tests/test_batch.py",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "credscan",
+      "ruleId": "CSCAN-GENERAL0060",
+      "justification": null,
+      "createdDate": "2022-02-18 01:42:17Z",
+      "expirationDate": null,
+      "type": null
+    },
     "dddcb70bc3d03b820b40ec33582bf683f570c9a8e4015d4245fab8d06da7a073": {
       "signature": "dddcb70bc3d03b820b40ec33582bf683f570c9a8e4015d4245fab8d06da7a073",
       "alternativeSignatures": [
@@ -20,7 +36,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -36,7 +52,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-GENERAL0030",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -52,7 +68,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -68,7 +84,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -84,23 +100,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-GENERAL0020",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
-      "expirationDate": null,
-      "type": null
-    },
-    "e31fd121a0b7df4768b8c1ee4e9c310efc48e45e98621fc9417b501e7036b976": {
-      "signature": "e31fd121a0b7df4768b8c1ee4e9c310efc48e45e98621fc9417b501e7036b976",
-      "alternativeSignatures": [
-        "daf785463d2faca68d7e39d34ab53909f75f3b0224c171cbea5d69a1ae5c82f5"
-      ],
-      "target": "sdk/core/azure-servicemanagement-legacy/tests/test_legacy_mgmt_misc.py",
-      "memberOf": [
-        "baseline"
-      ],
-      "tool": "credscan",
-      "ruleId": "CSCAN-GENERAL0060",
-      "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -116,7 +116,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -132,23 +132,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-GENERAL0020",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
-      "expirationDate": null,
-      "type": null
-    },
-    "18ba566f9a7f47a343a3ac791e316794d10370dac83b8218612e7bc723b7c0a5": {
-      "signature": "18ba566f9a7f47a343a3ac791e316794d10370dac83b8218612e7bc723b7c0a5",
-      "alternativeSignatures": [
-        "ae9b48ccbc3b22015582cb2f71b41fdaf21a1ebd9e46f26e66f50ef715469f9a"
-      ],
-      "target": "sdk/media/azure-media-analytics-edge/samples/sample_lva.py",
-      "memberOf": [
-        "baseline"
-      ],
-      "tool": "credscan",
-      "ruleId": "CSCAN-GENERAL0060",
-      "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -164,7 +148,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -180,7 +164,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -196,7 +180,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -212,7 +196,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -228,7 +212,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -244,7 +228,23 @@
       "tool": "credscan",
       "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
+      "expirationDate": null,
+      "type": null
+    },
+    "5fe5227f13b0099d164ce41aa18134c5ea943c9728376f5b04595553913fb575": {
+      "signature": "5fe5227f13b0099d164ce41aa18134c5ea943c9728376f5b04595553913fb575",
+      "alternativeSignatures": [
+        "98dccc6113a06dd8803a8b3eb53202efb128fe1097830a71098c64b465ab9649"
+      ],
+      "target": "sdk/batch/azure-batch/tests/recordings/test_batch.test_batch_compute_node_user.yaml",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "credscan",
+      "ruleId": "CSCAN-GENERAL0060",
+      "justification": null,
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -260,7 +260,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0061",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -276,7 +276,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0061",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -292,7 +292,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0061",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -308,7 +308,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0061",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -324,7 +324,55 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0061",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
+      "expirationDate": null,
+      "type": null
+    },
+    "116b02e96883d5cb1848c09d555f99f0dd0552f839fc634a50d2cae9ccc5d011": {
+      "signature": "116b02e96883d5cb1848c09d555f99f0dd0552f839fc634a50d2cae9ccc5d011",
+      "alternativeSignatures": [
+        "180ad4d8b2c539f9a9ba5f6f938c19085668d6bc496e59b401e4a408fc8d82ca"
+      ],
+      "target": "sdk/containerinstance/azure-mgmt-containerinstance/tests/recordings/test_mgmt_containerinstance.test_container_instance.yaml",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "credscan",
+      "ruleId": "CSCAN-GENERAL0060",
+      "justification": null,
+      "createdDate": "2022-02-18 01:42:17Z",
+      "expirationDate": null,
+      "type": null
+    },
+    "0bacc768cf9d1e5318f83dd632a38a6eba3ff2a3e5e1330dec874127e1ad5f39": {
+      "signature": "0bacc768cf9d1e5318f83dd632a38a6eba3ff2a3e5e1330dec874127e1ad5f39",
+      "alternativeSignatures": [
+        "edda32f6a366045c2978a0058569b2e5da25cb6a0a5d382722324fd5e087eee6"
+      ],
+      "target": "sdk/containerregistry/azure-mgmt-containerregistry/tests/recordings/test_mgmt_containerregistry.test_managed_registry.yaml",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "credscan",
+      "ruleId": "CSCAN-GENERAL0060",
+      "justification": null,
+      "createdDate": "2022-02-18 01:42:17Z",
+      "expirationDate": null,
+      "type": null
+    },
+    "5e6b9eae149a4628b850b0e9b3f05d56c5163fb39c353b483703e88a911e43c2": {
+      "signature": "5e6b9eae149a4628b850b0e9b3f05d56c5163fb39c353b483703e88a911e43c2",
+      "alternativeSignatures": [
+        "c7a8e6a068d6257e5b6cb483872bce90969a0d966d50b09fcb7378c1237d07af"
+      ],
+      "target": "sdk/containerregistry/azure-mgmt-containerregistry/tests/recordings/test_mgmt_containerregistry.test_managed_registry.yaml",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "credscan",
+      "ruleId": "CSCAN-GENERAL0060",
+      "justification": null,
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -340,7 +388,39 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
+      "expirationDate": null,
+      "type": null
+    },
+    "2553484f085ef741204474129433e4c5a58071116c9208cac1d41b5c06f815b6": {
+      "signature": "2553484f085ef741204474129433e4c5a58071116c9208cac1d41b5c06f815b6",
+      "alternativeSignatures": [
+        "f3b5300099a52f9fc7636c35825c41c42c3b710749f807064287c58ae8671a33"
+      ],
+      "target": "sdk/containerregistry/azure-mgmt-containerregistry/tests/recordings/test_mgmt_containerregistry_2018_02_01_preview.test_managed_registry.yaml",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "credscan",
+      "ruleId": "CSCAN-GENERAL0060",
+      "justification": null,
+      "createdDate": "2022-02-18 01:42:17Z",
+      "expirationDate": null,
+      "type": null
+    },
+    "35240efbeb6cb3e22e81285e2efe1bada9814c8d653cd395602a3dc2d244a014": {
+      "signature": "35240efbeb6cb3e22e81285e2efe1bada9814c8d653cd395602a3dc2d244a014",
+      "alternativeSignatures": [
+        "fead61099d6eee5832908795e5ba8db45359a88a300c05987017170ea159fae5"
+      ],
+      "target": "sdk/containerregistry/azure-mgmt-containerregistry/tests/recordings/test_mgmt_containerregistry_2018_02_01_preview.test_managed_registry.yaml",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "credscan",
+      "ruleId": "CSCAN-GENERAL0060",
+      "justification": null,
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -356,7 +436,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -372,7 +452,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -388,7 +468,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -404,7 +484,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -420,7 +500,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -436,7 +516,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -452,7 +532,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -468,7 +548,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -484,7 +564,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -500,7 +580,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -516,7 +596,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -532,7 +612,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -548,7 +628,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -564,7 +644,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -580,39 +660,39 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0070",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
-    "197665df4ead2ed179be7f58413818eea4f24de1e0be06d63066593d6b8175f8": {
-      "signature": "197665df4ead2ed179be7f58413818eea4f24de1e0be06d63066593d6b8175f8",
+    "557958a9890f1c4ea1d688a53be6e5ec4007cc538ef7deab1aae8edfd1d602e1": {
+      "signature": "557958a9890f1c4ea1d688a53be6e5ec4007cc538ef7deab1aae8edfd1d602e1",
       "alternativeSignatures": [
-        "3bd710896ef6512d957175c577444f05638eea145580d320ddd31df9ab8dc8bf"
+        "6b2637cabae94d444c424cba1860ec5815a6d14bf5bae61a08b28ff7c7ca33f9"
       ],
       "target": "sdk/cosmos/azure-mgmt-documentdb/tests/recordings/test_mgmt_documentdb.test_accounts_features.yaml",
       "memberOf": [
         "baseline"
       ],
       "tool": "credscan",
-      "ruleId": "CSCAN-AZURE0070",
+      "ruleId": "CSCAN-AZURE0080",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
-    "deb7e2a94abcc2c180b8373f0e3012e3ee828911ef402c87e9616b9a176b576d": {
-      "signature": "deb7e2a94abcc2c180b8373f0e3012e3ee828911ef402c87e9616b9a176b576d",
+    "ae22b088dbd02acb1911e52ec8280e480484b58e15a37b0f73b07823ef74f5a6": {
+      "signature": "ae22b088dbd02acb1911e52ec8280e480484b58e15a37b0f73b07823ef74f5a6",
       "alternativeSignatures": [
-        "21879ac862f24fa4d66993ac74a74549bdbb3c7b65f424463961758d23009967"
+        "689f1f1671903e07f228af1c17d36dc295a942bb1159b1ee7fc0043597cddd70"
       ],
       "target": "sdk/cosmos/azure-mgmt-documentdb/tests/recordings/test_mgmt_documentdb.test_accounts_features.yaml",
       "memberOf": [
         "baseline"
       ],
       "tool": "credscan",
-      "ruleId": "CSCAN-AZURE0070",
+      "ruleId": "CSCAN-AZURE0080",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -628,7 +708,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -644,23 +724,23 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
-    "90cb413bbf185df52bc1b510e172e2a66a58dc965b887a3a720315c00578505a": {
-      "signature": "90cb413bbf185df52bc1b510e172e2a66a58dc965b887a3a720315c00578505a",
+    "3c613692335a0af490f013e0a3ad267420bc25d35508cd7fbc578ba7b478314f": {
+      "signature": "3c613692335a0af490f013e0a3ad267420bc25d35508cd7fbc578ba7b478314f",
       "alternativeSignatures": [
-        "ff29f794a54dd5336050f3afe6830d7327b8cb41353e598285349a8e8a83060b"
+        "fe857dacf33cfc46b889a75f00fbfe3cf07b22c734186f890c89ceb41d4eba93"
       ],
       "target": "sdk/media/azure-mgmt-media/tests/recordings/test_mgmt_media.test_media.yaml",
       "memberOf": [
         "baseline"
       ],
       "tool": "credscan",
-      "ruleId": "CSCAN-AZURE0130",
+      "ruleId": "CSCAN-GENERAL0140",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -676,7 +756,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -692,7 +772,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -708,7 +788,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -724,7 +804,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -740,7 +820,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -756,7 +836,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -772,7 +852,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -788,7 +868,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -804,7 +884,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -820,7 +900,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -836,7 +916,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -852,7 +932,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -868,7 +948,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -884,7 +964,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -900,55 +980,23 @@
       "tool": "credscan",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
-    "24fcb85b501dc29e1497e9f7031af755cb45dc3cbe3ee99c7dc7ecf4027d8a9f": {
-      "signature": "24fcb85b501dc29e1497e9f7031af755cb45dc3cbe3ee99c7dc7ecf4027d8a9f",
+    "df5264715670b0a89bf35983217f0bebfdf06391ebd5db12cf9a896f684e2e6e": {
+      "signature": "df5264715670b0a89bf35983217f0bebfdf06391ebd5db12cf9a896f684e2e6e",
       "alternativeSignatures": [
-        "4ed5cc4df100c93c48c98360e2b84922e1acb7200aea212a5aeb188f8708546d"
+        "eb28ce5953df199a8e7a70ddab58af84566a2555ef767d5caddbee660d3b54b1"
       ],
-      "target": "sdk/search/azure-mgmt-search/tests/recordings/test_mgmt_search.pyTestMgmtSearchtest_search_admin_keys.json",
+      "target": "sdk/servermanager/azure-mgmt-servermanager/tests/recordings/test_mgmt_servermanager.test_servermanager_gateways.yaml",
       "memberOf": [
         "baseline"
       ],
       "tool": "credscan",
-      "ruleId": "CSCAN-GENERAL0060",
+      "ruleId": "CSCAN-GENERAL0030",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
-      "expirationDate": null,
-      "type": null
-    },
-    "13f637a24a803c1b421c2c7a094de0caf4bff0a0c09e8ad92db75ffa826aabf1": {
-      "signature": "13f637a24a803c1b421c2c7a094de0caf4bff0a0c09e8ad92db75ffa826aabf1",
-      "alternativeSignatures": [
-        "06e88367f450fc778069bc62ff41027e3ad6c2e811cb0ac0209f10782730afd8"
-      ],
-      "target": "sdk/search/azure-mgmt-search/tests/recordings/test_mgmt_search.pyTestMgmtSearchtest_search_admin_keys.json",
-      "memberOf": [
-        "baseline"
-      ],
-      "tool": "credscan",
-      "ruleId": "CSCAN-GENERAL0060",
-      "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
-      "expirationDate": null,
-      "type": null
-    },
-    "fefbfb4f251088edac0fe32510599d0252181a583b703e78d45ab24e8af922e1": {
-      "signature": "fefbfb4f251088edac0fe32510599d0252181a583b703e78d45ab24e8af922e1",
-      "alternativeSignatures": [
-        "7b1236dcf7c8ebbef9970832bb070584a22e91ff01ee2857a22a89fe3bf78b7b"
-      ],
-      "target": "sdk/search/azure-mgmt-search/tests/recordings/test_mgmt_search.pyTestMgmtSearchtest_search_admin_keys.json",
-      "memberOf": [
-        "baseline"
-      ],
-      "tool": "credscan",
-      "ruleId": "CSCAN-GENERAL0060",
-      "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -964,7 +1012,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0140",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -980,7 +1028,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0030",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -996,7 +1044,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1012,7 +1060,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1028,7 +1076,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-GENERAL0060",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1044,7 +1092,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0060",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1060,7 +1108,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1076,7 +1124,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1092,7 +1140,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1108,7 +1156,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1124,7 +1172,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1140,7 +1188,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1156,7 +1204,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1172,7 +1220,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1188,7 +1236,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1204,7 +1252,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1220,7 +1268,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1236,7 +1284,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1252,7 +1300,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1268,7 +1316,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1284,7 +1332,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1300,7 +1348,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1316,7 +1364,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1332,7 +1380,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1348,7 +1396,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1364,7 +1412,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1380,7 +1428,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1396,7 +1444,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1412,7 +1460,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0130",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1428,7 +1476,7 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0060",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     },
@@ -1444,7 +1492,183 @@
       "tool": "credscan",
       "ruleId": "CSCAN-AZURE0060",
       "justification": null,
-      "createdDate": "2022-02-17 23:05:12Z",
+      "createdDate": "2022-02-18 01:42:17Z",
+      "expirationDate": null,
+      "type": null
+    },
+    "2e7465a04c1dbba0d4c023349e82ae91395332f43fa70623aea90945632589ef": {
+      "signature": "2e7465a04c1dbba0d4c023349e82ae91395332f43fa70623aea90945632589ef",
+      "alternativeSignatures": [
+        "c06f5b709484d7c7b8a8d816e111dfccfa116d62e5f85cb6b00d35df5d9c72a6"
+      ],
+      "target": "sdk/servicefabric/azure-servicefabric/azure/servicefabric/models/_models_py3.py",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "credscan",
+      "ruleId": "CSCAN-GENERAL0030",
+      "justification": null,
+      "createdDate": "2022-02-18 01:42:17Z",
+      "expirationDate": null,
+      "type": null
+    },
+    "c15c7a1a72ed8b97adb1b1220fa1b5d00451a2de82f9ae7286626162e3884291": {
+      "signature": "c15c7a1a72ed8b97adb1b1220fa1b5d00451a2de82f9ae7286626162e3884291",
+      "alternativeSignatures": [
+        "e4986b7fb16a3f4889ee02d9cbf83c7754f2afd41d6ad72a13043b0fa3fe0484"
+      ],
+      "target": "sdk/labservices/azure-mgmt-labservices/azure/mgmt/labservices/models/_models_py3.py",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "credscan",
+      "ruleId": "CSCAN-GENERAL0030",
+      "justification": null,
+      "createdDate": "2022-02-18 01:42:17Z",
+      "expirationDate": null,
+      "type": null
+    },
+    "b8eb65f964eb239b61fd9362d333c1583d50f738aa47bd9508f38ee5bcc6bfb5": {
+      "signature": "b8eb65f964eb239b61fd9362d333c1583d50f738aa47bd9508f38ee5bcc6bfb5",
+      "alternativeSignatures": [
+        "0846a4a801e7aec45785c5f83af7c67d513bdf7b68feb7d0daf679ff820727fa"
+      ],
+      "target": "sdk/containerregistry/azure-mgmt-containerregistry/azure/mgmt/containerregistry/v2017_10_01/models/_models_py3.py",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "credscan",
+      "ruleId": "CSCAN-GENERAL0030",
+      "justification": null,
+      "createdDate": "2022-02-18 01:42:17Z",
+      "expirationDate": null,
+      "type": null
+    },
+    "5c25588bef4565a1b381bcb97c6ad8e5af347cf9920cd1a5675a5bc6874a006e": {
+      "signature": "5c25588bef4565a1b381bcb97c6ad8e5af347cf9920cd1a5675a5bc6874a006e",
+      "alternativeSignatures": [
+        "ccdb197cc6dd2a3983505d2e0f7a90ccde5aca1f1daf8ded2f89f986a8faf13e"
+      ],
+      "target": "sdk/containerregistry/azure-mgmt-containerregistry/azure/mgmt/containerregistry/v2019_05_01/models/_models_py3.py",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "credscan",
+      "ruleId": "CSCAN-GENERAL0030",
+      "justification": null,
+      "createdDate": "2022-02-18 01:42:17Z",
+      "expirationDate": null,
+      "type": null
+    },
+    "bfb6a3440b8721b13ee6f2e87e9a4231d580c6660baa83abe6647c42398837fb": {
+      "signature": "bfb6a3440b8721b13ee6f2e87e9a4231d580c6660baa83abe6647c42398837fb",
+      "alternativeSignatures": [
+        "3ec9617a4dd3cf0ac16c5a5aa3d83d4649825f7f844ae67e9a5af0ce202d85e6"
+      ],
+      "target": "sdk/containerregistry/azure-mgmt-containerregistry/azure/mgmt/containerregistry/v2019_12_01_preview/models/_models_py3.py",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "credscan",
+      "ruleId": "CSCAN-GENERAL0030",
+      "justification": null,
+      "createdDate": "2022-02-18 01:42:17Z",
+      "expirationDate": null,
+      "type": null
+    },
+    "d06f2d778df3f76894ca75075014e64909a4369c0e6b38259de977c401ad124e": {
+      "signature": "d06f2d778df3f76894ca75075014e64909a4369c0e6b38259de977c401ad124e",
+      "alternativeSignatures": [
+        "117f589c5edcd026d07911cb3eb8430d774f6f3fcdf7041e9f690cc98d70971a"
+      ],
+      "target": "sdk/containerregistry/azure-mgmt-containerregistry/azure/mgmt/containerregistry/v2020_11_01_preview/models/_models_py3.py",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "credscan",
+      "ruleId": "CSCAN-GENERAL0030",
+      "justification": null,
+      "createdDate": "2022-02-18 01:42:17Z",
+      "expirationDate": null,
+      "type": null
+    },
+    "ecdb854cbf5ca33e2ab8e0f755e2a06abf2c8954b3329a0db045352397b69480": {
+      "signature": "ecdb854cbf5ca33e2ab8e0f755e2a06abf2c8954b3329a0db045352397b69480",
+      "alternativeSignatures": [
+        "be3f0d1d626b5459a70fd621efeb40059747aac591a6c50f0687e4f643fdf800"
+      ],
+      "target": "sdk/containerregistry/azure-mgmt-containerregistry/azure/mgmt/containerregistry/v2021_06_01_preview/models/_models_py3.py",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "credscan",
+      "ruleId": "CSCAN-GENERAL0030",
+      "justification": null,
+      "createdDate": "2022-02-18 01:42:17Z",
+      "expirationDate": null,
+      "type": null
+    },
+    "a2acb43bf7567a19f29fd8bda4f477a3f7657ea4a40165ada9ac77a51cb4a84f": {
+      "signature": "a2acb43bf7567a19f29fd8bda4f477a3f7657ea4a40165ada9ac77a51cb4a84f",
+      "alternativeSignatures": [
+        "5a96cb3487cc04a6a0adfd3761951340bb30b88f0c5f7321073c46e4ab6e3305"
+      ],
+      "target": "sdk/containerregistry/azure-mgmt-containerregistry/azure/mgmt/containerregistry/v2021_08_01_preview/models/_models_py3.py",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "credscan",
+      "ruleId": "CSCAN-GENERAL0030",
+      "justification": null,
+      "createdDate": "2022-02-18 01:42:17Z",
+      "expirationDate": null,
+      "type": null
+    },
+    "3ad120c4b3faaa039f0313eaf39491f18709534f1e08d0e911e8e167f7c74d32": {
+      "signature": "3ad120c4b3faaa039f0313eaf39491f18709534f1e08d0e911e8e167f7c74d32",
+      "alternativeSignatures": [
+        "ae5abe3f3fdbf323adeb984846fc7dda525c87ba2398d374acdb8058d7623424"
+      ],
+      "target": "sdk/containerregistry/azure-mgmt-containerregistry/azure/mgmt/containerregistry/v2021_09_01/models/_models_py3.py",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "credscan",
+      "ruleId": "CSCAN-GENERAL0030",
+      "justification": null,
+      "createdDate": "2022-02-18 01:42:17Z",
+      "expirationDate": null,
+      "type": null
+    },
+    "a3e086b506e002abb15b8707871e83045a824e8e30a93915537e4ef90e15b1ea": {
+      "signature": "a3e086b506e002abb15b8707871e83045a824e8e30a93915537e4ef90e15b1ea",
+      "alternativeSignatures": [
+        "4c00061d7c819b0b83e26ba0a9303468ae5c6b0cf6a0f13a2bf51f46b2036a73"
+      ],
+      "target": "sdk/media/azure-media-analytics-edge/azure/media/analyticsedge/_generated/models/_models.py",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "credscan",
+      "ruleId": "CSCAN-GENERAL0030",
+      "justification": null,
+      "createdDate": "2022-02-18 01:42:17Z",
+      "expirationDate": null,
+      "type": null
+    },
+    "7cc0a02e06d8e308af33bbd383158561509bc10fd58703f4aca547cb2f6a2ec3": {
+      "signature": "7cc0a02e06d8e308af33bbd383158561509bc10fd58703f4aca547cb2f6a2ec3",
+      "alternativeSignatures": [
+        "9a4378092b7fc7ee2bc5690d5dbbdfa2a405fceb87cc970322fc6273e0201c6b"
+      ],
+      "target": "sdk/media/azure-media-analytics-edge/azure/media/analyticsedge/_generated/models/_models_py3.py",
+      "memberOf": [
+        "baseline"
+      ],
+      "tool": "credscan",
+      "ruleId": "CSCAN-GENERAL0030",
+      "justification": null,
+      "createdDate": "2022-02-18 01:42:17Z",
       "expirationDate": null,
       "type": null
     }
