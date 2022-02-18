@@ -2590,7 +2590,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_message_state_scheduled(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_state_scheduled(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string) as sb_client:
 
@@ -2603,7 +2603,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             receiver = sb_client.get_queue_receiver(servicebus_queue.name)
             with receiver:
                 for msg in receiver.peek_messages():
-                    assert msg.message_state == ServiceBusMessageState.SCHEDULED
+                    assert msg.state == ServiceBusMessageState.SCHEDULED
 
 
     @pytest.mark.liveTest
@@ -2611,7 +2611,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_message_state_deferred(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_state_deferred(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string) as sb_client:
 
@@ -2625,7 +2625,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             with receiver:
                 received_msgs = receiver.receive_messages()
                 for message in received_msgs:
-                    assert message.message_state == ServiceBusMessageState.ACTIVE
+                    assert message.state == ServiceBusMessageState.ACTIVE
                     deferred_messages.append(message.sequence_number)
                     receiver.defer_message(message)
                 if deferred_messages:
@@ -2633,4 +2633,4 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         sequence_numbers=deferred_messages
                         )
                 for message in received_deferred_msg:
-                    assert message.message_state == ServiceBusMessageState.DEFERRED
+                    assert message.state == ServiceBusMessageState.DEFERRED
