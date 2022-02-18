@@ -1831,7 +1831,7 @@ class MetricSeriesData:
         )
 
 
-class MetricEnrichedSeriesData:
+class MetricEnrichedSeriesData(generated_models.MetricEnrichedSeriesData):
     """MetricEnrichedSeriesData.
 
     All required parameters must be populated in order to send to Azure.
@@ -1856,16 +1856,6 @@ class MetricEnrichedSeriesData:
     :type upper_bounds: list[float]
     """
 
-    def __init__(self, **kwargs):
-        self.series_key = kwargs.get("series_key", None)
-        self.timestamps = kwargs.get("timestamps", None)
-        self.values = kwargs.get("values", None)
-        self.is_anomaly = kwargs.get("is_anomaly", None)
-        self.periods = kwargs.get("periods", None)
-        self.expected_values = kwargs.get("expected_values", None)
-        self.lower_bounds = kwargs.get("lower_bounds", None)
-        self.upper_bounds = kwargs.get("upper_bounds", None)
-
     def __repr__(self):
         return (
             "MetricEnrichedSeriesData(series_key={}, timestamps={}, values={}, is_anomaly={}, periods={}, "
@@ -1881,21 +1871,8 @@ class MetricEnrichedSeriesData:
             )[:1024]
         )
 
-    @classmethod
-    def _from_generated(cls, data):
-        return cls(
-            series_key=data.series.dimension,
-            timestamps=data.timestamp_list,
-            values=data.value_list,
-            is_anomaly=data.is_anomaly_list,
-            periods=data.period_list,
-            expected_values=data.expected_value_list,
-            lower_bounds=data.lower_boundary_list,
-            upper_bounds=data.upper_boundary_list,
-        )
 
-
-class AnomalyAlert:
+class AnomalyAlert(generated_models.AnomalyAlert):
     """AnomalyAlert
 
     :ivar id: alert id.
@@ -1908,25 +1885,10 @@ class AnomalyAlert:
     :vartype modified_time: ~datetime.datetime
     """
 
-    def __init__(self, **kwargs):
-        self.id = kwargs.get("id", None)
-        self.timestamp = kwargs.get("timestamp", None)
-        self.created_time = kwargs.get("created_time", None)
-        self.modified_time = kwargs.get("modified_time", None)
-
     def __repr__(self):
         return "AnomalyAlert(id={}, timestamp={}, created_time={}, modified_time={})".format(
             self.id, self.timestamp, self.created_time, self.modified_time
         )[:1024]
-
-    @classmethod
-    def _from_generated(cls, alert):
-        return cls(
-            id=alert.alert_id,
-            timestamp=alert.timestamp,
-            created_time=alert.created_time,
-            modified_time=alert.modified_time,
-        )
 
 
 TYPE_TO_DATA_SOURCE = {
@@ -1946,7 +1908,7 @@ TYPE_TO_DATA_SOURCE = {
 }
 
 
-class DataPointAnomaly(msrest.serialization.Model):
+class DataPointAnomaly(generated_models.DataPointAnomaly):
     """DataPointAnomaly.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1972,31 +1934,6 @@ class DataPointAnomaly(msrest.serialization.Model):
     :vartype status: str
     """
 
-    _attribute_map = {
-        "metric_id": {"key": "metricId", "type": "str"},
-        "detection_configuration_id": {
-            "key": "detectionConfigurationId",
-            "type": "str",
-        },
-        "timestamp": {"key": "timestamp", "type": "iso-8601"},
-        "created_time": {"key": "createdTime", "type": "iso-8601"},
-        "modified_time": {"key": "modifiedTime", "type": "iso-8601"},
-        "dimension": {"key": "dimension", "type": "{str}"},
-        "severity": {"key": "severity", "type": "str"},
-        "status": {"key": "status", "type": "str"},
-    }
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.metric_id = kwargs.get("metric_id", None)
-        self.detection_configuration_id = kwargs.get("detection_configuration_id", None)
-        self.timestamp = kwargs.get("timestamp", None)
-        self.created_time = kwargs.get("created_time", None)
-        self.modified_time = kwargs.get("modified_time", None)
-        self.dimension = kwargs.get("dimension", None)
-        self.severity = kwargs.get("severity", None)
-        self.status = kwargs.get("status", None)
-
     def __repr__(self):
         return (
             "DataPointAnomaly(metric_id={}, detection_configuration_id={}, timestamp={}, created_time={}, "
@@ -2012,30 +1949,8 @@ class DataPointAnomaly(msrest.serialization.Model):
             )[:1024]
         )
 
-    @classmethod
-    def _from_generated(cls, anomaly_result):
-        # type: (DataPointAnomaly) -> Union[DataPointAnomaly, None]
-        if not anomaly_result:
-            return None
-        severity = None
-        status = None
-        if anomaly_result.property:
-            severity = anomaly_result.property.anomaly_severity
-            status = anomaly_result.property.anomaly_status
 
-        return cls(
-            metric_id=anomaly_result.metric_id,
-            detection_configuration_id=anomaly_result.anomaly_detection_configuration_id,
-            timestamp=anomaly_result.timestamp,
-            created_time=anomaly_result.created_time,
-            modified_time=anomaly_result.modified_time,
-            dimension=anomaly_result.dimension,
-            severity=severity,
-            status=status,
-        )
-
-
-class AnomalyIncident(msrest.serialization.Model):
+class AnomalyIncident(generated_models.AnomalyIncident):
     """AnomalyIncident.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2061,31 +1976,6 @@ class AnomalyIncident(msrest.serialization.Model):
     :vartype status: str or ~azure.ai.metricsadvisor.models.AnomalyIncidentStatus
     """
 
-    _attribute_map = {
-        "metric_id": {"key": "metricId", "type": "str"},
-        "detection_configuration_id": {
-            "key": "detectionConfigurationId",
-            "type": "str",
-        },
-        "id": {"key": "id", "type": "str"},
-        "start_time": {"key": "startTime", "type": "iso-8601"},
-        "last_time": {"key": "lastTime", "type": "iso-8601"},
-        "dimension_key": {"key": "dimensionKey", "type": "{str}"},
-        "severity": {"key": "severity", "type": "str"},
-        "status": {"key": "status", "type": "str"},
-    }
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.metric_id = kwargs.get("metric_id", None)
-        self.detection_configuration_id = kwargs.get("detection_configuration_id", None)
-        self.id = kwargs.get("id", None)
-        self.start_time = kwargs.get("start_time", None)
-        self.last_time = kwargs.get("last_time", None)
-        self.dimension_key = kwargs.get("dimension_key", None)
-        self.severity = kwargs.get("severity", None)
-        self.status = kwargs.get("status", None)
-
     def __repr__(self):
         return (
             "AnomalyIncident(metric_id={}, detection_configuration_id={}, id={}, start_time={}, last_time={}, "
@@ -2099,28 +1989,6 @@ class AnomalyIncident(msrest.serialization.Model):
                 self.severity,
                 self.status,
             )[:1024]
-        )
-
-    @classmethod
-    def _from_generated(cls, incident_result):
-        # type: (AnomalyIncident) -> Union[AnomalyIncident, None]
-        if not incident_result:
-            return None
-        dimension_key = incident_result.root_node.dimension if incident_result.root_node else None
-        severity = None
-        status = None
-        if incident_result.property:
-            severity = incident_result.property.max_severity
-            status = incident_result.property.incident_status
-        return cls(
-            metric_id=incident_result.metric_id,
-            detection_configuration_id=incident_result.anomaly_detection_configuration_id,
-            id=incident_result.incident_id,
-            start_time=incident_result.start_time,
-            last_time=incident_result.last_time,
-            dimension_key=dimension_key,
-            severity=severity,
-            status=status,
         )
 
 

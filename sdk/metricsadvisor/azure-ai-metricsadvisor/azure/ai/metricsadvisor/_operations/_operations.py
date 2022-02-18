@@ -165,8 +165,8 @@ def build_list_alerts_request(
     )
 
 
-def build_get_anomalies_from_alert_by_anomaly_alerting_configuration_request(
-    configuration_id: str,
+def build_list_anomalies_for_alert_request(
+    alert_configuration_id: str,
     alert_id: str,
     *,
     skip: Optional[int] = None,
@@ -177,7 +177,7 @@ def build_get_anomalies_from_alert_by_anomaly_alerting_configuration_request(
     # Construct URL
     _url = "/alert/anomaly/configurations/{configurationId}/alerts/{alertId}/anomalies"
     path_format_arguments = {
-        "configurationId": _SERIALIZER.url("configuration_id", configuration_id, "str"),
+        "configurationId": _SERIALIZER.url("alert_configuration_id", alert_configuration_id, "str"),
         "alertId": _SERIALIZER.url("alert_id", alert_id, "str"),
     }
 
@@ -197,8 +197,8 @@ def build_get_anomalies_from_alert_by_anomaly_alerting_configuration_request(
     return HttpRequest(method="GET", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
 
 
-def build_get_incidents_from_alert_by_anomaly_alerting_configuration_request(
-    configuration_id: str,
+def build_list_incidents_for_alert_request(
+    alert_configuration_id: str,
     alert_id: str,
     *,
     skip: Optional[int] = None,
@@ -209,7 +209,7 @@ def build_get_incidents_from_alert_by_anomaly_alerting_configuration_request(
     # Construct URL
     _url = "/alert/anomaly/configurations/{configurationId}/alerts/{alertId}/incidents"
     path_format_arguments = {
-        "configurationId": _SERIALIZER.url("configuration_id", configuration_id, "str"),
+        "configurationId": _SERIALIZER.url("alert_configuration_id", alert_configuration_id, "str"),
         "alertId": _SERIALIZER.url("alert_id", alert_id, "str"),
     }
 
@@ -508,12 +508,14 @@ def build_get_incidents_by_anomaly_detection_configuration_next_pages_request(
     return HttpRequest(method="GET", url=_url, params=_query_parameters, headers=_header_parameters, **kwargs)
 
 
-def build_list_incident_root_causes_request(configuration_id: str, incident_id: str, **kwargs: Any) -> HttpRequest:
+def build_list_incident_root_causes_request(
+    detection_configuration_id: str, incident_id: str, **kwargs: Any
+) -> HttpRequest:
     accept = "application/json"
     # Construct URL
     _url = "/enrichment/anomalyDetection/configurations/{configurationId}/incidents/{incidentId}/rootCause"
     path_format_arguments = {
-        "configurationId": _SERIALIZER.url("configuration_id", configuration_id, "str"),
+        "configurationId": _SERIALIZER.url("detection_configuration_id", detection_configuration_id, "str"),
         "incidentId": _SERIALIZER.url("incident_id", incident_id, "str"),
     }
 
@@ -1482,9 +1484,9 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_anomalies_from_alert_by_anomaly_alerting_configuration(
+    def list_anomalies_for_alert(
         self,
-        configuration_id: str,
+        alert_configuration_id: str,
         alert_id: str,
         *,
         skip: Optional[int] = None,
@@ -1495,8 +1497,8 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         Query anomalies under a specific alert.
 
-        :param configuration_id: anomaly alerting configuration unique id.
-        :type configuration_id: str
+        :param alert_configuration_id: anomaly alerting configuration unique id.
+        :type alert_configuration_id: str
         :param alert_id: alert id.
         :type alert_id: str
         :keyword skip: for paging, skipped number.
@@ -1515,8 +1517,8 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_get_anomalies_from_alert_by_anomaly_alerting_configuration_request(
-                    configuration_id=configuration_id,
+                request = build_list_anomalies_for_alert_request(
+                    alert_configuration_id=alert_configuration_id,
                     alert_id=alert_id,
                     skip=skip,
                     maxpagesize=maxpagesize,
@@ -1530,8 +1532,8 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
             else:
 
-                request = build_get_anomalies_from_alert_by_anomaly_alerting_configuration_request(
-                    configuration_id=configuration_id,
+                request = build_list_anomalies_for_alert_request(
+                    alert_configuration_id=alert_configuration_id,
                     alert_id=alert_id,
                     skip=skip,
                     maxpagesize=maxpagesize,
@@ -1576,9 +1578,9 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_incidents_from_alert_by_anomaly_alerting_configuration(
+    def list_incidents_for_alert(
         self,
-        configuration_id: str,
+        alert_configuration_id: str,
         alert_id: str,
         *,
         skip: Optional[int] = None,
@@ -1589,8 +1591,8 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         Query incidents under a specific alert.
 
-        :param configuration_id: anomaly alerting configuration unique id.
-        :type configuration_id: str
+        :param alert_configuration_id: anomaly alerting configuration unique id.
+        :type alert_configuration_id: str
         :param alert_id: alert id.
         :type alert_id: str
         :keyword skip: for paging, skipped number.
@@ -1609,8 +1611,8 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_get_incidents_from_alert_by_anomaly_alerting_configuration_request(
-                    configuration_id=configuration_id,
+                request = build_list_incidents_for_alert_request(
+                    alert_configuration_id=alert_configuration_id,
                     alert_id=alert_id,
                     skip=skip,
                     maxpagesize=maxpagesize,
@@ -1624,8 +1626,8 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
             else:
 
-                request = build_get_incidents_from_alert_by_anomaly_alerting_configuration_request(
-                    configuration_id=configuration_id,
+                request = build_list_incidents_for_alert_request(
+                    alert_configuration_id=alert_configuration_id,
                     alert_id=alert_id,
                     skip=skip,
                     maxpagesize=maxpagesize,
@@ -2397,14 +2399,14 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
     @distributed_trace
     def list_incident_root_causes(
-        self, configuration_id: str, incident_id: str, **kwargs: Any
+        self, detection_configuration_id: str, incident_id: str, **kwargs: Any
     ) -> Iterable["_models.RootCauseList"]:
         """Query root cause for incident.
 
         Query root cause for incident.
 
-        :param configuration_id: anomaly detection configuration unique id.
-        :type configuration_id: str
+        :param detection_configuration_id: anomaly detection configuration unique id.
+        :type detection_configuration_id: str
         :param incident_id: incident id.
         :type incident_id: str
         :return: An iterator like instance of RootCauseList
@@ -2419,7 +2421,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
             if not next_link:
 
                 request = build_list_incident_root_causes_request(
-                    configuration_id=configuration_id,
+                    detection_configuration_id=detection_configuration_id,
                     incident_id=incident_id,
                 )
                 path_format_arguments = {
@@ -2432,7 +2434,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
             else:
 
                 request = build_list_incident_root_causes_request(
-                    configuration_id=configuration_id,
+                    detection_configuration_id=detection_configuration_id,
                     incident_id=incident_id,
                 )
                 path_format_arguments = {
@@ -3156,14 +3158,14 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
     @distributed_trace
     def add_feedback(  # pylint: disable=inconsistent-return-statements
-        self, body: "_models.MetricFeedback", **kwargs: Any
+        self, feedback: "_models.MetricFeedback", **kwargs: Any
     ) -> None:
         """Create a new metric feedback.
 
         Create a new metric feedback.
 
-        :param body: metric feedback.
-        :type body: ~azure.ai.metricsadvisor.models.MetricFeedback
+        :param feedback: metric feedback.
+        :type feedback: ~azure.ai.metricsadvisor.models.MetricFeedback
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -3174,7 +3176,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, "MetricFeedback")
+        _json = self._serialize.body(feedback, "MetricFeedback")
 
         request = build_add_feedback_request(
             content_type=content_type,

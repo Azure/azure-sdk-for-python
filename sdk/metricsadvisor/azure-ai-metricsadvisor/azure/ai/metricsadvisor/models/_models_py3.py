@@ -16,41 +16,6 @@ from ._metrics_advisor_client_enums import *
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from . import (
-        AnomalyAlert,
-        AnomalyDetectionConfiguration,
-        AnomalyIncident,
-        AnomalyProperty,
-        AzureSQLConnectionStringParamPatch,
-        ChangeThresholdCondition,
-        DataFeedDimension,
-        DataFeedMetric,
-        DataLakeGen2SharedKeyParamPatch,
-        DataPointAnomaly,
-        DetectionAnomalyFilterCondition,
-        DetectionIncidentFilterCondition,
-        DimensionGroupIdentity,
-        FeedbackDimensionFilter,
-        HardThresholdCondition,
-        IncidentProperty,
-        IncidentRootCause,
-        MetricAlertConfiguration,
-        MetricAnomalyAlertSnoozeCondition,
-        MetricBoundaryCondition,
-        MetricDetectionCondition,
-        MetricEnrichedSeriesData,
-        MetricSeriesDefinition,
-        MetricSeriesGroupDetectionCondition,
-        MetricSingleSeriesDetectionCondition,
-        SeriesIdentity,
-        ServicePrincipalInKVParamPatch,
-        ServicePrincipalParamPatch,
-        SeverityCondition,
-        SeverityFilterCondition,
-        SmartDetectionCondition,
-        SuppressCondition,
-        TopNGroupScope,
-    )
     import __init__ as _models
 
 
@@ -751,122 +716,94 @@ class AnomalyIncident(msrest.serialization.Model):
 
      only return for alerting incident result.
     :vartype metric_id: str
-    :ivar anomaly_detection_configuration_id: anomaly detection configuration unique id
+    :ivar detection_configuration_id: anomaly detection configuration unique id
 
      only return for alerting incident result.
-    :vartype anomaly_detection_configuration_id: str
-    :ivar incident_id: Required. incident id.
-    :vartype incident_id: str
+    :vartype detection_configuration_id: str
+    :ivar id: Required. incident id.
+    :vartype id: str
     :ivar start_time: Required. incident start time.
     :vartype start_time: ~datetime.datetime
     :ivar last_time: Required. incident last time.
     :vartype last_time: ~datetime.datetime
-    :ivar root_node: Required.
-    :vartype root_node: ~azure.ai.metricsadvisor.models.SeriesIdentity
-    :ivar property: Required.
-    :vartype property: ~azure.ai.metricsadvisor.models.IncidentProperty
+    :ivar severity: Required. max severity of latest anomalies in the incident. Possible values
+     include: "Low", "Medium", "High".
+    :vartype severity: str or ~azure.ai.metricsadvisor.models.AnomalySeverity
+    :ivar status: incident status
+
+     only return for alerting incident result. Possible values include: "Active", "Resolved".
+    :vartype status: str or ~azure.ai.metricsadvisor.models.AnomalyIncidentStatus
+    :ivar value_of_root_node: value of the root node.
+    :vartype value_of_root_node: float
+    :ivar expected_value_of_root_node: expected value of the root node given by smart detector.
+    :vartype expected_value_of_root_node: float
+    :ivar dimension: Required. dimension specified for series.
+    :vartype dimension: dict[str, str]
     """
 
     _validation = {
         "data_feed_id": {"readonly": True},
         "metric_id": {"readonly": True},
-        "anomaly_detection_configuration_id": {"readonly": True},
-        "incident_id": {"required": True},
+        "detection_configuration_id": {"readonly": True},
+        "id": {"required": True},
         "start_time": {"required": True},
         "last_time": {"required": True},
-        "root_node": {"required": True},
-        "property": {"required": True},
+        "severity": {"required": True},
+        "status": {"readonly": True},
+        "value_of_root_node": {"readonly": True},
+        "expected_value_of_root_node": {"readonly": True},
+        "dimension": {"required": True},
     }
 
     _attribute_map = {
         "data_feed_id": {"key": "dataFeedId", "type": "str"},
         "metric_id": {"key": "metricId", "type": "str"},
-        "anomaly_detection_configuration_id": {"key": "anomalyDetectionConfigurationId", "type": "str"},
-        "incident_id": {"key": "incidentId", "type": "str"},
+        "detection_configuration_id": {"key": "anomalyDetectionConfigurationId", "type": "str"},
+        "id": {"key": "incidentId", "type": "str"},
         "start_time": {"key": "startTime", "type": "iso-8601"},
         "last_time": {"key": "lastTime", "type": "iso-8601"},
-        "root_node": {"key": "rootNode", "type": "SeriesIdentity"},
-        "property": {"key": "property", "type": "IncidentProperty"},
+        "severity": {"key": "property.maxSeverity", "type": "str"},
+        "status": {"key": "property.incidentStatus", "type": "str"},
+        "value_of_root_node": {"key": "property.valueOfRootNode", "type": "float"},
+        "expected_value_of_root_node": {"key": "property.expectedValueOfRootNode", "type": "float"},
+        "dimension": {"key": "rootNode.dimension", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
-        incident_id: str,
+        id: str,
         start_time: datetime.datetime,
         last_time: datetime.datetime,
-        root_node: "_models.SeriesIdentity",
-        property: "_models.IncidentProperty",
+        severity: Union[str, "_models.AnomalySeverity"],
+        dimension: Dict[str, str],
         **kwargs
     ):
         """
-        :keyword incident_id: Required. incident id.
-        :paramtype incident_id: str
+        :keyword id: Required. incident id.
+        :paramtype id: str
         :keyword start_time: Required. incident start time.
         :paramtype start_time: ~datetime.datetime
         :keyword last_time: Required. incident last time.
         :paramtype last_time: ~datetime.datetime
-        :keyword root_node: Required.
-        :paramtype root_node: ~azure.ai.metricsadvisor.models.SeriesIdentity
-        :keyword property: Required.
-        :paramtype property: ~azure.ai.metricsadvisor.models.IncidentProperty
+        :keyword severity: Required. max severity of latest anomalies in the incident. Possible values
+         include: "Low", "Medium", "High".
+        :paramtype severity: str or ~azure.ai.metricsadvisor.models.AnomalySeverity
+        :keyword dimension: Required. dimension specified for series.
+        :paramtype dimension: dict[str, str]
         """
         super(AnomalyIncident, self).__init__(**kwargs)
         self.data_feed_id = None
         self.metric_id = None
-        self.anomaly_detection_configuration_id = None
-        self.incident_id = incident_id
+        self.detection_configuration_id = None
+        self.id = id
         self.start_time = start_time
         self.last_time = last_time
-        self.root_node = root_node
-        self.property = property
-
-
-class AnomalyProperty(msrest.serialization.Model):
-    """AnomalyProperty.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar anomaly_severity: Required. anomaly severity. Possible values include: "Low", "Medium",
-     "High".
-    :vartype anomaly_severity: str or ~azure.ai.metricsadvisor.models.AnomalySeverity
-    :ivar anomaly_status: anomaly status
-
-     only return for alerting anomaly result. Possible values include: "Active", "Resolved".
-    :vartype anomaly_status: str or ~azure.ai.metricsadvisor.models.AnomalyStatus
-    :ivar value: value of the anomaly.
-    :vartype value: float
-    :ivar expected_value: expected value of the anomaly given by smart detector.
-    :vartype expected_value: float
-    """
-
-    _validation = {
-        "anomaly_severity": {"required": True},
-        "anomaly_status": {"readonly": True},
-        "value": {"readonly": True},
-        "expected_value": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "anomaly_severity": {"key": "anomalySeverity", "type": "str"},
-        "anomaly_status": {"key": "anomalyStatus", "type": "str"},
-        "value": {"key": "value", "type": "float"},
-        "expected_value": {"key": "expectedValue", "type": "float"},
-    }
-
-    def __init__(self, *, anomaly_severity: Union[str, "_models.AnomalySeverity"], **kwargs):
-        """
-        :keyword anomaly_severity: Required. anomaly severity. Possible values include: "Low",
-         "Medium", "High".
-        :paramtype anomaly_severity: str or ~azure.ai.metricsadvisor.models.AnomalySeverity
-        """
-        super(AnomalyProperty, self).__init__(**kwargs)
-        self.anomaly_severity = anomaly_severity
-        self.anomaly_status = None
-        self.value = None
-        self.expected_value = None
+        self.severity = severity
+        self.status = None
+        self.value_of_root_node = None
+        self.expected_value_of_root_node = None
+        self.dimension = dimension
 
 
 class AnomalyResultList(msrest.serialization.Model):
@@ -2372,10 +2309,10 @@ class DataPointAnomaly(msrest.serialization.Model):
 
      only return for alerting anomaly result.
     :vartype metric_id: str
-    :ivar anomaly_detection_configuration_id: anomaly detection configuration unique id
+    :ivar detection_configuration_id: anomaly detection configuration unique id
 
      only return for alerting anomaly result.
-    :vartype anomaly_detection_configuration_id: str
+    :vartype detection_configuration_id: str
     :ivar timestamp: Required. anomaly time.
     :vartype timestamp: ~datetime.datetime
     :ivar created_time: created time
@@ -2388,52 +2325,75 @@ class DataPointAnomaly(msrest.serialization.Model):
     :vartype modified_time: ~datetime.datetime
     :ivar dimension: Required. dimension specified for series.
     :vartype dimension: dict[str, str]
-    :ivar property: Required.
-    :vartype property: ~azure.ai.metricsadvisor.models.AnomalyProperty
+    :ivar severity: Required. anomaly severity. Possible values include: "Low", "Medium", "High".
+    :vartype severity: str or ~azure.ai.metricsadvisor.models.AnomalySeverity
+    :ivar status: anomaly status
+
+     only return for alerting anomaly result. Possible values include: "Active", "Resolved".
+    :vartype status: str or ~azure.ai.metricsadvisor.models.AnomalyStatus
+    :ivar value: value of the anomaly.
+    :vartype value: float
+    :ivar expected_value: expected value of the anomaly given by smart detector.
+    :vartype expected_value: float
     """
 
     _validation = {
         "data_feed_id": {"readonly": True},
         "metric_id": {"readonly": True},
-        "anomaly_detection_configuration_id": {"readonly": True},
+        "detection_configuration_id": {"readonly": True},
         "timestamp": {"required": True},
         "created_time": {"readonly": True},
         "modified_time": {"readonly": True},
         "dimension": {"required": True},
-        "property": {"required": True},
+        "severity": {"required": True},
+        "status": {"readonly": True},
+        "value": {"readonly": True},
+        "expected_value": {"readonly": True},
     }
 
     _attribute_map = {
         "data_feed_id": {"key": "dataFeedId", "type": "str"},
         "metric_id": {"key": "metricId", "type": "str"},
-        "anomaly_detection_configuration_id": {"key": "anomalyDetectionConfigurationId", "type": "str"},
+        "detection_configuration_id": {"key": "anomalyDetectionConfigurationId", "type": "str"},
         "timestamp": {"key": "timestamp", "type": "iso-8601"},
         "created_time": {"key": "createdTime", "type": "iso-8601"},
         "modified_time": {"key": "modifiedTime", "type": "iso-8601"},
         "dimension": {"key": "dimension", "type": "{str}"},
-        "property": {"key": "property", "type": "AnomalyProperty"},
+        "severity": {"key": "property.anomalySeverity", "type": "str"},
+        "status": {"key": "property.anomalyStatus", "type": "str"},
+        "value": {"key": "property.value", "type": "float"},
+        "expected_value": {"key": "property.expectedValue", "type": "float"},
     }
 
     def __init__(
-        self, *, timestamp: datetime.datetime, dimension: Dict[str, str], property: "_models.AnomalyProperty", **kwargs
+        self,
+        *,
+        timestamp: datetime.datetime,
+        dimension: Dict[str, str],
+        severity: Union[str, "_models.AnomalySeverity"],
+        **kwargs
     ):
         """
         :keyword timestamp: Required. anomaly time.
         :paramtype timestamp: ~datetime.datetime
         :keyword dimension: Required. dimension specified for series.
         :paramtype dimension: dict[str, str]
-        :keyword property: Required.
-        :paramtype property: ~azure.ai.metricsadvisor.models.AnomalyProperty
+        :keyword severity: Required. anomaly severity. Possible values include: "Low", "Medium",
+         "High".
+        :paramtype severity: str or ~azure.ai.metricsadvisor.models.AnomalySeverity
         """
         super(DataPointAnomaly, self).__init__(**kwargs)
         self.data_feed_id = None
         self.metric_id = None
-        self.anomaly_detection_configuration_id = None
+        self.detection_configuration_id = None
         self.timestamp = timestamp
         self.created_time = None
         self.modified_time = None
         self.dimension = dimension
-        self.property = property
+        self.severity = severity
+        self.status = None
+        self.value = None
+        self.expected_value = None
 
 
 class DataSourceCredential(msrest.serialization.Model):
@@ -3422,53 +3382,6 @@ class HookList(msrest.serialization.Model):
         self.value = None
 
 
-class IncidentProperty(msrest.serialization.Model):
-    """IncidentProperty.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar max_severity: Required. max severity of latest anomalies in the incident. Possible values
-     include: "Low", "Medium", "High".
-    :vartype max_severity: str or ~azure.ai.metricsadvisor.models.AnomalySeverity
-    :ivar incident_status: incident status
-
-     only return for alerting incident result. Possible values include: "Active", "Resolved".
-    :vartype incident_status: str or ~azure.ai.metricsadvisor.models.AnomalyIncidentStatus
-    :ivar value_of_root_node: value of the root node.
-    :vartype value_of_root_node: float
-    :ivar expected_value_of_root_node: expected value of the root node given by smart detector.
-    :vartype expected_value_of_root_node: float
-    """
-
-    _validation = {
-        "max_severity": {"required": True},
-        "incident_status": {"readonly": True},
-        "value_of_root_node": {"readonly": True},
-        "expected_value_of_root_node": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "max_severity": {"key": "maxSeverity", "type": "str"},
-        "incident_status": {"key": "incidentStatus", "type": "str"},
-        "value_of_root_node": {"key": "valueOfRootNode", "type": "float"},
-        "expected_value_of_root_node": {"key": "expectedValueOfRootNode", "type": "float"},
-    }
-
-    def __init__(self, *, max_severity: Union[str, "_models.AnomalySeverity"], **kwargs):
-        """
-        :keyword max_severity: Required. max severity of latest anomalies in the incident. Possible
-         values include: "Low", "Medium", "High".
-        :paramtype max_severity: str or ~azure.ai.metricsadvisor.models.AnomalySeverity
-        """
-        super(IncidentProperty, self).__init__(**kwargs)
-        self.max_severity = max_severity
-        self.incident_status = None
-        self.value_of_root_node = None
-        self.expected_value_of_root_node = None
-
-
 class IncidentResultList(msrest.serialization.Model):
     """IncidentResultList.
 
@@ -4139,88 +4052,86 @@ class MetricEnrichedSeriesData(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar series: Required.
-    :vartype series: ~azure.ai.metricsadvisor.models.SeriesIdentity
-    :ivar timestamp_list: Required. timestamps of the series.
-    :vartype timestamp_list: list[~datetime.datetime]
-    :ivar value_list: Required. values of the series.
-    :vartype value_list: list[float]
-    :ivar is_anomaly_list: Required. whether points of the series are anomalies.
-    :vartype is_anomaly_list: list[bool]
-    :ivar period_list: Required. period calculated on each point of the series.
-    :vartype period_list: list[int]
-    :ivar expected_value_list: Required. expected values of the series given by smart detector.
-    :vartype expected_value_list: list[float]
-    :ivar lower_boundary_list: Required. lower boundary list of the series given by smart detector.
-    :vartype lower_boundary_list: list[float]
-    :ivar upper_boundary_list: Required. upper boundary list of the series given by smart detector.
-    :vartype upper_boundary_list: list[float]
+    :ivar timestamps: Required. timestamps of the series.
+    :vartype timestamps: list[~datetime.datetime]
+    :ivar values: Required. values of the series.
+    :vartype values: list[float]
+    :ivar is_anomaly: Required. whether points of the series are anomalies.
+    :vartype is_anomaly: list[bool]
+    :ivar periods: Required. period calculated on each point of the series.
+    :vartype periods: list[int]
+    :ivar expected_values: Required. expected values of the series given by smart detector.
+    :vartype expected_values: list[float]
+    :ivar lower_bounds: Required. lower boundary list of the series given by smart detector.
+    :vartype lower_bounds: list[float]
+    :ivar upper_bounds: Required. upper boundary list of the series given by smart detector.
+    :vartype upper_bounds: list[float]
+    :ivar series_key: Required. dimension specified for series group.
+    :vartype series_key: dict[str, str]
     """
 
     _validation = {
-        "series": {"required": True},
-        "timestamp_list": {"required": True},
-        "value_list": {"required": True},
-        "is_anomaly_list": {"required": True},
-        "period_list": {"required": True},
-        "expected_value_list": {"required": True},
-        "lower_boundary_list": {"required": True},
-        "upper_boundary_list": {"required": True},
+        "timestamps": {"required": True},
+        "values": {"required": True},
+        "is_anomaly": {"required": True},
+        "periods": {"required": True},
+        "expected_values": {"required": True},
+        "lower_bounds": {"required": True},
+        "upper_bounds": {"required": True},
+        "series_key": {"required": True},
     }
 
     _attribute_map = {
-        "series": {"key": "series", "type": "SeriesIdentity"},
-        "timestamp_list": {"key": "timestampList", "type": "[iso-8601]"},
-        "value_list": {"key": "valueList", "type": "[float]"},
-        "is_anomaly_list": {"key": "isAnomalyList", "type": "[bool]"},
-        "period_list": {"key": "periodList", "type": "[int]"},
-        "expected_value_list": {"key": "expectedValueList", "type": "[float]"},
-        "lower_boundary_list": {"key": "lowerBoundaryList", "type": "[float]"},
-        "upper_boundary_list": {"key": "upperBoundaryList", "type": "[float]"},
+        "timestamps": {"key": "timestampList", "type": "[iso-8601]"},
+        "values": {"key": "valueList", "type": "[float]"},
+        "is_anomaly": {"key": "isAnomalyList", "type": "[bool]"},
+        "periods": {"key": "periodList", "type": "[int]"},
+        "expected_values": {"key": "expectedValueList", "type": "[float]"},
+        "lower_bounds": {"key": "lowerBoundaryList", "type": "[float]"},
+        "upper_bounds": {"key": "upperBoundaryList", "type": "[float]"},
+        "series_key": {"key": "series.dimension", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
-        series: "_models.SeriesIdentity",
-        timestamp_list: List[datetime.datetime],
-        value_list: List[float],
-        is_anomaly_list: List[bool],
-        period_list: List[int],
-        expected_value_list: List[float],
-        lower_boundary_list: List[float],
-        upper_boundary_list: List[float],
+        timestamps: List[datetime.datetime],
+        values: List[float],
+        is_anomaly: List[bool],
+        periods: List[int],
+        expected_values: List[float],
+        lower_bounds: List[float],
+        upper_bounds: List[float],
+        series_key: Dict[str, str],
         **kwargs
     ):
         """
-        :keyword series: Required.
-        :paramtype series: ~azure.ai.metricsadvisor.models.SeriesIdentity
-        :keyword timestamp_list: Required. timestamps of the series.
-        :paramtype timestamp_list: list[~datetime.datetime]
-        :keyword value_list: Required. values of the series.
-        :paramtype value_list: list[float]
-        :keyword is_anomaly_list: Required. whether points of the series are anomalies.
-        :paramtype is_anomaly_list: list[bool]
-        :keyword period_list: Required. period calculated on each point of the series.
-        :paramtype period_list: list[int]
-        :keyword expected_value_list: Required. expected values of the series given by smart detector.
-        :paramtype expected_value_list: list[float]
-        :keyword lower_boundary_list: Required. lower boundary list of the series given by smart
-         detector.
-        :paramtype lower_boundary_list: list[float]
-        :keyword upper_boundary_list: Required. upper boundary list of the series given by smart
-         detector.
-        :paramtype upper_boundary_list: list[float]
+        :keyword timestamps: Required. timestamps of the series.
+        :paramtype timestamps: list[~datetime.datetime]
+        :keyword values: Required. values of the series.
+        :paramtype values: list[float]
+        :keyword is_anomaly: Required. whether points of the series are anomalies.
+        :paramtype is_anomaly: list[bool]
+        :keyword periods: Required. period calculated on each point of the series.
+        :paramtype periods: list[int]
+        :keyword expected_values: Required. expected values of the series given by smart detector.
+        :paramtype expected_values: list[float]
+        :keyword lower_bounds: Required. lower boundary list of the series given by smart detector.
+        :paramtype lower_bounds: list[float]
+        :keyword upper_bounds: Required. upper boundary list of the series given by smart detector.
+        :paramtype upper_bounds: list[float]
+        :keyword series_key: Required. dimension specified for series group.
+        :paramtype series_key: dict[str, str]
         """
         super(MetricEnrichedSeriesData, self).__init__(**kwargs)
-        self.series = series
-        self.timestamp_list = timestamp_list
-        self.value_list = value_list
-        self.is_anomaly_list = is_anomaly_list
-        self.period_list = period_list
-        self.expected_value_list = expected_value_list
-        self.lower_boundary_list = lower_boundary_list
-        self.upper_boundary_list = upper_boundary_list
+        self.timestamps = timestamps
+        self.values = values
+        self.is_anomaly = is_anomaly
+        self.periods = periods
+        self.expected_values = expected_values
+        self.lower_bounds = lower_bounds
+        self.upper_bounds = upper_bounds
+        self.series_key = series_key
 
 
 class MetricFeedbackFilter(msrest.serialization.Model):
@@ -4497,7 +4408,7 @@ class MetricSingleSeriesDetectionCondition(msrest.serialization.Model):
     :vartype hard_threshold_condition: ~azure.ai.metricsadvisor.models.HardThresholdCondition
     :ivar change_threshold_condition:
     :vartype change_threshold_condition: ~azure.ai.metricsadvisor.models.ChangeThresholdCondition
-    :ivar series_key: Required. dimension specified for series.
+    :ivar series_key: Required. dimension specified for series group.
     :vartype series_key: dict[str, str]
     """
 
@@ -4536,7 +4447,7 @@ class MetricSingleSeriesDetectionCondition(msrest.serialization.Model):
         :paramtype hard_threshold_condition: ~azure.ai.metricsadvisor.models.HardThresholdCondition
         :keyword change_threshold_condition:
         :paramtype change_threshold_condition: ~azure.ai.metricsadvisor.models.ChangeThresholdCondition
-        :keyword series_key: Required. dimension specified for series.
+        :keyword series_key: Required. dimension specified for series group.
         :paramtype series_key: dict[str, str]
         """
         super(MetricSingleSeriesDetectionCondition, self).__init__(**kwargs)
@@ -4693,25 +4604,25 @@ class SeriesIdentity(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar series_key: Required. dimension specified for series.
-    :vartype series_key: dict[str, str]
+    :ivar dimension: Required. dimension specified for series.
+    :vartype dimension: dict[str, str]
     """
 
     _validation = {
-        "series_key": {"required": True},
+        "dimension": {"required": True},
     }
 
     _attribute_map = {
-        "series_key": {"key": "dimension", "type": "{str}"},
+        "dimension": {"key": "dimension", "type": "{str}"},
     }
 
-    def __init__(self, *, series_key: Dict[str, str], **kwargs):
+    def __init__(self, *, dimension: Dict[str, str], **kwargs):
         """
-        :keyword series_key: Required. dimension specified for series.
-        :paramtype series_key: dict[str, str]
+        :keyword dimension: Required. dimension specified for series.
+        :paramtype dimension: dict[str, str]
         """
         super(SeriesIdentity, self).__init__(**kwargs)
-        self.series_key = series_key
+        self.dimension = dimension
 
 
 class SeriesResultList(msrest.serialization.Model):

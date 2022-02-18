@@ -39,6 +39,8 @@ from ._operations import (
     build_list_alert_configurations_request,
     build_update_alert_configuration_request,
     build_get_feedback_request,
+    build_list_feedback_request,
+    build_list_metric_series_definitions_request,
     JSONType,
 )
 from ..models import *
@@ -102,26 +104,6 @@ class OperationMixinHelpers:
             return PeriodFeedback.from_dict(feedback.serialize())  # type: ignore
         raise HttpResponseError("Invalid feedback type returned in the response.")
 
-    def _convert_to_datasource_credential(self, datasource_credential):
-        if datasource_credential.data_source_credential_type == "AzureSQLConnectionString":
-            return DatasourceSqlConnectionString._from_generated(datasource_credential)
-        if datasource_credential.data_source_credential_type == "DataLakeGen2SharedKey":
-            return DatasourceDataLakeGen2SharedKey._from_generated(datasource_credential)
-        if datasource_credential.data_source_credential_type == "ServicePrincipal":
-            return DatasourceServicePrincipal._from_generated(datasource_credential)
-        return DatasourceServicePrincipalInKeyVault._from_generated(datasource_credential)
-
-    def _construct_alert_config_dict(self, **update_kwargs):
-
-        if "metricAlertingConfigurations" in update_kwargs:
-            update_kwargs["metricAlertingConfigurations"] = (
-                [config._to_generated() for config in update_kwargs["metricAlertingConfigurations"]]
-                if update_kwargs["metricAlertingConfigurations"]
-                else None
-            )
-
-        return update_kwargs
-
     def _construct_data_feed(self, **kwargs):
         granularity = kwargs.pop("granularity", None)
         schema = kwargs.pop("schema", None)
@@ -136,9 +118,9 @@ class OperationMixinHelpers:
             ingestion_settings = DataFeedIngestionSettings(ingestion_begin_time=ingestion_settings)
         return DataFeed(granularity=granularity, schema=schema, ingestion_settings=ingestion_settings, **kwargs)
 
-    def _deserialize_anomaly_detection_configuration(self, http_response, **kwargs) -> AnomalyAlertConfiguration:
+    def _deserialize_anomaly_detection_configuration(self, pipeline_response, **kwargs) -> AnomalyAlertConfiguration:
         cls = kwargs.pop("cls", None)
-        response_json = http_response.json()
+        response_json = pipeline_response.http_response.json()
         response_json["metricAlertingConfigurations"] = [
             self._deserialize(generated_models.MetricAlertConfiguration, m)
             for m in response_json["metricAlertingConfigurations"]
@@ -223,6 +205,43 @@ class OperationMixinHelpers:
             data_feed_id = data_feed.id
             data_feed_patch = data_feed._to_generated()
         return data_feed_id, data_feed_patch, kwargs
+
+    def _list_feedback_initial_request(self, metric_id: str, **kwargs) -> Tuple[HttpRequest, Any]:
+        dimension_filter = None
+        dimension_key = kwargs.pop("dimension_key", None)
+        if dimension_key:
+            dimension_filter = FeedbackDimensionFilter(dimension_key=dimension_key)
+        feedback_type = kwargs.pop("feedback_type", None)
+        start_time = kwargs.pop("start_time", None)
+        end_time = kwargs.pop("end_time", None)
+        converted_start_time = self._convert_datetime(start_time) if start_time else None
+        converted_end_time = self._convert_datetime(end_time) if end_time else None
+        time_mode = kwargs.pop("time_mode", None)
+        feedback_filter = MetricFeedbackFilter(
+            metric_id=metric_id,
+            dimension_filter=dimension_filter,
+            feedback_type=feedback_type,
+            start_time=converted_start_time,
+            end_time=converted_end_time,
+            time_mode=time_mode,
+        )
+        return build_list_feedback_request(json=feedback_filter.serialize(), skip=kwargs.pop("skip", None)), kwargs
+
+    def _list_metric_series_definitions_initial_request(self, metric_id, active_since, **kwargs):
+        dimension_filter = kwargs.pop("dimension_filter", None)
+        metric_series_query_options = MetricSeriesQueryOptions(
+            active_since=active_since,
+            dimension_filter=dimension_filter,
+        )
+
+        request = build_list_metric_series_definitions_request(
+            metric_id=metric_id,
+            content_type=kwargs.pop("content_type", "application/json"),
+            json=metric_series_query_options.serialize(),
+            skip=kwargs.pop("skip", None),
+            maxpagesize=kwargs.pop("maxpagesize", None),
+        )
+        return request, kwargs
 
     def _update_alert_configuration_helper(
         self, alert_configuration: Union[str, AnomalyAlertConfiguration], **kwargs
@@ -546,7 +565,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
             error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        return self._deserialize_anomaly_detection_configuration(pipeline_response.http_response, **kwargs)
+        return self._deserialize_anomaly_detection_configuration(pipeline_response, **kwargs)
 
     @distributed_trace
     def refresh_data_feed_ingestion(
@@ -610,7 +629,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
-        return self._deserialize_anomaly_detection_configuration(pipeline_response.http_response, **kwargs)
+        return self._deserialize_anomaly_detection_configuration(pipeline_response, **kwargs)
 
     @distributed_trace
     def update_detection_configuration(
@@ -758,11 +777,6 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         super().delete_datasource_credential(credential_id=credential_id[0], **kwargs)
 
     @distributed_trace
-    def add_feedback(self, feedback, **kwargs):
-        # type: (FeedbackUnion, Any) -> None
-        return super().add_feedback(body=feedback, **kwargs)
-
-    @distributed_trace
     def get_feedback(self, feedback_id, **kwargs):
         # type: (str, Any) -> Union[MetricFeedback, FeedbackUnion]
         cls = kwargs.pop("cls", None)
@@ -776,45 +790,20 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         return self._get_feedback_deserialize(pipeline_response, cls=cls, error_map=error_map, **kwargs)
 
     @distributed_trace
-    def list_feedback(self, metric_id, **kwargs):
-        # type: (str, Any) -> ItemPaged[Union[MetricFeedback, FeedbackUnion]]
-        skip = kwargs.pop("skip", None)
-        dimension_filter = None
-        dimension_key = kwargs.pop("dimension_key", None)
-        if dimension_key:
-            dimension_filter = FeedbackDimensionFilter(dimension=dimension_key)
-        feedback_type = kwargs.pop("feedback_type", None)
-        start_time = kwargs.pop("start_time", None)
-        end_time = kwargs.pop("end_time", None)
-        converted_start_time = self._convert_datetime(start_time) if start_time else None
-        converted_end_time = self._convert_datetime(end_time) if end_time else None
-        time_mode = kwargs.pop("time_mode", None)
-        feedback_filter = MetricFeedbackFilter(
-            metric_id=metric_id,
-            dimension_filter=dimension_filter,
-            feedback_type=feedback_type,
-            start_time=converted_start_time,
-            end_time=converted_end_time,
-            time_mode=time_mode,
-        )
+    def list_feedback(self, metric_id: str, **kwargs: Any) -> ItemPaged[Union[MetricFeedback, FeedbackUnion]]:
+        deserializer = functools.partial(self._deserialize, generated_models.MetricFeedback)
+        initial_request, kwargs = self._list_feedback_initial_request(metric_id, **kwargs)
 
-        return super().list_feedback(  # type: ignore
-            skip=skip,
-            body=feedback_filter,
-            cls=kwargs.pop("cls", lambda result: [self._convert_to_sub_feedback(x) for x in result]),
-            **kwargs
-        )
+        def extract_data(deserializer, pipeline_response):
+            response_json = pipeline_response.http_response.json()
+            list_of_elem = []
+            list_of_elem = [deserializer(l) for l in response_json["value"]]
+            return response_json.get("@nextLink", None) or None, iter(list_of_elem)
 
-    @distributed_trace
-    def list_incident_root_causes(self, detection_configuration_id, incident_id, **kwargs):
-        # type: (str, str, Any) -> ItemPaged[IncidentRootCause]
-        return super().list_incident_root_causes(  # type: ignore
-            configuration_id=detection_configuration_id,
-            incident_id=incident_id,
-            cls=kwargs.pop(
-                "cls",
-                lambda result: [IncidentRootCause._from_generated(x) for x in result],
-            ),
+        return self._paging_helper(
+            extract_data=functools.partial(extract_data, deserializer),
+            initial_request=initial_request,
+            next_request=build_list_data_feeds_request(),
             **kwargs
         )
 
@@ -844,23 +833,18 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         return super().list_metric_enriched_series_data(  # type: ignore
             configuration_id=detection_configuration_id,
             body=detection_series_query,
-            cls=kwargs.pop(
-                "cls",
-                lambda series: [MetricEnrichedSeriesData._from_generated(data) for data in series],
-            ),
             **kwargs
         )
 
     @distributed_trace
     def list_alerts(
         self,
-        alert_configuration_id,  # type: str
-        start_time,  # type: datetime.datetime
-        end_time,  # type: datetime.datetime
-        time_mode,  # type: Union[str, AlertQueryTimeMode]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> ItemPaged[AnomalyAlert]
+        alert_configuration_id: str,
+        start_time: datetime.datetime,
+        end_time: datetime.datetime,
+        time_mode: Union[str, AlertQueryTimeMode],
+        **kwargs: Any
+    ) -> ItemPaged[AnomalyAlert]:
         skip = kwargs.pop("skip", None)
         converted_start_time = self._convert_datetime(start_time)
         converted_end_time = self._convert_datetime(end_time)
@@ -872,49 +856,21 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         )
 
         return super().list_alerts(  # type: ignore
-            configuration_id=alert_configuration_id,
-            skip=skip,
-            body=alerting_result_query,
-            cls=kwargs.pop(
-                "cls",
-                lambda alerts: [AnomalyAlert._from_generated(alert) for alert in alerts],
-            ),
-            **kwargs
-        )
-
-    def _list_anomalies_for_alert(self, alert_configuration_id, alert_id, **kwargs):
-        # type: (str, str, Any) -> ItemPaged[DataPointAnomaly]
-
-        skip = kwargs.pop("skip", None)
-
-        return super().get_anomalies_from_alert_by_anomaly_alerting_configuration(  # type: ignore
-            configuration_id=alert_configuration_id,
-            alert_id=alert_id,
-            skip=skip,
-            cls=lambda objs: [DataPointAnomaly._from_generated(x) for x in objs],
-            **kwargs
+            configuration_id=alert_configuration_id, skip=skip, body=alerting_result_query, **kwargs
         )
 
     def _list_anomalies_for_detection_configuration(self, detection_configuration_id, start_time, end_time, **kwargs):
         # type: (...) -> ItemPaged[DataPointAnomaly]
 
         skip = kwargs.pop("skip", None)
-        condition = kwargs.pop("filter", None)
-        filter_condition = condition._to_generated() if condition else None
         converted_start_time = self._convert_datetime(start_time)
         converted_end_time = self._convert_datetime(end_time)
         detection_anomaly_result_query = DetectionAnomalyResultQuery(
-            start_time=converted_start_time,
-            end_time=converted_end_time,
-            filter=filter_condition,
+            start_time=converted_start_time, end_time=converted_end_time, filter=kwargs.pop("filter", None)
         )
 
         return super().get_anomalies_by_anomaly_detection_configuration(  # type: ignore
-            configuration_id=detection_configuration_id,
-            skip=skip,
-            body=detection_anomaly_result_query,
-            cls=lambda objs: [DataPointAnomaly._from_generated(x) for x in objs],
-            **kwargs
+            configuration_id=detection_configuration_id, skip=skip, body=detection_anomaly_result_query, **kwargs
         )
 
     @distributed_trace
@@ -935,7 +891,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
             return self._list_anomalies_for_detection_configuration(**kwargs)
         if not alert_configuration_id or not alert_id:
             raise TypeError('"alert_configuration_id" and "alert_id" are required')
-        return self._list_anomalies_for_alert(**kwargs)
+        return self.list_anomalies_for_alert(**kwargs)  # type: ignore
 
     @distributed_trace
     def list_anomaly_dimension_values(self, detection_configuration_id, dimension_name, start_time, end_time, **kwargs):
@@ -956,38 +912,20 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
             configuration_id=detection_configuration_id, skip=skip, body=anomaly_dimension_query, **kwargs
         )
 
-    def _list_incidents_for_alert(self, alert_configuration_id, alert_id, **kwargs):
-        # type: (str, str, Any) -> ItemPaged[AnomalyIncident]
-
-        skip = kwargs.pop("skip", None)
-
-        return super().get_incidents_from_alert_by_anomaly_alerting_configuration(  # type: ignore
-            configuration_id=alert_configuration_id,
-            alert_id=alert_id,
-            skip=skip,
-            cls=lambda objs: [AnomalyIncident._from_generated(x) for x in objs],
-            **kwargs
-        )
-
     def _list_incidents_for_detection_configuration(self, detection_configuration_id, start_time, end_time, **kwargs):
         # type: (str, Union[str, datetime.datetime], Union[str, datetime.datetime], Any) -> ItemPaged[AnomalyIncident]
 
-        condition = kwargs.pop("filter", None)
-        filter_condition = condition._to_generated() if condition else None
         converted_start_time = self._convert_datetime(start_time)
         converted_end_time = self._convert_datetime(end_time)
 
         detection_incident_result_query = DetectionIncidentResultQuery(
             start_time=converted_start_time,
             end_time=converted_end_time,
-            filter=filter_condition,
+            filter=kwargs.pop("filter", None),
         )
 
         return super().get_incidents_by_anomaly_detection_configuration(  # type: ignore
-            configuration_id=detection_configuration_id,
-            body=detection_incident_result_query,
-            cls=lambda objs: [AnomalyIncident._from_generated(x) for x in objs],
-            **kwargs
+            configuration_id=detection_configuration_id, body=detection_incident_result_query, **kwargs
         )
 
     @distributed_trace
@@ -1008,7 +946,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
             return self._list_incidents_for_detection_configuration(**kwargs)
         if not alert_configuration_id or not alert_id:
             raise TypeError('"alert_configuration_id" and "alert_id" are required')
-        return self._list_incidents_for_alert(**kwargs)
+        return self.list_incidents_for_alert(**kwargs)  # type: ignore
 
     @distributed_trace
     def list_metric_dimension_values(self, metric_id, dimension_name, **kwargs):
@@ -1057,16 +995,24 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
     @distributed_trace
     def list_metric_series_definitions(self, metric_id, active_since, **kwargs):
         # type: (str, datetime.datetime, Any) -> ItemPaged[MetricSeriesDefinition]
-        skip = kwargs.pop("skip", None)
-        dimension_filter = kwargs.pop("dimension_filter", None)
+        cls = kwargs.pop("cls", None)
 
-        metric_series_query_options = MetricSeriesQueryOptions(
-            active_since=active_since,
-            dimension_filter=dimension_filter,
-        )
+        initial_request, kwargs = self._list_metric_series_definitions_initial_request(metric_id, active_since, **kwargs)
 
-        return super().list_metric_series_definitions(  # type: ignore
-            metric_id=metric_id, body=metric_series_query_options, skip=skip, **kwargs
+        def extract_data(pipeline_response):
+            deserialized = MetricSeriesList.deserialize(pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
+
+        next_request = build_list_metric_series_definitions_request(metric_id=metric_id)
+        next_request.method = "POST"
+        return self._paging_helper(
+            extract_data=extract_data,
+            initial_request=initial_request,
+            next_request=next_request,
+            **kwargs
         )
 
     @distributed_trace

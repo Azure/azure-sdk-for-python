@@ -134,6 +134,12 @@ directive:
   - rename-operation:
       from: updateAnomalyDetectionConfiguration
       to: updateDetectionConfiguration
+  - rename-operation:
+      from: getAnomaliesFromAlertByAnomalyAlertingConfiguration
+      to: listAnomaliesForAlert
+  - rename-operation:
+      from: getIncidentsFromAlertByAnomalyAlertingConfiguration
+      to: listIncidentsForAlert
 ```
 
 ### Severity -> AnomalySeverity
@@ -383,6 +389,38 @@ directive:
     transform: >
         $.properties["group"] = {"required": ["dimension"], "type": "object", "properties": { "dimension": { "x-ms-client-name": "seriesGroupKey", "description": "dimension specified for series group", "type": "object", "additionalProperties": { "type": "string" }}}};
 ```
+
+### Change SeriesIdentity just for IncidentResult
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["IncidentResult"]
+    transform: >
+        $.properties["rootNode"] = {"required": ["dimension"], "type": "object", "properties": { "dimension": { "x-ms-client-name": "dimensionKey", "description": "dimension specified for series group", "type": "object", "additionalProperties": { "type": "string" }}}};
+```
+
+### Change SeriesIdentity just for MetricSingleSeriesDetectionCondition
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["MetricSingleSeriesDetectionCondition"]
+    transform: >
+        $.properties["series"] = {"required": ["dimension"], "type": "object", "properties": { "dimension": { "x-ms-client-name": "seriesKey", "description": "dimension specified for series group", "type": "object", "additionalProperties": { "type": "string" }}}};
+```
+
+### Change SeriesIdentity just for MetricEnrichedSeriesData
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["MetricEnrichedSeriesData"]
+    transform: >
+        $.properties["series"] = {"required": ["dimension"], "type": "object", "properties": { "dimension": { "x-ms-client-name": "seriesKey", "description": "dimension specified for series group", "type": "object", "additionalProperties": { "type": "string" }}}};
+```
+
+
 
 ### Make get_root_cause_of_incident_by_anomaly_detection_configuration pageable
 
@@ -642,10 +680,6 @@ directive:
     rename-property:
       from: seriesOverrideConfigurations
       to: seriesDetectionConditions
-  - where-model: SeriesIdentity
-    rename-property:
-      from: dimension
-      to: seriesKey
   - where-model: MetricBoundaryCondition
     rename-property:
       from: metricId
@@ -686,6 +720,62 @@ directive:
     rename-property:
       from: dataSourceCredentialDescription
       to: description
+  - where-model: AnomalyProperty
+    rename-property:
+      from: anomalySeverity
+      to: severity
+  - where-model: AnomalyProperty
+    rename-property:
+      from: anomalyStatus
+      to: status
+  - where-model: DataPointAnomaly
+    rename-property:
+      from: anomalyDetectionConfigurationId
+      to: detectionConfigurationId
+  - where-model: AnomalyIncident
+    rename-property:
+      from: anomalyDetectionConfigurationId
+      to: detectionConfigurationId
+  - where-model: AnomalyIncident
+    rename-property:
+      from: incidentId
+      to: id
+  - where-model: IncidentProperty
+    rename-property:
+      from: maxSeverity
+      to: severity
+  - where-model: IncidentProperty
+    rename-property:
+      from: incidentStatus
+      to: status
+  - where-model: MetricEnrichedSeriesData
+    rename-property:
+      from: timestampList
+      to: timestamps
+  - where-model: MetricEnrichedSeriesData
+    rename-property:
+      from: valueList
+      to: values
+  - where-model: MetricEnrichedSeriesData
+    rename-property:
+      from: isAnomalyList
+      to: isAnomaly
+  - where-model: MetricEnrichedSeriesData
+    rename-property:
+      from: periodList
+      to: periods
+  - where-model: MetricEnrichedSeriesData
+    rename-property:
+      from: expectedValueList
+      to: expectedValues
+  - where-model: MetricEnrichedSeriesData
+    rename-property:
+      from: lowerBoundaryList
+      to: lowerBounds
+  - where-model: MetricEnrichedSeriesData
+    rename-property:
+      from: upperBoundaryList
+      to: upperBounds
 ```
 
 ```yaml
@@ -788,6 +878,14 @@ directive:
     flatten-property: parameters
   - where-model: DatasourceServicePrincipalInKeyVault
     flatten-property: parameters
+  - where-model: DataPointAnomaly
+    flatten-property: property
+  - where-model: AnomalyIncident
+    flatten-property: rootNode
+  - where-model: AnomalyIncident
+    flatten-property: property
+  - where-model: MetricEnrichedSeriesData
+    flatten-property: series
 ```
 
 ```yaml
@@ -810,6 +908,18 @@ directive:
   - where-operation: getDetectionConfiguration
     transform: >
         $.parameters[0]["x-ms-client-name"] = "detectionConfigurationId";
+  - where-operation: listIncidentRootCauses
+    transform: >
+        $.parameters[0]["x-ms-client-name"] = "detectionConfigurationId";
+  - where-operation: addFeedback
+    transform: >
+        $.parameters[0]["x-ms-client-name"] = "feedback";
+  - where-operation: listAnomaliesForAlert
+    transform: >
+        $.parameters[0]["x-ms-client-name"] = "alertConfigurationId";
+  - where-operation: listIncidentsForAlert
+    transform: >
+        $.parameters[0]["x-ms-client-name"] = "alertConfigurationId";
 ```
 
 ### Add DataSourceParameter to DataFeed

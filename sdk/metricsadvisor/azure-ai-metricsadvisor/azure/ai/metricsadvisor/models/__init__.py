@@ -18,7 +18,6 @@ from ._models_py3 import AnomalyDimensionList
 from ._models_py3 import AnomalyDimensionQuery
 from ._models_py3 import AnomalyFeedback
 from ._models_py3 import AnomalyIncident
-from ._models_py3 import AnomalyProperty
 from ._models_py3 import AnomalyResultList
 from ._models_py3 import AzureApplicationInsightsDataFeedSource
 from ._models_py3 import AzureBlobDataFeedSource
@@ -65,7 +64,6 @@ from ._models_py3 import ErrorCode
 from ._models_py3 import FeedbackDimensionFilter
 from ._models_py3 import HardThresholdCondition
 from ._models_py3 import HookList
-from ._models_py3 import IncidentProperty
 from ._models_py3 import IncidentResultList
 from ._models_py3 import IncidentRootCause
 from ._models_py3 import InfluxDbDataFeedSource
@@ -158,7 +156,6 @@ __all__ = [
     "AnomalyDimensionQuery",
     "AnomalyFeedback",
     "AnomalyIncident",
-    "AnomalyProperty",
     "AnomalyResultList",
     "AzureApplicationInsightsDataFeedSource",
     "AzureBlobDataFeedSource",
@@ -205,7 +202,6 @@ __all__ = [
     "FeedbackDimensionFilter",
     "HardThresholdCondition",
     "HookList",
-    "IncidentProperty",
     "IncidentResultList",
     "IncidentRootCause",
     "InfluxDbDataFeedSource",
