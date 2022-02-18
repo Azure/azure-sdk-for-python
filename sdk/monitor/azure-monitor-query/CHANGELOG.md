@@ -2,6 +2,8 @@
 
 ## 1.0.2 (Unreleased)
 
+- This version and all future versions will require Python 3.7+. Python 2.7 and 3.6 are no longer supported.
+
 ### Bugs Fixed
 
 - Fixed a bug where having a None value in datetime throws
