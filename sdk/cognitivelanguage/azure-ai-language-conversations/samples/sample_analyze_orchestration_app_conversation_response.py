@@ -59,7 +59,7 @@ def sample_analyze_orchestration_app_conversation_response():
     top_intent = result.prediction.top_intent
     print("\ttop intent: {}".format(top_intent))
 
-    top_intent_object = result.prediction.intents[top_intent]
+    top_intent_object = result.prediction.intents[0]
     print("\tconfidence score: {}\n".format(top_intent_object.confidence_score))
 
     print("view conversation result:\n")
