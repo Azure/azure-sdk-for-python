@@ -34,6 +34,12 @@ class FormRecognizerClientBaseAsync(object):
         credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
         **kwargs: Any
     ) -> None:
+
+        try:
+            endpoint = endpoint.rstrip("/")
+        except AttributeError:
+            raise ValueError("Parameter 'endpoint' must be a string.")
+
         self._endpoint = endpoint
         self._credential = credential
         self._api_version = kwargs.pop("api_version", None)
@@ -74,6 +80,7 @@ class FormRecognizerClientBaseAsync(object):
                 "api-version",
             }
         )
+
         self._client = FormRecognizer(
             endpoint=endpoint,
             credential=credential,  # type: ignore

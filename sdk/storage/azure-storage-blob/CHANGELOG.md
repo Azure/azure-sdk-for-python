@@ -1,14 +1,26 @@
 # Release History
 
-## 12.10.0b2 (Unreleased)
+## 12.10.0b3 (2022-02-08)
+
+This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
 
 ### Features Added
-
-### Breaking Changes
+- Added support for service version 2021-04-10.
+- Added support for `find_blobs_by_tags()` on a container.
+- Added support for `Find (f)` container SAS permission.
 
 ### Bugs Fixed
+- Update `azure-core` dependency to avoid inconsistent dependencies from being installed.
 
-### Other Changes
+## 12.10.0b2 (2021-12-13)
+
+### Features Added
+- Added support for service version 2021-02-12
+- Added support for blob names container invalid XML characters. Previously \uFFFE and \uFFFF would fail if present in blob name.
+- Added support for listing system containers with get_blob_containers().
+
+### Bugs Fixed
+- BlobPrefix for aio operations is now exposed to be imported, previously it was private.
 
 ## 12.10.0b1 (2021-11-08)
 **New Features**

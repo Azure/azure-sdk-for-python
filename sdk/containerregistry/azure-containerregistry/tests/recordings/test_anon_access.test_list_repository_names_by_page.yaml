@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/_catalog?n=2
   response:
@@ -30,7 +30,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 30 Aug 2021 20:27:54 GMT
+      - Wed, 17 Nov 2021 23:53:56 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -46,7 +46,7 @@ interactions:
       code: 401
       message: Unauthorized
 - request:
-    body: service=yalinlitestsanon.azurecr.io&scope=registry%3Acatalog%3A%2A&grant_type=password
+    body: service=yallacrtestsanon.azurecr.io&scope=registry%3Acatalog%3A%2A&grant_type=password
     headers:
       Accept:
       - application/json
@@ -59,9 +59,9 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
+    uri: https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01
   response:
     body:
       string: '{"access_token": "REDACTED"}'
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 30 Aug 2021 20:27:55 GMT
+      - Wed, 17 Nov 2021 23:53:56 GMT
       server:
       - openresty
       strict-transport-security:
@@ -79,7 +79,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.066667'
+      - '166.65'
     status:
       code: 200
       message: OK
@@ -93,7 +93,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/_catalog?n=2
   response:
@@ -112,7 +112,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 30 Aug 2021 20:27:55 GMT
+      - Wed, 17 Nov 2021 23:53:56 GMT
       docker-distribution-api-version:
       - registry/2.0
       link:
@@ -137,7 +137,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=library%2Fbusybox&n=2&orderby=
   response:
@@ -158,7 +158,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 30 Aug 2021 20:27:55 GMT
+      - Wed, 17 Nov 2021 23:53:56 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -174,7 +174,7 @@ interactions:
       code: 401
       message: Unauthorized
 - request:
-    body: service=yalinlitestsanon.azurecr.io&scope=registry%3Acatalog%3A%2A&grant_type=password
+    body: service=yallacrtestsanon.azurecr.io&scope=registry%3Acatalog%3A%2A&grant_type=password
     headers:
       Accept:
       - application/json
@@ -187,9 +187,9 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
+    uri: https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01
   response:
     body:
       string: '{"access_token": "REDACTED"}'
@@ -199,7 +199,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 30 Aug 2021 20:27:55 GMT
+      - Wed, 17 Nov 2021 23:53:56 GMT
       server:
       - openresty
       strict-transport-security:
@@ -207,7 +207,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.05'
+      - '166.633333'
     status:
       code: 200
       message: OK
@@ -221,12 +221,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=library%2Fbusybox&n=2&orderby=
   response:
     body:
-      string: '{"repositories": ["library/hello-world", "repo26ab150f"]}'
+      string: '{"repositories": ["library/hello-world", "repo2b381dc2"]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -240,11 +240,11 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 30 Aug 2021 20:27:55 GMT
+      - Wed, 17 Nov 2021 23:53:56 GMT
       docker-distribution-api-version:
       - registry/2.0
       link:
-      - </acr/v1/_catalog?last=repo26ab150f&n=2&orderby=>; rel="next"
+      - </acr/v1/_catalog?last=repo2b381dc2&n=2&orderby=>; rel="next"
       server:
       - openresty
       strict-transport-security:
@@ -265,9 +265,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo26ab150f&n=2&orderby=
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo2b381dc2&n=2&orderby=
   response:
     body:
       string: '{"errors": [{"code": "UNAUTHORIZED", "message": "authentication required,
@@ -286,7 +286,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 30 Aug 2021 20:27:55 GMT
+      - Wed, 17 Nov 2021 23:53:56 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:
@@ -302,7 +302,7 @@ interactions:
       code: 401
       message: Unauthorized
 - request:
-    body: service=yalinlitestsanon.azurecr.io&scope=registry%3Acatalog%3A%2A&grant_type=password
+    body: service=yallacrtestsanon.azurecr.io&scope=registry%3Acatalog%3A%2A&grant_type=password
     headers:
       Accept:
       - application/json
@@ -315,9 +315,9 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
+    uri: https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01
   response:
     body:
       string: '{"access_token": "REDACTED"}'
@@ -327,7 +327,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 30 Aug 2021 20:27:55 GMT
+      - Wed, 17 Nov 2021 23:53:56 GMT
       server:
       - openresty
       strict-transport-security:
@@ -335,7 +335,7 @@ interactions:
       transfer-encoding:
       - chunked
       x-ms-ratelimit-remaining-calls-per-second:
-      - '166.033333'
+      - '166.616667'
     status:
       code: 200
       message: OK
@@ -349,12 +349,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo26ab150f&n=2&orderby=
+    uri: https://fake_url.azurecr.io/acr/v1/_catalog?last=repo2b381dc2&n=2&orderby=
   response:
     body:
-      string: '{"repositories": ["repo93d41b55"]}'
+      string: '{"repositories": ["repo63d41ad4"]}'
     headers:
       access-control-expose-headers:
       - Docker-Content-Digest
@@ -368,7 +368,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 30 Aug 2021 20:27:55 GMT
+      - Wed, 17 Nov 2021 23:53:56 GMT
       docker-distribution-api-version:
       - registry/2.0
       server:

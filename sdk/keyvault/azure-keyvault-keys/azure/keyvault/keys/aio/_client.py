@@ -129,7 +129,9 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         policy = kwargs.pop("release_policy", None)
         if policy is not None:
-            policy = self._models.KeyReleasePolicy(data=policy.encoded_policy, content_type=policy.content_type)
+            policy = self._models.KeyReleasePolicy(
+                encoded_policy=policy.encoded_policy, content_type=policy.content_type, immutable=policy.immutable
+            )
         parameters = self._models.KeyCreateParameters(
             kty=key_type,
             key_size=kwargs.pop("size", None),
@@ -540,7 +542,9 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         policy = kwargs.pop("release_policy", None)
         if policy is not None:
-            policy = self._models.KeyReleasePolicy(content_type=policy.content_type, data=policy.encoded_policy)
+            policy = self._models.KeyReleasePolicy(
+                content_type=policy.content_type, encoded_policy=policy.encoded_policy, immutable=policy.immutable
+            )
         parameters = self._models.KeyUpdateParameters(
             key_ops=kwargs.pop("key_operations", None),
             key_attributes=attributes,
@@ -616,7 +620,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             self.vault_url,
             parameters=self._models.KeyRestoreParameters(key_bundle_backup=backup),
             error_map=_error_map,
-            **kwargs
+            **kwargs,
         )
         return KeyVaultKey._from_key_bundle(bundle)
 
@@ -654,7 +658,9 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         policy = kwargs.pop("release_policy", None)
         if policy is not None:
-            policy = self._models.KeyReleasePolicy(content_type=policy.content_type, data=policy.encoded_policy)
+            policy = self._models.KeyReleasePolicy(
+                content_type=policy.content_type, encoded_policy=policy.encoded_policy, immutable=policy.immutable
+            )
         parameters = self._models.KeyImportParameters(
             key=key._to_generated_model(),
             key_attributes=attributes,
@@ -664,11 +670,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         )
 
         bundle = await self._client.import_key(
-            self.vault_url,
-            name,
-            parameters=parameters,
-            error_map=_error_map,
-            **kwargs
+            self.vault_url, name, parameters=parameters, error_map=_error_map, **kwargs
         )
         return KeyVaultKey._from_key_bundle(bundle)
 
@@ -699,9 +701,11 @@ class KeyClient(AsyncKeyVaultClientBase):
             key_name=name,
             key_version=version or "",
             parameters=self._models.KeyReleaseParameters(
-                target=target_attestation_token, nonce=kwargs.pop("nonce", None), enc=kwargs.pop("algorithm", None)
+                target_attestation_token=target_attestation_token,
+                nonce=kwargs.pop("nonce", None),
+                enc=kwargs.pop("algorithm", None),
             ),
-            **kwargs
+            **kwargs,
         )
         return ReleaseKeyResult(result.value)
 
@@ -770,7 +774,8 @@ class KeyClient(AsyncKeyVaultClientBase):
         :keyword lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a key.
         :paramtype lifetime_actions: Iterable[~azure.keyvault.keys.KeyRotationLifetimeAction]
         :keyword str expires_in: The expiry time of the policy that will be applied on new key versions, defined as an
-            ISO 8601 duration. For example: 90 days is "P90D", 3 months is "P3M", and 48 hours is "PT48H".
+            ISO 8601 duration. For example: 90 days is "P90D", 3 months is "P3M", and 48 hours is "PT48H". See
+            `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_ for more information on ISO 8601 durations.
 
         :return: The updated rotation policy.
         :rtype: ~azure.keyvault.keys.KeyRotationPolicy

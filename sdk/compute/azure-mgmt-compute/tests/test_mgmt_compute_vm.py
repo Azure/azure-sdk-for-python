@@ -14,18 +14,19 @@
 #   virtual_machine_extensions: 5/5
 #   virtual_machine_extension_images: 3/3
 
+import os
 import unittest
 
+import pytest
 import azure.mgmt.compute
 from azure.core.exceptions import ResourceExistsError
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = 'eastus'
 
-class MgmtComputeTest(AzureMgmtTestCase):
+class TestMgmtCompute(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtComputeTest, self).setUp()
+    def setup_method(self, method):
         from azure.mgmt.compute import ComputeManagementClient
         self.mgmt_client = self.create_mgmt_client(
             ComputeManagementClient
@@ -79,12 +80,12 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
         return nic_info.id
 
-
-
+    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_compute_vm(self, resource_group):
 
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         VIRTUAL_MACHINE_NAME = self.get_resource_name("virtualmachinex")
         SUBNET_NAME = self.get_resource_name("subnetx")
@@ -293,9 +294,10 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
     @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_compute_vm_2(self, resource_group):
         
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         VIRTUAL_MACHINE_NAME = self.get_resource_name("virtualmachinex")
         SUBNET_NAME = self.get_resource_name("subnetx")
@@ -363,14 +365,14 @@ class MgmtComputeTest(AzureMgmtTestCase):
             result = self.mgmt_client.virtual_machines.begin_perform_maintenance(resource_group.name, VIRTUAL_MACHINE_NAME)
             result = result.result()
         except ResourceExistsError as e:
-            self.assertEqual(str(e), "(OperationNotAllowed) Operation 'performMaintenance' is not allowed on VM '%s' since the Subscription of this VM is not eligible." % (VIRTUAL_MACHINE_NAME))
+            assert str(e) == "(OperationNotAllowed) Operation 'performMaintenance' is not allowed on VM '%s' since the Subscription of this VM is not eligible." % (VIRTUAL_MACHINE_NAME)
 
         # VirtualMachine convert to managed disks (TODO: need swagger file)
         try:
             result = self.mgmt_client.virtual_machines.begin_convert_to_managed_disks(resource_group.name, VIRTUAL_MACHINE_NAME)
             result = result.result()
         except ResourceExistsError as e:
-            self.assertEqual(str(e), "(OperationNotAllowed) VM '%s' is already using managed disks." % (VIRTUAL_MACHINE_NAME))
+            assert str(e) == "(OperationNotAllowed) VM '%s' is already using managed disks." % (VIRTUAL_MACHINE_NAME)
 
         # TODO: Message: The Reimage and OSUpgrade Virtual Machine actions require that the virtual machine has Automatic OS Upgrades enabled.
         # Reimage a Virtual Machine.[post]
@@ -381,13 +383,15 @@ class MgmtComputeTest(AzureMgmtTestCase):
             result = self.mgmt_client.virtual_machines.begin_reimage(resource_group.name, VIRTUAL_MACHINE_NAME)
             result = result.result()
         except ResourceExistsError as e:
-            self.assertEqual(str(e), "(OperationNotAllowed) The Reimage and OSUpgrade Virtual Machine actions require that the virtual machine has Automatic OS Upgrades enabled.")
+            assert str(e) == "(OperationNotAllowed) The Reimage and OSUpgrade Virtual Machine actions require that the virtual machine has Automatic OS Upgrades enabled."
 
         # Delete virtual machine (TODO: need swagger file)
         result = self.mgmt_client.virtual_machines.begin_delete(resource_group.name, VIRTUAL_MACHINE_NAME)
         result = result.result()
 
+    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_compute_vm_image(self, resource_group):
         PUBLISHER_NAME = "MicrosoftWindowsServer"
         OFFER = "WindowsServer"
@@ -409,7 +413,9 @@ class MgmtComputeTest(AzureMgmtTestCase):
         # List Virtual Machine image skus (TODO: need swagger file)
         result = self.mgmt_client.virtual_machine_images.list_skus(AZURE_LOCATION, PUBLISHER_NAME, OFFER)
 
+    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_compute_vm_extension_image(self, resource_group):
         EXTENSION_PUBLISHER_NAME = "Microsoft.Compute"
         EXTENSION_IMAGE_TYPE = "VMAccessAgent"

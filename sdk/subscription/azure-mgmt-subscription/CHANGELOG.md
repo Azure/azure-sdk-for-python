@@ -1,5 +1,41 @@
 # Release History
 
+## 3.0.0 (2022-01-21)
+
+**Features**
+
+  - Added operation group SubscriptionsOperations
+  - Added operation group TenantsOperations
+  - Model CanceledSubscriptionId has a new parameter subscription_id
+  - Model EnabledSubscriptionId has a new parameter subscription_id
+  - Model RenamedSubscriptionId has a new parameter subscription_id
+  - Model SubscriptionAliasResponseProperties has a new parameter created_time
+
+**Breaking changes**
+
+  - Model CanceledSubscriptionId no longer has parameter value
+  - Model EnabledSubscriptionId no longer has parameter value
+  - Model RenamedSubscriptionId no longer has parameter value
+
+## 2.0.0 (2021-11-25)
+
+**Features**
+
+  - Model PutAliasRequestProperties has a new parameter additional_properties
+  - Model Operation has a new parameter is_data_action
+  - Model ErrorResponseBody has a new parameter code
+  - Model ErrorResponseBody has a new parameter message
+  - Model OperationDisplay has a new parameter description
+  - Added operation SubscriptionOperations.begin_accept_ownership
+  - Added operation SubscriptionOperations.accept_ownership_status
+  - Added operation group SubscriptionPolicyOperations
+  - Added operation group BillingAccountOperations
+
+**Breaking changes**
+
+  - Removed operation group TenantsOperations
+  - Removed operation group SubscriptionsOperations(SubscriptionsOperations can be used in [azure-mgmt-resource](https://pypi.org/project/azure-mgmt-resource/))
+
 ## 1.0.0 (2020-12-16)
 
 - GA release

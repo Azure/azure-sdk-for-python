@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from azure.core.rest import HttpRequest, HttpResponse
 
 class CommunicationNetworkTraversalClient(object):
-    """Azure Communication Networking Service.
+    """Azure Communication Network Traversal Service.
 
     :ivar communication_network_traversal: CommunicationNetworkTraversalOperations operations
     :vartype communication_network_traversal:
@@ -31,6 +31,9 @@ class CommunicationNetworkTraversalClient(object):
     :param endpoint: The communication resource, for example
      https://my-resource.communication.azure.com.
     :type endpoint: str
+    :keyword api_version: Api Version. The default value is "2022-02-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -40,7 +43,7 @@ class CommunicationNetworkTraversalClient(object):
     ):
         # type: (...) -> None
         _base_url = '{endpoint}'
-        self._config = CommunicationNetworkTraversalClientConfiguration(endpoint, **kwargs)
+        self._config = CommunicationNetworkTraversalClientConfiguration(endpoint=endpoint, **kwargs)
         self._client = PipelineClient(base_url=_base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

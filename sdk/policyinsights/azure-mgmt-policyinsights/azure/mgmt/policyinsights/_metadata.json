@@ -1,6 +1,6 @@
 {
     "chosen_version": "",
-    "total_api_version_list": ["2018-07-01-preview", "2019-07-01", "2019-10-01", "2020-07-01", "2021-01-01"],
+    "total_api_version_list": ["2018-07-01-preview", "2019-10-01", "2020-07-01", "2021-01-01", "2021-10-01"],
     "client": {
         "name": "PolicyInsightsClient",
         "filename": "_policy_insights_client",

@@ -1,5 +1,17 @@
 # Release History
 
+## 1.1.0 (Unreleased)
+
+This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.0.0 (2021-11-10)
 
 **Note:** This is the first stable release of our efforts to create a user-friendly and Pythonic client library for Azure Schema Registry.

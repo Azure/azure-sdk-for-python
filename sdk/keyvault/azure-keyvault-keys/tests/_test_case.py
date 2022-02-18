@@ -54,7 +54,7 @@ def get_decorator(only_hsm=False, only_vault=False, api_versions=None, **kwargs)
     return functools.partial(parameterized.expand, params, name_func=suffixed_test_name)
 
 
-def get_release_policy(attestation_uri):
+def get_release_policy(attestation_uri, **kwargs):
     release_policy_json = {
         "anyOf": [
             {
@@ -70,7 +70,7 @@ def get_release_policy(attestation_uri):
         "version": "1.0.0"
     }
     policy_string = json.dumps(release_policy_json).encode()
-    return KeyReleasePolicy(policy_string)
+    return KeyReleasePolicy(policy_string, **kwargs)
 
 
 def get_test_parameters(only_hsm=False, only_vault=False, api_versions=None):
@@ -95,6 +95,10 @@ def suffixed_test_name(testcase_func, param_num, param):
     )
 
 
+def is_public_cloud():
+    return (".microsoftonline.com" in os.getenv('AZURE_AUTHORITY_HOST', ''))
+
+    
 class KeysTestCase(AzureTestCase):
     def setUp(self, *args, **kwargs):
         vault_playback_url = "https://vaultname.vault.azure.net"
@@ -144,9 +148,9 @@ class KeysTestCase(AzureTestCase):
     def _get_attestation_uri(self):
         playback_uri = "https://fakeattestation.azurewebsites.net"
         if self.is_live:
-            real_uri = os.environ.get("AZURE_KEYVAULT_ATTESTATION_URI")
+            real_uri = os.environ.get("AZURE_KEYVAULT_ATTESTATION_URL")
             if real_uri is None:
-                pytest.skip("No AZURE_KEYVAULT_ATTESTATION_URI environment variable")
+                pytest.skip("No AZURE_KEYVAULT_ATTESTATION_URL environment variable")
             self._scrub_url(real_uri, playback_uri)
             return real_uri
         return playback_uri

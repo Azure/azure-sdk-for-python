@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import Any, Callable, Dict, Generic, Optional, TypeVar
+from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -18,7 +18,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._communication_network_traversal_operations import build_issue_relay_configuration_request
-
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -48,14 +47,23 @@ class CommunicationNetworkTraversalOperations:
     async def issue_relay_configuration(
         self,
         id: Optional[str] = None,
+        route_type: Optional[Union[str, "_models.RouteType"]] = None,
         **kwargs: Any
     ) -> "_models.CommunicationRelayConfiguration":
-        """Issue a configuration for an STUN/TURN server for an existing identity.
+        """Issue a configuration for an STUN/TURN server.
 
-        Issue a configuration for an STUN/TURN server for an existing identity.
+        Issue a configuration for an STUN/TURN server.
 
-        :param id: An existing ACS identity.
+        :param id: An identity to be associated with telemetry for data relayed using the returned
+         credentials. Must be an existing ACS user identity. If not provided, the telemetry will not
+         contain an associated identity value.
         :type id: str
+        :param route_type: Filter the routing methodology returned. If not provided, will return all
+         route types in separate ICE servers.
+        :type route_type: str or ~azure.communication.networktraversal.models.RouteType
+        :keyword api_version: Api Version. The default value is "2022-02-01". Note that overriding this
+         default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CommunicationRelayConfiguration, or the result of cls(response)
         :rtype: ~azure.communication.networktraversal.models.CommunicationRelayConfiguration
@@ -67,17 +75,19 @@ class CommunicationNetworkTraversalOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
+        api_version = kwargs.pop('api_version', "2022-02-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _body = _models.CommunicationRelayConfigurationRequest(id=id)
+        _body = _models.CommunicationRelayConfigurationRequest(id=id, route_type=route_type)
         if _body is not None:
-            json = self._serialize.body(_body, 'CommunicationRelayConfigurationRequest')
+            _json = self._serialize.body(_body, 'CommunicationRelayConfigurationRequest')
         else:
-            json = None
+            _json = None
 
         request = build_issue_relay_configuration_request(
+            api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             template_url=self.issue_relay_configuration.metadata['url'],
         )
         request = _convert_request(request)
@@ -86,7 +96,7 @@ class CommunicationNetworkTraversalOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client.send_request(request, stream=False, _return_pipeline_response=True, **kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -101,5 +111,5 @@ class CommunicationNetworkTraversalOperations:
 
         return deserialized
 
-    issue_relay_configuration.metadata = {'url': '/networktraversal/:issueRelayConfiguration'}  # type: ignore
+    issue_relay_configuration.metadata = {'url': '/networkTraversal/:issueRelayConfiguration'}  # type: ignore
 

@@ -1,0 +1,597 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs(\u00271\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=none",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "e44990ed-7fc3-11ec-ba49-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "1000",
+        "Content-Type": "application/json; odata.metadata=none",
+        "Date": "Thu, 27 Jan 2022 22:53:05 GMT",
+        "elapsed-time": "11",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "e44990ed-7fc3-11ec-ba49-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "hotelId": "1",
+        "hotelName": "Fancy Stay",
+        "description": "Best hotel in town if you like luxury hotels. They have an amazing infinity pool, a spa, and a really helpful concierge. The location is perfect -- right downtown, close to all the tourist attractions. We highly recommend this hotel.",
+        "descriptionFr": "Meilleur h\u00C3\u00B4tel en ville si vous aimez les h\u00C3\u00B4tels de luxe. Ils ont une magnifique piscine \u00C3\u00A0 d\u00C3\u00A9bordement, un spa et un concierge tr\u00C3\u00A8s utile. L\u0027emplacement est parfait \u00E2\u20AC\u201C en plein centre, \u00C3\u00A0 proximit\u00C3\u00A9 de toutes les attractions touristiques. Nous recommandons fortement cet h\u00C3\u00B4tel.",
+        "category": "Luxury",
+        "tags": [
+          "pool",
+          "view",
+          "wifi",
+          "concierge"
+        ],
+        "parkingIncluded": false,
+        "smokingAllowed": false,
+        "lastRenovationDate": "2010-06-27T00:00:00Z",
+        "rating": 5,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            47.678581
+          ],
+          "crs": {
+            "type": "name",
+            "properties": {
+              "name": "EPSG:4326"
+            }
+          }
+        },
+        "address": null,
+        "rooms": []
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs(\u00272\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=none",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "e45ce11b-7fc3-11ec-8ac1-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "469",
+        "Content-Type": "application/json; odata.metadata=none",
+        "Date": "Thu, 27 Jan 2022 22:53:05 GMT",
+        "elapsed-time": "6",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "e45ce11b-7fc3-11ec-8ac1-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "hotelId": "2",
+        "hotelName": "Roach Motel",
+        "description": "Cheapest hotel in town. Infact, a motel.",
+        "descriptionFr": "H\u00C3\u00B4tel le moins cher en ville. Infact, un motel.",
+        "category": "Budget",
+        "tags": [
+          "motel",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": true,
+        "lastRenovationDate": "1982-04-28T00:00:00Z",
+        "rating": 1,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            49.678581
+          ],
+          "crs": {
+            "type": "name",
+            "properties": {
+              "name": "EPSG:4326"
+            }
+          }
+        },
+        "address": null,
+        "rooms": []
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs(\u00273\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=none",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "e46f2602-7fc3-11ec-98b3-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "438",
+        "Content-Type": "application/json; odata.metadata=none",
+        "Date": "Thu, 27 Jan 2022 22:53:05 GMT",
+        "elapsed-time": "6",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "e46f2602-7fc3-11ec-98b3-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "hotelId": "3",
+        "hotelName": "EconoStay",
+        "description": "Very popular hotel in town",
+        "descriptionFr": "H\u00C3\u00B4tel le plus populaire en ville",
+        "category": "Budget",
+        "tags": [
+          "wifi",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": false,
+        "lastRenovationDate": "1995-07-01T00:00:00Z",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            46.678581
+          ],
+          "crs": {
+            "type": "name",
+            "properties": {
+              "name": "EPSG:4326"
+            }
+          }
+        },
+        "address": null,
+        "rooms": []
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs(\u00274\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=none",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "e480d228-7fc3-11ec-b8bc-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "416",
+        "Content-Type": "application/json; odata.metadata=none",
+        "Date": "Thu, 27 Jan 2022 22:53:05 GMT",
+        "elapsed-time": "6",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "e480d228-7fc3-11ec-b8bc-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "hotelId": "4",
+        "hotelName": "Express Rooms",
+        "description": "Pretty good hotel",
+        "descriptionFr": "Assez bon h\u00C3\u00B4tel",
+        "category": "Budget",
+        "tags": [
+          "wifi",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": false,
+        "lastRenovationDate": "1995-07-01T00:00:00Z",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            48.678581
+          ],
+          "crs": {
+            "type": "name",
+            "properties": {
+              "name": "EPSG:4326"
+            }
+          }
+        },
+        "address": null,
+        "rooms": []
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs(\u00275\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=none",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "e49162b4-7fc3-11ec-a532-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "418",
+        "Content-Type": "application/json; odata.metadata=none",
+        "Date": "Thu, 27 Jan 2022 22:53:05 GMT",
+        "elapsed-time": "6",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "e49162b4-7fc3-11ec-a532-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "hotelId": "5",
+        "hotelName": "Comfy Place",
+        "description": "Another good hotel",
+        "descriptionFr": "Un autre bon h\u00C3\u00B4tel",
+        "category": "Budget",
+        "tags": [
+          "wifi",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": false,
+        "lastRenovationDate": "2012-08-12T00:00:00Z",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            48.678581
+          ],
+          "crs": {
+            "type": "name",
+            "properties": {
+              "name": "EPSG:4326"
+            }
+          }
+        },
+        "address": null,
+        "rooms": []
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs(\u00276\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=none",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "e4a42561-7fc3-11ec-8d81-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "279",
+        "Content-Type": "application/json; odata.metadata=none",
+        "Date": "Thu, 27 Jan 2022 22:53:07 GMT",
+        "elapsed-time": "5",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "e4a42561-7fc3-11ec-8d81-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "hotelId": "6",
+        "hotelName": null,
+        "description": "Surprisingly expensive. Model suites have an ocean-view.",
+        "descriptionFr": null,
+        "category": null,
+        "tags": [],
+        "parkingIncluded": null,
+        "smokingAllowed": null,
+        "lastRenovationDate": null,
+        "rating": null,
+        "location": null,
+        "address": null,
+        "rooms": []
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs(\u00277\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=none",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "e4b57474-7fc3-11ec-906e-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "402",
+        "Content-Type": "application/json; odata.metadata=none",
+        "Date": "Thu, 27 Jan 2022 22:53:07 GMT",
+        "elapsed-time": "6",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "e4b57474-7fc3-11ec-906e-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "hotelId": "7",
+        "hotelName": "Modern Stay",
+        "description": "Modern architecture, very polite staff and very clean. Also very affordable.",
+        "descriptionFr": "Architecture moderne, personnel poli et tr\u00C3\u00A8s propre. Aussi tr\u00C3\u00A8s abordable.",
+        "category": null,
+        "tags": [],
+        "parkingIncluded": null,
+        "smokingAllowed": null,
+        "lastRenovationDate": null,
+        "rating": null,
+        "location": null,
+        "address": null,
+        "rooms": []
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs(\u00278\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=none",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "e4c698f6-7fc3-11ec-8926-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "483",
+        "Content-Type": "application/json; odata.metadata=none",
+        "Date": "Thu, 27 Jan 2022 22:53:07 GMT",
+        "elapsed-time": "6",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "e4c698f6-7fc3-11ec-8926-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "hotelId": "8",
+        "hotelName": null,
+        "description": "Has some road noise and is next to the very police station. Bathrooms had morel coverings.",
+        "descriptionFr": "Il y a du bruit de la route et se trouve \u00C3\u00A0 c\u00C3\u00B4t\u00C3\u00A9 de la station de police. Les salles de bain avaient des rev\u00C3\u00AAtements de morilles.",
+        "category": null,
+        "tags": [],
+        "parkingIncluded": null,
+        "smokingAllowed": null,
+        "lastRenovationDate": null,
+        "rating": null,
+        "location": null,
+        "address": null,
+        "rooms": []
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs(\u00279\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=none",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "e4d90b13-7fc3-11ec-83b7-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "1742",
+        "Content-Type": "application/json; odata.metadata=none",
+        "Date": "Thu, 27 Jan 2022 22:53:07 GMT",
+        "elapsed-time": "10",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "e4d90b13-7fc3-11ec-83b7-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "hotelId": "9",
+        "hotelName": "Secret Point Motel",
+        "description": "The hotel is ideally located on the main commercial artery of the city in the heart of New York. A few minutes away is Time\u0027s Square and the historic centre of the city, as well as other places of interest that make New York one of America\u0027s most attractive and cosmopolitan cities.",
+        "descriptionFr": "L\u0027h\u00C3\u00B4tel est id\u00C3\u00A9alement situ\u00C3\u00A9 sur la principale art\u00C3\u00A8re commerciale de la ville en plein c\u00C5\u201Cur de New York. A quelques minutes se trouve la place du temps et le centre historique de la ville, ainsi que d\u0027autres lieux d\u0027int\u00C3\u00A9r\u00C3\u00AAt qui font de New York l\u0027une des villes les plus attractives et cosmopolites de l\u0027Am\u00C3\u00A9rique.",
+        "category": "Boutique",
+        "tags": [
+          "pool",
+          "air conditioning",
+          "concierge"
+        ],
+        "parkingIncluded": false,
+        "smokingAllowed": true,
+        "lastRenovationDate": "1970-01-18T05:00:00Z",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -73.975403,
+            40.760586
+          ],
+          "crs": {
+            "type": "name",
+            "properties": {
+              "name": "EPSG:4326"
+            }
+          }
+        },
+        "address": {
+          "streetAddress": "677 5th Ave",
+          "city": "New York",
+          "stateProvince": "NY",
+          "country": "USA",
+          "postalCode": "10022"
+        },
+        "rooms": [
+          {
+            "description": "Budget Room, 1 Queen Bed (Cityside)",
+            "descriptionFr": "Chambre \u00C3\u2030conomique, 1 grand lit (c\u00C3\u00B4t\u00C3\u00A9 ville)",
+            "type": "Budget Room",
+            "baseRate": 9.69,
+            "bedOptions": "1 Queen Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": true,
+            "tags": [
+              "vcr/dvd"
+            ]
+          },
+          {
+            "description": "Budget Room, 1 King Bed (Mountain View)",
+            "descriptionFr": "Chambre \u00C3\u2030conomique, 1 tr\u00C3\u00A8s grand lit (Mountain View)",
+            "type": "Budget Room",
+            "baseRate": 8.09,
+            "bedOptions": "1 King Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": true,
+            "tags": [
+              "vcr/dvd",
+              "jacuzzi tub"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakesearchendpoint.search.windows.net/indexes(\u0027drgqefsg\u0027)/docs(\u002710\u0027)?api-version=2021-04-30-Preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata.metadata=none",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-search-documents/11.3.0b7 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "e4eb8af5-7fc3-11ec-b178-74c63bed1137"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Length": "1466",
+        "Content-Type": "application/json; odata.metadata=none",
+        "Date": "Thu, 27 Jan 2022 22:53:07 GMT",
+        "elapsed-time": "23",
+        "Expires": "-1",
+        "OData-Version": "4.0",
+        "Pragma": "no-cache",
+        "Preference-Applied": "odata.include-annotations=\u0022*\u0022",
+        "request-id": "e4eb8af5-7fc3-11ec-b178-74c63bed1137",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Vary": "Accept-Encoding"
+      },
+      "ResponseBody": {
+        "hotelId": "10",
+        "hotelName": "Countryside Hotel",
+        "description": "Save up to 50% off traditional hotels.  Free WiFi, great location near downtown, full kitchen, washer \u0026 dryer, 24/7 support, bowling alley, fitness center and more.",
+        "descriptionFr": "\u00C3\u2030conomisez jusqu\u0027\u00C3\u00A0 50% sur les h\u00C3\u00B4tels traditionnels.  WiFi gratuit, tr\u00C3\u00A8s bien situ\u00C3\u00A9 pr\u00C3\u00A8s du centre-ville, cuisine compl\u00C3\u00A8te, laveuse \u0026 s\u00C3\u00A9cheuse, support 24/7, bowling, centre de fitness et plus encore.",
+        "category": "Budget",
+        "tags": [
+          "24-hour front desk service",
+          "coffee in lobby",
+          "restaurant"
+        ],
+        "parkingIncluded": false,
+        "smokingAllowed": true,
+        "lastRenovationDate": "1999-09-06T00:00:00Z",
+        "rating": 3,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -78.940483,
+            35.90416
+          ],
+          "crs": {
+            "type": "name",
+            "properties": {
+              "name": "EPSG:4326"
+            }
+          }
+        },
+        "address": {
+          "streetAddress": "6910 Fayetteville Rd",
+          "city": "Durham",
+          "stateProvince": "NC",
+          "country": "USA",
+          "postalCode": "27713"
+        },
+        "rooms": [
+          {
+            "description": "Suite, 1 King Bed (Amenities)",
+            "descriptionFr": "Suite, 1 tr\u00C3\u00A8s grand lit (Services)",
+            "type": "Suite",
+            "baseRate": 2.44,
+            "bedOptions": "1 King Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": true,
+            "tags": [
+              "coffee maker"
+            ]
+          },
+          {
+            "description": "Budget Room, 1 Queen Bed (Amenities)",
+            "descriptionFr": "Chambre \u00C3\u2030conomique, 1 grand lit (Services)",
+            "type": "Budget Room",
+            "baseRate": 7.69,
+            "bedOptions": "1 Queen Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": false,
+            "tags": [
+              "coffee maker"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

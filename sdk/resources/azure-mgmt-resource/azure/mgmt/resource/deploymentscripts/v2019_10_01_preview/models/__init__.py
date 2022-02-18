@@ -6,52 +6,29 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AzureCliScript
-    from ._models_py3 import AzureCliScriptProperties
-    from ._models_py3 import AzurePowerShellScript
-    from ._models_py3 import AzurePowerShellScriptProperties
-    from ._models_py3 import AzureResourceBase
-    from ._models_py3 import ContainerConfiguration
-    from ._models_py3 import DeploymentScript
-    from ._models_py3 import DeploymentScriptListResult
-    from ._models_py3 import DeploymentScriptPropertiesBase
-    from ._models_py3 import DeploymentScriptUpdateParameter
-    from ._models_py3 import DeploymentScriptsError
-    from ._models_py3 import EnvironmentVariable
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import ManagedServiceIdentity
-    from ._models_py3 import ScriptConfigurationBase
-    from ._models_py3 import ScriptLog
-    from ._models_py3 import ScriptLogsList
-    from ._models_py3 import ScriptStatus
-    from ._models_py3 import StorageAccountConfiguration
-    from ._models_py3 import SystemData
-    from ._models_py3 import UserAssignedIdentity
-except (SyntaxError, ImportError):
-    from ._models import AzureCliScript  # type: ignore
-    from ._models import AzureCliScriptProperties  # type: ignore
-    from ._models import AzurePowerShellScript  # type: ignore
-    from ._models import AzurePowerShellScriptProperties  # type: ignore
-    from ._models import AzureResourceBase  # type: ignore
-    from ._models import ContainerConfiguration  # type: ignore
-    from ._models import DeploymentScript  # type: ignore
-    from ._models import DeploymentScriptListResult  # type: ignore
-    from ._models import DeploymentScriptPropertiesBase  # type: ignore
-    from ._models import DeploymentScriptUpdateParameter  # type: ignore
-    from ._models import DeploymentScriptsError  # type: ignore
-    from ._models import EnvironmentVariable  # type: ignore
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import ManagedServiceIdentity  # type: ignore
-    from ._models import ScriptConfigurationBase  # type: ignore
-    from ._models import ScriptLog  # type: ignore
-    from ._models import ScriptLogsList  # type: ignore
-    from ._models import ScriptStatus  # type: ignore
-    from ._models import StorageAccountConfiguration  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import UserAssignedIdentity  # type: ignore
+from ._models_py3 import AzureCliScript
+from ._models_py3 import AzureCliScriptProperties
+from ._models_py3 import AzurePowerShellScript
+from ._models_py3 import AzurePowerShellScriptProperties
+from ._models_py3 import AzureResourceBase
+from ._models_py3 import ContainerConfiguration
+from ._models_py3 import DeploymentScript
+from ._models_py3 import DeploymentScriptListResult
+from ._models_py3 import DeploymentScriptPropertiesBase
+from ._models_py3 import DeploymentScriptUpdateParameter
+from ._models_py3 import DeploymentScriptsError
+from ._models_py3 import EnvironmentVariable
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorResponse
+from ._models_py3 import ManagedServiceIdentity
+from ._models_py3 import ScriptConfigurationBase
+from ._models_py3 import ScriptLog
+from ._models_py3 import ScriptLogsList
+from ._models_py3 import ScriptStatus
+from ._models_py3 import StorageAccountConfiguration
+from ._models_py3 import SystemData
+from ._models_py3 import UserAssignedIdentity
+
 
 from ._deployment_scripts_client_enums import (
     CleanupOptions,

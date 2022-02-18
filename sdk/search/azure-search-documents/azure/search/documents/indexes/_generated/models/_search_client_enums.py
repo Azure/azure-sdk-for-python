@@ -833,6 +833,8 @@ class OcrSkillLanguage(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SR_LATN = "sr-Latn"
     #: Slovak.
     SK = "sk"
+    #: Unknown.  If the language is explicitly set to "unk", the language will be auto-detected.
+    UNK = "unk"
 
 class PhoneticEncoder(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Identifies the type of phonetic encoder to use with a PhoneticTokenFilter.

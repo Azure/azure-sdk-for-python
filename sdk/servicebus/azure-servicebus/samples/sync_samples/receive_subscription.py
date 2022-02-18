@@ -9,8 +9,6 @@
 Example to show receiving batch messages from a Service Bus Subscription under specific Topic.
 """
 
-# pylint: disable=C0111
-
 import os
 from azure.servicebus import ServiceBusClient
 

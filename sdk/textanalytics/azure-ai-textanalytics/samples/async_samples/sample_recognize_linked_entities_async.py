@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -49,7 +47,7 @@ async def sample_recognize_linked_entities_async():
         Microsoft was founded by Bill Gates with some friends he met at Harvard. One of his friends,
         Steve Ballmer, eventually became CEO after Bill Gates as well. Steve Ballmer eventually stepped
         down as CEO of Microsoft, and was succeeded by Satya Nadella.
-        Microsoft originally moved its headquarters to Bellevue, Wahsington in Januaray 1979, but is now
+        Microsoft originally moved its headquarters to Bellevue, Washington in January 1979, but is now
         headquartered in Redmond.
         """
     ]
@@ -84,5 +82,4 @@ async def main():
     await sample_recognize_linked_entities_async()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

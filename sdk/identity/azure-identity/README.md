@@ -1,8 +1,6 @@
 # Azure Identity client library for Python
 
-The Azure Identity library provides Azure Active Directory token authentication support across the Azure SDK. It
-provides a set of TokenCredential implementations which can be used to construct Azure SDK clients which support AAD
-token authentication.
+The Azure Identity library provides [Azure Active Directory (AAD)](https://docs.microsoft.com/azure/active-directory/fundamentals/active-directory-whatis) token authentication through a set of convenient TokenCredential implementations. It enables Azure SDK clients to authenticate with AAD, while also allowing other Python apps to authenticate with AAD work and school accounts, Microsoft personal accounts (MSA), and other Identity providers like [AAD B2C](https://docs.microsoft.com/azure/active-directory-b2c/overview) service.
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity)
 | [Package (PyPI)](https://pypi.org/project/azure-identity/)
@@ -11,7 +9,7 @@ token authentication.
 
 ## _Disclaimer_
 
-_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 
@@ -26,7 +24,7 @@ pip install azure-identity
 ### Prerequisites
 
 - an [Azure subscription](https://azure.microsoft.com/free/)
-- Python 2.7 or a recent version of Python 3 (this library doesn't support
+- Python 3.6 or a recent version of Python 3 (this library doesn't support
   end-of-life versions)
 
 ### Authenticate during local development
@@ -187,7 +185,7 @@ client = EventHubProducerClient(namespace, eventhub_name, credential_chain)
 
 ### Async credentials
 
-This library includes an async API supported on Python 3. To use the async
+This library includes a set of async APIs. To use the async
 credentials in [azure.identity.aio][ref_docs_aio], you must first install an
 async transport, such as [aiohttp](https://pypi.org/project/aiohttp/). See
 [azure-core documentation][azure_core_transport_doc] for more information.
@@ -398,7 +396,7 @@ additional questions or comments.
 [managed_id_cred_ref]: https://aka.ms/azsdk/python/identity/managedidentitycredential
 [ref_docs]: https://aka.ms/azsdk/python/identity/docs
 [ref_docs_aio]: https://aka.ms/azsdk/python/identity/aio/docs
-[troubleshooting_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/Troubleshoot.md
+[troubleshooting_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TROUBLESHOOTING.md
 [userpass_cred_ref]: https://aka.ms/azsdk/python/identity/usernamepasswordcredential
 [vscode_cred_ref]: https://aka.ms/azsdk/python/identity/vscodecredential
 

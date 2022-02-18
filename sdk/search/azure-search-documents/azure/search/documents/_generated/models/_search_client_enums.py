@@ -97,8 +97,148 @@ class QueryLanguage(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     #: Query language not specified.
     NONE = "none"
-    #: English.
+    #: Query language value for English (United States).
     EN_US = "en-us"
+    #: Query language value for English (Great Britain).
+    EN_GB = "en-gb"
+    #: Query language value for English (India).
+    EN_IN = "en-in"
+    #: Query language value for English (Canada).
+    EN_CA = "en-ca"
+    #: Query language value for English (Australia).
+    EN_AU = "en-au"
+    #: Query language value for French (France).
+    FR_FR = "fr-fr"
+    #: Query language value for French (Canada).
+    FR_CA = "fr-ca"
+    #: Query language value for German (Germany).
+    DE_DE = "de-de"
+    #: Query language value for Spanish (Spain).
+    ES_ES = "es-es"
+    #: Query language value for Spanish (Mexico).
+    ES_MX = "es-mx"
+    #: Query language value for Chinese (China).
+    ZH_CN = "zh-cn"
+    #: Query language value for Chinese (Taiwan).
+    ZH_TW = "zh-tw"
+    #: Query language value for Portuguese (Brazil).
+    PT_BR = "pt-br"
+    #: Query language value for Portuguese (Portugal).
+    PT_PT = "pt-pt"
+    #: Query language value for Italian (Italy).
+    IT_IT = "it-it"
+    #: Query language value for Japanese (Japan).
+    JA_JP = "ja-jp"
+    #: Query language value for Korean (Korea).
+    KO_KR = "ko-kr"
+    #: Query language value for Russian (Russia).
+    RU_RU = "ru-ru"
+    #: Query language value for Czech (Czech Republic).
+    CS_CZ = "cs-cz"
+    #: Query language value for Dutch (Belgium).
+    NL_BE = "nl-be"
+    #: Query language value for Dutch (Netherlands).
+    NL_NL = "nl-nl"
+    #: Query language value for Hungarian (Hungary).
+    HU_HU = "hu-hu"
+    #: Query language value for Polish (Poland).
+    PL_PL = "pl-pl"
+    #: Query language value for Swedish (Sweden).
+    SV_SE = "sv-se"
+    #: Query language value for Turkish (Turkey).
+    TR_TR = "tr-tr"
+    #: Query language value for Hindi (India).
+    HI_IN = "hi-in"
+    #: Query language value for Arabic (Saudi Arabia).
+    AR_SA = "ar-sa"
+    #: Query language value for Arabic (Egypt).
+    AR_EG = "ar-eg"
+    #: Query language value for Arabic (Morocco).
+    AR_MA = "ar-ma"
+    #: Query language value for Arabic (Kuwait).
+    AR_KW = "ar-kw"
+    #: Query language value for Arabic (Jordan).
+    AR_JO = "ar-jo"
+    #: Query language value for Danish (Denmark).
+    DA_DK = "da-dk"
+    #: Query language value for Norwegian (Norway).
+    NO_NO = "no-no"
+    #: Query language value for Bulgarian (Bulgaria).
+    BG_BG = "bg-bg"
+    #: Query language value for Croatian (Croatia).
+    HR_HR = "hr-hr"
+    #: Query language value for Croatian (Bosnia and Herzegovina).
+    HR_BA = "hr-ba"
+    #: Query language value for Malay (Malaysia).
+    MS_MY = "ms-my"
+    #: Query language value for Malay (Brunei Darussalam).
+    MS_BN = "ms-bn"
+    #: Query language value for Slovenian (Slovenia).
+    SL_SL = "sl-sl"
+    #: Query language value for Tamil (India).
+    TA_IN = "ta-in"
+    #: Query language value for Vietnamese (Viet Nam).
+    VI_VN = "vi-vn"
+    #: Query language value for Greek (Greece).
+    EL_GR = "el-gr"
+    #: Query language value for Romanian (Romania).
+    RO_RO = "ro-ro"
+    #: Query language value for Icelandic (Iceland).
+    IS_IS = "is-is"
+    #: Query language value for Indonesian (Indonesia).
+    ID_ID = "id-id"
+    #: Query language value for Thai (Thailand).
+    TH_TH = "th-th"
+    #: Query language value for Lithuanian (Lithuania).
+    LT_LT = "lt-lt"
+    #: Query language value for Ukrainian (Ukraine).
+    UK_UA = "uk-ua"
+    #: Query language value for Latvian (Latvia).
+    LV_LV = "lv-lv"
+    #: Query language value for Estonian (Estonia).
+    ET_EE = "et-ee"
+    #: Query language value for Catalan (Spain).
+    CA_ES = "ca-es"
+    #: Query language value for Finnish (Finland).
+    FI_FI = "fi-fi"
+    #: Query language value for Serbian (Bosnia and Herzegovina).
+    SR_BA = "sr-ba"
+    #: Query language value for Serbian (Montenegro).
+    SR_ME = "sr-me"
+    #: Query language value for Serbian (Serbia).
+    SR_RS = "sr-rs"
+    #: Query language value for Slovak (Slovakia).
+    SK_SK = "sk-sk"
+    #: Query language value for Norwegian (Norway).
+    NB_NO = "nb-no"
+    #: Query language value for Armenian (Armenia).
+    HY_AM = "hy-am"
+    #: Query language value for Bengali (India).
+    BN_IN = "bn-in"
+    #: Query language value for Basque (Spain).
+    EU_ES = "eu-es"
+    #: Query language value for Galician (Spain).
+    GL_ES = "gl-es"
+    #: Query language value for Gujarati (India).
+    GU_IN = "gu-in"
+    #: Query language value for Hebrew (Israel).
+    HE_IL = "he-il"
+    #: Query language value for Irish (Ireland).
+    GA_IE = "ga-ie"
+    #: Query language value for Kannada (India).
+    KN_IN = "kn-in"
+    #: Query language value for Malayalam (India).
+    ML_IN = "ml-in"
+    #: Query language value for Marathi (India).
+    MR_IN = "mr-in"
+    #: Query language value for Persian (U.A.E.).
+    FA_AE = "fa-ae"
+    #: Query language value for Punjabi (India).
+    PA_IN = "pa-in"
+    #: Query language value for Telugu (India).
+    TE_IN = "te-in"
+    #: Query language value for Urdu (Pakistan).
+    UR_PK = "ur-pk"
 
 class QuerySpellerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Improve search recall by spell-correcting individual search query terms.

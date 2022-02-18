@@ -52,6 +52,9 @@ parameters:
   - name: UsePlatformContainer
     type: boolean
     default: false
+  - name: TestProxy
+    type: boolean
+    default: false
 
 jobs:
   - job:
@@ -117,7 +120,8 @@ jobs:
           AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
           TestMarkArgument: ${{ parameters.TestMarkArgument }}
           InjectedPackages: ${{ parameters.InjectedPackages }}
-          BuildDocs: ${{parameters.BuildDocs}}
+          BuildDocs: ${{ parameters.BuildDocs }}
+          TestProxy: ${{ parameters.TestProxy }}
 
       - template: /eng/common/TestResources/remove-test-resources.yml
         parameters:

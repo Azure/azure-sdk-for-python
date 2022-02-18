@@ -9,8 +9,6 @@
 Example to show sending message(s) to a Service Bus Topic.
 """
 
-# pylint: disable=C0111
-
 import os
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
 

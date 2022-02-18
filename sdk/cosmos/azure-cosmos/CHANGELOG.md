@@ -1,7 +1,34 @@
-## 4.2.1 (Unreleased)
+## Release History
 
+### 4.3.0b3 (Unreleased)
 
-## 4.2.0 (2020-10-08)
+#### Features Added
+- Added support for split-proof queries for the async client
+
+### Bugs fixed
+- Default consistency level for the sync and async clients is no longer "Session" and will instead be set to the 
+  consistency level of the user's cosmos account setting on initialization if not passed during client initialization. 
+  This change will impact client application in terms of RUs and latency. Users relying on default `Session` consistency will need to pass it explicitly if their account consistency is different than `Session`.
+  Please see [Consistency Levels in Azure Cosmos DB](https://docs.microsoft.com/azure/cosmos-db/consistency-levels) for more details.
+- Fixed invalid request body being sent when passing in `serverScript` body parameter to replace operations for trigger, sproc and udf resources.
+
+### 4.3.0b2 (2022-01-25)
+
+This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
+We will also be removing support for Python 3.6 and will only support Python 3.7+ starting December 2022.
+
+#### Features Added
+- Added support for split-proof queries for the sync client
+
+#### Other Changes
+- Added async user agent for async client
+
+### 4.3.0b1 (2021-12-14)
+
+#### Features Added
+- Added language native async i/o client
+
+### 4.2.0 (2020-10-08)
 
 **Bug fixes**
 - Fixed bug where continuation token is not honored when query_iterable is used to get results by page. Issue #13265.
@@ -10,7 +37,7 @@
 **New features**
 - Added support for passing partitionKey while querying changefeed. Issue #11689.
 
-## 4.1.0 (2020-08-10)
+### 4.1.0 (2020-08-10)
 
 - Added deprecation warning for "lazy" indexing mode. The backend no longer allows creating containers with this mode and will set them to consistent instead.
 
@@ -25,7 +52,7 @@
 - Fixed error raised when a non string ID is used in an item. It now raises TypeError rather than AttributeError. Issue #11793 - thank you @Rabbit994.
 
 
-## 4.0.0 (2020-05-20)
+### 4.0.0 (2020-05-20)
 
 - Stable release.
 - Added HttpLoggingPolicy to pipeline to enable passing in a custom logger for request and response headers.

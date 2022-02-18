@@ -1,0 +1,38 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels:build?api-version=2022-01-30-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "119",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "824a8ea9-7f2b-11ec-8044-c8348e073d30"
+      },
+      "RequestBody": {
+        "modelId": "9343f954-1559-407b-9639-5c0f8e81c9bc",
+        "buildMode": "template",
+        "azureBlobSource": {
+          "containerUrl": "xx"
+        }
+      },
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "apim-request-id": "1f8d9b86-48de-41d8-a1d1-25fc8a81d4fc",
+        "Content-Length": "224",
+        "Content-Type": "application/json",
+        "Date": "Thu, 27 Jan 2022 04:42:18 GMT"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "401",
+          "message": "Access denied due to invalid subscription key or wrong API endpoint. Make sure to provide a valid key for an active subscription and use a correct regional API endpoint for your resource."
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

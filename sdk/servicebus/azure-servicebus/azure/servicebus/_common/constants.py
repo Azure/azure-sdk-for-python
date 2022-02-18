@@ -165,12 +165,16 @@ MESSAGE_PROPERTY_MAX_LENGTH = 128
 MAX_DURATION_VALUE = 922337203685477
 # equivalent to .NET Date("9999-12-31T07:59:59.000Z").getTime() in ms
 MAX_ABSOLUTE_EXPIRY_TIME = 253402243199000
-
+MESSAGE_STATE_NAME = b"x-opt-message-state"
 
 class ServiceBusReceiveMode(str, Enum):
     PEEK_LOCK = "peeklock"
     RECEIVE_AND_DELETE = "receiveanddelete"
 
+class ServiceBusMessageState(int, Enum):
+    ACTIVE = 0
+    DEFERRED = 1
+    SCHEDULED = 2
 
 # To enable extensible string enums for the public facing parameter, and translate to the "real" uamqp constants.
 ServiceBusToAMQPReceiveModeMap = {

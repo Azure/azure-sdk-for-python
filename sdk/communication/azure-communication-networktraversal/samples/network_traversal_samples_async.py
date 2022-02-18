@@ -51,25 +51,7 @@ class CommunicationRelayClientSamples(object):
 
         async with relay_client:
             print("Getting relay configuration")
-            relay_configuration = await relay_client.get_relay_configuration(user)
-
-        for iceServer in relay_configuration.ice_servers:
-            print("Icer server:")
-            print(iceServer)
-
-    async def get_relay_config_no_identity(self):
-        from azure.communication.networktraversal.aio import CommunicationRelayClient
-
-        if self.client_id is not None and self.client_secret is not None and self.tenant_id is not None:
-            from azure.identity.aio import DefaultAzureCredential
-            endpoint, _ = parse_connection_str(self.connection_string)
-            relay_client = CommunicationRelayClient(endpoint, DefaultAzureCredential())
-        else:
-            relay_client = CommunicationRelayClient.from_connection_string(self.connection_string)
-
-        async with relay_client:
-            print("Getting relay configuration")
-            relay_configuration = await relay_client.get_relay_configuration()
+            relay_configuration = await relay_client.get_relay_configuration(user=user)
 
         for iceServer in relay_configuration.ice_servers:
             print("Icer server:")
@@ -78,8 +60,6 @@ class CommunicationRelayClientSamples(object):
 async def main():
     sample = CommunicationRelayClientSamples()
     await sample.get_relay_config()
-    await sample.get_relay_config_no_identity()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

@@ -9,8 +9,6 @@
 Example to show receiving deferred message from a Service Bus Queue.
 """
 
-# pylint: disable=C0111
-
 import os
 from azure.servicebus import ServiceBusMessage, ServiceBusClient
 
