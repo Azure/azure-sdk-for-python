@@ -24,11 +24,11 @@ else:
 
 
 def generate_token_with_custom_expiry_epoch(expires_on_epoch):
-    expiry_json = '{"exp": ' + str(expires_on_epoch) + '}'
+    expiry_json = f'{{"exp": {str(expires_on_epoch)} }}'
     base64expiry = base64.b64encode(
         expiry_json.encode('utf-8')).decode('utf-8').rstrip("=")
-    token_template = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +\
-        base64expiry + ".adM-ddBZZlQ1WlN3pdPBOF5G4Wh9iZpxNP_fSvpF4cWs"
+    token_template = (f'''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
+        {base64expiry}.adM-ddBZZlQ1WlN3pdPBOF5G4Wh9iZpxNP_fSvpF4cWs''')
     return token_template
 
 class URIIdentityReplacer(RecordingProcessor):

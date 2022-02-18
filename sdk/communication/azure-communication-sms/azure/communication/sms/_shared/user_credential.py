@@ -95,7 +95,7 @@ class CommunicationTokenCredential(object):
 
         if self._is_token_expiring_soon(self._token):
             # Schedule the next refresh for when it reaches a certain percentage of the remaining lifetime.
-            timespan = token_ttl / 2
+            timespan = token_ttl // 2
         else:
             # Schedule the next refresh for when it gets in to the soon-to-expire window.
             timespan = token_ttl - timedelta(
@@ -114,8 +114,8 @@ class CommunicationTokenCredential(object):
         else:
             interval = timedelta(
                 minutes=self._ON_DEMAND_REFRESHING_INTERVAL_MINUTES)
-        return token.expires_on - get_current_utc_as_int() <\
-            interval.total_seconds()
+        return ((token.expires_on - get_current_utc_as_int())
+            < interval.total_seconds())
 
     @classmethod
     def _is_token_valid(cls, token):
