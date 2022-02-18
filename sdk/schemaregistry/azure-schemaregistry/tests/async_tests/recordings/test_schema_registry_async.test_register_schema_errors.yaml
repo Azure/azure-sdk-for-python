@@ -4,12 +4,6 @@ interactions:
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
       Content-Type:
       - application/json; serialization=Avro
       User-Agent:
@@ -19,32 +13,24 @@ interactions:
   response:
     body:
       string: '{"Code":400,"Detail":"Error when consuming request body: The body of
-        the message cannot be read because it is empty. TrackingId:3d29af9b-fae4-43ea-a782-6fd665b7fd2f_G19,
+        the message cannot be read because it is empty. TrackingId:0e263052-fc08-4ff1-96de-04f07b31ed99_G24,
         SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups\/fakegroup\/schemas\/test-schema,
-        Timestamp:2022-02-18T22:18:16"}'
+        Timestamp:2022-02-18T22:20:00"}'
     headers:
-      content-type:
-      - application/json
-      date:
-      - Fri, 18 Feb 2022 22:18:15 GMT
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000
-      transfer-encoding:
-      - chunked
+      content-type: application/json
+      date: Fri, 18 Feb 2022 22:20:00 GMT
+      server: Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=31536000
+      transfer-encoding: chunked
     status:
       code: 400
       message: Bad Request
+    url: https://swathip-test-eventhubs.servicebus.windows.net/$schemaGroups/swathip-test-schema/schemas/test-schema?api-version=2021-10
 - request:
     body: '{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}'
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
       - '179'
       Content-Type:
@@ -56,20 +42,16 @@ interactions:
   response:
     body:
       string: '{"Code":415,"Detail":"Invalid schema type for PUT request. ''invalid-format''
-        is not supported. TrackingId:a5f64e4b-bdd8-4910-a5c4-599a00c2e6b8_G19, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups\/fakegroup\/schemas\/test-schema,
-        Timestamp:2022-02-18T22:18:16"}'
+        is not supported. TrackingId:da79bb7e-6f52-465d-a6b9-6c66f4b4c433_G24, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups\/fakegroup\/schemas\/test-schema,
+        Timestamp:2022-02-18T22:20:00"}'
     headers:
-      content-type:
-      - application/json
-      date:
-      - Fri, 18 Feb 2022 22:18:16 GMT
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000
-      transfer-encoding:
-      - chunked
+      content-type: application/json
+      date: Fri, 18 Feb 2022 22:20:00 GMT
+      server: Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=31536000
+      transfer-encoding: chunked
     status:
       code: 415
       message: Unsupported Media Type
+    url: https://swathip-test-eventhubs.servicebus.windows.net/$schemaGroups/swathip-test-schema/schemas/test-schema?api-version=2021-10
 version: 1

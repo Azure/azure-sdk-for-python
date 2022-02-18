@@ -4,10 +4,6 @@ interactions:
     headers:
       Accept:
       - application/json; serialization=Avro
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       User-Agent:
       - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: GET
@@ -15,21 +11,17 @@ interactions:
   response:
     body:
       string: '{"Code":400,"Detail":"SubCode=40000, UnknownType:The request is invalid.
-        [MGResponseHttpError=BadRequest]. TrackingId:41931b21-7a53-4a0e-9125-6afd0f57001b_G5,
+        [MGResponseHttpError=BadRequest]. TrackingId:4d975522-ca3a-427d-87fd-e130a109baff_G2,
         SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups\/$schemas\/fakeschemaid,
-        Timestamp:2022-02-18T22:18:12"}'
+        Timestamp:2022-02-18T22:19:56"}'
     headers:
-      content-type:
-      - application/json
-      date:
-      - Fri, 18 Feb 2022 22:18:12 GMT
-      server:
-      - Microsoft-HTTPAPI/2.0
-      strict-transport-security:
-      - max-age=31536000
-      transfer-encoding:
-      - chunked
+      content-type: application/json
+      date: Fri, 18 Feb 2022 22:19:56 GMT
+      server: Microsoft-HTTPAPI/2.0
+      strict-transport-security: max-age=31536000
+      transfer-encoding: chunked
     status:
       code: 400
       message: Bad Request
+    url: https://swathip-test-eventhubs.servicebus.windows.net/$schemaGroups/$schemas/fakeschemaid?api-version=2021-10
 version: 1

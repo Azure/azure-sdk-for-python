@@ -18,8 +18,6 @@
 #
 # --------------------------------------------------------------------------
 import functools
-from msilib import schema
-from multiprocessing.sharedctypes import Value
 import pytest
 import json
 
