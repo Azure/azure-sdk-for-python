@@ -1,5 +1,12 @@
 # Release History
 
+## 12.7.0 (Unreleased)
+
+### Features Added
+
+### Bugs Fixed
+- Fixed a bug where `start_copy_from_url()` was not sending the `ignore_read_only` parameter correctly.
+
 ## 12.7.0b2 (2022-02-08)
 
 This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
@@ -11,7 +18,7 @@ This version and all future versions will require Python 3.6+. Python 2.7 is no 
 
 ### Bugs Fixed
 - Update `azure-core` dependency to avoid inconsistent dependencies from being installed.
-- Fixed a bug, that was introuced in the previous beta release, where `generate_account_sas()`
+- Fixed a bug, that was introduced in the previous beta release, where `generate_account_sas()`
 was not generating the proper SAS signature.
 
 ## 12.7.0b1 (2021-12-13)
