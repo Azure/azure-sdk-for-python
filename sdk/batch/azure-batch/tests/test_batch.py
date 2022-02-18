@@ -33,7 +33,7 @@ from devtools_testutils import (
 AZURE_LOCATION = 'southcentralus'
 BATCH_ENVIRONMENT = None  # Set this to None if testing against prod
 BATCH_RESOURCE = 'https://batch.core.windows.net/'
-DEFAULT_VM_SIZE = 'standard_d1_v2'
+DEFAULT_VM_SIZE = 'standard_d2_v2'
 
 
 class BatchTest(AzureMgmtTestCase):
@@ -210,9 +210,9 @@ class BatchTest(AzureMgmtTestCase):
                 image_reference=models.ImageReference(
                     publisher='Canonical',
                     offer='UbuntuServer',
-                    sku='16.04-LTS'
+                    sku='18.04-LTS'
                 ),
-                node_agent_sku_id='batch.node.ubuntu 16.04')
+                node_agent_sku_id='batch.node.ubuntu 18.04')
         )
         self.assertBatchError('InvalidPropertyValue', client.pool.add, test_network_pool, models.PoolAddOptions(timeout=45))
 
@@ -228,7 +228,7 @@ class BatchTest(AzureMgmtTestCase):
                                              "/images/FakeImage"
                                              "/versions/version"
                 ),
-                node_agent_sku_id='batch.node.ubuntu 16.04'
+                node_agent_sku_id='batch.node.ubuntu 18.04'
             )
         )
         self.assertBatchError('InvalidPropertyValue', client.pool.add, test_image_pool, models.PoolAddOptions(timeout=45))
@@ -242,9 +242,9 @@ class BatchTest(AzureMgmtTestCase):
                 image_reference=models.ImageReference(
                     publisher='Canonical',
                     offer='UbuntuServer',
-                    sku='16.04-LTS'
+                    sku='18.04-LTS'
                 ),
-                node_agent_sku_id='batch.node.ubuntu 16.04',
+                node_agent_sku_id='batch.node.ubuntu 18.04',
                 data_disks=[data_disk])
         )
         response = client.pool.add(test_disk_pool)
@@ -262,9 +262,9 @@ class BatchTest(AzureMgmtTestCase):
                 image_reference=models.ImageReference(
                     publisher='Canonical',
                     offer='UbuntuServer',
-                    sku='16.04-LTS'
+                    sku='18.04-LTS'
                 ),
-                node_agent_sku_id='batch.node.ubuntu 16.04',
+                node_agent_sku_id='batch.node.ubuntu 18.04',
                 data_disks=[data_disk])
         )
         response = client.pool.add(test_app_pool)
@@ -280,12 +280,12 @@ class BatchTest(AzureMgmtTestCase):
                 image_reference=models.ImageReference(
                     publisher='Canonical',
                     offer='UbuntuServer',
-                    sku='16.04-LTS'
+                    sku='18.04-LTS'
                 ),
                 disk_encryption_configuration=models.DiskEncryptionConfiguration(
                     targets=[models.DiskEncryptionTarget.temporary_disk]
                 ),
-                node_agent_sku_id='batch.node.ubuntu 16.04')
+                node_agent_sku_id='batch.node.ubuntu 18.04')
         )
         response = client.pool.add(test_ade_pool)
         self.assertIsNone(response)
@@ -435,6 +435,10 @@ class BatchTest(AzureMgmtTestCase):
             '$TargetDedicatedNodes=3;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue')
         
         # Test Disable Autoscale
+        pool = client.pool.get(batch_pool.name)
+        while self.is_live and pool.allocation_state != models.AllocationState.steady:
+            time.sleep(5)
+            pool = client.pool.get(batch_pool.name)
         response = client.pool.disable_auto_scale(batch_pool.name)
         self.assertIsNone(response)
 
@@ -569,11 +573,11 @@ class BatchTest(AzureMgmtTestCase):
             )
         )
         virtual_machine_config = models.VirtualMachineConfiguration(
-            node_agent_sku_id="batch.node.ubuntu 16.04",
+            node_agent_sku_id="batch.node.ubuntu 18.04",
             image_reference=models.ImageReference(
                 publisher="Canonical",
                 offer="UbuntuServer",
-                sku="16.04-LTS")
+                sku="18.04-LTS")
         )
         pool = models.PoolAddParameter(
             id=self.get_resource_name('batch_network_'),
@@ -620,7 +624,7 @@ class BatchTest(AzureMgmtTestCase):
 
         # Test Upload Log
         config = models.UploadBatchServiceLogsConfiguration(
-            container_url = "https://test.blob.core.windows.net:443/test-container", 
+            container_url = "https://computecontainer.blob.core.windows.net/", 
             start_time = datetime.datetime.utcnow() - datetime.timedelta(minutes=6))
         result = client.compute_node.upload_batch_service_logs(batch_pool.name, nodes[0].id, config)
         self.assertIsNotNone(result)

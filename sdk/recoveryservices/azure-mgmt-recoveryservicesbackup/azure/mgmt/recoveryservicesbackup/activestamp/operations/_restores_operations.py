@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -21,31 +21,29 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_trigger_request_initial(
-    vault_name,  # type: str
-    resource_group_name,  # type: str
-    subscription_id,  # type: str
-    fabric_name,  # type: str
-    container_name,  # type: str
-    protected_item_name,  # type: str
-    recovery_point_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    vault_name: str,
+    resource_group_name: str,
+    subscription_id: str,
+    fabric_name: str,
+    container_name: str,
+    protected_item_name: str,
+    recovery_point_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-10-01"
+    api_version = "2021-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/recoveryPoints/{recoveryPointId}/restore')
@@ -76,10 +74,11 @@ def build_trigger_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
-# fmt: on
 class RestoresOperations(object):
     """RestoresOperations operations.
 
@@ -104,16 +103,15 @@ class RestoresOperations(object):
 
     def _trigger_initial(
         self,
-        vault_name,  # type: str
-        resource_group_name,  # type: str
-        fabric_name,  # type: str
-        container_name,  # type: str
-        protected_item_name,  # type: str
-        recovery_point_id,  # type: str
-        parameters,  # type: "_models.RestoreRequestResource"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        vault_name: str,
+        resource_group_name: str,
+        fabric_name: str,
+        container_name: str,
+        protected_item_name: str,
+        recovery_point_id: str,
+        parameters: "_models.RestoreRequestResource",
+        **kwargs: Any
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -155,16 +153,15 @@ class RestoresOperations(object):
     @distributed_trace
     def begin_trigger(
         self,
-        vault_name,  # type: str
-        resource_group_name,  # type: str
-        fabric_name,  # type: str
-        container_name,  # type: str
-        protected_item_name,  # type: str
-        recovery_point_id,  # type: str
-        parameters,  # type: "_models.RestoreRequestResource"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        vault_name: str,
+        resource_group_name: str,
+        fabric_name: str,
+        container_name: str,
+        protected_item_name: str,
+        recovery_point_id: str,
+        parameters: "_models.RestoreRequestResource",
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Restores the specified backed up data. This is an asynchronous operation. To know the status of
         this API call, use
         GetProtectedItemOperationResult API.

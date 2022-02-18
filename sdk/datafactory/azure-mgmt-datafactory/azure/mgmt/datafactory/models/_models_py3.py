@@ -23542,7 +23542,7 @@ class FactoryUpdateParameters(msrest.serialization.Model):
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
         'identity': {'key': 'identity', 'type': 'FactoryIdentity'},
-        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
     }
 
     def __init__(

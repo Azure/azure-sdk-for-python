@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -71,7 +70,7 @@ class AsyncDocumentTranslationTest(DocumentTranslationTest, AzureRecordedTestCas
         return result_ids
 
     async def _begin_and_validate_translation_with_multiple_docs_async(self, async_client, docs_count, **kwargs):
-        # get input parms
+        # get input params
         variables = kwargs.pop('variables', {})
         wait_for_operation = kwargs.pop('wait', False)
         language_code = kwargs.pop('language_code', "es")

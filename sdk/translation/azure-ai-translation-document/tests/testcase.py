@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -16,7 +15,7 @@ from azure.storage.blob import generate_container_sas, ContainerClient
 from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
 
 
-class Document(object):
+class Document:
     """Represents a document to be uploaded to source/target container"""
     def __init__(self, **kwargs):
         self.name = kwargs.get("name", str(uuid.uuid4()))
@@ -270,7 +269,7 @@ class DocumentTranslationTest(AzureRecordedTestCase):
         return result_job_ids
 
     def _begin_and_validate_translation_with_multiple_docs(self, client, docs_count, **kwargs):
-        # get input parms
+        # get input params
         wait_for_operation = kwargs.pop('wait', False)
         variables = kwargs.get('variables', {})
         language_code = kwargs.pop('language_code', "es")

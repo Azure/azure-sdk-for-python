@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -196,10 +195,10 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         assert submitted_translations is not None
 
         # check statuses
-        curr = datetime.min
+        current = datetime.min
         async for translation in submitted_translations:
-            assert(translation.created_on.replace(tzinfo=None) >= curr.replace(tzinfo=None))
-            curr = translation.created_on
+            assert(translation.created_on.replace(tzinfo=None) >= current.replace(tzinfo=None))
+            current = translation.created_on
         return variables
 
     @DocumentTranslationPreparer()
@@ -217,10 +216,10 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         assert submitted_translations is not None
 
         # check statuses
-        curr = datetime.max
+        current = datetime.max
         async for translation in submitted_translations:
-            assert(translation.created_on.replace(tzinfo=None) <= curr.replace(tzinfo=None))
-            curr = translation.created_on
+            assert(translation.created_on.replace(tzinfo=None) <= current.replace(tzinfo=None))
+            current = translation.created_on
         return variables
 
     @pytest.mark.live_test_only()
@@ -254,7 +253,7 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
         ).by_page()
 
         # check statuses
-        curr_time = datetime.min
+        current_time = datetime.min
         async for page in submitted_translations:
             counter = 0
             async for translation in page:
@@ -262,8 +261,8 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
                 # assert id
                 assert translation.id in successful_translation_ids
                 # assert ordering
-                assert(translation.created_on.replace(tzinfo=None) >= curr_time.replace(tzinfo=None))
-                curr_time = translation.created_on
+                assert(translation.created_on.replace(tzinfo=None) >= current_time.replace(tzinfo=None))
+                current_time = translation.created_on
                 # assert filters
                 assert(translation.created_on.replace(tzinfo=None) <= end.replace(tzinfo=None))
                 assert(translation.created_on.replace(tzinfo=None) >= start.replace(tzinfo=None))

@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -161,12 +160,12 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
         # check doc statuses
         doc_statuses = client.list_document_statuses(poller.id, order_by=["created_on asc"])
 
-        curr = datetime.min
+        current = datetime.min
         docs = []
         async for document in doc_statuses:
             docs.append(document)
-            assert(document.created_on.replace(tzinfo=None) >= curr.replace(tzinfo=None))
-            curr = document.created_on
+            assert(document.created_on.replace(tzinfo=None) >= current.replace(tzinfo=None))
+            current = document.created_on
 
         assert len(docs) == docs_count
         return variables
@@ -184,12 +183,12 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
         # check doc statuses
         doc_statuses = client.list_document_statuses(poller.id, order_by=["created_on desc"])
 
-        curr = datetime.max
+        current = datetime.max
         docs = []
         async for document in doc_statuses:
             docs.append(document)
-            assert(document.created_on.replace(tzinfo=None) <= curr.replace(tzinfo=None))
-            curr = document.created_on
+            assert(document.created_on.replace(tzinfo=None) <= current.replace(tzinfo=None))
+            current = document.created_on
 
         assert len(docs) == docs_count
         return variables
@@ -227,15 +226,15 @@ class TestAllDocumentStatuses(AsyncDocumentTranslationTest):
 
         # check statuses
         counter = 0
-        curr_time = datetime.min
+        current_time = datetime.min
         async for page in filtered_docs:
             page_docs = []
             async for doc in page:
                 counter += 1
                 page_docs.append(doc)
                 # assert ordering
-                assert(doc.created_on.replace(tzinfo=None) >= curr_time.replace(tzinfo=None))
-                curr_time = doc.created_on
+                assert(doc.created_on.replace(tzinfo=None) >= current_time.replace(tzinfo=None))
+                current_time = doc.created_on
                 # assert filters
                 assert doc.status in statuses
                 assert doc.id in ids
