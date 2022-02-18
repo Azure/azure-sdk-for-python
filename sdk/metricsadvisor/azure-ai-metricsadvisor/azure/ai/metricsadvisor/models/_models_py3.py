@@ -4366,12 +4366,12 @@ class MetricSeriesGroupDetectionCondition(msrest.serialization.Model):
     :vartype hard_threshold_condition: ~azure.ai.metricsadvisor.models.HardThresholdCondition
     :ivar change_threshold_condition:
     :vartype change_threshold_condition: ~azure.ai.metricsadvisor.models.ChangeThresholdCondition
-    :ivar dimension: Required. dimension specified for series group.
-    :vartype dimension: dict[str, str]
+    :ivar series_group_key: Required. dimension specified for series group.
+    :vartype series_group_key: dict[str, str]
     """
 
     _validation = {
-        "dimension": {"required": True},
+        "series_group_key": {"required": True},
     }
 
     _attribute_map = {
@@ -4379,13 +4379,13 @@ class MetricSeriesGroupDetectionCondition(msrest.serialization.Model):
         "smart_detection_condition": {"key": "smartDetectionCondition", "type": "SmartDetectionCondition"},
         "hard_threshold_condition": {"key": "hardThresholdCondition", "type": "HardThresholdCondition"},
         "change_threshold_condition": {"key": "changeThresholdCondition", "type": "ChangeThresholdCondition"},
-        "dimension": {"key": "group.dimension", "type": "{str}"},
+        "series_group_key": {"key": "group.dimension", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
-        dimension: Dict[str, str],
+        series_group_key: Dict[str, str],
         condition_operator: Optional[Union[str, "_models.AnomalyDetectionConfigurationLogicType"]] = None,
         smart_detection_condition: Optional["_models.SmartDetectionCondition"] = None,
         hard_threshold_condition: Optional["_models.HardThresholdCondition"] = None,
@@ -4405,15 +4405,15 @@ class MetricSeriesGroupDetectionCondition(msrest.serialization.Model):
         :paramtype hard_threshold_condition: ~azure.ai.metricsadvisor.models.HardThresholdCondition
         :keyword change_threshold_condition:
         :paramtype change_threshold_condition: ~azure.ai.metricsadvisor.models.ChangeThresholdCondition
-        :keyword dimension: Required. dimension specified for series group.
-        :paramtype dimension: dict[str, str]
+        :keyword series_group_key: Required. dimension specified for series group.
+        :paramtype series_group_key: dict[str, str]
         """
         super(MetricSeriesGroupDetectionCondition, self).__init__(**kwargs)
         self.condition_operator = condition_operator
         self.smart_detection_condition = smart_detection_condition
         self.hard_threshold_condition = hard_threshold_condition
         self.change_threshold_condition = change_threshold_condition
-        self.dimension = dimension
+        self.series_group_key = series_group_key
 
 
 class MetricSeriesList(msrest.serialization.Model):

@@ -374,6 +374,16 @@ directive:
       to: MetricBoundaryCondition
 ```
 
+### Change DimensionGroupIdentity just for MetricSeriesGroupDetectionCondition
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["MetricSeriesGroupDetectionCondition"]
+    transform: >
+        $.properties["group"] = {"required": ["dimension"], "type": "object", "properties": { "dimension": { "x-ms-client-name": "seriesGroupKey", "description": "dimension specified for series group", "type": "object", "additionalProperties": { "type": "string" }}}};
+```
+
 ### Make get_root_cause_of_incident_by_anomaly_detection_configuration pageable
 
 ```yaml

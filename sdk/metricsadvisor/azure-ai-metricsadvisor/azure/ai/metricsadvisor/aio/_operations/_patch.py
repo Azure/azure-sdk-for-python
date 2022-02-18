@@ -287,7 +287,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
             detection_configuration, **kwargs
         )
 
-        return await super().update_anomaly_detection_configuration(
+        return await super().update_detection_configuration(
             configuration_id=detection_configuration_id, body=detection_config_patch, **kwargs
         )
 
@@ -413,15 +413,9 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
 
     @distributed_trace_async
     async def update_datasource_credential(
-        self,
-        datasource_credential: DatasourceCredentialUnion,
-        **kwargs: Any
+        self, datasource_credential: DatasourceCredentialUnion, **kwargs: Any
     ) -> DatasourceCredentialUnion:
-        return await super().update_datasource_credential(
-            datasource_credential.id,
-            datasource_credential,
-            **kwargs
-        )
+        return await super().update_datasource_credential(datasource_credential.id, datasource_credential, **kwargs)
 
     @distributed_trace_async
     async def delete_datasource_credential(self, *credential_id: str, **kwargs: Any) -> None:

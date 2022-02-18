@@ -620,7 +620,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
             detection_configuration, **kwargs
         )
 
-        return super().update_anomaly_detection_configuration(
+        return super().update_detection_configuration(
             configuration_id=detection_configuration_id, body=detection_config_patch, **kwargs
         )
 
