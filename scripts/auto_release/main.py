@@ -266,7 +266,7 @@ class CodegenTestPR:
 
         for file in os.listdir(self.sdk_code_path()):
             if os.path.isfile(file):
-                modify_file(file, edit_file_for_pprint_name)
+                modify_file(str(Path(self.sdk_code_path()) / file), edit_file_for_pprint_name)
         log(f' replace \"MyService\" with \"{pprint_name}\" successfully ')
 
     def get_all_files_under_package_folder(self) -> List[str]:
