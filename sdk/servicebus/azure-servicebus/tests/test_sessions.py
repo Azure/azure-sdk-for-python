@@ -1114,7 +1114,7 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                 except OperationTimeoutError:
                     return
                 except Exception as e:
-                    # TODO: after service fixes error, remove
+                    # TODO: may be service error, remove later
                     if isinstance(e, ServiceBusError) and "Cannot open log for source 'Microsoft.ServiceBus'" in e.value:
                         print('service error;ignore')
                         print(e.value)
@@ -1141,7 +1141,6 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
     
             assert not errors
             assert len(messages) == 100
-            assert 1 == 2
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
