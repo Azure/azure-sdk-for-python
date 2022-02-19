@@ -25,6 +25,32 @@ def set_bodiless_matcher():
     _send_matcher_request("BodilessMatcher", {"x-recording-id": x_recording_id})
 
 
+def set_custom_default_matcher(**kwargs):
+    # type: (**Any) -> None
+    """Exposes the default matcher in a customizable way.
+
+    All optional settings are safely defaulted. This means that providing zero additional configuration will produce a
+    sanitizer that is functionally identical to the default.
+
+    :keyword bool compare_bodies: True to enable body matching (default behavior), or False to disable body matching.
+    :keyword str excluded_headers: A comma separated list of headers that should be excluded during matching. The
+        presence of these headers will not be taken into account while matching. Should look like
+        "Authorization, Content-Length", for example.
+    :keyword str ignored_headers: A comma separated list of headers that should be ignored during matching. The header
+        values won't be matched, but the presence of these headers will be taken into account while matching. Should
+        look like "Authorization, Content-Length", for example.
+    :keyword bool ignore_query_ordering: By default, the test proxy does not sort query params before matching. Setting
+        to True will sort query params alphabetically before comparing URIs.
+    :keyword str ignored_query_parameters: A comma separated list of query parameters that should be ignored during
+        matching. The parameter values won't be matched, but the presence of these parameters will be taken into account
+        while matching. Should look like "param1, param2", for example.
+    """
+
+    x_recording_id = get_recording_id()
+    request_args = _get_request_args(**kwargs)
+    _send_matcher_request("CustomDefaultMatcher", {"x-recording-id": x_recording_id}, request_args)
+
+
 def add_body_key_sanitizer(**kwargs):
     # type: (**Any) -> None
     """Registers a sanitizer that offers regex update of a specific JTokenPath within a returned body.
@@ -170,10 +196,20 @@ def _get_request_args(**kwargs):
     """Returns a dictionary of sanitizer constructor headers"""
 
     request_args = {}
+    if "compare_bodies" in kwargs:
+        request_args["compareBodies"] = str(kwargs.get("compare_bodies"))
+    if "excluded_headers" in kwargs:
+        request_args["excludedHeaders"] = kwargs.get("excluded_headers")
     if "group_for_replace" in kwargs:
         request_args["groupForReplace"] = kwargs.get("group_for_replace")
     if "headers" in kwargs:
         request_args["headersForRemoval"] = kwargs.get("headers")
+    if "ignored_headers" in kwargs:
+        request_args["ignoredHeaders"] = kwargs.get("ignored_headers")
+    if "ignore_query_ordering" in kwargs:
+        request_args["ignoreQueryOrdering"] = str(kwargs.get("ignore_query_ordering"))
+    if "ignored_query_parameters" in kwargs:
+        request_args["ignoredQueryParameters"] = kwargs.get("ignored_query_parameters")
     if "json_path" in kwargs:
         request_args["jsonPath"] = kwargs.get("json_path")
     if "key" in kwargs:
@@ -189,7 +225,7 @@ def _get_request_args(**kwargs):
     return request_args
 
 
-def _send_matcher_request(matcher, headers):
+def _send_matcher_request(matcher, headers, parameters=None):
     # type: (str, Dict) -> None
     """Sends a POST request to the test proxy endpoint to register the specified matcher.
 
@@ -208,6 +244,7 @@ def _send_matcher_request(matcher, headers):
     requests.post(
         "{}/Admin/SetMatcher".format(PROXY_URL),
         headers=headers_to_send,
+        json=parameters
     )
 
 
