@@ -27,19 +27,19 @@ class TestCancelTranslation(DocumentTranslationTest):
             2. wait sometime after calling 'cancel' and before calling 'get status'
                 - in order for the cancel status to propagate
         '''
+
+        # submit translation operation
+        docs_count = 8 # large number of docs
+        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, wait=False, variables=variables)
+
+        # cancel translation
+        client.cancel_translation(poller.id)
+
+        # check translation status
+        translation_details = client.get_translation_status(poller.id)
+        assert translation_details.status in ["Canceled", "Canceling"]
+        self._validate_translations(translation_details)
         try:
-            # submit translation operation
-            docs_count = 8 # large number of docs
-            poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, wait=False, variables=variables)
-
-            # cancel translation
-            client.cancel_translation(poller.id)
-
-            # check translation status
-            translation_details = client.get_translation_status(poller.id)
-            assert translation_details.status in ["Canceled", "Canceling"]
-            self._validate_translations(translation_details)
-
             poller.wait()
         except HttpResponseError:
             pass  # expected if the operation was already in a terminal state.

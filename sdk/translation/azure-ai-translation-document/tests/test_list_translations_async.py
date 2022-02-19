@@ -158,11 +158,12 @@ class TestSubmittedTranslations(AsyncDocumentTranslationTest):
     @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    async def test_list_translations_filter_by_created_before(self, client):
+    async def test_list_translations_filter_by_created_before(self, **kwargs):
         '''
             NOTE: test is dependent on 'end' to be specific/same as time zone of the service! 
                 'end' must be timezone-aware!
         '''
+        client = kwargs.pop("client")
         operations_count = 5
         docs_per_operation = 1
 
