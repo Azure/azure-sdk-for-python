@@ -8,14 +8,14 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "549",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-translation-document/1.0.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "289c7234-7e33-11ec-bd1d-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-translation-document/1.0.0b7 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "2b200ffb-9127-11ec-989b-b831b58100e8"
       },
       "RequestBody": {
         "inputs": [
           {
             "source": {
-              "sourceUrl": "https://fakeendpoint.blob.core.windows.net/src7748c2f9-c209-4ee9-b041-28e65761e18c?se=end\u0026sp=rl\u0026sv=2021-02-12\u0026sr=c\u0026sig=fake_token_value",
+              "sourceUrl": "https://fakeendpoint.blob.core.windows.net/src8992d4f8-44e3-4bba-a266-83d9092fd2e3?se=end\u0026sp=rl\u0026sv=2021-04-10\u0026sr=c\u0026sig=fake_token_value",
               "filter": {
                 "prefix": "",
                 "suffix": ".txt"
@@ -24,7 +24,7 @@
             },
             "targets": [
               {
-                "targetUrl": "https://fakeendpoint.blob.core.windows.net/targetcbb570f9-6d6b-4f47-a2a5-4b29c386425b?se=end\u0026sp=wl\u0026sv=2021-02-12\u0026sr=c\u0026sig=fake_token_value",
+                "targetUrl": "https://fakeendpoint.blob.core.windows.net/target1b2e6d9e-d257-445c-a9e1-875ad663056d?se=end\u0026sp=wl\u0026sv=2021-04-10\u0026sr=c\u0026sig=fake_token_value",
                 "category": "fake",
                 "language": "es",
                 "glossaries": [
@@ -41,18 +41,18 @@
       },
       "StatusCode": 400,
       "ResponseHeaders": {
-        "apim-request-id": "19f06063-8f3c-45b7-84e4-97a2238035de",
+        "apim-request-id": "8d04e0ec-73c4-43d5-b87b-f753577cc7fc",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 25 Jan 2022 23:04:32 GMT",
+        "Date": "Sat, 19 Feb 2022 01:56:35 GMT",
         "Set-Cookie": [
-          "ARRAffinity=748a2cefe0e94b92294828d7237123826b9552ab7a870cd971e8858b6fa6e96a;Path=/;HttpOnly;Secure;Domain=mtbatch.nam.microsofttranslator.com",
-          "ARRAffinitySameSite=748a2cefe0e94b92294828d7237123826b9552ab7a870cd971e8858b6fa6e96a;Path=/;HttpOnly;SameSite=None;Secure;Domain=mtbatch.nam.microsofttranslator.com"
+          "ARRAffinity=a374f049af0321e021a66f6ba57004d2e31d3140f1d09889270a08e39d2850a6;Path=/;HttpOnly;Secure;Domain=mtbatch.nam.microsofttranslator.com",
+          "ARRAffinitySameSite=a374f049af0321e021a66f6ba57004d2e31d3140f1d09889270a08e39d2850a6;Path=/;HttpOnly;SameSite=None;Secure;Domain=mtbatch.nam.microsofttranslator.com"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
         "X-Powered-By": "ASP.NET",
-        "X-RequestId": "19f06063-8f3c-45b7-84e4-97a2238035de"
+        "X-RequestId": "8d04e0ec-73c4-43d5-b87b-f753577cc7fc"
       },
       "ResponseBody": {
         "error": {
@@ -68,7 +68,7 @@
     }
   ],
   "Variables": {
-    "source_container_name": "src7748c2f9-c209-4ee9-b041-28e65761e18c",
-    "target_container_name": "targetcbb570f9-6d6b-4f47-a2a5-4b29c386425b"
+    "source_container_name": "src8992d4f8-44e3-4bba-a266-83d9092fd2e3",
+    "target_container_name": "target1b2e6d9e-d257-445c-a9e1-875ad663056d"
   }
 }

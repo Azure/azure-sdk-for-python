@@ -6,29 +6,29 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-translation-document/1.0.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "77dc2b6e-5d59-11ec-95a3-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-translation-document/1.0.0b7 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "8ea66959-9126-11ec-85e9-b831b58100e8"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Age": "0",
-        "apim-request-id": "839dcbc1-70a6-4dcc-b8e8-dd3d0e0abef7",
+        "apim-request-id": "ff49aa6d-87e7-4959-87ae-31d7f7d68b71",
         "Cache-Control": "public, max-age=1",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Dec 2021 03:45:38 GMT",
-        "ETag": "\u00225478C7120DE16FAA3EAAAF3E994A6412CC6958126140A354E1D1B5CD2114529D\u0022",
+        "Date": "Sat, 19 Feb 2022 01:52:12 GMT",
+        "ETag": "\u00229C1CF8EDA769617CA7678A73A2F05FCF05698216BE3BBBF497A697285B545363\u0022",
         "Set-Cookie": [
-          "ARRAffinity=d5311be9a7eee70fefb806f1e2337cdd19ccc651d9ba4b6954f0949b8feead5f;Path=/;HttpOnly;Secure;Domain=mtbatch.nam.microsofttranslator.com",
-          "ARRAffinitySameSite=d5311be9a7eee70fefb806f1e2337cdd19ccc651d9ba4b6954f0949b8feead5f;Path=/;HttpOnly;SameSite=None;Secure;Domain=mtbatch.nam.microsofttranslator.com"
+          "ARRAffinity=a374f049af0321e021a66f6ba57004d2e31d3140f1d09889270a08e39d2850a6;Path=/;HttpOnly;Secure;Domain=mtbatch.nam.microsofttranslator.com",
+          "ARRAffinitySameSite=a374f049af0321e021a66f6ba57004d2e31d3140f1d09889270a08e39d2850a6;Path=/;HttpOnly;SameSite=None;Secure;Domain=mtbatch.nam.microsofttranslator.com"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
         "X-Powered-By": "ASP.NET",
-        "X-RequestId": "5716459c-06b9-4aa7-ac15-b37428cc05f2"
+        "X-RequestId": "08337bc6-5298-4eed-adb5-d5e3fb5675f7"
       },
       "ResponseBody": {
         "value": [
@@ -149,6 +149,17 @@
             ],
             "contentTypes": [
               "application/vnd.ms-outlook"
+            ],
+            "versions": []
+          },
+          {
+            "format": "OfficeOpenXml",
+            "fileExtensions": [
+              ".xml",
+              ".ooxml"
+            ],
+            "contentTypes": [
+              "application/vnd.openxmlformats-officedocument"
             ],
             "versions": []
           },
