@@ -29,7 +29,6 @@ from azure.core.pipeline.transport import RequestsTransport
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 from .helpers import is_live, is_live_and_not_recording
 from .config import PROXY_URL
-from .sanitizers import set_recording_settings
 
 if TYPE_CHECKING:
     from typing import Tuple
@@ -123,9 +122,6 @@ def start_record_or_playback(test_id):
 
     # set recording ID in a module-level variable so that sanitizers can access it
     this.recording_ids[test_id] = recording_id
-
-    set_recording_settings(recording_id)
-
     return (recording_id, variables)
 
 
