@@ -265,8 +265,9 @@ class CodegenTestPR:
                 content[i] = content[i].replace('MyService', pprint_name)
 
         for file in os.listdir(self.sdk_code_path()):
-            if os.path.isfile(file):
-                modify_file(file, edit_file_for_pprint_name)
+            file_path = str(Path(self.sdk_code_path()) / file)
+            if os.path.isfile(file_path):
+                modify_file(file_path, edit_file_for_pprint_name)
         log(f' replace \"MyService\" with \"{pprint_name}\" successfully ')
 
     def get_all_files_under_package_folder(self) -> List[str]:
@@ -367,7 +368,7 @@ class CodegenTestPR:
         def edit_changelog_for_new_service_proc(content: List[str]):
             for i in range(0, len(content)):
                 if '##' in content[i]:
-                    content[i] = f'## {self.next_version}({current_time()})'
+                    content[i] = f'## {self.next_version}({current_time()})\n'
                     break
 
         modify_file(str(Path(self.sdk_code_path()) / 'CHANGELOG.md'), edit_changelog_for_new_service_proc)
