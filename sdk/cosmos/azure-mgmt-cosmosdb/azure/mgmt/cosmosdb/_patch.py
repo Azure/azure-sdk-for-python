@@ -1,3 +1,4 @@
+# coding=utf-8
 # --------------------------------------------------------------------------
 #
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -23,11 +24,8 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import platform
-import sys
 
-
-# Ignore async tests for Python < 3.5
-collect_ignore_glob = []
-if sys.version_info < (3, 5):
-    collect_ignore_glob.append("*_async.py")
+# This file is used for handwritten extensions to the generated code. Example:
+# https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md
+def patch_sdk():
+    pass
