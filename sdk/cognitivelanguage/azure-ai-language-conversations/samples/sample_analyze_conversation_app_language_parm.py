@@ -34,14 +34,13 @@ def sample_analyze_conversation_app_language_parm():
     # get secrets
     conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
-    conv_project = 'lufengruiproject2'
+    conv_project = os.environ["AZURE_CONVERSATIONS_PROJECT"]
 
     # prepare data
     query = "One california maki please."
     input = ConversationAnalysisOptions(
         query=query,
-        language='en'
-        # language="en"
+        language="en"
     )
 
     # analyze quey
