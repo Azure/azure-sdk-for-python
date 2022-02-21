@@ -38,8 +38,7 @@ def sample_analyze_conversation_app():
     # prepare data
     query = "One california maki please."
     input = ConversationAnalysisOptions(
-        query=query,
-        language="en"
+        query=query
     )
 
     # analyze quey
