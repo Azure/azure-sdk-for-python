@@ -15,7 +15,7 @@ from .utils import create_access_token
 class CommunicationTokenCredential(object):
     """Credential type used for authenticating to an Azure Communication service.
     :param str token: The token used to authenticate to an Azure Communication service.
-    :keyword Callable[[], Awaitable[azure.core.credentials.AccessToken]] token_refresher: The async token
+    :keyword callable token_refresher: The async token
      refresher to provide capacity to fetch a fresh token. The returned token must be valid (expiration
      date must be in the future).
     :keyword bool refresh_proactively: Whether to refresh the token proactively or not.

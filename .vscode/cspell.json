@@ -187,6 +187,7 @@
     "msrest",
     "msrestazure",
     "MSSQL",
+    "mutex",
     "nazsdk",
     "noarch",
     "northcentralus",
@@ -329,13 +330,14 @@
       ]
     },
     {
-      "filename": "sdk/communication/azure-communication-identity/tests/*.py",
+      "filename": "sdk/communication/azure-communication-identity/tests/**",
       "words": [
         "XVCJ",
         "Njgw",
         "FNNHHJT",
         "Zwiz",
-        "nypg"
+        "nypg",
+        "PBOF"
       ]
     }
   ],
