@@ -33,7 +33,7 @@ def sample_analyze_conversation_app():
     # get secrets
     conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
-    conv_project = os.environ["AZURE_CONVERSATIONS_PROJECT"]
+    conv_project = 'lufengruiproject2'
 
     # prepare data
     query = "One california maki please."
