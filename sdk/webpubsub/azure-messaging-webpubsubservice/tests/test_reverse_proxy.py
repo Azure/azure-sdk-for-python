@@ -8,7 +8,6 @@ import pytest
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
 from azure.messaging.webpubsubservice._operations._operations import build_send_to_all_request
 from azure.core.credentials import AzureKeyCredential
-from devtools_testutils.fake_credential import FakeTokenCredential
 from testcase import WebpubsubTest, WebpubsubPowerShellPreparer
 from azure.identity import DefaultAzureCredential
 
@@ -34,7 +33,7 @@ class WebpubsubReverseProxyTest(WebpubsubTest):
             raise ValueError("Success!")
         wps_endpoint = "https://wps.contoso.com/"
         apim_endpoint = "https://apim.contoso.com/"
-        credential = FakeTokenCredential()
+        credential = self.get_credential(WebPubSubServiceClient)
         client = WebPubSubServiceClient(wps_endpoint, "Hub", credential, reverse_proxy_endpoint=apim_endpoint)
         request = build_send_to_all_request('Hub', content='test_webpubsub_send_request', content_type='text/plain')
 

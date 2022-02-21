@@ -44,6 +44,7 @@ pylint-*.out.txt
 coverage-*.xml
 stderr.txt
 stdout.txt
+_proxy_log_*.log
 
 # tox environment folders
 .tox/
