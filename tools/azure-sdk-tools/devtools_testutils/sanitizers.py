@@ -60,7 +60,7 @@ def add_body_key_sanitizer(**kwargs):
     :keyword str json_path: The SelectToken path (which could possibly match multiple entries) that will be used to
         select JTokens for value replacement.
     :keyword str value: The substitution value.
-    :keyword str regex: A regex. Can be defined as a simple regex replace OR if groupForReplace is set, a subsitution
+    :keyword str regex: A regex. Can be defined as a simple regex replace OR if groupForReplace is set, a substitution
         operation. Defaults to replacing the entire string.
     :keyword str group_for_replace: The capture group that needs to be operated upon. Do not provide if you're invoking
         a simple replacement operation.
@@ -96,7 +96,7 @@ def add_continuation_sanitizer(**kwargs):
     requests get this key" as well as "single response/request pair". Defaults to maintaining same key for rest of
     recording.
 
-    :keyword str key: The name of the header whos value will be replaced from response -> next request.
+    :keyword str key: The name of the header whose value will be replaced from response -> next request.
     :keyword str method: The method by which the value of the targeted key will be replaced. Defaults to guid
         replacement.
     :keyword str reset_after_first: Do we need multiple pairs replaced? Or do we want to replace each value with the
