@@ -202,7 +202,6 @@ class ContainerProxy(object):
             self,
             item,  # type: Union[str, Dict[str, Any]]
             partition_key,  # type: Any
-            max_integrated_cache_staleness_in_ms=None,  # type: Optional[int],
             **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
@@ -210,14 +209,14 @@ class ContainerProxy(object):
 
         :param item: The ID (name) or dict representing item to retrieve.
         :param partition_key: Partition key for the item to retrieve.
-        **Provisional** parameter max_integrated_cache_staleness_in_ms
-        :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
-            For accounts configured to use the integrated cache, using Session or Eventual consistency,
-            responses are guaranteed to be no staler than this value.
-        :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        **Provisional** keyword argument max_integrated_cache_staleness_in_ms
+        :keyword int max_integrated_cache_staleness_in_ms:
+        The max cache staleness for the integrated cache in milliseconds.
+            For accounts configured to use the integrated cache, using Session or Eventual consistency,
+            responses are guaranteed to be no staler than this value.
         :returns: Dict representing the item to be retrieved.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
         :rtype: dict[str, Any]
@@ -237,7 +236,8 @@ class ContainerProxy(object):
         response_hook = kwargs.pop('response_hook', None)
         if partition_key is not None:
             request_options["partitionKey"] = await self._set_partition_key(partition_key)
-        if max_integrated_cache_staleness_in_ms is not None:
+        max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
+        if max_integrated_cache_staleness_in_ms:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
@@ -250,21 +250,20 @@ class ContainerProxy(object):
     def read_all_items(
             self,
             max_item_count=None,  # type: Optional[int]
-            max_integrated_cache_staleness_in_ms=None,  # type: Optional[int]
             **kwargs  # type: Any
     ):
         # type: (...) -> AsyncItemPaged[Dict[str, Any]]
         """List all the items in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
-        **Provisional** parameter max_integrated_cache_staleness_in_ms
-        :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
-            For accounts configured to use the integrated cache, using Session or Eventual consistency,
-            responses are guaranteed to be no staler than this value.
-        :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        **Provisional** keyword argument max_integrated_cache_staleness_in_ms
+        :keyword int max_integrated_cache_staleness_in_ms:
+        The max cache staleness for the integrated cache in milliseconds.
+            For accounts configured to use the integrated cache, using Session or Eventual consistency,
+            responses are guaranteed to be no staler than this value.
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -272,7 +271,8 @@ class ContainerProxy(object):
         response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        if max_integrated_cache_staleness_in_ms is not None:
+        max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
+        if max_integrated_cache_staleness_in_ms:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
@@ -295,7 +295,6 @@ class ContainerProxy(object):
             max_item_count=None,  # type: Optional[int]
             enable_scan_in_query=None,  # type: Optional[bool]
             populate_query_metrics=None,  # type: Optional[bool]
-            max_integrated_cache_staleness_in_ms=None,  # type: Optional[int],
             **kwargs  # type: Any
     ):
         # type: (...) -> AsyncItemPaged[Dict[str, Any]]
@@ -316,14 +315,14 @@ class ContainerProxy(object):
         :param enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
         :param populate_query_metrics: Enable returning query metrics in response headers.
-        **Provisional** parameter max_integrated_cache_staleness_in_ms
-        :param max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in milliseconds.
-            For accounts configured to use the integrated cache, using Session or Eventual consistency,
-            responses are guaranteed to be no staler than this value.
-        :type max_integrated_cache_staleness_in_ms: Optional[int]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        **Provisional** keyword argument max_integrated_cache_staleness_in_ms
+        :keyword int max_integrated_cache_staleness_in_ms:
+        The max cache staleness for the integrated cache in milliseconds.
+            For accounts configured to use the integrated cache, using Session or Eventual consistency,
+            responses are guaranteed to be no staler than this value.
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
 
@@ -357,7 +356,8 @@ class ContainerProxy(object):
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
         else:
             feed_options["enableCrossPartitionQuery"] = True
-        if max_integrated_cache_staleness_in_ms is not None:
+        max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
+        if max_integrated_cache_staleness_in_ms:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
