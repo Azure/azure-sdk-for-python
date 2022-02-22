@@ -1624,7 +1624,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 await sender.send_messages(batch_message)
                 await sender.send_messages(batch_message)
                 messages = []
-                async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10) as receiver:
+                async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=20) as receiver:
                     async for message in receiver:
                         messages.append(message)
                 assert len(messages) == 4
@@ -1632,7 +1632,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 await sender.send_messages(message)
                 await sender.send_messages(message)
                 messages = []
-                async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10) as receiver:
+                async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=20) as receiver:
                     async for message in receiver:
                         messages.append(message)
                 assert len(messages) == 2
