@@ -9,16 +9,18 @@
 from copy import deepcopy
 from typing import Any, Awaitable
 
+from msrest import Deserializer, Serializer
+
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
-from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import SearchClientConfiguration
 from .operations import AliasesOperations, DataSourcesOperations, IndexersOperations, IndexesOperations, SearchClientOperationsMixin, SkillsetsOperations, SynonymMapsOperations
 
-class SearchClient(SearchClientOperationsMixin):
-    """Client that can be used to manage and query indexes and documents, as well as manage other resources, on a search service.
+class SearchClient(SearchClientOperationsMixin):    # pylint: disable=too-many-instance-attributes
+    """Client that can be used to manage and query indexes and documents, as well as manage other
+    resources, on a search service.
 
     :ivar data_sources: DataSourcesOperations operations
     :vartype data_sources: azure.search.documents.indexes.aio.operations.DataSourcesOperations
