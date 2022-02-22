@@ -178,6 +178,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
+    @pytest.mark.xfail(reason="'Cannot open log' error, potential service bug", raises=ServiceBusError)
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
@@ -934,7 +935,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @pytest.mark.xfail(reason="'Cannot open log' error, may be service error")
+    @pytest.mark.xfail(reason="'Cannot open log' error, potential service bug", raises=ServiceBusError)
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
@@ -1000,6 +1001,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
+    @pytest.mark.xfail(reason="'Cannot open log' error, potential service bug", raises=ServiceBusError)
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
