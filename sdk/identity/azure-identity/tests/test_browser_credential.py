@@ -50,11 +50,11 @@ def test_browser_credential():
 
     # credential should have a cached access token for the scope used in authenticate
     with patch(WEBBROWSER_OPEN, Mock(side_effect=Exception("credential should authenticate silently"))):
-        token = credential.get_token(scope, tenant_id="tenant_id")
+        token = credential.get_token(scope)
     assert token.token
 
     credential = InteractiveBrowserCredential(transport=transport)
-    token = credential.get_token(scope, tenant_id="tenant_id")
+    token = credential.get_token(scope)
     assert token.token
 
     with patch(WEBBROWSER_OPEN, Mock(side_effect=Exception("credential should authenticate silently"))):
