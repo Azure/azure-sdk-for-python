@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING, Any, Union
+from typing import TYPE_CHECKING
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
@@ -479,7 +479,7 @@ class SearchIndexClient(HeadersMixin):
         return result.as_dict()
 
     @distributed_trace
-    def list_aliases(self, **kwargs: Any) -> ItemPaged[SearchAlias]:
+    def list_aliases(self, **kwargs):
         # type: (**Any) -> ItemPaged[SearchAlias]
         """List the aliases in an Azure Search service.
 
@@ -501,7 +501,7 @@ class SearchIndexClient(HeadersMixin):
         )
 
     @distributed_trace
-    def list_alias_names(self, **kwargs: Any) -> ItemPaged[str]:
+    def list_alias_names(self, **kwargs):
         # type: (**Any) -> ItemPaged[str]
         """List the alias names in an Azure Search service.
 
@@ -517,7 +517,7 @@ class SearchIndexClient(HeadersMixin):
         )
 
     @distributed_trace
-    def get_alias(self, name: str, **kwargs: Any) -> SearchAlias:
+    def get_alias(self, name, **kwargs):
         # type: (str, **Any) -> SearchAlias
         """
 
@@ -526,22 +526,13 @@ class SearchIndexClient(HeadersMixin):
         :return: SearchAlias object
         :rtype: ~azure.search.documents.indexes.models.SearchAlias
         :raises: ~azure.core.exceptions.HttpResponseError
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_index_crud_operations.py
-                :start-after: [START get_index]
-                :end-before: [END get_index]
-                :language: python
-                :dedent: 4
-                :caption: Get an index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.aliases.get(name, **kwargs)
         return result
 
     @distributed_trace
-    def delete_alias(self, alias: Union[str, SearchAlias], **kwargs: Any) -> None:
+    def delete_alias(self, alias, **kwargs):
         # type: (Union[str, SearchAlias], **Any) -> None
         """Deletes a search alias and its associated mapping to an index. This operation is permanent,
         with no recovery option. The mapped index is untouched by this operation
@@ -551,15 +542,6 @@ class SearchIndexClient(HeadersMixin):
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
         :raises: ~azure.core.exceptions.HttpResponseError
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_index_crud_operations.py
-                :start-after: [START delete_index]
-                :end-before: [END delete_index]
-                :language: python
-                :dedent: 4
-                :caption: Delete an index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
@@ -575,7 +557,7 @@ class SearchIndexClient(HeadersMixin):
         )
 
     @distributed_trace
-    def create_alias(self, alias: SearchAlias, **kwargs: Any) -> SearchAlias:
+    def create_alias(self, alias, **kwargs):
         # type: (SearchIndex, **Any) -> SearchAlias
         """Creates a new search alias.
 
@@ -584,22 +566,13 @@ class SearchIndexClient(HeadersMixin):
         :return: The alias created
         :rtype: ~azure.search.documents.indexes.models.SearchAlias
         :raises: ~azure.core.exceptions.HttpResponseError
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_index_crud_operations.py
-                :start-after: [START create_index]
-                :end-before: [END create_index]
-                :language: python
-                :dedent: 4
-                :caption: Creating a new index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.aliases.create(alias, **kwargs)
         return result  # pylint:disable=protected-access
 
     @distributed_trace
-    def create_or_update_alias(self, alias: SearchAlias, **kwargs: Any) -> SearchAlias:
+    def create_or_update_alias(self, alias, **kwargs):
         # type: (str, SearchAlias, **Any) -> SearchAlias
         """Creates a new search alias or updates an alias if it already exists.
 
@@ -614,15 +587,6 @@ class SearchIndexClient(HeadersMixin):
         :class:`~azure.core.exceptions.ResourceNotModifiedError`, \
         :class:`~azure.core.exceptions.ResourceNotFoundError`, \
         :class:`~azure.core.exceptions.ResourceExistsError`
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_index_crud_operations.py
-                :start-after: [START update_index]
-                :end-before: [END update_index]
-                :language: python
-                :dedent: 4
-                :caption: Update an index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
