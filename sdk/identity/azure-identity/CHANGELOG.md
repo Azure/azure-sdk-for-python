@@ -1,5 +1,12 @@
 # Release History
 
+## 1.7.2 (2022-03-08)
+
+### Bugs Fixed
+
+- Handle injected "tenant_id" and "claims" ([#23138](https://github.com/Azure/azure-sdk-for-python/issues/23138))
+
+
 ## 1.7.1 (2021-11-09)
 
 ### Bugs Fixed

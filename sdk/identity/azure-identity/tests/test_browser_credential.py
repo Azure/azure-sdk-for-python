@@ -50,11 +50,11 @@ def test_browser_credential():
 
     # credential should have a cached access token for the scope used in authenticate
     with patch(WEBBROWSER_OPEN, Mock(side_effect=Exception("credential should authenticate silently"))):
-        token = credential.get_token(scope)
+        token = credential.get_token(scope, tenant_id="tenant_id")
     assert token.token
 
     credential = InteractiveBrowserCredential(transport=transport)
-    token = credential.get_token(scope)
+    token = credential.get_token(scope, tenant_id="tenant_id")
     assert token.token
 
     with patch(WEBBROWSER_OPEN, Mock(side_effect=Exception("credential should authenticate silently"))):
@@ -186,7 +186,7 @@ def test_redirect_uri():
     expected_message = "test_redirect_uri"
     server = Mock(side_effect=Exception(expected_message))  # exception prevents this test actually authenticating
     credential = InteractiveBrowserCredential(
-        redirect_uri="htps://{}:{}".format(expected_hostname, expected_port), _server_class=server
+        redirect_uri="https://{}:{}".format(expected_hostname, expected_port), _server_class=server
     )
     with pytest.raises(ClientAuthenticationError) as ex:
         credential.get_token("scope")
