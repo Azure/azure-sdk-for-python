@@ -231,7 +231,6 @@ class DatabaseProxy(object):
             response_hook(self.client_connection.last_response_headers, data)
 
         container = ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data)
-        await container._check_is_system_key()
         return container
 
     @distributed_trace_async
@@ -278,7 +277,6 @@ class DatabaseProxy(object):
         try:
             container_proxy = self.get_container_client(id)
             await container_proxy.read(**kwargs)
-            await container_proxy._check_is_system_key()
             return container_proxy
         except CosmosResourceNotFoundError:
             return await self.create_container(

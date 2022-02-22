@@ -76,11 +76,15 @@ class ContainerProxy(object):
             self._properties = await self.read()
         return self._properties
 
-    async def _check_is_system_key(self):
-        # type: () -> None
-        properties = await self._get_properties()
-        self._is_system_key = (
-            properties["partitionKey"]["systemKey"] if "systemKey" in properties["partitionKey"] else False)
+    @property
+    async def is_system_key(self):
+        # type: () -> bool
+        if self._is_system_key is None:
+            properties = await self._get_properties()
+            self._is_system_key = (
+                properties["partitionKey"]["systemKey"] if "systemKey" in properties["partitionKey"] else False
+            )
+        return cast('bool', self._is_system_key)
 
     @property
     def scripts(self):
@@ -101,9 +105,9 @@ class ContainerProxy(object):
             return u"{}/conflicts/{}".format(self.container_link, conflict_or_link)
         return conflict_or_link["_self"]
 
-    def _set_partition_key(self, partition_key):
+    async def _set_partition_key(self, partition_key):
         if partition_key == NonePartitionKeyValue:
-            return CosmosClientConnection._return_undefined_or_empty_partition_key(self._is_system_key)
+            return CosmosClientConnection._return_undefined_or_empty_partition_key(await self.is_system_key)
         return partition_key
 
     @distributed_trace_async
@@ -225,7 +229,7 @@ class ContainerProxy(object):
         request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if partition_key is not None:
-            request_options["partitionKey"] = self._set_partition_key(partition_key)
+            request_options["partitionKey"] = await self._set_partition_key(partition_key)
 
         result = await self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
         if response_hook:
@@ -512,7 +516,7 @@ class ContainerProxy(object):
         request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if partition_key is not None:
-            request_options["partitionKey"] = self._set_partition_key(partition_key)
+            request_options["partitionKey"] = await self._set_partition_key(partition_key)
         if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:
@@ -671,7 +675,7 @@ class ContainerProxy(object):
         request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if partition_key is not None:
-            request_options["partitionKey"] = self._set_partition_key(partition_key)
+            request_options["partitionKey"] = await self._set_partition_key(partition_key)
 
         result = await self.client_connection.ReadConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
@@ -702,7 +706,7 @@ class ContainerProxy(object):
         request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if partition_key is not None:
-            request_options["partitionKey"] = self._set_partition_key(partition_key)
+            request_options["partitionKey"] = await self._set_partition_key(partition_key)
 
         result = await self.client_connection.DeleteConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
