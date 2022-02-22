@@ -13,8 +13,8 @@ class Python(Common):
     def collect_open_issues(self) -> List[Issue]:
         open_issues = super().collect_open_issues()
         # Skip issue created by owners
-        res_issues = [i for i in open_issues if i.user.login not in self.language_owner]
-        return res_issues
+        filtered_issues = [i for i in open_issues if i.user.login not in self.language_owner]
+        return filtered_issues
 
 
 def python_process() -> None:
