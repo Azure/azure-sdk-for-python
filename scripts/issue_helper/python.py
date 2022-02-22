@@ -17,5 +17,5 @@ class Python(Common):
 
 
 def python_process() -> None:
-    instance = Common(_PYTHON_OWNER, _PYTHON_REPO, _FILE_OUT_NAME_PYTHON)
+    instance = Python(_PYTHON_OWNER, _PYTHON_REPO, _FILE_OUT_NAME_PYTHON)
     instance.run()
