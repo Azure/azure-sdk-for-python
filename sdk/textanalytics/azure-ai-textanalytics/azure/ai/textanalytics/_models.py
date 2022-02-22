@@ -5,6 +5,7 @@
 # ------------------------------------
 import re
 from enum import Enum
+from ._base_client import is_date_based
 from ._generated.models import (
     LanguageInput,
     MultiLanguageInput,
@@ -12,7 +13,7 @@ from ._generated.models import (
 
 from ._generated.v3_0 import models as _v3_0_models
 from ._generated.v3_2_preview_2 import models as _v3_2_preview_models
-from ._version import DEFAULT_API_VERSION
+from ._generated.v2022_02_01_preview import models as _v2022_02_01_preview_models
 
 
 def _get_indices(relation):
@@ -1811,11 +1812,10 @@ class RecognizeEntitiesAction(DictMixin):
         ]
 
     def _to_generated(self, api_version, task_id):
-        if api_version == "2022-02-01-preview":
-            from ._generated.v2022_02_01_preview.models import EntitiesLROTask, EntitiesTaskParameters
-            return EntitiesLROTask(
+        if is_date_based(api_version):
+            return _v2022_02_01_preview_models.EntitiesLROTask(
                 task_name=task_id,
-                parameters=EntitiesTaskParameters(
+                parameters=_v2022_02_01_preview_models.EntitiesTaskParameters(
                     model_version=self.model_version,
                     string_index_type=self.string_index_type,
                     logging_opt_out=self.disable_service_logs,
@@ -1899,11 +1899,10 @@ class AnalyzeSentimentAction(DictMixin):
         )
 
     def _to_generated(self, api_version, task_id):
-        if api_version == "2022-02-01-preview":
-            from ._generated.v2022_02_01_preview.models import SentimentAnalysisLROTask, SentimentAnalysisTaskParameters
-            return SentimentAnalysisLROTask(
+        if is_date_based(api_version):
+            return _v2022_02_01_preview_models.SentimentAnalysisLROTask(
                 task_name=task_id,
-                parameters=SentimentAnalysisTaskParameters(
+                parameters=_v2022_02_01_preview_models.SentimentAnalysisTaskParameters(
                     model_version=self.model_version,
                     opinion_mining=self.show_opinion_mining,
                     string_index_type=self.string_index_type,
@@ -1993,11 +1992,10 @@ class RecognizePiiEntitiesAction(DictMixin):
         )
 
     def _to_generated(self, api_version, task_id):
-        if api_version == "2022-02-01-preview":
-            from ._generated.v2022_02_01_preview.models import PiiLROTask, PiiLROTaskParameters
-            return PiiLROTask(
+        if is_date_based(api_version):
+            return _v2022_02_01_preview_models.PiiLROTask(
                 task_name=task_id,
-                parameters=PiiLROTaskParameters(
+                parameters=_v2022_02_01_preview_models.PiiTaskParameters(
                     model_version=self.model_version,
                     domain=self.domain_filter,
                     pii_categories=self.categories_filter,
@@ -2061,11 +2059,10 @@ class ExtractKeyPhrasesAction(DictMixin):
         )
 
     def _to_generated(self, api_version, task_id):
-        if api_version == "2022-02-01-preview":
-            from ._generated.v2022_02_01_preview.models import KeyPhraseLROTask, KeyPhraseTaskParameters
-            return KeyPhraseLROTask(
+        if is_date_based(api_version):
+            return _v2022_02_01_preview_models.KeyPhraseLROTask(
                 task_name=task_id,
-                parameters=KeyPhraseTaskParameters(
+                parameters=_v2022_02_01_preview_models.KeyPhraseTaskParameters(
                     model_version=self.model_version,
                     logging_opt_out=self.disable_service_logs,
                 )
@@ -2133,11 +2130,10 @@ class RecognizeLinkedEntitiesAction(DictMixin):
         )
 
     def _to_generated(self, api_version, task_id):
-        if api_version == "2022-02-01-preview":
-            from ._generated.v2022_02_01_preview.models import EntityLinkingLROTask, EntityLinkingTaskParameters
-            return EntityLinkingLROTask(
+        if is_date_based(api_version):
+            return _v2022_02_01_preview_models.EntityLinkingLROTask(
                 task_name=task_id,
-                parameters=EntityLinkingTaskParameters(
+                parameters=_v2022_02_01_preview_models.EntityLinkingTaskParameters(
                     model_version=self.model_version,
                     string_index_type=self.string_index_type,
                     logging_opt_out=self.disable_service_logs,
@@ -2214,11 +2210,10 @@ class ExtractSummaryAction(DictMixin):
         )
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
-        if api_version == "2022-02-01-preview":
-            from ._generated.v2022_02_01_preview.models import ExtractiveSummarizationLROTask, ExtractiveSummarizationTaskParameters
-            return ExtractiveSummarizationLROTask(
+        if is_date_based(api_version):
+            return _v2022_02_01_preview_models.ExtractiveSummarizationLROTask(
                 task_name=task_id,
-                parameters=ExtractiveSummarizationTaskParameters(
+                parameters=_v2022_02_01_preview_models.ExtractiveSummarizationTaskParameters(
                     model_version=self.model_version,
                     string_index_type=self.string_index_type,
                     logging_opt_out=self.disable_service_logs,
@@ -2389,11 +2384,10 @@ class RecognizeCustomEntitiesAction(DictMixin):
         )[:1024]
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
-        if api_version == "2022-02-01-preview":
-            from ._generated.v2022_02_01_preview.models import CustomEntitiesLROTask, CustomEntitiesTaskParameters
-            return CustomEntitiesLROTask(
+        if is_date_based(api_version):
+            return _v2022_02_01_preview_models.CustomEntitiesLROTask(
                 task_name=task_id,
-                parameters=CustomEntitiesTaskParameters(
+                parameters=_v2022_02_01_preview_models.CustomEntitiesTaskParameters(
                     project_name=self.project_name,
                     deployment_name=self.deployment_name,
                     string_index_type=self.string_index_type,
@@ -2515,11 +2509,10 @@ class MultiCategoryClassifyAction(DictMixin):
         )[:1024]
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
-        if api_version == "2022-02-01-preview":
-            from ._generated.v2022_02_01_preview.models import CustomMultiClassificationLROTask, CustomMultiClassificationTaskParameters
-            return CustomMultiClassificationLROTask(
+        if is_date_based(api_version):
+            return _v2022_02_01_preview_models.CustomMultiClassificationLROTask(
                 task_name=task_id,
-                parameters=CustomMultiClassificationTaskParameters(
+                parameters=_v2022_02_01_preview_models.CustomMultiClassificationTaskParameters(
                     project_name=self.project_name,
                     deployment_name=self.deployment_name,
                     logging_opt_out=self.disable_service_logs,
@@ -2640,11 +2633,10 @@ class SingleCategoryClassifyAction(DictMixin):
         )[:1024]
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
-        if api_version == "2022-02-01-preview":
-            from ._generated.v2022_02_01_preview.models import CustomSingleClassificationLROTask, CustomSingleClassificationTaskParameters
-            return CustomSingleClassificationLROTask(
+        if is_date_based(api_version):
+            return _v2022_02_01_preview_models.CustomSingleClassificationLROTask(
                 task_name=task_id,
-                parameters=CustomSingleClassificationTaskParameters(
+                parameters=_v2022_02_01_preview_models.CustomSingleClassificationTaskParameters(
                     project_name=self.project_name,
                     deployment_name=self.deployment_name,
                     logging_opt_out=self.disable_service_logs,
@@ -2782,10 +2774,9 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
         self.disable_service_logs = kwargs.get("disable_service_logs", None)
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
-        from ._generated.v2022_02_01_preview.models import HealthcareLROTask, HealthcareTaskParameters
-        return HealthcareLROTask(
+        return _v2022_02_01_preview_models.HealthcareLROTask(
             task_name=task_id,
-            parameters=HealthcareTaskParameters(
+            parameters=_v2022_02_01_preview_models.HealthcareTaskParameters(
                 model_version=self.model_version,
                 string_index_type=self.string_index_type,
                 logging_opt_out=self.disable_service_logs,
