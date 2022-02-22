@@ -34,15 +34,6 @@ class Common:
         cmd_list = ['git add .', 'git commit -m \"update excel\"', 'git push -f origin HEAD']
         [check_call(cmd, shell=True) for cmd in cmd_list]
 
-    def skip_self_author(func):
-        def ware(self, *args):
-            if 'python' in self.file_out_name:
-                open_issues = func(self, *args)
-                res_issues = [i for i in open_issues if i.user.login not in self.language_owner]
-            return res_issues
-        return ware
-
-    @skip_self_author
     def collect_open_issues(self) -> List[Issue]:
         hub = Github(os.getenv('TOKEN'))
         repo = hub.get_repo(self.repo_name)
