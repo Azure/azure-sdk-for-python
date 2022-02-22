@@ -69,7 +69,7 @@ async def test_custom_hooks(environ):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("environ", ALL_ENVIRONMENTS)
-async def test_custom_hooks(environ):
+async def test_tenant_id(environ):
     scope = "scope"
     expected_token = "***"
     request_hook = mock.Mock()
