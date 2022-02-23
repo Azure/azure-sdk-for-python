@@ -20,9 +20,9 @@ class Python(Common):
     def judge_status(self, issue: Issue) -> str:
         bot_advice = super().judge_status(issue)
         # Prompt to add `issue-addressed` tag if customer has not replied > 7 days
-        if not bot_advice and 'issue-addressed' not in issue.labels:
+        if not bot_advice and 'issue-addressed' not in issue.labels and 'needs-author-feedback' not in issue.labels:
             if (datetime.today() - list(issue.get_comments())[-1].updated_at).days > 7:
-                return 'no reply > 7, could add `issue-addressed`'
+                return 'no reply > 7'
         return bot_advice
 
 
