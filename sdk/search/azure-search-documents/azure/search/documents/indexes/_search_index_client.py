@@ -177,7 +177,7 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
         """Deletes a search index and all the documents it contains. The model must be
         provided instead of the name to use the access conditions.
 
-        :param index: The index to retrieve.
+        :param index: The index name or object to delete.
         :type index: str or ~azure.search.documents.indexes.models.SearchIndex
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
@@ -383,7 +383,7 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
         the SynonymMap model must be provided instead of the name. It is enough to provide
         the name of the synonym map to delete unconditionally.
 
-        :param name: The Synonym Map to delete
+        :param name: The synonym map name or object to delete
         :type name: str or ~azure.search.documents.indexes.models.SynonymMap
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
@@ -535,7 +535,7 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
         """Deletes a search alias and its associated mapping to an index. This operation is permanent,
         with no recovery option. The mapped index is untouched by this operation
 
-        :param alias: The alias to retrieve.
+        :param alias: The alias name or object to delete.
         :type alias: str or ~azure.search.documents.indexes.models.SearchAlias
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
@@ -592,7 +592,7 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
         """Creates a new search alias or updates an alias if it already exists.
 
         :param alias: The definition of the alias to create or update.
-        :type index: ~azure.search.documents.indexes.models.SearchAlias
+        :type alias: ~azure.search.documents.indexes.models.SearchAlias
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: The index created or updated
