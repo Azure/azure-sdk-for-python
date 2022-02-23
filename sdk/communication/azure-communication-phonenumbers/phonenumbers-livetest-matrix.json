@@ -1,0 +1,58 @@
+{
+  "displayNames": {
+    "--disablecov": "",
+    "false": "",
+    "true": ""
+  },
+  "matrix": {
+    "Agent": {
+      "ubuntu-20.04": {
+        "OSVmImage": "MMSUbuntu20.04",
+        "Pool": "azsdk-pool-mms-ubuntu-2004-general",
+        "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST": "true"
+      },
+      "windows-2019": {
+        "OSVmImage": "MMS2019",
+        "Pool": "azsdk-pool-mms-win-2019-general",
+        "AZURE_TEST_AGENT": "WINDOWS_2019_PYTHON36",
+        "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST": "false"
+      },
+      "macOS-10.15": {
+        "OSVmImage": "macOS-10.15",
+        "Pool": "Azure Pipelines",
+        "AZURE_TEST_AGENT": "MACOS_1015_PYTHON37",
+        "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST": "false"
+      }
+    },
+    "PythonVersion": ["pypy3.7", "3.6", "3.7", "3.8"],
+    "CoverageArg": "--disablecov",
+    "TestSamples": "false"
+  },
+  "include": [
+    {
+      "CoverageConfig": {
+        "ubuntu2004_39_coverage": {
+          "OSVmImage": "MMSUbuntu20.04",
+          "Pool": "azsdk-pool-mms-ubuntu-2004-general",
+          "PythonVersion": "3.9",
+          "CoverageArg": "",
+          "TestSamples": "false",
+          "AZURE_TEST_AGENT": "UBUNTU_2004_PYTHON39",
+          "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST": "false"
+        }
+      }
+    },
+    {
+      "Config": {
+        "Ubuntu2004_310": {
+          "OSVmImage": "MMSUbuntu20.04",
+          "Pool": "azsdk-pool-mms-ubuntu-2004-general",
+          "PythonVersion": "3.10.0",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST": "true"
+        }
+      }
+    }
+  ]
+}

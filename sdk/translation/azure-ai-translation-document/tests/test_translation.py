@@ -26,6 +26,7 @@ GLOSSARY_FILE_NAME = os.path.abspath(os.path.join(os.path.abspath(__file__), "..
 
 class TestTranslation(DocumentTranslationTest):
 
+    @pytest.mark.skip("Failing in PPE: https://github.com/Azure/azure-sdk-for-python/issues/22898")
     @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
     def test_active_directory_auth(self):

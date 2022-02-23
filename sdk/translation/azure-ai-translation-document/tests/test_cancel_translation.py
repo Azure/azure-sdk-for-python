@@ -36,7 +36,7 @@ class TestCancelTranslation(DocumentTranslationTest):
             # check translation status
             translation_details = client.get_translation_status(poller.id)
             assert translation_details.status in ["Canceled", "Canceling"]
-            self._validate_translations(translation_details, total=docs_count)
+            self._validate_translations(translation_details)
 
             poller.wait()
         except HttpResponseError:

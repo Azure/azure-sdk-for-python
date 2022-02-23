@@ -18,7 +18,7 @@ from ._configuration import CommunicationNetworkTraversalClientConfiguration
 from .operations import CommunicationNetworkTraversalOperations
 
 class CommunicationNetworkTraversalClient:
-    """Azure Communication Networking Service.
+    """Azure Communication Network Traversal Service.
 
     :ivar communication_network_traversal: CommunicationNetworkTraversalOperations operations
     :vartype communication_network_traversal:
@@ -26,8 +26,8 @@ class CommunicationNetworkTraversalClient:
     :param endpoint: The communication resource, for example
      https://my-resource.communication.azure.com.
     :type endpoint: str
-    :keyword api_version: Api Version. The default value is "2021-10-08-preview". Note that
-     overriding this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. The default value is "2022-02-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 

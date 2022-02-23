@@ -11,12 +11,11 @@ urlFragment: azure-messaging-webpubsubservice-samples
 # Azure Web PubSub service client library for Python Samples
 
 These are code samples that show common scenario operations with the Azure WebPubSub client library.
-The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations,
-and require Python 3.6 or later.
+The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations.
 
 ## Prerequisites
 
-* Python 2.7, or 3.6 or later is required to use this package (3.5 or later if using asyncio)
+* Python 3.6 or later is required to use this package
 * You need an [Azure subscription][azure_sub], and a [Azure WebPubSub service instance][webpubsubservice_docs] to use this package.
 
 ## Setup
