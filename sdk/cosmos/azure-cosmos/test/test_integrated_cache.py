@@ -33,9 +33,6 @@ import test_config
 
 pytestmark = pytest.mark.cosmosEmulator
 
-endpoint = ""
-key = ""
-
 
 @pytest.mark.usefixtures("teardown")
 class TestIntegratedCache(unittest.TestCase):
