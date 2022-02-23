@@ -11,7 +11,7 @@ from .helpers import is_live_and_not_recording
 from .proxy_testcase import get_recording_id
 
 if TYPE_CHECKING:
-    from typing import Any, Dict
+    from typing import Any, Dict, Optional
 
 
 def set_bodiless_matcher():
@@ -197,7 +197,7 @@ def _get_request_args(**kwargs):
 
     request_args = {}
     if "compare_bodies" in kwargs:
-        request_args["compareBodies"] = str(kwargs.get("compare_bodies"))
+        request_args["compareBodies"] = kwargs.get("compare_bodies")
     if "excluded_headers" in kwargs:
         request_args["excludedHeaders"] = kwargs.get("excluded_headers")
     if "group_for_replace" in kwargs:
@@ -207,7 +207,7 @@ def _get_request_args(**kwargs):
     if "ignored_headers" in kwargs:
         request_args["ignoredHeaders"] = kwargs.get("ignored_headers")
     if "ignore_query_ordering" in kwargs:
-        request_args["ignoreQueryOrdering"] = str(kwargs.get("ignore_query_ordering"))
+        request_args["ignoreQueryOrdering"] = kwargs.get("ignore_query_ordering")
     if "ignored_query_parameters" in kwargs:
         request_args["ignoredQueryParameters"] = kwargs.get("ignored_query_parameters")
     if "json_path" in kwargs:
@@ -226,7 +226,7 @@ def _get_request_args(**kwargs):
 
 
 def _send_matcher_request(matcher, headers, parameters=None):
-    # type: (str, Dict) -> None
+    # type: (str, Dict, Optional[Dict]) -> None
     """Sends a POST request to the test proxy endpoint to register the specified matcher.
 
     If live tests are being run with recording turned off via the AZURE_SKIP_LIVE_RECORDING environment variable, no
@@ -241,11 +241,12 @@ def _send_matcher_request(matcher, headers, parameters=None):
 
     headers_to_send = {"x-abstraction-identifier": matcher}
     headers_to_send.update(headers)
-    requests.post(
+    response = requests.post(
         "{}/Admin/SetMatcher".format(PROXY_URL),
         headers=headers_to_send,
         json=parameters
     )
+    response.raise_for_status()
 
 
 def _send_sanitizer_request(sanitizer, parameters):
@@ -262,8 +263,9 @@ def _send_sanitizer_request(sanitizer, parameters):
     if is_live_and_not_recording():
         return
 
-    requests.post(
+    response = requests.post(
         "{}/Admin/AddSanitizer".format(PROXY_URL),
         headers={"x-abstraction-identifier": sanitizer, "Content-Type": "application/json"},
         json=parameters
     )
+    response.raise_for_status()
