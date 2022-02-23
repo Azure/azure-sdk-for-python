@@ -34,7 +34,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class SearchIndexClient(HeadersMixin):
+class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
     """A client to interact with Azure search service Indexes.
 
     :param endpoint: The URL endpoint of an Azure search service
