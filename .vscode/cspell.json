@@ -51,7 +51,6 @@
     "sdk/cognitiveservices/azure-cognitiveservices-search-visualsearch/**",
     "sdk/communication/azure-communication-networktraversal/**",
     "sdk/communication/azure-communication-chat/**",
-    "sdk/communication/azure-communication-identity/**",
     "sdk/communication/azure-communication-phonenumbers/**",
     "sdk/communication/azure-communication-sms/**",
     "sdk/confidentialledger/azure-confidentialledger/**",
@@ -86,8 +85,9 @@
     "sdk/metricsadvisor/azure-ai-metricsadvisor/**",
     "sdk/purview/azure-purview-catalog/**",
     "sdk/remoterendering/azure-mixedreality-remoterendering/**",
+    "sdk/schemaregistry/ci.yml",
     "sdk/schemaregistry/azure-schemaregistry/**",
-    "sdk/schemaregistry/azure-schemaregistry-avroserializer/**",
+    "sdk/schemaregistry/azure-schemaregistry-avroencoder/**",
     "sdk/servicefabric/azure-servicefabric/**",
     "sdk/search/azure-search-documents/**",
     "sdk/storage/azure-storage-blob-changefeed/**",
@@ -104,13 +104,14 @@
     "sdk/translation/azure-ai-translation-document/samples/assets/**",
     "sdk/translation/azure-ai-translation-document/tests/glossaries-valid.csv",
     "sdk/tables/azure-data-tables/**",
-    "sdk/textanalytics/azure-ai-textanalytics/**",
     "sdk/storage/azure-storage-blob/**",
     "eng/**/*.json",
     "eng/*.txt",
     "eng/tox/tox.ini",
     "eng/common/docgeneration/Generate-DocIndex.ps1",
-    "eng/tox/*.py"
+    "eng/**/*.py",
+    ".gitignore",
+    
   ],
   "words": [
     "aad",
@@ -153,6 +154,7 @@
     "fqdns",
     "fstat",
     "gbps",
+    "GCCH",
     "graphrbac",
     "guids",
     "hanaonazure",
@@ -208,11 +210,13 @@
     "pschema",
     "PSECRET",
     "pygobject",
+    "parameterizing",
     "pytz",
     "pywin",
     "rdbms",
     "reauthenticated",
     "reimage",
+    "revascularization",
     "rollup",
     "rtsp",
     "rtype",
@@ -238,6 +242,7 @@
     "urandom",
     "urlsafeb",
     "urlunparse",
+    "usgov",
     "usdodcentral",
     "usdodeast",
     "usgovarizona",
@@ -261,7 +266,9 @@
     "wfile",
     "westus",
     "docfx",
-    "Docfx"
+    "Docfx",
+    "azurecr",
+    "envname"
   ],
   "overrides": [
     {
@@ -274,6 +281,61 @@
       "filename": "sdk/translation/azure-ai-translation-document/tests/*.py",
       "words": [
         "essai"
+      ]
+    },
+    {
+      "filename": "sdk/textanalytics/azure-ai-textanalytics/**",
+      "words": [
+        "Forndexter",
+        "ESDNI",
+        "dinero",
+        "IOHTTP",
+        "Zocor",
+        "dann",
+        "dont",
+        "UMLS",
+        "nach",
+        "año",
+        "BRCPF",
+        "abril",
+        "zalgo",
+        "n'était",
+        "tengo",
+        "IDRG",
+        "était",
+        "gegründet",
+        "L'hôtel",
+        "Hola",
+        "hola",
+        "escrito",
+        "Coumadin",
+        "EUGPS",
+        "dokument",
+        "wurde",
+        "Detta",
+        "IFIC",
+        "Fahrt",
+        "documento",
+        "scritto",
+        "USUK",
+        "Sprache",
+        "PLREGON",
+        "Fusce",
+        "Inigo",
+        "italiano",
+        "skrivet",
+        "verfasst",
+        "engelska"
+      ]
+    },
+    {
+      "filename": "sdk/communication/azure-communication-identity/tests/*.py",
+      "words": [
+        "XVCJ",
+        "Njgw",
+        "FNNHHJT",
+        "Zwiz",
+        "nypg"
       ]
     }
   ],

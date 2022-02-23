@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._question_answering_projects_client import QuestionAnsweringProjectsClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['QuestionAnsweringProjectsClient']
 
 # `._patch.py` is used for handwritten extensions to the generated code

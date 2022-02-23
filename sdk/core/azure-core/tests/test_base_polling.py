@@ -47,7 +47,7 @@ from azure.core import PipelineClient
 from azure.core.pipeline import PipelineResponse, Pipeline, PipelineContext
 from azure.core.pipeline.transport import HttpTransport
 
-from azure.core.polling.base_polling import LROBasePolling
+from azure.core.polling.base_polling import LROBasePolling, OperationResourcePolling
 from azure.core.pipeline.policies._utils import _FixedOffset
 from utils import request_and_responses_product, REQUESTS_TRANSPORT_RESPONSES, create_transport_response, HTTP_REQUESTS
 from azure.core.pipeline._tools import is_rest
@@ -879,3 +879,18 @@ def test_final_get_via_location(port, http_request, deserialization_cb):
     )
     result = poller.result()
     assert result == {"returnedFrom": "locationHeaderUrl"}
+
+# THIS TEST WILL BE REMOVED SOON
+"""Weird test, but we are temporarily adding back the POST check in OperationResourcePolling
+get_final_get_url. With the test added back, we should not exit on final state via checks and
+continue through the rest of the code. Since the rest of the code requires inspection of pipeline_response
+and since I don't want to bother with adding a pipeline response object, just check that we get
+past the final state via checks
+"""
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_post_check_patch(http_request):
+    algorithm = OperationResourcePolling(lro_options={"final-state-via": "azure-async-operation"})
+    algorithm._request = http_request("PUT", "http://fakeurl.com")
+    with pytest.raises(AttributeError) as ex:
+        algorithm.get_final_get_url(None)
+    assert "'NoneType' object has no attribute 'http_response'" in str(ex.value)

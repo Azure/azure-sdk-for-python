@@ -1,5 +1,21 @@
 # Release History
 
+## 26.0.0 (2022-02-14)
+
+**Features**
+
+  - Model Gallery has a new parameter sharing_status
+  - Model GalleryApplicationVersionPublishingProfile has a new parameter target_extended_locations
+  - Model GalleryArtifactPublishingProfileBase has a new parameter target_extended_locations
+  - Model GalleryImageVersionPublishingProfile has a new parameter target_extended_locations
+  - Model GalleryUpdate has a new parameter sharing_status
+  - Model OSDiskImageEncryption has a new parameter security_profile
+  - Model SharingProfile has a new parameter community_gallery_info
+
+**Breaking changes**
+
+  - Operation GalleriesOperations.get has a new signature
+
 ## 25.0.0 (2022-01-28)
 
 **Features**

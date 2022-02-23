@@ -10,28 +10,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/unknown Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
     method: PATCH
     uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton?api-version=2021-10-01
   response:
     body:
       string: "{\n  \"projectName\": \"IssacNewton\",\n  \"description\": \"biography
         of Sir Issac Newton\",\n  \"language\": \"en\",\n  \"multilingualResource\":
-        false,\n  \"createdDateTime\": \"2022-01-31T15:25:07Z\",\n  \"lastModifiedDateTime\":
-        \"2022-01-31T16:28:11Z\",\n  \"lastDeployedDateTime\": \"2022-01-31T16:10:26Z\",\n
+        false,\n  \"createdDateTime\": \"2022-01-26T21:05:50Z\",\n  \"lastModifiedDateTime\":
+        \"2022-02-10T19:37:34Z\",\n  \"lastDeployedDateTime\": \"2022-02-10T19:37:12Z\",\n
         \ \"settings\": {\n    \"defaultAnswer\": \"no answer\"\n  }\n}"
     headers:
-      apim-request-id: f8c419f7-75b1-4007-a52f-d399db1f4b53
+      apim-request-id: 7aa1f8ba-4cd6-4ee7-81b0-3b900c71d106
       content-length: '336'
       content-type: application/json; charset=utf-8
-      date: Mon, 31 Jan 2022 16:28:11 GMT
+      date: Thu, 10 Feb 2022 19:37:33 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '138'
+      x-envoy-upstream-service-time: '23'
     status:
       code: 200
       message: OK
-    url: https://wuppe.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton?api-version=2021-10-01
+    url: https://leithyta-sdktesting.cognitiveservices.azure.com/language/query-knowledgebases/projects/IssacNewton?api-version=2021-10-01
 - request:
     body: '[{"op": "add", "value": {"displayName": "Issac Newton Bio", "sourceUri":
       "https://wikipedia.org/wiki/Isaac_Newton", "sourceKind": "url"}}]'
@@ -43,54 +43,54 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/unknown Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
     method: PATCH
     uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/sources?api-version=2021-10-01
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 4337d867-bc21-44bd-ac72-b1a99981835f
+      apim-request-id: 30e73f4f-556a-4d37-a808-cef538345f34
       content-length: '0'
-      date: Mon, 31 Jan 2022 16:28:11 GMT
-      operation-location: https://test-resource.api.cognitive.microsoft.com:443/language/query-knowledgebases/projects/IssacNewton/sources/jobs/8d03f43d-7f7c-4f7b-8e43-406bdef145f3?api-version=2021-10-01
+      date: Thu, 10 Feb 2022 19:37:34 GMT
+      operation-location: https://test-resource.api.cognitive.microsoft.com:443/language/query-knowledgebases/projects/IssacNewton/sources/jobs/cc210eda-a6d9-4521-a935-54a564543fa3?api-version=2021-10-01
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '719'
+      x-envoy-upstream-service-time: '213'
     status:
       code: 202
       message: Accepted
-    url: https://wuppe.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/sources?api-version=2021-10-01
+    url: https://leithyta-sdktesting.cognitiveservices.azure.com/language/query-knowledgebases/projects/IssacNewton/sources?api-version=2021-10-01
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/unknown Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
     method: GET
-    uri: https://test-resource.api.cognitive.microsoft.com:443/language/query-knowledgebases/projects/IssacNewton/sources/jobs/8d03f43d-7f7c-4f7b-8e43-406bdef145f3?api-version=2021-10-01
+    uri: https://test-resource.api.cognitive.microsoft.com:443/language/query-knowledgebases/projects/IssacNewton/sources/jobs/cc210eda-a6d9-4521-a935-54a564543fa3?api-version=2021-10-01
   response:
     body:
-      string: "{\n  \"createdDateTime\": \"2022-01-31T16:28:11+00:00\",\n  \"expirationDateTime\":
-        \"2022-01-31T22:28:11+00:00\",\n  \"jobId\": \"8d03f43d-7f7c-4f7b-8e43-406bdef145f3\",\n
-        \ \"lastUpdatedDateTime\": \"2022-01-31T16:28:13+00:00\",\n  \"status\": \"succeeded\",\n
+      string: "{\n  \"createdDateTime\": \"2022-02-10T19:37:34+00:00\",\n  \"expirationDateTime\":
+        \"2022-02-11T01:37:34+00:00\",\n  \"jobId\": \"cc210eda-a6d9-4521-a935-54a564543fa3\",\n
+        \ \"lastUpdatedDateTime\": \"2022-02-10T19:37:36+00:00\",\n  \"status\": \"succeeded\",\n
         \ \"resultUrl\": \"/knowledgebases/IssacNewton\"\n}"
     headers:
-      apim-request-id: 884987cf-0c1d-49d9-8450-a210da20c30d
+      apim-request-id: 649de291-94fd-47e9-a8e2-2cb6ad39d73b
       content-length: '281'
       content-type: application/json; charset=utf-8
-      date: Mon, 31 Jan 2022 16:28:43 GMT
+      date: Thu, 10 Feb 2022 19:38:05 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '52'
+      x-envoy-upstream-service-time: '10'
     status:
       code: 200
       message: OK
-    url: https://wuppe.api.cognitive.microsoft.com:443/language/query-knowledgebases/projects/IssacNewton/sources/jobs/8d03f43d-7f7c-4f7b-8e43-406bdef145f3?api-version=2021-10-01
+    url: https://leithyta-sdktesting.cognitiveservices.azure.com:443/language/query-knowledgebases/projects/IssacNewton/sources/jobs/cc210eda-a6d9-4521-a935-54a564543fa3?api-version=2021-10-01
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/unknown Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
     method: GET
     uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/sources?api-version=2021-10-01
   response:
@@ -99,113 +99,113 @@ interactions:
         \     \"source\": \"https://wikipedia.org/wiki/Isaac_Newton\",\n      \"sourceUri\":
         \"https://wikipedia.org/wiki/Isaac_Newton\",\n      \"sourceKind\": \"url\",\n
         \     \"contentStructureKind\": \"semistructured\",\n      \"lastUpdatedDateTime\":
-        \"2022-01-31T16:09:27.5300182Z\"\n    }\n  ]\n}"
+        \"2022-01-26T21:07:41.7684985Z\"\n    }\n  ]\n}"
     headers:
-      apim-request-id: d85eb7e2-5a75-4238-9052-72618491be40
+      apim-request-id: 5fc8bc5d-5189-4f02-9ed9-81872c4a097b
       content-length: '329'
       content-type: application/json; charset=utf-8
-      date: Mon, 31 Jan 2022 16:28:43 GMT
+      date: Thu, 10 Feb 2022 19:38:05 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '55'
+      x-envoy-upstream-service-time: '13'
     status:
       code: 200
       message: OK
-    url: https://wuppe.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/sources?api-version=2021-10-01
+    url: https://leithyta-sdktesting.cognitiveservices.azure.com/language/query-knowledgebases/projects/IssacNewton/sources?api-version=2021-10-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/unknown Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
     method: PUT
     uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/deployments/production?api-version=2021-10-01
   response:
     body:
       string: ''
     headers:
-      apim-request-id: 3dfe9576-cb32-4574-99b0-e858391dbe94
+      apim-request-id: 60acee39-8b00-4794-be62-988d7813faa7
       content-length: '0'
-      date: Mon, 31 Jan 2022 16:28:44 GMT
-      operation-location: https://test-resource.api.cognitive.microsoft.com:443/language/query-knowledgebases/projects/IssacNewton/deployments/production/jobs/c8e2034a-6c41-43e1-a867-97c665decc66?api-version=2021-10-01
+      date: Thu, 10 Feb 2022 19:38:05 GMT
+      operation-location: https://test-resource.api.cognitive.microsoft.com:443/language/query-knowledgebases/projects/IssacNewton/deployments/production/jobs/dc69344d-5f3b-4e1e-b25e-572c79663478?api-version=2021-10-01
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '131'
+      x-envoy-upstream-service-time: '35'
     status:
       code: 202
       message: Accepted
-    url: https://wuppe.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/deployments/production?api-version=2021-10-01
+    url: https://leithyta-sdktesting.cognitiveservices.azure.com/language/query-knowledgebases/projects/IssacNewton/deployments/production?api-version=2021-10-01
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/unknown Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
     method: GET
-    uri: https://test-resource.api.cognitive.microsoft.com:443/language/query-knowledgebases/projects/IssacNewton/deployments/production/jobs/c8e2034a-6c41-43e1-a867-97c665decc66?api-version=2021-10-01
+    uri: https://test-resource.api.cognitive.microsoft.com:443/language/query-knowledgebases/projects/IssacNewton/deployments/production/jobs/dc69344d-5f3b-4e1e-b25e-572c79663478?api-version=2021-10-01
   response:
     body:
-      string: "{\n  \"createdDateTime\": \"2022-01-31T16:28:44+00:00\",\n  \"expirationDateTime\":
-        \"2022-01-31T22:28:44+00:00\",\n  \"jobId\": \"c8e2034a-6c41-43e1-a867-97c665decc66\",\n
-        \ \"lastUpdatedDateTime\": \"2022-01-31T16:28:45+00:00\",\n  \"status\": \"succeeded\"\n}"
+      string: "{\n  \"createdDateTime\": \"2022-02-10T19:38:06+00:00\",\n  \"expirationDateTime\":
+        \"2022-02-11T01:38:06+00:00\",\n  \"jobId\": \"dc69344d-5f3b-4e1e-b25e-572c79663478\",\n
+        \ \"lastUpdatedDateTime\": \"2022-02-10T19:38:07+00:00\",\n  \"status\": \"succeeded\"\n}"
     headers:
-      apim-request-id: 48d1b7e7-992d-4cf3-9c4b-b1417d861160
+      apim-request-id: 0b1fc623-359c-4cdb-a3a9-91bb75861e69
       content-length: '235'
       content-type: application/json; charset=utf-8
-      date: Mon, 31 Jan 2022 16:29:14 GMT
+      date: Thu, 10 Feb 2022 19:38:35 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '50'
+      x-envoy-upstream-service-time: '21'
     status:
       code: 200
       message: OK
-    url: https://wuppe.api.cognitive.microsoft.com:443/language/query-knowledgebases/projects/IssacNewton/deployments/production/jobs/c8e2034a-6c41-43e1-a867-97c665decc66?api-version=2021-10-01
+    url: https://leithyta-sdktesting.cognitiveservices.azure.com:443/language/query-knowledgebases/projects/IssacNewton/deployments/production/jobs/dc69344d-5f3b-4e1e-b25e-572c79663478?api-version=2021-10-01
 - request:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/unknown Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
     method: GET
     uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/deployments/production?api-version=2021-10-01
   response:
     body:
       string: "{\n  \"deploymentName\": \"production\",\n  \"lastDeployedDateTime\":
-        \"2022-01-31T16:28:45Z\"\n}"
+        \"2022-02-10T19:38:07Z\"\n}"
     headers:
-      apim-request-id: 736a03c3-0831-4b8d-b0a9-911a50552afc
+      apim-request-id: ebb77014-9a96-44d2-bcb4-34f0bf5c40d6
       content-length: '86'
       content-type: application/json; charset=utf-8
-      date: Mon, 31 Jan 2022 16:29:17 GMT
+      date: Thu, 10 Feb 2022 19:38:35 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '58'
+      x-envoy-upstream-service-time: '20'
     status:
       code: 200
       message: OK
-    url: https://wuppe.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/deployments/production?api-version=2021-10-01
+    url: https://leithyta-sdktesting.cognitiveservices.azure.com/language/query-knowledgebases/projects/IssacNewton/deployments/production?api-version=2021-10-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/unknown Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
     method: GET
     uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/deployments?api-version=2021-10-01
   response:
     body:
       string: "{\n  \"value\": [\n    {\n      \"deploymentName\": \"production\",\n
-        \     \"lastDeployedDateTime\": \"2022-01-31T16:28:45Z\"\n    }\n  ]\n}"
+        \     \"lastDeployedDateTime\": \"2022-02-10T19:38:07Z\"\n    }\n  ]\n}"
     headers:
-      apim-request-id: a03a2c84-7944-407a-9d1f-d832de7ee768
+      apim-request-id: e69a3c6d-87ee-4877-8efe-2fa554e15881
       content-length: '123'
       content-type: application/json; charset=utf-8
-      date: Mon, 31 Jan 2022 16:29:17 GMT
+      date: Thu, 10 Feb 2022 19:38:36 GMT
       strict-transport-security: max-age=31536000; includeSubDomains; preload
       x-content-type-options: nosniff
-      x-envoy-upstream-service-time: '47'
+      x-envoy-upstream-service-time: '27'
     status:
       code: 200
       message: OK
-    url: https://wuppe.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/deployments?api-version=2021-10-01
+    url: https://leithyta-sdktesting.cognitiveservices.azure.com/language/query-knowledgebases/projects/IssacNewton/deployments?api-version=2021-10-01
 version: 1

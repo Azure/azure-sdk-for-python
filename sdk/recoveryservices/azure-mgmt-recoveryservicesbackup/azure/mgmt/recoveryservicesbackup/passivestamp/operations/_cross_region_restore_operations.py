@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -21,26 +21,24 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_trigger_request_initial(
-    azure_region,  # type: str
-    subscription_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    azure_region: str,
+    subscription_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2018-12-20"
+    api_version = "2021-11-15"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/providers/Microsoft.RecoveryServices/locations/{azureRegion}/backupCrossRegionRestore')
@@ -66,10 +64,11 @@ def build_trigger_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
-# fmt: on
 class CrossRegionRestoreOperations(object):
     """CrossRegionRestoreOperations operations.
 
@@ -94,11 +93,10 @@ class CrossRegionRestoreOperations(object):
 
     def _trigger_initial(
         self,
-        azure_region,  # type: str
-        parameters,  # type: "_models.CrossRegionRestoreRequest"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        azure_region: str,
+        parameters: "_models.CrossRegionRestoreRequest",
+        **kwargs: Any
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -135,11 +133,10 @@ class CrossRegionRestoreOperations(object):
     @distributed_trace
     def begin_trigger(
         self,
-        azure_region,  # type: str
-        parameters,  # type: "_models.CrossRegionRestoreRequest"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        azure_region: str,
+        parameters: "_models.CrossRegionRestoreRequest",
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Restores the specified backed up data in a different region as compared to where the data is
         backed up.
 

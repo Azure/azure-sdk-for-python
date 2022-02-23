@@ -4,6 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=no-self-use
+from typing import (  # pylint: disable=unused-import
+    Any, Dict, Optional, Tuple, Union,
+    TYPE_CHECKING)
+
 try:
     from urllib.parse import quote
 except ImportError:
@@ -29,6 +33,9 @@ from ._generated.models import (
     BlobTags, LeaseAccessConditions
 )
 
+if TYPE_CHECKING:
+    from ._lease import BlobLeaseClient
+
 
 _SUPPORTED_API_VERSIONS = [
     '2019-02-02',
@@ -41,7 +48,8 @@ _SUPPORTED_API_VERSIONS = [
     '2020-08-04',
     '2020-10-02',
     '2020-12-06',
-    '2021-02-12'
+    '2021-02-12',
+    '2021-04-10'
 ]
 
 

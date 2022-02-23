@@ -1076,7 +1076,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         CosmosClientConnection.__ValidateResource(udf)
         udf = udf.copy()
         if udf.get("serverScript"):
-            udf["body"] = str(udf["serverScript"])
+            udf["body"] = str(udf.pop("serverScript", ""))
         elif udf.get("body"):
             udf["body"] = str(udf["body"])
 
@@ -1105,7 +1105,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         CosmosClientConnection.__ValidateResource(trigger)
         trigger = trigger.copy()
         if trigger.get("serverScript"):
-            trigger["body"] = str(trigger["serverScript"])
+            trigger["body"] = str(trigger.pop("serverScript", ""))
         elif trigger.get("body"):
             trigger["body"] = str(trigger["body"])
 
@@ -1187,7 +1187,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         CosmosClientConnection.__ValidateResource(sproc)
         sproc = sproc.copy()
         if sproc.get("serverScript"):
-            sproc["body"] = str(sproc["serverScript"])
+            sproc["body"] = str(sproc.pop("serverScript", ""))
         elif sproc.get("body"):
             sproc["body"] = str(sproc["body"])
 
@@ -2476,6 +2476,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             return self._return_undefined_or_empty_partition_key(is_system_key)
 
         return partitionKey
+
+    def refresh_routing_map_provider(self):
+        # re-initializes the routing map provider, effectively refreshing the current partition key range cache
+        self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
 
     async def _GetQueryPlanThroughGateway(self, query, resource_link, **kwargs):
         supported_query_features = (documents._QueryFeature.Aggregate + "," +
