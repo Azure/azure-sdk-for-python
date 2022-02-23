@@ -1627,9 +1627,8 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=20) as receiver:
                     async for message in receiver:
                         messages.append(message)
+                        await receiver.complete_message(message)
                     assert len(messages) == 4
-                    for message in messages:
-                        receiver.complete_message(message)
                 # then normal message resending
                 await sender.send_messages(message)
                 await sender.send_messages(message)
@@ -1637,9 +1636,8 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=20) as receiver:
                     async for message in receiver:
                         messages.append(message)
+                        await receiver.complete_message(message)
                     assert len(messages) == 2
-                    for message in messages:
-                        receiver.complete_message(message)
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
