@@ -29,7 +29,7 @@ import uuid
 import test_config
 
 # This class tests the integrated cache, which only works against accounts with the dedicated gateway configured
-# Since it doesn't work against the emulator
+# This class tests a PREVIEW FEATURE
 
 pytestmark = pytest.mark.cosmosEmulator
 
