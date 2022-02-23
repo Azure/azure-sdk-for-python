@@ -550,6 +550,15 @@ class SearchIndexClient(HeadersMixin):
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_index_alias_crud_operations_async.py
+                :start-after: [START delete_alias_async]
+                :end-before: [END delete_alias_async]
+                :language: python
+                :dedent: 4
+                :caption: Delete an alias.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
@@ -574,6 +583,15 @@ class SearchIndexClient(HeadersMixin):
         :return: The alias created
         :rtype: ~azure.search.documents.indexes.models.SearchAlias
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_index_alias_crud_operations_async.py
+                :start-after: [START create_alias_async]
+                :end-before: [END create_alias_async]
+                :language: python
+                :dedent: 4
+                :caption: Create an alias.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.aliases.create(alias, **kwargs)
@@ -595,6 +613,15 @@ class SearchIndexClient(HeadersMixin):
         :class:`~azure.core.exceptions.ResourceNotModifiedError`, \
         :class:`~azure.core.exceptions.ResourceNotFoundError`, \
         :class:`~azure.core.exceptions.ResourceExistsError`
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_index_alias_crud_operations_async.py
+                :start-after: [START update_alias_async]
+                :end-before: [END update_alias_async]
+                :language: python
+                :dedent: 4
+                :caption: Update an alias.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(

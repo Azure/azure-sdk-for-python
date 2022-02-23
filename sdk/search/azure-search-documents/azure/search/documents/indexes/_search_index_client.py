@@ -542,6 +542,15 @@ class SearchIndexClient(HeadersMixin):
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
         :raises: ~azure.core.exceptions.HttpResponseError
+        
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_index_alias_crud_operations.py
+                :start-after: [START delete_alias]
+                :end-before: [END delete_alias]
+                :language: python
+                :dedent: 4
+                :caption: Deleting an alias.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
@@ -558,7 +567,7 @@ class SearchIndexClient(HeadersMixin):
 
     @distributed_trace
     def create_alias(self, alias, **kwargs):
-        # type: (SearchIndex, **Any) -> SearchAlias
+        # type: (SearchAlias, **Any) -> SearchAlias
         """Creates a new search alias.
 
         :param alias: The alias object.
@@ -566,6 +575,15 @@ class SearchIndexClient(HeadersMixin):
         :return: The alias created
         :rtype: ~azure.search.documents.indexes.models.SearchAlias
         :raises: ~azure.core.exceptions.HttpResponseError
+        
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_index_alias_crud_operations.py
+                :start-after: [START create_alias]
+                :end-before: [END create_alias]
+                :language: python
+                :dedent: 4
+                :caption: Creating a new alias.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.aliases.create(alias, **kwargs)
@@ -587,6 +605,15 @@ class SearchIndexClient(HeadersMixin):
         :class:`~azure.core.exceptions.ResourceNotModifiedError`, \
         :class:`~azure.core.exceptions.ResourceNotFoundError`, \
         :class:`~azure.core.exceptions.ResourceExistsError`
+        
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_index_alias_crud_operations.py
+                :start-after: [START update_alias]
+                :end-before: [END update_alias]
+                :language: python
+                :dedent: 4
+                :caption: Updating an alias.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
