@@ -6,90 +6,6 @@
     "version": "2021-04-07"
   },
   "paths": {
-    "/ping": {
-      "get": {
-        "tags": [
-          "Ping"
-        ],
-        "operationId": "Ping",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "$ref": "#/parameters/ApiVersionParameter"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "401": {
-            "description": "Unauthorized",
-            "schema": {
-              "$ref": "#/definitions/CommunicationErrorResponse"
-            },
-            "x-ms-error-response": true
-          },
-          "403": {
-            "description": "Forbidden",
-            "schema": {
-              "$ref": "#/definitions/CommunicationErrorResponse"
-            },
-            "x-ms-error-response": true
-          },
-          "500": {
-            "description": "InternalServerError",
-            "schema": {
-              "$ref": "#/definitions/CommunicationErrorResponse"
-            },
-            "x-ms-error-response": true
-          }
-        }
-      }
-    },
-    "/pingtest": {
-      "get": {
-        "tags": [
-          "Ping"
-        ],
-        "operationId": "PingTest",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "$ref": "#/parameters/ApiVersionParameter"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          },
-          "401": {
-            "description": "Unauthorized",
-            "schema": {
-              "$ref": "#/definitions/CommunicationErrorResponse"
-            },
-            "x-ms-error-response": true
-          },
-          "403": {
-            "description": "Forbidden",
-            "schema": {
-              "$ref": "#/definitions/CommunicationErrorResponse"
-            },
-            "x-ms-error-response": true
-          },
-          "500": {
-            "description": "InternalServerError",
-            "schema": {
-              "$ref": "#/definitions/CommunicationErrorResponse"
-            },
-            "x-ms-error-response": true
-          }
-        }
-      }
-    },
     "/rooms": {
       "post": {
         "tags": [
@@ -126,21 +42,14 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
-            "schema": {
-              "$ref": "#/definitions/CommunicationErrorResponse"
-            },
-            "x-ms-error-response": true
-          },
-          "403": {
-            "description": "Forbidden",
+            "description": "Unauthorized.",
             "schema": {
               "$ref": "#/definitions/CommunicationErrorResponse"
             },
             "x-ms-error-response": true
           },
           "500": {
-            "description": "InternalServerError",
+            "description": "Internal Server Error.",
             "schema": {
               "$ref": "#/definitions/CommunicationErrorResponse"
             },
@@ -186,21 +95,14 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
-            "schema": {
-              "$ref": "#/definitions/CommunicationErrorResponse"
-            },
-            "x-ms-error-response": true
-          },
-          "403": {
-            "description": "Forbidden",
+            "description": "Unauthorized.",
             "schema": {
               "$ref": "#/definitions/CommunicationErrorResponse"
             },
             "x-ms-error-response": true
           },
           "500": {
-            "description": "InternalServerError",
+            "description": "Internal Server Error.",
             "schema": {
               "$ref": "#/definitions/CommunicationErrorResponse"
             },
@@ -240,7 +142,8 @@
           },
           {
             "in": "body",
-            "name": "patchRoomRequest",
+            "name": "updateRoomRequest",
+            "description": "The update room request body.",
             "schema": {
               "$ref": "#/definitions/UpdateRoomRequest"
             }
@@ -254,21 +157,14 @@
             }
           },
           "401": {
-            "description": "Unauthorized",
-            "schema": {
-              "$ref": "#/definitions/CommunicationErrorResponse"
-            },
-            "x-ms-error-response": true
-          },
-          "403": {
-            "description": "Forbidden",
+            "description": "Unauthorized.",
             "schema": {
               "$ref": "#/definitions/CommunicationErrorResponse"
             },
             "x-ms-error-response": true
           },
           "500": {
-            "description": "InternalServerError",
+            "description": "Internal Server Error.",
             "schema": {
               "$ref": "#/definitions/CommunicationErrorResponse"
             },
@@ -307,21 +203,14 @@
             "description": "Request successful."
           },
           "401": {
-            "description": "Unauthorized",
-            "schema": {
-              "$ref": "#/definitions/CommunicationErrorResponse"
-            },
-            "x-ms-error-response": true
-          },
-          "403": {
-            "description": "Forbidden",
+            "description": "Unauthorized.",
             "schema": {
               "$ref": "#/definitions/CommunicationErrorResponse"
             },
             "x-ms-error-response": true
           },
           "500": {
-            "description": "InternalServerError",
+            "description": "Internal Server Error.",
             "schema": {
               "$ref": "#/definitions/CommunicationErrorResponse"
             },
@@ -337,50 +226,6 @@
     }
   },
   "definitions": {
-    "CommunicationError": {
-      "description": "The Communication Services error.",
-      "required": [
-        "code",
-        "message"
-      ],
-      "type": "object",
-      "properties": {
-        "code": {
-          "description": "The error code.",
-          "type": "string"
-        },
-        "message": {
-          "description": "The error message.",
-          "type": "string"
-        },
-        "target": {
-          "description": "If applicable, would be used to indicate the property causing the error.",
-          "type": "string"
-        },
-        "details": {
-          "description": "Further details about specific errors that led to this error.",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/CommunicationError"
-          }
-        },
-        "innerError": {
-          "$ref": "#/definitions/CommunicationError"
-        }
-      }
-    },
-    "CommunicationErrorResponse": {
-      "description": "The Communication Services error.",
-      "required": [
-        "communicationError"
-      ],
-      "type": "object",
-      "properties": {
-        "communicationError": {
-          "$ref": "#/definitions/CommunicationError"
-        }
-      }
-    },
     "CreateRoomRequest": {
       "description": "Request payload for creating new room.",
       "type": "object",
@@ -471,13 +316,13 @@
       "properties": {
         "validFrom": {
           "format": "date-time",
-          "description": "(Optional) The timestamp from when the room is open for joining. The timestamp is in RFC3339 format: `yyyy-MM-ddTHH:mm:ssZ`.",
+          "description": "The timestamp from when the room is open for joining. The timestamp is in RFC3339 format: `yyyy-MM-ddTHH:mm:ssZ`.",
           "type": "string",
           "example": "2021-09-07T07:55:41Z"
         },
         "validUntil": {
           "format": "date-time",
-          "description": "(Optional) The timestamp from when the room can no longer be joined. The timestamp is in RFC3339 format: `yyyy-MM-ddTHH:mm:ssZ`.",
+          "description": "The timestamp from when the room can no longer be joined. The timestamp is in RFC3339 format: `yyyy-MM-ddTHH:mm:ssZ`.",
           "type": "string",
           "example": "2020-09-08T15:55:41Z"
         },
@@ -506,6 +351,56 @@
           "additionalProperties": {
             "$ref": "#/definitions/Participant"
           }
+        }
+      }
+    },
+    "CommunicationErrorResponse": {
+      "description": "The Communication Services error.",
+      "type": "object",
+      "required": [
+        "error"
+      ],
+      "properties": {
+        "error": {
+          "description": "The Communication Services error.",
+          "$ref": "#/definitions/CommunicationError"
+        }
+      }
+    },
+    "CommunicationError": {
+      "description": "The Communication Services error.",
+      "type": "object",
+      "required": [
+        "code",
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "The error code."
+        },
+        "message": {
+          "type": "string",
+          "description": "The error message."
+        },
+        "target": {
+          "type": "string",
+          "readOnly": true,
+          "description": "The error target."
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CommunicationError"
+          },
+          "readOnly": true,
+          "description": "Further details about specific errors that led to this error."
+        },
+        "innererror": {
+          "x-ms-client-name": "innerError",
+          "readOnly": true,
+          "$ref": "#/definitions/CommunicationError",
+          "description": "The inner error if any."
         }
       }
     }

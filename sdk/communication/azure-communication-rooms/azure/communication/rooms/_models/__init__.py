@@ -6,4 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.0.0b1"
+from ._models_py3 import RoomRequest, CommunicationRoom, RoomParticipant
+
+__all__ = [
+    'RoomRequest',
+    "CommunicationRoom",
+    "RoomParticipant"
+]

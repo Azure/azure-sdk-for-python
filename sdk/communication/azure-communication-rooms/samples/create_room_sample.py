@@ -24,30 +24,32 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import logging
 import os
-
-from azure.communication.rooms import RoomsClient
-from azure.identity import DefaultAzureCredential
+import datetime
+import sys
 from azure.core.exceptions import HttpResponseError
+from azure.communication.rooms import RoomsClient, RoomRequest
 
-logging.basicConfig(level=logging.DEBUG)
-LOG = logging.getLogger()
+sys.path.append("..")
 
-# Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
-# AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, ROOMS_ENDPOINT
-try:
-    endpoint = os.environ["ROOMS_ENDPOINT"]
-except KeyError:
-    LOG.error("Missing environment variable 'ROOMS_ENDPOINT' - please set if before running the example")
-    exit()
+class CreateRoomSample(object):
 
-# Build a client through AAD
-client = RoomsClient(credential=DefaultAzureCredential(), endpoint=endpoint)
+    connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
+    
+    def create_single_room(self):
+        rooms_client = RoomsClient.from_connection_string(self.connection_string)
 
-# write your sample here. For example:
-# try:
-#     result = client.xxx.xx(...)
-#     print(result)
-# except HttpResponseError as e:
-#     print('Failed to send JSON message: {}'.format(e.response.json()))
+        valid_from = datetime.datetime(2022, 2, 25, 4, 34, 22)
+        valid_until = datetime.datetime(2022, 2, 25, 4, 34, 22)
+        roomRequest = RoomRequest(valid_from=valid_from, valid_until=valid_until)
+        try:
+            create_room_response = rooms_client.create_room(roomRequest=roomRequest)
+            print(create_room_response)
+            # delete created room
+            rooms_client.delete_room(room_id=create_room_response.id)
+        except HttpResponseError as ex:
+            print(ex)
+        
+if __name__ == '__main__':
+    sample = CreateRoomSample()
+    sample.create_single_room()

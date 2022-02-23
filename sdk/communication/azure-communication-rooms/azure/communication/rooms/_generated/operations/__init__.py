@@ -6,10 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import AzureCommunicationRoomsServiceOperationsMixin
-from ._operations import RoomsOperations
+from ._rooms_operations import RoomsOperations
 
 __all__ = [
-    'AzureCommunicationRoomsServiceOperationsMixin',
     'RoomsOperations',
 ]

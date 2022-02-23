@@ -11,7 +11,7 @@ clear-output-folder: true
 no-namespace-folders: true
 python: true
 title: Azure Communication Rooms Service
-version-tolerant: true
-package-version: 1.0.0b1
 add-credential: false
+v3: true
+no-async: false
 ```

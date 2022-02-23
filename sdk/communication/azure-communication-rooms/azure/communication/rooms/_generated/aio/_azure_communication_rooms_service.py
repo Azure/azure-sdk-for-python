@@ -7,20 +7,18 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Awaitable
+
+from msrest import Deserializer, Serializer
 
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
-from msrest import Deserializer, Serializer
 
+from .. import models
 from ._configuration import AzureCommunicationRoomsServiceConfiguration
-from .operations import AzureCommunicationRoomsServiceOperationsMixin, RoomsOperations
+from .operations import RoomsOperations
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Dict
-
-class AzureCommunicationRoomsService(AzureCommunicationRoomsServiceOperationsMixin):
+class AzureCommunicationRoomsService:
     """Azure Communication Room Service.
 
     :ivar rooms: RoomsOperations operations
@@ -37,17 +35,18 @@ class AzureCommunicationRoomsService(AzureCommunicationRoomsServiceOperationsMix
         endpoint: str,
         **kwargs: Any
     ) -> None:
-        _endpoint = '{endpoint}'
+        _base_url = '{endpoint}'
         self._config = AzureCommunicationRoomsServiceConfiguration(endpoint=endpoint, **kwargs)
-        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._client = AsyncPipelineClient(base_url=_base_url, config=self._config, **kwargs)
 
-        self._serialize = Serializer()
-        self._deserialize = Deserializer()
+        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self._serialize = Serializer(client_models)
+        self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.rooms = RoomsOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
-    def send_request(
+    def _send_request(
         self,
         request: HttpRequest,
         **kwargs: Any
@@ -57,7 +56,7 @@ class AzureCommunicationRoomsService(AzureCommunicationRoomsServiceOperationsMix
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = await client.send_request(request)
+        >>> response = await client._send_request(request)
         <AsyncHttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart

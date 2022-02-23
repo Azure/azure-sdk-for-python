@@ -7,9 +7,6 @@
 # --------------------------------------------------------------------------
 
 from ._azure_communication_rooms_service import AzureCommunicationRoomsService
-from ._version import VERSION
-
-__version__ = VERSION
 __all__ = ['AzureCommunicationRoomsService']
 
 # `._patch.py` is used for handwritten extensions to the generated code

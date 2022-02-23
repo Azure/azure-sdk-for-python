@@ -7,20 +7,23 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
-from azure.core import PipelineClient
-from azure.core.rest import HttpRequest, HttpResponse
 from msrest import Deserializer, Serializer
 
+from azure.core import PipelineClient
+
+from . import models
 from ._configuration import AzureCommunicationRoomsServiceConfiguration
-from .operations import AzureCommunicationRoomsServiceOperationsMixin, RoomsOperations
+from .operations import RoomsOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Dict
+    from typing import Any
 
-class AzureCommunicationRoomsService(AzureCommunicationRoomsServiceOperationsMixin):
+    from azure.core.rest import HttpRequest, HttpResponse
+
+class AzureCommunicationRoomsService(object):
     """Azure Communication Room Service.
 
     :ivar rooms: RoomsOperations operations
@@ -34,30 +37,33 @@ class AzureCommunicationRoomsService(AzureCommunicationRoomsServiceOperationsMix
 
     def __init__(
         self,
-        endpoint: str,
-        **kwargs: Any
-    ) -> None:
-        _endpoint = '{endpoint}'
+        endpoint,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        _base_url = '{endpoint}'
         self._config = AzureCommunicationRoomsServiceConfiguration(endpoint=endpoint, **kwargs)
-        self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._client = PipelineClient(base_url=_base_url, config=self._config, **kwargs)
 
-        self._serialize = Serializer()
-        self._deserialize = Deserializer()
+        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self._serialize = Serializer(client_models)
+        self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.rooms = RoomsOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
-    def send_request(
+    def _send_request(
         self,
         request,  # type: HttpRequest
-        **kwargs: Any
-    ) -> HttpResponse:
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> HttpResponse
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = client.send_request(request)
+        >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart

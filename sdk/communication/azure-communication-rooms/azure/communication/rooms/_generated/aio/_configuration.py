@@ -11,10 +11,9 @@ from typing import Any
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
-from .._version import VERSION
+VERSION = "unknown"
 
-
-class AzureCommunicationRoomsServiceConfiguration(Configuration):
+class AzureCommunicationRoomsServiceConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for AzureCommunicationRoomsService.
 
     Note that all parameters used to create this instance are saved as instance
@@ -22,7 +21,8 @@ class AzureCommunicationRoomsServiceConfiguration(Configuration):
 
     :param endpoint: The endpoint of the Azure Communication resource.
     :type endpoint: str
-    :keyword api_version: Api Version. The default value is "2021-04-07". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. The default value is "2021-04-07". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
