@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Handle injected "tenant_id" and "claims" ([#23138](https://github.com/Azure/azure-sdk-for-python/issues/23138))
+
 ### Other Changes
 
 ## 1.8.0b1 (2022-02-08)

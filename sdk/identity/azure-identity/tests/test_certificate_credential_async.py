@@ -99,6 +99,17 @@ async def test_user_agent():
 
     await credential.get_token("scope")
 
+@pytest.mark.asyncio
+async def test_tenant_id():
+    transport = async_validating_transport(
+        requests=[Request(required_headers={"User-Agent": USER_AGENT})],
+        responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
+    )
+
+    credential = CertificateCredential("tenant-id", "client-id", PEM_CERT_PATH, transport=transport)
+
+    await credential.get_token("scope", tenant_id="tenant_id")
+
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("authority", ("localhost", "https://localhost"))

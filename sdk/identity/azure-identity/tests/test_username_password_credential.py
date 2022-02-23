@@ -71,6 +71,18 @@ def test_user_agent():
     credential.get_token("scope")
 
 
+def test_tenant_id():
+    transport = validating_transport(
+        requests=[Request()] * 2 + [Request(required_headers={"User-Agent": USER_AGENT})],
+        responses=[get_discovery_response()] * 2
+        + [mock_response(json_payload=build_aad_response(access_token="**", id_token=build_id_token()))],
+    )
+
+    credential = UsernamePasswordCredential("client-id", "username", "password", transport=transport)
+
+    credential.get_token("scope", tenant_id="tenant_id")
+
+
 def test_username_password_credential():
     expected_token = "access-token"
     client_id = "client-id"
