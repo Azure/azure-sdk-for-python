@@ -496,9 +496,7 @@ class SearchIndexClient(HeadersMixin):
         if kwargs.get('select', None):
             kwargs['select'] = ','.join(kwargs['select'])
         # pylint:disable=protected-access
-        return self._client.aliases.list(
-            cls=lambda objs: [x for x in objs], **kwargs
-        )
+        return self._client.aliases.list(**kwargs)
 
     @distributed_trace
     def list_alias_names(self, **kwargs):
@@ -542,7 +540,6 @@ class SearchIndexClient(HeadersMixin):
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
         :raises: ~azure.core.exceptions.HttpResponseError
-        
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_index_alias_crud_operations.py
@@ -575,7 +572,7 @@ class SearchIndexClient(HeadersMixin):
         :return: The alias created
         :rtype: ~azure.search.documents.indexes.models.SearchAlias
         :raises: ~azure.core.exceptions.HttpResponseError
-        
+
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_index_alias_crud_operations.py
@@ -605,7 +602,6 @@ class SearchIndexClient(HeadersMixin):
         :class:`~azure.core.exceptions.ResourceNotModifiedError`, \
         :class:`~azure.core.exceptions.ResourceNotFoundError`, \
         :class:`~azure.core.exceptions.ResourceExistsError`
-        
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_index_alias_crud_operations.py
@@ -627,3 +623,4 @@ class SearchIndexClient(HeadersMixin):
             **kwargs
         )
         return result  # pylint:disable=protected-access
+        

@@ -504,9 +504,7 @@ class SearchIndexClient(HeadersMixin):
         if kwargs.get('select', None):
             kwargs['select'] = ','.join(kwargs['select'])
         # pylint:disable=protected-access
-        return self._client.aliases.list(
-            cls=lambda objs: [x for x in objs], **kwargs
-        )
+        return self._client.aliases.list(**kwargs)
 
     @distributed_trace
     def list_alias_names(self, **kwargs):
@@ -542,9 +540,8 @@ class SearchIndexClient(HeadersMixin):
     @distributed_trace
     async def delete_alias(self, alias, **kwargs):
         # type: (Union[str, SearchAlias], **Any) -> None
-        """Deletes a search alias and its associated mapping to an index. This operation is permanent,
-        with no recovery option. The mapped index is untouched by this operation
-
+        """Deletes a search alias and its associated mapping to an index.
+        This operation is permanent, with no recovery option. The mapped index is untouched by this operation
         :param alias: The alias to retrieve.
         :type alias: str or ~azure.search.documents.indexes.models.SearchAlias
         :keyword match_condition: The match condition to use upon the etag
@@ -577,7 +574,6 @@ class SearchIndexClient(HeadersMixin):
     async def create_alias(self, alias, **kwargs):
         # type: (SearchIndex, **Any) -> SearchAlias
         """Creates a new search alias.
-
         :param alias: The alias object.
         :type alias: ~azure.search.documents.indexes.models.SearchAlias
         :return: The alias created
@@ -635,3 +631,4 @@ class SearchIndexClient(HeadersMixin):
             **kwargs
         )
         return result  # pylint:disable=protected-access
+        
