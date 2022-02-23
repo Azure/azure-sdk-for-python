@@ -1996,7 +1996,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=20) as receiver:
                     for message in receiver:
                         messages.append(message)
-                assert len(messages) == 4
+                    assert len(messages) == 4
+                    for message in messages:
+                        receiver.complete_message(message)
                 # then normal message resending
                 sender.send_messages(message)
                 sender.send_messages(message)
@@ -2004,7 +2006,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=20) as receiver:
                     for message in receiver:
                         messages.append(message)
-                assert len(messages) == 2
+                    assert len(messages) == 2
+                    for message in messages:
+                        receiver.complete_message(message)
 
 
     @pytest.mark.liveTest
