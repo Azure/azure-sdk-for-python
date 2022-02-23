@@ -1,4 +1,5 @@
 from typing import List
+from datetime import datetime
 
 from github.Issue import Issue
 
@@ -15,6 +16,14 @@ class Python(Common):
         # Skip issue created by owners
         filtered_issues = [i for i in open_issues if i.user.login not in self.language_owner]
         return filtered_issues
+
+    def judge_status(self, issue: Issue) -> str:
+        bot_advice = super().judge_status(issue)
+        # Prompt to add `issue-addressed` tag if customer has not replied > 7 days
+        if not bot_advice and 'issue-addressed' not in issue.labels:
+            if (datetime.today() - list(issue.get_comments())[-1].updated_at).days > 7:
+                return 'no reply > 7, could add `issue-addressed`'
+        return bot_advice
 
 
 def python_process() -> None:
