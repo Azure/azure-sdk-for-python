@@ -201,6 +201,7 @@ class HttpHeaders(object):
 
     # Dedicated Gateway headers
     DedicatedGatewayCacheStaleness = "x-ms-dedicatedgateway-max-age"
+    IntegratedCacheHit = "x-ms-cosmos-cachehit"
 
 
 class HttpHeaderPreferenceTokens(object):

@@ -89,18 +89,13 @@ class TestPartitionSplitQuery(unittest.TestCase):
             print("validation succeeded for all query results")
 
     def get_test_item(self):
-        async_item = {
-            'id': 'Async_' + str(uuid.uuid4()),
-            'address': {
-                'state': 'WA',
-                'city': 'Redmond',
-                'street': '1 Microsoft Way'
-            },
+        test_item = {
+            'id': 'Item_' + str(uuid.uuid4()),
             'test_object': True,
             'lastName': 'Smith',
             'attr1': random.randint(0, 10)
         }
-        return async_item
+        return test_item
 
 
 if __name__ == "__main__":
