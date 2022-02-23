@@ -67,7 +67,7 @@ class AadClient(AadClientBase):
         return build_pipeline(**kwargs)
 
     def _run_pipeline(self, request: "HttpRequest", **kwargs: "Any") -> "AccessToken":
-        # remove tenant_id kwarg that could have been passed from credential's get_token method
+        # remove tenant_id and claims kwarg that could have been passed from credential's get_token method
         # tenant_id is already part of `request` at this point
         kwargs.pop("tenant_id", None)
         kwargs.pop("claims", None)
