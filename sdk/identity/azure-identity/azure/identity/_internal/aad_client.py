@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from typing import Any, Iterable, Optional, Union
     from azure.core.credentials import AccessToken
     from azure.core.pipeline import Pipeline
+    from azure.core.pipeline.transport import HttpRequest
     from .._internal import AadClientCertificate
 
 
