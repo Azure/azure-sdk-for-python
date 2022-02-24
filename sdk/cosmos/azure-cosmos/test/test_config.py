@@ -59,6 +59,7 @@ class _test_config(object):
     THROUGHPUT_FOR_1_PARTITION = 400
 
     TEST_DATABASE_ID = os.getenv('COSMOS_TEST_DATABASE_ID', "Python SDK Test Database " + str(uuid.uuid4()))
+    TEST_DATABASE_ID_PLAIN = "COSMOS_TEST_DATABASE"
     TEST_THROUGHPUT_DATABASE_ID = "Python SDK Test Throughput Database " + str(uuid.uuid4())
     TEST_COLLECTION_SINGLE_PARTITION_ID = "Single Partition Test Collection"
     TEST_COLLECTION_MULTI_PARTITION_ID = "Multi Partition Test Collection"
@@ -81,6 +82,12 @@ class _test_config(object):
         cls.try_delete_database(client)
         cls.TEST_DATABASE = client.create_database(cls.TEST_DATABASE_ID)
         cls.IS_MULTIMASTER_ENABLED = client.get_database_account()._EnableMultipleWritableLocations
+        return cls.TEST_DATABASE
+
+    @classmethod
+    def create_database_if_not_exists_plain(cls, client):
+        # type: (CosmosClient) -> Database
+        cls.TEST_DATABASE = client.create_database_if_not_exists(cls.TEST_DATABASE_ID_PLAIN)
         return cls.TEST_DATABASE
 
     @classmethod
@@ -119,6 +126,13 @@ class _test_config(object):
             cls.TEST_COLLECTION_MULTI_PARTITION = cls.create_collection_with_required_throughput(client,
                     cls.THROUGHPUT_FOR_5_PARTITIONS, False)
         cls.remove_all_documents(cls.TEST_COLLECTION_MULTI_PARTITION, False)
+        return cls.TEST_COLLECTION_MULTI_PARTITION
+
+    @classmethod
+    def create_collection_if_not_exists_plain(cls):
+        # type: () -> Container
+        cls.TEST_COLLECTION_MULTI_PARTITION = cls.TEST_DATABASE.create_container_if_not_exists(
+            id=cls.TEST_COLLECTION_MULTI_PARTITION_ID, partition_key=PartitionKey(path="/id"))
         return cls.TEST_COLLECTION_MULTI_PARTITION
 
     @classmethod

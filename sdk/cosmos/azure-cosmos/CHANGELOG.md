@@ -9,7 +9,7 @@
 - Added support for split-proof queries for the async client
 
 ### Bugs fixed
-- Default consistency level for the sync and async clients is no longer "Session" and will instead be set to the 
+- Default consistency level for the sync and async clients is no longer `Session` and will instead be set to the 
   consistency level of the user's cosmos account setting on initialization if not passed during client initialization. 
   This change will impact client application in terms of RUs and latency. Users relying on default `Session` consistency
   will need to pass it explicitly if their account consistency is different than `Session`.
