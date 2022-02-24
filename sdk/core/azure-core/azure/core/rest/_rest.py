@@ -28,7 +28,7 @@ import copy
 
 from typing import TYPE_CHECKING
 
-from ..utils._utils import _case_insensitive_dict
+from ..utils._utils import case_insensitive_dict
 from ._helpers import (
     set_content_body,
     set_json_body,
@@ -111,7 +111,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
             files=kwargs.pop("files", None),
             json=kwargs.pop("json", None),
         )
-        self.headers = _case_insensitive_dict(default_headers)
+        self.headers = case_insensitive_dict(default_headers)
         self.headers.update(kwargs.pop("headers", {}))
 
         if kwargs:
