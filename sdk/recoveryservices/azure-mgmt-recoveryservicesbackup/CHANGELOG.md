@@ -1,5 +1,11 @@
 # Release History
 
+## 4.1.1 (2022-02-18)
+
+**Bug Fixes**
+
+  - Fix multi-page paging  #23089
+
 ## 4.1.0 (2022-02-15)
 
 **Features**
