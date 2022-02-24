@@ -5,6 +5,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import os
+import gzip
 from flask import (
     Response,
     Blueprint,
@@ -34,13 +35,21 @@ def stream_compressed_header_error():
 
 def stream_compressed_no_header():
     try:
-        file_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./files/test.tar.gz"))
-        with open(file_path, "rb") as fd:
+        with gzip.open('test.tar.gz', 'wb') as f:
+            f.write(b"test")
+
+        with open(os.path.join(os.path.abspath('test.tar.gz')), "rb") as fd:
             yield fd.read()
+
+        os.remove("test.tar.gz")
     except:
-        file_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./files/test.tar.gz"))
-        with open(file_path, "rb") as fd:
+        with gzip.open('test.tar.gz', 'wb') as f:
+            f.write(b"test")
+
+        with open(os.path.join(os.path.abspath('test.tar.gz')), "rb") as fd:
             yield fd.read()
+            
+        os.remove("test.tar.gz")
 
 @streams_api.route('/basic', methods=['GET'])
 def basic():
