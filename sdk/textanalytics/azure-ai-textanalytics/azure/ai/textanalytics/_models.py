@@ -1222,8 +1222,8 @@ class DocumentError(DictMixin):
 class DetectLanguageInput(LanguageInput):
     """The input document to be analyzed for detecting language.
 
-    :keyword str id: Unique, non-empty document identifier.
-    :keyword str text: The input text to process.
+    :keyword str id: Required. Unique, non-empty document identifier.
+    :keyword str text: Required. The input text to process.
     :keyword str country_hint: A country hint to help better detect
      the language of the text. Accepts two letter country codes
      specified by ISO 3166-1 alpha-2. Defaults to "US". Pass
@@ -1375,8 +1375,8 @@ class LinkedEntityMatch(DictMixin):
 class TextDocumentInput(DictMixin, MultiLanguageInput):
     """The input document to be analyzed by the service.
 
-    :keyword str id: Unique, non-empty document identifier.
-    :keyword str text: The input text to process.
+    :keyword str id: Required. Unique, non-empty document identifier.
+    :keyword str text: Required. The input text to process.
     :keyword str language: This is the 2 letter ISO 639-1 representation
      of a language. For example, use "en" for English; "es" for Spanish etc. If
      not set, uses "en" for English as default.
@@ -1416,7 +1416,7 @@ class TextDocumentBatchStatistics(DictMixin):
         This includes empty, over-size limit or non-supported languages documents.
     :vartype erroneous_document_count: int
     :ivar transaction_count: Number of transactions for the request.
-    :vartype transaction_count: long
+    :vartype transaction_count: int
     """
 
     def __init__(self, **kwargs):
