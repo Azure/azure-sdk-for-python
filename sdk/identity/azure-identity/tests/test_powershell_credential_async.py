@@ -88,6 +88,21 @@ async def test_get_token(stderr):
     assert mock_exec().result().communicate.call_count == 1
 
 
+@pytest.mark.parametrize("stderr", ("", PREPARING_MODULES))
+async def test_get_token_tenant_id(stderr):
+    expected_access_token = "access"
+    expected_expires_on = 1617923581
+    scope = "scope"
+    stdout = "azsdk%{}%{}".format(expected_access_token, expected_expires_on)
+
+    mock_exec = get_mock_exec(stdout=stdout, stderr=stderr)
+    with patch(CREATE_SUBPROCESS_EXEC, mock_exec):
+        token = await AzurePowerShellCredential().get_token(scope, tenant_id="tenant_id")
+
+    assert token.token == expected_access_token
+    assert token.expires_on == expected_expires_on
+
+
 async def test_ignores_extraneous_stdout_content():
     expected_access_token = "access"
     expected_expires_on = 1617923581

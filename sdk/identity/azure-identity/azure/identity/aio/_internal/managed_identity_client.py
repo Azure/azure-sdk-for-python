@@ -30,6 +30,8 @@ class AsyncManagedIdentityClient(AsyncContextManager, ManagedIdentityClientBase)
         # pylint:disable=invalid-overridden-method
         resource = _scopes_to_resource(*scopes)
         request = self._request_factory(resource, self._identity_config)
+        kwargs.pop("tenant_id", None)
+        kwargs.pop("claims", None)
         request_time = int(time.time())
         response = await self._pipeline.run(request, retry_on_methods=[request.method], **kwargs)
         token = self._process_response(response, request_time)
