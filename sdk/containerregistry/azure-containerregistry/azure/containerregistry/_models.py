@@ -206,7 +206,7 @@ class RepositoryProperties(object):
         return self._created_on
 
     @property
-    def last_udpated_on(self):
+    def last_updated_on(self):
         # type: () -> datetime
         return self._last_updated_on
 
