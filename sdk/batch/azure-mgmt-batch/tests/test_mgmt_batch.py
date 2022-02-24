@@ -86,7 +86,7 @@ class TestMgmtBatch(AzureMgmtRecordedTestCase):
     def test_mgmt_batch_list_operations(self):
         operations = self.mgmt_batch_client.operations.list()
         all_ops = list(operations)
-        assert len(all_ops) == 53
+        assert len(all_ops) == 54
         assert all_ops[0].name == 'Microsoft.Batch/batchAccounts/providers/Microsoft.Insights/diagnosticSettings/read'
         assert all_ops[0].origin == 'system'
         assert all_ops[0].display.provider == 'Microsoft Batch'
