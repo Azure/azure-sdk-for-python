@@ -102,7 +102,7 @@ class AioHttpTransport(AsyncHttpTransport):
                 "cookie_jar": jar,
                 "auto_decompress": False,
             }
-            if self._loop:
+            if self._loop is not None:
                 clientsession_kwargs["loop"] = self._loop
             self.session = aiohttp.ClientSession(**clientsession_kwargs)
         if self.session is not None:
