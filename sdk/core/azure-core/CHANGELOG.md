@@ -1,8 +1,10 @@
 # Release History
 
-## 1.22.2 (Unreleased)
+## 1.23.0 (Unreleased)
 
 ### Features Added
+
+- Add a case insensitive dict `case_insensitive_dict` in `azure.core.utils`.  #23206
 
 ### Breaking Changes
 
