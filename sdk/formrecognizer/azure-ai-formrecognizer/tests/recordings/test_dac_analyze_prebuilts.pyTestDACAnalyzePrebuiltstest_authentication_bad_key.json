@@ -9,16 +9,17 @@
         "Connection": "keep-alive",
         "Content-Length": "2",
         "Content-Type": "application/octet-stream",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "3d669931-7f11-11ec-b42d-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "2469a8a9-901a-11ec-b1aa-b831b58100e8"
       },
       "RequestBody": "eHg=",
       "StatusCode": 401,
       "ResponseHeaders": {
-        "apim-request-id": "4629a28c-e95c-41f0-8f69-7836e8bee2ac",
+        "apim-request-id": "8e7eff15-21bc-44b4-9180-90f432d558bb",
         "Content-Length": "224",
         "Content-Type": "application/json",
-        "Date": "Thu, 27 Jan 2022 01:34:15 GMT"
+        "Date": "Thu, 17 Feb 2022 17:50:49 GMT",
+        "Server": "Kestrel"
       },
       "ResponseBody": {
         "error": {
