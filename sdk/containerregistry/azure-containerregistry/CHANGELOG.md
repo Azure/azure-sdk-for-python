@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Fixed a spell error in a property of `RepositoryProperties` to `last_updated_on`.
+
 ## 1.0.0 (2022-01-25)
 
 ### Features Added
