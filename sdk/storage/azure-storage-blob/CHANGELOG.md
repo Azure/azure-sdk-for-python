@@ -1,6 +1,6 @@
 # Release History
 
-## 12.10.0b4 (2022-02-23)
+## 12.10.0b4 (2022-02-24)
 
 ### Features Added
 - Updated clients to support both SAS and OAuth together.

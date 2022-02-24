@@ -150,10 +150,7 @@ class StorageHttpChallenge(object):
             raise ValueError("Challenge cannot be empty")
 
         self._parameters = {}
-
-        split_challenge = challenge.strip().split(" ", 1)
-        self.scheme = split_challenge[0]
-        trimmed_challenge = split_challenge[1]
+        self.scheme, trimmed_challenge = challenge.strip().split(" ", 1)
 
         # name=value pairs either comma or space separated with values possibly being
         # enclosed in quotes
