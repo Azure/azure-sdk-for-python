@@ -1999,6 +1999,29 @@ class StorageCommonBlobTest(StorageTestCase):
         result = service.get_service_properties()
         self.assertIsNotNone(result)
 
+    @BlobPreparer()
+    def test_token_credential_blob(self, storage_account_name, storage_account_key):
+        # Setup
+        container_name = self._get_container_reference()
+        blob_name = self._get_blob_reference()
+        blob_data = b'Helloworld'
+        token_credential = self.generate_oauth_token()
+
+        service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential)
+        container = service.get_container_client(container_name)
+
+        # Act / Assert
+        try:
+            container.create_container()
+            blob = container.upload_blob(blob_name, blob_data)
+
+            data = blob.download_blob().readall()
+            self.assertEqual(blob_data, data)
+
+            blob.delete_blob()
+        finally:
+            container.delete_container()
+
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @BlobPreparer()
     def test_token_credential_with_batch_operation(self, storage_account_name, storage_account_key):
