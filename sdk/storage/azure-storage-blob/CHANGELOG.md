@@ -1,5 +1,14 @@
 # Release History
 
+## 12.10.0b4 (2022-02-24)
+
+### Features Added
+- Updated clients to support both SAS and OAuth together.
+- Updated OAuth implementation to use the AAD scope returned in a Bearer challenge.
+
+### Bugs Fixed
+- Addressed a few `mypy` typing hint errors.
+
 ## 12.10.0b3 (2022-02-08)
 
 This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
