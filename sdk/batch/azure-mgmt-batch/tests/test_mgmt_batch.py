@@ -161,6 +161,7 @@ class TestMgmtBatch(AzureMgmtRecordedTestCase):
         #         batch_account)
         # creating.result()
 
+    @pytest.mark.skip('hard to test')
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_mgmt_batch_account(self, resource_group, location):
