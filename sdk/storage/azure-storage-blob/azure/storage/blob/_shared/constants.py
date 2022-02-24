@@ -22,6 +22,7 @@ if sys.version_info >= (3, 5):
     # 4000MB (max block size)/ 50KB/s (an arbitrarily chosen minimum upload speed)
     READ_TIMEOUT = 80000
 
+DEFAULT_OAUTH_SCOPE = "/.default"
 STORAGE_OAUTH_SCOPE = "https://storage.azure.com/.default"
 
 SERVICE_HOST_BASE = 'core.windows.net'
