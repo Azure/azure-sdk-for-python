@@ -20,7 +20,7 @@
   - `EnvironmentCredential`
   - `UsernamePasswordCredential`
 
-   it is omitted by other types of credentials.
+   it is ignored by other types of credentials.
 
 ### Other Changes
 
