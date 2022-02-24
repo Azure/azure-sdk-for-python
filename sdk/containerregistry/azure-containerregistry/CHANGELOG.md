@@ -54,7 +54,7 @@
 
 ### Bugs Fixed
 
-- Fixeed a bug where `credential_scopes` keyword on `ContainerRegistryClient` was not passed through and the client could not authenticate with foreign clouds.
+- Fixed a bug where `credential_scopes` keyword on `ContainerRegistryClient` was not passed through and the client could not authenticate with foreign clouds.
 
 ## 1.0.0b3 (2021-06-08)
 
