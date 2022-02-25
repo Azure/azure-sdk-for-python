@@ -9,13 +9,18 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.communication.rooms._models import RoomRequest, CommunicationRoom
 
 from ._generated._azure_communication_rooms_service import AzureCommunicationRoomsService
+from ._generated.models import (
+
+    CreateRoomRequest,
+)
+
 from ._shared.utils import parse_connection_str, get_authentication_policy, get_current_utc_time
 from ._version import SDK_MONIKER
 
 class RoomsClient(object):
     """A client to interact with the AzureCommunicationService Rooms gateway.
 
-    This client provides operations to send an SMS via a phone number.
+    This client provides operations to manage rooms.
 
     :param str endpoint:
         The endpoint url for Azure Communication Service resource.
@@ -73,14 +78,34 @@ class RoomsClient(object):
 
     def create_room(
         self,
-        roomRequest=None, # type: RoomRequest
+        room_request=None, # type: RoomRequest
         **kwargs
     ):
         # type: (...) -> CommunicationRoom
-        create_room_request = roomRequest.to_create_room_request()
+        """Create a new room.
+
+        :param RoomRequest room_request:
+            Room.
+        :returns: Instance of RoomsClient.
+        :rtype: ~azure.communication.RoomsClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/Rooms_sample.py
+                :start-after: [START auth_from_connection_string]
+                :end-before: [END auth_from_connection_string]
+                :language: python
+                :dedent: 8
+                :caption: Creating the RoomsClient from a connection string.
+        """
+        create_room_request = None
+        if room_request is not None:
+            create_room_request = room_request.to_create_room_request()
+        else:
+            create_room_request = CreateRoomRequest()
         create_room_response = self._rooms_service_client.rooms.create_room(
             create_room_request=create_room_request, **kwargs)
-        return CommunicationRoom.from_create_room_response(create_room_response)
+        return CommunicationRoom._from_create_room_response(create_room_response)
     
     def delete_room(
         self,
@@ -92,11 +117,22 @@ class RoomsClient(object):
     def update_room(
         self,
         room_id,
-        roomRequest=None, # type: RoomRequest
+        room_request, # type: RoomRequest
         **kwargs
     ):
         # type: (...) -> CommunicationRoom
-        update_room_request = roomRequest.to_update_room_request()
+        if not room_request:
+            raise ValueError("room_request cannot be None.")
+        update_room_request = room_request.to_update_room_request()
         update_room_response = self._rooms_service_client.rooms.update_room(
             room_id=room_id, update_room_request=update_room_request, **kwargs)
-        return CommunicationRoom.from_update_room_response(update_room_response)
+        return CommunicationRoom._from_update_room_response(update_room_response)
+
+    def get_room(
+        self,
+        room_id, # type: str
+        **kwargs
+    ):
+        get_room_response = self._rooms_service_client.rooms.get_room(room_id=room_id, **kwargs)
+        return CommunicationRoom._from_get_room_response(get_room_response)
+    

@@ -9,7 +9,14 @@
 import datetime
 from logging.config import valid_ident
 from typing import Any, Dict, Optional
-from .._generated.models import CreateRoomRequest, CreateRoomResponse, UpdateRoomRequest, UpdateRoomResponse
+from .._generated.models import (
+
+    RoomModel,
+    CreateRoomRequest,
+    CreateRoomResponse,
+    UpdateRoomRequest,
+    UpdateRoomResponse
+)
 import msrest.serialization
 
 
@@ -75,7 +82,24 @@ class RoomRequest(msrest.serialization.Model):
             valid_until=self.valid_until,
             participants=self.participants
         )
+    
+    def add_participant(
+        self,
+        communication_user_identifier,
+        room_participant=None #type: RoomParticipant
+    ):
+        if room_participant is None:
+            room_participant = RoomParticipant()
+        self.participants[communication_user_identifier.properties["id"]] = room_participant
+    
+    def remove_participant(
+        self,
+        communication_user_identifier
+    ):
+        self.participants[communication_user_identifier.properties["id"]] = None
 
+    def remove_all_participants(self):
+        self.participants = None
 
 class CommunicationRoom(msrest.serialization.Model):
     """The response object from rooms service.
@@ -140,8 +164,9 @@ class CommunicationRoom(msrest.serialization.Model):
         self.participants = participants
         self.invalid_participants = invalid_participants
     
+
     @classmethod
-    def from_create_room_response(cls, create_room_response,  # type: CreateRoomResponse
+    def _from_create_room_response(cls, create_room_response,  # type: CreateRoomResponse
             **kwargs  # type: Any
     ):
         # type: (...) -> CommunicationRoom
@@ -162,13 +187,13 @@ class CommunicationRoom(msrest.serialization.Model):
         )
 
     @classmethod
-    def from_update_room_response(cls, update_room_response,  # type: UpdateRoomResponse
+    def _from_update_room_response(cls, update_room_response,  # type: UpdateRoomResponse
             **kwargs  # type: Any
     ):
         # type: (...) -> CommunicationRoom
-        """Create CommunicationRoom from a CreateRoomResponse.
-        :param CreateRoomResponse create_room_response:
-            Response from create_room API.
+        """Create CommunicationRoom from a UpdateRoomResponse.
+        :param UpdateRoomResponse update_room_response:
+            Response from update_room API.
         :returns: Instance of CommunicationRoom.
         :rtype: ~azure.communication.CommunicationRoom
         """
@@ -179,6 +204,26 @@ class CommunicationRoom(msrest.serialization.Model):
         valid_until=update_room_response.room.valid_until,
         participants=update_room_response.room.participants,
         invalid_participants=update_room_response.invalid_participants,
+        **kwargs
+        )
+    
+    @classmethod
+    def _from_get_room_response(cls, get_room_response,  # type: RoomModel
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> CommunicationRoom
+        """Create CommunicationRoom from a RoomModel.
+        :param RoomModel get_room_response:
+            Response from get_room API.
+        :returns: Instance of CommunicationRoom.
+        :rtype: ~azure.communication.CommunicationRoom
+        """
+        return cls(
+        id=get_room_response.id,
+        created_date_time=get_room_response.created_date_time,
+        valid_from=get_room_response.valid_from,
+        valid_until=get_room_response.valid_until,
+        participants=get_room_response.participants,
         **kwargs
         )
 
