@@ -58,7 +58,9 @@ class TestTranslation(AsyncDocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
-    async def test_single_source_single_target(self, client, variables):
+    async def test_single_source_single_target(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.get("variables", {})
         # prepare containers and test data
         blob_data = b'This is some text'
         source_container_sas_url = self.create_source_container(data=Document(data=blob_data), variables=variables)
@@ -84,7 +86,9 @@ class TestTranslation(AsyncDocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
-    async def test_single_source_two_targets(self, client, variables):
+    async def test_single_source_two_targets(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.get("variables", {})
         # prepare containers and test data
         blob_data = b'This is some text'
         source_container_sas_url = self.create_source_container(data=Document(data=blob_data), variables=variables)
@@ -115,7 +119,9 @@ class TestTranslation(AsyncDocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
-    async def test_multiple_sources_single_target(self, client, variables):
+    async def test_multiple_sources_single_target(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.get("variables", {})
         # prepare containers and test data
         blob_data = b'This is some text'
         source_container_sas_url = self.create_source_container(data=Document(data=blob_data), variables=variables)
@@ -152,7 +158,9 @@ class TestTranslation(AsyncDocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
-    async def test_single_source_single_target_with_prefix(self, client, variables):
+    async def test_single_source_single_target_with_prefix(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.get("variables", {})
         # prepare containers and test data
         blob_data = b'This is some text'
         prefix = "xyz"
@@ -180,7 +188,9 @@ class TestTranslation(AsyncDocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
-    async def test_single_source_single_target_with_suffix(self, client, variables):
+    async def test_single_source_single_target_with_suffix(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.get("variables", {})
         # prepare containers and test data
         blob_data = b'This is some text'
         suffix = "txt"
@@ -208,7 +218,9 @@ class TestTranslation(AsyncDocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
-    async def test_bad_input_source(self, client, variables):
+    async def test_bad_input_source(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.get("variables", {})
         # prepare containers and test data
         target_container_sas_url = self.create_target_container(variables=variables)
 
@@ -234,7 +246,9 @@ class TestTranslation(AsyncDocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
-    async def test_bad_input_target(self, client, variables):
+    async def test_bad_input_target(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.get("variables", {})
         # prepare containers and test data
         blob_data = b'This is some text'
         source_container_sas_url = self.create_source_container(data=Document(data=blob_data), variables=variables)
@@ -262,7 +276,9 @@ class TestTranslation(AsyncDocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
-    async def test_use_supported_and_unsupported_files(self, client, variables):
+    async def test_use_supported_and_unsupported_files(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.get("variables", {})
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(data=[
                 Document(suffix=".txt"),
@@ -295,7 +311,9 @@ class TestTranslation(AsyncDocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
-    async def test_existing_documents_in_target(self, client, variables):
+    async def test_existing_documents_in_target(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.get("variables", {})
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(data=Document(name="document"), variables=variables)
         target_container_sas_url = self.create_target_container(data=Document(name="document"), variables=variables)
@@ -326,7 +344,9 @@ class TestTranslation(AsyncDocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
-    async def test_existing_documents_in_target_one_valid(self, client, variables):
+    async def test_existing_documents_in_target_one_valid(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.get("variables", {})
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(data=[Document(name="document"), Document()], variables=variables)
         target_container_sas_url = self.create_target_container(data=Document(name="document"), variables=variables)
@@ -356,7 +376,9 @@ class TestTranslation(AsyncDocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
-    async def test_empty_document(self, client, variables):
+    async def test_empty_document(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.get("variables", {})
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(Document(data=b''), variables=variables)
         target_container_sas_url = self.create_target_container(variables=variables)
@@ -386,7 +408,9 @@ class TestTranslation(AsyncDocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
-    async def test_overloaded_inputs(self, client, variables):
+    async def test_overloaded_inputs(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.get("variables", {})
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'), variables=variables)
         target_container_sas_url = self.create_target_container(variables=variables)
@@ -422,7 +446,9 @@ class TestTranslation(AsyncDocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
-    async def test_overloaded_single_input(self, client, variables):
+    async def test_overloaded_single_input(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.get("variables", {})
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'), variables=variables)
         target_container_sas_url = self.create_target_container(variables=variables)
@@ -491,7 +517,9 @@ class TestTranslation(AsyncDocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
-    async def test_single_input_with_kwargs(self, client, variables):
+    async def test_single_input_with_kwargs(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.get("variables", {})
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(data=Document(data=b'hello world'), variables=variables)
         target_container_sas_url = self.create_target_container(variables=variables)
@@ -535,7 +563,9 @@ class TestTranslation(AsyncDocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
-    async def test_single_input_with_kwarg_successful(self, client, variables):
+    async def test_single_input_with_kwarg_successful(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.get("variables", {})
         # prepare containers and test data
         source_container_sas_url = self.create_source_container(data=[Document(data=b'hello world', prefix="kwargs"),
                                                                       Document(data=b'hello world')],

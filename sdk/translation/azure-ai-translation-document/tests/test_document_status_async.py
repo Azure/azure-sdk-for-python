@@ -18,7 +18,9 @@ class TestDocumentStatus(AsyncDocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
-    async def test_list_statuses(self, client, variables):
+    async def test_list_statuses(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.get("variables", {})
         # prepare containers and test data
         blob_data = [Document(data=b'This is some text')]
         source_container_sas_url = self.create_source_container(data=blob_data, variables=variables)

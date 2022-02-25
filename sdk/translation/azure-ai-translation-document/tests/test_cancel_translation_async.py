@@ -19,7 +19,7 @@ class TestCancelTranslation(AsyncDocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy_async
-    async def test_cancel_translation(self, client, variables):
+    async def test_cancel_translation(self, **kwargs):
         '''
             some notes (test sporadically failing):
             1. use a large number of translations
@@ -28,6 +28,8 @@ class TestCancelTranslation(AsyncDocumentTranslationTest):
             2. wait sometime after calling 'cancel' and before calling 'get status'
                 - in order for the cancel status to propagate
         '''
+        client = kwargs.pop("client")
+        variables = kwargs.get("variables", {})
         # submit translation operation
         docs_count = 8 # large number of docs
         poller = await self._begin_and_validate_translation_with_multiple_docs_async(client, docs_count, wait=False, variables=variables)

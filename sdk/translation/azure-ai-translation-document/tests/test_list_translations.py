@@ -20,7 +20,9 @@ class TestListTranslations(DocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
-    def test_list_translations(self, client, variables):
+    def test_list_translations(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.get("variables", {})
         # create some translations
         operations_count = 5
         docs_per_operation = 5
@@ -38,7 +40,9 @@ class TestListTranslations(DocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
-    def test_list_translations_with_pagination(self, client, variables):
+    def test_list_translations_with_pagination(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.get("variables", {})
         # prepare data
         operations_count = 5
         docs_per_operation = 2
@@ -62,7 +66,9 @@ class TestListTranslations(DocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
-    def test_list_translations_with_skip(self, client, variables):
+    def test_list_translations_with_skip(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.get("variables", {})
         # prepare data
         operations_count = 10
         docs_per_operation = 2
@@ -80,7 +86,9 @@ class TestListTranslations(DocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
-    def test_list_translations_filter_by_status(self, client, variables):
+    def test_list_translations_filter_by_status(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.get("variables", {})
         operations_count = 5
         docs_per_operation = 1
 
@@ -106,7 +114,9 @@ class TestListTranslations(DocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
-    def test_list_translations_filter_by_ids(self, client, variables):
+    def test_list_translations_filter_by_ids(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.get("variables", {})
         operations_count = 3
         docs_per_operation = 2
 
@@ -173,7 +183,9 @@ class TestListTranslations(DocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
-    def test_list_translations_order_by_creation_time_asc(self, client, variables):
+    def test_list_translations_order_by_creation_time_asc(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.get("variables", {})
         operations_count = 3
         docs_per_operation = 2
 
@@ -194,7 +206,9 @@ class TestListTranslations(DocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
-    def test_list_translations_order_by_creation_time_desc(self, client, variables):
+    def test_list_translations_order_by_creation_time_desc(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.get("variables", {})
         operations_count = 3
         docs_per_operation = 2
 
