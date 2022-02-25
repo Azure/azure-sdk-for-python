@@ -14,21 +14,23 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/a?api-version=2021-10
   response:
     body:
-      string: '{"Code":400,"Detail":"SubCode=40000, UnknownType:The request is invalid.
-        [MGResponseHttpError=BadRequest]. TrackingId:a788abde-8482-4bd2-8504-def48cc6ed00_G21,
-        SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups\/$schemas\/a,
-        Timestamp:2022-02-18T22:18:19"}'
+      string: '{"error":{"code":"InvalidRequest","message":"SubCode=40000, UnknownType:The
+        request is invalid. [MGResponseHttpError=BadRequest]. TrackingId:923cad80-a1c2-4b27-a6d5-a030838d91a0_G31,
+        SystemTracker:swathip-test-eh-westus.servicebus.windows.net:$schemaGroups\/$schemas\/a,
+        Timestamp:2022-02-25T20:18:50"}}'
     headers:
       content-type:
       - application/json
       date:
-      - Fri, 18 Feb 2022 22:18:18 GMT
+      - Fri, 25 Feb 2022 20:18:50 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
       - max-age=31536000
       transfer-encoding:
       - chunked
+      x-ms-error-code:
+      - InvalidRequest
     status:
       code: 400
       message: Bad Request
@@ -47,20 +49,22 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2021-10
   response:
     body:
-      string: '{"Code":404,"Detail":"Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does
-        not exist. TrackingId:d1e6b6a9-894b-4022-a074-da1525efdb67_G21, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups\/$schemas\/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
-        Timestamp:2022-02-18T22:18:20"}'
+      string: '{"error":{"code":"ItemNotFound","message":"Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+        does not exist. TrackingId:86a7730e-eb05-4e05-962d-8a522f5298d2_G31, SystemTracker:swathip-test-eh-westus.servicebus.windows.net:$schemaGroups\/$schemas\/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
+        Timestamp:2022-02-25T20:18:51"}}'
     headers:
       content-type:
       - application/json
       date:
-      - Fri, 18 Feb 2022 22:18:19 GMT
+      - Fri, 25 Feb 2022 20:18:50 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
       - max-age=31536000
       transfer-encoding:
       - chunked
+      x-ms-error-code:
+      - ItemNotFound
     status:
       code: 404
       message: Not Found

@@ -18,21 +18,23 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema:get-id?api-version=2021-10
   response:
     body:
-      string: '{"Code":400,"Detail":"Error when consuming request body: The body of
-        the message cannot be read because it is empty. TrackingId:46248fa1-335d-4391-9172-7941260297af_G12,
-        SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups\/fakegroup\/schemas\/test-schema:get-id,
-        Timestamp:2022-02-18T22:18:14"}'
+      string: '{"error":{"code":"InvalidRequest","message":"Error when consuming request
+        body: The body of the message cannot be read because it is empty. TrackingId:e02461fb-40f7-492a-abb6-11596ffd1c1b_G10,
+        SystemTracker:swathip-test-eh-westus.servicebus.windows.net:$schemaGroups\/fakegroup\/schemas\/test-schema:get-id,
+        Timestamp:2022-02-25T20:18:41"}}'
     headers:
       content-type:
       - application/json
       date:
-      - Fri, 18 Feb 2022 22:18:13 GMT
+      - Fri, 25 Feb 2022 20:18:41 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
       - max-age=31536000
       transfer-encoding:
       - chunked
+      x-ms-error-code:
+      - InvalidRequest
     status:
       code: 400
       message: Bad Request
@@ -55,20 +57,23 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema:get-id?api-version=2021-10
   response:
     body:
-      string: '{"Code":415,"Detail":"Invalid schema type for POST request. ''invalid-format''
-        is not supported. TrackingId:ddf9a2a4-2384-4caa-a970-ee1e010083e8_G12, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups\/fakegroup\/schemas\/test-schema:get-id,
-        Timestamp:2022-02-18T22:18:14"}'
+      string: '{"error":{"code":"InvalidSchemaType","message":"Invalid schema type
+        for POST request. ''invalid-format'' is not supported. TrackingId:74a0f7cc-118d-4eea-82ca-9088627c7640_G10,
+        SystemTracker:swathip-test-eh-westus.servicebus.windows.net:$schemaGroups\/fakegroup\/schemas\/test-schema:get-id,
+        Timestamp:2022-02-25T20:18:42"}}'
     headers:
       content-type:
       - application/json
       date:
-      - Fri, 18 Feb 2022 22:18:14 GMT
+      - Fri, 25 Feb 2022 20:18:42 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
       - max-age=31536000
       transfer-encoding:
       - chunked
+      x-ms-error-code:
+      - InvalidSchemaType
     status:
       code: 415
       message: Unsupported Media Type
@@ -91,20 +96,22 @@ interactions:
     uri: https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroup/schemas/never-registered:get-id?api-version=2021-10
   response:
     body:
-      string: '{"Code":404,"Detail":"Schema fakegroup\/never-registered does not exist.
-        TrackingId:0c5c2473-ec00-41c3-850d-ed73feb32e46_G12, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups\/fakegroup\/schemas\/never-registered:get-id,
-        Timestamp:2022-02-18T22:18:14"}'
+      string: '{"error":{"code":"ItemNotFound","message":"Schema fakegroup\/never-registered
+        does not exist. TrackingId:494d5d0b-9244-4315-8aac-0743f6a6b37c_G10, SystemTracker:swathip-test-eh-westus.servicebus.windows.net:$schemaGroups\/fakegroup\/schemas\/never-registered:get-id,
+        Timestamp:2022-02-25T20:18:43"}}'
     headers:
       content-type:
       - application/json
       date:
-      - Fri, 18 Feb 2022 22:18:14 GMT
+      - Fri, 25 Feb 2022 20:18:43 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
       - max-age=31536000
       transfer-encoding:
       - chunked
+      x-ms-error-code:
+      - ItemNotFound
     status:
       code: 404
       message: Not Found
