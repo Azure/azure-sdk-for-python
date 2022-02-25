@@ -41,8 +41,9 @@ def add_sanitizers(test_proxy):
     # run tests
     yield
 
-    # delete containers
-    if is_live():
+    # Dogfood env uses a static storage account so we clean up the blob resources
+    # This is unnecessary for AzureCloud where each storage account is deleted at the end of testing
+    if is_live() and os.getenv("TRANSLATION_ENVIRONMENT") == "Dogfood":
         client = BlobServiceClient(
             "https://" + os.getenv("TRANSLATION_DOCUMENT_STORAGE_NAME") + ".blob.core.windows.net/",
             os.getenv("TRANSLATION_DOCUMENT_STORAGE_KEY")

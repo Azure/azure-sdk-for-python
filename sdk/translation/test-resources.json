@@ -277,6 +277,10 @@
             "type": "string",
             "value": "[variables('azureDocTranslationUrl')]"
         },
+        "TRANSLATION_ENVIRONMENT": {
+            "type": "string",
+            "defaultValue": "[if(parameters('useStaticStorageResource'), 'Dogfood', 'AzureCloud')]"
+        },
         "TRANSLATION_DOCUMENT_STORAGE_NAME": {
             "type": "string",
             "value": "[parameters('blobStorageAccount')]"
