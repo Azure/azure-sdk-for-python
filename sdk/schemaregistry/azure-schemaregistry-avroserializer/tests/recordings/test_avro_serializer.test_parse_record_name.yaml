@@ -25,7 +25,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Feb 2022 00:47:56 GMT
+      - Fri, 25 Feb 2022 23:54:15 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/User.avro/versions/1?api-version=2021-10
       schema-group-name:
@@ -67,7 +67,7 @@ interactions:
       content-type:
       - application/json;serialization=Avro
       date:
-      - Fri, 25 Feb 2022 00:47:56 GMT
+      - Fri, 25 Feb 2022 23:54:15 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/User.avro/versions/1?api-version=2021-10
       schema-group-name:
@@ -116,7 +116,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Feb 2022 00:47:57 GMT
+      - Fri, 25 Feb 2022 23:54:16 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/User/versions/1?api-version=2021-10
       schema-group-name:
@@ -158,7 +158,7 @@ interactions:
       content-type:
       - application/json;serialization=Avro
       date:
-      - Fri, 25 Feb 2022 00:47:57 GMT
+      - Fri, 25 Feb 2022 23:54:16 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/User/versions/1?api-version=2021-10
       schema-group-name:

@@ -21,7 +21,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 25 Feb 2022 00:51:20 GMT
+      date: Fri, 25 Feb 2022 23:54:33 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/example.avro.populatedrecord.User/versions/1?api-version=2021-10
       schema-group-name: swathip-test-schema
       schema-id: f024ca12f4254593a89831cefc5c9e80
@@ -49,7 +49,7 @@ interactions:
       string: '{"name":"User","namespace":"example.avro.populatedrecord","type":"record","fields":[{"name":"name","type":"string"},{"name":"age","type":"int"},{"name":"married","type":"boolean"},{"name":"height","type":"float"},{"name":"randb","type":"bytes"}]}'
     headers:
       content-type: application/json;serialization=Avro
-      date: Fri, 25 Feb 2022 00:51:20 GMT
+      date: Fri, 25 Feb 2022 23:54:34 GMT
       location: https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/example.avro.populatedrecord.User/versions/1?api-version=2021-10
       schema-group-name: swathip-test-schema
       schema-id: f024ca12f4254593a89831cefc5c9e80

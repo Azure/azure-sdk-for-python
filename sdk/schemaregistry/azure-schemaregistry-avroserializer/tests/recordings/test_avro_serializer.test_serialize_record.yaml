@@ -27,7 +27,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 25 Feb 2022 00:48:02 GMT
+      - Fri, 25 Feb 2022 23:54:19 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/example.avro.populatedrecord.User/versions/1?api-version=2021-10
       schema-group-name:
@@ -69,7 +69,7 @@ interactions:
       content-type:
       - application/json;serialization=Avro
       date:
-      - Fri, 25 Feb 2022 00:48:02 GMT
+      - Fri, 25 Feb 2022 23:54:20 GMT
       location:
       - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/example.avro.populatedrecord.User/versions/1?api-version=2021-10
       schema-group-name:

@@ -200,6 +200,27 @@ class AvroSerializerTests(AzureTestCase):
         with pytest.raises(SchemaDeserializationError):
             deserialized_data = sr_avro_serializer.deserialize(serialized_data_dict, readers_schema=readers_schema_change_name)
 
+    @SchemaRegistryPowerShellPreparer()
+    def test_avro_serializer_with_client_request_kwargs(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        sr_client = self.create_basic_client(SchemaRegistryClient, fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
+        sr_avro_serializer = AvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
+
+        schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
+        schema = avro.schema.parse(schema_str)
+
+        dict_data = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
+        with pytest.raises(TypeError) as e:
+            serialized_metadata = sr_avro_serializer.serialize(dict_data, schema=schema_str, client_request_kwargs={"fake_kwarg": True})
+        assert 'request() got an unexpected keyword' in str(e.value)
+        serialized_metadata = sr_avro_serializer.serialize(dict_data, schema=schema_str)
+        content_type = serialized_metadata["content_type"]
+        serialized_data = serialized_metadata["data"]
+
+        serialized_data_dict = {"data": serialized_data, "content_type": content_type}
+        with pytest.raises(TypeError) as e:
+            deserialized_data = sr_avro_serializer.deserialize(serialized_data_dict, client_request_kwargs={"fake_kwarg": True})
+        assert 'request() got an unexpected keyword' in str(e.value)
+
 
     ################################################################# 
     ######################### PARSE SCHEMAS #########################

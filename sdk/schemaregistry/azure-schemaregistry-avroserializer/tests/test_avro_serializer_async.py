@@ -149,33 +149,56 @@ class AvroSerializerAsyncTests(AzureTestCase):
 
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
 
-        dict_data = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
-        serialized_metadata = await sr_avro_serializer.serialize(dict_data, schema=schema_str)
-        content_type = serialized_metadata["content_type"]
-        serialized_data = serialized_metadata["data"]
+        async with sr_client, sr_avro_serializer:
+            dict_data = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
+            serialized_metadata = await sr_avro_serializer.serialize(dict_data, schema=schema_str)
+            content_type = serialized_metadata["content_type"]
+            serialized_data = serialized_metadata["data"]
 
-        # readers_schema with removed field
-        readers_schema_remove_field = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]}]}"""
-        serialized_data_dict = {"data": serialized_data, "content_type": content_type}
-        deserialized_data = await sr_avro_serializer.deserialize(serialized_data_dict, readers_schema=readers_schema_remove_field)
-        assert deserialized_data["name"] == u"Ben"
-        assert deserialized_data["favorite_number"] == 7
-
-        # readers_schema with extra field with default
-        readers_schema_extra_field = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}, {"name":"favorite_city","type":["string","null"], "default": "Redmond"}]}"""
-        serialized_data_dict = {"data": serialized_data, "content_type": content_type}
-        deserialized_data = await sr_avro_serializer.deserialize(serialized_data_dict, readers_schema=readers_schema_extra_field)
-        assert deserialized_data["name"] == u"Ben"
-        assert deserialized_data["favorite_number"] == 7
-        assert deserialized_data["favorite_color"] == "red"
-        assert deserialized_data["favorite_city"] == "Redmond"
-
-        # readers_schema with changed name results in error
-        readers_schema_change_name = """{"namespace":"fakeexample.avro","type":"record","name":"fake_user","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
-        with pytest.raises(SchemaDeserializationError):
+            # readers_schema with removed field
+            readers_schema_remove_field = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]}]}"""
             serialized_data_dict = {"data": serialized_data, "content_type": content_type}
-            deserialized_data = await sr_avro_serializer.deserialize(serialized_data_dict, readers_schema=readers_schema_change_name)
-            print(deserialized_data)
+            deserialized_data = await sr_avro_serializer.deserialize(serialized_data_dict, readers_schema=readers_schema_remove_field)
+            assert deserialized_data["name"] == u"Ben"
+            assert deserialized_data["favorite_number"] == 7
+
+            # readers_schema with extra field with default
+            readers_schema_extra_field = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}, {"name":"favorite_city","type":["string","null"], "default": "Redmond"}]}"""
+            serialized_data_dict = {"data": serialized_data, "content_type": content_type}
+            deserialized_data = await sr_avro_serializer.deserialize(serialized_data_dict, readers_schema=readers_schema_extra_field)
+            assert deserialized_data["name"] == u"Ben"
+            assert deserialized_data["favorite_number"] == 7
+            assert deserialized_data["favorite_color"] == "red"
+            assert deserialized_data["favorite_city"] == "Redmond"
+
+            # readers_schema with changed name results in error
+            readers_schema_change_name = """{"namespace":"fakeexample.avro","type":"record","name":"fake_user","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
+            with pytest.raises(SchemaDeserializationError):
+                serialized_data_dict = {"data": serialized_data, "content_type": content_type}
+                deserialized_data = await sr_avro_serializer.deserialize(serialized_data_dict, readers_schema=readers_schema_change_name)
+                print(deserialized_data)
+
+    @pytest.mark.asyncio
+    @SchemaRegistryPowerShellPreparer()
+    async def test_avro_serializer_with_client_request_kwargs(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        sr_client = self.create_client(schemaregistry_fully_qualified_namespace)
+        sr_avro_serializer = AvroSerializer(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
+
+        schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
+
+        async with sr_client, sr_avro_serializer:
+            dict_data = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
+            with pytest.raises(TypeError) as e:
+                serialized_metadata = await sr_avro_serializer.serialize(dict_data, schema=schema_str, client_request_kwargs={"fake_kwarg": True})
+            assert 'request() got an unexpected keyword' in str(e.value)
+            serialized_metadata = await sr_avro_serializer.serialize(dict_data, schema=schema_str)
+            content_type = serialized_metadata["content_type"]
+            serialized_data = serialized_metadata["data"]
+
+            serialized_data_dict = {"data": serialized_data, "content_type": content_type}
+            with pytest.raises(TypeError) as e:
+                deserialized_data = await sr_avro_serializer.deserialize(serialized_data_dict, client_request_kwargs={"fake_kwarg": True})
+            assert 'request() got an unexpected keyword' in str(e.value)
 
 
     ################################################################# 
