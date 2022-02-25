@@ -370,7 +370,7 @@ async def range_scan_on_hash_index(db):
         # Now add IndexingDirective and repeat query
         # expect 200 OK because now we are explicitly allowing scans in a query
         # using the enableScanInQuery directive
-        results = await created_Container.query_items(
+        results = created_Container.query_items(
             query,
             enable_scan_in_query=True,
             enable_cross_partition_query=True
