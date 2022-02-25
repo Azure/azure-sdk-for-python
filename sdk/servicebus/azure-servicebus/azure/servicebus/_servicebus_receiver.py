@@ -8,6 +8,7 @@ import functools
 import uuid
 import datetime
 import warnings
+import threading
 from typing import Any, List, Optional, Dict, Iterator, Union, TYPE_CHECKING, cast
 
 import six
@@ -63,6 +64,28 @@ if TYPE_CHECKING:
     )
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def _patched_message_received(self, receive_context, message):
+    """Callback run on receipt of every message.
+    Replaces the default defined in uAMQP, and either adds
+    to the internal buffer, or releases messages if the buffer
+    is not currently being listened to.
+
+    :param ~threading.Event receive_context: Whether the receiver is
+     currently actively receiving messages. If not, messages will be
+     immediately released.
+    :param message: Received message.
+    :type message: ~uamqp.message.Message
+    """
+    print("Got a message!")
+    self._was_message_received = True
+    if receive_context.is_set():
+        print("Adding to internal buffer")
+        self._received_messages.put(message)
+    else:
+        print("Not listening right now - be gone!")
+        message.release()
 
 
 class ServiceBusReceiver(
@@ -194,6 +217,7 @@ class ServiceBusReceiver(
             prefetch_count=prefetch_count,
             **kwargs
         )
+        self._receive_context = threading.Event()
         self._session = (
             None if self._session_id is None else ServiceBusSession(self._session_id, self)
         )
@@ -246,10 +270,12 @@ class ServiceBusReceiver(
     next = __next__  # for python2.7
 
     def _iter_next(self):
+        self._receive_context.set()
         self._open()
         if not self._message_iter:
             self._message_iter = self._handler.receive_messages_iter()
         uamqp_message = next(self._message_iter)
+        self._receive_context.clear()
         message = self._build_message(uamqp_message)
         if (
             self._auto_lock_renewer
@@ -341,6 +367,10 @@ class ServiceBusReceiver(
             keep_alive_interval=self._config.keep_alive,
             shutdown_after_timeout=False,
         )
+        self._handler._message_received = functools.partial(
+            _patched_message_received.__get__(self._handler, ReceiveClient),
+            self._receive_context
+        )
 
     def _open(self):
         # pylint: disable=protected-access
@@ -366,6 +396,7 @@ class ServiceBusReceiver(
     def _receive(self, max_message_count=None, timeout=None):
         # type: (Optional[int], Optional[float]) -> List[ServiceBusReceivedMessage]
         # pylint: disable=protected-access
+        self._receive_context.set()
         self._open()
 
         amqp_receive_client = self._handler
@@ -424,6 +455,8 @@ class ServiceBusReceiver(
                 batch.append(received_messages_queue.get())
                 received_messages_queue.task_done()
 
+        if self._prefetch_count == 1:
+            self._receive_context.clear()
         return [self._build_message(message) for message in batch]
 
     def _settle_message_with_retry(
