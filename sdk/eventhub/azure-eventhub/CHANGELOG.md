@@ -1,5 +1,11 @@
 # Release History
 
+## 5.9.0b2 (Unreleased)
+
+### Other Changes
+
+- The TODO: for interoperability with the Schema Registry Avro Serializer library.
+
 ## 5.9.0b1 (2022-02-09)
 
 ### Features Added
