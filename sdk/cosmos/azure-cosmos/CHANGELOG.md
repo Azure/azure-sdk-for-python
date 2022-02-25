@@ -2,6 +2,11 @@
 
 ### 4.3.0b3 (Unreleased)
 
+>[!WARNING]
+>The default consistency bugfix will impact customers whose database accounts have a `Bounded Staleness` or `Strong`
+> consistency level, and were previously not sending `Session` as a consistency_level parameter when initializing
+> their clients.
+
 #### Features Added
 - Added support for split-proof queries for the async client
 
