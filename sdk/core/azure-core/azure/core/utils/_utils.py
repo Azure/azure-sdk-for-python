@@ -5,6 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import datetime
+from typing import Any, MutableMapping
 
 
 class _FixedOffset(datetime.tzinfo):
@@ -80,7 +81,7 @@ def _convert_to_isoformat(date_time):
     deserialized = deserialized.replace(tzinfo=tzinfo)
     return deserialized
 
-def case_insensitive_dict(*args, **kwargs):
+def case_insensitive_dict(*args: Any, **kwargs: Any) -> MutableMapping:
     """Return a case-insensitive dict from a structure that a dict would have accepted."""
 
     # Rational is I don't want to re-implement this, but I don't want
