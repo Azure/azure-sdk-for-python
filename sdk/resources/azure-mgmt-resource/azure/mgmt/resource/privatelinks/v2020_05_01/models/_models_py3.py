@@ -10,7 +10,7 @@ from typing import List, Optional, Union
 
 import msrest.serialization
 
-from ._policy_client_enums import *
+from ._resource_private_link_client_enums import *
 
 
 class ErrorAdditionalInfo(msrest.serialization.Model):

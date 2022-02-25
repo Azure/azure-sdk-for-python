@@ -7,31 +7,31 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
-from azure.core.rest import AsyncHttpResponse, HttpRequest
-from azure.mgmt.core import AsyncARMPipelineClient
+from azure.core.rest import HttpRequest, HttpResponse
+from azure.mgmt.core import ARMPipelineClient
 from msrest import Deserializer, Serializer
 
-from .. import models
-from ._configuration import PolicyClientConfiguration
+from . import models
+from ._configuration import ResourcePrivateLinkClientConfiguration
 from .operations import PrivateLinkAssociationOperations, ResourceManagementPrivateLinkOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.credentials import TokenCredential
 
-class PolicyClient:
-    """To manage and control access to your resources, you can define customized policies and assign them at a scope.
+class ResourcePrivateLinkClient:
+    """Provides operations for managing private link resources.
 
     :ivar private_link_association: PrivateLinkAssociationOperations operations
     :vartype private_link_association:
-     azure.mgmt.resource.privatelinks.v2020_05_01.aio.operations.PrivateLinkAssociationOperations
+     azure.mgmt.resource.privatelinks.v2020_05_01.operations.PrivateLinkAssociationOperations
     :ivar resource_management_private_link: ResourceManagementPrivateLinkOperations operations
     :vartype resource_management_private_link:
-     azure.mgmt.resource.privatelinks.v2020_05_01.aio.operations.ResourceManagementPrivateLinkOperations
+     azure.mgmt.resource.privatelinks.v2020_05_01.operations.ResourceManagementPrivateLinkOperations
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     :param base_url: Service URL. Default value is 'https://management.azure.com'.
@@ -40,13 +40,13 @@ class PolicyClient:
 
     def __init__(
         self,
-        credential: "AsyncTokenCredential",
+        credential: "TokenCredential",
         subscription_id: str,
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = PolicyClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._config = ResourcePrivateLinkClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -58,16 +58,16 @@ class PolicyClient:
 
     def _send_request(
         self,
-        request: HttpRequest,
+        request,  # type: HttpRequest
         **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = await client._send_request(request)
-        <AsyncHttpResponse: 200 OK>
+        >>> response = client._send_request(request)
+        <HttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
 
@@ -75,19 +75,22 @@ class PolicyClient:
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.AsyncHttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    async def close(self) -> None:
-        await self._client.close()
+    def close(self):
+        # type: () -> None
+        self._client.close()
 
-    async def __aenter__(self) -> "PolicyClient":
-        await self._client.__aenter__()
+    def __enter__(self):
+        # type: () -> ResourcePrivateLinkClient
+        self._client.__enter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
-        await self._client.__aexit__(*exc_details)
+    def __exit__(self, *exc_details):
+        # type: (Any) -> None
+        self._client.__exit__(*exc_details)

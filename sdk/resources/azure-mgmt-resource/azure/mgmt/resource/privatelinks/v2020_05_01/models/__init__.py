@@ -18,7 +18,7 @@ from ._models_py3 import ResourceManagementPrivateLinkListResult
 from ._models_py3 import ResourceManagementPrivateLinkLocation
 
 
-from ._policy_client_enums import (
+from ._resource_private_link_client_enums import (
     PublicNetworkAccessOptions,
 )
 
