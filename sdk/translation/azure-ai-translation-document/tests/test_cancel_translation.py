@@ -28,7 +28,7 @@ class TestCancelTranslation(DocumentTranslationTest):
                 - in order for the cancel status to propagate
         '''
         client = kwargs.pop("client")
-        variables = kwargs.get("variables", {})
+        variables = kwargs.pop("variables", {})
 
         # submit translation operation
         docs_count = 8 # large number of docs

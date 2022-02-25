@@ -29,7 +29,7 @@ class TestCancelTranslation(AsyncDocumentTranslationTest):
                 - in order for the cancel status to propagate
         '''
         client = kwargs.pop("client")
-        variables = kwargs.get("variables", {})
+        variables = kwargs.pop("variables", {})
         # submit translation operation
         docs_count = 8 # large number of docs
         poller = await self._begin_and_validate_translation_with_multiple_docs_async(client, docs_count, wait=False, variables=variables)
