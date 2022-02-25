@@ -1,17 +1,17 @@
 {
-    "chosen_version": "2017-08-01-preview",
-    "total_api_version_list": ["2017-08-01-preview"],
+    "chosen_version": "2021-07-01",
+    "total_api_version_list": ["2021-07-01"],
     "client": {
-        "name": "MachineLearningComputeManagementClient",
-        "filename": "_machine_learning_compute_management_client",
-        "description": "These APIs allow end users to operate on Azure Machine Learning Compute resources. They support the following operations::code:`\u003cul\u003e\u003cli\u003eCreate or update a cluster\u003c/li\u003e\u003cli\u003eGet a cluster\u003c/li\u003e\u003cli\u003ePatch a cluster\u003c/li\u003e\u003cli\u003eDelete a cluster\u003c/li\u003e\u003cli\u003eGet keys for a cluster\u003c/li\u003e\u003cli\u003eCheck if updates are available for system services in a cluster\u003c/li\u003e\u003cli\u003eUpdate system services in a cluster\u003c/li\u003e\u003cli\u003eGet all clusters in a resource group\u003c/li\u003e\u003cli\u003eGet all clusters in a subscription\u003c/li\u003e\u003c/ul\u003e`.",
+        "name": "AzureMachineLearningWorkspaces",
+        "filename": "_azure_machine_learning_workspaces",
+        "description": "These APIs allow end users to operate on Azure Machine Learning Workspace resources.",
         "host_value": "\"https://management.azure.com\"",
         "parameterized_host_template": null,
         "azure_arm": true,
         "has_lro_operations": true,
         "client_side_validation": false,
-        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"MachineLearningComputeManagementClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
-        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"], \"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"MachineLearningComputeManagementClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"AzureMachineLearningWorkspacesConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"], \"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"AzureMachineLearningWorkspacesConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
     },
     "global_parameters": {
         "sync": {
@@ -23,7 +23,7 @@
             },
             "subscription_id": {
                 "signature": "subscription_id,  # type: str",
-                "description": "The Azure subscription ID.",
+                "description": "The ID of the target subscription.",
                 "docstring_type": "str",
                 "required": true
             }
@@ -37,7 +37,7 @@
             },
             "subscription_id": {
                 "signature": "subscription_id: str,",
-                "description": "The Azure subscription ID.",
+                "description": "The ID of the target subscription.",
                 "docstring_type": "str",
                 "required": true
             }
@@ -97,7 +97,16 @@
         "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
-        "operationalization_clusters": "OperationalizationClustersOperations",
-        "machine_learning_compute": "MachineLearningComputeOperations"
+        "operations": "Operations",
+        "workspaces": "WorkspacesOperations",
+        "usages": "UsagesOperations",
+        "virtual_machine_sizes": "VirtualMachineSizesOperations",
+        "quotas": "QuotasOperations",
+        "compute": "ComputeOperations",
+        "private_endpoint_connections": "PrivateEndpointConnectionsOperations",
+        "private_link_resources": "PrivateLinkResourcesOperations",
+        "workspace_connections": "WorkspaceConnectionsOperations",
+        "workspace_features": "WorkspaceFeaturesOperations",
+        "workspace_skus": "WorkspaceSkusOperations"
     }
 }

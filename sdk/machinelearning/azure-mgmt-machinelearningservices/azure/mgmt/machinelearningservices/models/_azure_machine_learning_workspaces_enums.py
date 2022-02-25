@@ -6,27 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AllocationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AllocationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Allocation state of the compute. Possible values are: steady - Indicates that the compute is
     not resizing. There are no changes to the number of compute nodes in the compute in progress. A
     compute enters this state when it is created and when no operations are being performed on the
@@ -37,7 +22,7 @@ class AllocationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STEADY = "Steady"
     RESIZING = "Resizing"
 
-class ApplicationSharingPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ApplicationSharingPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Policy for sharing applications on this compute instance among users of parent workspace. If
     Personal, only the creator can access applications on this compute instance. When Shared, any
     workspace user can access applications on this instance depending on his/her assigned role.
@@ -46,14 +31,28 @@ class ApplicationSharingPolicy(with_metaclass(_CaseInsensitiveEnumMeta, str, Enu
     PERSONAL = "Personal"
     SHARED = "Shared"
 
-class BillingCurrency(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class BillingCurrency(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Three lettered code specifying the currency of the VM price. Example: USD
     """
 
     USD = "USD"
 
-class ComputeInstanceState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Current state of a ComputeInstance.
+class ClusterPurpose(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Intended usage of the cluster
+    """
+
+    FAST_PROD = "FastProd"
+    DENSE_PROD = "DenseProd"
+    DEV_TEST = "DevTest"
+
+class ComputeInstanceAuthorizationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The Compute Instance Authorization type. Available values are personal (default).
+    """
+
+    PERSONAL = "personal"
+
+class ComputeInstanceState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Current state of an ComputeInstance.
     """
 
     CREATING = "Creating"
@@ -72,11 +71,12 @@ class ComputeInstanceState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UNKNOWN = "Unknown"
     UNUSABLE = "Unusable"
 
-class ComputeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ComputeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of compute
     """
 
     AKS = "AKS"
+    KUBERNETES = "Kubernetes"
     AML_COMPUTE = "AmlCompute"
     COMPUTE_INSTANCE = "ComputeInstance"
     DATA_FACTORY = "DataFactory"
@@ -84,15 +84,40 @@ class ComputeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     HD_INSIGHT = "HDInsight"
     DATABRICKS = "Databricks"
     DATA_LAKE_ANALYTICS = "DataLakeAnalytics"
+    SYNAPSE_SPARK = "SynapseSpark"
 
-class EncryptionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+class DiagnoseResultLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Level of workspace setup error
+    """
+
+    WARNING = "Warning"
+    ERROR = "Error"
+    INFORMATION = "Information"
+
+class EncryptionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates whether or not the encryption is enabled for the workspace.
     """
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class NodeState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class LoadBalancerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Load Balancer Type
+    """
+
+    PUBLIC_IP = "PublicIp"
+    INTERNAL_LOAD_BALANCER = "InternalLoadBalancer"
+
+class NodeState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """State of the compute node. Values are idle, running, preparing, unusable, leaving and
     preempted.
     """
@@ -104,7 +129,7 @@ class NodeState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LEAVING = "leaving"
     PREEMPTED = "preempted"
 
-class OperationName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OperationName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Name of the last operation.
     """
 
@@ -115,7 +140,7 @@ class OperationName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     REIMAGE = "Reimage"
     DELETE = "Delete"
 
-class OperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OperationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Operation status.
     """
 
@@ -128,7 +153,14 @@ class OperationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     REIMAGE_FAILED = "ReimageFailed"
     DELETE_FAILED = "DeleteFailed"
 
-class PrivateEndpointConnectionProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class OsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Compute OS Type
+    """
+
+    LINUX = "Linux"
+    WINDOWS = "Windows"
+
+class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The current provisioning state.
     """
 
@@ -137,7 +169,7 @@ class PrivateEndpointConnectionProvisioningState(with_metaclass(_CaseInsensitive
     DELETING = "Deleting"
     FAILED = "Failed"
 
-class PrivateEndpointServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PrivateEndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The private endpoint connection status.
     """
 
@@ -147,7 +179,7 @@ class PrivateEndpointServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnum
     DISCONNECTED = "Disconnected"
     TIMEOUT = "Timeout"
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The current deployment state of workspace resource. The provisioningState is to indicate states
     for resource provisioning.
     """
@@ -160,13 +192,20 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     CANCELED = "Canceled"
 
-class QuotaUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PublicNetworkAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Whether requests from Public Network are allowed.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+class QuotaUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """An enum describing the unit of quota measurement.
     """
 
     COUNT = "Count"
 
-class ReasonCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ReasonCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The reason for the restriction.
     """
 
@@ -174,7 +213,7 @@ class ReasonCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NOT_AVAILABLE_FOR_REGION = "NotAvailableForRegion"
     NOT_AVAILABLE_FOR_SUBSCRIPTION = "NotAvailableForSubscription"
 
-class RemoteLoginPortPublicAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class RemoteLoginPortPublicAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """State of the public SSH port. Possible values are: Disabled - Indicates that the public ssh
     port is closed on all nodes of the cluster. Enabled - Indicates that the public ssh port is
     open on all nodes of the cluster. NotSpecified - Indicates that the public ssh port is closed
@@ -187,16 +226,16 @@ class RemoteLoginPortPublicAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, 
     DISABLED = "Disabled"
     NOT_SPECIFIED = "NotSpecified"
 
-class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The identity type.
     """
 
     SYSTEM_ASSIGNED = "SystemAssigned"
-    USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
+    USER_ASSIGNED = "UserAssigned"
     NONE = "None"
 
-class SshPublicAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SshPublicAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """State of the public SSH port. Possible values are: Disabled - Indicates that the public ssh
     port is closed on this instance. Enabled - Indicates that the public ssh port is open and
     accessible according to the VNet/subnet policy if applicable.
@@ -205,14 +244,15 @@ class SshPublicAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class SslConfigurationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class SslConfigurationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enable or disable ssl for scoring
     """
 
     DISABLED = "Disabled"
     ENABLED = "Enabled"
+    AUTO = "Auto"
 
-class Status(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class Status(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Status of update workspace quota.
     """
 
@@ -225,38 +265,44 @@ class Status(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     OPERATION_NOT_SUPPORTED_FOR_SKU = "OperationNotSupportedForSku"
     OPERATION_NOT_ENABLED_FOR_REGION = "OperationNotEnabledForRegion"
 
-class UnderlyingResourceAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class UnderlyingResourceAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     DELETE = "Delete"
     DETACH = "Detach"
 
-class UnitOfMeasure(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class UnitOfMeasure(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The unit of time measurement for the specified VM price. Example: OneHour
     """
 
     ONE_HOUR = "OneHour"
 
-class UsageUnit(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class UsageUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """An enum describing the unit of usage measurement.
     """
 
     COUNT = "Count"
 
-class VMPriceOSType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ValueFormat(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """format for the workspace connection value
+    """
+
+    JSON = "JSON"
+
+class VMPriceOSType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Operating system type used by the VM.
     """
 
     LINUX = "Linux"
     WINDOWS = "Windows"
 
-class VmPriority(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class VmPriority(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Virtual Machine priority
     """
 
     DEDICATED = "Dedicated"
     LOW_PRIORITY = "LowPriority"
 
-class VMTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class VMTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of the VM.
     """
 
