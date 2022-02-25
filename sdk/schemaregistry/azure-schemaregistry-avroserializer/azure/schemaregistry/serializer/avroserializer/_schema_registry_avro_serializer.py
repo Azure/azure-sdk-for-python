@@ -130,6 +130,7 @@ class AvroSerializer(object):
         *,
         schema: str,
         message_type: Optional[Callable] = None,
+        client_request_kwargs: Dict[str, Any] = None,
         **kwargs: Any,
     ) -> Union[MessageType, MessageMetadataDict]:
         """
@@ -154,6 +155,8 @@ class AvroSerializer(object):
          `(data: bytes, content_type: str, **kwargs) -> MessageType`, where `data` and `content_type`
          are positional parameters.
         :paramtype message_type: Callable or None
+        :keyword client_request_kwargs: The keyword arguments to be passed to the SchemaRegistryClient.
+        :paramtype client_request_kwargs: Dict[str, Any]
         :rtype: MessageType or MessageMetadataDict
         :raises ~azure.schemaregistry.serializer.avroserializer.exceptions.SchemaParseError:
             Indicates an issue with parsing schema.
@@ -170,7 +173,7 @@ class AvroSerializer(object):
                 f"Cannot parse schema: {raw_input_schema}", error=e
             ).raise_with_traceback()
 
-        schema_id = self._get_schema_id(schema_fullname, raw_input_schema)
+        schema_id = self._get_schema_id(schema_fullname, raw_input_schema, **client_request_kwargs)
         content_type = f"{AVRO_MIME_TYPE}+{schema_id}"
 
         try:
@@ -225,7 +228,7 @@ class AvroSerializer(object):
         message: Union[MessageType, MessageMetadataDict],
         *,
         readers_schema: Optional[str] = None,
-        **kwargs,   # pylint: disable=unused-argument
+        client_request_kwargs: Dict[str, Any] = None,
     ) -> Dict[str, Any]:
         """
         Deserialize bytes data using schema ID in the content type field. `message` must be one of the following:
@@ -267,14 +270,15 @@ class AvroSerializer(object):
         data, content_type = self._convert_preamble_format(data, content_type)
 
         schema_id = content_type.split("+")[1]
-        schema_definition = self._get_schema(schema_id)
+        schema_definition = self._get_schema(schema_id, **client_request_kwargs)
         try:
             dict_value = self._avro_serializer.deserialize(
                 data, schema_definition, readers_schema=readers_schema
             )
         except Exception as e:  # pylint:disable=broad-except
             error_message = (
-                f"Cannot deserialize value '{data}' for schema: {schema_definition}\n and reader's schema: {readers_schema}"
+                f"Cannot deserialize value '{data}' for schema: {schema_definition}\n and"
+                "reader's schema: {readers_schema}"
                 if readers_schema
                 else f"Cannot deserialize value '{data}' for schema: {schema_definition}"
             )
