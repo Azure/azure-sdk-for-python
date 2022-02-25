@@ -382,8 +382,11 @@ class StorageCommonBlobTest(StorageTestCase):
         # Assert
         self.assertEqual(data, raw_data*2)
 
+    @pytest.mark.live_test_only
     @BlobPreparer()
     def test_upload_blob_from_pipe(self, storage_account_name, storage_account_key):
+        # Different OSs have different behavior, so this can't be recorded.
+
         self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()
         data = b"Hello World"
