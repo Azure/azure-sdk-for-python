@@ -6,6 +6,8 @@
 
 - APIs have been updated to allow for serializing directly to and deserializing from message type objects, where the data value is the Avro serialized payload.
 - The content type of the message will hold the schema ID and record format indicator.
+- `client_request_kwargs` has been added to `serialize` and `deserialize` on `AvroSerializer` as an optional parameter to be passed into client requests.
+- The size of the current schema/schema ID caches will be logged at an info level when a new entry has been added.
 
 ### Other Changes
 
