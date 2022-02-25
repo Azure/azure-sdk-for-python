@@ -82,7 +82,7 @@ def _convert_to_isoformat(date_time):
 
 def case_insensitive_dict(*args, **kwargs):
     """Return a case-insensitive dict from a structure that a dict would have accepted."""
-    
+
     # Rational is I don't want to re-implement this, but I don't want
     # to assume "requests" or "aiohttp" are installed either.
     # So I use the one from "requests" or the one from "aiohttp" ("multidict")
