@@ -137,7 +137,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
 
     @distributed_trace
-    def detect_language(  # type: ignore
+    def detect_language(
         self,
         documents: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]],
         *,
@@ -218,10 +218,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     @distributed_trace
-    def recognize_entities(  # type: ignore
+    def recognize_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         *,
@@ -311,10 +311,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     @distributed_trace
-    def recognize_pii_entities(  # type: ignore
+    def recognize_pii_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         *,
@@ -426,10 +426,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 ) from error
             raise error
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     @distributed_trace
-    def recognize_linked_entities(  # type: ignore
+    def recognize_linked_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         *,
@@ -521,7 +521,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     def _healthcare_result_callback(
         self, doc_id_order, raw_response, _, headers, show_stats=False
@@ -539,7 +539,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
 
     @distributed_trace
-    def begin_analyze_healthcare_entities(  # type: ignore
+    def begin_analyze_healthcare_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         *,
@@ -681,10 +681,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             raise error
 
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     @distributed_trace
-    def extract_key_phrases(  # type: ignore
+    def extract_key_phrases(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         *,
@@ -764,10 +764,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     @distributed_trace
-    def analyze_sentiment(  # type: ignore
+    def analyze_sentiment(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         *,
@@ -875,7 +875,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     def _analyze_result_callback(
         self, doc_id_order, task_order, raw_response, _, headers, show_stats=False
@@ -894,7 +894,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
 
     @distributed_trace
-    def begin_analyze_actions(  # type: ignore
+    def begin_analyze_actions(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         actions: List[
@@ -1126,4 +1126,4 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             raise error
 
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)

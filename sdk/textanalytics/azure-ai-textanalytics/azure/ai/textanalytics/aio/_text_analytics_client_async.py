@@ -110,7 +110,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             :caption: Creating the TextAnalyticsClient with endpoint and token credential from Azure Active Directory.
     """
 
-    def __init__(  # type: ignore
+    def __init__(
         self,
         endpoint: str,
         credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
@@ -130,7 +130,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         )
 
     @distributed_trace_async
-    async def detect_language(  # type: ignore
+    async def detect_language(
         self,
         documents: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]],
         *,
@@ -211,10 +211,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 **kwargs,
             )
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     @distributed_trace_async
-    async def recognize_entities(  # type: ignore
+    async def recognize_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         *,
@@ -305,10 +305,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 **kwargs,
             )
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     @distributed_trace_async
-    async def recognize_pii_entities(  # type: ignore
+    async def recognize_pii_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         *,
@@ -420,10 +420,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 ) from error
             raise error
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     @distributed_trace_async
-    async def recognize_linked_entities(  # type: ignore
+    async def recognize_linked_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         *,
@@ -515,10 +515,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 **kwargs,
             )
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     @distributed_trace_async
-    async def extract_key_phrases(  # type: ignore
+    async def extract_key_phrases(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         *,
@@ -597,10 +597,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 **kwargs,
             )
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     @distributed_trace_async
-    async def analyze_sentiment(  # type: ignore
+    async def analyze_sentiment(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         *,
@@ -708,7 +708,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 **kwargs,
             )
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     def _healthcare_result_callback(
         self, doc_id_order, raw_response, _, headers, show_stats=False
@@ -726,7 +726,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         )
 
     @distributed_trace_async
-    async def begin_analyze_healthcare_entities(  # type: ignore
+    async def begin_analyze_healthcare_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         *,
@@ -866,7 +866,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             raise error
 
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     def _analyze_result_callback(
         self, doc_id_order, task_order, raw_response, _, headers, show_stats=False
@@ -885,7 +885,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         )
 
     @distributed_trace_async
-    async def begin_analyze_actions(  # type: ignore
+    async def begin_analyze_actions(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         actions: List[
@@ -1118,4 +1118,4 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             raise error
 
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
