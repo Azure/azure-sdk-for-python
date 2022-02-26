@@ -51,7 +51,6 @@
     "sdk/cognitiveservices/azure-cognitiveservices-search-visualsearch/**",
     "sdk/communication/azure-communication-networktraversal/**",
     "sdk/communication/azure-communication-chat/**",
-    "sdk/communication/azure-communication-identity/**",
     "sdk/communication/azure-communication-phonenumbers/**",
     "sdk/communication/azure-communication-sms/**",
     "sdk/confidentialledger/azure-confidentialledger/**",
@@ -59,7 +58,6 @@
     "sdk/core/azure-common/**",
     "sdk/core/azure-core-tracing-opencensus/**",
     "sdk/core/azure-core-tracing-opentelemetry/**",
-    "sdk/containerregistry/azure-containerregistry/**",
     "sdk/core/azure-core/**",
     "sdk/cosmos/azure-cosmos/**",
     "sdk/core/azure-servicemanagement-legacy/**",
@@ -110,7 +108,9 @@
     "eng/*.txt",
     "eng/tox/tox.ini",
     "eng/common/docgeneration/Generate-DocIndex.ps1",
-    "eng/tox/*.py"
+    "eng/**/*.py",
+    ".gitignore",
+    
   ],
   "words": [
     "aad",
@@ -125,6 +125,7 @@
     "asyncio",
     "azcmagent",
     "azsdk",
+    "azurecr",
     "azuremgmtcore",
     "azuremgmtcommunication",
     "bdist",
@@ -145,14 +146,17 @@
     "delenv",
     "dependened",
     "deserialization",
+    "docfx",
     "dotenv",
     "DWORD",
     "eastus",
     "engsys",
+    "envname",
     "fileno",
     "fqdns",
     "fstat",
     "gbps",
+    "GCCH",
     "graphrbac",
     "guids",
     "hanaonazure",
@@ -160,6 +164,7 @@
     "hexlify",
     "himds",
     "hmac",
+    "illumos",
     "imds",
     "inotify",
     "iohttp",
@@ -180,6 +185,8 @@
     "Lucene",
     "mbps",
     "mgmt",
+    "myacr",
+    "mipsle",
     "mktime",
     "msal",
     "msrest",
@@ -215,6 +222,7 @@
     "reauthenticated",
     "reimage",
     "revascularization",
+    "riscv",
     "rollup",
     "rtsp",
     "rtype",
@@ -262,9 +270,7 @@
     "westcentralus",
     "westus",
     "wfile",
-    "westus",
-    "docfx",
-    "Docfx"
+    "westus"
   ],
   "overrides": [
     {
@@ -322,6 +328,16 @@
         "skrivet",
         "verfasst",
         "engelska"
+      ]
+    },
+    {
+      "filename": "sdk/communication/azure-communication-identity/tests/*.py",
+      "words": [
+        "XVCJ",
+        "Njgw",
+        "FNNHHJT",
+        "Zwiz",
+        "nypg"
       ]
     }
   ],

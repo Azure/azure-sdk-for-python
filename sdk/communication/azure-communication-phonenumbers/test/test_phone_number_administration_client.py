@@ -23,7 +23,14 @@ SKIP_INT_PHONE_NUMBER_TESTS = os.getenv("COMMUNICATION_SKIP_INT_PHONENUMBERS_TES
 INT_PHONE_NUMBER_TEST_SKIP_REASON = "Phone numbers setting SMS capability does not support in INT. Skip these tests in INT."
 
 SKIP_UPDATE_CAPABILITIES_TESTS = os.getenv("COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST", "false") == "true"
-SKIP_UPDATE_CAPABILITIES_TESTS_REASON = "Phone number capabilities update does not currently support parallel execution. Skip these tests from live test pipeline."
+SKIP_UPDATE_CAPABILITIES_TESTS_REASON = "Phone number capabilities are skipped."
+
+def get_test_phone_number():
+    if SKIP_UPDATE_CAPABILITIES_TESTS:
+        return os.getenv("AZURE_PHONE_NUMBER")
+
+    test_agent = os.getenv("AZURE_TEST_AGENT")
+    return os.getenv("AZURE_PHONE_NUMBER_" + test_agent)
 
 class PhoneNumbersClientTest(CommunicationTestCase):
     def setUp(self):
@@ -32,7 +39,7 @@ class PhoneNumbersClientTest(CommunicationTestCase):
             self.phone_number = "sanitized"
             self.country_code = "US"
         else:
-            self.phone_number = os.getenv("AZURE_PHONE_NUMBER")
+            self.phone_number = get_test_phone_number()
             self.country_code = os.getenv("AZURE_COMMUNICATION_SERVICE_COUNTRY_CODE", "US")
         self.phone_number_client = PhoneNumbersClient.from_connection_string(
             self.connection_str, 
