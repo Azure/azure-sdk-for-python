@@ -1,6 +1,6 @@
 # Release History
 
-## 1.8.0 (Unreleased)
+## 1.8.0 (2022-03-01)
 
 ### Bugs Fixed
 
