@@ -188,7 +188,7 @@ class TestTableClientUnit(TableTestCase):
             assert service.url.startswith('https://' + self.tables_cosmos_account_name + suffix)
             assert not hasattr(service, 'account_key')
 
-    #@pytest.mark.skip("HTTP prefix does not raise an error")
+    @pytest.mark.skip("HTTP prefix does not raise an error")
     def test_create_service_with_token_and_http(self):
         self.token_credential = self.generate_fake_token()
         for service_type in SERVICES:

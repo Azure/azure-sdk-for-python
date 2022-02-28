@@ -533,7 +533,7 @@ class TableClient(TablesBaseClient):
         """Lists entities in a table.
 
         :param str query_filter: Specify a filter to return certain entities. For more information
-         on filter formatting, see the `samples documentation <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples#writing-filters>`_.  # pylint: disable=line-too-long
+         on filter formatting, see the `samples documentation <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples#writing-filters>`_.
         :keyword int results_per_page: Number of entities returned per service request.
         :keyword select: Specify desired properties of an entity to return.
         :paramtype select: str or List[str]
