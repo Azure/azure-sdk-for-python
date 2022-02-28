@@ -41,9 +41,9 @@ jobs:
         git config --global user.email "ReleaseIssueStatus"
         git config --global user.name "ReleaseIssueStatus"
 
-        # clone(REPO: https://github.com/Azure/azure-sdk-for-python.git, USR_NAME: Azure, USR_TOKEN: xxxxxxxxxxxxx)
+        # clone(FILE_REPO: https://github.com/msyyc/file-storage.git, USR_NAME: msyyc, USR_TOKEN: xxxxxxxxxxxxx)
         mkdir file-storage
-        git clone ${REPO:0:8}$(USR-NAME):$(Yuchao-GitToken)@${REPO:8} $(pwd)/file-storage
+        git clone ${FILE_REPO:0:8}$(USR_NAME):$(Yuchao-GitToken)@${FILE_REPO:8} $(pwd)/file-storage
 
         # import env variable
         export TOKEN=$(Yuchao-GitToken)
