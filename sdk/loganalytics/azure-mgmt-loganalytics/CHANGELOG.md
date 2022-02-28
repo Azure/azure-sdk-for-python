@@ -1,5 +1,11 @@
 # Release History
 
+## 13.0.0b2 (2022-02-14)
+
+**Features**
+
+  - Added operation TablesOperations.migrate
+
 ## 13.0.0b1 (2022-01-18)
 
 **Features**

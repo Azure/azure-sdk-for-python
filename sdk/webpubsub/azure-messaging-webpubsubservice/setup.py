@@ -43,8 +43,7 @@ setup(
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
@@ -52,6 +51,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "License :: OSI Approved :: MIT License",
     ],
+    python_requires=">=3.6",
     zip_safe=False,
     packages=find_packages(
         exclude=[
@@ -67,8 +67,4 @@ setup(
         "pyjwt>=1.7.1",
         "six>=1.12.0",
     ],
-    extras_require={
-        ":python_version<'3.0'": ["futures", "azure-messaging-nspkg"],
-        ":python_version<'3.5'": ["typing"],
-    },
 )
