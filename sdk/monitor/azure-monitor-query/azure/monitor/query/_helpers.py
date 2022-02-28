@@ -118,7 +118,7 @@ def native_col_type(col_type, value):
     if col_type == "datetime":
         try:
             value = Deserializer.deserialize_iso(value)
-        except: # pylint: disable=bare-except
+        except Exception: # pylint: disable=broad-except
             # if there is any exception in deserializing the iso,
             # return the value to the user
             pass
