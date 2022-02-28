@@ -45,6 +45,7 @@ setup(
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
+    keywords="azure, azure sdk",  # update with search keywords relevant to the azure service / product
     classifiers=[
         'Development Status :: 4 - Beta',
         'Programming Language :: Python',
