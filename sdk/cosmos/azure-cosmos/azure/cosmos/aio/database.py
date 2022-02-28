@@ -230,8 +230,7 @@ class DatabaseProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, data)
 
-        container = ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data)
-        return container
+        return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data)
 
     @distributed_trace_async
     async def create_container_if_not_exists(
