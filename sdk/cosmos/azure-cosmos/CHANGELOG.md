@@ -3,15 +3,16 @@
 ### 4.3.0b3 (Unreleased)
 
 #### Features Added
-- Added support for split-proof queries for the async client
+- Added support for split-proof queries for the async client.
 
 ### Bugs fixed
 - Default consistency level for the sync and async clients is no longer "Session" and will instead be set to the 
-  consistency level of the user's cosmos account setting on initialization if not passed during client initialization. 
+  consistency level of the user's cosmos account setting on initialization if not passed during client initialization.
   This change will impact client application in terms of RUs and latency. Users relying on default `Session` consistency will need to pass it explicitly if their account consistency is different than `Session`.
   Please see [Consistency Levels in Azure Cosmos DB](https://docs.microsoft.com/azure/cosmos-db/consistency-levels) for more details.
 - Fixed invalid request body being sent when passing in `serverScript` body parameter to replace operations for trigger, sproc and udf resources.
-- Moved `is_system_key` logic in async client
+- Moved `is_system_key` logic in async client.
+- Fixed TypeErrors not being thrown when passing in invalid connection retry policies to the client.
 
 ### 4.3.0b2 (2022-01-25)
 
@@ -19,15 +20,15 @@ This version and all future versions will require Python 3.6+. Python 2.7 is no 
 We will also be removing support for Python 3.6 and will only support Python 3.7+ starting December 2022.
 
 #### Features Added
-- Added support for split-proof queries for the sync client
+- Added support for split-proof queries for the sync client.
 
 #### Other Changes
-- Added async user agent for async client
+- Added async user agent for async client.
 
 ### 4.3.0b1 (2021-12-14)
 
 #### Features Added
-- Added language native async i/o client
+- Added language native async i/o client.
 
 ### 4.2.0 (2020-10-08)
 
