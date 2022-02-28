@@ -142,6 +142,16 @@ directive:
       to: listIncidentsForAlert
 ```
 
+### Add empty Anything object to definitions
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
+      $["Anything"] = {}
+```
+
 ### Severity -> AnomalySeverity
 
 ```yaml
@@ -157,15 +167,42 @@ directive:
       $["SeverityFilterCondition"]["properties"]["max"]["x-ms-enum"]["name"] = "AnomalySeverity";
 ```
 
-### DataSourceType -> DatasourceType
+### AnomalyDetectionConfigurationLogicType -> DetectionConditionOperator
 
 ```yaml
 directive:
   - from: swagger-document
     where: $["definitions"]
     transform: >
+      $["WholeMetricConfiguration"]["properties"]["conditionOperator"]["x-ms-enum"]["name"] = "DetectionConditionOperator";
+      $["DimensionGroupConfiguration"]["properties"]["conditionOperator"]["x-ms-enum"]["name"] = "DetectionConditionOperator";
+      $["SeriesConfiguration"]["properties"]["conditionOperator"]["x-ms-enum"]["name"] = "DetectionConditionOperator";
+      $["WholeMetricConfigurationPatch"]["properties"]["conditionOperator"]["x-ms-enum"]["name"] = "DetectionConditionOperator";
+```
+
+### DataSourceType -> DatasourceType
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["paths"]
+    transform: >
+      $["/dataFeeds"]["get"]["parameters"][1]["x-ms-enum"]["name"] = "DatasourceType";
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
       $["DataFeedDetail"]["properties"]["dataSourceType"]["x-ms-enum"]["name"] = "DatasourceType";
       $["DataFeedDetailPatch"]["properties"]["dataSourceType"]["x-ms-enum"]["name"] = "DatasourceType";
+```
+
+### AnomalyAlertingConfigurationLogicType -> MetricAnomalyAlertConfigurationsOperator
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
+      $["AnomalyAlertingConfiguration"]["properties"]["crossMetricsOperator"]["x-ms-enum"]["name"] = "MetricAnomalyAlertConfigurationsOperator";
 ```
 
 ### ViewMode -> DataFeedAccessMode
@@ -176,7 +213,6 @@ directive:
     where: $["definitions"]
     transform: >
       $["DataFeedDetail"]["properties"]["viewMode"]["x-ms-enum"]["name"] = "DataFeedAccessMode";
-      $["DataFeedDetailPatch"]["properties"]["viewMode"]["x-ms-enum"]["name"] = "DataFeedAccessMode";
 ```
 
 ### RollUpMethod -> DataFeedAutoRollupMethod
@@ -187,7 +223,6 @@ directive:
     where: $["definitions"]
     transform: >
       $["DataFeedDetail"]["properties"]["rollUpMethod"]["x-ms-enum"]["name"] = "DataFeedAutoRollupMethod";
-      $["DataFeedDetailPatch"]["properties"]["rollUpMethod"]["x-ms-enum"]["name"] = "DataFeedAutoRollupMethod";
 ```
 
 ### FillMissingPointType -> DatasourceMissingDataPointFillType
@@ -198,7 +233,6 @@ directive:
     where: $["definitions"]
     transform: >
       $["DataFeedDetail"]["properties"]["fillMissingPointType"]["x-ms-enum"]["name"] = "DatasourceMissingDataPointFillType";
-      $["DataFeedDetailPatch"]["properties"]["fillMissingPointType"]["x-ms-enum"]["name"] = "DatasourceMissingDataPointFillType";
 ```
 
 ### IncidentStatus -> AnomalyIncidentStatus
@@ -219,6 +253,10 @@ directive:
     where: $["paths"]["/dataFeeds"]["get"]["parameters"][2]["x-ms-enum"]
     transform: >
       $["name"] = "DataFeedGranularityType";
+  - from: swagger-document
+    where: $["definitions"]["DataFeedDetail"]["properties"]["granularityName"]["x-ms-enum"]
+    transform: >
+      $["name"] = "DataFeedGranularityType";
 ```
 
 ### EntityStatus -> DataFeedStatus
@@ -237,17 +275,6 @@ directive:
     where: $["definitions"]
     transform: >
       $["DataFeedDetail"]["properties"]["status"]["x-ms-enum"]["name"] = "DataFeedStatus";
-      $["DataFeedDetailPatch"]["properties"]["status"]["x-ms-enum"]["name"] = "DataFeedStatus";
-```
-
-### TimeMode -> AlertQueryTimeMode
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $["definitions"]["AlertingResultQuery"]["properties"]["timeMode"]["x-ms-enum"]
-    transform: >
-      $["name"] = "AlertQueryTimeMode";
 ```
 
 ### DataSourceCredentialType -> DatasourceCredentialType
@@ -258,7 +285,16 @@ directive:
     where: $["definitions"]
     transform: >
       $["DataSourceCredential"]["properties"]["dataSourceCredentialType"]["x-ms-enum"]["name"] = "DatasourceCredentialType";
-      $["DataSourceCredentialPatch"]["properties"]["dataSourceCredentialType"]["x-ms-enum"]["name"] = "DatasourceCredentialType";
+```
+
+### DataSourceCredential -> DatasourceCredential
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
+      $["DataSourceCredential"]["x-ms-client-name"] = "DatasourceCredential";
 ```
 
 ### AuthenticationTypeEnum -> DatasourceAuthenticationType
@@ -269,7 +305,6 @@ directive:
     where: $["definitions"]
     transform: >
       $["DataFeedDetail"]["properties"]["authenticationType"]["x-ms-enum"]["name"] = "DatasourceAuthenticationType";
-      $["DataFeedDetailPatch"]["properties"]["authenticationType"]["x-ms-enum"]["name"] = "DatasourceAuthenticationType";
 ```
 
 ### Rename models
@@ -378,6 +413,9 @@ directive:
   - rename-model:
       from: ValueCondition
       to: MetricBoundaryCondition
+  - rename-model:
+      from: MetricDataItem
+      to: MetricSeriesData
 ```
 
 ### Change DimensionGroupIdentity just for MetricSeriesGroupDetectionCondition
@@ -467,9 +505,9 @@ directive:
 ```yaml
 directive:
   - from: swagger-document
-    where: $["definitions"]["DataFeed"]["properties"]["needRollup"]
+    where: $["definitions"]
     transform: >
-      $["x-ms-enum"]["name"] = "DataFeedRollupType";
+      $["DataFeed"]["properties"]["needRollup"]["x-ms-enum"]["name"] = "DataFeedRollupType";
 ```
 
 ```yaml
@@ -516,6 +554,89 @@ directive:
   - where-operation: updateDetectionConfiguration
     transform: >
       $["parameters"][1]["schema"]["$ref"] = "#/definitions/AnomalyDetectionConfiguration";
+  - where-operation: listAlerts
+    transform: >
+      $["parameters"][3]["schema"]["$ref"] = "#/definitions/Anything";
+  - where-operation: listMetricSeriesData
+    transform: >
+      $["parameters"][1]["schema"]["$ref"] = "#/definitions/Anything";
+  - where-operation: listMetricDimensionValues
+    transform: >
+      $["parameters"][3]["schema"]["$ref"] = "#/definitions/Anything";
+  - where-operation: listMetricSeriesDefinitions
+    transform: >
+      $["parameters"][3]["schema"]["$ref"] = "#/definitions/Anything";
+  - where-operation: updateAlertConfiguration
+    transform: >
+      $["parameters"][1]["schema"]["$ref"] = "#/definitions/AnomalyAlertConfiguration";
+  - where-operation: updateDatasourceCredential
+    transform: >
+      $["parameters"][1]["schema"]["$ref"] = "#/definitions/DataSourceCredential";
+  - where-operation: updateDataFeed
+    transform: >
+      $["parameters"][1]["schema"]["$ref"] = "#/definitions/DataFeed";
+  - where-operation: listAnomalyDimensionValues
+    transform: >
+      $["parameters"][3]["schema"]["$ref"] = "#/definitions/Anything";
+  - where-operation: getAnomaliesByAnomalyDetectionConfiguration
+    transform: >
+      $["parameters"][3]["schema"]["$ref"] = "#/definitions/Anything";
+  - where-operation: getIncidentsByAnomalyDetectionConfiguration
+    transform: >
+      $["parameters"][2]["schema"]["$ref"] = "#/definitions/Anything";
+  - where-operation: listMetricEnrichedSeriesData
+    transform: >
+      $["parameters"][1]["schema"]["$ref"] = "#/definitions/Anything";
+  - where-operation: listMetricEnrichmentStatus
+    transform: >
+      $["parameters"][3]["schema"]["$ref"] = "#/definitions/Anything";
+  - where-operation: listFeedback
+    transform: >
+      $["parameters"][2]["schema"]["$ref"] = "#/definitions/Anything";
+  - where-operation: refreshDataFeedIngestion
+    transform: >
+      $["parameters"][1]["schema"]["$ref"] = "#/definitions/Anything";
+  - where-operation: listDataFeedIngestionStatus
+    transform: >
+      $["parameters"][3]["schema"]["$ref"] = "#/definitions/Anything";
+```
+
+### Change Property Types
+
+```yaml
+directive:
+  - where-model: MetricBoundaryCondition
+    transform: >
+      $["properties"]["direction"]["x-ms-enum"] = undefined;
+      $["properties"]["direction"]["enum"] = undefined;
+  - where-model: AnomalyAlertingConfiguration
+    transform: >
+      $["properties"]["crossMetricsOperator"]["x-ms-enum"] = undefined;
+      $["properties"]["crossMetricsOperator"]["enum"] = undefined;
+  - where-model: AnomalyProperty
+    transform: >
+      $["properties"]["anomalyStatus"]["x-ms-enum"] = undefined;
+      $["properties"]["anomalyStatus"]["enum"] = undefined;
+  - where-model: NotificationHook
+    transform: >
+      $["properties"]["hookType"]["x-ms-enum"] = undefined;
+      $["properties"]["hookType"]["enum"] = undefined;
+  - where-model: DataFeedIngestionStatus
+    transform: >
+      $["properties"]["status"]["x-ms-enum"] = undefined;
+      $["properties"]["status"]["enum"] = undefined;
+```
+
+### Remove ErrorCode
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["paths"][*]
+    transform: >
+      for (var op of Object.values($)) {
+          op["responses"]["default"]["schema"]["$ref"] = "#/definitions/Anything";
+      }
 ```
 
 ### Remove Models
@@ -567,6 +688,41 @@ directive:
   - remove-model: ChangeThresholdConditionPatch
   - remove-model: AnomalyDetectionConfigurationPatch
   - remove-model: WholeMetricConfigurationPatch
+  - remove-model: AlertingResultQuery
+  - remove-model: MetricDataQueryOptions
+  - remove-model: MetricDimensionQueryOptions
+  - remove-model: MetricSeriesQueryOptions
+  - remove-model: ServicePrincipalCredentialPatch
+  - remove-model: ServicePrincipalInKVCredentialPatch
+  - remove-model: ServicePrincipalInKVParamPatch
+  - remove-model: ServicePrincipalParamPatch
+  - remove-model: WebhookHookInfoPatch
+  - remove-model: WebhookHookParameterPatch
+  - remove-model: AnomalyAlertingConfigurationPatch
+  - remove-model: DataSourceCredentialPatch
+  - remove-model: AzureSQLConnectionStringCredentialPatch
+  - remove-model: AzureSQLConnectionStringParamPatch
+  - remove-model: DataFeedDetailPatch
+  - remove-model: DataLakeGen2SharedKeyCredentialPatch
+  - remove-model: DataLakeGen2SharedKeyParamPatch
+  - remove-model: EmailHookParameterPatch
+  - remove-model: UsageStats
+  - remove-model: AnomalyDimensionQuery
+  - remove-model: DetectionAnomalyResultQuery
+  - remove-model: DetectionIncidentResultQuery
+  - remove-model: DetectionSeriesQuery
+  - remove-model: EnrichmentStatusQueryOption
+  - remove-model: ErrorCode
+  - remove-model: MetricFeedbackFilter
+  - remove-model: IngestionProgressResetOptions
+  - remove-model: IngestionStatusQueryOptions
+```
+
+### Remove Operations
+
+```yaml
+directive:
+  - remove-operation: getActiveSeriesCount
 ```
 
 ### Rename Properties
@@ -776,6 +932,20 @@ directive:
     rename-property:
       from: upperBoundaryList
       to: upperBounds
+  - where-model: AnomalyAlert
+    rename-property:
+      from: alertId
+      to: id
+  - where-model: MetricBoundaryCondition
+    remove-property: type
+  - where-model: MetricSeriesData
+    rename-property:
+      from: timestampList
+      to: timestamps
+  - where-model: MetricSeriesData
+    rename-property:
+      from: valueList
+      to: values
 ```
 
 ```yaml
@@ -886,6 +1056,8 @@ directive:
     flatten-property: property
   - where-model: MetricEnrichedSeriesData
     flatten-property: series
+  - where-model: MetricSeriesData
+    flatten-property: id
 ```
 
 ```yaml

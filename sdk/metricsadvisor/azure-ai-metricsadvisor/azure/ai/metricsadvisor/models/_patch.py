@@ -6,14 +6,15 @@
 
 # pylint:disable=protected-access
 # pylint:disable=too-many-lines
-
-from contextlib import suppress
+import sys
 import datetime
 from this import d
 from typing import Any, Tuple, Union, List, Dict, Optional, TYPE_CHECKING
 from enum import Enum
 import msrest
-from . import _models_py3 as generated_models, _metrics_advisor_client_enums as generated_enums
+from . import _models_py3 as generated_models
+from six import with_metaclass
+from azure.core import CaseInsensitiveEnumMeta
 
 if TYPE_CHECKING:
     from ._models_py3 import (
@@ -819,7 +820,7 @@ class AnomalyDetectionConfiguration(generated_models.AnomalyDetectionConfigurati
         )
 
 
-class DataFeedSource(DictMixin):
+class DataFeedSource(dict):
     """DataFeedSource base class
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values
@@ -2293,7 +2294,7 @@ class PeriodFeedback(generated_models.PeriodFeedback, DictMixin):
         )
 
 
-class DatasourceCredential(generated_models.DataSourceCredential, DictMixin):
+class DatasourceCredential(generated_models.DatasourceCredential, DictMixin):
     """DatasourceCredential base class.
 
     :param credential_type: Required. Type of data source credential.Constant filled by
@@ -2526,6 +2527,395 @@ class DetectionAnomalyFilterCondition(msrest.serialization.Model):
         self.severity_filter = kwargs.get("severity_filter", None)
 
 
+class AlertingResultQuery(msrest.serialization.Model):
+    """AlertingResultQuery.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar start_time: Required. start time.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Required. end time.
+    :vartype end_time: ~datetime.datetime
+    :ivar time_mode: Required. time mode. Possible values include: "AnomalyTime", "CreatedTime",
+     "ModifiedTime".
+    :vartype time_mode: str or ~azure.ai.metricsadvisor.models.AlertQueryTimeMode
+    """
+
+    _validation = {
+        "start_time": {"required": True},
+        "end_time": {"required": True},
+        "time_mode": {"required": True},
+    }
+
+    _attribute_map = {
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "time_mode": {"key": "timeMode", "type": "str"},
+    }
+
+    def __init__(self, *, start_time: datetime.datetime, end_time: datetime.datetime, time_mode: str, **kwargs):
+        super(AlertingResultQuery, self).__init__(**kwargs)
+        self.start_time = start_time
+        self.end_time = end_time
+        self.time_mode = time_mode
+
+
+class MetricDataQueryOptions(msrest.serialization.Model):
+    """MetricDataQueryOptions.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar start_time: Required. start time of query a time series data, and format should be
+     yyyy-MM-ddThh:mm:ssZ. The maximum number of data points (series number * time range) is 10000.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Required. start time of query a time series data, and format should be
+     yyyy-MM-ddThh:mm:ssZ. The maximum number of data points (series number * time range) is 10000.
+    :vartype end_time: ~datetime.datetime
+    :ivar series: Required. query specific series. The maximum number of series is 100.
+    :vartype series: list[dict[str, str]]
+    """
+
+    _validation = {
+        "start_time": {"required": True},
+        "end_time": {"required": True},
+        "series": {"required": True},
+    }
+
+    _attribute_map = {
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "series": {"key": "series", "type": "[{str}]"},
+    }
+
+    def __init__(
+        self, *, start_time: datetime.datetime, end_time: datetime.datetime, series: List[Dict[str, str]], **kwargs
+    ):
+        super(MetricDataQueryOptions, self).__init__(**kwargs)
+        self.start_time = start_time
+        self.end_time = end_time
+        self.series = series
+
+
+class MetricDimensionQueryOptions(msrest.serialization.Model):
+    """MetricDimensionQueryOptions.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar dimension_name: Required. dimension name.
+    :vartype dimension_name: str
+    :ivar dimension_value_filter: dimension value to be filtered.
+    :vartype dimension_value_filter: str
+    """
+
+    _validation = {
+        "dimension_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "dimension_name": {"key": "dimensionName", "type": "str"},
+        "dimension_value_filter": {"key": "dimensionValueFilter", "type": "str"},
+    }
+
+    def __init__(self, *, dimension_name: str, dimension_value_filter: Optional[str] = None, **kwargs):
+        super(MetricDimensionQueryOptions, self).__init__(**kwargs)
+        self.dimension_name = dimension_name
+        self.dimension_value_filter = dimension_value_filter
+
+
+class MetricSeriesQueryOptions(msrest.serialization.Model):
+    """MetricSeriesQueryOptions.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar active_since: Required. query series ingested after this time, the format should be
+     yyyy-MM-ddTHH:mm:ssZ.
+    :vartype active_since: ~datetime.datetime
+    :ivar dimension_filter: filter specific dimension name and values.
+    :vartype dimension_filter: dict[str, list[str]]
+    """
+
+    _validation = {
+        "active_since": {"required": True},
+    }
+
+    _attribute_map = {
+        "active_since": {"key": "activeSince", "type": "iso-8601"},
+        "dimension_filter": {"key": "dimensionFilter", "type": "{[str]}"},
+    }
+
+    def __init__(
+        self, *, active_since: datetime.datetime, dimension_filter: Optional[Dict[str, List[str]]] = None, **kwargs
+    ):
+        super(MetricSeriesQueryOptions, self).__init__(**kwargs)
+        self.active_since = active_since
+        self.dimension_filter = dimension_filter
+
+
+class AlertQueryTimeMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """time mode"""
+
+    ANOMALY_TIME = "AnomalyTime"
+    CREATED_TIME = "CreatedTime"
+    MODIFIED_TIME = "ModifiedTime"
+
+
+class AnomalyDimensionQuery(msrest.serialization.Model):
+    """AnomalyDimensionQuery.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar start_time: Required. start time.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Required. end time.
+    :vartype end_time: ~datetime.datetime
+    :ivar dimension_name: Required. dimension to query.
+    :vartype dimension_name: str
+    :ivar dimension_filter:
+    :vartype dimension_filter: ~azure.ai.metricsadvisor.models.DimensionGroupIdentity
+    """
+
+    _validation = {
+        "start_time": {"required": True},
+        "end_time": {"required": True},
+        "dimension_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "dimension_name": {"key": "dimensionName", "type": "str"},
+        "dimension_filter": {"key": "dimensionFilter", "type": "DimensionGroupIdentity"},
+    }
+
+    def __init__(
+        self,
+        *,
+        start_time: datetime.datetime,
+        end_time: datetime.datetime,
+        dimension_name: str,
+        dimension_filter=None,
+        **kwargs
+    ):
+        super(AnomalyDimensionQuery, self).__init__(**kwargs)
+        self.start_time = start_time
+        self.end_time = end_time
+        self.dimension_name = dimension_name
+        self.dimension_filter = dimension_filter
+
+
+class DetectionAnomalyResultQuery(msrest.serialization.Model):
+    """DetectionAnomalyResultQuery.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar start_time: Required. start time.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Required. end time.
+    :vartype end_time: ~datetime.datetime
+    :ivar filter:
+    :vartype filter: ~azure.ai.metricsadvisor.models.DetectionAnomalyFilterCondition
+    """
+
+    _validation = {
+        "start_time": {"required": True},
+        "end_time": {"required": True},
+    }
+
+    _attribute_map = {
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "filter": {"key": "filter", "type": "DetectionAnomalyFilterCondition"},
+    }
+
+    def __init__(
+        self,
+        *,
+        start_time: datetime.datetime,
+        end_time: datetime.datetime,
+        filter: Optional["DetectionAnomalyFilterCondition"] = None,
+        **kwargs
+    ):
+        super(DetectionAnomalyResultQuery, self).__init__(**kwargs)
+        self.start_time = start_time
+        self.end_time = end_time
+        self.filter = filter
+
+
+class DetectionIncidentResultQuery(msrest.serialization.Model):
+    """DetectionIncidentResultQuery.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar start_time: Required. start time.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Required. end time.
+    :vartype end_time: ~datetime.datetime
+    :ivar filter:
+    :vartype filter: ~azure.ai.metricsadvisor.models.DetectionIncidentFilterCondition
+    """
+
+    _validation = {
+        "start_time": {"required": True},
+        "end_time": {"required": True},
+    }
+
+    _attribute_map = {
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "filter": {"key": "filter", "type": "DetectionIncidentFilterCondition"},
+    }
+
+    def __init__(self, *, start_time: datetime.datetime, end_time: datetime.datetime, filter=None, **kwargs):
+        super(DetectionIncidentResultQuery, self).__init__(**kwargs)
+        self.start_time = start_time
+        self.end_time = end_time
+        self.filter = filter
+
+
+class DetectionSeriesQuery(msrest.serialization.Model):
+    """DetectionSeriesQuery.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar start_time: Required. This is inclusive. The maximum number of data points (series number
+     * time range) is 10000.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Required. This is exclusive. The maximum number of data points (series number *
+     time range) is 10000.
+    :vartype end_time: ~datetime.datetime
+    :ivar series: Required. The series to be queried. The identity must be able to define one
+     single time series instead of a group of time series. The maximum number of series is 100.
+    :vartype series: list[~azure.ai.metricsadvisor.models.SeriesIdentity]
+    """
+
+    _validation = {
+        "start_time": {"required": True},
+        "end_time": {"required": True},
+        "series": {"required": True, "unique": True},
+    }
+
+    _attribute_map = {
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "series": {"key": "series", "type": "[SeriesIdentity]"},
+    }
+
+    def __init__(self, *, start_time: datetime.datetime, end_time: datetime.datetime, series, **kwargs):
+        super(DetectionSeriesQuery, self).__init__(**kwargs)
+        self.start_time = start_time
+        self.end_time = end_time
+        self.series = series
+
+
+class EnrichmentStatusQueryOption(msrest.serialization.Model):
+    """EnrichmentStatusQueryOption.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar start_time: Required. the start point of time range to query anomaly detection status.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Required. the end point of time range to query anomaly detection status.
+    :vartype end_time: ~datetime.datetime
+    """
+
+    _validation = {
+        "start_time": {"required": True},
+        "end_time": {"required": True},
+    }
+
+    _attribute_map = {
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+    }
+
+    def __init__(self, *, start_time: datetime.datetime, end_time: datetime.datetime, **kwargs):
+        super(EnrichmentStatusQueryOption, self).__init__(**kwargs)
+        self.start_time = start_time
+        self.end_time = end_time
+
+
+class FeedbackQueryTimeMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """time mode to filter feedback"""
+
+    METRIC_TIMESTAMP = "MetricTimestamp"
+    FEEDBACK_CREATED_TIME = "FeedbackCreatedTime"
+
+
+class IngestionProgressResetOptions(msrest.serialization.Model):
+    """IngestionProgressResetOptions.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar start_time: Required. the start point of time range to reset data ingestion status.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Required. the end point of time range to reset data ingestion status.
+    :vartype end_time: ~datetime.datetime
+    """
+
+    _validation = {
+        "start_time": {"required": True},
+        "end_time": {"required": True},
+    }
+
+    _attribute_map = {
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+    }
+
+    def __init__(self, *, start_time: datetime.datetime, end_time: datetime.datetime, **kwargs):
+        super(IngestionProgressResetOptions, self).__init__(**kwargs)
+        self.start_time = start_time
+        self.end_time = end_time
+
+
+class IngestionStatusQueryOptions(msrest.serialization.Model):
+    """IngestionStatusQueryOptions.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar start_time: Required. the start point of time range to query data ingestion status.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Required. the end point of time range to query data ingestion status.
+    :vartype end_time: ~datetime.datetime
+    """
+
+    _validation = {
+        "start_time": {"required": True},
+        "end_time": {"required": True},
+    }
+
+    _attribute_map = {
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+    }
+
+    def __init__(self, *, start_time: datetime.datetime, end_time: datetime.datetime, **kwargs):
+        super(IngestionStatusQueryOptions, self).__init__(**kwargs)
+        self.start_time = start_time
+        self.end_time = end_time
+
+
+class SeriesIdentity(msrest.serialization.Model):
+    """SeriesIdentity.
+
+    All required parameters must be populated in order to send to Azure.
+    :param dimension: Required. dimension specified for series.
+    :type dimension: dict[str, str]
+    """
+
+    _validation = {
+        "dimension": {"required": True},
+    }
+
+    _attribute_map = {
+        "dimension": {"key": "dimension", "type": "{str}"},
+    }
+
+    def __init__(self, *, dimension: Dict[str, str], **kwargs):
+        super(SeriesIdentity, self).__init__(**kwargs)
+        self.dimension = dimension
+
+
 __all__ = [
     "MetricFeedback",
     "AnomalyFeedback",
@@ -2590,8 +2980,33 @@ __all__ = [
     "DatasourceCredential",
     "DataFeedSource",
     "DetectionAnomalyFilterCondition",
+    "AlertQueryTimeMode",
+    "FeedbackQueryTimeMode",
+    "SeriesIdentity",
 ]
 
 
 def patch_sdk():
-    pass
+    models_to_remove = [
+        "AlertResultList",
+        "AnomalyAlertingConfigurationList",
+        "MetricDimensionList",
+        "MetricFeedbackList",
+        "MetricSeriesList",
+        "RootCauseList",
+        "SeriesResultList",
+        "AnomalyDetectionConfigurationList",
+        "AnomalyDimensionList",
+        "AnomalyResultList",
+        "DataFeedList",
+        "DataSourceCredentialList",
+        "EnrichmentStatusList",
+        "HookList",
+        "IncidentResultList",
+        "IngestionStatusList",
+        "MetricDataList",
+    ]
+    models_module = sys.modules["azure.ai.metricsadvisor.models"]
+    for m in models_to_remove:
+        delattr(models_module, m)
+    models_module.__all__ = [m for m in models_module.__all__ if m not in models_to_remove]

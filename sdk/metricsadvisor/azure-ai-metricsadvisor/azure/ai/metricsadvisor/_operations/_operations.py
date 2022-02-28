@@ -34,18 +34,6 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_get_active_series_count_request(**kwargs: Any) -> HttpRequest:
-    accept = "application/json"
-    # Construct URL
-    _url = "/stats/latest"
-
-    # Construct headers
-    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    _header_parameters["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, headers=_header_parameters, **kwargs)
-
-
 def build_get_alert_configuration_request(configuration_id: str, **kwargs: Any) -> HttpRequest:
     accept = "application/json"
     # Construct URL
@@ -627,7 +615,7 @@ def build_get_datasource_credential_request(credential_id: str, **kwargs: Any) -
 def build_list_data_feeds_request(
     *,
     data_feed_name: Optional[str] = None,
-    data_source_type: Optional[Union[str, "_models.DataSourceType"]] = None,
+    data_source_type: Optional[Union[str, "_models.DatasourceType"]] = None,
     granularity_name: Optional[Union[str, "_models.DataFeedGranularityType"]] = None,
     status: Optional[Union[str, "_models.DataFeedStatus"]] = None,
     creator: Optional[str] = None,
@@ -1170,43 +1158,6 @@ def build_list_metric_enrichment_status_request(
 
 class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-public-methods
     @distributed_trace
-    def get_active_series_count(self, **kwargs: Any) -> "_models.UsageStats":
-        """Get latest usage stats.
-
-        Get latest usage stats.
-
-        :return: UsageStats
-        :rtype: ~azure.ai.metricsadvisor.models.UsageStats
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.UsageStats"]
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}))
-
-        request = build_get_active_series_count_request()
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize("UsageStats", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    @distributed_trace
     def get_alert_configuration(self, configuration_id: str, **kwargs: Any) -> "_models.AnomalyAlertConfiguration":
         """Query a single anomaly alerting configuration.
 
@@ -1237,7 +1188,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+            error = self._deserialize.failsafe_deserialize("object", pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize("AnomalyAlertConfiguration", pipeline_response)
@@ -1249,7 +1200,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
     @distributed_trace
     def update_alert_configuration(
-        self, configuration_id: str, body: "_models.AnomalyAlertingConfigurationPatch", **kwargs: Any
+        self, configuration_id: str, body: "_models.AnomalyAlertConfiguration", **kwargs: Any
     ) -> "_models.AnomalyAlertConfiguration":
         """Update anomaly alerting configuration.
 
@@ -1258,7 +1209,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         :param configuration_id: anomaly alerting configuration unique id.
         :type configuration_id: str
         :param body: anomaly alerting configuration.
-        :type body: ~azure.ai.metricsadvisor.models.AnomalyAlertingConfigurationPatch
+        :type body: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
         :return: AnomalyAlertConfiguration
         :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1269,7 +1220,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, "AnomalyAlertingConfigurationPatch")
+        _json = self._serialize.body(body, "AnomalyAlertConfiguration")
 
         request = build_update_alert_configuration_request(
             configuration_id=configuration_id,
@@ -1288,7 +1239,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+            error = self._deserialize.failsafe_deserialize("object", pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize("AnomalyAlertConfiguration", pipeline_response)
@@ -1331,7 +1282,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+            error = self._deserialize.failsafe_deserialize("object", pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -1375,7 +1326,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+            error = self._deserialize.failsafe_deserialize("object", pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1388,7 +1339,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
     def list_alerts(
         self,
         configuration_id: str,
-        body: "_models.AlertingResultQuery",
+        body: Any,
         *,
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
@@ -1401,10 +1352,10 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         :param configuration_id: anomaly alerting configuration unique id.
         :type configuration_id: str
         :param body: query alerting result request.
-        :type body: ~azure.ai.metricsadvisor.models.AlertingResultQuery
-        :keyword skip: for paging, skipped number.
+        :type body: any
+        :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page.
+        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
         :return: An iterator like instance of AlertResultList
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AlertResultList]
@@ -1418,7 +1369,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         def prepare_request(next_link=None):
             if not next_link:
-                _json = self._serialize.body(body, "AlertingResultQuery")
+                _json = self._serialize.body(body, "object")
 
                 request = build_list_alerts_request(
                     configuration_id=configuration_id,
@@ -1435,7 +1386,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                _json = self._serialize.body(body, "AlertingResultQuery")
+                _json = self._serialize.body(body, "object")
 
                 request = build_list_alerts_request(
                     configuration_id=configuration_id,
@@ -1476,7 +1427,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+                error = self._deserialize.failsafe_deserialize("object", pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1501,9 +1452,9 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         :type alert_configuration_id: str
         :param alert_id: alert id.
         :type alert_id: str
-        :keyword skip: for paging, skipped number.
+        :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page.
+        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
         :return: An iterator like instance of AnomalyResultList
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyResultList]
@@ -1570,7 +1521,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+                error = self._deserialize.failsafe_deserialize("object", pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1595,9 +1546,9 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         :type alert_configuration_id: str
         :param alert_id: alert id.
         :type alert_id: str
-        :keyword skip: for paging, skipped number.
+        :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page.
+        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
         :return: An iterator like instance of IncidentResultList
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.IncidentResultList]
@@ -1664,7 +1615,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+                error = self._deserialize.failsafe_deserialize("object", pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1704,7 +1655,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+            error = self._deserialize.failsafe_deserialize("object", pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize("AnomalyDetectionConfiguration", pipeline_response)
@@ -1755,7 +1706,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+            error = self._deserialize.failsafe_deserialize("object", pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize("AnomalyDetectionConfiguration", pipeline_response)
@@ -1798,7 +1749,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+            error = self._deserialize.failsafe_deserialize("object", pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -1842,7 +1793,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+            error = self._deserialize.failsafe_deserialize("object", pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1861,9 +1812,9 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         :param configuration_id: anomaly detection configuration unique id.
         :type configuration_id: str
-        :keyword skip: for paging, skipped number.
+        :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page.
+        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
         :return: An iterator like instance of AnomalyAlertingConfigurationList
         :rtype:
@@ -1929,7 +1880,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+                error = self._deserialize.failsafe_deserialize("object", pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1938,7 +1889,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
     @distributed_trace
     def list_metric_enriched_series_data(
-        self, configuration_id: str, body: "_models.DetectionSeriesQuery", **kwargs: Any
+        self, configuration_id: str, body: Any, **kwargs: Any
     ) -> Iterable["_models.SeriesResultList"]:
         """Query series enriched by anomaly detection.
 
@@ -1947,7 +1898,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         :param configuration_id: anomaly detection configuration unique id.
         :type configuration_id: str
         :param body: query series detection result request.
-        :type body: ~azure.ai.metricsadvisor.models.DetectionSeriesQuery
+        :type body: any
         :return: An iterator like instance of SeriesResultList
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.SeriesResultList]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1960,7 +1911,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         def prepare_request(next_link=None):
             if not next_link:
-                _json = self._serialize.body(body, "DetectionSeriesQuery")
+                _json = self._serialize.body(body, "object")
 
                 request = build_list_metric_enriched_series_data_request(
                     configuration_id=configuration_id,
@@ -1975,7 +1926,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                _json = self._serialize.body(body, "DetectionSeriesQuery")
+                _json = self._serialize.body(body, "object")
 
                 request = build_list_metric_enriched_series_data_request(
                     configuration_id=configuration_id,
@@ -2014,7 +1965,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+                error = self._deserialize.failsafe_deserialize("object", pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -2025,7 +1976,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
     def get_anomalies_by_anomaly_detection_configuration(
         self,
         configuration_id: str,
-        body: "_models.DetectionAnomalyResultQuery",
+        body: Any,
         *,
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
@@ -2038,10 +1989,10 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         :param configuration_id: anomaly detection configuration unique id.
         :type configuration_id: str
         :param body: query detection anomaly result request.
-        :type body: ~azure.ai.metricsadvisor.models.DetectionAnomalyResultQuery
-        :keyword skip: for paging, skipped number.
+        :type body: any
+        :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page.
+        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
         :return: An iterator like instance of AnomalyResultList
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyResultList]
@@ -2055,7 +2006,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         def prepare_request(next_link=None):
             if not next_link:
-                _json = self._serialize.body(body, "DetectionAnomalyResultQuery")
+                _json = self._serialize.body(body, "object")
 
                 request = build_get_anomalies_by_anomaly_detection_configuration_request(
                     configuration_id=configuration_id,
@@ -2072,7 +2023,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                _json = self._serialize.body(body, "DetectionAnomalyResultQuery")
+                _json = self._serialize.body(body, "object")
 
                 request = build_get_anomalies_by_anomaly_detection_configuration_request(
                     configuration_id=configuration_id,
@@ -2113,7 +2064,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+                error = self._deserialize.failsafe_deserialize("object", pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -2124,7 +2075,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
     def list_anomaly_dimension_values(
         self,
         configuration_id: str,
-        body: "_models.AnomalyDimensionQuery",
+        body: Any,
         *,
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
@@ -2137,10 +2088,10 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         :param configuration_id: anomaly detection configuration unique id.
         :type configuration_id: str
         :param body: query dimension values request.
-        :type body: ~azure.ai.metricsadvisor.models.AnomalyDimensionQuery
-        :keyword skip: for paging, skipped number.
+        :type body: any
+        :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page.
+        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
         :return: An iterator like instance of AnomalyDimensionList
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.AnomalyDimensionList]
@@ -2154,7 +2105,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         def prepare_request(next_link=None):
             if not next_link:
-                _json = self._serialize.body(body, "AnomalyDimensionQuery")
+                _json = self._serialize.body(body, "object")
 
                 request = build_list_anomaly_dimension_values_request(
                     configuration_id=configuration_id,
@@ -2171,7 +2122,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                _json = self._serialize.body(body, "AnomalyDimensionQuery")
+                _json = self._serialize.body(body, "object")
 
                 request = build_list_anomaly_dimension_values_request(
                     configuration_id=configuration_id,
@@ -2212,7 +2163,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+                error = self._deserialize.failsafe_deserialize("object", pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -2221,12 +2172,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
     @distributed_trace
     def get_incidents_by_anomaly_detection_configuration(
-        self,
-        configuration_id: str,
-        body: "_models.DetectionIncidentResultQuery",
-        *,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, configuration_id: str, body: Any, *, maxpagesize: Optional[int] = None, **kwargs: Any
     ) -> Iterable["_models.IncidentResultList"]:
         """Query incidents under anomaly detection configuration.
 
@@ -2235,8 +2181,8 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         :param configuration_id: anomaly detection configuration unique id.
         :type configuration_id: str
         :param body: query detection incident result request.
-        :type body: ~azure.ai.metricsadvisor.models.DetectionIncidentResultQuery
-        :keyword maxpagesize: the maximum number of items in one page.
+        :type body: any
+        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
         :return: An iterator like instance of IncidentResultList
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.IncidentResultList]
@@ -2250,7 +2196,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         def prepare_request(next_link=None):
             if not next_link:
-                _json = self._serialize.body(body, "DetectionIncidentResultQuery")
+                _json = self._serialize.body(body, "object")
 
                 request = build_get_incidents_by_anomaly_detection_configuration_request(
                     configuration_id=configuration_id,
@@ -2266,7 +2212,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                _json = self._serialize.body(body, "DetectionIncidentResultQuery")
+                _json = self._serialize.body(body, "object")
 
                 request = build_get_incidents_by_anomaly_detection_configuration_request(
                     configuration_id=configuration_id,
@@ -2306,7 +2252,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+                error = self._deserialize.failsafe_deserialize("object", pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -2323,9 +2269,9 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         :param configuration_id: anomaly detection configuration unique id.
         :type configuration_id: str
-        :keyword maxpagesize: the maximum number of items in one page.
+        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
-        :keyword token: the token for getting the next page.
+        :keyword token: the token for getting the next page. Default value is None.
         :paramtype token: str
         :return: An iterator like instance of IncidentResultList
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.IncidentResultList]
@@ -2390,7 +2336,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+                error = self._deserialize.failsafe_deserialize("object", pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -2469,7 +2415,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+                error = self._deserialize.failsafe_deserialize("object", pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -2478,14 +2424,14 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
     @distributed_trace
     def create_datasource_credential(  # pylint: disable=inconsistent-return-statements
-        self, body: "_models.DataSourceCredential", **kwargs: Any
+        self, body: "_models.DatasourceCredential", **kwargs: Any
     ) -> None:
         """Create a new data source credential.
 
         Create a new data source credential.
 
         :param body: Create data source credential request.
-        :type body: ~azure.ai.metricsadvisor.models.DataSourceCredential
+        :type body: ~azure.ai.metricsadvisor.models.DatasourceCredential
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -2496,7 +2442,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, "DataSourceCredential")
+        _json = self._serialize.body(body, "DatasourceCredential")
 
         request = build_create_datasource_credential_request(
             content_type=content_type,
@@ -2514,7 +2460,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+            error = self._deserialize.failsafe_deserialize("object", pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2531,9 +2477,9 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         List all credentials.
 
-        :keyword skip: for paging, skipped number.
+        :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page.
+        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
         :return: An iterator like instance of DataSourceCredentialList
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.DataSourceCredentialList]
@@ -2596,7 +2542,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+                error = self._deserialize.failsafe_deserialize("object", pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -2605,8 +2551,8 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
     @distributed_trace
     def update_datasource_credential(
-        self, credential_id: str, body: "_models.DataSourceCredentialPatch", **kwargs: Any
-    ) -> "_models.DataSourceCredential":
+        self, credential_id: str, body: "_models.DatasourceCredential", **kwargs: Any
+    ) -> "_models.DatasourceCredential":
         """Update a data source credential.
 
         Update a data source credential.
@@ -2614,18 +2560,18 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         :param credential_id: Data source credential unique ID.
         :type credential_id: str
         :param body: Update data source credential request.
-        :type body: ~azure.ai.metricsadvisor.models.DataSourceCredentialPatch
-        :return: DataSourceCredential
-        :rtype: ~azure.ai.metricsadvisor.models.DataSourceCredential
+        :type body: ~azure.ai.metricsadvisor.models.DatasourceCredential
+        :return: DatasourceCredential
+        :rtype: ~azure.ai.metricsadvisor.models.DatasourceCredential
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DataSourceCredential"]
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DatasourceCredential"]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, "DataSourceCredentialPatch")
+        _json = self._serialize.body(body, "DatasourceCredential")
 
         request = build_update_datasource_credential_request(
             credential_id=credential_id,
@@ -2644,10 +2590,10 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+            error = self._deserialize.failsafe_deserialize("object", pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("DataSourceCredential", pipeline_response)
+        deserialized = self._deserialize("DatasourceCredential", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -2687,25 +2633,25 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+            error = self._deserialize.failsafe_deserialize("object", pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def get_datasource_credential(self, credential_id: str, **kwargs: Any) -> "_models.DataSourceCredential":
+    def get_datasource_credential(self, credential_id: str, **kwargs: Any) -> "_models.DatasourceCredential":
         """Get a data source credential.
 
         Get a data source credential.
 
         :param credential_id: Data source credential unique ID.
         :type credential_id: str
-        :return: DataSourceCredential
-        :rtype: ~azure.ai.metricsadvisor.models.DataSourceCredential
+        :return: DatasourceCredential
+        :rtype: ~azure.ai.metricsadvisor.models.DatasourceCredential
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DataSourceCredential"]
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DatasourceCredential"]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
@@ -2724,10 +2670,10 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+            error = self._deserialize.failsafe_deserialize("object", pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("DataSourceCredential", pipeline_response)
+        deserialized = self._deserialize("DatasourceCredential", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -2739,7 +2685,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         self,
         *,
         data_feed_name: Optional[str] = None,
-        data_source_type: Optional[Union[str, "_models.DataSourceType"]] = None,
+        data_source_type: Optional[Union[str, "_models.DatasourceType"]] = None,
         granularity_name: Optional[Union[str, "_models.DataFeedGranularityType"]] = None,
         status: Optional[Union[str, "_models.DataFeedStatus"]] = None,
         creator: Optional[str] = None,
@@ -2751,19 +2697,19 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         List all data feeds.
 
-        :keyword data_feed_name: filter data feed by its name.
+        :keyword data_feed_name: filter data feed by its name. Default value is None.
         :paramtype data_feed_name: str
-        :keyword data_source_type: filter data feed by its source type.
-        :paramtype data_source_type: str or ~azure.ai.metricsadvisor.models.DataSourceType
-        :keyword granularity_name: filter data feed by its granularity.
+        :keyword data_source_type: filter data feed by its source type. Default value is None.
+        :paramtype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
+        :keyword granularity_name: filter data feed by its granularity. Default value is None.
         :paramtype granularity_name: str or ~azure.ai.metricsadvisor.models.DataFeedGranularityType
-        :keyword status: filter data feed by its status.
+        :keyword status: filter data feed by its status. Default value is None.
         :paramtype status: str or ~azure.ai.metricsadvisor.models.DataFeedStatus
-        :keyword creator: filter data feed by its creator.
+        :keyword creator: filter data feed by its creator. Default value is None.
         :paramtype creator: str
-        :keyword skip: for paging, skipped number.
+        :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page.
+        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
         :return: An iterator like instance of DataFeedList
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.DataFeedList]
@@ -2836,7 +2782,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+                error = self._deserialize.failsafe_deserialize("object", pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -2881,7 +2827,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+            error = self._deserialize.failsafe_deserialize("object", pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2921,7 +2867,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+            error = self._deserialize.failsafe_deserialize("object", pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize("DataFeed", pipeline_response)
@@ -2932,9 +2878,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         return deserialized
 
     @distributed_trace
-    def update_data_feed(
-        self, data_feed_id: str, body: "_models.DataFeedDetailPatch", **kwargs: Any
-    ) -> "_models.DataFeed":
+    def update_data_feed(self, data_feed_id: str, body: "_models.DataFeed", **kwargs: Any) -> "_models.DataFeed":
         """Update a data feed.
 
         Update a data feed.
@@ -2942,7 +2886,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         :param data_feed_id: The data feed unique id.
         :type data_feed_id: str
         :param body: parameters to update a data feed.
-        :type body: ~azure.ai.metricsadvisor.models.DataFeedDetailPatch
+        :type body: ~azure.ai.metricsadvisor.models.DataFeed
         :return: DataFeed
         :rtype: ~azure.ai.metricsadvisor.models.DataFeed
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -2953,7 +2897,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, "DataFeedDetailPatch")
+        _json = self._serialize.body(body, "DataFeed")
 
         request = build_update_data_feed_request(
             data_feed_id=data_feed_id,
@@ -2972,7 +2916,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+            error = self._deserialize.failsafe_deserialize("object", pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize("DataFeed", pipeline_response)
@@ -3015,7 +2959,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+            error = self._deserialize.failsafe_deserialize("object", pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -3052,7 +2996,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+            error = self._deserialize.failsafe_deserialize("object", pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize("MetricFeedback", pipeline_response)
@@ -3064,22 +3008,17 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
     @distributed_trace
     def list_feedback(
-        self,
-        body: "_models.MetricFeedbackFilter",
-        *,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, body: Any, *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
     ) -> Iterable["_models.MetricFeedbackList"]:
         """List feedback on the given metric.
 
         List feedback on the given metric.
 
         :param body: metric feedback filter.
-        :type body: ~azure.ai.metricsadvisor.models.MetricFeedbackFilter
-        :keyword skip: for paging, skipped number.
+        :type body: any
+        :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page.
+        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
         :return: An iterator like instance of MetricFeedbackList
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricFeedbackList]
@@ -3093,7 +3032,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         def prepare_request(next_link=None):
             if not next_link:
-                _json = self._serialize.body(body, "MetricFeedbackFilter")
+                _json = self._serialize.body(body, "object")
 
                 request = build_list_feedback_request(
                     content_type=content_type,
@@ -3109,7 +3048,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                _json = self._serialize.body(body, "MetricFeedbackFilter")
+                _json = self._serialize.body(body, "object")
 
                 request = build_list_feedback_request(
                     content_type=content_type,
@@ -3149,7 +3088,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+                error = self._deserialize.failsafe_deserialize("object", pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -3194,7 +3133,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+            error = self._deserialize.failsafe_deserialize("object", pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3216,11 +3155,11 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         List all hooks.
 
-        :keyword hook_name: filter hook by its name.
+        :keyword hook_name: filter hook by its name. Default value is None.
         :paramtype hook_name: str
-        :keyword skip: for paging, skipped number.
+        :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page.
+        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
         :return: An iterator like instance of HookList
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.HookList]
@@ -3285,7 +3224,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+                error = self._deserialize.failsafe_deserialize("object", pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -3330,7 +3269,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+            error = self._deserialize.failsafe_deserialize("object", pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3370,7 +3309,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+            error = self._deserialize.failsafe_deserialize("object", pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize("NotificationHook", pipeline_response)
@@ -3419,7 +3358,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+            error = self._deserialize.failsafe_deserialize("object", pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize("NotificationHook", pipeline_response)
@@ -3460,7 +3399,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+            error = self._deserialize.failsafe_deserialize("object", pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -3470,7 +3409,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
     def list_data_feed_ingestion_status(
         self,
         data_feed_id: str,
-        body: "_models.IngestionStatusQueryOptions",
+        body: Any,
         *,
         skip: Optional[int] = None,
         maxpagesize: Optional[int] = None,
@@ -3483,10 +3422,10 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         :param data_feed_id: The data feed unique id.
         :type data_feed_id: str
         :param body: The query time range.
-        :type body: ~azure.ai.metricsadvisor.models.IngestionStatusQueryOptions
-        :keyword skip: for paging, skipped number.
+        :type body: any
+        :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page.
+        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
         :return: An iterator like instance of IngestionStatusList
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.IngestionStatusList]
@@ -3500,7 +3439,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         def prepare_request(next_link=None):
             if not next_link:
-                _json = self._serialize.body(body, "IngestionStatusQueryOptions")
+                _json = self._serialize.body(body, "object")
 
                 request = build_list_data_feed_ingestion_status_request(
                     data_feed_id=data_feed_id,
@@ -3517,7 +3456,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                _json = self._serialize.body(body, "IngestionStatusQueryOptions")
+                _json = self._serialize.body(body, "object")
 
                 request = build_list_data_feed_ingestion_status_request(
                     data_feed_id=data_feed_id,
@@ -3558,7 +3497,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+                error = self._deserialize.failsafe_deserialize("object", pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -3567,7 +3506,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
     @distributed_trace
     def refresh_data_feed_ingestion(  # pylint: disable=inconsistent-return-statements
-        self, data_feed_id: str, body: "_models.IngestionProgressResetOptions", **kwargs: Any
+        self, data_feed_id: str, body: Any, **kwargs: Any
     ) -> None:
         """Reset data ingestion status by data feed to backfill data.
 
@@ -3576,7 +3515,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         :param data_feed_id: The data feed unique id.
         :type data_feed_id: str
         :param body: The backfill time range.
-        :type body: ~azure.ai.metricsadvisor.models.IngestionProgressResetOptions
+        :type body: any
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -3587,7 +3526,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, "IngestionProgressResetOptions")
+        _json = self._serialize.body(body, "object")
 
         request = build_refresh_data_feed_ingestion_request(
             data_feed_id=data_feed_id,
@@ -3606,7 +3545,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+            error = self._deserialize.failsafe_deserialize("object", pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -3643,7 +3582,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+            error = self._deserialize.failsafe_deserialize("object", pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize("DataFeedIngestionProgress", pipeline_response)
@@ -3654,9 +3593,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         return deserialized
 
     @distributed_trace
-    def list_metric_series_data(
-        self, metric_id: str, body: "_models.MetricDataQueryOptions", **kwargs: Any
-    ) -> Iterable["_models.MetricDataList"]:
+    def list_metric_series_data(self, metric_id: str, body: Any, **kwargs: Any) -> Iterable["_models.MetricDataList"]:
         """Get time series data from metric.
 
         Get time series data from metric.
@@ -3664,7 +3601,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         :param metric_id: metric unique id.
         :type metric_id: str
         :param body: query time series data condition.
-        :type body: ~azure.ai.metricsadvisor.models.MetricDataQueryOptions
+        :type body: any
         :return: An iterator like instance of MetricDataList
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricDataList]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -3677,7 +3614,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         def prepare_request(next_link=None):
             if not next_link:
-                _json = self._serialize.body(body, "MetricDataQueryOptions")
+                _json = self._serialize.body(body, "object")
 
                 request = build_list_metric_series_data_request(
                     metric_id=metric_id,
@@ -3692,7 +3629,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                _json = self._serialize.body(body, "MetricDataQueryOptions")
+                _json = self._serialize.body(body, "object")
 
                 request = build_list_metric_series_data_request(
                     metric_id=metric_id,
@@ -3731,7 +3668,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+                error = self._deserialize.failsafe_deserialize("object", pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -3740,13 +3677,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
     @distributed_trace
     def list_metric_series_definitions(
-        self,
-        metric_id: str,
-        body: "_models.MetricSeriesQueryOptions",
-        *,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, metric_id: str, body: Any, *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
     ) -> Iterable["_models.MetricSeriesList"]:
         """List series (dimension combinations) from metric.
 
@@ -3755,10 +3686,10 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         :param metric_id: metric unique id.
         :type metric_id: str
         :param body: filter to query series.
-        :type body: ~azure.ai.metricsadvisor.models.MetricSeriesQueryOptions
-        :keyword skip: for paging, skipped number.
+        :type body: any
+        :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page.
+        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
         :return: An iterator like instance of MetricSeriesList
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricSeriesList]
@@ -3772,7 +3703,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         def prepare_request(next_link=None):
             if not next_link:
-                _json = self._serialize.body(body, "MetricSeriesQueryOptions")
+                _json = self._serialize.body(body, "object")
 
                 request = build_list_metric_series_definitions_request(
                     metric_id=metric_id,
@@ -3789,7 +3720,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                _json = self._serialize.body(body, "MetricSeriesQueryOptions")
+                _json = self._serialize.body(body, "object")
 
                 request = build_list_metric_series_definitions_request(
                     metric_id=metric_id,
@@ -3830,7 +3761,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+                error = self._deserialize.failsafe_deserialize("object", pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -3839,13 +3770,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
     @distributed_trace
     def list_metric_dimension_values(
-        self,
-        metric_id: str,
-        body: "_models.MetricDimensionQueryOptions",
-        *,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, metric_id: str, body: Any, *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
     ) -> Iterable["_models.MetricDimensionList"]:
         """List dimension from certain metric.
 
@@ -3854,10 +3779,10 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         :param metric_id: metric unique id.
         :type metric_id: str
         :param body: query dimension option.
-        :type body: ~azure.ai.metricsadvisor.models.MetricDimensionQueryOptions
-        :keyword skip: for paging, skipped number.
+        :type body: any
+        :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page.
+        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
         :return: An iterator like instance of MetricDimensionList
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.MetricDimensionList]
@@ -3871,7 +3796,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         def prepare_request(next_link=None):
             if not next_link:
-                _json = self._serialize.body(body, "MetricDimensionQueryOptions")
+                _json = self._serialize.body(body, "object")
 
                 request = build_list_metric_dimension_values_request(
                     metric_id=metric_id,
@@ -3888,7 +3813,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                _json = self._serialize.body(body, "MetricDimensionQueryOptions")
+                _json = self._serialize.body(body, "object")
 
                 request = build_list_metric_dimension_values_request(
                     metric_id=metric_id,
@@ -3929,7 +3854,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+                error = self._deserialize.failsafe_deserialize("object", pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -3946,9 +3871,9 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         :param metric_id: metric unique id.
         :type metric_id: str
-        :keyword skip: for paging, skipped number.
+        :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page.
+        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
         :return: An iterator like instance of AnomalyDetectionConfigurationList
         :rtype:
@@ -4014,7 +3939,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+                error = self._deserialize.failsafe_deserialize("object", pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -4023,13 +3948,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
     @distributed_trace
     def list_metric_enrichment_status(
-        self,
-        metric_id: str,
-        body: "_models.EnrichmentStatusQueryOption",
-        *,
-        skip: Optional[int] = None,
-        maxpagesize: Optional[int] = None,
-        **kwargs: Any
+        self, metric_id: str, body: Any, *, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
     ) -> Iterable["_models.EnrichmentStatusList"]:
         """Query anomaly detection status.
 
@@ -4038,10 +3957,10 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         :param metric_id: metric unique id.
         :type metric_id: str
         :param body: query options.
-        :type body: ~azure.ai.metricsadvisor.models.EnrichmentStatusQueryOption
-        :keyword skip: for paging, skipped number.
+        :type body: any
+        :keyword skip: for paging, skipped number. Default value is None.
         :paramtype skip: int
-        :keyword maxpagesize: the maximum number of items in one page.
+        :keyword maxpagesize: the maximum number of items in one page. Default value is None.
         :paramtype maxpagesize: int
         :return: An iterator like instance of EnrichmentStatusList
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.metricsadvisor.models.EnrichmentStatusList]
@@ -4055,7 +3974,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         def prepare_request(next_link=None):
             if not next_link:
-                _json = self._serialize.body(body, "EnrichmentStatusQueryOption")
+                _json = self._serialize.body(body, "object")
 
                 request = build_list_metric_enrichment_status_request(
                     metric_id=metric_id,
@@ -4072,7 +3991,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                _json = self._serialize.body(body, "EnrichmentStatusQueryOption")
+                _json = self._serialize.body(body, "object")
 
                 request = build_list_metric_enrichment_status_request(
                     metric_id=metric_id,
@@ -4113,7 +4032,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+                error = self._deserialize.failsafe_deserialize("object", pipeline_response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response

@@ -9,7 +9,6 @@
 import datetime
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
 from ._metrics_advisor_client_enums import *
@@ -17,55 +16,6 @@ from ._metrics_advisor_client_enums import *
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     import __init__ as _models
-
-
-class AlertingResultQuery(msrest.serialization.Model):
-    """AlertingResultQuery.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar start_time: Required. start time.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: Required. end time.
-    :vartype end_time: ~datetime.datetime
-    :ivar time_mode: Required. time mode. Possible values include: "AnomalyTime", "CreatedTime",
-     "ModifiedTime".
-    :vartype time_mode: str or ~azure.ai.metricsadvisor.models.AlertQueryTimeMode
-    """
-
-    _validation = {
-        "start_time": {"required": True},
-        "end_time": {"required": True},
-        "time_mode": {"required": True},
-    }
-
-    _attribute_map = {
-        "start_time": {"key": "startTime", "type": "iso-8601"},
-        "end_time": {"key": "endTime", "type": "iso-8601"},
-        "time_mode": {"key": "timeMode", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
-        time_mode: Union[str, "_models.AlertQueryTimeMode"],
-        **kwargs
-    ):
-        """
-        :keyword start_time: Required. start time.
-        :paramtype start_time: ~datetime.datetime
-        :keyword end_time: Required. end time.
-        :paramtype end_time: ~datetime.datetime
-        :keyword time_mode: Required. time mode. Possible values include: "AnomalyTime", "CreatedTime",
-         "ModifiedTime".
-        :paramtype time_mode: str or ~azure.ai.metricsadvisor.models.AlertQueryTimeMode
-        """
-        super(AlertingResultQuery, self).__init__(**kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
-        self.time_mode = time_mode
 
 
 class AlertResultList(msrest.serialization.Model):
@@ -106,8 +56,8 @@ class AnomalyAlert(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar alert_id: alert id.
-    :vartype alert_id: str
+    :ivar id: alert id.
+    :vartype id: str
     :ivar timestamp: anomaly time.
     :vartype timestamp: ~datetime.datetime
     :ivar created_time: created time.
@@ -117,14 +67,14 @@ class AnomalyAlert(msrest.serialization.Model):
     """
 
     _validation = {
-        "alert_id": {"readonly": True},
+        "id": {"readonly": True},
         "timestamp": {"readonly": True},
         "created_time": {"readonly": True},
         "modified_time": {"readonly": True},
     }
 
     _attribute_map = {
-        "alert_id": {"key": "alertId", "type": "str"},
+        "id": {"key": "alertId", "type": "str"},
         "timestamp": {"key": "timestamp", "type": "iso-8601"},
         "created_time": {"key": "createdTime", "type": "iso-8601"},
         "modified_time": {"key": "modifiedTime", "type": "iso-8601"},
@@ -133,7 +83,7 @@ class AnomalyAlert(msrest.serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super(AnomalyAlert, self).__init__(**kwargs)
-        self.alert_id = None
+        self.id = None
         self.timestamp = None
         self.created_time = None
         self.modified_time = None
@@ -155,7 +105,7 @@ class AnomalyAlertConfiguration(msrest.serialization.Model):
      should be specified when setting up multiple metric alerting configurations. Possible values
      include: "AND", "OR", "XOR".
     :vartype cross_metrics_operator: str or
-     ~azure.ai.metricsadvisor.models.AnomalyAlertingConfigurationLogicType
+     ~azure.ai.metricsadvisor.models.MetricAnomalyAlertConfigurationsOperator
     :ivar dimensions_to_split_alert: dimensions used to split alert.
     :vartype dimensions_to_split_alert: list[str]
     :ivar hook_ids: Required. hook unique ids.
@@ -190,7 +140,7 @@ class AnomalyAlertConfiguration(msrest.serialization.Model):
         metric_alert_configurations: List["_models.MetricAlertConfiguration"],
         id: Optional[str] = None,
         description: Optional[str] = "",
-        cross_metrics_operator: Optional[Union[str, "_models.AnomalyAlertingConfigurationLogicType"]] = None,
+        cross_metrics_operator: Optional[Union[str, "_models.MetricAnomalyAlertConfigurationsOperator"]] = None,
         dimensions_to_split_alert: Optional[List[str]] = None,
         **kwargs
     ):
@@ -206,7 +156,7 @@ class AnomalyAlertConfiguration(msrest.serialization.Model):
          should be specified when setting up multiple metric alerting configurations. Possible values
          include: "AND", "OR", "XOR".
         :paramtype cross_metrics_operator: str or
-         ~azure.ai.metricsadvisor.models.AnomalyAlertingConfigurationLogicType
+         ~azure.ai.metricsadvisor.models.MetricAnomalyAlertConfigurationsOperator
         :keyword dimensions_to_split_alert: dimensions used to split alert.
         :paramtype dimensions_to_split_alert: list[str]
         :keyword hook_ids: Required. hook unique ids.
@@ -251,78 +201,6 @@ class AnomalyAlertingConfigurationList(msrest.serialization.Model):
         super(AnomalyAlertingConfigurationList, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
-
-
-class AnomalyAlertingConfigurationPatch(msrest.serialization.Model):
-    """AnomalyAlertingConfigurationPatch.
-
-    :ivar name: Anomaly alerting configuration name.
-    :vartype name: str
-    :ivar description: anomaly alerting configuration description.
-    :vartype description: str
-    :ivar cross_metrics_operator: cross metrics operator. Possible values include: "AND", "OR",
-     "XOR".
-    :vartype cross_metrics_operator: str or
-     ~azure.ai.metricsadvisor.models.AnomalyAlertingConfigurationLogicType
-    :ivar split_alert_by_dimensions: dimensions used to split alert.
-    :vartype split_alert_by_dimensions: list[str]
-    :ivar hook_ids: hook unique ids.
-    :vartype hook_ids: list[str]
-    :ivar metric_alerting_configurations: Anomaly alerting configurations.
-    :vartype metric_alerting_configurations:
-     list[~azure.ai.metricsadvisor.models.MetricAlertConfiguration]
-    """
-
-    _validation = {
-        "split_alert_by_dimensions": {"unique": True},
-        "hook_ids": {"unique": True},
-        "metric_alerting_configurations": {"unique": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-        "cross_metrics_operator": {"key": "crossMetricsOperator", "type": "str"},
-        "split_alert_by_dimensions": {"key": "splitAlertByDimensions", "type": "[str]"},
-        "hook_ids": {"key": "hookIds", "type": "[str]"},
-        "metric_alerting_configurations": {"key": "metricAlertingConfigurations", "type": "[MetricAlertConfiguration]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        description: Optional[str] = "",
-        cross_metrics_operator: Optional[Union[str, "_models.AnomalyAlertingConfigurationLogicType"]] = None,
-        split_alert_by_dimensions: Optional[List[str]] = None,
-        hook_ids: Optional[List[str]] = None,
-        metric_alerting_configurations: Optional[List["_models.MetricAlertConfiguration"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword name: Anomaly alerting configuration name.
-        :paramtype name: str
-        :keyword description: anomaly alerting configuration description.
-        :paramtype description: str
-        :keyword cross_metrics_operator: cross metrics operator. Possible values include: "AND", "OR",
-         "XOR".
-        :paramtype cross_metrics_operator: str or
-         ~azure.ai.metricsadvisor.models.AnomalyAlertingConfigurationLogicType
-        :keyword split_alert_by_dimensions: dimensions used to split alert.
-        :paramtype split_alert_by_dimensions: list[str]
-        :keyword hook_ids: hook unique ids.
-        :paramtype hook_ids: list[str]
-        :keyword metric_alerting_configurations: Anomaly alerting configurations.
-        :paramtype metric_alerting_configurations:
-         list[~azure.ai.metricsadvisor.models.MetricAlertConfiguration]
-        """
-        super(AnomalyAlertingConfigurationPatch, self).__init__(**kwargs)
-        self.name = name
-        self.description = description
-        self.cross_metrics_operator = cross_metrics_operator
-        self.split_alert_by_dimensions = split_alert_by_dimensions
-        self.hook_ids = hook_ids
-        self.metric_alerting_configurations = metric_alerting_configurations
 
 
 class AnomalyDetectionConfiguration(msrest.serialization.Model):
@@ -473,60 +351,6 @@ class AnomalyDimensionList(msrest.serialization.Model):
         super(AnomalyDimensionList, self).__init__(**kwargs)
         self.next_link = None
         self.value = value
-
-
-class AnomalyDimensionQuery(msrest.serialization.Model):
-    """AnomalyDimensionQuery.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar start_time: Required. start time.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: Required. end time.
-    :vartype end_time: ~datetime.datetime
-    :ivar dimension_name: Required. dimension to query.
-    :vartype dimension_name: str
-    :ivar dimension_filter:
-    :vartype dimension_filter: ~azure.ai.metricsadvisor.models.DimensionGroupIdentity
-    """
-
-    _validation = {
-        "start_time": {"required": True},
-        "end_time": {"required": True},
-        "dimension_name": {"required": True},
-    }
-
-    _attribute_map = {
-        "start_time": {"key": "startTime", "type": "iso-8601"},
-        "end_time": {"key": "endTime", "type": "iso-8601"},
-        "dimension_name": {"key": "dimensionName", "type": "str"},
-        "dimension_filter": {"key": "dimensionFilter", "type": "DimensionGroupIdentity"},
-    }
-
-    def __init__(
-        self,
-        *,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
-        dimension_name: str,
-        dimension_filter: Optional["_models.DimensionGroupIdentity"] = None,
-        **kwargs
-    ):
-        """
-        :keyword start_time: Required. start time.
-        :paramtype start_time: ~datetime.datetime
-        :keyword end_time: Required. end time.
-        :paramtype end_time: ~datetime.datetime
-        :keyword dimension_name: Required. dimension to query.
-        :paramtype dimension_name: str
-        :keyword dimension_filter:
-        :paramtype dimension_filter: ~azure.ai.metricsadvisor.models.DimensionGroupIdentity
-        """
-        super(AnomalyDimensionQuery, self).__init__(**kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
-        self.dimension_name = dimension_name
-        self.dimension_filter = dimension_filter
 
 
 class MetricFeedback(msrest.serialization.Model):
@@ -1167,137 +991,6 @@ class AzureLogAnalyticsDataFeedSource(msrest.serialization.Model):
         self.query = query
 
 
-class DataSourceCredentialPatch(msrest.serialization.Model):
-    """DataSourceCredentialPatch.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureSQLConnectionStringCredentialPatch, DataLakeGen2SharedKeyCredentialPatch, ServicePrincipalCredentialPatch, ServicePrincipalInKVCredentialPatch.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar data_source_credential_type: Required. Type of data source credential.Constant filled by
-     server. Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
-     "ServicePrincipal", "ServicePrincipalInKV".
-    :vartype data_source_credential_type: str or
-     ~azure.ai.metricsadvisor.models.DatasourceCredentialType
-    :ivar data_source_credential_name: Name of data source credential.
-    :vartype data_source_credential_name: str
-    :ivar data_source_credential_description: Description of data source credential.
-    :vartype data_source_credential_description: str
-    """
-
-    _validation = {
-        "data_source_credential_type": {"required": True},
-    }
-
-    _attribute_map = {
-        "data_source_credential_type": {"key": "dataSourceCredentialType", "type": "str"},
-        "data_source_credential_name": {"key": "dataSourceCredentialName", "type": "str"},
-        "data_source_credential_description": {"key": "dataSourceCredentialDescription", "type": "str"},
-    }
-
-    _subtype_map = {
-        "data_source_credential_type": {
-            "AzureSQLConnectionString": "AzureSQLConnectionStringCredentialPatch",
-            "DataLakeGen2SharedKey": "DataLakeGen2SharedKeyCredentialPatch",
-            "ServicePrincipal": "ServicePrincipalCredentialPatch",
-            "ServicePrincipalInKV": "ServicePrincipalInKVCredentialPatch",
-        }
-    }
-
-    def __init__(
-        self,
-        *,
-        data_source_credential_name: Optional[str] = None,
-        data_source_credential_description: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword data_source_credential_name: Name of data source credential.
-        :paramtype data_source_credential_name: str
-        :keyword data_source_credential_description: Description of data source credential.
-        :paramtype data_source_credential_description: str
-        """
-        super(DataSourceCredentialPatch, self).__init__(**kwargs)
-        self.data_source_credential_type = None  # type: Optional[str]
-        self.data_source_credential_name = data_source_credential_name
-        self.data_source_credential_description = data_source_credential_description
-
-
-class AzureSQLConnectionStringCredentialPatch(DataSourceCredentialPatch):
-    """AzureSQLConnectionStringCredentialPatch.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar data_source_credential_type: Required. Type of data source credential.Constant filled by
-     server. Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
-     "ServicePrincipal", "ServicePrincipalInKV".
-    :vartype data_source_credential_type: str or
-     ~azure.ai.metricsadvisor.models.DatasourceCredentialType
-    :ivar data_source_credential_name: Name of data source credential.
-    :vartype data_source_credential_name: str
-    :ivar data_source_credential_description: Description of data source credential.
-    :vartype data_source_credential_description: str
-    :ivar parameters:
-    :vartype parameters: ~azure.ai.metricsadvisor.models.AzureSQLConnectionStringParamPatch
-    """
-
-    _validation = {
-        "data_source_credential_type": {"required": True},
-    }
-
-    _attribute_map = {
-        "data_source_credential_type": {"key": "dataSourceCredentialType", "type": "str"},
-        "data_source_credential_name": {"key": "dataSourceCredentialName", "type": "str"},
-        "data_source_credential_description": {"key": "dataSourceCredentialDescription", "type": "str"},
-        "parameters": {"key": "parameters", "type": "AzureSQLConnectionStringParamPatch"},
-    }
-
-    def __init__(
-        self,
-        *,
-        data_source_credential_name: Optional[str] = None,
-        data_source_credential_description: Optional[str] = None,
-        parameters: Optional["_models.AzureSQLConnectionStringParamPatch"] = None,
-        **kwargs
-    ):
-        """
-        :keyword data_source_credential_name: Name of data source credential.
-        :paramtype data_source_credential_name: str
-        :keyword data_source_credential_description: Description of data source credential.
-        :paramtype data_source_credential_description: str
-        :keyword parameters:
-        :paramtype parameters: ~azure.ai.metricsadvisor.models.AzureSQLConnectionStringParamPatch
-        """
-        super(AzureSQLConnectionStringCredentialPatch, self).__init__(
-            data_source_credential_name=data_source_credential_name,
-            data_source_credential_description=data_source_credential_description,
-            **kwargs
-        )
-        self.data_source_credential_type = "AzureSQLConnectionString"  # type: str
-        self.parameters = parameters
-
-
-class AzureSQLConnectionStringParamPatch(msrest.serialization.Model):
-    """AzureSQLConnectionStringParamPatch.
-
-    :ivar connection_string: The connection string to access the Azure SQL.
-    :vartype connection_string: str
-    """
-
-    _attribute_map = {
-        "connection_string": {"key": "connectionString", "type": "str"},
-    }
-
-    def __init__(self, *, connection_string: Optional[str] = None, **kwargs):
-        """
-        :keyword connection_string: The connection string to access the Azure SQL.
-        :paramtype connection_string: str
-        """
-        super(AzureSQLConnectionStringParamPatch, self).__init__(**kwargs)
-        self.connection_string = connection_string
-
-
 class AzureTableDataFeedSource(msrest.serialization.Model):
     """AzureTableDataFeedSource.
 
@@ -1588,7 +1281,7 @@ class DataFeed(msrest.serialization.Model):
     :vartype data_feed_description: str
     :ivar granularity_name: Required. granularity of the time series. Possible values include:
      "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Custom".
-    :vartype granularity_name: str or ~azure.ai.metricsadvisor.models.Granularity
+    :vartype granularity_name: str or ~azure.ai.metricsadvisor.models.DataFeedGranularityType
     :ivar granularity_amount: if granularity is custom,it is required.
     :vartype granularity_amount: int
     :ivar metrics: Required. measure list.
@@ -1615,20 +1308,21 @@ class DataFeed(msrest.serialization.Model):
      "NeedRollup", "AlreadyRollup". Default value: "NoRollup".
     :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
     :ivar roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
-     "Avg", "Count".
+     "Avg", "Count". Default value: "None".
     :vartype roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedAutoRollupMethod
     :ivar roll_up_columns: roll up columns.
     :vartype roll_up_columns: list[str]
     :ivar all_up_identification: the identification value for the row of calculated all-up value.
     :vartype all_up_identification: str
     :ivar fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
-     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
+     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling". Default value:
+     "SmartFilling".
     :vartype fill_missing_point_type: str or
      ~azure.ai.metricsadvisor.models.DatasourceMissingDataPointFillType
     :ivar fill_missing_point_value: the value of fill missing point for anomaly detection.
     :vartype fill_missing_point_value: float
     :ivar access_mode: data feed access mode, default is Private. Possible values include:
-     "Private", "Public".
+     "Private", "Public". Default value: "Private".
     :vartype access_mode: str or ~azure.ai.metricsadvisor.models.DataFeedAccessMode
     :ivar admins: data feed administrator.
     :vartype admins: list[str]
@@ -1646,7 +1340,7 @@ class DataFeed(msrest.serialization.Model):
     :vartype action_link_template: str
     :ivar authentication_type: authentication type for corresponding data source. Possible values
      include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
-     "ServicePrincipal", "ServicePrincipalInKV".
+     "ServicePrincipal", "ServicePrincipalInKV". Default value: "Basic".
     :vartype authentication_type: str or
      ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
     :ivar credential_id: The credential entity id.
@@ -1712,7 +1406,7 @@ class DataFeed(msrest.serialization.Model):
         self,
         *,
         name: str,
-        granularity_name: Union[str, "_models.Granularity"],
+        granularity_name: Union[str, "_models.DataFeedGranularityType"],
         metrics: List["_models.DataFeedMetric"],
         data_start_from: datetime.datetime,
         data_feed_description: Optional[str] = "",
@@ -1724,16 +1418,16 @@ class DataFeed(msrest.serialization.Model):
         min_retry_interval_in_seconds: Optional[int] = -1,
         stop_retry_after_in_seconds: Optional[int] = -1,
         need_rollup: Optional[Union[str, "_models.DataFeedRollupType"]] = "NoRollup",
-        roll_up_method: Optional[Union[str, "_models.DataFeedAutoRollupMethod"]] = None,
+        roll_up_method: Optional[Union[str, "_models.DataFeedAutoRollupMethod"]] = "None",
         roll_up_columns: Optional[List[str]] = None,
         all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "_models.DatasourceMissingDataPointFillType"]] = None,
+        fill_missing_point_type: Optional[Union[str, "_models.DatasourceMissingDataPointFillType"]] = "SmartFilling",
         fill_missing_point_value: Optional[float] = None,
-        access_mode: Optional[Union[str, "_models.DataFeedAccessMode"]] = None,
+        access_mode: Optional[Union[str, "_models.DataFeedAccessMode"]] = "Private",
         admins: Optional[List[str]] = None,
         viewers: Optional[List[str]] = None,
         action_link_template: Optional[str] = "",
-        authentication_type: Optional[Union[str, "_models.DatasourceAuthenticationType"]] = None,
+        authentication_type: Optional[Union[str, "_models.DatasourceAuthenticationType"]] = "Basic",
         credential_id: Optional[str] = None,
         data_source_parameter: Optional[Any] = None,
         **kwargs
@@ -1745,7 +1439,7 @@ class DataFeed(msrest.serialization.Model):
         :paramtype data_feed_description: str
         :keyword granularity_name: Required. granularity of the time series. Possible values include:
          "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Custom".
-        :paramtype granularity_name: str or ~azure.ai.metricsadvisor.models.Granularity
+        :paramtype granularity_name: str or ~azure.ai.metricsadvisor.models.DataFeedGranularityType
         :keyword granularity_amount: if granularity is custom,it is required.
         :paramtype granularity_amount: int
         :keyword metrics: Required. measure list.
@@ -1772,7 +1466,7 @@ class DataFeed(msrest.serialization.Model):
          "NeedRollup", "AlreadyRollup". Default value: "NoRollup".
         :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.DataFeedRollupType
         :keyword roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
-         "Avg", "Count".
+         "Avg", "Count". Default value: "None".
         :paramtype roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedAutoRollupMethod
         :keyword roll_up_columns: roll up columns.
         :paramtype roll_up_columns: list[str]
@@ -1780,13 +1474,14 @@ class DataFeed(msrest.serialization.Model):
          value.
         :paramtype all_up_identification: str
         :keyword fill_missing_point_type: the type of fill missing point for anomaly detection.
-         Possible values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
+         Possible values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling". Default
+         value: "SmartFilling".
         :paramtype fill_missing_point_type: str or
          ~azure.ai.metricsadvisor.models.DatasourceMissingDataPointFillType
         :keyword fill_missing_point_value: the value of fill missing point for anomaly detection.
         :paramtype fill_missing_point_value: float
         :keyword access_mode: data feed access mode, default is Private. Possible values include:
-         "Private", "Public".
+         "Private", "Public". Default value: "Private".
         :paramtype access_mode: str or ~azure.ai.metricsadvisor.models.DataFeedAccessMode
         :keyword admins: data feed administrator.
         :paramtype admins: list[str]
@@ -1796,7 +1491,7 @@ class DataFeed(msrest.serialization.Model):
         :paramtype action_link_template: str
         :keyword authentication_type: authentication type for corresponding data source. Possible
          values include: "Basic", "ManagedIdentity", "AzureSQLConnectionString",
-         "DataLakeGen2SharedKey", "ServicePrincipal", "ServicePrincipalInKV".
+         "DataLakeGen2SharedKey", "ServicePrincipal", "ServicePrincipalInKV". Default value: "Basic".
         :paramtype authentication_type: str or
          ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
         :keyword credential_id: The credential entity id.
@@ -1836,217 +1531,6 @@ class DataFeed(msrest.serialization.Model):
         self.authentication_type = authentication_type
         self.credential_id = credential_id
         self.data_source_parameter = data_source_parameter
-
-
-class DataFeedDetailPatch(msrest.serialization.Model):
-    """DataFeedDetailPatch.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: .
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar data_source_type: Required. data source type.Constant filled by server. Possible values
-     include: "AzureApplicationInsights", "AzureBlob", "AzureCosmosDB", "AzureDataExplorer",
-     "AzureDataLakeStorageGen2", "AzureEventHubs", "AzureLogAnalytics", "AzureTable", "InfluxDB",
-     "MongoDB", "MySql", "PostgreSql", "SqlServer".
-    :vartype data_source_type: str or ~azure.ai.metricsadvisor.models.DatasourceType
-    :ivar data_feed_name: data feed name.
-    :vartype data_feed_name: str
-    :ivar data_feed_description: data feed description.
-    :vartype data_feed_description: str
-    :ivar timestamp_column: user-defined timestamp column. if timestampColumn is null, start time
-     of every time slice will be used as default value.
-    :vartype timestamp_column: str
-    :ivar data_start_from: ingestion start time.
-    :vartype data_start_from: ~datetime.datetime
-    :ivar start_offset_in_seconds: the time that the beginning of data ingestion task will delay
-     for every data slice according to this offset.
-    :vartype start_offset_in_seconds: long
-    :ivar max_concurrency: the max concurrency of data ingestion queries against user data source.
-     0 means no limitation.
-    :vartype max_concurrency: int
-    :ivar min_retry_interval_in_seconds: the min retry interval for failed data ingestion tasks.
-    :vartype min_retry_interval_in_seconds: long
-    :ivar stop_retry_after_in_seconds: stop retry data ingestion after the data slice first
-     schedule time in seconds.
-    :vartype stop_retry_after_in_seconds: long
-    :ivar need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-     "NeedRollup", "AlreadyRollup".
-    :vartype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
-    :ivar roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
-     "Avg", "Count".
-    :vartype roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedAutoRollupMethod
-    :ivar roll_up_columns: roll up columns.
-    :vartype roll_up_columns: list[str]
-    :ivar all_up_identification: the identification value for the row of calculated all-up value.
-    :vartype all_up_identification: str
-    :ivar fill_missing_point_type: the type of fill missing point for anomaly detection. Possible
-     values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
-    :vartype fill_missing_point_type: str or
-     ~azure.ai.metricsadvisor.models.DatasourceMissingDataPointFillType
-    :ivar fill_missing_point_value: the value of fill missing point for anomaly detection.
-    :vartype fill_missing_point_value: float
-    :ivar view_mode: data feed access mode, default is Private. Possible values include: "Private",
-     "Public".
-    :vartype view_mode: str or ~azure.ai.metricsadvisor.models.DataFeedAccessMode
-    :ivar admins: data feed administrator.
-    :vartype admins: list[str]
-    :ivar viewers: data feed viewer.
-    :vartype viewers: list[str]
-    :ivar status: data feed status. Possible values include: "Active", "Paused".
-    :vartype status: str or ~azure.ai.metricsadvisor.models.DataFeedStatus
-    :ivar action_link_template: action link for alert.
-    :vartype action_link_template: str
-    :ivar authentication_type: authentication type for corresponding data source. Possible values
-     include: "Basic", "ManagedIdentity", "AzureSQLConnectionString", "DataLakeGen2SharedKey",
-     "ServicePrincipal", "ServicePrincipalInKV".
-    :vartype authentication_type: str or
-     ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
-    :ivar credential_id: The credential entity id.
-    :vartype credential_id: str
-    """
-
-    _validation = {
-        "data_source_type": {"required": True},
-        "roll_up_columns": {"unique": True},
-        "admins": {"unique": True},
-        "viewers": {"unique": True},
-    }
-
-    _attribute_map = {
-        "data_source_type": {"key": "dataSourceType", "type": "str"},
-        "data_feed_name": {"key": "dataFeedName", "type": "str"},
-        "data_feed_description": {"key": "dataFeedDescription", "type": "str"},
-        "timestamp_column": {"key": "timestampColumn", "type": "str"},
-        "data_start_from": {"key": "dataStartFrom", "type": "iso-8601"},
-        "start_offset_in_seconds": {"key": "startOffsetInSeconds", "type": "long"},
-        "max_concurrency": {"key": "maxConcurrency", "type": "int"},
-        "min_retry_interval_in_seconds": {"key": "minRetryIntervalInSeconds", "type": "long"},
-        "stop_retry_after_in_seconds": {"key": "stopRetryAfterInSeconds", "type": "long"},
-        "need_rollup": {"key": "needRollup", "type": "str"},
-        "roll_up_method": {"key": "rollUpMethod", "type": "str"},
-        "roll_up_columns": {"key": "rollUpColumns", "type": "[str]"},
-        "all_up_identification": {"key": "allUpIdentification", "type": "str"},
-        "fill_missing_point_type": {"key": "fillMissingPointType", "type": "str"},
-        "fill_missing_point_value": {"key": "fillMissingPointValue", "type": "float"},
-        "view_mode": {"key": "viewMode", "type": "str"},
-        "admins": {"key": "admins", "type": "[str]"},
-        "viewers": {"key": "viewers", "type": "[str]"},
-        "status": {"key": "status", "type": "str"},
-        "action_link_template": {"key": "actionLinkTemplate", "type": "str"},
-        "authentication_type": {"key": "authenticationType", "type": "str"},
-        "credential_id": {"key": "credentialId", "type": "str"},
-    }
-
-    _subtype_map = {"data_source_type": {}}
-
-    def __init__(
-        self,
-        *,
-        data_feed_name: Optional[str] = None,
-        data_feed_description: Optional[str] = None,
-        timestamp_column: Optional[str] = None,
-        data_start_from: Optional[datetime.datetime] = None,
-        start_offset_in_seconds: Optional[int] = None,
-        max_concurrency: Optional[int] = None,
-        min_retry_interval_in_seconds: Optional[int] = None,
-        stop_retry_after_in_seconds: Optional[int] = None,
-        need_rollup: Optional[Union[str, "_models.NeedRollupEnum"]] = None,
-        roll_up_method: Optional[Union[str, "_models.DataFeedAutoRollupMethod"]] = None,
-        roll_up_columns: Optional[List[str]] = None,
-        all_up_identification: Optional[str] = None,
-        fill_missing_point_type: Optional[Union[str, "_models.DatasourceMissingDataPointFillType"]] = None,
-        fill_missing_point_value: Optional[float] = None,
-        view_mode: Optional[Union[str, "_models.DataFeedAccessMode"]] = None,
-        admins: Optional[List[str]] = None,
-        viewers: Optional[List[str]] = None,
-        status: Optional[Union[str, "_models.DataFeedStatus"]] = None,
-        action_link_template: Optional[str] = None,
-        authentication_type: Optional[Union[str, "_models.DatasourceAuthenticationType"]] = None,
-        credential_id: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword data_feed_name: data feed name.
-        :paramtype data_feed_name: str
-        :keyword data_feed_description: data feed description.
-        :paramtype data_feed_description: str
-        :keyword timestamp_column: user-defined timestamp column. if timestampColumn is null, start
-         time of every time slice will be used as default value.
-        :paramtype timestamp_column: str
-        :keyword data_start_from: ingestion start time.
-        :paramtype data_start_from: ~datetime.datetime
-        :keyword start_offset_in_seconds: the time that the beginning of data ingestion task will delay
-         for every data slice according to this offset.
-        :paramtype start_offset_in_seconds: long
-        :keyword max_concurrency: the max concurrency of data ingestion queries against user data
-         source. 0 means no limitation.
-        :paramtype max_concurrency: int
-        :keyword min_retry_interval_in_seconds: the min retry interval for failed data ingestion tasks.
-        :paramtype min_retry_interval_in_seconds: long
-        :keyword stop_retry_after_in_seconds: stop retry data ingestion after the data slice first
-         schedule time in seconds.
-        :paramtype stop_retry_after_in_seconds: long
-        :keyword need_rollup: mark if the data feed need rollup. Possible values include: "NoRollup",
-         "NeedRollup", "AlreadyRollup".
-        :paramtype need_rollup: str or ~azure.ai.metricsadvisor.models.NeedRollupEnum
-        :keyword roll_up_method: roll up method. Possible values include: "None", "Sum", "Max", "Min",
-         "Avg", "Count".
-        :paramtype roll_up_method: str or ~azure.ai.metricsadvisor.models.DataFeedAutoRollupMethod
-        :keyword roll_up_columns: roll up columns.
-        :paramtype roll_up_columns: list[str]
-        :keyword all_up_identification: the identification value for the row of calculated all-up
-         value.
-        :paramtype all_up_identification: str
-        :keyword fill_missing_point_type: the type of fill missing point for anomaly detection.
-         Possible values include: "SmartFilling", "PreviousValue", "CustomValue", "NoFilling".
-        :paramtype fill_missing_point_type: str or
-         ~azure.ai.metricsadvisor.models.DatasourceMissingDataPointFillType
-        :keyword fill_missing_point_value: the value of fill missing point for anomaly detection.
-        :paramtype fill_missing_point_value: float
-        :keyword view_mode: data feed access mode, default is Private. Possible values include:
-         "Private", "Public".
-        :paramtype view_mode: str or ~azure.ai.metricsadvisor.models.DataFeedAccessMode
-        :keyword admins: data feed administrator.
-        :paramtype admins: list[str]
-        :keyword viewers: data feed viewer.
-        :paramtype viewers: list[str]
-        :keyword status: data feed status. Possible values include: "Active", "Paused".
-        :paramtype status: str or ~azure.ai.metricsadvisor.models.DataFeedStatus
-        :keyword action_link_template: action link for alert.
-        :paramtype action_link_template: str
-        :keyword authentication_type: authentication type for corresponding data source. Possible
-         values include: "Basic", "ManagedIdentity", "AzureSQLConnectionString",
-         "DataLakeGen2SharedKey", "ServicePrincipal", "ServicePrincipalInKV".
-        :paramtype authentication_type: str or
-         ~azure.ai.metricsadvisor.models.DatasourceAuthenticationType
-        :keyword credential_id: The credential entity id.
-        :paramtype credential_id: str
-        """
-        super(DataFeedDetailPatch, self).__init__(**kwargs)
-        self.data_source_type = None  # type: Optional[str]
-        self.data_feed_name = data_feed_name
-        self.data_feed_description = data_feed_description
-        self.timestamp_column = timestamp_column
-        self.data_start_from = data_start_from
-        self.start_offset_in_seconds = start_offset_in_seconds
-        self.max_concurrency = max_concurrency
-        self.min_retry_interval_in_seconds = min_retry_interval_in_seconds
-        self.stop_retry_after_in_seconds = stop_retry_after_in_seconds
-        self.need_rollup = need_rollup
-        self.roll_up_method = roll_up_method
-        self.roll_up_columns = roll_up_columns
-        self.all_up_identification = all_up_identification
-        self.fill_missing_point_type = fill_missing_point_type
-        self.fill_missing_point_value = fill_missing_point_value
-        self.view_mode = view_mode
-        self.admins = admins
-        self.viewers = viewers
-        self.status = status
-        self.action_link_template = action_link_template
-        self.authentication_type = authentication_type
-        self.credential_id = credential_id
 
 
 class DataFeedDimension(msrest.serialization.Model):
@@ -2119,9 +1603,8 @@ class DataFeedIngestionStatus(msrest.serialization.Model):
 
     :ivar timestamp: data slice timestamp.
     :vartype timestamp: ~datetime.datetime
-    :ivar status: latest ingestion task status for this data slice. Possible values include:
-     "NotStarted", "Scheduled", "Running", "Succeeded", "Failed", "NoData", "Error", "Paused".
-    :vartype status: str or ~azure.ai.metricsadvisor.models.IngestionStatusType
+    :ivar status: latest ingestion task status for this data slice.
+    :vartype status: str
     :ivar message: the trimmed message of last ingestion job.
     :vartype message: str
     """
@@ -2220,80 +1703,6 @@ class DataFeedMetric(msrest.serialization.Model):
         self.description = description
 
 
-class DataLakeGen2SharedKeyCredentialPatch(DataSourceCredentialPatch):
-    """DataLakeGen2SharedKeyCredentialPatch.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar data_source_credential_type: Required. Type of data source credential.Constant filled by
-     server. Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
-     "ServicePrincipal", "ServicePrincipalInKV".
-    :vartype data_source_credential_type: str or
-     ~azure.ai.metricsadvisor.models.DatasourceCredentialType
-    :ivar data_source_credential_name: Name of data source credential.
-    :vartype data_source_credential_name: str
-    :ivar data_source_credential_description: Description of data source credential.
-    :vartype data_source_credential_description: str
-    :ivar parameters:
-    :vartype parameters: ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyParamPatch
-    """
-
-    _validation = {
-        "data_source_credential_type": {"required": True},
-    }
-
-    _attribute_map = {
-        "data_source_credential_type": {"key": "dataSourceCredentialType", "type": "str"},
-        "data_source_credential_name": {"key": "dataSourceCredentialName", "type": "str"},
-        "data_source_credential_description": {"key": "dataSourceCredentialDescription", "type": "str"},
-        "parameters": {"key": "parameters", "type": "DataLakeGen2SharedKeyParamPatch"},
-    }
-
-    def __init__(
-        self,
-        *,
-        data_source_credential_name: Optional[str] = None,
-        data_source_credential_description: Optional[str] = None,
-        parameters: Optional["_models.DataLakeGen2SharedKeyParamPatch"] = None,
-        **kwargs
-    ):
-        """
-        :keyword data_source_credential_name: Name of data source credential.
-        :paramtype data_source_credential_name: str
-        :keyword data_source_credential_description: Description of data source credential.
-        :paramtype data_source_credential_description: str
-        :keyword parameters:
-        :paramtype parameters: ~azure.ai.metricsadvisor.models.DataLakeGen2SharedKeyParamPatch
-        """
-        super(DataLakeGen2SharedKeyCredentialPatch, self).__init__(
-            data_source_credential_name=data_source_credential_name,
-            data_source_credential_description=data_source_credential_description,
-            **kwargs
-        )
-        self.data_source_credential_type = "DataLakeGen2SharedKey"  # type: str
-        self.parameters = parameters
-
-
-class DataLakeGen2SharedKeyParamPatch(msrest.serialization.Model):
-    """DataLakeGen2SharedKeyParamPatch.
-
-    :ivar account_key: The account key to access the Azure Data Lake Storage Gen2.
-    :vartype account_key: str
-    """
-
-    _attribute_map = {
-        "account_key": {"key": "accountKey", "type": "str"},
-    }
-
-    def __init__(self, *, account_key: Optional[str] = None, **kwargs):
-        """
-        :keyword account_key: The account key to access the Azure Data Lake Storage Gen2.
-        :paramtype account_key: str
-        """
-        super(DataLakeGen2SharedKeyParamPatch, self).__init__(**kwargs)
-        self.account_key = account_key
-
-
 class DataPointAnomaly(msrest.serialization.Model):
     """DataPointAnomaly.
 
@@ -2329,8 +1738,8 @@ class DataPointAnomaly(msrest.serialization.Model):
     :vartype severity: str or ~azure.ai.metricsadvisor.models.AnomalySeverity
     :ivar status: anomaly status
 
-     only return for alerting anomaly result. Possible values include: "Active", "Resolved".
-    :vartype status: str or ~azure.ai.metricsadvisor.models.AnomalyStatus
+     only return for alerting anomaly result.
+    :vartype status: str
     :ivar value: value of the anomaly.
     :vartype value: float
     :ivar expected_value: expected value of the anomaly given by smart detector.
@@ -2396,8 +1805,8 @@ class DataPointAnomaly(msrest.serialization.Model):
         self.expected_value = None
 
 
-class DataSourceCredential(msrest.serialization.Model):
-    """DataSourceCredential.
+class DatasourceCredential(msrest.serialization.Model):
+    """DatasourceCredential.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: DatasourceSqlConnectionString, DatasourceDataLakeGen2SharedKey, DatasourceServicePrincipal, DatasourceServicePrincipalInKeyVault.
@@ -2447,7 +1856,7 @@ class DataSourceCredential(msrest.serialization.Model):
         :keyword description: Description of data source credential.
         :paramtype description: str
         """
-        super(DataSourceCredential, self).__init__(**kwargs)
+        super(DatasourceCredential, self).__init__(**kwargs)
         self.credential_type = None  # type: Optional[str]
         self.id = None
         self.name = name
@@ -2462,7 +1871,7 @@ class DataSourceCredentialList(msrest.serialization.Model):
     :ivar next_link:
     :vartype next_link: str
     :ivar value:
-    :vartype value: list[~azure.ai.metricsadvisor.models.DataSourceCredential]
+    :vartype value: list[~azure.ai.metricsadvisor.models.DatasourceCredential]
     """
 
     _validation = {
@@ -2472,7 +1881,7 @@ class DataSourceCredentialList(msrest.serialization.Model):
 
     _attribute_map = {
         "next_link": {"key": "@nextLink", "type": "str"},
-        "value": {"key": "value", "type": "[DataSourceCredential]"},
+        "value": {"key": "value", "type": "[DatasourceCredential]"},
     }
 
     def __init__(self, **kwargs):
@@ -2482,7 +1891,7 @@ class DataSourceCredentialList(msrest.serialization.Model):
         self.value = None
 
 
-class DatasourceDataLakeGen2SharedKey(DataSourceCredential):
+class DatasourceDataLakeGen2SharedKey(DatasourceCredential):
     """DatasourceDataLakeGen2SharedKey.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2531,7 +1940,7 @@ class DatasourceDataLakeGen2SharedKey(DataSourceCredential):
         self.account_key = account_key
 
 
-class DatasourceServicePrincipal(DataSourceCredential):
+class DatasourceServicePrincipal(DatasourceCredential):
     """DatasourceServicePrincipal.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2603,7 +2012,7 @@ class DatasourceServicePrincipal(DataSourceCredential):
         self.tenant_id = tenant_id
 
 
-class DatasourceServicePrincipalInKeyVault(DataSourceCredential):
+class DatasourceServicePrincipalInKeyVault(DatasourceCredential):
     """DatasourceServicePrincipalInKeyVault.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2704,7 +2113,7 @@ class DatasourceServicePrincipalInKeyVault(DataSourceCredential):
         self.tenant_id = tenant_id
 
 
-class DatasourceSqlConnectionString(DataSourceCredential):
+class DatasourceSqlConnectionString(DatasourceCredential):
     """DatasourceSqlConnectionString.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2791,52 +2200,6 @@ class DetectionAnomalyFilterCondition(msrest.serialization.Model):
         self.severity_filter = severity_filter
 
 
-class DetectionAnomalyResultQuery(msrest.serialization.Model):
-    """DetectionAnomalyResultQuery.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar start_time: Required. start time.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: Required. end time.
-    :vartype end_time: ~datetime.datetime
-    :ivar filter:
-    :vartype filter: ~azure.ai.metricsadvisor.models.DetectionAnomalyFilterCondition
-    """
-
-    _validation = {
-        "start_time": {"required": True},
-        "end_time": {"required": True},
-    }
-
-    _attribute_map = {
-        "start_time": {"key": "startTime", "type": "iso-8601"},
-        "end_time": {"key": "endTime", "type": "iso-8601"},
-        "filter": {"key": "filter", "type": "DetectionAnomalyFilterCondition"},
-    }
-
-    def __init__(
-        self,
-        *,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
-        filter: Optional["_models.DetectionAnomalyFilterCondition"] = None,
-        **kwargs
-    ):
-        """
-        :keyword start_time: Required. start time.
-        :paramtype start_time: ~datetime.datetime
-        :keyword end_time: Required. end time.
-        :paramtype end_time: ~datetime.datetime
-        :keyword filter:
-        :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionAnomalyFilterCondition
-        """
-        super(DetectionAnomalyResultQuery, self).__init__(**kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
-        self.filter = filter
-
-
 class DetectionIncidentFilterCondition(msrest.serialization.Model):
     """DetectionIncidentFilterCondition.
 
@@ -2859,105 +2222,6 @@ class DetectionIncidentFilterCondition(msrest.serialization.Model):
         """
         super(DetectionIncidentFilterCondition, self).__init__(**kwargs)
         self.dimension_filter = dimension_filter
-
-
-class DetectionIncidentResultQuery(msrest.serialization.Model):
-    """DetectionIncidentResultQuery.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar start_time: Required. start time.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: Required. end time.
-    :vartype end_time: ~datetime.datetime
-    :ivar filter:
-    :vartype filter: ~azure.ai.metricsadvisor.models.DetectionIncidentFilterCondition
-    """
-
-    _validation = {
-        "start_time": {"required": True},
-        "end_time": {"required": True},
-    }
-
-    _attribute_map = {
-        "start_time": {"key": "startTime", "type": "iso-8601"},
-        "end_time": {"key": "endTime", "type": "iso-8601"},
-        "filter": {"key": "filter", "type": "DetectionIncidentFilterCondition"},
-    }
-
-    def __init__(
-        self,
-        *,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
-        filter: Optional["_models.DetectionIncidentFilterCondition"] = None,
-        **kwargs
-    ):
-        """
-        :keyword start_time: Required. start time.
-        :paramtype start_time: ~datetime.datetime
-        :keyword end_time: Required. end time.
-        :paramtype end_time: ~datetime.datetime
-        :keyword filter:
-        :paramtype filter: ~azure.ai.metricsadvisor.models.DetectionIncidentFilterCondition
-        """
-        super(DetectionIncidentResultQuery, self).__init__(**kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
-        self.filter = filter
-
-
-class DetectionSeriesQuery(msrest.serialization.Model):
-    """DetectionSeriesQuery.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar start_time: Required. This is inclusive. The maximum number of data points (series number
-     * time range) is 10000.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: Required. This is exclusive. The maximum number of data points (series number *
-     time range) is 10000.
-    :vartype end_time: ~datetime.datetime
-    :ivar series: Required. The series to be queried. The identity must be able to define one
-     single time series instead of a group of time series. The maximum number of series is 100.
-    :vartype series: list[~azure.ai.metricsadvisor.models.SeriesIdentity]
-    """
-
-    _validation = {
-        "start_time": {"required": True},
-        "end_time": {"required": True},
-        "series": {"required": True, "unique": True},
-    }
-
-    _attribute_map = {
-        "start_time": {"key": "startTime", "type": "iso-8601"},
-        "end_time": {"key": "endTime", "type": "iso-8601"},
-        "series": {"key": "series", "type": "[SeriesIdentity]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
-        series: List["_models.SeriesIdentity"],
-        **kwargs
-    ):
-        """
-        :keyword start_time: Required. This is inclusive. The maximum number of data points (series
-         number * time range) is 10000.
-        :paramtype start_time: ~datetime.datetime
-        :keyword end_time: Required. This is exclusive. The maximum number of data points (series
-         number * time range) is 10000.
-        :paramtype end_time: ~datetime.datetime
-        :keyword series: Required. The series to be queried. The identity must be able to define one
-         single time series instead of a group of time series. The maximum number of series is 100.
-        :paramtype series: list[~azure.ai.metricsadvisor.models.SeriesIdentity]
-        """
-        super(DetectionSeriesQuery, self).__init__(**kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
-        self.series = series
 
 
 class DimensionGroupIdentity(msrest.serialization.Model):
@@ -2986,30 +2250,6 @@ class DimensionGroupIdentity(msrest.serialization.Model):
         self.dimension = dimension
 
 
-class EmailHookParameterPatch(msrest.serialization.Model):
-    """EmailHookParameterPatch.
-
-    :ivar to_list: Email TO: list.
-    :vartype to_list: list[str]
-    """
-
-    _validation = {
-        "to_list": {"unique": True},
-    }
-
-    _attribute_map = {
-        "to_list": {"key": "toList", "type": "[str]"},
-    }
-
-    def __init__(self, *, to_list: Optional[List[str]] = None, **kwargs):
-        """
-        :keyword to_list: Email TO: list.
-        :paramtype to_list: list[str]
-        """
-        super(EmailHookParameterPatch, self).__init__(**kwargs)
-        self.to_list = to_list
-
-
 class NotificationHook(msrest.serialization.Model):
     """NotificationHook.
 
@@ -3020,9 +2260,8 @@ class NotificationHook(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar hook_type: Required. hook type.Constant filled by server. Possible values include:
-     "Webhook", "Email".
-    :vartype hook_type: str or ~azure.ai.metricsadvisor.models.HookType
+    :ivar hook_type: Required. hook type.Constant filled by server.
+    :vartype hook_type: str
     :ivar id: Hook unique id.
     :vartype id: str
     :ivar name: hook unique name.
@@ -3087,9 +2326,8 @@ class EmailNotificationHook(NotificationHook):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar hook_type: Required. hook type.Constant filled by server. Possible values include:
-     "Webhook", "Email".
-    :vartype hook_type: str or ~azure.ai.metricsadvisor.models.HookType
+    :ivar hook_type: Required. hook type.Constant filled by server.
+    :vartype hook_type: str
     :ivar id: Hook unique id.
     :vartype id: str
     :ivar name: hook unique name.
@@ -3209,91 +2447,6 @@ class EnrichmentStatusList(msrest.serialization.Model):
         super(EnrichmentStatusList, self).__init__(**kwargs)
         self.next_link = None
         self.value = None
-
-
-class EnrichmentStatusQueryOption(msrest.serialization.Model):
-    """EnrichmentStatusQueryOption.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar start_time: Required. the start point of time range to query anomaly detection status.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: Required. the end point of time range to query anomaly detection status.
-    :vartype end_time: ~datetime.datetime
-    """
-
-    _validation = {
-        "start_time": {"required": True},
-        "end_time": {"required": True},
-    }
-
-    _attribute_map = {
-        "start_time": {"key": "startTime", "type": "iso-8601"},
-        "end_time": {"key": "endTime", "type": "iso-8601"},
-    }
-
-    def __init__(self, *, start_time: datetime.datetime, end_time: datetime.datetime, **kwargs):
-        """
-        :keyword start_time: Required. the start point of time range to query anomaly detection status.
-        :paramtype start_time: ~datetime.datetime
-        :keyword end_time: Required. the end point of time range to query anomaly detection status.
-        :paramtype end_time: ~datetime.datetime
-        """
-        super(EnrichmentStatusQueryOption, self).__init__(**kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
-
-
-class ErrorCode(msrest.serialization.Model):
-    """ErrorCode.
-
-    :ivar message:
-    :vartype message: str
-    :ivar code:
-    :vartype code: str
-    """
-
-    _attribute_map = {
-        "message": {"key": "message", "type": "str"},
-        "code": {"key": "code", "type": "str"},
-    }
-
-    def __init__(self, *, message: Optional[str] = None, code: Optional[str] = None, **kwargs):
-        """
-        :keyword message:
-        :paramtype message: str
-        :keyword code:
-        :paramtype code: str
-        """
-        super(ErrorCode, self).__init__(**kwargs)
-        self.message = message
-        self.code = code
-
-
-class FeedbackDimensionFilter(msrest.serialization.Model):
-    """FeedbackDimensionFilter.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar dimension_key: Required. metric dimension filter.
-    :vartype dimension_key: dict[str, str]
-    """
-
-    _validation = {
-        "dimension_key": {"required": True},
-    }
-
-    _attribute_map = {
-        "dimension_key": {"key": "dimension", "type": "{str}"},
-    }
-
-    def __init__(self, *, dimension_key: Dict[str, str], **kwargs):
-        """
-        :keyword dimension_key: Required. metric dimension filter.
-        :paramtype dimension_key: dict[str, str]
-        """
-        super(FeedbackDimensionFilter, self).__init__(**kwargs)
-        self.dimension_key = dimension_key
 
 
 class HardThresholdCondition(msrest.serialization.Model):
@@ -3523,39 +2676,6 @@ class InfluxDbDataFeedSource(msrest.serialization.Model):
         self.query = query
 
 
-class IngestionProgressResetOptions(msrest.serialization.Model):
-    """IngestionProgressResetOptions.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar start_time: Required. the start point of time range to reset data ingestion status.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: Required. the end point of time range to reset data ingestion status.
-    :vartype end_time: ~datetime.datetime
-    """
-
-    _validation = {
-        "start_time": {"required": True},
-        "end_time": {"required": True},
-    }
-
-    _attribute_map = {
-        "start_time": {"key": "startTime", "type": "iso-8601"},
-        "end_time": {"key": "endTime", "type": "iso-8601"},
-    }
-
-    def __init__(self, *, start_time: datetime.datetime, end_time: datetime.datetime, **kwargs):
-        """
-        :keyword start_time: Required. the start point of time range to reset data ingestion status.
-        :paramtype start_time: ~datetime.datetime
-        :keyword end_time: Required. the end point of time range to reset data ingestion status.
-        :paramtype end_time: ~datetime.datetime
-        """
-        super(IngestionProgressResetOptions, self).__init__(**kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
-
-
 class IngestionStatusList(msrest.serialization.Model):
     """IngestionStatusList.
 
@@ -3582,39 +2702,6 @@ class IngestionStatusList(msrest.serialization.Model):
         super(IngestionStatusList, self).__init__(**kwargs)
         self.next_link = None
         self.value = None
-
-
-class IngestionStatusQueryOptions(msrest.serialization.Model):
-    """IngestionStatusQueryOptions.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar start_time: Required. the start point of time range to query data ingestion status.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: Required. the end point of time range to query data ingestion status.
-    :vartype end_time: ~datetime.datetime
-    """
-
-    _validation = {
-        "start_time": {"required": True},
-        "end_time": {"required": True},
-    }
-
-    _attribute_map = {
-        "start_time": {"key": "startTime", "type": "iso-8601"},
-        "end_time": {"key": "endTime", "type": "iso-8601"},
-    }
-
-    def __init__(self, *, start_time: datetime.datetime, end_time: datetime.datetime, **kwargs):
-        """
-        :keyword start_time: Required. the start point of time range to query data ingestion status.
-        :paramtype start_time: ~datetime.datetime
-        :keyword end_time: Required. the end point of time range to query data ingestion status.
-        :paramtype end_time: ~datetime.datetime
-        """
-        super(IngestionStatusQueryOptions, self).__init__(**kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
 
 
 class MetricAlertConfiguration(msrest.serialization.Model):
@@ -3758,12 +2845,8 @@ class MetricBoundaryCondition(msrest.serialization.Model):
 
      should be specified when direction is Both or Up.
     :vartype upper: float
-    :ivar direction: Required. value filter direction. Possible values include: "Both", "Down",
-     "Up".
-    :vartype direction: str or ~azure.ai.metricsadvisor.models.Direction
-    :ivar type: data used to implement value filter. Possible values include: "Value", "Mean".
-     Default value: "Value".
-    :vartype type: str or ~azure.ai.metricsadvisor.models.ValueType
+    :ivar direction: Required. value filter direction.
+    :vartype direction: str
     :ivar companion_metric_id: the other metric unique id used for value filter.
     :vartype companion_metric_id: str
     :ivar trigger_for_missing: trigger alert when the corresponding point is missing in the other
@@ -3781,7 +2864,6 @@ class MetricBoundaryCondition(msrest.serialization.Model):
         "lower": {"key": "lower", "type": "float"},
         "upper": {"key": "upper", "type": "float"},
         "direction": {"key": "direction", "type": "str"},
-        "type": {"key": "type", "type": "str"},
         "companion_metric_id": {"key": "metricId", "type": "str"},
         "trigger_for_missing": {"key": "triggerForMissing", "type": "bool"},
     }
@@ -3789,10 +2871,9 @@ class MetricBoundaryCondition(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        direction: Union[str, "_models.Direction"],
+        direction: str,
         lower: Optional[float] = None,
         upper: Optional[float] = None,
-        type: Optional[Union[str, "_models.ValueType"]] = "Value",
         companion_metric_id: Optional[str] = None,
         trigger_for_missing: Optional[bool] = None,
         **kwargs
@@ -3806,12 +2887,8 @@ class MetricBoundaryCondition(msrest.serialization.Model):
 
          should be specified when direction is Both or Up.
         :paramtype upper: float
-        :keyword direction: Required. value filter direction. Possible values include: "Both", "Down",
-         "Up".
-        :paramtype direction: str or ~azure.ai.metricsadvisor.models.Direction
-        :keyword type: data used to implement value filter. Possible values include: "Value", "Mean".
-         Default value: "Value".
-        :paramtype type: str or ~azure.ai.metricsadvisor.models.ValueType
+        :keyword direction: Required. value filter direction.
+        :paramtype direction: str
         :keyword companion_metric_id: the other metric unique id used for value filter.
         :paramtype companion_metric_id: str
         :keyword trigger_for_missing: trigger alert when the corresponding point is missing in the
@@ -3824,44 +2901,8 @@ class MetricBoundaryCondition(msrest.serialization.Model):
         self.lower = lower
         self.upper = upper
         self.direction = direction
-        self.type = type
         self.companion_metric_id = companion_metric_id
         self.trigger_for_missing = trigger_for_missing
-
-
-class MetricDataItem(msrest.serialization.Model):
-    """MetricDataItem.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id:
-    :vartype id: ~azure.ai.metricsadvisor.models.MetricSeriesDefinition
-    :ivar timestamp_list: timestamps of the data related to this time series.
-    :vartype timestamp_list: list[~datetime.datetime]
-    :ivar value_list: values of the data related to this time series.
-    :vartype value_list: list[float]
-    """
-
-    _validation = {
-        "timestamp_list": {"readonly": True},
-        "value_list": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "MetricSeriesDefinition"},
-        "timestamp_list": {"key": "timestampList", "type": "[iso-8601]"},
-        "value_list": {"key": "valueList", "type": "[float]"},
-    }
-
-    def __init__(self, *, id: Optional["_models.MetricSeriesDefinition"] = None, **kwargs):
-        """
-        :keyword id:
-        :paramtype id: ~azure.ai.metricsadvisor.models.MetricSeriesDefinition
-        """
-        super(MetricDataItem, self).__init__(**kwargs)
-        self.id = id
-        self.timestamp_list = None
-        self.value_list = None
 
 
 class MetricDataList(msrest.serialization.Model):
@@ -3870,7 +2911,7 @@ class MetricDataList(msrest.serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value:
-    :vartype value: list[~azure.ai.metricsadvisor.models.MetricDataItem]
+    :vartype value: list[~azure.ai.metricsadvisor.models.MetricSeriesData]
     """
 
     _validation = {
@@ -3878,59 +2919,13 @@ class MetricDataList(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        "value": {"key": "value", "type": "[MetricDataItem]"},
+        "value": {"key": "value", "type": "[MetricSeriesData]"},
     }
 
     def __init__(self, **kwargs):
         """ """
         super(MetricDataList, self).__init__(**kwargs)
         self.value = None
-
-
-class MetricDataQueryOptions(msrest.serialization.Model):
-    """MetricDataQueryOptions.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar start_time: Required. start time of query a time series data, and format should be
-     yyyy-MM-ddThh:mm:ssZ. The maximum number of data points (series number * time range) is 10000.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: Required. start time of query a time series data, and format should be
-     yyyy-MM-ddThh:mm:ssZ. The maximum number of data points (series number * time range) is 10000.
-    :vartype end_time: ~datetime.datetime
-    :ivar series: Required. query specific series. The maximum number of series is 100.
-    :vartype series: list[dict[str, str]]
-    """
-
-    _validation = {
-        "start_time": {"required": True},
-        "end_time": {"required": True},
-        "series": {"required": True},
-    }
-
-    _attribute_map = {
-        "start_time": {"key": "startTime", "type": "iso-8601"},
-        "end_time": {"key": "endTime", "type": "iso-8601"},
-        "series": {"key": "series", "type": "[{str}]"},
-    }
-
-    def __init__(
-        self, *, start_time: datetime.datetime, end_time: datetime.datetime, series: List[Dict[str, str]], **kwargs
-    ):
-        """
-        :keyword start_time: Required. start time of query a time series data, and format should be
-         yyyy-MM-ddThh:mm:ssZ. The maximum number of data points (series number * time range) is 10000.
-        :paramtype start_time: ~datetime.datetime
-        :keyword end_time: Required. start time of query a time series data, and format should be
-         yyyy-MM-ddThh:mm:ssZ. The maximum number of data points (series number * time range) is 10000.
-        :paramtype end_time: ~datetime.datetime
-        :keyword series: Required. query specific series. The maximum number of series is 100.
-        :paramtype series: list[dict[str, str]]
-        """
-        super(MetricDataQueryOptions, self).__init__(**kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
-        self.series = series
 
 
 class MetricDetectionCondition(msrest.serialization.Model):
@@ -3940,8 +2935,7 @@ class MetricDetectionCondition(msrest.serialization.Model):
 
      should be specified when combining multiple detection conditions. Possible values include:
      "AND", "OR".
-    :vartype condition_operator: str or
-     ~azure.ai.metricsadvisor.models.AnomalyDetectionConfigurationLogicType
+    :vartype condition_operator: str or ~azure.ai.metricsadvisor.models.DetectionConditionOperator
     :ivar smart_detection_condition:
     :vartype smart_detection_condition: ~azure.ai.metricsadvisor.models.SmartDetectionCondition
     :ivar hard_threshold_condition:
@@ -3960,7 +2954,7 @@ class MetricDetectionCondition(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        condition_operator: Optional[Union[str, "_models.AnomalyDetectionConfigurationLogicType"]] = None,
+        condition_operator: Optional[Union[str, "_models.DetectionConditionOperator"]] = None,
         smart_detection_condition: Optional["_models.SmartDetectionCondition"] = None,
         hard_threshold_condition: Optional["_models.HardThresholdCondition"] = None,
         change_threshold_condition: Optional["_models.ChangeThresholdCondition"] = None,
@@ -3972,7 +2966,7 @@ class MetricDetectionCondition(msrest.serialization.Model):
          should be specified when combining multiple detection conditions. Possible values include:
          "AND", "OR".
         :paramtype condition_operator: str or
-         ~azure.ai.metricsadvisor.models.AnomalyDetectionConfigurationLogicType
+         ~azure.ai.metricsadvisor.models.DetectionConditionOperator
         :keyword smart_detection_condition:
         :paramtype smart_detection_condition: ~azure.ai.metricsadvisor.models.SmartDetectionCondition
         :keyword hard_threshold_condition:
@@ -4013,38 +3007,6 @@ class MetricDimensionList(msrest.serialization.Model):
         super(MetricDimensionList, self).__init__(**kwargs)
         self.next_link = None
         self.value = None
-
-
-class MetricDimensionQueryOptions(msrest.serialization.Model):
-    """MetricDimensionQueryOptions.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar dimension_name: Required. dimension name.
-    :vartype dimension_name: str
-    :ivar dimension_value_filter: dimension value to be filtered.
-    :vartype dimension_value_filter: str
-    """
-
-    _validation = {
-        "dimension_name": {"required": True},
-    }
-
-    _attribute_map = {
-        "dimension_name": {"key": "dimensionName", "type": "str"},
-        "dimension_value_filter": {"key": "dimensionValueFilter", "type": "str"},
-    }
-
-    def __init__(self, *, dimension_name: str, dimension_value_filter: Optional[str] = None, **kwargs):
-        """
-        :keyword dimension_name: Required. dimension name.
-        :paramtype dimension_name: str
-        :keyword dimension_value_filter: dimension value to be filtered.
-        :paramtype dimension_value_filter: str
-        """
-        super(MetricDimensionQueryOptions, self).__init__(**kwargs)
-        self.dimension_name = dimension_name
-        self.dimension_value_filter = dimension_value_filter
 
 
 class MetricEnrichedSeriesData(msrest.serialization.Model):
@@ -4134,76 +3096,6 @@ class MetricEnrichedSeriesData(msrest.serialization.Model):
         self.series_key = series_key
 
 
-class MetricFeedbackFilter(msrest.serialization.Model):
-    """MetricFeedbackFilter.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar metric_id: Required. filter feedbacks by metric id.
-    :vartype metric_id: str
-    :ivar dimension_filter:
-    :vartype dimension_filter: ~azure.ai.metricsadvisor.models.FeedbackDimensionFilter
-    :ivar feedback_type: filter feedbacks by type. Possible values include: "Anomaly",
-     "ChangePoint", "Period", "Comment".
-    :vartype feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
-    :ivar start_time: start time filter under chosen time mode.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: end time filter under chosen time mode.
-    :vartype end_time: ~datetime.datetime
-    :ivar time_mode: time mode to filter feedback. Possible values include: "MetricTimestamp",
-     "FeedbackCreatedTime".
-    :vartype time_mode: str or ~azure.ai.metricsadvisor.models.FeedbackQueryTimeMode
-    """
-
-    _validation = {
-        "metric_id": {"required": True},
-    }
-
-    _attribute_map = {
-        "metric_id": {"key": "metricId", "type": "str"},
-        "dimension_filter": {"key": "dimensionFilter", "type": "FeedbackDimensionFilter"},
-        "feedback_type": {"key": "feedbackType", "type": "str"},
-        "start_time": {"key": "startTime", "type": "iso-8601"},
-        "end_time": {"key": "endTime", "type": "iso-8601"},
-        "time_mode": {"key": "timeMode", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        metric_id: str,
-        dimension_filter: Optional["_models.FeedbackDimensionFilter"] = None,
-        feedback_type: Optional[Union[str, "_models.FeedbackType"]] = None,
-        start_time: Optional[datetime.datetime] = None,
-        end_time: Optional[datetime.datetime] = None,
-        time_mode: Optional[Union[str, "_models.FeedbackQueryTimeMode"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword metric_id: Required. filter feedbacks by metric id.
-        :paramtype metric_id: str
-        :keyword dimension_filter:
-        :paramtype dimension_filter: ~azure.ai.metricsadvisor.models.FeedbackDimensionFilter
-        :keyword feedback_type: filter feedbacks by type. Possible values include: "Anomaly",
-         "ChangePoint", "Period", "Comment".
-        :paramtype feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
-        :keyword start_time: start time filter under chosen time mode.
-        :paramtype start_time: ~datetime.datetime
-        :keyword end_time: end time filter under chosen time mode.
-        :paramtype end_time: ~datetime.datetime
-        :keyword time_mode: time mode to filter feedback. Possible values include: "MetricTimestamp",
-         "FeedbackCreatedTime".
-        :paramtype time_mode: str or ~azure.ai.metricsadvisor.models.FeedbackQueryTimeMode
-        """
-        super(MetricFeedbackFilter, self).__init__(**kwargs)
-        self.metric_id = metric_id
-        self.dimension_filter = dimension_filter
-        self.feedback_type = feedback_type
-        self.start_time = start_time
-        self.end_time = end_time
-        self.time_mode = time_mode
-
-
 class MetricFeedbackList(msrest.serialization.Model):
     """MetricFeedbackList.
 
@@ -4230,6 +3122,44 @@ class MetricFeedbackList(msrest.serialization.Model):
         super(MetricFeedbackList, self).__init__(**kwargs)
         self.next_link = None
         self.value = None
+
+
+class MetricSeriesData(msrest.serialization.Model):
+    """MetricSeriesData.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar timestamps: timestamps of the data related to this time series.
+    :vartype timestamps: list[~datetime.datetime]
+    :ivar values: values of the data related to this time series.
+    :vartype values: list[float]
+    :ivar metric_id: metric unique id.
+    :vartype metric_id: str
+    :ivar dimension: dimension name and value pair.
+    :vartype dimension: dict[str, str]
+    """
+
+    _validation = {
+        "timestamps": {"readonly": True},
+        "values": {"readonly": True},
+        "metric_id": {"readonly": True},
+        "dimension": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "timestamps": {"key": "timestampList", "type": "[iso-8601]"},
+        "values": {"key": "valueList", "type": "[float]"},
+        "metric_id": {"key": "id.metricId", "type": "str"},
+        "dimension": {"key": "id.dimension", "type": "{str}"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super(MetricSeriesData, self).__init__(**kwargs)
+        self.timestamps = None
+        self.values = None
+        self.metric_id = None
+        self.dimension = None
 
 
 class MetricSeriesDefinition(msrest.serialization.Model):
@@ -4269,8 +3199,7 @@ class MetricSeriesGroupDetectionCondition(msrest.serialization.Model):
 
      should be specified when combining multiple detection conditions. Possible values include:
      "AND", "OR".
-    :vartype condition_operator: str or
-     ~azure.ai.metricsadvisor.models.AnomalyDetectionConfigurationLogicType
+    :vartype condition_operator: str or ~azure.ai.metricsadvisor.models.DetectionConditionOperator
     :ivar smart_detection_condition:
     :vartype smart_detection_condition: ~azure.ai.metricsadvisor.models.SmartDetectionCondition
     :ivar hard_threshold_condition:
@@ -4297,7 +3226,7 @@ class MetricSeriesGroupDetectionCondition(msrest.serialization.Model):
         self,
         *,
         series_group_key: Dict[str, str],
-        condition_operator: Optional[Union[str, "_models.AnomalyDetectionConfigurationLogicType"]] = None,
+        condition_operator: Optional[Union[str, "_models.DetectionConditionOperator"]] = None,
         smart_detection_condition: Optional["_models.SmartDetectionCondition"] = None,
         hard_threshold_condition: Optional["_models.HardThresholdCondition"] = None,
         change_threshold_condition: Optional["_models.ChangeThresholdCondition"] = None,
@@ -4309,7 +3238,7 @@ class MetricSeriesGroupDetectionCondition(msrest.serialization.Model):
          should be specified when combining multiple detection conditions. Possible values include:
          "AND", "OR".
         :paramtype condition_operator: str or
-         ~azure.ai.metricsadvisor.models.AnomalyDetectionConfigurationLogicType
+         ~azure.ai.metricsadvisor.models.DetectionConditionOperator
         :keyword smart_detection_condition:
         :paramtype smart_detection_condition: ~azure.ai.metricsadvisor.models.SmartDetectionCondition
         :keyword hard_threshold_condition:
@@ -4355,42 +3284,6 @@ class MetricSeriesList(msrest.serialization.Model):
         self.value = None
 
 
-class MetricSeriesQueryOptions(msrest.serialization.Model):
-    """MetricSeriesQueryOptions.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar active_since: Required. query series ingested after this time, the format should be
-     yyyy-MM-ddTHH:mm:ssZ.
-    :vartype active_since: ~datetime.datetime
-    :ivar dimension_filter: filter specific dimension name and values.
-    :vartype dimension_filter: dict[str, list[str]]
-    """
-
-    _validation = {
-        "active_since": {"required": True},
-    }
-
-    _attribute_map = {
-        "active_since": {"key": "activeSince", "type": "iso-8601"},
-        "dimension_filter": {"key": "dimensionFilter", "type": "{[str]}"},
-    }
-
-    def __init__(
-        self, *, active_since: datetime.datetime, dimension_filter: Optional[Dict[str, List[str]]] = None, **kwargs
-    ):
-        """
-        :keyword active_since: Required. query series ingested after this time, the format should be
-         yyyy-MM-ddTHH:mm:ssZ.
-        :paramtype active_since: ~datetime.datetime
-        :keyword dimension_filter: filter specific dimension name and values.
-        :paramtype dimension_filter: dict[str, list[str]]
-        """
-        super(MetricSeriesQueryOptions, self).__init__(**kwargs)
-        self.active_since = active_since
-        self.dimension_filter = dimension_filter
-
-
 class MetricSingleSeriesDetectionCondition(msrest.serialization.Model):
     """MetricSingleSeriesDetectionCondition.
 
@@ -4400,8 +3293,7 @@ class MetricSingleSeriesDetectionCondition(msrest.serialization.Model):
 
      should be specified when combining multiple detection conditions. Possible values include:
      "AND", "OR".
-    :vartype condition_operator: str or
-     ~azure.ai.metricsadvisor.models.AnomalyDetectionConfigurationLogicType
+    :vartype condition_operator: str or ~azure.ai.metricsadvisor.models.DetectionConditionOperator
     :ivar smart_detection_condition:
     :vartype smart_detection_condition: ~azure.ai.metricsadvisor.models.SmartDetectionCondition
     :ivar hard_threshold_condition:
@@ -4428,7 +3320,7 @@ class MetricSingleSeriesDetectionCondition(msrest.serialization.Model):
         self,
         *,
         series_key: Dict[str, str],
-        condition_operator: Optional[Union[str, "_models.AnomalyDetectionConfigurationLogicType"]] = None,
+        condition_operator: Optional[Union[str, "_models.DetectionConditionOperator"]] = None,
         smart_detection_condition: Optional["_models.SmartDetectionCondition"] = None,
         hard_threshold_condition: Optional["_models.HardThresholdCondition"] = None,
         change_threshold_condition: Optional["_models.ChangeThresholdCondition"] = None,
@@ -4440,7 +3332,7 @@ class MetricSingleSeriesDetectionCondition(msrest.serialization.Model):
          should be specified when combining multiple detection conditions. Possible values include:
          "AND", "OR".
         :paramtype condition_operator: str or
-         ~azure.ai.metricsadvisor.models.AnomalyDetectionConfigurationLogicType
+         ~azure.ai.metricsadvisor.models.DetectionConditionOperator
         :keyword smart_detection_condition:
         :paramtype smart_detection_condition: ~azure.ai.metricsadvisor.models.SmartDetectionCondition
         :keyword hard_threshold_condition:
@@ -4599,32 +3491,6 @@ class RootCauseList(msrest.serialization.Model):
         self.value = value
 
 
-class SeriesIdentity(msrest.serialization.Model):
-    """SeriesIdentity.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar dimension: Required. dimension specified for series.
-    :vartype dimension: dict[str, str]
-    """
-
-    _validation = {
-        "dimension": {"required": True},
-    }
-
-    _attribute_map = {
-        "dimension": {"key": "dimension", "type": "{str}"},
-    }
-
-    def __init__(self, *, dimension: Dict[str, str], **kwargs):
-        """
-        :keyword dimension: Required. dimension specified for series.
-        :paramtype dimension: dict[str, str]
-        """
-        super(SeriesIdentity, self).__init__(**kwargs)
-        self.dimension = dimension
-
-
 class SeriesResultList(msrest.serialization.Model):
     """SeriesResultList.
 
@@ -4649,217 +3515,6 @@ class SeriesResultList(msrest.serialization.Model):
         """
         super(SeriesResultList, self).__init__(**kwargs)
         self.value = value
-
-
-class ServicePrincipalCredentialPatch(DataSourceCredentialPatch):
-    """ServicePrincipalCredentialPatch.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar data_source_credential_type: Required. Type of data source credential.Constant filled by
-     server. Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
-     "ServicePrincipal", "ServicePrincipalInKV".
-    :vartype data_source_credential_type: str or
-     ~azure.ai.metricsadvisor.models.DatasourceCredentialType
-    :ivar data_source_credential_name: Name of data source credential.
-    :vartype data_source_credential_name: str
-    :ivar data_source_credential_description: Description of data source credential.
-    :vartype data_source_credential_description: str
-    :ivar parameters:
-    :vartype parameters: ~azure.ai.metricsadvisor.models.ServicePrincipalParamPatch
-    """
-
-    _validation = {
-        "data_source_credential_type": {"required": True},
-    }
-
-    _attribute_map = {
-        "data_source_credential_type": {"key": "dataSourceCredentialType", "type": "str"},
-        "data_source_credential_name": {"key": "dataSourceCredentialName", "type": "str"},
-        "data_source_credential_description": {"key": "dataSourceCredentialDescription", "type": "str"},
-        "parameters": {"key": "parameters", "type": "ServicePrincipalParamPatch"},
-    }
-
-    def __init__(
-        self,
-        *,
-        data_source_credential_name: Optional[str] = None,
-        data_source_credential_description: Optional[str] = None,
-        parameters: Optional["_models.ServicePrincipalParamPatch"] = None,
-        **kwargs
-    ):
-        """
-        :keyword data_source_credential_name: Name of data source credential.
-        :paramtype data_source_credential_name: str
-        :keyword data_source_credential_description: Description of data source credential.
-        :paramtype data_source_credential_description: str
-        :keyword parameters:
-        :paramtype parameters: ~azure.ai.metricsadvisor.models.ServicePrincipalParamPatch
-        """
-        super(ServicePrincipalCredentialPatch, self).__init__(
-            data_source_credential_name=data_source_credential_name,
-            data_source_credential_description=data_source_credential_description,
-            **kwargs
-        )
-        self.data_source_credential_type = "ServicePrincipal"  # type: str
-        self.parameters = parameters
-
-
-class ServicePrincipalInKVCredentialPatch(DataSourceCredentialPatch):
-    """ServicePrincipalInKVCredentialPatch.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar data_source_credential_type: Required. Type of data source credential.Constant filled by
-     server. Possible values include: "AzureSQLConnectionString", "DataLakeGen2SharedKey",
-     "ServicePrincipal", "ServicePrincipalInKV".
-    :vartype data_source_credential_type: str or
-     ~azure.ai.metricsadvisor.models.DatasourceCredentialType
-    :ivar data_source_credential_name: Name of data source credential.
-    :vartype data_source_credential_name: str
-    :ivar data_source_credential_description: Description of data source credential.
-    :vartype data_source_credential_description: str
-    :ivar parameters:
-    :vartype parameters: ~azure.ai.metricsadvisor.models.ServicePrincipalInKVParamPatch
-    """
-
-    _validation = {
-        "data_source_credential_type": {"required": True},
-    }
-
-    _attribute_map = {
-        "data_source_credential_type": {"key": "dataSourceCredentialType", "type": "str"},
-        "data_source_credential_name": {"key": "dataSourceCredentialName", "type": "str"},
-        "data_source_credential_description": {"key": "dataSourceCredentialDescription", "type": "str"},
-        "parameters": {"key": "parameters", "type": "ServicePrincipalInKVParamPatch"},
-    }
-
-    def __init__(
-        self,
-        *,
-        data_source_credential_name: Optional[str] = None,
-        data_source_credential_description: Optional[str] = None,
-        parameters: Optional["_models.ServicePrincipalInKVParamPatch"] = None,
-        **kwargs
-    ):
-        """
-        :keyword data_source_credential_name: Name of data source credential.
-        :paramtype data_source_credential_name: str
-        :keyword data_source_credential_description: Description of data source credential.
-        :paramtype data_source_credential_description: str
-        :keyword parameters:
-        :paramtype parameters: ~azure.ai.metricsadvisor.models.ServicePrincipalInKVParamPatch
-        """
-        super(ServicePrincipalInKVCredentialPatch, self).__init__(
-            data_source_credential_name=data_source_credential_name,
-            data_source_credential_description=data_source_credential_description,
-            **kwargs
-        )
-        self.data_source_credential_type = "ServicePrincipalInKV"  # type: str
-        self.parameters = parameters
-
-
-class ServicePrincipalInKVParamPatch(msrest.serialization.Model):
-    """ServicePrincipalInKVParamPatch.
-
-    :ivar key_vault_endpoint: The Key Vault endpoint that storing the service principal.
-    :vartype key_vault_endpoint: str
-    :ivar key_vault_client_id: The Client Id to access the Key Vault.
-    :vartype key_vault_client_id: str
-    :ivar key_vault_client_secret: The Client Secret to access the Key Vault.
-    :vartype key_vault_client_secret: str
-    :ivar service_principal_id_name_in_kv: The secret name of the service principal's client Id in
-     the Key Vault.
-    :vartype service_principal_id_name_in_kv: str
-    :ivar service_principal_secret_name_in_kv: The secret name of the service principal's client
-     secret in the Key Vault.
-    :vartype service_principal_secret_name_in_kv: str
-    :ivar tenant_id: The tenant id of your service principal.
-    :vartype tenant_id: str
-    """
-
-    _attribute_map = {
-        "key_vault_endpoint": {"key": "keyVaultEndpoint", "type": "str"},
-        "key_vault_client_id": {"key": "keyVaultClientId", "type": "str"},
-        "key_vault_client_secret": {"key": "keyVaultClientSecret", "type": "str"},
-        "service_principal_id_name_in_kv": {"key": "servicePrincipalIdNameInKV", "type": "str"},
-        "service_principal_secret_name_in_kv": {"key": "servicePrincipalSecretNameInKV", "type": "str"},
-        "tenant_id": {"key": "tenantId", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        key_vault_endpoint: Optional[str] = None,
-        key_vault_client_id: Optional[str] = None,
-        key_vault_client_secret: Optional[str] = None,
-        service_principal_id_name_in_kv: Optional[str] = None,
-        service_principal_secret_name_in_kv: Optional[str] = None,
-        tenant_id: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword key_vault_endpoint: The Key Vault endpoint that storing the service principal.
-        :paramtype key_vault_endpoint: str
-        :keyword key_vault_client_id: The Client Id to access the Key Vault.
-        :paramtype key_vault_client_id: str
-        :keyword key_vault_client_secret: The Client Secret to access the Key Vault.
-        :paramtype key_vault_client_secret: str
-        :keyword service_principal_id_name_in_kv: The secret name of the service principal's client Id
-         in the Key Vault.
-        :paramtype service_principal_id_name_in_kv: str
-        :keyword service_principal_secret_name_in_kv: The secret name of the service principal's client
-         secret in the Key Vault.
-        :paramtype service_principal_secret_name_in_kv: str
-        :keyword tenant_id: The tenant id of your service principal.
-        :paramtype tenant_id: str
-        """
-        super(ServicePrincipalInKVParamPatch, self).__init__(**kwargs)
-        self.key_vault_endpoint = key_vault_endpoint
-        self.key_vault_client_id = key_vault_client_id
-        self.key_vault_client_secret = key_vault_client_secret
-        self.service_principal_id_name_in_kv = service_principal_id_name_in_kv
-        self.service_principal_secret_name_in_kv = service_principal_secret_name_in_kv
-        self.tenant_id = tenant_id
-
-
-class ServicePrincipalParamPatch(msrest.serialization.Model):
-    """ServicePrincipalParamPatch.
-
-    :ivar client_id: The client id of the service principal.
-    :vartype client_id: str
-    :ivar client_secret: The client secret of the service principal.
-    :vartype client_secret: str
-    :ivar tenant_id: The tenant id of the service principal.
-    :vartype tenant_id: str
-    """
-
-    _attribute_map = {
-        "client_id": {"key": "clientId", "type": "str"},
-        "client_secret": {"key": "clientSecret", "type": "str"},
-        "tenant_id": {"key": "tenantId", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        client_id: Optional[str] = None,
-        client_secret: Optional[str] = None,
-        tenant_id: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword client_id: The client id of the service principal.
-        :paramtype client_id: str
-        :keyword client_secret: The client secret of the service principal.
-        :paramtype client_secret: str
-        :keyword tenant_id: The tenant id of the service principal.
-        :paramtype tenant_id: str
-        """
-        super(ServicePrincipalParamPatch, self).__init__(**kwargs)
-        self.client_id = client_id
-        self.client_secret = client_secret
-        self.tenant_id = tenant_id
 
 
 class SeverityCondition(msrest.serialization.Model):
@@ -5053,111 +3708,6 @@ class TopNGroupScope(msrest.serialization.Model):
         self.min_top_count = min_top_count
 
 
-class UsageStats(msrest.serialization.Model):
-    """UsageStats.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar timestamp: The timestamp of the stats.
-    :vartype timestamp: ~datetime.datetime
-    :ivar active_series_count: The active series count.
-    :vartype active_series_count: int
-    :ivar all_series_count: All series count under non deleted data feed.
-    :vartype all_series_count: int
-    :ivar metrics_count: The metrics count under non deleted data feed.
-    :vartype metrics_count: int
-    :ivar data_feed_count: The count of non deleted data feed.
-    :vartype data_feed_count: int
-    """
-
-    _validation = {
-        "timestamp": {"readonly": True},
-        "active_series_count": {"readonly": True},
-        "all_series_count": {"readonly": True},
-        "metrics_count": {"readonly": True},
-        "data_feed_count": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "timestamp": {"key": "timestamp", "type": "iso-8601"},
-        "active_series_count": {"key": "activeSeriesCount", "type": "int"},
-        "all_series_count": {"key": "allSeriesCount", "type": "int"},
-        "metrics_count": {"key": "metricsCount", "type": "int"},
-        "data_feed_count": {"key": "dataFeedCount", "type": "int"},
-    }
-
-    def __init__(self, **kwargs):
-        """ """
-        super(UsageStats, self).__init__(**kwargs)
-        self.timestamp = None
-        self.active_series_count = None
-        self.all_series_count = None
-        self.metrics_count = None
-        self.data_feed_count = None
-
-
-class WebhookHookParameterPatch(msrest.serialization.Model):
-    """WebhookHookParameterPatch.
-
-    :ivar endpoint: API address, will be called when alert is triggered, only support POST method
-     via SSL.
-    :vartype endpoint: str
-    :ivar username: (Deprecated) The username, if using basic authentication.
-    :vartype username: str
-    :ivar password: (Deprecated) The password, if using basic authentication.
-    :vartype password: str
-    :ivar headers: custom headers in api call.
-    :vartype headers: dict[str, str]
-    :ivar certificate_key: The certificate key, if using client certificate.
-    :vartype certificate_key: str
-    :ivar certificate_password: The certificate password, if using client certificate.
-    :vartype certificate_password: str
-    """
-
-    _attribute_map = {
-        "endpoint": {"key": "endpoint", "type": "str"},
-        "username": {"key": "username", "type": "str"},
-        "password": {"key": "password", "type": "str"},
-        "headers": {"key": "headers", "type": "{str}"},
-        "certificate_key": {"key": "certificateKey", "type": "str"},
-        "certificate_password": {"key": "certificatePassword", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        endpoint: Optional[str] = None,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
-        headers: Optional[Dict[str, str]] = None,
-        certificate_key: Optional[str] = None,
-        certificate_password: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword endpoint: API address, will be called when alert is triggered, only support POST
-         method via SSL.
-        :paramtype endpoint: str
-        :keyword username: (Deprecated) The username, if using basic authentication.
-        :paramtype username: str
-        :keyword password: (Deprecated) The password, if using basic authentication.
-        :paramtype password: str
-        :keyword headers: custom headers in api call.
-        :paramtype headers: dict[str, str]
-        :keyword certificate_key: The certificate key, if using client certificate.
-        :paramtype certificate_key: str
-        :keyword certificate_password: The certificate password, if using client certificate.
-        :paramtype certificate_password: str
-        """
-        super(WebhookHookParameterPatch, self).__init__(**kwargs)
-        self.endpoint = endpoint
-        self.username = username
-        self.password = password
-        self.headers = headers
-        self.certificate_key = certificate_key
-        self.certificate_password = certificate_password
-
-
 class WebNotificationHook(NotificationHook):
     """WebNotificationHook.
 
@@ -5165,9 +3715,8 @@ class WebNotificationHook(NotificationHook):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar hook_type: Required. hook type.Constant filled by server. Possible values include:
-     "Webhook", "Email".
-    :vartype hook_type: str or ~azure.ai.metricsadvisor.models.HookType
+    :ivar hook_type: Required. hook type.Constant filled by server.
+    :vartype hook_type: str
     :ivar id: Hook unique id.
     :vartype id: str
     :ivar name: hook unique name.

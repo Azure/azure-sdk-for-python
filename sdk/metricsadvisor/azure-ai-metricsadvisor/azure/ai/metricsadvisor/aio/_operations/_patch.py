@@ -40,6 +40,16 @@ from azure.core.exceptions import (
     map_error,
 )
 from ...models import _models_py3 as generated_models
+from ...models._patch import (
+    AlertingResultQuery,
+    AnomalyDimensionQuery,
+    DetectionAnomalyResultQuery,
+    DetectionIncidentResultQuery,
+    DetectionSeriesQuery,
+    EnrichmentStatusQueryOption,
+    IngestionProgressResetOptions,
+    IngestionStatusQueryOptions,
+)
 
 from ._operations import MetricsAdvisorClientOperationsMixin as MetricsAdvisorClientOperationsMixinGenerated
 from ..._operations._patch import (
@@ -480,9 +490,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         )
 
         return super().list_metric_enriched_series_data(  # type: ignore
-            configuration_id=detection_configuration_id,
-            body=detection_series_query,
-            **kwargs
+            configuration_id=detection_configuration_id, body=detection_series_query, **kwargs
         )
 
     @distributed_trace
@@ -588,9 +596,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         )
 
         return super().get_incidents_by_anomaly_detection_configuration(  # type: ignore
-            configuration_id=detection_configuration_id,
-            body=detection_incident_result_query,
-            **kwargs
+            configuration_id=detection_configuration_id, body=detection_incident_result_query, **kwargs
         )
 
     @distributed_trace
@@ -662,7 +668,9 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         # type: (str, datetime.datetime, Any) -> AsyncItemPaged[MetricSeriesDefinition]
         cls = kwargs.pop("cls", None)
 
-        initial_request, kwargs = self._list_metric_series_definitions_initial_request(metric_id, active_since, **kwargs)
+        initial_request, kwargs = self._list_metric_series_definitions_initial_request(
+            metric_id, active_since, **kwargs
+        )
 
         async def extract_data(pipeline_response):
             deserialized = MetricSeriesList.deserialize(pipeline_response)
@@ -674,10 +682,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         next_request = build_list_metric_series_definitions_request(metric_id=metric_id)
         next_request.method = "POST"
         return self._paging_helper(
-            extract_data=extract_data,
-            initial_request=initial_request,
-            next_request=next_request,
-            **kwargs
+            extract_data=extract_data, initial_request=initial_request, next_request=next_request, **kwargs
         )
 
     @distributed_trace

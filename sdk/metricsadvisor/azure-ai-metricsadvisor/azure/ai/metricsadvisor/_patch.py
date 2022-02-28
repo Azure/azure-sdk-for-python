@@ -1586,5 +1586,4 @@ __all__ = [
     "MetricsAdvisorKeyCredential",
     "MetricsAdvisorAdministrationClient",
     "MetricsAdvisorClient",
-    "patch_sdk",
 ]

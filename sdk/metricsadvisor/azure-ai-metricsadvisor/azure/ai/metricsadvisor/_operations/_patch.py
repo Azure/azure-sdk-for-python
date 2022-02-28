@@ -45,6 +45,17 @@ from ._operations import (
 )
 from ..models import *
 from ..models import _models_py3 as generated_models
+from ..models._patch import (
+    AlertingResultQuery,
+    MetricDataQueryOptions,
+    AnomalyDimensionQuery,
+    DetectionAnomalyResultQuery,
+    DetectionIncidentResultQuery,
+    DetectionSeriesQuery,
+    EnrichmentStatusQueryOption,
+    IngestionProgressResetOptions,
+    IngestionStatusQueryOptions,
+)
 from msrest import Serializer
 from azure.core.paging import ItemPaged
 from azure.core.exceptions import (
@@ -121,10 +132,13 @@ class OperationMixinHelpers:
     def _deserialize_anomaly_detection_configuration(self, pipeline_response, **kwargs) -> AnomalyAlertConfiguration:
         cls = kwargs.pop("cls", None)
         response_json = pipeline_response.http_response.json()
-        response_json["metricAlertingConfigurations"] = [
-            self._deserialize(generated_models.MetricAlertConfiguration, m)
-            for m in response_json["metricAlertingConfigurations"]
-        ]
+        try:
+            response_json["metricAlertingConfigurations"] = [
+                self._deserialize(generated_models.MetricAlertConfiguration, m)
+                for m in response_json["metricAlertingConfigurations"]
+            ]
+        except KeyError:
+            raise ValueError(response_json)
         deserialized = self._deserialize(generated_models.AnomalyAlertConfiguration, response_json)
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -270,7 +284,7 @@ class OperationMixinHelpers:
             alert_configuration_patch = alert_configuration._to_generated()
         content_type = kwargs.pop("content_type", "application/merge-patch+json")  # type: Optional[str]
 
-        _json = self._serialize.body(alert_configuration_patch, "AnomalyAlertingConfigurationPatch")
+        _json = self._serialize.body(alert_configuration_patch, "AnomalyAlertingConfiguration")
 
         request = build_update_alert_configuration_request(
             configuration_id=alert_configuration_id,
@@ -831,9 +845,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         )
 
         return super().list_metric_enriched_series_data(  # type: ignore
-            configuration_id=detection_configuration_id,
-            body=detection_series_query,
-            **kwargs
+            configuration_id=detection_configuration_id, body=detection_series_query, **kwargs
         )
 
     @distributed_trace
@@ -997,7 +1009,9 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         # type: (str, datetime.datetime, Any) -> ItemPaged[MetricSeriesDefinition]
         cls = kwargs.pop("cls", None)
 
-        initial_request, kwargs = self._list_metric_series_definitions_initial_request(metric_id, active_since, **kwargs)
+        initial_request, kwargs = self._list_metric_series_definitions_initial_request(
+            metric_id, active_since, **kwargs
+        )
 
         def extract_data(pipeline_response):
             deserialized = MetricSeriesList.deserialize(pipeline_response)
@@ -1009,10 +1023,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         next_request = build_list_metric_series_definitions_request(metric_id=metric_id)
         next_request.method = "POST"
         return self._paging_helper(
-            extract_data=extract_data,
-            initial_request=initial_request,
-            next_request=next_request,
-            **kwargs
+            extract_data=extract_data, initial_request=initial_request, next_request=next_request, **kwargs
         )
 
     @distributed_trace
