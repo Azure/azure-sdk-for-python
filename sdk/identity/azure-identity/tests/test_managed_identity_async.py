@@ -291,14 +291,14 @@ async def test_azure_ml_tenant_id():
             Request(
                 url,
                 method="GET",
-                required_headers={"secret": secret, "User-Agent": USER_AGENT},
-                required_params={"api-version": "2017-09-01", "resource": scope},
+                required_headers={"X-IDENTITY-HEADER": secret, "User-Agent": USER_AGENT},
+                required_params={"api-version": "2019-08-01", "resource": scope},
             ),
             Request(
                 url,
                 method="GET",
-                required_headers={"secret": secret, "User-Agent": USER_AGENT},
-                required_params={"api-version": "2017-09-01", "resource": scope, "clientid": client_id},
+                required_headers={"X-IDENTITY-HEADER": secret, "User-Agent": USER_AGENT},
+                required_params={"api-version": "2019-08-01", "resource": scope, "clientid": client_id},
             ),
         ],
         responses=[
@@ -386,13 +386,15 @@ async def test_app_service_2019_08_01():
     access_token = "****"
     expires_on = 42
     endpoint = "http://localhost:42/token"
+    new_endpoint = "http://localhost:42/new-token"
     secret = "expected-secret"
+    new_secret = "new-expected-secret"
     scope = "scope"
 
     async def send(request, **_):
-        assert request.url.startswith(endpoint)
+        assert request.url.startswith(new_endpoint)
         assert request.method == "GET"
-        assert request.headers["X-IDENTITY-HEADER"] == secret
+        assert request.headers["X-IDENTITY-HEADER"] == new_secret
         assert request.headers["User-Agent"] == USER_AGENT
         assert request.query["api-version"] == "2019-08-01"
         assert request.query["resource"] == scope
@@ -412,8 +414,8 @@ async def test_app_service_2019_08_01():
         {
             EnvironmentVariables.IDENTITY_ENDPOINT: endpoint,
             EnvironmentVariables.IDENTITY_HEADER: secret,
-            EnvironmentVariables.MSI_ENDPOINT: endpoint,
-            EnvironmentVariables.MSI_SECRET: secret,
+            EnvironmentVariables.MSI_ENDPOINT: new_endpoint,
+            EnvironmentVariables.MSI_SECRET: new_secret,
         },
         clear=True,
     ):
@@ -427,13 +429,15 @@ async def test_app_service_2019_08_01_tenant_id():
     access_token = "****"
     expires_on = 42
     endpoint = "http://localhost:42/token"
+    new_endpoint = "http://localhost:42/new-token"
     secret = "expected-secret"
+    new_secret = "new-expected-secret"
     scope = "scope"
 
     async def send(request, **_):
-        assert request.url.startswith(endpoint)
+        assert request.url.startswith(new_endpoint)
         assert request.method == "GET"
-        assert request.headers["X-IDENTITY-HEADER"] == secret
+        assert request.headers["X-IDENTITY-HEADER"] == new_secret
         assert request.headers["User-Agent"] == USER_AGENT
         assert request.query["api-version"] == "2019-08-01"
         assert request.query["resource"] == scope
@@ -448,17 +452,17 @@ async def test_app_service_2019_08_01_tenant_id():
         )
 
     # when configuration for both API versions is present, the credential should prefer the most recent
-    for environment in [
-        {EnvironmentVariables.IDENTITY_ENDPOINT: endpoint, EnvironmentVariables.IDENTITY_HEADER: secret},
-        {
-            EnvironmentVariables.IDENTITY_ENDPOINT: endpoint,
-            EnvironmentVariables.IDENTITY_HEADER: secret,
-            EnvironmentVariables.MSI_ENDPOINT: endpoint,
-            EnvironmentVariables.MSI_SECRET: secret,
-        },
-    ]:
-        with mock.patch.dict("os.environ", environment, clear=True):
-            token = await ManagedIdentityCredential(transport=mock.Mock(send=send)).get_token(scope, tenant_id="tenant_id")
+    with mock.patch.dict(
+            MANAGED_IDENTITY_ENVIRON,
+            {
+                EnvironmentVariables.IDENTITY_ENDPOINT: endpoint,
+                EnvironmentVariables.IDENTITY_HEADER: secret,
+                EnvironmentVariables.MSI_ENDPOINT: new_endpoint,
+                EnvironmentVariables.MSI_SECRET: new_secret,
+            },
+            clear=True,
+    ):
+        token = await ManagedIdentityCredential(transport=mock.Mock(send=send)).get_token(scope, tenant_id="tenant_id")
         assert token.token == access_token
         assert token.expires_on == expires_on
 
@@ -529,7 +533,6 @@ async def test_client_id_none():
 
     async def send(request, **_):
         assert "client_id" not in request.query  # IMDS
-        assert "clientid" not in request.query  # App Service 2019-08-01
         if request.data:
             assert "client_id" not in request.body  # Cloud Shell
         return mock_response(
@@ -543,37 +546,6 @@ async def test_client_id_none():
 
     with mock.patch.dict(
         MANAGED_IDENTITY_ENVIRON, {EnvironmentVariables.MSI_ENDPOINT: "https://localhost"}, clear=True
-    ):
-        credential = ManagedIdentityCredential(client_id=None, transport=mock.Mock(send=send))
-        token = await credential.get_token(scope)
-    assert token.token == expected_access_token
-
-
-@pytest.mark.asyncio
-async def test_client_id_none_app_service_2017_09_01():
-    """The credential should ignore client_id=None.
-
-    App Service 2017-09-01 must be tested separately due to its eccentric expires_on format.
-    """
-
-    expected_access_token = "****"
-    scope = "scope"
-
-    async def send(request, **_):
-        assert "client_id" not in request.query
-        assert "clientid" not in request.query
-        return mock_response(
-            json_payload=(
-                build_aad_response(
-                    access_token=expected_access_token, expires_on="01/01/1970 00:00:42 +00:00", resource=scope
-                )
-            )
-        )
-
-    with mock.patch.dict(
-        MANAGED_IDENTITY_ENVIRON,
-        {EnvironmentVariables.MSI_ENDPOINT: "https://localhost", EnvironmentVariables.MSI_SECRET: "secret"},
-        clear=True,
     ):
         credential = ManagedIdentityCredential(client_id=None, transport=mock.Mock(send=send))
         token = await credential.get_token(scope)

@@ -7,7 +7,7 @@ interactions:
       secret:
       - redacted
     method: GET
-    uri: https://msi-endpoint/token?api-version=2017-09-01&resource=https://management.azure.com&clientid=client-id
+    uri: https://msi-endpoint/token?api-version=2019-08-01&resource=https://management.azure.com&clientid=client-id
   response:
     body:
       string: '{"access_token": "redacted", "expires_on": "05/22/2021 17:18:21 +00:00",
