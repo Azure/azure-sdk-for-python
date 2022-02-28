@@ -18,6 +18,9 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 class TestGetChildren(FormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(2)
+
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy

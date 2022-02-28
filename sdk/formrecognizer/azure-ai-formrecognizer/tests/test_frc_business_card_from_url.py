@@ -18,6 +18,9 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 
 class TestBusinessCardFromUrl(FormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(2)
+
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
