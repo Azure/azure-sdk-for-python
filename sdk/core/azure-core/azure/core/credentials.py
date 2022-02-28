@@ -4,12 +4,9 @@
 # license information.
 # -------------------------------------------------------------------------
 from collections import namedtuple
-from typing import NamedTuple, TYPE_CHECKING
+from typing import Any, NamedTuple, Optional
 from typing_extensions import Protocol
 import six
-
-if TYPE_CHECKING:
-    from typing import Any, Optional
 
 
 class AccessToken(NamedTuple):
@@ -26,7 +23,7 @@ class TokenCredential(Protocol):
     """Protocol for classes able to provide OAuth tokens."""
 
     def get_token(
-        self, *scopes: str, claims: "Optional[str]" = None, tenant_id: "Optional[str]" = None, **kwargs: "Any"
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
     ) -> AccessToken:
         """Request an access token for `scopes`.
 
