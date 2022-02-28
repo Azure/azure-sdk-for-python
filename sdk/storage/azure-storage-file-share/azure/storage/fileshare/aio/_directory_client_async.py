@@ -89,7 +89,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             credential=credential,
             loop=loop,
             **kwargs)
-        self._client = AzureFileStorage(url=self.url, pipeline=self._pipeline, loop=loop)
+        self._client = AzureFileStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
         self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
         self._loop = loop
 
