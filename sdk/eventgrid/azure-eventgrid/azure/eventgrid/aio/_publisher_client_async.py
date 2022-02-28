@@ -187,11 +187,14 @@ class EventGridPublisherClient:
         :keyword str content_type: The type of content to be used to send the events.
          Has default value "application/json; charset=utf-8" for EventGridEvents,
          with "cloudevents-batch+json" for CloudEvents
+        :keyword str channel_name: Optional. Required only when publishing to partner namespaces with partner topic
+         routing mode. The name of the channel header.
         :rtype: None
         """
         if not isinstance(events, list):
             events = cast(ListEventType, [events])
         content_type = kwargs.pop("content_type", "application/json; charset=utf-8")
+        channel_name = kwargs.pop('channel_name', None)
 
         if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
             try:
@@ -209,7 +212,7 @@ class EventGridPublisherClient:
             for event in events:
                 _eventgrid_data_typecheck(event)
         response = await self._client.send_request(  # pylint: disable=protected-access
-            _build_request(self._endpoint, content_type, events), **kwargs
+            _build_request(self._endpoint, content_type, events, channel_name), **kwargs
         )
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         if response.status_code != 200:
