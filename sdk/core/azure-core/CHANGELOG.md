@@ -3,6 +3,7 @@
 ## 1.22.2 (Unreleased)
 
 ### Features Added
+- Improve intellisense type hinting for service client methods #22891
 
 ### Breaking Changes
 
