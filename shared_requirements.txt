@@ -136,7 +136,8 @@ chardet<5,>=3.0.2
 #override azure-core-tracing-opencensus azure-core<2.0.0,>=1.13.0
 #override azure-core-tracing-opentelemetry azure-core<2.0.0,>=1.13.0
 #override azure-cosmos azure-core<2.0.0,>=1.0.0
-#override azure-data-tables azure-core<2.0.0,>=1.14.0
+#override azure-data-tables azure-core<2.0.0,>=1.15.0
+#override azure-data-tables msrest>=0.6.10
 #override azure-eventhub azure-core<2.0.0,>=1.14.0
 #override azure-identity azure-core<2.0.0,>=1.11.0
 #override azure-keyvault-administration azure-core<2.0.0,>=1.15.0
@@ -185,7 +186,6 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-synapse-artifacts azure-core>=1.20.0,<2.0.0
 #override azure-synapse-monitoring azure-core>=1.20.0,<2.0.0
 #override azure-synapse-managedprivateendpoints azure-core>=1.20.0,<2.0.0
-#override azure-data-tables msrest>=0.6.10
 #override azure-ai-anomalydetector azure-core>=1.6.0,<2.0.0
 #override azure-eventgrid azure-core<2.0.0,>=1.18.0
 #override azure-monitor-query msrest>=0.6.19
