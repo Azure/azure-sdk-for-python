@@ -1,5 +1,6 @@
 # Azure Communication Rooms client library for Python
-<!-- write necessary description of service -->
+This package contains a Python SDK for Azure Communication Services for Rooms.
+Read more about Azure Communication Services [here](https://docs.microsoft.com/azure/communication-services/overview)
 
 ## _Disclaimer_
 
@@ -18,7 +19,7 @@ python -m pip install azure-communication-rooms
 
 - Python 3.6 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
-- An existing Azure Communication Rooms instance.
+- A deployed Communication Services resource. You can use the [Azure Portal](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource?tabs=windows&pivots=platform-azp) or the [Azure PowerShell](https://docs.microsoft.com/powershell/module/az.communication/new-azcommunicationservice) to set it up.
 
 #### Create with an Azure Active Directory Credential
 To use an [Azure Active Directory (AAD) token credential][authenticate_with_token],
@@ -36,29 +37,99 @@ Set the values of the client ID, tenant ID, and client secret of the AAD applica
 Use the returned token credential to authenticate the client:
 
 ```python
->>> from azure.communication.rooms import RoomsClient
->>> from azure.identity import DefaultAzureCredential
->>> client = RoomsClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
+from azure.communication.rooms import RoomsClient
+from azure.identity import DefaultAzureCredential
+client = RoomsClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 ```
-
-## Examples
+Alternatively you can use Connection String to the deployed resource
 
 ```python
->>> from azure.communication.rooms import RoomsClient
->>> from azure.identity import DefaultAzureCredential
->>> from azure.core.exceptions import HttpResponseError
+from azure.communication.rooms import RoomsClient
+from azure.identity import DefaultAzureCredential
+client = RoomsClient.from_connection_string(conn_str='<connection_str>' )
+```
+## Examples
 
->>> client = RoomsClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
->>> try:
-        <!-- wirte test code here -->
-    except HttpResponseError as e:
-        print('service responds error: {}'.format(e.response.json()))
+Once the client is initialized, following object can be used to interact with the service:
+
+```python
+from azure.communication.rooms import RoomsClient, RoomRequest
+
+room_request = RoomRequest(
+    valid_from="start-datetime",
+    valid_until="meeting-end-datetime"
+    participants={"first-participant":{}, "second-participant":{}},
+    )
+```
+- `valid_from`: A datetime object from which room will start existing
+- `valid_until`: A datetime object after which room meeting would end
+- `paritcipants`: A dict with MRI's of invitees to the room
+All the above attributes are optional. The service provides default values of valid_unti and
+valid_from if the are missing.
+RoomRequest can be used in following method invokations:
+
+`Create Room`
+```python
+from azure.communication.rooms import RoomsClient, RoomRequest
+from azure.core.exceptions import HttpResponseError
+
+client = RoomsClient.from_connection_string(conn_str='<connection_str>' )
+room_request = RoomRequest(
+    valid_from="start-datetime",
+    valid_until="meeting-end-datetime"
+    participants={"first-participant":{}, "second-participant":{}},
+    )
+try:
+    response = client.create_room(room_request=room_request)
+except HttpResponseError as e:
+    print('service responds error: {}'.format(e.response.json()))
 
 ```
+`Update Room`
+```python
+from azure.communication.rooms import RoomsClient, RoomRequest
+from azure.core.exceptions import HttpResponseError
+
+client = RoomsClient.from_connection_string(conn_str='<connection_str>' )
+update_room_request = RoomRequest(
+    valid_from="new-start-datetime",
+    valid_until="new-meeting-end-datetime"
+    participants={"first-participant":{}, "second-participant":{}},
+    )
+try:
+    response = client.update_room(
+        room_id="id of the room to be updated",
+        room_request=update_room_request)
+except HttpResponseError as e:
+    print('service responds error: {}'.format(e.response.json()))
+
+```
+
+`Delete a Room`
+```python
+from azure.communication.rooms import RoomsClient, RoomRequest
+from azure.core.exceptions import HttpResponseError
+
+client = RoomsClient.from_connection_string(conn_str='<connection_str>' )
+try:
+    client.delete_room(
+        room_id="id of the room to be deleted")
+except HttpResponseError as e:
+    print('service responds error: {}'.format(e.response.json()))
+
+```
+
+### More sample code
+
+Please take a look at the [samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/communication/azure-communication-rooms/samples) directory for detailed examples of how to use this library to create and manage rooms.
 
 ## Next steps
 
 More examples are coming soon...
+
+## Provide Feedback
+
+If you encounter any bugs or have suggestions, please file an issue in the [Issues](https://github.com/Azure/azure-sdk-for-python/issues) section of the project
 
 ## Contributing
 
