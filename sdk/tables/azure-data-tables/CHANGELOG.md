@@ -2,11 +2,9 @@
 
 ## 12.2.1 (Unreleased)
 
-### Features Added
-
-### Breaking Changes
-
 ### Bugs Fixed
+* Fixed hard-coded URL scheme in batch requests (#21953)
+* Improved documentation for query formatting in `query_entities APIs (#23235)
 
 ### Other Changes
 * Python 2.7 and 3.6 are no longer supported. Please use Python version 3.7 or later.
