@@ -82,7 +82,11 @@ def _convert_to_isoformat(date_time):
     return deserialized
 
 def case_insensitive_dict(*args: Any, **kwargs: Any) -> MutableMapping:
-    """Return a case-insensitive dict from a structure that a dict would have accepted."""
+    """Return a case-insensitive mutable mapping from an inputted mapping structure.
+
+    :return: A case-insensitive mutable mapping object.
+    :rtype: ~collections.abc.MutableMapping
+    """
 
     # Rational is I don't want to re-implement this, but I don't want
     # to assume "requests" or "aiohttp" are installed either.
