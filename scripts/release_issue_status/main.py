@@ -15,7 +15,7 @@ from utils import update_issue_body, get_readme_and_output_folder, \
 _NULL = ' '
 _FILE_OUT = 'release_issue_status.csv'
 _FILE_OUT_PYTHON = 'release_python_status.md'
-_PYTHON_SDK_ADMINISTRATORS = ['msyyc', 'BigCat20196']
+_PYTHON_SDK_ADMINISTRATORS = ['msyyc', 'BigCat20196', 'azure-sdk']
 _PYTHON_SDK_ASSIGNEES = ['BigCat20196', 'msyyc']
 _ASSIGNER_DICT = {'BigCat20196': os.getenv('JF_TOKEN'),
                   'msyyc': os.getenv('TOKEN')}

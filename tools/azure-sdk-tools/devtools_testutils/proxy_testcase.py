@@ -87,8 +87,6 @@ def start_record_or_playback(test_id):
     This returns a tuple, (a, b), where a is the recording ID of the test and b is the `variables` dictionary that maps
     test variables to values. If no variable dictionary was stored when the test was recorded, b is an empty dictionary.
     """
-    head_commit = subprocess.check_output(["git", "rev-parse", "HEAD"])
-    current_sha = head_commit.decode("utf-8").strip()
     variables = {}  # this stores a dictionary of test variable values that could have been stored with a recording
 
     if is_live():

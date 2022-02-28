@@ -94,13 +94,13 @@ If message type or callback function is not provided, and by default, the encode
 The following sections provide several code snippets covering some of the most common Schema Registry tasks, including:
 
 - [Encoding](#encoding)
-- [Deencoding](#decoding)
+- [Decoding](#decoding)
 - [Event Hubs Sending Integration](#event-hubs-sending-integration)
 - [Event Hubs Receiving Integration](#event-hubs-receiving-integration)
 
 ### Encoding
 
-Use `AvroEncoder.encode` method to encode dict data with the given avro schema.
+Use `AvroEncoder.encode` method to encode dict data with the given Avro schema.
 The method will use a schema previously registered to the Schema Registry service and keep the schema cached for future encoding usage. It is also possible to avoid pre-registering the schema to the service and automatically register with the `encode` method by instantiating the `AvroEncoder` with the keyword argument `auto_register_schemas=True`.
 
 ```python
@@ -175,7 +175,7 @@ with encoder:
 
 ### Event Hubs Sending Integration
 
-Integration with [Event Hubs][eventhubs_repo] to send encoded avro dict data as the body of EventData.
+Integration with [Event Hubs][eventhubs_repo] to send encoded Avro dict data as the body of EventData.
 
 ```python
 import os
@@ -219,7 +219,7 @@ with eventhub_producer, avro_encoder:
 
 ### Event Hubs Receiving Integration
 
-Integration with [Event Hubs][eventhubs_repo] to receive `EventData` and decoded raw bytes into avro dict data.
+Integration with [Event Hubs][eventhubs_repo] to receive `EventData` and decoded raw bytes into Avro dict data.
 
 ```python
 import os
@@ -313,13 +313,13 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 <!-- LINKS -->
 [pip]: https://pypi.org/project/pip/
-[pypi]: https://pypi.org/
+[pypi]: https://pypi.org/project/azure-schemaregistry-avroencoder/
 [python]: https://www.python.org/downloads/
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 [azure_sub]: https://azure.microsoft.com/free/
 [python_logging]: https://docs.python.org/3/library/logging.html
 [sr_avro_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroencoder/samples
-[api_reference]: https://docs.microsoft.com/python/api/
+[api_reference]: https://docs.microsoft.com/python/api/overview/azure/schemaregistry-avroencoder-readme
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroencoder
 [change_log]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroencoder/CHANGELOG.md
 [schemaregistry_client]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry

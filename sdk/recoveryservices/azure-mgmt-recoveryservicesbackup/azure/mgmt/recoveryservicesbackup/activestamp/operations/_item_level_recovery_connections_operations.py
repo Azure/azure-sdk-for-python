@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -19,31 +19,29 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_provision_request(
-    vault_name,  # type: str
-    resource_group_name,  # type: str
-    subscription_id,  # type: str
-    fabric_name,  # type: str
-    container_name,  # type: str
-    protected_item_name,  # type: str
-    recovery_point_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    vault_name: str,
+    resource_group_name: str,
+    subscription_id: str,
+    fabric_name: str,
+    container_name: str,
+    protected_item_name: str,
+    recovery_point_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-10-01"
+    api_version = "2021-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/recoveryPoints/{recoveryPointId}/provisionInstantItemRecovery')
@@ -74,22 +72,23 @@ def build_provision_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_revoke_request(
-    vault_name,  # type: str
-    resource_group_name,  # type: str
-    subscription_id,  # type: str
-    fabric_name,  # type: str
-    container_name,  # type: str
-    protected_item_name,  # type: str
-    recovery_point_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-10-01"
+    vault_name: str,
+    resource_group_name: str,
+    subscription_id: str,
+    fabric_name: str,
+    container_name: str,
+    protected_item_name: str,
+    recovery_point_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/{fabricName}/protectionContainers/{containerName}/protectedItems/{protectedItemName}/recoveryPoints/{recoveryPointId}/revokeInstantItemRecovery')
@@ -121,7 +120,6 @@ def build_revoke_request(
         **kwargs
     )
 
-# fmt: on
 class ItemLevelRecoveryConnectionsOperations(object):
     """ItemLevelRecoveryConnectionsOperations operations.
 
@@ -147,16 +145,15 @@ class ItemLevelRecoveryConnectionsOperations(object):
     @distributed_trace
     def provision(
         self,
-        vault_name,  # type: str
-        resource_group_name,  # type: str
-        fabric_name,  # type: str
-        container_name,  # type: str
-        protected_item_name,  # type: str
-        recovery_point_id,  # type: str
-        parameters,  # type: "_models.ILRRequestResource"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        vault_name: str,
+        resource_group_name: str,
+        fabric_name: str,
+        container_name: str,
+        protected_item_name: str,
+        recovery_point_id: str,
+        parameters: "_models.ILRRequestResource",
+        **kwargs: Any
+    ) -> None:
         """Provisions a script which invokes an iSCSI connection to the backup data. Executing this script
         opens a file
         explorer displaying all the recoverable files and folders. This is an asynchronous operation.
@@ -226,15 +223,14 @@ class ItemLevelRecoveryConnectionsOperations(object):
     @distributed_trace
     def revoke(
         self,
-        vault_name,  # type: str
-        resource_group_name,  # type: str
-        fabric_name,  # type: str
-        container_name,  # type: str
-        protected_item_name,  # type: str
-        recovery_point_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        vault_name: str,
+        resource_group_name: str,
+        fabric_name: str,
+        container_name: str,
+        protected_item_name: str,
+        recovery_point_id: str,
+        **kwargs: Any
+    ) -> None:
         """Revokes an iSCSI connection which can be used to download a script. Executing this script opens
         a file explorer
         displaying all recoverable files and folders. This is an asynchronous operation.

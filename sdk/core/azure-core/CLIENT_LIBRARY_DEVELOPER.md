@@ -522,3 +522,71 @@ class Pipeline:
         return first_node.send(pipeline_request)  # type: ignore
 
 ```
+
+## Credentials
+
+### TokenCredential protocol
+
+Clients from the Azure SDK often require a `TokenCredential` instance in their constructors. A `TokenCredential` is
+meant to provide OAuth tokens to authenticate service requests and can be implemented in a number of ways.
+
+The `TokenCredential` protocol specifies a class that has a single method -- `get_token` -- which returns an
+`AccessToken`: a `NamedTuple` containing a `token` string and an `expires_on` integer (in Unix time).
+
+```python
+AccessToken = NamedTuple("AccessToken", [("token", str), ("expires_on", int)])
+
+class TokenCredential(Protocol):
+    """Protocol for classes able to provide OAuth tokens."""
+
+    def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
+        """Request an access token for `scopes`.
+
+        :param str scopes: The type(s) of access needed.
+
+        :keyword str claims: Additional claims required in the token, such as those returned in a resource
+            provider's claims challenge following an authorization failure.
+        :keyword str tenant_id: Optional tenant to include in the token request.
+
+        :rtype: AccessToken
+        :return: An AccessToken instance containing the token string and its expiration time in Unix time.
+        """
+```
+
+A `TokenCredential` implementation needs to implement the `get_token` method to these specifications and can optionally
+implement additional methods. The [`azure-identity`][identity_github] package has a number of `TokenCredential`
+implementations that can be used for reference. For example, the [`InteractiveCredential`][interactive_cred] is used as
+a base class for multiple credentials and uses `claims` and `tenant_id` in token requests.
+
+If a `TokenCredential` implementation doesn't have a use for a keyword argument in a given scenario, the unused
+keyword argument should be removed from `kwargs` before getting passed elsewhere. The documentation for the
+implementation should mention that this keyword argument will not be used when making token requests, as well as any
+potential consequences of this. For example, if a `TokenCredential` implementation doesn't use `tenant_id`, it should
+document that fetched tokens may not authorize requests made to the specified tenant.
+
+There is also an async protocol -- the `AsyncTokenCredential` protocol -- that specifies a class with an aysnc
+`get_token` method with the same arguments. An `AsyncTokenCredential` implementation additionally needs to be a context
+manager, with `__aenter__`, `__aexit__`, and `close` methods.
+
+#### Known uses of `get_token` keyword-only parameters
+
+**`claims`**
+
+| Service/Feature | Reason |
+| --- | --- |
+| [Continuous Access Evaluation][cae_doc] | Respond to claim challenges when unexpired tokens have access revoked
+
+**`tenant_id`**
+
+| Service/Feature | Reason |
+| --- | --- |
+| Key Vault ([example][kv_tenant_id]) | Request access in a tenant that was discovered as part of an authentication challenge
+
+
+[cae_doc]: https://docs.microsoft.com/azure/active-directory/conditional-access/concept-continuous-access-evaluation
+[custom_creds_sample]: https://github.com/Azure/azure-sdk-for-python/blob/fc95f8d3d84d076ffea158116ca1bf6912689c70/sdk/identity/azure-identity/samples/custom_credentials.py
+[identity_github]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
+[interactive_cred]: https://github.com/Azure/azure-sdk-for-python/blob/58c974883123b10b1ca9249ac49109220facb02f/sdk/identity/azure-identity/azure/identity/_internal/interactive.py
+[kv_tenant_id]: https://github.com/Azure/azure-sdk-for-python/blob/0a0cc97f178a7476ec79f29c090b8c93ad5d4955/sdk/keyvault/azure-keyvault-keys/azure/keyvault/keys/_shared/challenge_auth_policy.py#L102
