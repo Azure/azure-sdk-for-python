@@ -15,7 +15,7 @@ from setuptools import setup, find_packages
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-communication-rooms"
-PACKAGE_PPRINT_NAME = "Azure Communication Rooms"
+PACKAGE_PPRINT_NAME = "Communication Rooms"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")
@@ -55,6 +55,7 @@ setup(
     zip_safe=False,
     packages=find_packages(
         exclude=[
+            'tests',
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
             "azure.communication",

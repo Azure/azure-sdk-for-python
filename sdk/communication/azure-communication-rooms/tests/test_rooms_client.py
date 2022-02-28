@@ -28,7 +28,7 @@ class TestRoomsClient(unittest.TestCase):
         room_request = RoomRequest(valid_from=valid_from, valid_until=valid_until) 
         raised = False
         participants = {}
-        participants["8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_be3a83c1-f5d9-49ee-a427-0e9b917c062c"] = {}
+        participants["8:acs:abcd"] = {}
         
 
         def mock_send(*_, **__):

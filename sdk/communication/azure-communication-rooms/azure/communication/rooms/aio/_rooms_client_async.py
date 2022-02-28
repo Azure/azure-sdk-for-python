@@ -11,7 +11,9 @@ from azure.communication.rooms._models import RoomRequest, CommunicationRoom
 from .._generated.aio._azure_communication_rooms_service import AzureCommunicationRoomsService
 from .._shared.utils import parse_connection_str, get_authentication_policy, get_current_utc_time
 from .._version import SDK_MONIKER
-
+from .._generated.models import (
+    CreateRoomRequest,
+)
 
 class RoomsClient(object):
     """A client to interact with the AzureCommunicationService Rooms gateway.
@@ -79,9 +81,20 @@ class RoomsClient(object):
         **kwargs
     ):
         # type: (...) -> CommunicationRoom
+        """Create a new room.
+
+        :param room_request: Room to be created. If it is not specified, 
+         room will be created with 180 days of validity
+        :type room_request: RoomRequest
+        :returns: Created room.
+        :rtype: ~azure.communication.rooms.CommunicationRoom
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
         create_room_request = None
         if room_request is not None:
             create_room_request = room_request.to_create_room_request()
+        else:
+            create_room_request = CreateRoomRequest()
         create_room_response = await self._rooms_service_client.rooms.create_room(
             create_room_request=create_room_request, **kwargs)
         return CommunicationRoom._from_create_room_response(create_room_response)
@@ -92,6 +105,16 @@ class RoomsClient(object):
         room_id, # type: str
         **kwargs
     ):
+        # type: (...) -> CommunicationRoom
+        """Delete room.
+
+        :param room_id: Required. Id of room to be deleted
+        :type room_id: str
+        :returns: None.
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
         await self._rooms_service_client.rooms.delete_room(room_id=room_id, **kwargs)
     
     @distributed_trace_async
@@ -102,6 +125,17 @@ class RoomsClient(object):
         **kwargs
     ):
         # type: (...) -> CommunicationRoom
+        """Update a valid room's attributes
+
+        :param room_id: Required. Id of room to be updated
+        :type room_id: str
+        :param room_request: Required. Room with new attributes
+        :type room_request: RoomRequest
+        :returns: Updated room.
+        :rtype: ~azure.communication.rooms.CommunicationRoom
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        """
         update_room_request = None
         if room_request is not None:
             update_room_request = room_request.to_update_room_request()
@@ -115,6 +149,16 @@ class RoomsClient(object):
         room_id, # type: str
         **kwargs
     ):
+        # type: (...) -> CommunicationRoom
+        """Get a valid room
+
+        :param room_id: Required. Id of room to be fetched
+        :type room_id: str
+        :returns: Room with current attributes.
+        :rtype: ~azure.communication.rooms.CommunicationRoom
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
         get_room_response = await self._rooms_service_client.rooms.get_room(room_id=room_id, **kwargs)
         return CommunicationRoom._from_get_room_response(get_room_response)
     

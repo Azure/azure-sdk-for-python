@@ -10,7 +10,6 @@ from azure.communication.rooms._models import RoomRequest, CommunicationRoom
 
 from ._generated._azure_communication_rooms_service import AzureCommunicationRoomsService
 from ._generated.models import (
-
     CreateRoomRequest,
 )
 
@@ -76,6 +75,7 @@ class RoomsClient(object):
 
         return cls(endpoint, access_key, **kwargs)
 
+    @distributed_trace
     def create_room(
         self,
         room_request=None, # type: RoomRequest
@@ -84,19 +84,12 @@ class RoomsClient(object):
         # type: (...) -> CommunicationRoom
         """Create a new room.
 
-        :param RoomRequest room_request:
-            Room.
-        :returns: Instance of RoomsClient.
-        :rtype: ~azure.communication.RoomsClient
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/Rooms_sample.py
-                :start-after: [START auth_from_connection_string]
-                :end-before: [END auth_from_connection_string]
-                :language: python
-                :dedent: 8
-                :caption: Creating the RoomsClient from a connection string.
+        :param room_request: Room to be created. If it is not specified, 
+         room will be created with 180 days of validity
+        :type room_request: RoomRequest
+        :returns: Created room.
+        :rtype: ~azure.communication.rooms.CommunicationRoom
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         create_room_request = None
         if room_request is not None:
@@ -106,14 +99,26 @@ class RoomsClient(object):
         create_room_response = self._rooms_service_client.rooms.create_room(
             create_room_request=create_room_request, **kwargs)
         return CommunicationRoom._from_create_room_response(create_room_response)
-    
+
+    @distributed_trace
     def delete_room(
         self,
         room_id, # type: str
         **kwargs
     ):
+        # type: (...) -> CommunicationRoom
+        """Delete room.
+
+        :param room_id: Required. Id of room to be deleted
+        :type room_id: str
+        :returns: None.
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
         self._rooms_service_client.rooms.delete_room(room_id=room_id, **kwargs)
-    
+
+    @distributed_trace
     def update_room(
         self,
         room_id,
@@ -121,6 +126,17 @@ class RoomsClient(object):
         **kwargs
     ):
         # type: (...) -> CommunicationRoom
+        """Update a valid room's attributes
+
+        :param room_id: Required. Id of room to be updated
+        :type room_id: str
+        :param room_request: Required. Room with new attributes
+        :type room_request: RoomRequest
+        :returns: Updated room.
+        :rtype: ~azure.communication.rooms.CommunicationRoom
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        """
         if not room_request:
             raise ValueError("room_request cannot be None.")
         update_room_request = room_request.to_update_room_request()
@@ -128,11 +144,22 @@ class RoomsClient(object):
             room_id=room_id, update_room_request=update_room_request, **kwargs)
         return CommunicationRoom._from_update_room_response(update_room_response)
 
+    @distributed_trace
     def get_room(
         self,
         room_id, # type: str
         **kwargs
     ):
+        # type: (...) -> CommunicationRoom
+        """Get a valid room
+
+        :param room_id: Required. Id of room to be fetched
+        :type room_id: str
+        :returns: Room with current attributes.
+        :rtype: ~azure.communication.rooms.CommunicationRoom
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
         get_room_response = self._rooms_service_client.rooms.get_room(room_id=room_id, **kwargs)
         return CommunicationRoom._from_get_room_response(get_room_response)
     

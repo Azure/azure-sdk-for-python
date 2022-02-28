@@ -70,6 +70,11 @@ class RoomRequest(msrest.serialization.Model):
         self.participants = participants
     
     def to_create_room_request(self):
+        """Map RoomRequest to CreatedRoomRequest
+        
+        :returns: CreateRoomRequest.
+        :rtype: ~azure.communication.rooms._generated.CreateRoomReqeust
+        """
         return CreateRoomRequest(
             valid_from=self.valid_from,
             valid_until=self.valid_until,
@@ -77,6 +82,11 @@ class RoomRequest(msrest.serialization.Model):
         )
 
     def to_update_room_request(self):
+        """Map RoomRequest to UpdateRoomReqeust
+        
+        :returns: CreateRoomRequest.
+        :rtype: ~azure.communication.rooms._generated.UpdateRoomReqeust
+        """
         return UpdateRoomRequest(
             valid_from=self.valid_from,
             valid_until=self.valid_until,
@@ -88,18 +98,40 @@ class RoomRequest(msrest.serialization.Model):
         communication_user_identifier,
         room_participant=None #type: RoomParticipant
     ):
+        """Add a participant to room
+        :param communication_user_identifier: Required. Participant to be added
+        :type communication_user_identifier: azure.communication.identity.CommunicationIdentityClient
+        :param room_participant: Participant's permissions in the room.
+        :type room_participant: RoomParticipant
+        :returns: None.
+        :rtype: None
+        """
         if room_participant is None:
             room_participant = RoomParticipant()
+        if self.participants is None:
+            self.participants = {}
         self.participants[communication_user_identifier.properties["id"]] = room_participant
     
     def remove_participant(
         self,
         communication_user_identifier
     ):
+        """Remove a participant from room
+        :param communication_user_identifier: Required. Participant to be added
+        :type communication_user_identifier: azure.communication.identity.CommunicationIdentityClient
+        :returns: None.
+        :rtype: None
+        """
+        if self.participants is None:
+            self.participants = {}
         self.participants[communication_user_identifier.properties["id"]] = None
 
     def remove_all_participants(self):
-        self.participants = None
+        """Removes all participants from room
+        :returns: None.
+        :rtype: None
+        """
+        self.participants = {}
 
 class CommunicationRoom(msrest.serialization.Model):
     """The response object from rooms service.
