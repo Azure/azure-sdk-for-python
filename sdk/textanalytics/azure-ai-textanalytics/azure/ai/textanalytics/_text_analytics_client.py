@@ -9,7 +9,6 @@ from typing import (
     Any,
     List,
     Dict,
-    Optional,
     TYPE_CHECKING
 )
 from functools import partial
@@ -68,7 +67,6 @@ from ._models import (
     SingleCategoryClassifyResult,
     MultiCategoryClassifyAction,
     MultiCategoryClassifyResult,
-    PiiEntityCategory
 )
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -121,17 +119,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         self,
         endpoint: str,
         credential: Union[AzureKeyCredential, "TokenCredential"],
-        *,
-        default_language: Optional[str] = "en",
-        default_country_hint: Optional[str] = "US",
         **kwargs: Any
     ) -> None:
         super().__init__(
             endpoint=endpoint, credential=credential, **kwargs
         )
         self._api_version = kwargs.get("api_version", DEFAULT_API_VERSION)
-        self._default_language = default_language
-        self._default_country_hint = default_country_hint
+        self._default_language = kwargs.pop("default_language", "en")
+        self._default_country_hint = kwargs.pop("default_country_hint", "US")
         self._string_index_type_default = (
             None if kwargs.get("api_version") == "v3.0" else "UnicodeCodePoint"
         )
@@ -140,11 +135,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def detect_language(
         self,
         documents: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]],
-        *,
-        show_stats: Optional[bool] = None,
-        country_hint: Optional[str] = None,
-        model_version: Optional[str] = None,
-        disable_service_logs: Optional[bool] = None,
         **kwargs: Any,
     ) -> List[Union[DetectLanguageResult, DocumentError]]:
         """Detect language for a batch of documents.
@@ -200,13 +190,16 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :dedent: 4
                 :caption: Detecting language in a batch of documents.
         """
-
+        country_hint_arg = kwargs.pop("country_hint", None)
         country_hint = (
-            country_hint
-            if country_hint is not None
+            country_hint_arg
+            if country_hint_arg is not None
             else self._default_country_hint
         )
         docs = _validate_input(documents, "country_hint", country_hint)
+        model_version = kwargs.pop("model_version", None)
+        show_stats = kwargs.pop("show_stats", None)
+        disable_service_logs = kwargs.pop("disable_service_logs", None)
         if disable_service_logs is not None:
             kwargs["logging_opt_out"] = disable_service_logs
         try:
@@ -224,11 +217,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def recognize_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        *,
-        show_stats: Optional[bool] = None,
-        language: Optional[str] = None,
-        model_version: Optional[str] = None,
-        disable_service_logs: Optional[bool] = None,
         **kwargs: Any,
     ) -> List[Union[RecognizeEntitiesResult, DocumentError]]:
         """Recognize entities for a batch of documents.
@@ -289,9 +277,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :dedent: 4
                 :caption: Recognize entities in a batch of documents.
         """
-        language = language if language is not None else self._default_language
+        language_arg = kwargs.pop("language", None)
+        language = language_arg if language_arg is not None else self._default_language
         docs = _validate_input(documents, "language", language)
-
+        model_version = kwargs.pop("model_version", None)
+        show_stats = kwargs.pop("show_stats", None)
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
             self._api_version,
@@ -299,9 +289,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
         if string_index_type:
             kwargs.update({"string_index_type": string_index_type})
+        disable_service_logs = kwargs.pop("disable_service_logs", None)
         if disable_service_logs is not None:
             kwargs["logging_opt_out"] = disable_service_logs
-
         try:
             return self._client.entities_recognition_general(
                 documents=docs,
@@ -317,13 +307,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def recognize_pii_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        *,
-        show_stats: Optional[bool] = None,
-        language: Optional[str] = None,
-        domain_filter: Optional[str] = None,
-        categories_filter: Optional[List[Union[str, PiiEntityCategory]]] = None,
-        model_version: Optional[str] = None,
-        disable_service_logs: Optional[bool] = None,
         **kwargs: Any,
     ) -> List[Union[RecognizePiiEntitiesResult, DocumentError]]:
         """Recognize entities containing personal information for a batch of documents.
@@ -392,10 +375,13 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :dedent: 4
                 :caption: Recognize personally identifiable information entities in a batch of documents.
         """
-
-        language = language if language is not None else self._default_language
+        language_arg = kwargs.pop("language", None)
+        language = language_arg if language_arg is not None else self._default_language
         docs = _validate_input(documents, "language", language)
-
+        model_version = kwargs.pop("model_version", None)
+        show_stats = kwargs.pop("show_stats", None)
+        domain_filter = kwargs.pop("domain_filter", None)
+        categories_filter = kwargs.pop("categories_filter", None)
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
             self._api_version,
@@ -403,9 +389,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
         if string_index_type:
             kwargs.update({"string_index_type": string_index_type})
+        disable_service_logs = kwargs.pop("disable_service_logs", None)
         if disable_service_logs is not None:
             kwargs["logging_opt_out"] = disable_service_logs
-
         try:
             return self._client.entities_recognition_pii(
                 documents=docs,
@@ -432,11 +418,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def recognize_linked_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        *,
-        show_stats: Optional[bool] = None,
-        language: Optional[str] = None,
-        model_version: Optional[str] = None,
-        disable_service_logs: Optional[bool] = None,
         **kwargs: Any,
     ) -> List[Union[RecognizeLinkedEntitiesResult, DocumentError]]:
         """Recognize linked entities from a well-known knowledge base for a batch of documents.
@@ -498,12 +479,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :dedent: 4
                 :caption: Recognize linked entities in a batch of documents.
         """
-
-        language = language if language is not None else self._default_language
+        language_arg = kwargs.pop("language", None)
+        language = language_arg if language_arg is not None else self._default_language
         docs = _validate_input(documents, "language", language)
+        model_version = kwargs.pop("model_version", None)
+        show_stats = kwargs.pop("show_stats", None)
+        disable_service_logs = kwargs.pop("disable_service_logs", None)
         if disable_service_logs is not None:
             kwargs["logging_opt_out"] = disable_service_logs
-
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
             self._api_version,
@@ -511,7 +494,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
         if string_index_type:
             kwargs.update({"string_index_type": string_index_type})
-
         try:
             return self._client.entities_linking(
                 documents=docs,
@@ -542,11 +524,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def begin_analyze_healthcare_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        *,
-        show_stats: Optional[bool] = None,
-        language: Optional[str] = None,
-        model_version: Optional[str] = None,
-        disable_service_logs: Optional[bool] = None,
         **kwargs: Any,
     ) -> AnalyzeHealthcareEntitiesLROPoller[ItemPaged[Union[AnalyzeHealthcareEntitiesResult, DocumentError]]]:
         """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
@@ -613,14 +590,16 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :dedent: 4
                 :caption: Recognize healthcare entities in a batch of documents.
         """
-
-        language = language if language is not None else self._default_language
+        language_arg = kwargs.pop("language", None)
+        language = language_arg if language_arg is not None else self._default_language
+        model_version = kwargs.pop("model_version", None)
+        show_stats = kwargs.pop("show_stats", None)
         polling_interval = kwargs.pop("polling_interval", 5)
         continuation_token = kwargs.pop("continuation_token", None)
         string_index_type = kwargs.pop(
             "string_index_type", self._string_index_type_default
         )
-
+        disable_service_logs = kwargs.pop("disable_service_logs", None)
         if continuation_token:
             def get_result_from_cont_token(initial_response, pipeline_response):
                 doc_id_order = initial_response.context.options["doc_id_order"]
@@ -628,7 +607,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 return self._healthcare_result_callback(
                     doc_id_order, pipeline_response, None, {}, show_stats=show_stats
                 )
-
             return AnalyzeHealthcareEntitiesLROPoller.from_continuation_token(
                 polling_method=AnalyzeHealthcareEntitiesLROPollingMethod(
                     text_analytics_client=self._client,
@@ -639,7 +617,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 deserialization_callback=get_result_from_cont_token,
                 continuation_token=continuation_token
             )
-
         docs = _validate_input(documents, "language", language)
         doc_id_order = [doc.get("id") for doc in docs]
         my_cls = kwargs.pop(
@@ -648,7 +625,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 self._healthcare_result_callback, doc_id_order, show_stats=show_stats
             ),
         )
-
         try:
             return self._client.begin_health(
                 docs,
@@ -671,7 +647,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 continuation_token=continuation_token,
                 **kwargs
             )
-
         except ValueError as error:
             if "API version v3.0 does not have operation 'begin_health'" in str(error):
                 raise ValueError(
@@ -679,7 +654,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     V3_1 and up."
                 ) from error
             raise error
-
         except HttpResponseError as error:
             return process_http_response_error(error)
 
@@ -687,11 +661,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def extract_key_phrases(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        *,
-        show_stats: Optional[bool] = None,
-        language: Optional[str] = None,
-        model_version: Optional[str] = None,
-        disable_service_logs: Optional[bool] = None,
         **kwargs: Any,
     ) -> List[Union[ExtractKeyPhrasesResult, DocumentError]]:
         """Extract key phrases from a batch of documents.
@@ -749,12 +718,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :dedent: 4
                 :caption: Extract the key phrases in a batch of documents.
         """
-
-        language = language if language is not None else self._default_language
+        language_arg = kwargs.pop("language", None)
+        language = language_arg if language_arg is not None else self._default_language
         docs = _validate_input(documents, "language", language)
+        model_version = kwargs.pop("model_version", None)
+        show_stats = kwargs.pop("show_stats", None)
+        disable_service_logs = kwargs.pop("disable_service_logs", None)
         if disable_service_logs is not None:
             kwargs["logging_opt_out"] = disable_service_logs
-
         try:
             return self._client.key_phrases(
                 documents=docs,
@@ -770,12 +741,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def analyze_sentiment(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        *,
-        show_opinion_mining: Optional[bool] = None,
-        show_stats: Optional[bool] = None,
-        language: Optional[str] = None,
-        model_version: Optional[str] = None,
-        disable_service_logs: Optional[bool] = None,
         **kwargs: Any,
     ) -> List[Union[AnalyzeSentimentResult, DocumentError]]:
         """Analyze sentiment for a batch of documents. Turn on opinion mining with `show_opinion_mining`.
@@ -842,12 +807,15 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 :dedent: 4
                 :caption: Analyze sentiment in a batch of documents.
         """
-
-        language = language if language is not None else self._default_language
+        language_arg = kwargs.pop("language", None)
+        language = language_arg if language_arg is not None else self._default_language
         docs = _validate_input(documents, "language", language)
+        model_version = kwargs.pop("model_version", None)
+        show_stats = kwargs.pop("show_stats", None)
+        show_opinion_mining = kwargs.pop("show_opinion_mining", None)
+        disable_service_logs = kwargs.pop("disable_service_logs", None)
         if disable_service_logs is not None:
             kwargs["logging_opt_out"] = disable_service_logs
-
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
             self._api_version,
@@ -855,7 +823,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
         if string_index_type:
             kwargs.update({"string_index_type": string_index_type})
-
         if show_opinion_mining is not None:
             if (
                 self._api_version == TextAnalyticsApiVersion.V3_0
@@ -865,7 +832,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     "'show_opinion_mining' is only available for API version v3.1 and up"
                 )
             kwargs.update({"opinion_mining": show_opinion_mining})
-
         try:
             return self._client.sentiment(
                 documents=docs,
@@ -910,10 +876,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 MultiCategoryClassifyAction,
             ]
         ],
-        *,
-        display_name: Optional[str] = None,
-        show_stats: Optional[bool] = None,
-        language: Optional[str] = None,
         **kwargs: Any,
     ) -> AnalyzeActionsLROPoller[
         ItemPaged[
@@ -1008,9 +970,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         """
 
         continuation_token = kwargs.pop("continuation_token", None)
+        display_name = kwargs.pop("display_name", None)
+        language_arg = kwargs.pop("language", None)
+        show_stats = kwargs.pop("show_stats", None)
         polling_interval = kwargs.pop("polling_interval", 5)
-        language = language if language is not None else self._default_language
-
+        language = language_arg if language_arg is not None else self._default_language
         if continuation_token:
             def get_result_from_cont_token(initial_response, pipeline_response):
                 doc_id_order = initial_response.context.options["doc_id_order"]
@@ -1019,7 +983,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 return self._analyze_result_callback(
                     doc_id_order, task_id_order, pipeline_response, None, {}, show_stats=show_stats
                 )
-
             return AnalyzeActionsLROPoller.from_continuation_token(
                 polling_method=AnalyzeActionsLROPollingMethod(
                     timeout=polling_interval,
@@ -1029,7 +992,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 deserialization_callback=get_result_from_cont_token,
                 continuation_token=continuation_token
             )
-
         docs = self._client.models(
             api_version=self._api_version
         ).MultiLanguageBatchInput(
@@ -1044,7 +1006,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except AttributeError as e:
             raise TypeError("Unsupported action type in list.") from e
         task_order = [(_determine_action_type(a), a.task_name) for a in generated_tasks]
-
         try:
             analyze_tasks = self._client.models(
                 api_version=self._api_version
@@ -1117,13 +1078,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 continuation_token=continuation_token,
                 **kwargs
             )
-
         except ValueError as error:
             if "API version v3.0 does not have operation 'begin_analyze'" in str(error):
                 raise ValueError(
                     "'begin_analyze_actions' endpoint is only available for API version V3_1 and up"
                 ) from error
             raise error
-
         except HttpResponseError as error:
             return process_http_response_error(error)

@@ -3,7 +3,6 @@
 ## 5.2.0b3 (Unreleased)
 
 ### Features Added
-- Arguments are now validated for input type models.
 
 ### Breaking Changes
 

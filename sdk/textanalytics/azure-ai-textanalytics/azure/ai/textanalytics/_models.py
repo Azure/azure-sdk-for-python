@@ -4,7 +4,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import re
-from typing import Optional, List, Union
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 from ._generated.models import (
@@ -1239,11 +1238,11 @@ class DetectLanguageInput(LanguageInput):
     :vartype country_hint: str
     """
 
-    def __init__(self, *, id: str, text: str, country_hint: Optional[str] = None):  # pylint: disable=redefined-builtin
-        super().__init__(id=id, text=text, country_hint=country_hint)
-        self.id = id
-        self.text = text
-        self.country_hint = country_hint
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.id = kwargs.get("id", None)
+        self.text = kwargs.get("text", None)
+        self.country_hint = kwargs.get("country_hint", None)
 
     def __repr__(self):
         return "DetectLanguageInput(id={}, text={}, country_hint={})".format(
@@ -1390,11 +1389,11 @@ class TextDocumentInput(DictMixin, MultiLanguageInput):
     :vartype language: str
     """
 
-    def __init__(self, *, id: str, text: str, language: Optional[str] = None):  # pylint: disable=redefined-builtin
-        super().__init__(id=id, text=text, language=language)
-        self.id = id
-        self.text = text
-        self.language = language
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.id = kwargs.get("id", None)
+        self.text = kwargs.get("text", None)
+        self.language = kwargs.get("language", None)
 
     def __repr__(self):
         return "TextDocumentInput(id={}, text={}, language={})".format(
@@ -1799,16 +1798,10 @@ class RecognizeEntitiesAction(DictMixin):
         https://www.microsoft.com/ai/responsible-ai.
     """
 
-    def __init__(
-        self,
-        *,
-        model_version: Optional[str] = None,
-        disable_service_logs: Optional[bool] = None,
-        **kwargs
-    ) -> None:
-        self.model_version = model_version
-        self.string_index_type = kwargs.pop("string_index_type", "UnicodeCodePoint")
-        self.disable_service_logs = disable_service_logs
+    def __init__(self, **kwargs):
+        self.model_version = kwargs.get("model_version", None)
+        self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
+        self.disable_service_logs = kwargs.get("disable_service_logs", None)
 
     def __repr__(self, **kwargs):
         return "RecognizeEntitiesAction(model_version={}, string_index_type={}, disable_service_logs={})".format(
@@ -1878,18 +1871,11 @@ class AnalyzeSentimentAction(DictMixin):
         https://www.microsoft.com/ai/responsible-ai.
     """
 
-    def __init__(
-        self,
-        *,
-        show_opinion_mining: Optional[bool] = None,
-        model_version: Optional[str] = None,
-        disable_service_logs: Optional[bool] = None,
-        **kwargs
-    ) -> None:
-        self.model_version = model_version
-        self.show_opinion_mining = show_opinion_mining
-        self.string_index_type = kwargs.pop("string_index_type", "UnicodeCodePoint")
-        self.disable_service_logs = disable_service_logs
+    def __init__(self, **kwargs):
+        self.model_version = kwargs.get("model_version", None)
+        self.show_opinion_mining = kwargs.get("show_opinion_mining", None)
+        self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
+        self.disable_service_logs = kwargs.get("disable_service_logs", None)
 
     def __repr__(self, **kwargs):
         return (
@@ -1966,20 +1952,12 @@ class RecognizePiiEntitiesAction(DictMixin):
         https://www.microsoft.com/ai/responsible-ai.
     """
 
-    def __init__(
-        self,
-        *,
-        domain_filter: Optional[str] = None,
-        categories_filter: Optional[List[Union[str, PiiEntityCategory]]] = None,
-        model_version: Optional[str] = None,
-        disable_service_logs: Optional[bool] = None,
-        **kwargs
-    ) -> None:
-        self.model_version = model_version
-        self.domain_filter = domain_filter
-        self.categories_filter = categories_filter
-        self.string_index_type = kwargs.pop("string_index_type", "UnicodeCodePoint")
-        self.disable_service_logs = disable_service_logs
+    def __init__(self, **kwargs):
+        self.model_version = kwargs.get("model_version", None)
+        self.domain_filter = kwargs.get("domain_filter", None)
+        self.categories_filter = kwargs.get("categories_filter", None)
+        self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
+        self.disable_service_logs = kwargs.get("disable_service_logs", None)
 
     def __repr__(self, **kwargs):
         return (
@@ -2038,14 +2016,9 @@ class ExtractKeyPhrasesAction(DictMixin):
         https://www.microsoft.com/ai/responsible-ai.
     """
 
-    def __init__(
-        self,
-        *,
-        model_version: Optional[str] = None,
-        disable_service_logs: Optional[bool] = None
-    ) -> None:
-        self.model_version = model_version
-        self.disable_service_logs = disable_service_logs
+    def __init__(self, **kwargs):
+        self.model_version = kwargs.get("model_version", None)
+        self.disable_service_logs = kwargs.get("disable_service_logs", None)
 
     def __repr__(self, **kwargs):
         return (
@@ -2104,16 +2077,10 @@ class RecognizeLinkedEntitiesAction(DictMixin):
         https://www.microsoft.com/ai/responsible-ai.
     """
 
-    def __init__(
-        self,
-        *,
-        model_version: Optional[str] = None,
-        disable_service_logs: Optional[bool] = None,
-        **kwargs
-    ) -> None:
-        self.model_version = model_version
-        self.string_index_type = kwargs.pop("string_index_type", "UnicodeCodePoint")
-        self.disable_service_logs = disable_service_logs
+    def __init__(self, **kwargs):
+        self.model_version = kwargs.get("model_version", None)
+        self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
+        self.disable_service_logs = kwargs.get("disable_service_logs", None)
 
     def __repr__(self, **kwargs):
         return (
@@ -2175,20 +2142,12 @@ class ExtractSummaryAction(DictMixin):
     :ivar str order_by:  Possible values include: "Offset", "Rank". Default value: "Offset".
     """
 
-    def __init__(
-        self,
-        *,
-        max_sentence_count: Optional[int] = None,
-        order_by: Optional[str] = None,
-        model_version: Optional[str] = None,
-        disable_service_logs: Optional[bool] = None,
-        **kwargs
-    ) -> None:
-        self.model_version = model_version
-        self.string_index_type = kwargs.pop("string_index_type", "UnicodeCodePoint")
-        self.disable_service_logs = disable_service_logs
-        self.max_sentence_count = max_sentence_count
-        self.order_by = order_by
+    def __init__(self, **kwargs):
+        self.model_version = kwargs.get("model_version", None)
+        self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
+        self.disable_service_logs = kwargs.get("disable_service_logs", None)
+        self.max_sentence_count = kwargs.get("max_sentence_count", None)
+        self.order_by = kwargs.get("order_by", None)
 
     def __repr__(self):
         return (
@@ -2343,18 +2302,17 @@ class RecognizeCustomEntitiesAction(DictMixin):
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
     """
+
     def __init__(
         self,
         project_name: str,
         deployment_name: str,
-        *,
-        disable_service_logs: Optional[bool] = None,
         **kwargs
     ) -> None:
         self.project_name = project_name
         self.deployment_name = deployment_name
-        self.disable_service_logs = disable_service_logs
-        self.string_index_type = kwargs.pop("string_index_type", "UnicodeCodePoint")
+        self.disable_service_logs = kwargs.get('disable_service_logs', None)
+        self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
 
     def __repr__(self):
         return "RecognizeCustomEntitiesAction(project_name={}, deployment_name={}, disable_service_logs={}, " \
@@ -2465,12 +2423,11 @@ class MultiCategoryClassifyAction(DictMixin):
         self,
         project_name: str,
         deployment_name: str,
-        *,
-        disable_service_logs: Optional[bool] = None
+        **kwargs
     ) -> None:
         self.project_name = project_name
         self.deployment_name = deployment_name
-        self.disable_service_logs = disable_service_logs
+        self.disable_service_logs = kwargs.get('disable_service_logs', None)
 
     def __repr__(self):
         return "MultiCategoryClassifyAction(project_name={}, deployment_name={}, " \
@@ -2580,12 +2537,11 @@ class SingleCategoryClassifyAction(DictMixin):
         self,
         project_name: str,
         deployment_name: str,
-        *,
-        disable_service_logs: Optional[bool] = None
+        **kwargs
     ) -> None:
         self.project_name = project_name
         self.deployment_name = deployment_name
-        self.disable_service_logs = disable_service_logs
+        self.disable_service_logs = kwargs.get('disable_service_logs', None)
 
     def __repr__(self):
         return "SingleCategoryClassifyAction(project_name={}, deployment_name={}, " \
