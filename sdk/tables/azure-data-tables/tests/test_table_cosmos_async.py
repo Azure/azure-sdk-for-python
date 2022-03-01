@@ -16,7 +16,7 @@ from _shared.asynctestcase import AsyncTableTestCase
 from _shared.testcase import SLEEP_DELAY
 from async_preparers import cosmos_decorator_async
 
-TEST_TABLE_PREFIX = 'pytableasync'
+TEST_TABLE_PREFIX = 'mytableasync'
 
 # ------------------------------------------------------------------------------
 
@@ -59,12 +59,12 @@ class TestTableCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
         # Arrange
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
 
-        table_name = "myasynctable"
+        table_name = "mytableasync"
 
         for i in range(5):
             await ts.create_table(table_name + str(i))
 
-        query_filter = "TableName eq 'myasynctable0' or TableName eq 'myasynctable1' or TableName eq 'myasynctable2'"
+        query_filter = "TableName eq 'mytableasync0' or TableName eq 'mytableasync1' or TableName eq 'mytableasync2'"
         table_count = 0
         page_count = 0
         async for table_page in ts.query_tables(query_filter, results_per_page=2).by_page():

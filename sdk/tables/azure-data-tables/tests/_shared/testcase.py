@@ -29,7 +29,7 @@ from devtools_testutils import is_live
 
 SLEEP_DELAY = 30
 
-TEST_TABLE_PREFIX = "pytablesync"
+TEST_TABLE_PREFIX = "mytableasync"
 
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
                                 '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \

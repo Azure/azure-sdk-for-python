@@ -151,14 +151,14 @@ def _convert_to_entity(entry_element):
     entity = TableEntity()
 
     properties = {}
-    edmtypes = {}
+    edm_types = {}
     odata = {}
 
     for name, value in entry_element.items():
         if name.startswith("odata."):
             odata[name[6:]] = value
         elif name.endswith("@odata.type"):
-            edmtypes[name[:-11]] = value
+            edm_types[name[:-11]] = value
         else:
             properties[name] = value
 
@@ -176,7 +176,7 @@ def _convert_to_entity(entry_element):
     timestamp = properties.pop("Timestamp", None)
 
     for name, value in properties.items():
-        mtype = edmtypes.get(name)
+        mtype = edm_types.get(name)
 
         # Add type for Int32/64
         if isinstance(value, int) and mtype is None:
@@ -199,9 +199,9 @@ def _convert_to_entity(entry_element):
         elif mtype in [EdmType.STRING, EdmType.INT32]:
             entity[name] = value
         else:  # need an object to hold the property
-            conv = _ENTITY_TO_PYTHON_CONVERSIONS.get(mtype)
-            if conv is not None:
-                new_property = conv(value)
+            conversation = _ENTITY_TO_PYTHON_CONVERSIONS.get(mtype)
+            if conversation is not None:
+                new_property = conversation(value)
             else:
                 new_property = EntityProperty(mtype, value)
             entity[name] = new_property

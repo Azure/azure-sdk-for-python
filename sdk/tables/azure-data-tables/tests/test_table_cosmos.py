@@ -16,7 +16,7 @@ from _shared.testcase import TableTestCase, SLEEP_DELAY
 from preparers import cosmos_decorator
 
 # ------------------------------------------------------------------------------
-TEST_TABLE_PREFIX = 'pytablesync'
+TEST_TABLE_PREFIX = 'mytable'
 # ------------------------------------------------------------------------------
 
 class TestTableCosmos(AzureRecordedTestCase, TableTestCase):

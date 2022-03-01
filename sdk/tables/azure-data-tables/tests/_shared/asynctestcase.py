@@ -23,7 +23,7 @@ from devtools_testutils import is_live
 from .testcase import TableTestCase, SLEEP_DELAY
 
 
-TEST_TABLE_PREFIX = "pytableasync"
+TEST_TABLE_PREFIX = "mytableasync"
 
 
 class AsyncFakeTokenCredential(object):

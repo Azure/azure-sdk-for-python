@@ -117,10 +117,10 @@ def _to_entity_int32(value):
 
 def _to_entity_int64(value):
     if sys.version_info < (3,):
-        ivalue = int(value)
+        i_value = int(value)
     else:
-        ivalue = int(value)
-    if ivalue >= 2 ** 63 or ivalue < -(2 ** 63):
+        i_value = int(value)
+    if i_value >= 2 ** 63 or i_value < -(2 ** 63):
         raise TypeError(_ERROR_VALUE_TOO_LARGE.format(str(value), EdmType.INT64))
     return EdmType.INT64, str(value)
 
@@ -203,23 +203,23 @@ def _add_entity_properties(source):
 
         if isinstance(value, Enum):
             try:
-                conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(unicode)  # type: ignore
+                conversation = _PYTHON_TO_ENTITY_CONVERSIONS.get(unicode)  # type: ignore
             except NameError:
-                conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(str)
-            mtype, value = conv(value)
+                conversation = _PYTHON_TO_ENTITY_CONVERSIONS.get(str)
+            mtype, value = conversation(value)
         elif isinstance(value, datetime):
             mtype, value = _to_entity_datetime(value)
         elif isinstance(value, tuple):
-            conv = _EDM_TO_ENTITY_CONVERSIONS.get(value[1])
-            mtype, value = conv(value[0])
+            conversation = _EDM_TO_ENTITY_CONVERSIONS.get(value[1])
+            mtype, value = conversation(value[0])
         else:
-            conv = _PYTHON_TO_ENTITY_CONVERSIONS.get(type(value))
-            if conv is None and value is not None:
+            conversation = _PYTHON_TO_ENTITY_CONVERSIONS.get(type(value))
+            if conversation is None and value is not None:
                 raise TypeError(_ERROR_TYPE_NOT_SUPPORTED.format(type(value)))
             if value is None:
-                conv = _to_entity_none
+                conversation = _to_entity_none
 
-            mtype, value = conv(value)
+            mtype, value = conversation(value)
 
         # form the property node
         if value is not None:

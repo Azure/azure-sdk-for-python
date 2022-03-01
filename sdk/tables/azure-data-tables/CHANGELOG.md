@@ -20,7 +20,7 @@
 * Resolved bug where single quote characters in Partition and Row keys were not escaped correctly (#20301).
 
 ### Features Added
-* Added support for async iterators in `aio.TableClient.submit_transaction (#21083, thank you yashbhutoria).
+* Added support for async iterators in `aio.TableClient.submit_transaction (#21083).
 
 ### Other Changes
 * Bumped dependency on `msrest` to `>=0.6.21`
