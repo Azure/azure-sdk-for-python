@@ -25,7 +25,6 @@ from azure.communication.rooms._models import (
 
 from _shared.utils import get_http_logging_policy
 
-
 class FakeTokenCredential(object):
     def __init__(self):
         self.token = AccessToken("Fake Token", 0)
@@ -75,6 +74,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             # delete created room
             await self.rooms_client.delete_room(room_id=response.id)
 
+    @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_room_only_validFrom_async(self):
         # room attributes
@@ -89,6 +89,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             valid_until = datetime.now() + relativedelta(days=+180)
             self.assertEqual(valid_until.date(), response.valid_until.date())
 
+    @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_room_only_validUntil_async(self):
         # room attributes
@@ -100,6 +101,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             await self.rooms_client.delete_room(room_id=response.id)
             self.verify_successful_room_response(response=response, valid_until=valid_until)
 
+    @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_room_only_participants_async(self):
         # room with no attributes
@@ -146,6 +148,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
                 assert str(ex.value.status_code) == "400"
                 assert ex.value.message is not None
 
+    @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_room_correct_timerange_async(self):
         # room attributes
@@ -159,6 +162,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             await self.rooms_client.delete_room(room_id=response.id)
             self.verify_successful_room_response(response=response, valid_from=valid_from, valid_until=valid_until)
    
+    @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_room_none_participant_async(self):
         # room attributes
@@ -194,7 +198,8 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
 
                 assert str(ex.value.status_code) == "400"
                 assert ex.value.message is not None
-    
+
+    @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_create_room_all_attributes_async(self):
         # room attributes
@@ -216,6 +221,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             self.verify_successful_room_response(
             response=response, valid_from=valid_from, valid_until=valid_until, participants=participants)
 
+    @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_get_room_async(self):
         # room attributes
@@ -239,7 +245,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             await self.rooms_client.delete_room(room_id=create_response.id)
             self.verify_successful_room_response(
                 response=get_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id, participants=participants)
-    
+
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_get_invalid_room_async(self):
         # random room id
@@ -250,7 +256,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
                 # Resource not found    
                 assert str(ex.value.status_code) == "404"
                 assert ex.value.message is not None
-        
+
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_delete_invalid_room_async(self):
         # random room id
@@ -261,7 +267,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
                 # Resource not found    
                 assert str(ex.value.status_code) == "404"
                 assert ex.value.message is not None
-    
+
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_update_room_only_ValidFrom_async(self):
         # room with no attributes
@@ -301,7 +307,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
 
                 assert str(ex.value.status_code) == "400"
                 assert ex.value.message is not None
-            
+
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_update_room_ValidFrom_7Months_async(self):
         # room with no attributes
@@ -363,6 +369,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
                 assert str(ex.value.status_code) == "400"
                 assert ex.value.message is not None
 
+    @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_update_room_correct_timerange_async(self):
         # room with no attributes
@@ -382,6 +389,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             self.verify_successful_room_response(
                 response=update_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id)
 
+    @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_update_room_add_participant_async(self):
         # room with no attributes
@@ -406,6 +414,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
                 room_id=create_response.id,
                 participants=participants)
 
+    @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_update_room_remove_participant_async(self):
         # room with participant
@@ -434,6 +443,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
                 room_id=create_response.id,
                 participants=participants)
 
+    @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_update_room_add_remove_participant_async(self):
         create_request = RoomRequest()
@@ -480,6 +490,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             assert str(ex.value.status_code) == "400"
             assert ex.value.message is not None
 
+    @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_update_room_clear_participant_dict_async(self):
         create_request = RoomRequest()

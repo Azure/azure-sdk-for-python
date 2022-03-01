@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.communication.rooms._models import RoomRequest, CommunicationRoom
 from .._generated.aio._azure_communication_rooms_service import AzureCommunicationRoomsService
-from .._shared.utils import parse_connection_str, get_authentication_policy, get_current_utc_time
+from .._shared.utils import parse_connection_str, get_authentication_policy
 from .._version import SDK_MONIKER
 from .._generated.models import (
     CreateRoomRequest,
@@ -164,7 +164,7 @@ class RoomsClient(object):
         """
         get_room_response = await self._rooms_service_client.rooms.get_room(room_id=room_id, **kwargs)
         return CommunicationRoom.from_get_room_response(get_room_response)
-    
+
     async def __aenter__(self) -> "RoomsClient":
         await self._rooms_service_client.__aenter__()
         return self

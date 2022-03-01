@@ -75,7 +75,8 @@ class RoomsClientTest(CommunicationTestCase):
         response = self.rooms_client.create_room(room_request=room_request)     
         # delete created room
         self.rooms_client.delete_room(room_id=response.id)
-
+    
+    @pytest.mark.live_test_only
     def test_create_room_only_validFrom(self):
         # room attributes
         valid_from =  datetime.now() + relativedelta(days=+3)
@@ -88,6 +89,7 @@ class RoomsClientTest(CommunicationTestCase):
         valid_until = datetime.utcnow() + relativedelta(days=+180)
         self.assertEqual(valid_until.date(), response.valid_until.date())
 
+    @pytest.mark.live_test_only
     def test_create_room_only_validUntil(self):
         # room attributes
         valid_until =  datetime.now() + relativedelta(months=+3)
@@ -98,6 +100,7 @@ class RoomsClientTest(CommunicationTestCase):
         self.rooms_client.delete_room(room_id=response.id)
         self.verify_successful_room_response(response=response, valid_until=valid_until)
 
+    @pytest.mark.live_test_only
     def test_create_room_only_participants(self):
         # room with no attributes
         room_request = RoomRequest()
@@ -139,6 +142,7 @@ class RoomsClientTest(CommunicationTestCase):
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
 
+    @pytest.mark.live_test_only
     def test_create_room_correct_timerange(self):
         # room attributes
         valid_from =  datetime.now() + relativedelta(days=+3)
@@ -149,7 +153,8 @@ class RoomsClientTest(CommunicationTestCase):
         self.verify_successful_room_response(response=response, valid_from=valid_from, valid_until=valid_until)
         # delete created room
         self.rooms_client.delete_room(room_id=response.id)
-   
+
+    @pytest.mark.live_test_only
     def test_create_room_none_participant(self):
         # room attributes
         room_request = RoomRequest()
@@ -182,7 +187,8 @@ class RoomsClientTest(CommunicationTestCase):
 
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
-    
+
+    @pytest.mark.live_test_only
     def test_create_room_all_attributes(self):
         # room attributes
         valid_from =  datetime.now() + relativedelta(days=+3)
@@ -203,6 +209,7 @@ class RoomsClientTest(CommunicationTestCase):
         self.verify_successful_room_response(
             response=response, valid_from=valid_from, valid_until=valid_until, participants=participants)
 
+    @pytest.mark.live_test_only
     def test_get_room(self):
         # room attributes
         valid_from =  datetime.now() + relativedelta(days=+3)
@@ -224,7 +231,7 @@ class RoomsClientTest(CommunicationTestCase):
         self.rooms_client.delete_room(room_id=create_response.id)
         self.verify_successful_room_response(
             response=get_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id, participants=participants)
-    
+
     def test_get_invalid_room(self):
         # random room id
         with pytest.raises(HttpResponseError) as ex:
@@ -233,7 +240,7 @@ class RoomsClientTest(CommunicationTestCase):
         # Resource not found    
         assert str(ex.value.status_code) == "404"
         assert ex.value.message is not None
-        
+
     def test_delete_invalid_room(self):
         # random room id
         with pytest.raises(HttpResponseError) as ex:
@@ -242,7 +249,7 @@ class RoomsClientTest(CommunicationTestCase):
         # Resource not found    
         assert str(ex.value.status_code) == "404"
         assert ex.value.message is not None
-    
+
     def test_update_room_only_ValidFrom(self):
         # room with no attributes
         create_request = RoomRequest()  
@@ -334,6 +341,7 @@ class RoomsClientTest(CommunicationTestCase):
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
 
+    @pytest.mark.live_test_only
     def test_update_room_correct_timerange(self):
         # room with no attributes
         create_request = RoomRequest()        
@@ -351,6 +359,7 @@ class RoomsClientTest(CommunicationTestCase):
         self.verify_successful_room_response(
             response=update_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id)
 
+    @pytest.mark.live_test_only
     def test_update_room_add_participant(self):
         # room with no attributes
         create_request = RoomRequest()
@@ -373,6 +382,7 @@ class RoomsClientTest(CommunicationTestCase):
             room_id=create_response.id,
             participants=participants)
 
+    @pytest.mark.live_test_only
     def test_update_room_remove_participant(self):
         # room with participant
         create_request = RoomRequest()
@@ -399,6 +409,7 @@ class RoomsClientTest(CommunicationTestCase):
             room_id=create_response.id,
             participants=participants)
 
+    @pytest.mark.live_test_only
     def test_update_room_add_remove_participant(self):
         create_request = RoomRequest()
         # add chris to the room
@@ -441,6 +452,7 @@ class RoomsClientTest(CommunicationTestCase):
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
 
+    @pytest.mark.live_test_only
     def test_update_room_clear_participant_dict(self):
         create_request = RoomRequest()
         # add john and chris to the room

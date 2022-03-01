@@ -25,11 +25,9 @@
 #
 # --------------------------------------------------------------------------
 import os
-import re
 import sys
 
 from datetime import datetime
-from webbrowser import get
 from dateutil.relativedelta import relativedelta
 from azure.core.exceptions import HttpResponseError
 from azure.communication.rooms import (
