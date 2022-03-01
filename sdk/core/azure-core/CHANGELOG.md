@@ -3,6 +3,7 @@
 ## 1.23.0 (Unreleased)
 
 ### Features Added
+- Improve intellisense type hinting for service client methods #22891
 
 - Add a case insensitive dict `case_insensitive_dict` in `azure.core.utils`.  #23206
 
