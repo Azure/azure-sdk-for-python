@@ -1,10 +1,16 @@
 # Release History
 
-## 12.6.0b3 (Unreleased)
+## 12.6.0 (2022-03-08)
 
 This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
 
-### Features Added
+### Stable release of preview features
+- Added support for service version 2021-02-12.
+- Added support for batch deleting files using the `delete_files()` method from a `FileSystemClient`.
+- Account level SAS tokens now supports two new permissions:
+    - `permanent_delete`
+    - `set_immutability_policy`
+- Added support for listing system file systems with list_file_systems().
 
 ### Bugs Fixed
 - Update `azure-core` dependency to avoid inconsistent dependencies from being installed.
