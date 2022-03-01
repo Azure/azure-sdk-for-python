@@ -59,7 +59,7 @@ def wait_for_backup_policy_state(client, desired_state, rg=TEST_RG, account_name
             time.sleep(5)
 
 
-class TestNetAppAccount(AzureMgmtRecordedTestCase):
+class TestNetAppBackupPolicies(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
         self.client = self.create_mgmt_client(azure.mgmt.netapp.NetAppManagementClient)

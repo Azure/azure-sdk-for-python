@@ -12,7 +12,7 @@ SUBSID = '69a75bda-882e-44d5-8431-63421204132a'
 
 
 def create_volume_body(volume_name, location, rg=TEST_RG, vnet=VNET):
-    default_protocol_type = {"NFSv3"}
+    default_protocol_type = ["NFSv3"]
 
     volume_body = Volume(
         location=location,
@@ -76,7 +76,7 @@ def create_dp_volume(client, source_volume, rg=TEST_REPL_REMOTE_RG, account_name
         replication=replication
     )
 
-    default_protocol_type = {"NFSv3"}
+    default_protocol_type = ["NFSv3"]
 
     volume_body = Volume(
         location=location,
@@ -162,7 +162,7 @@ def wait_for_succeeded(client, live=False):
             time.sleep(1)
 
 
-class NetAppAccountTestCase(AzureMgmtRecordedTestCase):
+class TestNetAppVolume(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
         self.client = self.create_mgmt_client(azure.mgmt.netapp.NetAppManagementClient)

@@ -2,7 +2,8 @@ from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 from setup import *
 import azure.mgmt.netapp.models
 
-class TestNetAppAccount(AzureMgmtRecordedTestCase):
+
+class TestNetAppResourceQuota(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
         self.client = self.create_mgmt_client(azure.mgmt.netapp.NetAppManagementClient)

@@ -6,7 +6,6 @@ from test_account import delete_account
 from test_volume import create_volume, wait_for_volume, delete_volume, delete_pool
 from setup import *
 import azure.mgmt.netapp.models
-import unittest
 
 backups = [TEST_BACKUP_1, TEST_BACKUP_2]
 
@@ -93,7 +92,7 @@ def clean_up(client, disable_bp=True, live=False):
     delete_account(client, TEST_RG, TEST_ACC_1, live=live)
 
 
-class TestNetAppAccount(AzureMgmtRecordedTestCase):
+class TestNetAppBackup(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
         self.client = self.create_mgmt_client(azure.mgmt.netapp.NetAppManagementClient)

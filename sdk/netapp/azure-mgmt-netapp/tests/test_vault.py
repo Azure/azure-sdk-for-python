@@ -4,7 +4,7 @@ from setup import *
 import azure.mgmt.netapp.models
 
 
-class NetAppAccountTestCase(AzureMgmtRecordedTestCase):
+class TestNetAppVault(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
         self.client = self.create_mgmt_client(azure.mgmt.netapp.NetAppManagementClient)

@@ -1,13 +1,11 @@
-import time
 from azure.mgmt.resource import ResourceManagementClient
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
-from azure.mgmt.netapp.models import Backup, VolumePatch
+from azure.mgmt.netapp.models import Backup
 from test_account import delete_account
-from test_volume import create_volume, wait_for_volume, delete_volume, delete_pool
+from test_volume import delete_volume, delete_pool
 from test_backup import create_backup, disable_backup
 from setup import *
 import azure.mgmt.netapp.models
-import unittest
 
 
 class TestNetAppAccountBackup(AzureMgmtRecordedTestCase):
@@ -45,7 +43,6 @@ class TestNetAppAccountBackup(AzureMgmtRecordedTestCase):
         delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
-
     @recorded_by_proxy
     def test_get_account_backups(self):
         create_backup(self.client, backup_name=TEST_BACKUP_1, live=self.is_live)
@@ -57,7 +54,6 @@ class TestNetAppAccountBackup(AzureMgmtRecordedTestCase):
         delete_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
         delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
-
 
     @recorded_by_proxy
     def test_delete_account_backups(self):

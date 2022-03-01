@@ -5,6 +5,7 @@ import azure.mgmt.netapp.models
 from azure.mgmt.netapp.models import NetAppAccount, NetAppAccountPatch
 from setup import *
 
+
 def create_account(client, rg, acc_name, location=LOCATION, tags=None, active_directories=None):
     account_body = NetAppAccount(location=location, tags=tags, active_directories=active_directories)
 

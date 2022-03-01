@@ -1,8 +1,7 @@
 import time
-import unittest
 from azure.mgmt.resource import ResourceManagementClient
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
-from azure.mgmt.netapp.models import SnapshotPolicy, SnapshotPolicyPatch, HourlySchedule, DailySchedule, Volume, VolumeSnapshotProperties, VolumePatchPropertiesDataProtection, VolumePatch
+from azure.mgmt.netapp.models import SnapshotPolicy, SnapshotPolicyPatch, HourlySchedule, DailySchedule, VolumeSnapshotProperties, VolumePatchPropertiesDataProtection, VolumePatch
 from test_account import create_account, delete_account
 from test_pool import delete_pool
 from test_volume import create_volume, delete_volume
@@ -50,7 +49,7 @@ def wait_for_no_snapshot_policy(client, rg, account_name, snapshot_policy_name, 
             break
 
 
-class NetAppAccountTestCase(AzureMgmtRecordedTestCase):
+class TestNetAppSnapshotPolicy(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
         self.client = self.create_mgmt_client(azure.mgmt.netapp.NetAppManagementClient)

@@ -43,7 +43,7 @@ def delete_snapshot(client, rg, account_name, pool_name, volume_name, snapshot_n
             break
 
 
-class TestNetAppAccount(AzureMgmtRecordedTestCase):
+class TestNetAppSnapshot(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
         self.client = self.create_mgmt_client(azure.mgmt.netapp.NetAppManagementClient)

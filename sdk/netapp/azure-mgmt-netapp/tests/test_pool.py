@@ -56,7 +56,7 @@ def delete_pool(client, rg, acc_name, pool_name, live=False):
     wait_for_no_pool(client, rg, acc_name, pool_name, live)
 
 
-class TestNetAppAccount(AzureMgmtRecordedTestCase):
+class TestNetAppCapacityPool(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
         self.client = self.create_mgmt_client(azure.mgmt.netapp.NetAppManagementClient)
