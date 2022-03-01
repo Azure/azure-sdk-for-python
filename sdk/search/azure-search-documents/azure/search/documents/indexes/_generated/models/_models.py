@@ -1508,9 +1508,13 @@ class CustomEntityLookupSkill(SearchIndexerSkill):
 class LexicalNormalizer(msrest.serialization.Model):
     """Base type for normalizers.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: CustomNormalizer.
+
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. Identifies the concrete type of the normalizer.
+    :ivar odata_type: Required. Identifies the concrete type of the normalizer.Constant filled by
+     server.
     :vartype odata_type: str
     :ivar name: Required. The name of the normalizer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -1529,13 +1533,15 @@ class LexicalNormalizer(msrest.serialization.Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
+    _subtype_map = {
+        'odata_type': {'#Microsoft.Azure.Search.CustomNormalizer': 'CustomNormalizer'}
+    }
+
     def __init__(
         self,
         **kwargs
     ):
         """
-        :keyword odata_type: Required. Identifies the concrete type of the normalizer.
-        :paramtype odata_type: str
         :keyword name: Required. The name of the normalizer. It must only contain letters, digits,
          spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
          limited to 128 characters. It cannot end in '.microsoft' nor '.lucene', nor be named
@@ -1543,7 +1549,7 @@ class LexicalNormalizer(msrest.serialization.Model):
         :paramtype name: str
         """
         super(LexicalNormalizer, self).__init__(**kwargs)
-        self.odata_type = kwargs['odata_type']
+        self.odata_type = None  # type: Optional[str]
         self.name = kwargs['name']
 
 
@@ -1552,7 +1558,8 @@ class CustomNormalizer(LexicalNormalizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. Identifies the concrete type of the normalizer.
+    :ivar odata_type: Required. Identifies the concrete type of the normalizer.Constant filled by
+     server.
     :vartype odata_type: str
     :ivar name: Required. The name of the normalizer. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -1586,8 +1593,6 @@ class CustomNormalizer(LexicalNormalizer):
         **kwargs
     ):
         """
-        :keyword odata_type: Required. Identifies the concrete type of the normalizer.
-        :paramtype odata_type: str
         :keyword name: Required. The name of the normalizer. It must only contain letters, digits,
          spaces, dashes or underscores, can only start and end with alphanumeric characters, and is
          limited to 128 characters. It cannot end in '.microsoft' nor '.lucene', nor be named
@@ -1603,6 +1608,7 @@ class CustomNormalizer(LexicalNormalizer):
         :paramtype char_filters: list[str or ~azure.search.documents.indexes.models.CharFilterName]
         """
         super(CustomNormalizer, self).__init__(**kwargs)
+        self.odata_type = '#Microsoft.Azure.Search.CustomNormalizer'  # type: str
         self.token_filters = kwargs.get('token_filters', None)
         self.char_filters = kwargs.get('char_filters', None)
 
@@ -3916,6 +3922,35 @@ class LimitTokenFilter(TokenFilter):
         self.consume_all_tokens = kwargs.get('consume_all_tokens', False)
 
 
+class ListAliasesResult(msrest.serialization.Model):
+    """Response from a List Aliases request. If successful, it includes the associated index mappings for all aliases.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar aliases: Required. The aliases in the Search service.
+    :vartype aliases: list[~azure.search.documents.indexes.models.SearchAlias]
+    """
+
+    _validation = {
+        'aliases': {'required': True, 'readonly': True},
+    }
+
+    _attribute_map = {
+        'aliases': {'key': 'value', 'type': '[SearchAlias]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(ListAliasesResult, self).__init__(**kwargs)
+        self.aliases = None
+
+
 class ListDataSourcesResult(msrest.serialization.Model):
     """Response from a List Datasources request. If successful, it includes the full definitions of all datasources.
 
@@ -5605,6 +5640,50 @@ class ScoringProfile(msrest.serialization.Model):
         self.text_weights = kwargs.get('text_weights', None)
         self.functions = kwargs.get('functions', None)
         self.function_aggregation = kwargs.get('function_aggregation', None)
+
+
+class SearchAlias(msrest.serialization.Model):
+    """Represents an index alias, which describes a mapping from the alias name to an index. The alias name can be used in place of the index name for supported operations.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: Required. The name of the alias.
+    :vartype name: str
+    :ivar indexes: Required. The name of the index this alias maps to. Only one index name may be
+     specified.
+    :vartype indexes: list[str]
+    :ivar e_tag: The ETag of the alias.
+    :vartype e_tag: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'indexes': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'indexes': {'key': 'indexes', 'type': '[str]'},
+        'e_tag': {'key': '@odata\\.etag', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword name: Required. The name of the alias.
+        :paramtype name: str
+        :keyword indexes: Required. The name of the index this alias maps to. Only one index name may
+         be specified.
+        :paramtype indexes: list[str]
+        :keyword e_tag: The ETag of the alias.
+        :paramtype e_tag: str
+        """
+        super(SearchAlias, self).__init__(**kwargs)
+        self.name = kwargs['name']
+        self.indexes = kwargs['indexes']
+        self.e_tag = kwargs.get('e_tag', None)
 
 
 class SearchError(msrest.serialization.Model):
@@ -7491,6 +7570,8 @@ class ServiceCounters(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar alias_counter: Total number of aliases.
+    :vartype alias_counter: ~azure.search.documents.indexes.models.ResourceCounter
     :ivar document_counter: Required. Total number of documents across all indexes in the service.
     :vartype document_counter: ~azure.search.documents.indexes.models.ResourceCounter
     :ivar index_counter: Required. Total number of indexes.
@@ -7517,6 +7598,7 @@ class ServiceCounters(msrest.serialization.Model):
     }
 
     _attribute_map = {
+        'alias_counter': {'key': 'aliasesCount', 'type': 'ResourceCounter'},
         'document_counter': {'key': 'documentCount', 'type': 'ResourceCounter'},
         'index_counter': {'key': 'indexesCount', 'type': 'ResourceCounter'},
         'indexer_counter': {'key': 'indexersCount', 'type': 'ResourceCounter'},
@@ -7531,6 +7613,8 @@ class ServiceCounters(msrest.serialization.Model):
         **kwargs
     ):
         """
+        :keyword alias_counter: Total number of aliases.
+        :paramtype alias_counter: ~azure.search.documents.indexes.models.ResourceCounter
         :keyword document_counter: Required. Total number of documents across all indexes in the
          service.
         :paramtype document_counter: ~azure.search.documents.indexes.models.ResourceCounter
@@ -7548,6 +7632,7 @@ class ServiceCounters(msrest.serialization.Model):
         :paramtype skillset_counter: ~azure.search.documents.indexes.models.ResourceCounter
         """
         super(ServiceCounters, self).__init__(**kwargs)
+        self.alias_counter = kwargs.get('alias_counter', None)
         self.document_counter = kwargs['document_counter']
         self.index_counter = kwargs['index_counter']
         self.indexer_counter = kwargs['indexer_counter']

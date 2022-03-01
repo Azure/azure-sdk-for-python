@@ -51,8 +51,6 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
                     assert key
                     assert field["type"]
                     assert doc_type.field_confidence[key] is not None
-        
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -85,8 +83,6 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
         document_model_dict = document_model.to_dict()
         document_model_from_dict = DocumentModel.from_dict(document_model_dict)
         self.assertModelTransformCorrect(document_model_from_dict, generated)
-        
-        return {}
 
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
@@ -109,8 +105,6 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             assert result
 
             await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
-        
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -133,5 +127,3 @@ class TestTrainingAsync(AsyncFormRecognizerTest):
             assert poller.resource_location_url
             assert poller.created_on
             assert poller.last_updated_on
-        
-        return {}

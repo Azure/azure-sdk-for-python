@@ -1,5 +1,11 @@
 # Release History
 
+## 2.1.0b2 (2022-02-28)
+
+**Features**
+
+  - Model ConfigurationStoreUpdateParameters has a new parameter enable_purge_protection
+
 ## 2.1.0b1 (2022-02-16)
 
 **Features**
