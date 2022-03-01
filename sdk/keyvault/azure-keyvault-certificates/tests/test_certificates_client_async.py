@@ -603,7 +603,7 @@ class CertificateClientTests(CertificatesTestCase, KeyVaultTestCase):
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
                 # parts of the request are logged on new lines in a single message
-                request_sections = message.message.split("/n")
+                request_sections = message.message.split("\n")
                 for section in request_sections:
                     try:
                         # the body of the request should be JSON
@@ -633,7 +633,7 @@ class CertificateClientTests(CertificatesTestCase, KeyVaultTestCase):
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
                 # parts of the request are logged on new lines in a single message
-                request_sections = message.message.split("/n")
+                request_sections = message.message.split("\n")
                 for section in request_sections:
                     try:
                         # the body of the request should be JSON
