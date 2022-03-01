@@ -50,8 +50,6 @@ class TestTraining(FormRecognizerTest):
                 assert field["type"]
                 assert doc_type.field_confidence[key] is not None
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -82,8 +80,6 @@ class TestTraining(FormRecognizerTest):
         document_model_dict = document_model.to_dict()
         document_model_from_dict = DocumentModel.from_dict(document_model_dict)
         self.assertModelTransformCorrect(document_model_from_dict, generated)
-
-        return {}
 
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
@@ -126,5 +122,3 @@ class TestTraining(FormRecognizerTest):
         assert poller.resource_location_url
         assert poller.created_on
         assert poller.last_updated_on
-
-        return {}

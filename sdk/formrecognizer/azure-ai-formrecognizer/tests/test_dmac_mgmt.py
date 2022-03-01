@@ -42,8 +42,6 @@ class TestManagement(FormRecognizerTest):
         with pytest.raises(ClientAuthenticationError):
             result = client.get_account_info()
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_get_model_empty_model_id(self, **kwargs):
@@ -81,8 +79,6 @@ class TestManagement(FormRecognizerTest):
         assert info.model_limit
         assert info.model_count
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -99,8 +95,6 @@ class TestManagement(FormRecognizerTest):
                 assert key
                 assert field["type"]
             assert doc_type.field_confidence is None
-
-        return {}
 
     @pytest.mark.skip()
     @FormRecognizerPreparer()
@@ -191,8 +185,6 @@ class TestManagement(FormRecognizerTest):
             assert error.message
             assert error.details
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_get_operation_bad_model_id(self, **kwargs):
@@ -218,5 +210,3 @@ class TestManagement(FormRecognizerTest):
                 assert dac._api_version == DocumentAnalysisApiVersion.V2022_01_30_PREVIEW
             dtc.get_account_info()
             assert transport.session is not None
-
-        return {}

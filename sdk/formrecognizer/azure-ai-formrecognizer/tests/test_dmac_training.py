@@ -40,8 +40,6 @@ class TestDMACTraining(FormRecognizerTest):
         check_poll_value(poller2._polling_method._timeout)  # goes back to client default
         client.close()
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -54,8 +52,6 @@ class TestDMACTraining(FormRecognizerTest):
             assert "https://fakeuri.com/blank%20space" in poller._polling_method._initial_response.http_request.body
             poller.wait()
 
-        return {}
-
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_build_model_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
@@ -63,8 +59,6 @@ class TestDMACTraining(FormRecognizerTest):
         client = DocumentModelAdministrationClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with pytest.raises(ClientAuthenticationError):
             poller = client.begin_build_model("xx", build_mode="template")
-
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -95,8 +89,6 @@ class TestDMACTraining(FormRecognizerTest):
                 assert field["type"]
                 assert doc_type.field_confidence[key] is not None
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -119,8 +111,6 @@ class TestDMACTraining(FormRecognizerTest):
                 assert doc_type.field_confidence[key] is not None
                 assert doc_type.build_mode == "template"
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -139,8 +129,6 @@ class TestDMACTraining(FormRecognizerTest):
                 assert key
                 assert field["type"]
                 assert doc_type.field_confidence[key] is not None
-
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -169,8 +157,6 @@ class TestDMACTraining(FormRecognizerTest):
         assert document_model_from_dict.model_id == document_model.model_id
         self.assertModelTransformCorrect(document_model_from_dict, raw_model)
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -192,8 +178,6 @@ class TestDMACTraining(FormRecognizerTest):
         raw_model = raw_response[0]
         document_model = raw_response[1]
         self.assertModelTransformCorrect(document_model, raw_model)
-
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -223,8 +207,6 @@ class TestDMACTraining(FormRecognizerTest):
         assert document_model_from_dict.model_id == document_model.model_id
         self.assertModelTransformCorrect(document_model_from_dict, raw_model)
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -233,8 +215,6 @@ class TestDMACTraining(FormRecognizerTest):
         with pytest.raises(HttpResponseError) as e:
             poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template", prefix="subfolder")
             model = poller.result()
-
-        return {}
 
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
@@ -263,5 +243,3 @@ class TestDMACTraining(FormRecognizerTest):
         assert poller.resource_location_url
         assert poller.created_on
         assert poller.last_updated_on
-
-        return {}

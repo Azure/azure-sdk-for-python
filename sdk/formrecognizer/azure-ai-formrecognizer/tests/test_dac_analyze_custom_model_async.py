@@ -88,8 +88,6 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -138,8 +136,6 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -186,8 +182,6 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -207,8 +201,6 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
                 assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
                 result = await poller.result()
                 assert result
-
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -235,5 +227,3 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
         assert result.documents[0].fields.get("FullSignature").value_type == "signature"
         # this will notify us of changes in the service, currently expecting to get a None content for signature type fields
         assert result.documents[0].fields.get("FullSignature").content == None
-
-        return {}

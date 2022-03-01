@@ -53,5 +53,3 @@ class TestDACAnalyzeRead(FormRecognizerTest):
         self.assertDocumentLanguagesTransformCorrect(returned_model.languages, raw_analyze_result.languages)
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
-
-        return {}
