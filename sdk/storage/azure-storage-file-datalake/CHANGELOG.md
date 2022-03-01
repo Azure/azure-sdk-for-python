@@ -14,6 +14,7 @@ This version and all future versions will require Python 3.6+. Python 2.7 is no 
 
 ### Bugs Fixed
 - Update `azure-core` dependency to avoid inconsistent dependencies from being installed.
+- Added all missing Service SAS permissions.
 
 ## 12.6.0b2 (2021-12-13)
 
