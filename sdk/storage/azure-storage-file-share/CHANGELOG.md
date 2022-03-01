@@ -11,6 +11,9 @@ This version and all future versions will require Python 3.6+. Python 2.7 is no 
 - Added support for `rename_directory()` and `rename_file()`.
 - Added support for `Create (c)` SAS permission for Share SAS.
 
+### Bugs Fixed
+- Fixed a bug where `start_copy_from_url()` was not sending the `ignore_read_only` parameter correctly.
+
 ## 12.7.0b2 (2022-02-08)
 
 This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
