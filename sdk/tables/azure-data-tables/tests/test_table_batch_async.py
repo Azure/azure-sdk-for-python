@@ -852,19 +852,19 @@ class RequestCorrect(Exception):
 
 
 class CheckBatchURL(AsyncHTTPPolicy):
-    def __init__(self, account_url):
+    def __init__(self, account_url, table_name):
         if not account_url.startswith('http'):
             account_url = 'https://' + account_url
-        self.url = account_url.encode()
+        self.url = account_url
+        self.table = table_name
         super().__init__()
 
     async def send(self, request):
+        assert request.http_request.url == self.url + '/$batch'
         payload = request.http_request.body
-        payload_lines = payload.split(b'\r\n\r\n')
-        for line in payload_lines:
+        for line in payload.split(b'\r\n\r\n'):
             if line.startswith(b"PATCH") or line.startswith(b"POST"):
-                index = line.index(b" ") + 1
-                assert line[index: index + len(self.url)] == self.url
+                assert line[line.index(b" ") + 1:].decode().startswith(self.url + "/" + self.table)
                 raise RequestCorrect()
         raise AssertionError(
             "No matching PATCH/POST requests found in batch:\n{}".format(payload.decode()))
@@ -895,7 +895,7 @@ class TestBatchUnitTestsAsync(AsyncTableTestCase):
             url,
             "batchtablename",
             credential=self.credential,
-            per_call_policies=[CheckBatchURL(url)])
+            per_call_policies=[CheckBatchURL(url, "batchtablename")])
 
         with pytest.raises(RequestCorrect):
             await table.submit_transaction(self.batch)
@@ -906,7 +906,7 @@ class TestBatchUnitTestsAsync(AsyncTableTestCase):
             self.account_url(self.tables_storage_account_name, "table"),
             "batchtablename",
             credential=self.credential,
-            per_call_policies=[CheckBatchURL(self.account_url(self.tables_storage_account_name, "table"))])
+            per_call_policies=[CheckBatchURL(self.account_url(self.tables_storage_account_name, "table"), "batchtablename")])
 
         with pytest.raises(RequestCorrect):
             await table.submit_transaction(self.batch)
@@ -918,7 +918,7 @@ class TestBatchUnitTestsAsync(AsyncTableTestCase):
             url,
             credential=self.credential,
             table_name='foo',
-            per_call_policies=[CheckBatchURL(url)])
+            per_call_policies=[CheckBatchURL(url, "foo")])
 
         # Assert
         assert table.account_name == self.tables_storage_account_name
@@ -934,7 +934,7 @@ class TestBatchUnitTestsAsync(AsyncTableTestCase):
         table = TableClient.from_connection_string(
             conn_string,
             table_name='foo',
-            per_call_policies=[CheckBatchURL("https://{}.table.core.windows.net".format(self.tables_storage_account_name))]
+            per_call_policies=[CheckBatchURL("https://{}.table.core.windows.net".format(self.tables_storage_account_name), "foo")]
         )
         assert table.scheme == 'https'
         with pytest.raises(RequestCorrect):
@@ -948,7 +948,7 @@ class TestBatchUnitTestsAsync(AsyncTableTestCase):
         table = TableClient.from_connection_string(
             conn_string,
             table_name='foo',
-            per_call_policies=[CheckBatchURL("https://{}.table.core.windows.net".format(self.tables_storage_account_name))]
+            per_call_policies=[CheckBatchURL("https://{}.table.core.windows.net".format(self.tables_storage_account_name), "foo")]
         )
 
         assert table.account_name == self.tables_storage_account_name
@@ -963,7 +963,7 @@ class TestBatchUnitTestsAsync(AsyncTableTestCase):
         table = TableClient.from_connection_string(
             conn_string,
             table_name='foo',
-            per_call_policies=[CheckBatchURL("https://{}.table.cosmos.azure.com".format(self.tables_storage_account_name))]
+            per_call_policies=[CheckBatchURL("https://{}.table.cosmos.azure.com:443".format(self.tables_storage_account_name), "foo")]
         )
         assert table.account_name == self.tables_storage_account_name
         assert table.url.startswith('https://' + self.tables_storage_account_name + '.table.cosmos.azure.com')
@@ -979,7 +979,7 @@ class TestBatchUnitTestsAsync(AsyncTableTestCase):
         table = TableClient.from_connection_string(
             conn_string,
             table_name="foo",
-            per_call_policies=[CheckBatchURL("http://{}.table.core.chinacloudapi.cn".format(self.tables_storage_account_name))]
+            per_call_policies=[CheckBatchURL("http://{}.table.core.chinacloudapi.cn".format(self.tables_storage_account_name), "foo")]
         )
         assert table.account_name == self.tables_storage_account_name
         assert table.scheme == 'http'
@@ -994,7 +994,7 @@ class TestBatchUnitTestsAsync(AsyncTableTestCase):
         table = TableClient.from_connection_string(
             conn_string,
             table_name="foo",
-            per_call_policies=[CheckBatchURL("https://www.mydomain.com")]
+            per_call_policies=[CheckBatchURL("https://www.mydomain.com", "foo")]
         )
         assert table.url.startswith('https://www.mydomain.com')
         assert table.scheme == 'https'
@@ -1010,7 +1010,7 @@ class TestBatchUnitTestsAsync(AsyncTableTestCase):
         table = TableClient.from_connection_string(
             conn_string,
             table_name="foo",
-            per_call_policies=[CheckBatchURL("http://local-machine:11002/custom/account/path")]
+            per_call_policies=[CheckBatchURL("http://local-machine:11002/custom/account/path", "foo")]
         )
         assert table.account_name == self.tables_storage_account_name
         assert table._primary_hostname == 'local-machine:11002/custom/account/path'
@@ -1021,7 +1021,7 @@ class TestBatchUnitTestsAsync(AsyncTableTestCase):
         table = TableClient(
             endpoint=custom_account_url,
             table_name="foo",
-            per_call_policies=[CheckBatchURL("http://local-machine:11002/custom/account/path")]
+            per_call_policies=[CheckBatchURL("http://local-machine:11002/custom/account/path", "foo")]
         )
         assert table.account_name == "custom"
         assert table.table_name == "foo"
@@ -1033,7 +1033,7 @@ class TestBatchUnitTestsAsync(AsyncTableTestCase):
 
         table = TableClient.from_table_url(
             "http://local-machine:11002/custom/account/path/foo" + token.signature,
-            per_call_policies=[CheckBatchURL("http://local-machine:11002/custom/account/path")]
+            per_call_policies=[CheckBatchURL("http://local-machine:11002/custom/account/path", "foo")]
         )
         assert table.account_name == "custom"
         assert table.table_name == "foo"
@@ -1050,7 +1050,7 @@ class TestBatchUnitTestsAsync(AsyncTableTestCase):
             table_url,
             table_name='bar',
             credential=self.credential,
-            per_call_policies=[CheckBatchURL("https://{}.table.core.windows.net/foo".format(self.tables_storage_account_name))]
+            per_call_policies=[CheckBatchURL("https://{}.table.core.windows.net/foo".format(self.tables_storage_account_name), "bar")]
         )
 
         assert table.scheme == 'https'
@@ -1067,7 +1067,7 @@ class TestBatchUnitTestsAsync(AsyncTableTestCase):
             endpoint=table_url,
             table_name='bar',
             credential=self.credential,
-            per_call_policies=[CheckBatchURL("https://{}.table.core.windows.net:443/foo".format(self.tables_storage_account_name))]
+            per_call_policies=[CheckBatchURL("https://{}.table.core.windows.net:443/foo".format(self.tables_storage_account_name), "bar")]
         )
 
         # Assert
@@ -1087,7 +1087,7 @@ class TestBatchUnitTestsAsync(AsyncTableTestCase):
         table = TableClient.from_connection_string(
             emulator_connstr,
             'tablename',
-            per_call_policies=[CheckBatchURL("http://localhost:8902/tablename")]
+            per_call_policies=[CheckBatchURL("http://localhost:8902", "tablename")]
         )
         assert table.url == "http://localhost:8902"
         assert table.account_name == 'localhost'
@@ -1101,7 +1101,7 @@ class TestBatchUnitTestsAsync(AsyncTableTestCase):
             "http://localhost:8902/",
             "tablename",
             credential=emulator_credential,
-            per_call_policies=[CheckBatchURL("http://localhost:8902/tablename")]
+            per_call_policies=[CheckBatchURL("http://localhost:8902", "tablename")]
         )
         assert table.url == "http://localhost:8902"
         assert table.account_name == 'localhost'
@@ -1114,7 +1114,7 @@ class TestBatchUnitTestsAsync(AsyncTableTestCase):
         table = TableClient.from_table_url(
             "http://localhost:8902/Tables('tablename')",
             credential=emulator_credential,
-            per_call_policies=[CheckBatchURL("http://localhost:8902/tablename")]
+            per_call_policies=[CheckBatchURL("http://localhost:8902", "tablename")]
         )
         assert table.url == "http://localhost:8902"
         assert table.account_name == 'localhost'
