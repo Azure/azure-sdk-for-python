@@ -1,8 +1,15 @@
 # Release History
 
-## 12.7.0 (Unreleased)
+## 12.7.0 (2022-03-08)
 
-### Features Added
+This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
+
+### Stable release of preview features
+- Added support for service version 2021-02-12, 2021-04-10.
+- Added support for premium file share provisioned_bandwidth property.
+- Added support for checking if a directory exists using `exists()`.
+- Added support for `rename_directory()` and `rename_file()`.
+- Added support for `Create (c)` SAS permission for Share SAS.
 
 ### Bugs Fixed
 - Fixed a bug where `start_copy_from_url()` was not sending the `ignore_read_only` parameter correctly.
