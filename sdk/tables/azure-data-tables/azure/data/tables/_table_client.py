@@ -524,7 +524,7 @@ class TableClient(TablesBaseClient):
         )
 
     @distributed_trace
-    def query_entities(
+    def query_entities(  # pylint: disable=line-too-long
         self,
         query_filter,
         **kwargs
