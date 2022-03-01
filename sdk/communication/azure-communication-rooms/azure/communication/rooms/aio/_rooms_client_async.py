@@ -3,10 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import TYPE_CHECKING
 
-from uuid import uuid4
 from azure.core.tracing.decorator_async import distributed_trace_async
-
 from azure.communication.rooms._models import RoomRequest, CommunicationRoom
 from .._generated.aio._azure_communication_rooms_service import AzureCommunicationRoomsService
 from .._shared.utils import parse_connection_str, get_authentication_policy, get_current_utc_time
@@ -14,6 +13,10 @@ from .._version import SDK_MONIKER
 from .._generated.models import (
     CreateRoomRequest,
 )
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any
 
 class RoomsClient(object):
     """A client to interact with the AzureCommunicationService Rooms gateway.
@@ -73,7 +76,7 @@ class RoomsClient(object):
         endpoint, access_key = parse_connection_str(conn_str)
 
         return cls(endpoint, access_key, **kwargs)
-    
+
     @distributed_trace_async
     async def create_room(
         self,
@@ -83,7 +86,7 @@ class RoomsClient(object):
         # type: (...) -> CommunicationRoom
         """Create a new room.
 
-        :param room_request: Room to be created. If it is not specified, 
+        :param room_request: Room to be created. If it is not specified,
          room will be created with 180 days of validity
         :type room_request: RoomRequest
         :returns: Created room.
@@ -97,8 +100,8 @@ class RoomsClient(object):
             create_room_request = CreateRoomRequest()
         create_room_response = await self._rooms_service_client.rooms.create_room(
             create_room_request=create_room_request, **kwargs)
-        return CommunicationRoom._from_create_room_response(create_room_response)
-    
+        return CommunicationRoom.from_create_room_response(create_room_response)
+
     @distributed_trace_async
     async def delete_room(
         self,
@@ -116,7 +119,7 @@ class RoomsClient(object):
 
         """
         await self._rooms_service_client.rooms.delete_room(room_id=room_id, **kwargs)
-    
+
     @distributed_trace_async
     async def update_room(
         self,
@@ -141,7 +144,7 @@ class RoomsClient(object):
             update_room_request = room_request.to_update_room_request()
         update_room_response = await self._rooms_service_client.rooms.update_room(
             room_id=room_id, update_room_request=update_room_request, **kwargs)
-        return CommunicationRoom._from_update_room_response(update_room_response)
+        return CommunicationRoom.from_update_room_response(update_room_response)
 
     @distributed_trace_async
     async def get_room(
@@ -160,7 +163,7 @@ class RoomsClient(object):
 
         """
         get_room_response = await self._rooms_service_client.rooms.get_room(room_id=room_id, **kwargs)
-        return CommunicationRoom._from_get_room_response(get_room_response)
+        return CommunicationRoom.from_get_room_response(get_room_response)
     
     async def __aenter__(self) -> "RoomsClient":
         await self._rooms_service_client.__aenter__()

@@ -20,9 +20,6 @@ from _shared.testcase import (
     ResponseReplacerProcessor
 )
 from azure.communication.rooms._models import (
-    CommunicationRoom
-)
-from azure.communication.rooms._models import (
     RoomRequest
 )
 
@@ -42,7 +39,6 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
 
     def setUp(self):
         super(RoomsClientTestAsync, self).setUp()
-        #self.connection_str = "endpoint=https://rooms-ppe-us.ppe.communication.azure.net/;accesskey=J9gcDYLfopqKzHIKg7BI7+Qt/ZKTg0jeO/xvUF1JWxr8sHeA9Wq3DT+bjEIo3kRfjuj84CNm3s7B/zDrqkeLnA=="
         if self.is_playback():
             self.recording_processors.extend([
                 BodyReplacerProcessor(keys=["participants","invalid_participants"])])
@@ -89,8 +85,8 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             # delete created room
             await self.rooms_client.delete_room(room_id=response.id)
         
-            # verify room is valid for 6 months
-            valid_until = datetime.now() + relativedelta(months=+6)
+            # verify room is valid for 180 days
+            valid_until = datetime.now() + relativedelta(days=+180)
             self.assertEqual(valid_until.date(), response.valid_until.date())
 
     @AsyncCommunicationTestCase.await_prepared_test
@@ -172,7 +168,8 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
         room_request.add_participant(self.users["john"])
         room_request.remove_participant(self.users["chris"])
         participants = {
-            self.users["john"].properties["id"] : {}
+            self.users["john"].properties["id"] : {},
+            self.users["chris"].properties["id"] : {}
         }
         
         async with self.rooms_client:

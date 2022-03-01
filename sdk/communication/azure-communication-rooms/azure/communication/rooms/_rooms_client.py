@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
-from uuid import uuid4
 from azure.core.tracing.decorator import distributed_trace
 from azure.communication.rooms._models import RoomRequest, CommunicationRoom
 
@@ -13,8 +12,11 @@ from ._generated.models import (
     CreateRoomRequest,
 )
 
-from ._shared.utils import parse_connection_str, get_authentication_policy, get_current_utc_time
+from ._shared.utils import parse_connection_str, get_authentication_policy
 from ._version import SDK_MONIKER
+
+if TYPE_CHECKING:
+    from typing import Any
 
 class RoomsClient(object):
     """A client to interact with the AzureCommunicationService Rooms gateway.
@@ -84,7 +86,7 @@ class RoomsClient(object):
         # type: (...) -> CommunicationRoom
         """Create a new room.
 
-        :param room_request: Room to be created. If it is not specified, 
+        :param room_request: Room to be created. If it is not specified,
          room will be created with 180 days of validity
         :type room_request: RoomRequest
         :returns: Created room.
@@ -98,7 +100,7 @@ class RoomsClient(object):
             create_room_request = CreateRoomRequest()
         create_room_response = self._rooms_service_client.rooms.create_room(
             create_room_request=create_room_request, **kwargs)
-        return CommunicationRoom._from_create_room_response(create_room_response)
+        return CommunicationRoom.from_create_room_response(create_room_response)
 
     @distributed_trace
     def delete_room(
@@ -142,7 +144,7 @@ class RoomsClient(object):
         update_room_request = room_request.to_update_room_request()
         update_room_response = self._rooms_service_client.rooms.update_room(
             room_id=room_id, update_room_request=update_room_request, **kwargs)
-        return CommunicationRoom._from_update_room_response(update_room_response)
+        return CommunicationRoom.from_update_room_response(update_room_response)
 
     @distributed_trace
     def get_room(
@@ -161,5 +163,5 @@ class RoomsClient(object):
 
         """
         get_room_response = self._rooms_service_client.rooms.get_room(room_id=room_id, **kwargs)
-        return CommunicationRoom._from_get_room_response(get_room_response)
+        return CommunicationRoom.from_get_room_response(get_room_response)
     

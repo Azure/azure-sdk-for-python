@@ -21,27 +21,10 @@ python -m pip install azure-communication-rooms
 - You need an [Azure subscription][azure_sub] to use this package.
 - A deployed Communication Services resource. You can use the [Azure Portal](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource?tabs=windows&pivots=platform-azp) or the [Azure PowerShell](https://docs.microsoft.com/powershell/module/az.communication/new-azcommunicationservice) to set it up.
 
-#### Create with an Azure Active Directory Credential
-To use an [Azure Active Directory (AAD) token credential][authenticate_with_token],
-provide an instance of the desired credential type obtained from the
-[azure-identity][azure_identity_credentials] library.
 
-To authenticate with AAD, you must first [pip][pip] install [`azure-identity`][azure_identity_pip]
+### Client Initialization
 
-After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
-As an example, [DefaultAzureCredential][default_azure_credential] can be used to authenticate the client:
-
-Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
-`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`
-
-Use the returned token credential to authenticate the client:
-
-```python
-from azure.communication.rooms import RoomsClient
-from azure.identity import DefaultAzureCredential
-client = RoomsClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
-```
-Alternatively you can use Connection String to the deployed resource
+To initialize the Rooms Client, the connection string can be used to instantiate.
 
 ```python
 from azure.communication.rooms import RoomsClient

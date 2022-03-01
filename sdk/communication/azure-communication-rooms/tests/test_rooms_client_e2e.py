@@ -19,9 +19,7 @@ from _shared.testcase import (
     BodyReplacerProcessor,
     ResponseReplacerProcessor
 )
-from azure.communication.rooms._models import (
-    CommunicationRoom
-)
+
 from azure.communication.rooms import (
     RoomsClient,
     RoomRequest
@@ -43,7 +41,6 @@ class RoomsClientTest(CommunicationTestCase):
 
     def setUp(self):
         super(RoomsClientTest, self).setUp()
-        self.connection_str = "endpoint=https://rooms-ppe-us.ppe.communication.azure.net/;accesskey=J9gcDYLfopqKzHIKg7BI7+Qt/ZKTg0jeO/xvUF1JWxr8sHeA9Wq3DT+bjEIo3kRfjuj84CNm3s7B/zDrqkeLnA=="
         if self.is_playback():
             self.recording_processors.extend([
                 BodyReplacerProcessor(keys=["participants","invalid_participants"])])
@@ -87,8 +84,8 @@ class RoomsClientTest(CommunicationTestCase):
         # delete created room
         self.rooms_client.delete_room(room_id=response.id)
         
-        # verify room is valid for 6 months
-        valid_until = datetime.now() + relativedelta(months=+6)
+        # verify room is valid for 180 days
+        valid_until = datetime.utcnow() + relativedelta(days=+180)
         self.assertEqual(valid_until.date(), response.valid_until.date())
 
     def test_create_room_only_validUntil(self):
@@ -163,7 +160,8 @@ class RoomsClientTest(CommunicationTestCase):
         
         response = self.rooms_client.create_room(room_request=room_request)
         participants = {
-            self.users["john"].properties["id"] : {}
+            self.users["john"].properties["id"] : {},
+            self.users["chris"].properties["id"] : {}
         }
         
         # delete created room
@@ -495,7 +493,6 @@ class RoomsClientTest(CommunicationTestCase):
         assert ex.value.message is not None
     
     def verify_successful_room_response(self, response, valid_from=None, valid_until=None, room_id=None, participants=None):
-        assert self.is_playback()
         if room_id is not None:
             self.assertEqual(room_id, response.id)
         if valid_from is not None:
