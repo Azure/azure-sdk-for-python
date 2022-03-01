@@ -52,7 +52,7 @@ class AppConfigurationManagementClientConfiguration(Configuration):
 
     def _configure(
         self,
-        **kwargs  # type: Any
+        **kwargs
     ):
         # type: (...) -> None
         self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
