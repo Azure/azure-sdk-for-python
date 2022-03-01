@@ -126,6 +126,7 @@ class AvroEncoder(object):
         *,
         schema: str,
         message_type: Optional[Callable] = None,
+        request_kwargs: Dict[str, Any] = None,
         **kwargs: Any,
     ) -> Union[MessageType, MessageMetadataDict]:
 
@@ -151,6 +152,8 @@ class AvroEncoder(object):
          `(data: bytes, content_type: str, **kwargs) -> MessageType`, where `data` and `content_type`
          are positional parameters.
         :paramtype message_type: Callable or None
+        :keyword request_kwargs: The keyword arguments to be passed to the client.
+        :paramtype request_kwargs: Dict[str, Any]
         :rtype: MessageType or MessageMetadataDict
         :raises ~azure.schemaregistry.encoder.avroencoder.exceptions.SchemaParseError:
             Indicates an issue with parsing schema.
@@ -167,7 +170,8 @@ class AvroEncoder(object):
                 f"Cannot parse schema: {raw_input_schema}", error=e
             ).raise_with_traceback()
 
-        schema_id = await self._get_schema_id(schema_fullname, raw_input_schema)
+        request_kwargs = request_kwargs or {}
+        schema_id = await self._get_schema_id(schema_fullname, raw_input_schema, **request_kwargs)
         content_type = f"{AVRO_MIME_TYPE}+{schema_id}"
 
         try:
@@ -219,6 +223,7 @@ class AvroEncoder(object):
         message: Union[MessageType, MessageMetadataDict],
         *,
         readers_schema: Optional[str] = None,
+        request_kwargs: Dict[str, Any] = None,
         **kwargs,   # pylint: disable=unused-argument
     ) -> Dict[str, Any]:
         """
@@ -235,6 +240,8 @@ class AvroEncoder(object):
         :type message: MessageType or MessageMetadataDict
         :keyword readers_schema: An optional reader's schema as defined by the Apache Avro specification.
         :paramtype readers_schema: str or None
+        :keyword client_request_kwargs: The keyword arguments to be passed to the client.
+        :paramtype client_request_kwargs: Dict[str, Any]
         :rtype: Dict[str, Any]
         :raises ~azure.schemaregistry.encoder.avroencoder.exceptions.SchemaParseError:
             Indicates an issue with parsing schema.
@@ -261,7 +268,8 @@ class AvroEncoder(object):
         data, content_type = self._convert_preamble_format(data, content_type)
 
         schema_id = content_type.split("+")[1]
-        schema_definition = await self._get_schema(schema_id)
+        request_kwargs = request_kwargs or {}
+        schema_definition = await self._get_schema(schema_id, **request_kwargs)
         try:
             dict_value = self._avro_encoder.decode(data, schema_definition, readers_schema=readers_schema)
         except Exception as e:  # pylint:disable=broad-except

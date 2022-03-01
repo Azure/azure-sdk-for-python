@@ -199,6 +199,26 @@ class AvroEncoderTests(AzureTestCase):
         readers_schema_change_name = """{"namespace":"fakeexample.avro","type":"record","name":"fake_user","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         with pytest.raises(SchemaDecodeError):
             decoded_data = sr_avro_encoder.decode(encoded_data_dict, readers_schema=readers_schema_change_name)
+    
+    @SchemaRegistryPowerShellPreparer()
+    def test_basic_sr_avro_encoder_with_request_kwargs(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        sr_client = self.create_basic_client(SchemaRegistryClient, fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
+        sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
+
+        schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
+
+        dict_data = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
+        with pytest.raises(TypeError) as e:
+            encoded_metadata = sr_avro_encoder.encode(dict_data, schema=schema_str, request_kwargs={"fake_kwarg": True})
+        assert 'request() got an unexpected keyword' in str(e.value)
+        encoded_metadata = sr_avro_encoder.encode(dict_data, schema=schema_str)
+        content_type = encoded_metadata["content_type"]
+        encoded_data = encoded_metadata["data"]
+
+        encoded_data_dict = {"data": encoded_data, "content_type": content_type}
+        with pytest.raises(TypeError) as e:
+            decoded_data = sr_avro_encoder.decode(encoded_data_dict, request_kwargs={"fake_kwarg": True})
+        assert 'request() got an unexpected keyword' in str(e.value)
 
 
     ################################################################# 

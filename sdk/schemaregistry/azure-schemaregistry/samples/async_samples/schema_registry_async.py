@@ -46,10 +46,10 @@ SCHEMA_JSON = {
 DEFINITION = json.dumps(SCHEMA_JSON, separators=(",", ":"))
 
 
-async def register_schema(client, group_name, name, definition, format):
+async def register_schema(client, group_name, name, definition, format, **kwargs):
     print("Registering schema...")
     schema_properties = await client.register_schema(
-        group_name, name, definition, format
+        group_name, name, definition, format, **kwargs
     )
     print("Schema registered, returned schema id is {}".format(schema_properties.id))
     print("Schema properties are {}".format(schema_properties))
@@ -68,10 +68,10 @@ async def get_schema_by_id(client, schema_id):
     return schema.definition
 
 
-async def get_schema_id(client, group_name, name, definition, format):
+async def get_schema_id(client, group_name, name, definition, format, **kwargs):
     print("Getting schema id...")
     schema_properties = await client.get_schema_properties(
-        group_name, name, definition, format
+        group_name, name, definition, format, **kwargs
     )
     print("The schema id is: {}".format(schema_properties.id))
     print("Schema properties are {}".format(schema_properties))
@@ -83,13 +83,14 @@ async def main():
     schema_registry_client = SchemaRegistryClient(
         fully_qualified_namespace=SCHEMAREGISTRY_FQN, credential=token_credential
     )
+    request_kwargs = {"fake_kwarg": True}
     async with token_credential, schema_registry_client:
-        schema_id = await register_schema(
-            schema_registry_client, GROUP_NAME, NAME, DEFINITION, FORMAT
-        )
-        schema_str = await get_schema_by_id(schema_registry_client, schema_id)
+        #schema_id = await register_schema(
+        #    schema_registry_client, GROUP_NAME, NAME, DEFINITION, FORMAT, **request_kwargs
+        #)
+        #schema_str = await get_schema_by_id(schema_registry_client, schema_id)
         schema_id = await get_schema_id(
-            schema_registry_client, GROUP_NAME, NAME, DEFINITION, FORMAT
+            schema_registry_client, GROUP_NAME, NAME, DEFINITION, FORMAT, **request_kwargs
         )
 
 
