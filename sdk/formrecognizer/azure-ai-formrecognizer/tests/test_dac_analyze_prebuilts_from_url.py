@@ -82,8 +82,6 @@ class TestDACAnalyzePrebuiltsfromUrl(FormRecognizerTest):
         assert len(business_card.fields.get("CompanyNames").value) == 1
         assert business_card.fields.get("CompanyNames").value[0].value == "Contoso"
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -106,8 +104,6 @@ class TestDACAnalyzePrebuiltsfromUrl(FormRecognizerTest):
         assert passport["Sex"].value == "F"
         assert passport["CountryRegion"].value == "CAN"
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -129,8 +125,6 @@ class TestDACAnalyzePrebuiltsfromUrl(FormRecognizerTest):
         assert id_document.fields.get("Address").value == "123 STREET ADDRESS YOUR CITY WA 99999-1234"
         assert id_document.fields.get("CountryRegion").value == "USA"
         assert id_document.fields.get("Region").value == "Washington"
-
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -155,8 +149,6 @@ class TestDACAnalyzePrebuiltsfromUrl(FormRecognizerTest):
         assert invoice.fields.get("Items").value[0].value["Amount"].value.symbol ==  "$"
         assert invoice.fields.get("DueDate").value, date(2017, 6 ==  24)
 
-        return {}
-
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
@@ -170,8 +162,6 @@ class TestDACAnalyzePrebuiltsfromUrl(FormRecognizerTest):
         poller2 = client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
         poller2.wait()
         assert poller2._polling_method._timeout ==  7  # goes back to client default
-
-        return {}
 
     @pytest.mark.live_test_only
     def test_active_directory_auth(self):
@@ -192,8 +182,6 @@ class TestDACAnalyzePrebuiltsfromUrl(FormRecognizerTest):
         except HttpResponseError as e:
             assert "https://fakeuri.com/blank%20space" in  e.response.request.body
 
-        return {}
-
     @pytest.mark.skip("TODO check if the error changed")
     @FormRecognizerPreparer()
     @recorded_by_proxy
@@ -211,8 +199,6 @@ class TestDACAnalyzePrebuiltsfromUrl(FormRecognizerTest):
         with pytest.raises(ClientAuthenticationError):
             poller = client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -220,8 +206,6 @@ class TestDACAnalyzePrebuiltsfromUrl(FormRecognizerTest):
         set_bodiless_matcher()
         with pytest.raises(HttpResponseError):
             poller = client.begin_analyze_document_from_url("prebuilt-receipt", "https://badurl.jpg")
-
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -231,8 +215,6 @@ class TestDACAnalyzePrebuiltsfromUrl(FormRecognizerTest):
         with open(self.receipt_png, "rb") as receipt:
             with pytest.raises(HttpResponseError):
                 poller = client.begin_analyze_document_from_url("prebuilt-receipt", receipt)
-
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -272,8 +254,6 @@ class TestDACAnalyzePrebuiltsfromUrl(FormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -295,8 +275,6 @@ class TestDACAnalyzePrebuiltsfromUrl(FormRecognizerTest):
         assert receipt.doc_type == "receipt.retailMeal"
 
         assert len(result.pages) == 1
-
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -331,8 +309,6 @@ class TestDACAnalyzePrebuiltsfromUrl(FormRecognizerTest):
         assert receipt.doc_type == "receipt.retailMeal"
 
         assert len(result.pages) == 2
-
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -373,8 +349,6 @@ class TestDACAnalyzePrebuiltsfromUrl(FormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
-        return {}
-
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -398,8 +372,6 @@ class TestDACAnalyzePrebuiltsfromUrl(FormRecognizerTest):
         result = poller.result()
         assert result
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -408,8 +380,6 @@ class TestDACAnalyzePrebuiltsfromUrl(FormRecognizerTest):
         with pytest.raises(HttpResponseError) as e:
             client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg, locale="not a locale")
         assert "InvalidArgument" == e.value.error.code
-
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -420,5 +390,3 @@ class TestDACAnalyzePrebuiltsfromUrl(FormRecognizerTest):
         assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
         result = poller.result()
         assert result
-
-        return {}
