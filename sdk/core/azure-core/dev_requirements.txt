@@ -1,6 +1,5 @@
 trio
 aiohttp>=3.0
-typing_extensions>=3.7.2
 opencensus>=0.6.0
 opencensus-ext-azure
 opencensus-ext-threading
