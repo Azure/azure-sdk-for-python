@@ -81,3 +81,11 @@ azure.core.rest
    :undoc-members:
    :inherited-members:
 
+azure.core.utils
+-------------------
+
+.. automodule:: azure.core.utils
+   :members:
+   :undoc-members:
+   :inherited-members:
+
