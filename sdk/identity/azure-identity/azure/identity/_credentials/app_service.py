@@ -41,8 +41,6 @@ def _get_client_args(**kwargs):
 
     if kwargs.get("client_id"):
         identity_config["clientid"] = kwargs.pop("client_id")
-    if kwargs.get("resource_id"):
-        identity_config["mi_res_id"] = kwargs.pop("resource_id")
 
     return dict(
         kwargs,
