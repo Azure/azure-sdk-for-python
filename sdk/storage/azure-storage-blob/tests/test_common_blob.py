@@ -1824,6 +1824,53 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @pytest.mark.live_test_only
     @BlobPreparer()
+    def test_blob_service_sas(self, storage_account_name, storage_account_key):
+        # SAS URL is calculated from storage key, so this test runs live only
+
+        self._setup(storage_account_name, storage_account_key)
+        container = self.bsc.get_container_client(self.container_name)
+        blob_name = self._create_block_blob(overwrite=True)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+
+        # Generate SAS with all available permissions
+        container_sas = generate_container_sas(
+            container.account_name,
+            container.container_name,
+            account_key=container.credential.account_key,
+            permission=ContainerSasPermissions(
+                read=True, write=True, delete=True, list=True, delete_previous_version=True,
+                tag=True, add=True, create=True, permanent_delete=True, find=True, move=True,
+                execute=True, set_immutability_policy=True
+            ),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+
+        blob_sas = generate_blob_sas(
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            snapshot=blob.snapshot,
+            account_key=blob.credential.account_key,
+            permission=BlobSasPermissions(
+                read=True, add=True, create=True, write=True, delete=True, delete_previous_version=True,
+                permanent_delete=True, tag=True, find=True, move=True, execute=True, set_immutability_policy=True
+            ),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # Act
+        container_client = ContainerClient.from_container_url(container.url, credential=container_sas)
+        blob_list = list(container_client.list_blobs())
+
+        blob_client = BlobClient.from_blob_url(blob.url, credential=blob_sas)
+        blob_props = blob_client.get_blob_properties()
+
+        # Assert
+        self.assertIsNotNone(blob_list)
+        self.assertIsNotNone(blob_props)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
     def test_set_immutability_policy_using_sas(self, versioned_storage_account_name, versioned_storage_account_key, storage_resource_group_name):
         # SAS URL is calculated from storage key, so this test runs live only
 
