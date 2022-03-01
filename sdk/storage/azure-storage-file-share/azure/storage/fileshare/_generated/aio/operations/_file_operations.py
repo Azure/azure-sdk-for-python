@@ -1753,6 +1753,7 @@ class FileOperations:
         source_lease_access_conditions: Optional["_models.SourceLeaseAccessConditions"] = None,
         destination_lease_access_conditions: Optional["_models.DestinationLeaseAccessConditions"] = None,
         copy_file_smb_info: Optional["_models.CopyFileSmbInfo"] = None,
+        file_http_headers: Optional["_models.FileHTTPHeaders"] = None,
         **kwargs: Any
     ) -> None:
         """Renames a file.
@@ -1796,6 +1797,8 @@ class FileOperations:
          ~azure.storage.fileshare.models.DestinationLeaseAccessConditions
         :param copy_file_smb_info: Parameter group.
         :type copy_file_smb_info: ~azure.storage.fileshare.models.CopyFileSmbInfo
+        :param file_http_headers: Parameter group.
+        :type file_http_headers: ~azure.storage.fileshare.models.FileHTTPHeaders
         :keyword comp: comp. The default value is "rename". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
@@ -1817,6 +1820,7 @@ class FileOperations:
         _file_attributes = None
         _file_creation_time = None
         _file_last_write_time = None
+        _file_content_type = None
         if source_lease_access_conditions is not None:
             _source_lease_id = source_lease_access_conditions.source_lease_id
         if destination_lease_access_conditions is not None:
@@ -1825,6 +1829,8 @@ class FileOperations:
             _file_attributes = copy_file_smb_info.file_attributes
             _file_creation_time = copy_file_smb_info.file_creation_time
             _file_last_write_time = copy_file_smb_info.file_last_write_time
+        if file_http_headers is not None:
+            _file_content_type = file_http_headers.file_content_type
 
         request = build_rename_request(
             url=self._config.url,
@@ -1842,6 +1848,7 @@ class FileOperations:
             file_permission=file_permission,
             file_permission_key=file_permission_key,
             metadata=metadata,
+            file_content_type=_file_content_type,
             template_url=self.rename.metadata['url'],
         )
         request = _convert_request(request)

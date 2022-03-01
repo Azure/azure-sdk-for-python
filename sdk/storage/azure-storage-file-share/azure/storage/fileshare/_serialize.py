@@ -27,12 +27,13 @@ _SUPPORTED_API_VERSIONS = [
     '2020-08-04',
     '2020-10-02',
     '2021-02-12',
-    '2021-04-10'
+    '2021-04-10',
+    '2021-06-08'
 ]
 
 
 def _get_match_headers(kwargs, match_param, etag_param):
-    # type: (str) -> Tuple(Dict[str, Any], Optional[str], Optional[str])
+    # type: (Dict[str, Any], str, str) -> Tuple(Optional[str], Optional[str])
     # TODO: extract this method to shared folder also add some comments, so that share, datalake and blob can use it.
     if_match = None
     if_none_match = None

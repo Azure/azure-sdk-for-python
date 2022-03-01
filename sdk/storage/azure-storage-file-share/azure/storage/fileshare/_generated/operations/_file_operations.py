@@ -34,7 +34,7 @@ def build_create_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     file_type_constant = kwargs.pop('file_type_constant', "file")  # type: str
     file_content_length = kwargs.pop('file_content_length')  # type: int
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
@@ -110,7 +110,7 @@ def build_download_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     range = kwargs.pop('range', None)  # type: Optional[str]
     range_get_content_md5 = kwargs.pop('range_get_content_md5', None)  # type: Optional[bool]
@@ -155,7 +155,7 @@ def build_get_properties_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     sharesnapshot = kwargs.pop('sharesnapshot', None)  # type: Optional[str]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
@@ -197,7 +197,7 @@ def build_delete_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
 
@@ -237,7 +237,7 @@ def build_set_http_headers_request(
 ):
     # type: (...) -> HttpRequest
     comp = kwargs.pop('comp', "properties")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     file_content_length = kwargs.pop('file_content_length', None)  # type: Optional[int]
     file_content_type = kwargs.pop('file_content_type', None)  # type: Optional[str]
@@ -311,7 +311,7 @@ def build_set_metadata_request(
 ):
     # type: (...) -> HttpRequest
     comp = kwargs.pop('comp', "metadata")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
     lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
@@ -356,7 +356,7 @@ def build_acquire_lease_request(
     # type: (...) -> HttpRequest
     comp = kwargs.pop('comp', "lease")  # type: str
     action = kwargs.pop('action', "acquire")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     duration = kwargs.pop('duration', None)  # type: Optional[int]
     proposed_lease_id = kwargs.pop('proposed_lease_id', None)  # type: Optional[str]
@@ -405,7 +405,7 @@ def build_release_lease_request(
     # type: (...) -> HttpRequest
     comp = kwargs.pop('comp', "lease")  # type: str
     action = kwargs.pop('action', "release")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     lease_id = kwargs.pop('lease_id')  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
@@ -450,7 +450,7 @@ def build_change_lease_request(
     # type: (...) -> HttpRequest
     comp = kwargs.pop('comp', "lease")  # type: str
     action = kwargs.pop('action', "change")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     lease_id = kwargs.pop('lease_id')  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     proposed_lease_id = kwargs.pop('proposed_lease_id', None)  # type: Optional[str]
@@ -498,7 +498,7 @@ def build_break_lease_request(
     # type: (...) -> HttpRequest
     comp = kwargs.pop('comp', "lease")  # type: str
     action = kwargs.pop('action', "break")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
@@ -543,7 +543,7 @@ def build_upload_range_request(
 ):
     # type: (...) -> HttpRequest
     comp = kwargs.pop('comp', "range")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     range = kwargs.pop('range')  # type: str
     content_length = kwargs.pop('content_length')  # type: int
@@ -597,7 +597,7 @@ def build_upload_range_from_url_request(
     # type: (...) -> HttpRequest
     comp = kwargs.pop('comp', "range")  # type: str
     file_range_write_from_url = kwargs.pop('file_range_write_from_url', "update")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     range = kwargs.pop('range')  # type: str
     copy_source = kwargs.pop('copy_source')  # type: str
     content_length = kwargs.pop('content_length')  # type: int
@@ -660,7 +660,7 @@ def build_get_range_list_request(
 ):
     # type: (...) -> HttpRequest
     comp = kwargs.pop('comp', "rangelist")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     sharesnapshot = kwargs.pop('sharesnapshot', None)  # type: Optional[str]
     prevsharesnapshot = kwargs.pop('prevsharesnapshot', None)  # type: Optional[str]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
@@ -709,7 +709,7 @@ def build_start_copy_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     copy_source = kwargs.pop('copy_source')  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
@@ -779,7 +779,7 @@ def build_abort_copy_request(
     # type: (...) -> HttpRequest
     comp = kwargs.pop('comp', "copy")  # type: str
     copy_action_abort_constant = kwargs.pop('copy_action_abort_constant', "abort")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     copy_id = kwargs.pop('copy_id')  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
@@ -823,7 +823,7 @@ def build_list_handles_request(
 ):
     # type: (...) -> HttpRequest
     comp = kwargs.pop('comp', "listhandles")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     marker = kwargs.pop('marker', None)  # type: Optional[str]
     maxresults = kwargs.pop('maxresults', None)  # type: Optional[int]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
@@ -870,7 +870,7 @@ def build_force_close_handles_request(
 ):
     # type: (...) -> HttpRequest
     comp = kwargs.pop('comp', "forceclosehandles")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     handle_id = kwargs.pop('handle_id')  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     marker = kwargs.pop('marker', None)  # type: Optional[str]
@@ -916,7 +916,7 @@ def build_rename_request(
 ):
     # type: (...) -> HttpRequest
     comp = kwargs.pop('comp', "rename")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     rename_source = kwargs.pop('rename_source')  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     replace_if_exists = kwargs.pop('replace_if_exists', None)  # type: Optional[bool]
@@ -929,6 +929,7 @@ def build_rename_request(
     file_permission = kwargs.pop('file_permission', "inherit")  # type: Optional[str]
     file_permission_key = kwargs.pop('file_permission_key', None)  # type: Optional[str]
     metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
+    file_content_type = kwargs.pop('file_content_type', None)  # type: Optional[str]
 
     accept = "application/xml"
     # Construct URL
@@ -969,6 +970,8 @@ def build_rename_request(
         _header_parameters['x-ms-file-permission-key'] = _SERIALIZER.header("file_permission_key", file_permission_key, 'str')
     if metadata is not None:
         _header_parameters['x-ms-meta'] = _SERIALIZER.header("metadata", metadata, '{str}')
+    if file_content_type is not None:
+        _header_parameters['x-ms-content-type'] = _SERIALIZER.header("file_content_type", file_content_type, 'str')
     _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
@@ -2730,6 +2733,7 @@ class FileOperations(object):
         source_lease_access_conditions=None,  # type: Optional["_models.SourceLeaseAccessConditions"]
         destination_lease_access_conditions=None,  # type: Optional["_models.DestinationLeaseAccessConditions"]
         copy_file_smb_info=None,  # type: Optional["_models.CopyFileSmbInfo"]
+        file_http_headers=None,  # type: Optional["_models.FileHTTPHeaders"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -2774,6 +2778,8 @@ class FileOperations(object):
          ~azure.storage.fileshare.models.DestinationLeaseAccessConditions
         :param copy_file_smb_info: Parameter group.
         :type copy_file_smb_info: ~azure.storage.fileshare.models.CopyFileSmbInfo
+        :param file_http_headers: Parameter group.
+        :type file_http_headers: ~azure.storage.fileshare.models.FileHTTPHeaders
         :keyword comp: comp. The default value is "rename". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
@@ -2795,6 +2801,7 @@ class FileOperations(object):
         _file_attributes = None
         _file_creation_time = None
         _file_last_write_time = None
+        _file_content_type = None
         if source_lease_access_conditions is not None:
             _source_lease_id = source_lease_access_conditions.source_lease_id
         if destination_lease_access_conditions is not None:
@@ -2803,6 +2810,8 @@ class FileOperations(object):
             _file_attributes = copy_file_smb_info.file_attributes
             _file_creation_time = copy_file_smb_info.file_creation_time
             _file_last_write_time = copy_file_smb_info.file_last_write_time
+        if file_http_headers is not None:
+            _file_content_type = file_http_headers.file_content_type
 
         request = build_rename_request(
             url=self._config.url,
@@ -2820,6 +2829,7 @@ class FileOperations(object):
             file_permission=file_permission,
             file_permission_key=file_permission_key,
             metadata=metadata,
+            file_content_type=_file_content_type,
             template_url=self.rename.metadata['url'],
         )
         request = _convert_request(request)

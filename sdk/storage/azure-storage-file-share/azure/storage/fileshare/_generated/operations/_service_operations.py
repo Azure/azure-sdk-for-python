@@ -36,7 +36,7 @@ def build_set_properties_request(
     # type: (...) -> HttpRequest
     restype = kwargs.pop('restype', "service")  # type: str
     comp = kwargs.pop('comp', "properties")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
 
@@ -79,7 +79,7 @@ def build_get_properties_request(
     # type: (...) -> HttpRequest
     restype = kwargs.pop('restype', "service")  # type: str
     comp = kwargs.pop('comp', "properties")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
 
     accept = "application/xml"
@@ -118,7 +118,7 @@ def build_list_shares_segment_request(
 ):
     # type: (...) -> HttpRequest
     comp = kwargs.pop('comp', "list")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     prefix = kwargs.pop('prefix', None)  # type: Optional[str]
     marker = kwargs.pop('marker', None)  # type: Optional[str]
     maxresults = kwargs.pop('maxresults', None)  # type: Optional[int]

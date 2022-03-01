@@ -35,7 +35,7 @@ def build_create_request(
 ):
     # type: (...) -> HttpRequest
     restype = kwargs.pop('restype', "directory")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
     file_permission = kwargs.pop('file_permission', "inherit")  # type: Optional[str]
@@ -88,7 +88,7 @@ def build_get_properties_request(
 ):
     # type: (...) -> HttpRequest
     restype = kwargs.pop('restype', "directory")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     sharesnapshot = kwargs.pop('sharesnapshot', None)  # type: Optional[str]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
 
@@ -129,7 +129,7 @@ def build_delete_request(
 ):
     # type: (...) -> HttpRequest
     restype = kwargs.pop('restype', "directory")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
 
     accept = "application/xml"
@@ -168,7 +168,7 @@ def build_set_properties_request(
     # type: (...) -> HttpRequest
     restype = kwargs.pop('restype', "directory")  # type: str
     comp = kwargs.pop('comp', "properties")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     file_permission = kwargs.pop('file_permission', "inherit")  # type: Optional[str]
     file_permission_key = kwargs.pop('file_permission_key', None)  # type: Optional[str]
@@ -220,7 +220,7 @@ def build_set_metadata_request(
     # type: (...) -> HttpRequest
     restype = kwargs.pop('restype', "directory")  # type: str
     comp = kwargs.pop('comp', "metadata")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
 
@@ -263,7 +263,7 @@ def build_list_files_and_directories_segment_request(
     # type: (...) -> HttpRequest
     restype = kwargs.pop('restype', "directory")  # type: str
     comp = kwargs.pop('comp', "list")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     prefix = kwargs.pop('prefix', None)  # type: Optional[str]
     sharesnapshot = kwargs.pop('sharesnapshot', None)  # type: Optional[str]
     marker = kwargs.pop('marker', None)  # type: Optional[str]
@@ -320,7 +320,7 @@ def build_list_handles_request(
 ):
     # type: (...) -> HttpRequest
     comp = kwargs.pop('comp', "listhandles")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     marker = kwargs.pop('marker', None)  # type: Optional[str]
     maxresults = kwargs.pop('maxresults', None)  # type: Optional[int]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
@@ -370,7 +370,7 @@ def build_force_close_handles_request(
 ):
     # type: (...) -> HttpRequest
     comp = kwargs.pop('comp', "forceclosehandles")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     handle_id = kwargs.pop('handle_id')  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     marker = kwargs.pop('marker', None)  # type: Optional[str]
@@ -420,7 +420,7 @@ def build_rename_request(
     # type: (...) -> HttpRequest
     restype = kwargs.pop('restype', "directory")  # type: str
     comp = kwargs.pop('comp', "rename")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     rename_source = kwargs.pop('rename_source')  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     replace_if_exists = kwargs.pop('replace_if_exists', None)  # type: Optional[bool]
