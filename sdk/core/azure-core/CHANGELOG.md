@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- use "\n" rather than "/n" for new line in log     #23261
+
 ### Other Changes
 
 - Log "WWW-Authenticate" header in `HttpLoggingPolicy`  #22990
