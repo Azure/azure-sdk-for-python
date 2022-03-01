@@ -200,7 +200,7 @@ print(secret.value)
 ```
 
 ### Update Secret metadata
-[update_secret_properites](https://aka.ms/azsdk/python/keyvault-secrets/docs#azure.keyvault.secrets.SecretClient.update_secret_properties)
+[update_secret_properties](https://aka.ms/azsdk/python/keyvault-secrets/docs#azure.keyvault.secrets.SecretClient.update_secret_properties)
 updates a secret's metadata. It cannot change the secret's value; use [set_secret](#set-a-secret) to set a secret's
 value.
 
