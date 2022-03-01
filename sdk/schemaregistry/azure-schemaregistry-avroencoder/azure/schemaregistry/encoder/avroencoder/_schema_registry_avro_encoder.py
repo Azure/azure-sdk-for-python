@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import logging
 from functools import lru_cache
 from io import BytesIO
 from typing import Any, Dict, Mapping, Optional, Union, Callable
@@ -42,6 +43,7 @@ from ._constants import (
     RECORD_FORMAT_IDENTIFIER_LENGTH,
 )
 
+_LOGGER = logging.getLogger(__name__)
 
 class AvroEncoder(object):
     """
@@ -173,8 +175,14 @@ class AvroEncoder(object):
                 f"Cannot parse schema: {raw_input_schema}", error=e
             ).raise_with_traceback()
 
+        cache_misses = self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter
         request_kwargs = request_kwargs or {}
         schema_id = self._get_schema_id(schema_fullname, raw_input_schema, **request_kwargs)
+        new_cache_misses = self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter
+        if new_cache_misses > cache_misses:
+            cache_size = self._get_schema_id.cache_info().currsize  # pylint: disable=no-value-for-parameter
+            _LOGGER.info("New entry has been added to schema ID cache. Cache size: %s", str(cache_size))
+
         content_type = f"{AVRO_MIME_TYPE}+{schema_id}"
 
         try:
@@ -274,8 +282,15 @@ class AvroEncoder(object):
         data, content_type = self._convert_preamble_format(data, content_type)
 
         schema_id = content_type.split("+")[1]
+
+        cache_misses = self._get_schema.cache_info().misses # pylint: disable=no-value-for-parameter
         request_kwargs = request_kwargs or {}
         schema_definition = self._get_schema(schema_id, **request_kwargs)
+        new_cache_misses = self._get_schema.cache_info().misses # pylint: disable=no-value-for-parameter
+        if new_cache_misses > cache_misses:
+            cache_size = self._get_schema.cache_info().currsize  # pylint: disable=no-value-for-parameter
+            _LOGGER.info("New entry has been added to schema cache. Cache size: %s", str(cache_size))
+
         try:
             dict_value = self._avro_encoder.decode(
                 data, schema_definition, readers_schema=readers_schema
