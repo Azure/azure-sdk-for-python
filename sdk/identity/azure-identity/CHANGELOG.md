@@ -1,5 +1,19 @@
 # Release History
 
+## 1.9.0b1 (Unreleased)
+
+### Features Added
+
+- Added `validate_authority` support for msal client  #22625
+- Added `resource_id` support for user-assigned managed identity  #22329
+- Added `ClientAssertionCredential` support  #22328
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.8.0 (2022-03-01)
 
 ### Bugs Fixed
