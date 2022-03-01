@@ -1356,7 +1356,8 @@
             "ARM"
           ],
           "mentionees": [
-            "armleads-azure"
+            "josephkwchan", 
+            "jennyhunter-msft"
           ]
         },
         {
@@ -1365,7 +1366,8 @@
             "ARM - Templates"
           ],
           "mentionees": [
-            "armleads-azure"
+            "satyavel", 
+            "apclouds"
           ]
         },
         {
@@ -1374,7 +1376,7 @@
             "ARM - Tags"
           ],
           "mentionees": [
-            "armleads-azure"
+            "rthorn17"
           ]
         },
         {
@@ -1383,7 +1385,8 @@
             "ARM - Core"
           ],
           "mentionees": [
-            "armleads-azure"
+            "josephkwchan", 
+            "jennyhunter-msft"
           ]
         },
         {
@@ -1392,7 +1395,7 @@
             "ARM - Managed Applications"
           ],
           "mentionees": [
-            "armleads-azure"
+            "MSEvanhi"
           ]
         },
         {
@@ -1410,7 +1413,8 @@
             "ARM - RBAC"
           ],
           "mentionees": [
-            "armleads-azure"
+            "LizMS", 
+            "cbrooksmsft"
           ]
         },
         {
@@ -1440,7 +1444,7 @@
             "API Management"
           ],
           "mentionees": [
-            "miaojiang"
+            "adrianhall"
           ]
         },
         {
