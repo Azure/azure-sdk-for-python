@@ -6,7 +6,7 @@ parameters:
 steps:
   - pwsh: |
       pip install virtualenv
-    displayname: Ensure virtualenv installed
+    displayName: Ensure virtualenv installed
 
   - pwsh: |
       mkdir $(Agent.TempDirectory)/_virtualenv
