@@ -21,7 +21,7 @@ DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPrepa
 class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
 
     def teardown(self):
-        self.sleep(2)
+        self.sleep(3)
 
     @FormRecognizerPreparer()
     async def test_document_analysis_none_model(self, **kwargs):

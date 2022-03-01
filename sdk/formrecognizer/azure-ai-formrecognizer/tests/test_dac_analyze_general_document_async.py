@@ -21,7 +21,7 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
 
     def teardown(self):
-        self.sleep(2)
+        self.sleep(3)
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()

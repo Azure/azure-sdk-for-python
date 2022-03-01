@@ -20,7 +20,7 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 class TestReceiptFromUrl(FormRecognizerTest):
 
     def teardown(self):
-        self.sleep(2)
+        self.sleep(3)
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()

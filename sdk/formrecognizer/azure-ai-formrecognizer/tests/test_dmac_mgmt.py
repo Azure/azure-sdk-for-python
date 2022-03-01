@@ -27,7 +27,7 @@ DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPrepa
 class TestManagement(FormRecognizerTest):
 
     def teardown(self):
-        self.sleep(2)
+        self.sleep(3)
 
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
