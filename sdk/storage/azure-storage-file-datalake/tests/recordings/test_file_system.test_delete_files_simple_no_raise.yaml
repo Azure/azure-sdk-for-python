@@ -684,24 +684,22 @@ interactions:
 - request:
     body: "--batch_19514640-2b98-11ec-bd57-001a7dda7113\r\nContent-Type: application/http\r\nContent-ID:
       0\r\nContent-Transfer-Encoding: binary\r\n\r\nDELETE /fs1d66148e/file1? HTTP/1.1\r\nx-ms-date:
-      Tue, 12 Oct 2021 20:08:00 GMT\r\nx-ms-client-request-id: 19514641-2b98-11ec-b645-001a7dda7113\r\nAuthorization:
-      SharedKey storagename:iYJo5j0NYLUbjKHEmfHr+UDrDFZnjH2eHv0keOxe2+0=\r\nContent-Length:
+      Tue, 12 Oct 2021 20:08:00 GMT\r\nx-ms-client-request-id:19514641-2b98-11ec-b645-001a7dda7113\r\nContent-Length:
       0\r\n\r\n\r\n--batch_19514640-2b98-11ec-bd57-001a7dda7113\r\nContent-Type: application/http\r\nContent-ID:
       1\r\nContent-Transfer-Encoding: binary\r\n\r\nDELETE /fs1d66148e/file2? HTTP/1.1\r\nIf-Match:
       \"0x8D98DBBFCF62AAA\"\r\nx-ms-date: Tue, 12 Oct 2021 20:08:00 GMT\r\nx-ms-client-request-id:
-      19514642-2b98-11ec-b004-001a7dda7113\r\nAuthorization: SharedKey storagename:6GlTCV2sKGugHZr8Q+LMhH32bE7BEr2hAamgl7rgSmU=\r\nContent-Length:
+      19514642-2b98-11ec-b004-001a7dda7113\r\nContent-Length:
       0\r\n\r\n\r\n--batch_19514640-2b98-11ec-bd57-001a7dda7113\r\nContent-Type: application/http\r\nContent-ID:
       2\r\nContent-Transfer-Encoding: binary\r\n\r\nDELETE /fs1d66148e/file3? HTTP/1.1\r\nIf-Match:
       \"0x8D98DBBFD3E0CCA\"\r\nx-ms-date: Tue, 12 Oct 2021 20:08:00 GMT\r\nx-ms-client-request-id:
-      19516d40-2b98-11ec-8954-001a7dda7113\r\nAuthorization: SharedKey storagename:TZHq/I+ouSPFCYCs3sN4ra/bi5TDJJpWiFPP3jPcW2g=\r\nContent-Length:
+      19516d40-2b98-11ec-8954-001a7dda7113\r\nContent-Length:
       0\r\n\r\n\r\n--batch_19514640-2b98-11ec-bd57-001a7dda7113\r\nContent-Type: application/http\r\nContent-ID:
       3\r\nContent-Transfer-Encoding: binary\r\n\r\nDELETE /fs1d66148e/dir1? HTTP/1.1\r\nx-ms-date:
-      Tue, 12 Oct 2021 20:08:00 GMT\r\nx-ms-client-request-id: 19516d41-2b98-11ec-be0a-001a7dda7113\r\nAuthorization:
-      SharedKey storagename:qc+jzUjMFa8lB0s0Zn97wOn0EZZaH2evGcTnEMv2uZE=\r\nContent-Length:
+      Tue, 12 Oct 2021 20:08:00 GMT\r\nx-ms-client-request-id: 19516d41-2b98-11ec-be0a-001a7dda7113\r\nContent-Length:
       0\r\n\r\n\r\n--batch_19514640-2b98-11ec-bd57-001a7dda7113\r\nContent-Type: application/http\r\nContent-ID:
       4\r\nContent-Transfer-Encoding: binary\r\n\r\nDELETE /fs1d66148e/dir2? HTTP/1.1\r\nIf-Match:
       \"0x8D98DBBFD6E735A\"\r\nx-ms-date: Tue, 12 Oct 2021 20:08:00 GMT\r\nx-ms-client-request-id:
-      19516d42-2b98-11ec-a7fa-001a7dda7113\r\nAuthorization: SharedKey storagename:rgY7D5nAXMfYPW2waRR/FfVpRCj5c1uuDIlkSIYOlYE=\r\nContent-Length:
+      19516d42-2b98-11ec-a7fa-001a7dda7113\r\nContent-Length:
       0\r\n\r\n\r\n--batch_19514640-2b98-11ec-bd57-001a7dda7113--\r\n"
     headers:
       Accept:
