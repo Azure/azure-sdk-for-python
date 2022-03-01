@@ -17,6 +17,11 @@ This version and all future versions will require Python 3.6+. Python 2.7 is no 
 - Added support for `find_blobs_by_tags()` on a container.
 - Added support for `Find (f)` container SAS permission.
 
+### Bugs Fixed
+- Added all missing Service SAS permissions.
+- Fixed a bug that prevented `upload_blob()` from working with an OS pipe
+reader stream on Linux. (#23131)
+
 ## 12.10.0b4 (2022-02-24)
 
 ### Features Added
