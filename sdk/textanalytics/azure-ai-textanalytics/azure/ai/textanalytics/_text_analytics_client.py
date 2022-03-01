@@ -292,6 +292,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         disable_service_logs = kwargs.pop("disable_service_logs", None)
         if disable_service_logs is not None:
             kwargs["logging_opt_out"] = disable_service_logs
+
         try:
             return self._client.entities_recognition_general(
                 documents=docs,
@@ -382,6 +383,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", None)
         domain_filter = kwargs.pop("domain_filter", None)
         categories_filter = kwargs.pop("categories_filter", None)
+
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
             self._api_version,
@@ -392,6 +394,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         disable_service_logs = kwargs.pop("disable_service_logs", None)
         if disable_service_logs is not None:
             kwargs["logging_opt_out"] = disable_service_logs
+
         try:
             return self._client.entities_recognition_pii(
                 documents=docs,
@@ -487,6 +490,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         disable_service_logs = kwargs.pop("disable_service_logs", None)
         if disable_service_logs is not None:
             kwargs["logging_opt_out"] = disable_service_logs
+
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
             self._api_version,
@@ -494,6 +498,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
         if string_index_type:
             kwargs.update({"string_index_type": string_index_type})
+
         try:
             return self._client.entities_linking(
                 documents=docs,
@@ -600,6 +605,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             "string_index_type", self._string_index_type_default
         )
         disable_service_logs = kwargs.pop("disable_service_logs", None)
+
         if continuation_token:
             def get_result_from_cont_token(initial_response, pipeline_response):
                 doc_id_order = initial_response.context.options["doc_id_order"]
@@ -607,6 +613,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 return self._healthcare_result_callback(
                     doc_id_order, pipeline_response, None, {}, show_stats=show_stats
                 )
+
             return AnalyzeHealthcareEntitiesLROPoller.from_continuation_token(
                 polling_method=AnalyzeHealthcareEntitiesLROPollingMethod(
                     text_analytics_client=self._client,
@@ -617,6 +624,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 deserialization_callback=get_result_from_cont_token,
                 continuation_token=continuation_token
             )
+
         docs = _validate_input(documents, "language", language)
         doc_id_order = [doc.get("id") for doc in docs]
         my_cls = kwargs.pop(
@@ -625,6 +633,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 self._healthcare_result_callback, doc_id_order, show_stats=show_stats
             ),
         )
+
         try:
             return self._client.begin_health(
                 docs,
@@ -647,6 +656,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 continuation_token=continuation_token,
                 **kwargs
             )
+
         except ValueError as error:
             if "API version v3.0 does not have operation 'begin_health'" in str(error):
                 raise ValueError(
@@ -654,6 +664,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     V3_1 and up."
                 ) from error
             raise error
+
         except HttpResponseError as error:
             return process_http_response_error(error)
 
@@ -726,6 +737,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         disable_service_logs = kwargs.pop("disable_service_logs", None)
         if disable_service_logs is not None:
             kwargs["logging_opt_out"] = disable_service_logs
+
         try:
             return self._client.key_phrases(
                 documents=docs,
@@ -816,6 +828,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         disable_service_logs = kwargs.pop("disable_service_logs", None)
         if disable_service_logs is not None:
             kwargs["logging_opt_out"] = disable_service_logs
+
         string_index_type = _check_string_index_type_arg(
             kwargs.pop("string_index_type", None),
             self._api_version,
@@ -823,6 +836,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
         if string_index_type:
             kwargs.update({"string_index_type": string_index_type})
+
         if show_opinion_mining is not None:
             if (
                 self._api_version == TextAnalyticsApiVersion.V3_0
@@ -832,6 +846,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     "'show_opinion_mining' is only available for API version v3.1 and up"
                 )
             kwargs.update({"opinion_mining": show_opinion_mining})
+
         try:
             return self._client.sentiment(
                 documents=docs,
@@ -975,6 +990,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         show_stats = kwargs.pop("show_stats", None)
         polling_interval = kwargs.pop("polling_interval", 5)
         language = language_arg if language_arg is not None else self._default_language
+
         if continuation_token:
             def get_result_from_cont_token(initial_response, pipeline_response):
                 doc_id_order = initial_response.context.options["doc_id_order"]
@@ -983,6 +999,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 return self._analyze_result_callback(
                     doc_id_order, task_id_order, pipeline_response, None, {}, show_stats=show_stats
                 )
+
             return AnalyzeActionsLROPoller.from_continuation_token(
                 polling_method=AnalyzeActionsLROPollingMethod(
                     timeout=polling_interval,
@@ -992,6 +1009,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 deserialization_callback=get_result_from_cont_token,
                 continuation_token=continuation_token
             )
+
         docs = self._client.models(
             api_version=self._api_version
         ).MultiLanguageBatchInput(
@@ -1006,6 +1024,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         except AttributeError as e:
             raise TypeError("Unsupported action type in list.") from e
         task_order = [(_determine_action_type(a), a.task_name) for a in generated_tasks]
+
         try:
             analyze_tasks = self._client.models(
                 api_version=self._api_version
@@ -1078,11 +1097,13 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 continuation_token=continuation_token,
                 **kwargs
             )
+
         except ValueError as error:
             if "API version v3.0 does not have operation 'begin_analyze'" in str(error):
                 raise ValueError(
                     "'begin_analyze_actions' endpoint is only available for API version V3_1 and up"
                 ) from error
             raise error
+
         except HttpResponseError as error:
             return process_http_response_error(error)

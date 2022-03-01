@@ -2312,7 +2312,7 @@ class RecognizeCustomEntitiesAction(DictMixin):
         self.project_name = project_name
         self.deployment_name = deployment_name
         self.disable_service_logs = kwargs.get('disable_service_logs', None)
-        self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
+        self.string_index_type = kwargs.get('string_index_type', "UnicodeCodePoint")
 
     def __repr__(self):
         return "RecognizeCustomEntitiesAction(project_name={}, deployment_name={}, disable_service_logs={}, " \
