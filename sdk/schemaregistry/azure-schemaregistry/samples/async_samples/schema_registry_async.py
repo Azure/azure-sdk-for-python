@@ -83,7 +83,6 @@ async def main():
     schema_registry_client = SchemaRegistryClient(
         fully_qualified_namespace=SCHEMAREGISTRY_FQN, credential=token_credential
     )
-    request_kwargs = {"fake_kwarg": True}
     async with token_credential, schema_registry_client:
         schema_id = await register_schema(
             schema_registry_client, GROUP_NAME, NAME, DEFINITION, FORMAT
