@@ -9,7 +9,7 @@
 ### Bugs Fixed
 
 ### Other Changes
-* Python 2.7 and 3.6 are no longer supported. Please use Python version 3.7 or later.
+* Python 2.7 is no longer supported. Please use Python version 3.6 or later.
 
 ## 12.2.0 (2021-11-10)
 **Warning** This release involves a bug fix that may change the behaviour for some users. Partition and Row keys that contain a single quote character (`'`) will now be automatically escaped for upsert, update and delete entity operations. Partition and Row keys that were already escaped, or contained duplicate single quote char (`''`) will now be treated as unescaped values.
