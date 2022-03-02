@@ -68,6 +68,5 @@ setup(
         "azure-core<2.0.0,>=1.19.1",
         "msrest>=0.6.21",
         'azure-common~=1.1',
-        'six>=1.11.0',
     ],
 )

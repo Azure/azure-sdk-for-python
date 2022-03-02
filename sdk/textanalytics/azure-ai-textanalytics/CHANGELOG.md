@@ -9,7 +9,8 @@
 ### Bugs Fixed
 - `string_index_type` now correctly defaults to the Python default `UnicodeCodePoint` for `AnalyzeSentimentAction` and `RecognizeCustomEntitiesAction`.
 - Fixed a bug in `begin_analyze_actions` where incorrect action types were being sent in the request if targeting the older API version `v3.1` in the beta version of the client library.
- 
+- `string_index_type` option `Utf16CodePoint` is corrected to `Utf16CodeUnit`.
+
 ### Other Changes
 - Python 2.7 is no longer supported. Please use Python version 3.6 or later.
 
