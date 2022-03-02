@@ -21,12 +21,15 @@ from typing import (
 from azure.core.tracing import AbstractSpan
 
 import uamqp
+from uamqp import types as uamqp_types
+
 from .exceptions import OperationTimeoutError, _error_handler
 from ._common import EventData, EventDataBatch
 from ._client_base import ConsumerProducerMixin
 from ._utils import (
     create_properties,
-    set_message_partition_key,
+    set_message_partition_key_pyamqp,
+    set_message_partition_key_uamqp,
     trace_message,
     send_context_manager,
     transform_outbound_single_message_pyamqp,
@@ -50,10 +53,16 @@ if TYPE_CHECKING:
     from ._producer_client import EventHubProducerClient
 
 
-def _set_partition_key(event_datas, partition_key):
+def _set_partition_key_uamqp(event_datas, partition_key):
     # type: (Iterable[EventData], AnyStr) -> Iterable[EventData]
     for ed in iter(event_datas):
-        set_message_partition_key(ed.message, partition_key)
+        set_message_partition_key_uamqp(ed.message, partition_key)
+        yield ed
+
+def _set_partition_key_pyamqp(event_datas, partition_key):
+    # type: (Iterable[EventData], AnyStr) -> Iterable[EventData]
+    for ed in iter(event_datas):
+        set_message_partition_key_pyamqp(ed.message, partition_key)
         yield ed
 
 
@@ -125,7 +134,7 @@ class EventHubProducer(
                 max_retries=self._client._config.max_retries, on_error=_error_handler  # pylint: disable=protected-access
             )
             self._link_properties = {
-                uamqp.types.AMQPSymbol(TIMEOUT_SYMBOL): uamqp.types.AMQPLong(int(self._timeout * 1000))
+                uamqp_types.AMQPSymbol(TIMEOUT_SYMBOL): uamqp_types.AMQPLong(int(self._timeout * 1000))
             }
             self._open = self._open_uamqp
             self._handle_exception = self._handle_exception_uamqp
@@ -226,9 +235,9 @@ class EventHubProducer(
     ):
         # type: (...) -> Union[EventData, EventDataBatch]
         if isinstance(event_data, EventData):
-            outgoing_event_data = transform_outbound_single_message_uamqp(event_data, EventData, is_uamqp=True)
+            outgoing_event_data = transform_outbound_single_message_uamqp(event_data, EventData)
             if partition_key:
-                set_message_partition_key(outgoing_event_data.message, partition_key)
+                set_message_partition_key_uamqp(outgoing_event_data.message, partition_key)
             wrapper_event_data = outgoing_event_data
             trace_message(wrapper_event_data, span)
         else:
@@ -247,7 +256,7 @@ class EventHubProducer(
                 wrapper_event_data = event_data  # type:ignore
             else:
                 if partition_key:
-                    event_data = _set_partition_key(event_data, partition_key)
+                    event_data = _set_partition_key_uamqp(event_data, partition_key)
                 event_data = _set_trace_message(event_data, span)
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # type: ignore  # pylint: disable=protected-access
         wrapper_event_data.message.on_send_complete = self._on_outcome
@@ -263,7 +272,7 @@ class EventHubProducer(
         if isinstance(event_data, EventData):
             outgoing_event_data = transform_outbound_single_message_pyamqp(event_data, EventData)
             if partition_key:
-                set_message_partition_key(outgoing_event_data.message, partition_key)
+                set_message_partition_key_pyamqp(outgoing_event_data.message, partition_key)
             wrapper_event_data = outgoing_event_data
             trace_message(wrapper_event_data, span)
         else:
@@ -282,7 +291,7 @@ class EventHubProducer(
                 wrapper_event_data = event_data  # type:ignore
             else:
                 if partition_key:
-                    event_data = _set_partition_key(event_data, partition_key)
+                    event_data = _set_partition_key_pyamqp(event_data, partition_key)
                 event_data = _set_trace_message(event_data, span)
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # type: ignore  # pylint: disable=protected-access
         return wrapper_event_data

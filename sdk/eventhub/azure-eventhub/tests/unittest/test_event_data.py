@@ -1,6 +1,7 @@
 import platform
 import pytest
 from packaging import version
+import uamqp
 from azure.eventhub.amqp import AmqpAnnotatedMessage
 from azure.eventhub import _common
 from azure.eventhub._pyamqp.message import Message, Properties
@@ -31,7 +32,6 @@ def test_constructor(test_input, expected_result):
         with pytest.raises(TypeError):
             event_data.body_as_json()
 
-
 def test_body_json():
     event_data = EventData('{"a":"b"}')
     assert str(event_data) == "{ body: '{\"a\":\"b\"}', properties: {} }"
@@ -55,8 +55,11 @@ def test_app_properties():
     assert event_data.properties["a"] == "b"
 
 
-def test_sys_properties():
-    properties = Properties(
+@pytest.mark.parametrize("properties_constr, message_constr, annotations_dict, from_message_func",
+                         [(uamqp.message.MessageProperties, uamqp.Message, {"annotations": {_common.PROP_OFFSET: "@latest"}}, EventData._from_message_uamqp),
+                         (Properties, Message, {"message_annotations": {_common.PROP_OFFSET: "@latest"}}, EventData._from_message_pyamqp)])
+def test_sys_properties(properties_constr, message_constr, annotations_dict, from_message_func):
+    properties = properties_constr(
         message_id="message_id",
         user_id="user_id",
         to="to",
@@ -71,9 +74,8 @@ def test_sys_properties():
         group_sequence=1,
         reply_to_group_id="reply_to_group_id"
     )
-    message_annotations = {_common.PROP_OFFSET: "@latest"}
-    message = Message(properties=properties, message_annotations=message_annotations)
-    ed = EventData._from_message(message)  # type: EventData
+    message = message_constr(properties=properties, **annotations_dict)
+    ed = from_message_func(message)  # type: EventData
 
     assert ed.system_properties[_common.PROP_OFFSET] == "@latest"
     assert ed.system_properties[_common.PROP_CORRELATION_ID] == properties.correlation_id
@@ -104,10 +106,9 @@ def test_event_data_batch():
     with pytest.raises(ValueError):
         batch.add(EventData("A"))
 
-
-def test_event_data_from_message():
-    message = Message(data=b'A')
-    event = EventData._from_message(message)
+@pytest.mark.parametrize("message, from_message_func", [(Message(data=b'A'), EventData._from_message_pyamqp), (uamqp.Message(b'A'), EventData._from_message_uamqp)])
+def test_event_data_from_message(from_message_func, message):
+    event = from_message_func(message)
     assert event.content_type is None
     assert event.correlation_id is None
     assert event.message_id is None
@@ -119,7 +120,6 @@ def test_event_data_from_message():
     assert event.correlation_id == 'correlation_id'
     assert event.message_id == 'message_id'
     assert event.body == b'A'
-
 
 def test_amqp_message_str_repr():
     data_body = b'A'

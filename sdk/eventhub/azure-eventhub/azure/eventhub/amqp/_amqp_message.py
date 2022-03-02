@@ -8,7 +8,7 @@ from typing import Optional, Any, cast, Mapping, Dict
 
 import uamqp
 
-from ._constants import AmqpMessageBodyType
+from ._constants import AMQP_MESSAGE_BODY_TYPE_MAP, AmqpMessageBodyType
 from .._pyamqp.message import Message, Header, Properties
 from .._pyamqp import utils as pyamqp_utils
 
@@ -114,9 +114,10 @@ class AmqpAnnotatedMessage(object):
         self._encoding = kwargs.pop("encoding", "UTF-8")
 
         # internal usage only for Event Hub received message
-        if self._message:
-            self._from_amqp_message(self._message)
-            return
+        # TODO: may need to re-add
+        #if self._message:
+        #    self._from_amqp_message_pyamqp(self._message)
+        #    return
 
         # manually constructed AMQPAnnotatedMessage
         input_count_validation = len([key for key in ("data_body", "sequence_body", "value_body") if key in kwargs])
@@ -186,35 +187,99 @@ class AmqpAnnotatedMessage(object):
             message_repr += ", annotations=<read-error>"
         return "AmqpAnnotatedMessage({})".format(message_repr)[:1024]
 
-    def _from_amqp_message(self, message):
+    @classmethod
+    def _from_amqp_message_uamqp(cls, message):
+        footer = message.footer if message.footer else {}
+        annotations = message.annotations if message.annotations else {}
+        delivery_annotations = message.delivery_annotations if message.delivery_annotations else {}
+        application_properties = message.application_properties if message.application_properties else {}
+        dict_attr = {
+            "footer": footer,
+            "annotations": annotations,
+            "delivery_annotations": delivery_annotations,
+            "application_properties": application_properties,
+        }
+        if message.properties:
+            dict_attr["properties"] = {
+                "message_id": message.properties.message_id,
+                "user_id": message.properties.user_id,
+                "to": message.properties.to,
+                "subject": message.properties.subject,
+                "reply_to": message.properties.reply_to,
+                "correlation_id": message.properties.correlation_id,
+                "content_type": message.properties.content_type,
+                "content_encoding": message.properties.content_encoding,
+                "absolute_expiry_time": message.properties.absolute_expiry_time,
+                "creation_time": message.properties.creation_time,
+                "group_id": message.properties.group_id,
+                "group_sequence": message.properties.group_sequence,
+                "reply_to_group_id": message.properties.reply_to_group_id,
+            }
+        if message.header:
+            dict_attr["header"] = {
+                "delivery_count": message.header.delivery_count,
+                "time_to_live": message.header.time_to_live,
+                "first_acquirer": message.header.first_acquirer,
+                "durable": message.header.durable,
+                "priority": message.header.priority
+            }
+        amqp_body = message._body  # pylint: disable=protected-access
+        if isinstance(amqp_body, uamqp.message.DataBody):
+            dict_attr['data_body'] = list(amqp_body.data)
+        elif isinstance(amqp_body, uamqp.message.SequenceBody):
+            dict_attr['sequence_body'] = list(amqp_body.data)
+        else:
+            # amqp_body is type of uamqp.message.ValueBody
+            dict_attr['value_body'] = amqp_body.data
+
+        return cls(**dict_attr)
+
+    @classmethod
+    def _from_amqp_message_pyamqp(cls, message):
         # populate the properties from an uamqp message
         # TODO: message.properties should not be a list
-        self._properties = AmqpMessageProperties(
-            message_id=message.properties.message_id,
-            user_id=message.properties.user_id,
-            to=message.properties.to,
-            subject=message.properties.subject,
-            reply_to=message.properties.reply_to,
-            correlation_id=message.properties.correlation_id,
-            content_type=message.properties.content_type,
-            content_encoding=message.properties.content_encoding,
-            absolute_expiry_time=message.properties.absolute_expiry_time,
-            creation_time=message.properties.creation_time,
-            group_id=message.properties.group_id,
-            group_sequence=message.properties.group_sequence,
-            reply_to_group_id=message.properties.reply_to_group_id,
-        ) if message.properties else None
-        self._header = AmqpMessageHeader(
-            delivery_count=message.header.delivery_count,
-            time_to_live=message.header.time_to_live,
-            first_acquirer=message.header.first_acquirer,
-            durable=message.header.durable,
-            priority=message.header.priority
-        ) if message.header else None
-        self._footer = message.footer if message.footer else {}
-        self._annotations = message.message_annotations if message.message_annotations else {}
-        self._delivery_annotations = message.delivery_annotations if message.delivery_annotations else {}
-        self._application_properties = message.application_properties if message.application_properties else {}
+        footer = message.footer if message.footer else {}
+        annotations = message.message_annotations if message.message_annotations else {}
+        delivery_annotations = message.delivery_annotations if message.delivery_annotations else {}
+        application_properties = message.application_properties if message.application_properties else {}
+        dict_attr = {
+            "footer": footer,
+            "annotations": annotations,
+            "delivery_annotations": delivery_annotations,
+            "application_properties": application_properties,
+        }
+        if message.properties:
+            dict_attr["properties"] = {
+                "message_id": message.properties.message_id,
+                "user_id": message.properties.user_id,
+                "to": message.properties.to,
+                "subject": message.properties.subject,
+                "reply_to": message.properties.reply_to,
+                "correlation_id": message.properties.correlation_id,
+                "content_type": message.properties.content_type,
+                "content_encoding": message.properties.content_encoding,
+                "absolute_expiry_time": message.properties.absolute_expiry_time,
+                "creation_time": message.properties.creation_time,
+                "group_id": message.properties.group_id,
+                "group_sequence": message.properties.group_sequence,
+                "reply_to_group_id": message.properties.reply_to_group_id,
+            }
+        if message.header:
+            dict_attr["header"] = {
+                "delivery_count": message.header.delivery_count,
+                "time_to_live": message.header.time_to_live,
+                "first_acquirer": message.header.first_acquirer,
+                "durable": message.header.durable,
+                "priority": message.header.priority
+            }
+        if message.data:
+            dict_attr["data_body"] = message.data
+        elif message.sequence:
+            dict_attr["sequence_body"] = message.sequence
+        else:
+            dict_attr["value_body"] = message.value
+
+        return cls(**dict_attr)
 
     def _to_outgoing_amqp_message_uamqp(self):
         message_header = None

@@ -26,7 +26,8 @@ from ._utils import (
     set_message_partition_key_pyamqp,
     trace_message,
     utc_from_timestamp,
-    transform_outbound_single_message,
+    transform_outbound_single_message_pyamqp,
+    transform_outbound_single_message_uamqp,
     decode_with_recurse,
 )
 from ._constants import (
@@ -185,7 +186,7 @@ class EventData(object):
         return event_str
 
     @classmethod
-    def _from_message(cls, message, raw_amqp_message=None):
+    def _from_message_uamqp(cls, message, raw_amqp_message=None):
         # type: (Message, Optional[AmqpAnnotatedMessage]) -> EventData
         # pylint:disable=protected-access
         """Internal use only.
@@ -199,7 +200,27 @@ class EventData(object):
         event_data = cls(body="")
         event_data.message = message
         # pylint: disable=protected-access
-        event_data._raw_amqp_message = raw_amqp_message if raw_amqp_message else AmqpAnnotatedMessage(message=message)
+        event_data._raw_amqp_message = raw_amqp_message if \
+            raw_amqp_message else AmqpAnnotatedMessage._from_amqp_message_uamqp(message=message)
+        return event_data
+
+    @classmethod
+    def _from_message_pyamqp(cls, message, raw_amqp_message=None):
+        # type: (Message, Optional[AmqpAnnotatedMessage]) -> EventData
+        # pylint:disable=protected-access
+        """Internal use only.
+
+        Creates an EventData object from a raw uamqp message and, if provided, AmqpAnnotatedMessage.
+
+        :param ~uamqp.Message message: A received uamqp message.
+        :param ~azure.eventhub.amqp.AmqpAnnotatedMessage message: An amqp annotated message.
+        :rtype: ~azure.eventhub.EventData
+        """
+        event_data = cls(body="")
+        event_data.message = message
+        # pylint: disable=protected-access
+        event_data._raw_amqp_message = raw_amqp_message if \
+            raw_amqp_message else AmqpAnnotatedMessage._from_amqp_message_pyamqp(message=message)
         return event_data
 
     def _encode_message(self):
@@ -520,11 +541,13 @@ class EventDataBatch(object):
             set_message_partition_key_uamqp(self.message, self._partition_key)
             self._size = self.message.gather()[0].get_message_encoded_size()
             self._add = self._add_uamqp
+            self._transform_outbound_single_message = transform_outbound_single_message_uamqp
         else:
             self.message = BatchMessage(data=[])
             self.message = set_message_partition_key_pyamqp(self.message, self._partition_key)
             self._size = pyutils.get_message_encoded_size(self.message)
             self._add = self._add_pyamqp
+            self._transform_outbound_single_message = transform_outbound_single_message_pyamqp
 
     def __repr__(self):
         # type: () -> str
@@ -539,7 +562,7 @@ class EventDataBatch(object):
     @classmethod
     def _from_batch(cls, batch_data, partition_key=None):
         # type: (Iterable[EventData], Optional[AnyStr]) -> EventDataBatch
-        outgoing_batch_data = [transform_outbound_single_message(m, EventData) for m in batch_data]
+        outgoing_batch_data = [self._transform_outbound_single_message(m, EventData) for m in batch_data] # pylint:disable=protected-access
         batch_data_instance = cls(partition_key=partition_key)
         batch_data_instance.message._body_gen = (  # pylint:disable=protected-access
             outgoing_batch_data
@@ -569,7 +592,7 @@ class EventDataBatch(object):
         :raise: :class:`ValueError`, when exceeding the size limit.
         """
 
-        outgoing_event_data = transform_outbound_single_message(event_data, EventData)
+        outgoing_event_data = transform_outbound_single_message_uamqp(event_data, EventData)
 
         if self._partition_key:
             if (
@@ -608,7 +631,7 @@ class EventDataBatch(object):
 
     def _add_pyamqp(self, event_data):
         # type: (Union[EventData, AmqpAnnotatedMessage]) -> None
-        outgoing_event_data = transform_outbound_single_message(event_data, EventData)
+        outgoing_event_data = transform_outbound_single_message_pyamqp(event_data, EventData)
 
         if self._partition_key:
             if (

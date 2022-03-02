@@ -12,13 +12,13 @@ from azure.core.tracing import AbstractSpan
 
 from .._common import EventData, EventDataBatch
 from ..exceptions import OperationTimeoutError
-from .._producer import _set_partition_key, _set_trace_message
+from .._producer import _set_partition_key_pyamqp as _set_partition_key, _set_trace_message
 from .._utils import (
     create_properties,
-    set_message_partition_key,
+    set_message_partition_key_pyamqp as set_message_partition_key,
     trace_message,
     send_context_manager,
-    transform_outbound_single_message,
+    transform_outbound_single_message_pyamqp as transform_outbound_single_message,
 )
 from .._constants import TIMEOUT_SYMBOL, NO_RETRY_ERRORS, CUSTOM_CONDITION_BACKOFF
 from ._client_base_async import ConsumerProducerMixin

@@ -13,8 +13,8 @@ from urllib.parse import urlparse
 
 ## uamqp imports
 import uamqp
+from uamqp import types as uamqp_types
 from .exceptions import _error_handler
-#from uamqp import types as uamqp_types, errors as uamqp_errors, utils as uamqp_utils
 #from uamqp import ReceiveClient, Source, Message
 
 ## pyamqp imports
@@ -137,16 +137,17 @@ class EventHubConsumer(
             )
             self._idle_timeout = (idle_timeout * 1000) if idle_timeout else None
             if owner_level is not None:
-                self._link_properties[uamqp.types.AMQPSymbol(EPOCH_SYMBOL)] = uamqp.types.AMQPLong(
+                self._link_properties[uamqp_types.AMQPSymbol(EPOCH_SYMBOL)] = uamqp_types.AMQPLong(
                     int(owner_level)
                 )
-            self._link_properties[uamqp.types.AMQPSymbol(TIMEOUT_SYMBOL)] = uamqp.types.AMQPLong(
+            self._link_properties[uamqp_types.AMQPSymbol(TIMEOUT_SYMBOL)] = uamqp_types.AMQPLong(
                 int(link_property_timeout_ms)
             )
             self._handler_work_kwargs = {}
             self._link_detach_error = uamqp.errors.LinkDetach
             self._open = self._open_uamqp
             self._handle_exception = self._handle_exception_uamqp
+            self._event_data_from_message = EventData._from_message_uamqp
         else:
             self._retry_policy = error.RetryPolicy(
                 retry_total=self._client._config.max_retries,  # pylint:disable=protected-access
@@ -164,6 +165,7 @@ class EventHubConsumer(
             self._link_detach_error = error.AMQPLinkError
             self._open = self._open_pyamqp
             self._handle_exception = self._handle_exception_pyamqp
+            self._event_data_from_message = EventData._from_message_pyamqp
 
     def _create_handler_uamqp(self, auth):
         # type: (JWTTokenAuth) -> None
@@ -174,8 +176,8 @@ class EventHubConsumer(
             )
         desired_capabilities = None
         if self._track_last_enqueued_event_properties:
-            symbol_array = [uamqp.types.AMQPSymbol(RECEIVER_RUNTIME_METRIC_SYMBOL)]
-            desired_capabilities = uamqp.utils.data_factory(uamqp.types.AMQPArray(symbol_array))
+            symbol_array = [uamqp_types.AMQPSymbol(RECEIVER_RUNTIME_METRIC_SYMBOL)]
+            desired_capabilities = uamqp.utils.data_factory(uamqp_types.AMQPArray(symbol_array))
 
         properties = create_properties(
             self._client._config.user_agent  # pylint:disable=protected-access
@@ -247,7 +249,7 @@ class EventHubConsumer(
     def _next_message_in_buffer(self):
         # pylint:disable=protected-access
         message = self._message_buffer.popleft()
-        event_data = EventData._from_message(message)
+        event_data = self._event_data_from_message(message)
         self._last_received_event = event_data
         return event_data
 
