@@ -58,7 +58,7 @@ class RecognizeReceiptsFromURLSample(object):
                 continue
             else:
                 break
-        
+        print("--------Retry times: {}--------".format(retry_times))
         receipts = poller.result()
 
         for idx, receipt in enumerate(receipts):

@@ -59,7 +59,8 @@ class RecognizeReceiptsFromURLSampleAsync(object):
                     continue
                 else:
                     break
-                    
+
+            print("--------Retry times: {}--------".format(retry_times))        
             receipts = await poller.result()
 
             for idx, receipt in enumerate(receipts):

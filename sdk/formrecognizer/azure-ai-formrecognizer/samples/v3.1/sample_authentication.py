@@ -62,7 +62,7 @@ class AuthenticationSample(object):
                 continue
             else:
                 break
-        
+        print("--------Retry times: {}--------".format(retry_times))
         result = poller.result()
 
     def authentication_with_azure_active_directory_form_recognizer_client(self):
@@ -95,6 +95,7 @@ class AuthenticationSample(object):
                 continue
             else:
                 break
+        print("--------Retry times: {}--------".format(retry_times))
         result = poller.result()
 
     def authentication_with_api_key_credential_form_training_client(self):

@@ -64,7 +64,7 @@ class AuthenticationSampleAsync(object):
                     continue
                 else:
                     break
-
+            print("--------Retry times: {}--------".format(retry_times))
             result = await poller.result()
             
 
@@ -99,6 +99,7 @@ class AuthenticationSampleAsync(object):
                     continue
                 else:
                     break
+            print("--------Retry times: {}--------".format(retry_times))
             result = await poller.result()
 
     async def authentication_with_api_key_credential_form_training_client_async(self):

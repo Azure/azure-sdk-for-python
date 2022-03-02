@@ -59,7 +59,7 @@ async def analyze_receipts_from_url_async():
                 continue
             else:
                 break
-
+        print("--------Retry times: {}--------".format(retry_times))
         receipts = await poller.result()
 
     for idx, receipt in enumerate(receipts.documents):
