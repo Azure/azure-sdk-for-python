@@ -120,7 +120,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT10S')
     def test_queue_by_queue_client_conn_str_receive_handler_peeklock(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
@@ -204,6 +204,33 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 receiver.peek_messages()
 
             assert count == 10
+
+            def sub_test_releasing_messages():
+                # test releasing messages when prefetch is 1 and link credits are issue dynamically
+                receiver = sb_client.get_queue_receiver(servicebus_queue.name)
+                sender = sb_client.get_queue_sender(servicebus_queue.name)
+                with sender, receiver:
+                    # send 10 msgs to queue first
+                    sender.send_messages([ServiceBusMessage('test') for _ in range(10)])
+
+                    # issue 30 link credits, client should consume 10 msgs from the service
+                    # leaving 20 credits on the wire
+                    received_msgs = receiver.receive_messages(max_message_count=30, max_wait_time=5)
+                    for msg in received_msgs:
+                        receiver.complete_message(msg)
+                    assert len(received_msgs) == 10
+
+                    # send 20 more messages, those messages would arrive at the client while the program is sleeping
+                    sender.send_messages([ServiceBusMessage('test') for _ in range(20)])
+                    time.sleep(15)  # sleep > message expiration time
+
+                    # issue 20 link credits, client should consume 20 msgs from the service, leaving no link credits
+                    received_msgs = receiver.receive_messages(max_message_count=30, max_wait_time=5)
+                    for msg in received_msgs:
+                        assert msg.delivery_count == 0  # release would not increase delivery count
+                        receiver.complete_message(msg)
+                    assert len(received_msgs) == 20
+            sub_test_releasing_messages()
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
