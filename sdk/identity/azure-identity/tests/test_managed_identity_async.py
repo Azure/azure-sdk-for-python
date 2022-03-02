@@ -236,14 +236,14 @@ async def test_azure_ml():
             Request(
                 url,
                 method="GET",
-                required_headers={"X-IDENTITY-HEADER": secret, "User-Agent": USER_AGENT},
-                required_params={"api-version": "2019-08-01", "resource": scope},
+                required_headers={"secret": secret, "User-Agent": USER_AGENT},
+                required_params={"api-version": "2017-09-01", "resource": scope},
             ),
             Request(
                 url,
                 method="GET",
-                required_headers={"X-IDENTITY-HEADER": secret, "User-Agent": USER_AGENT},
-                required_params={"api-version": "2019-08-01", "resource": scope, "clientid": client_id},
+                required_headers={"secret": secret, "User-Agent": USER_AGENT},
+                required_params={"api-version": "2017-09-01", "resource": scope, "clientid": client_id},
             ),
         ],
         responses=[
@@ -291,14 +291,14 @@ async def test_azure_ml_tenant_id():
             Request(
                 url,
                 method="GET",
-                required_headers={"X-IDENTITY-HEADER": secret, "User-Agent": USER_AGENT},
-                required_params={"api-version": "2019-08-01", "resource": scope},
+                required_headers={"secret": secret, "User-Agent": USER_AGENT},
+                required_params={"api-version": "2017-09-01", "resource": scope},
             ),
             Request(
                 url,
                 method="GET",
-                required_headers={"X-IDENTITY-HEADER": secret, "User-Agent": USER_AGENT},
-                required_params={"api-version": "2019-08-01", "resource": scope, "clientid": client_id},
+                required_headers={"secret": secret, "User-Agent": USER_AGENT},
+                required_params={"api-version": "2017-09-01", "resource": scope, "clientid": client_id},
             ),
         ],
         responses=[
@@ -412,10 +412,10 @@ async def test_app_service_2019_08_01():
     with mock.patch.dict(
         MANAGED_IDENTITY_ENVIRON,
         {
-            EnvironmentVariables.IDENTITY_ENDPOINT: endpoint,
-            EnvironmentVariables.IDENTITY_HEADER: secret,
-            EnvironmentVariables.MSI_ENDPOINT: new_endpoint,
-            EnvironmentVariables.MSI_SECRET: new_secret,
+            EnvironmentVariables.IDENTITY_ENDPOINT: new_endpoint,
+            EnvironmentVariables.IDENTITY_HEADER: new_secret,
+            EnvironmentVariables.MSI_ENDPOINT: endpoint,
+            EnvironmentVariables.MSI_SECRET: secret,
         },
         clear=True,
     ):
@@ -455,10 +455,10 @@ async def test_app_service_2019_08_01_tenant_id():
     with mock.patch.dict(
             MANAGED_IDENTITY_ENVIRON,
             {
-                EnvironmentVariables.IDENTITY_ENDPOINT: endpoint,
-                EnvironmentVariables.IDENTITY_HEADER: secret,
-                EnvironmentVariables.MSI_ENDPOINT: new_endpoint,
-                EnvironmentVariables.MSI_SECRET: new_secret,
+                EnvironmentVariables.IDENTITY_ENDPOINT: new_endpoint,
+                EnvironmentVariables.IDENTITY_HEADER: new_secret,
+                EnvironmentVariables.MSI_ENDPOINT: endpoint,
+                EnvironmentVariables.MSI_SECRET: secret,
             },
             clear=True,
     ):
@@ -497,7 +497,7 @@ async def test_app_service_user_assigned_identity():
             mock_response(
                 json_payload={
                     "access_token": expected_token,
-                    "expires_on": "01/01/1970 00:00:{} +00:00".format(expires_on),
+                    "expires_on": expires_on,
                     "resource": scope,
                     "token_type": "Bearer",
                 }
@@ -508,7 +508,7 @@ async def test_app_service_user_assigned_identity():
 
     with mock.patch.dict(
         MANAGED_IDENTITY_ENVIRON,
-        {EnvironmentVariables.MSI_ENDPOINT: endpoint, EnvironmentVariables.MSI_SECRET: secret},
+        {EnvironmentVariables.IDENTITY_ENDPOINT: endpoint, EnvironmentVariables.IDENTITY_HEADER: secret},
         clear=True,
     ):
         credential = ManagedIdentityCredential(client_id=client_id, transport=transport)

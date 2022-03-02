@@ -22,7 +22,7 @@ from helpers import build_aad_response, validating_transport, mock_response, Req
 
 MANAGED_IDENTITY_ENVIRON = "azure.identity._credentials.managed_identity.os.environ"
 ALL_ENVIRONMENTS = (
-    {EnvironmentVariables.MSI_ENDPOINT: "...", EnvironmentVariables.MSI_SECRET: "..."},  # App Service
+    {EnvironmentVariables.IDENTITY_ENDPOINT: "...", EnvironmentVariables.IDENTITY_HEADER: "..."},  # App Service
     {EnvironmentVariables.MSI_ENDPOINT: "..."},  # Cloud Shell
     {  # Service Fabric
         EnvironmentVariables.IDENTITY_ENDPOINT: "...",
@@ -37,6 +37,7 @@ ALL_ENVIRONMENTS = (
         EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE: __file__,
     },
     {},  # IMDS
+    {EnvironmentVariables.MSI_ENDPOINT: "...", EnvironmentVariables.MSI_SECRET: "..."},  # Azure ML
 )
 
 
@@ -242,14 +243,14 @@ def test_azure_ml():
             Request(
                 url,
                 method="GET",
-                required_headers={"X-IDENTITY-HEADER": secret, "User-Agent": USER_AGENT},
-                required_params={"api-version": "2019-08-01", "resource": scope},
+                required_headers={"secret": secret, "User-Agent": USER_AGENT},
+                required_params={"api-version": "2017-09-01", "resource": scope},
             ),
             Request(
                 url,
                 method="GET",
-                required_headers={"X-IDENTITY-HEADER": secret, "User-Agent": USER_AGENT},
-                required_params={"api-version": "2019-08-01", "resource": scope, "clientid": client_id},
+                required_headers={"secret": secret, "User-Agent": USER_AGENT},
+                required_params={"api-version": "2017-09-01", "resource": scope, "clientid": client_id},
             ),
         ],
         responses=[
@@ -292,14 +293,14 @@ def test_azure_ml_tenant_id():
             Request(
                 url,
                 method="GET",
-                required_headers={"X-IDENTITY-HEADER": secret, "User-Agent": USER_AGENT},
-                required_params={"api-version": "2019-08-01", "resource": scope},
+                required_headers={"secret": secret, "User-Agent": USER_AGENT},
+                required_params={"api-version": "2017-09-01", "resource": scope},
             ),
             Request(
                 url,
                 method="GET",
-                required_headers={"X-IDENTITY-HEADER": secret, "User-Agent": USER_AGENT},
-                required_params={"api-version": "2019-08-01", "resource": scope, "clientid": client_id},
+                required_headers={"secret": secret, "User-Agent": USER_AGENT},
+                required_params={"api-version": "2017-09-01", "resource": scope, "clientid": client_id},
             ),
         ],
         responses=[
@@ -450,10 +451,10 @@ def test_app_service_2019_08_01():
     with mock.patch.dict(
             MANAGED_IDENTITY_ENVIRON,
             {
-                EnvironmentVariables.IDENTITY_ENDPOINT: endpoint,
-                EnvironmentVariables.IDENTITY_HEADER: secret,
-                EnvironmentVariables.MSI_ENDPOINT: new_endpoint,
-                EnvironmentVariables.MSI_SECRET: new_secret,
+                EnvironmentVariables.IDENTITY_ENDPOINT: new_endpoint,
+                EnvironmentVariables.IDENTITY_HEADER: new_secret,
+                EnvironmentVariables.MSI_ENDPOINT: endpoint,
+                EnvironmentVariables.MSI_SECRET: secret,
             },
             clear=True,
     ):
@@ -494,10 +495,10 @@ def test_app_service_2019_08_01_tenant_id():
     with mock.patch.dict(
             MANAGED_IDENTITY_ENVIRON,
             {
-                EnvironmentVariables.IDENTITY_ENDPOINT: endpoint,
-                EnvironmentVariables.IDENTITY_HEADER: secret,
-                EnvironmentVariables.MSI_ENDPOINT: new_endpoint,
-                EnvironmentVariables.MSI_SECRET: new_secret,
+                EnvironmentVariables.IDENTITY_ENDPOINT: new_endpoint,
+                EnvironmentVariables.IDENTITY_HEADER: new_secret,
+                EnvironmentVariables.MSI_ENDPOINT: endpoint,
+                EnvironmentVariables.MSI_SECRET: secret,
             },
             clear=True,
     ):
@@ -541,7 +542,7 @@ def test_app_service_user_assigned_identity():
             mock_response(
                 json_payload={
                     "access_token": expected_token,
-                    "expires_on": "01/01/1970 00:00:{} +00:00".format(expires_on),
+                    "expires_on": expires_on,
                     "resource": scope,
                     "token_type": "Bearer",
                 }
@@ -552,7 +553,7 @@ def test_app_service_user_assigned_identity():
 
     with mock.patch.dict(
         MANAGED_IDENTITY_ENVIRON,
-        {EnvironmentVariables.MSI_ENDPOINT: endpoint, EnvironmentVariables.MSI_SECRET: secret},
+        {EnvironmentVariables.IDENTITY_ENDPOINT: endpoint, EnvironmentVariables.IDENTITY_HEADER: secret},
         clear=True,
     ):
         token = ManagedIdentityCredential(client_id=client_id, transport=transport).get_token(scope)
