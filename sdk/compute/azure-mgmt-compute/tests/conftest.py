@@ -24,13 +24,14 @@
 #
 # --------------------------------------------------------------------------
 import os
+import re
 import platform
 import pytest
 import sys
 
 from dotenv import load_dotenv
 
-from devtools_testutils import test_proxy, add_general_regex_sanitizer
+from devtools_testutils import test_proxy, add_general_regex_sanitizer,add_body_regex_sanitizer
 
 # Ignore async tests for Python < 3.5
 collect_ignore_glob = []
@@ -46,3 +47,5 @@ def add_sanitizers(test_proxy):
     tenant_id = os.environ.get("AZURE_TENANT_ID", "00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(regex=subscription_id, value="00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(regex=tenant_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex='eyJ0eXAiOiJKV.*?"', value='access_token"')
+    add_general_regex_sanitizer(regex='fpc=.*?;', value='fpc=fpc;')
