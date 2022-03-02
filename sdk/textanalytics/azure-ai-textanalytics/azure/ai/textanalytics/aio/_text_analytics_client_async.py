@@ -38,21 +38,8 @@ from .._models import (
     AnalyzeSentimentResult,
     DocumentError,
     RecognizePiiEntitiesResult,
-    RecognizeEntitiesAction,
-    RecognizePiiEntitiesAction,
-    ExtractKeyPhrasesAction,
     _AnalyzeActionsType,
-    RecognizeLinkedEntitiesAction,
-    AnalyzeSentimentAction,
     AnalyzeHealthcareEntitiesResult,
-    ExtractSummaryAction,
-    ExtractSummaryResult,
-    RecognizeCustomEntitiesAction,
-    RecognizeCustomEntitiesResult,
-    SingleCategoryClassifyAction,
-    SingleCategoryClassifyResult,
-    MultiCategoryClassifyAction,
-    MultiCategoryClassifyResult,
 )
 from .._lro import TextAnalyticsOperationResourcePolling
 from ._lro_async import (
