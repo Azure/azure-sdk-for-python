@@ -1,6 +1,6 @@
 # Release History
 
-## 1.23.0 (Unreleased)
+## 1.23.0 (2022-03-03)
 
 ### Features Added
 - Improve intellisense type hinting for service client methods #22891
