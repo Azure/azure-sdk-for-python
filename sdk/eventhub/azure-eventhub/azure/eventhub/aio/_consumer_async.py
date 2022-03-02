@@ -69,6 +69,8 @@ class EventHubConsumer(
         network bandwidth consumption that is generally a favorable trade-off when considered against periodically
         making requests for partition properties using the Event Hub client.
         It is set to `False` by default.
+    :keyword bool is_uamqp: Whether to use the underlying Python AMQP or uAMQP implementation. If True, use `uamqp`.
+     If False, and by default, use the internal Python AMQP implementation.
     """
 
     def __init__(self, client: "EventHubConsumerClient", source: str, **kwargs) -> None:

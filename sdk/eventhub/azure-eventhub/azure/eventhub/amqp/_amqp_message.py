@@ -6,6 +6,8 @@
 
 from typing import Optional, Any, cast, Mapping, Dict
 
+import uamqp
+
 from ._constants import AmqpMessageBodyType
 from .._pyamqp.message import Message, Header, Properties
 from .._pyamqp import utils as pyamqp_utils
@@ -128,16 +130,13 @@ class AmqpAnnotatedMessage(object):
         self._body_type = None
         if "data_body" in kwargs:
             self._body = pyamqp_utils.normalized_data_body(kwargs.get("data_body"))
-            self._message = Message(data=self._body)
             self._body_type = AmqpMessageBodyType.DATA
         elif "sequence_body" in kwargs:
             self._body = pyamqp_utils.normalized_sequence_body(kwargs.get("sequence_body"))
             self._body_type = AmqpMessageBodyType.SEQUENCE
-            self._message = Message(sequence=self._body)
         elif "value_body" in kwargs:
             self._body = kwargs.get("value_body")
             self._body_type = AmqpMessageBodyType.VALUE
-            self._message = Message(value=self._body)
 
         #self._message = uamqp.message.Message(body=self._body, body_type=self._body_type)
         header_dict = cast(Mapping, kwargs.get("header"))
@@ -150,30 +149,9 @@ class AmqpAnnotatedMessage(object):
         self._delivery_annotations = kwargs.get("delivery_annotations")
 
     def __str__(self):
-        if self._body_type == AmqpMessageBodyType.DATA:
-            output_str = ""
-            for data_section in self.body:
-                try:
-                    output_str += data_section.decode(self._encoding)
-                except AttributeError:
-                    output_str += str(data_section)
-            return output_str
-        elif self._body_type == AmqpMessageBodyType.SEQUENCE:
-            output_str = ""
-            for sequence_section in self.body:
-                for d in sequence_section:
-                    try:
-                        output_str += d.decode(self._encoding)
-                    except AttributeError:
-                        output_str += str(d)
-            return output_str
-        else:
-            if not self.body:
-                return ""
-            try:
-                return self.body.decode(self._encoding)
-            except AttributeError:
-                return str(self.body)
+        if not self.body:
+            return ""
+        return str(self._body)
 
     def __repr__(self):
         # type: () -> str
@@ -238,7 +216,62 @@ class AmqpAnnotatedMessage(object):
         self._delivery_annotations = message.delivery_annotations if message.delivery_annotations else {}
         self._application_properties = message.application_properties if message.application_properties else {}
 
-    def _to_outgoing_amqp_message(self):
+    def _to_outgoing_amqp_message_uamqp(self):
+        message_header = None
+        if self.header:
+            message_header = uamqp.message.MessageHeader()
+            message_header.delivery_count = self.header.delivery_count
+            message_header.time_to_live = self.header.time_to_live
+            message_header.first_acquirer = self.header.first_acquirer
+            message_header.durable = self.header.durable
+            message_header.priority = self.header.priority
+
+        message_properties = None
+        if self.properties:
+            message_properties = uamqp.message.MessageProperties(
+                message_id=self.properties.message_id,
+                user_id=self.properties.user_id,
+                to=self.properties.to,
+                subject=self.properties.subject,
+                reply_to=self.properties.reply_to,
+                correlation_id=self.properties.correlation_id,
+                content_type=self.properties.content_type,
+                content_encoding=self.properties.content_encoding,
+                creation_time=int(self.properties.creation_time) if self.properties.creation_time else None,
+                absolute_expiry_time=int(self.properties.absolute_expiry_time)
+                if self.properties.absolute_expiry_time else None,
+                group_id=self.properties.group_id,
+                group_sequence=self.properties.group_sequence,
+                reply_to_group_id=self.properties.reply_to_group_id,
+                encoding=self._encoding
+            )
+
+        # TODO: redundant line below, figure out what `amqp_body.data` looks like
+        self._message = uamqp.message.Message(body=self._body, body_type=self._body_type)
+        amqp_body = self._message._body  # pylint: disable=protected-access
+        if isinstance(amqp_body, uamqp.message.DataBody):
+            amqp_body_type = uamqp.MessageBodyType.Data
+            amqp_body = list(amqp_body.data)
+        elif isinstance(amqp_body, uamqp.message.SequenceBody):
+            amqp_body_type = uamqp.MessageBodyType.Sequence
+            amqp_body = list(amqp_body.data)
+        else:
+            # amqp_body is type of uamqp.message.ValueBody
+            amqp_body_type = uamqp.MessageBodyType.Value
+            amqp_body = amqp_body.data
+
+        return uamqp.message.Message(
+            body=amqp_body,
+            body_type=amqp_body_type,
+            header=message_header,
+            properties=message_properties,
+            application_properties=self.application_properties,
+            annotations=self.annotations,
+            delivery_annotations=self.delivery_annotations,
+            footer=self.footer
+        )
+
+    def _to_outgoing_amqp_message_pyamqp(self):
         message_header = None
         if self.header and any(self.header.values()):
             message_header = Header(
@@ -276,7 +309,6 @@ class AmqpAnnotatedMessage(object):
             "delivery_annotations": self.delivery_annotations,
             "footer": self.footer
         }
-
         if self.body_type == AmqpMessageBodyType.DATA:
             dict["data"] = self._body
         elif self.body_type == AmqpMessageBodyType.SEQUENCE:
@@ -295,7 +327,7 @@ class AmqpAnnotatedMessage(object):
         For ~azure.eventhub.AmqpMessageBodyType.VALUE, the body could be any type.
         :rtype: Any
         """
-        return self._message.data or self._message.sequence or self._message.value
+        return self._body
 
     @property
     def body_type(self):
@@ -303,12 +335,7 @@ class AmqpAnnotatedMessage(object):
         """The body type of the underlying AMQP message.
         rtype: ~azure.eventhub.amqp.AmqpMessageBodyType
         """
-        if self._message.data:
-            return AmqpMessageBodyType.DATA
-        elif self._message.sequence:
-            return AmqpMessageBodyType.SEQUENCE
-        else:
-            return AmqpMessageBodyType.VALUE
+        return self._body_type
 
     @property
     def properties(self):

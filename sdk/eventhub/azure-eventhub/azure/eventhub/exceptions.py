@@ -5,6 +5,10 @@
 import logging
 import six
 
+# uamqp imports
+import uamqp
+
+# pyamqp imports
 from ._constants import NO_RETRY_ERRORS
 from ._pyamqp import error as errors
 
@@ -171,3 +175,25 @@ def _handle_exception(
             if hasattr(closable, "_close_connection"):
                 closable._close_connection()  # pylint:disable=protected-access
         return _create_eventhub_exception(exception)
+
+def _error_handler(error):
+    """
+    Called internally when an event has failed to send so we
+    can parse the error to determine whether we should attempt
+    to retry sending the event again.
+    Returns the action to take according to error type.
+    :param error: The error received in the send attempt.
+    :type error: Exception
+    :rtype: ~uamqp.errors.ErrorAction
+    """
+    if error.condition == b"com.microsoft:server-busy":
+        return uamqp.errors.ErrorAction(retry=True, backoff=4)
+    if error.condition == b"com.microsoft:timeout":
+        return uamqp.errors.ErrorAction(retry=True, backoff=2)
+    if error.condition == b"com.microsoft:operation-cancelled":
+        return uamqp.errors.ErrorAction(retry=True)
+    if error.condition == b"com.microsoft:container-close":
+        return uamqp.errors.ErrorAction(retry=True, backoff=4)
+    if error.condition in NO_RETRY_uamqp.errors:
+        return uamqp.errors.ErrorAction(retry=False)
+    return uamqp.errors.ErrorAction(retry=True)

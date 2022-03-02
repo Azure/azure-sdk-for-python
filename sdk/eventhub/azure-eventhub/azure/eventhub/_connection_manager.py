@@ -7,6 +7,8 @@ from typing import TYPE_CHECKING
 from threading import Lock
 from enum import Enum
 
+from uamqp import Connection
+
 from ._pyamqp._connection import Connection, _CLOSING_STATES
 from ._constants import TransportType
 
@@ -54,7 +56,7 @@ class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attr
             "remote_idle_timeout_empty_frame_send_ratio"
         )
 
-    def get_connection(self, endpoint):
+    def get_connection_pyamqp(self, endpoint):
         # type: (str, JWTTokenAuth) -> Connection
         with self._lock:
             if self._conn is None:
@@ -71,6 +73,10 @@ class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attr
                     encoding=self._encoding,
                 )
             return self._conn
+
+    def get_connection_uamqp(self, host, auth):  # pylint:disable=unused-argument, no-self-use
+        # type: (str, JWTTokenAuth) -> None
+        return None
 
     def close_connection(self):
         # type: () -> None

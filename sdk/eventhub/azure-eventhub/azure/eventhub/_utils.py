@@ -13,6 +13,7 @@ import logging
 from typing import TYPE_CHECKING, Type, Optional, Dict, Union, Any, Iterable, Tuple, Mapping
 
 import six
+import uamqp
 
 from ._pyamqp.message import Header
 
@@ -22,6 +23,7 @@ from azure.core.tracing import SpanKind, Link
 from .amqp import AmqpAnnotatedMessage
 from ._version import VERSION
 from ._constants import (
+    PROP_PARTITION_KEY_AMQP_SYMBOL,
     PROP_PARTITION_KEY,
     MAX_USER_AGENT_LENGTH,
     USER_AGENT_PREFIX,
@@ -111,7 +113,7 @@ def create_properties(user_agent=None):
     return properties
 
 
-def set_message_partition_key(message, partition_key, **kwargs):
+def set_message_partition_key_pyamqp(message, partition_key, **kwargs):
     # type: (Message, Optional[Union[bytes, str]]) -> Message
     """Set the partition key as an annotation on a uamqp message.
 
@@ -135,6 +137,24 @@ def set_message_partition_key(message, partition_key, **kwargs):
         return message._replace(message_annotations=annotations, header=header)
     return message
 
+def set_message_partition_key_uamqp(message, partition_key):
+    # type: (Message, Optional[Union[bytes, str]]) -> None
+    """Set the partition key as an annotation on a uamqp message.
+    :param ~uamqp.Message message: The message to update.
+    :param str partition_key: The partition key value.
+    :rtype: None
+    """
+    if partition_key:
+        annotations = message.annotations
+        if annotations is None:
+            annotations = dict()
+        annotations[
+            PROP_PARTITION_KEY_AMQP_SYMBOL
+        ] = partition_key  # pylint:disable=protected-access
+        header = uamqp.message.MessageHeader()
+        header.durable = True
+        message.annotations = annotations
+        message.header = header
 
 @contextmanager
 def send_context_manager():
@@ -273,8 +293,7 @@ def parse_sas_credential(credential):
             expiry = int(item[3:])
     return (sas, expiry)
 
-
-def transform_outbound_single_message(message, message_type):
+def transform_outbound_single_message_uamqp(message, message_type):
     # type: (Union[AmqpAnnotatedMessage, EventData], Type[EventData]) -> EventData
     """
     This method serves multiple goals:
@@ -289,12 +308,35 @@ def transform_outbound_single_message(message, message_type):
     try:
         # EventData
         # pylint: disable=protected-access
-        return message._to_outgoing_message()  # type: ignore
+        return message._to_outgoing_message_uamqp()  # type: ignore
     except AttributeError:
         # AmqpAnnotatedMessage
         # pylint: disable=protected-access
         return message_type._from_message(
-            message=message._to_outgoing_amqp_message(), raw_amqp_message=message  # type: ignore
+            message=message._to_outgoing_amqp_message_uamqp(), raw_amqp_message=message  # type: ignore
+        )
+
+def transform_outbound_single_message_pyamqp(message, message_type):
+    # type: (Union[AmqpAnnotatedMessage, EventData], Type[EventData]) -> EventData
+    """
+    This method serves multiple goals:
+    1. update the internal message to reflect any updates to settable properties on EventData
+    2. transform the AmqpAnnotatedMessage to be EventData
+    :param message: A single instance of message of type EventData
+        or AmqpAnnotatedMessage.
+    :type message: ~azure.eventhub.common.EventData, ~azure.eventhub.amqp.AmqpAnnotatedMessage
+    :param Type[EventData] message_type: The class type to return the messages as.
+    :rtype: EventData
+    """
+    try:
+        # EventData
+        # pylint: disable=protected-access
+        return message._to_outgoing_message_pyamqp()  # type: ignore
+    except AttributeError:
+        # AmqpAnnotatedMessage
+        # pylint: disable=protected-access
+        return message_type._from_message(
+            message=message._to_outgoing_amqp_message_pyamqp(), raw_amqp_message=message  # type: ignore
         )
 
 

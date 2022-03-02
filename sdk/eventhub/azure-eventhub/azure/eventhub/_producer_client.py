@@ -9,9 +9,9 @@ from typing import Any, Union, TYPE_CHECKING, Dict, List, Optional, cast
 
 from .exceptions import ConnectError, EventHubError
 from .amqp import AmqpAnnotatedMessage
-from ._client_base import ClientBase
+from ._client_base import ClientBase, EventHubSharedKeyCredential, _EventHubSharedKeyCredential_uamqp
 from ._producer import EventHubProducer
-from ._constants import ALL_PARTITIONS, MAX_MESSAGE_LENGTH_BYTES
+from ._constants import ALL_PARTITIONS, MAX_MESSAGE_LENGTH_BYTES  # TODO: diff from uamqp
 from ._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
@@ -58,6 +58,8 @@ class EventHubProducerClient(ClientBase):
     :keyword float idle_timeout: Timeout, in seconds, after which this client will close the underlying connection
      if there is no activity. By default the value is None, meaning that the client will not shutdown due to inactivity
      unless initiated by the service.
+    :keyword bool is_uamqp: Whether the underlying `uamqp` AMQP implementation should be used.  If True, the `uamqp`
+     implementation will be used. If False, and by default, the internal Python AMQP implementation will be used.
 
     .. admonition:: Example:
 
@@ -78,6 +80,7 @@ class EventHubProducerClient(ClientBase):
         **kwargs  # type: Any
     ):
         # type:(...) -> None
+        self._is_uamqp = kwargs.get("is_uamqp", False)
         super(EventHubProducerClient, self).__init__(
             fully_qualified_namespace=fully_qualified_namespace,
             eventhub_name=eventhub_name,
@@ -92,6 +95,15 @@ class EventHubProducerClient(ClientBase):
         self._partition_ids = None  # Optional[List[str]]
         self._lock = threading.Lock()
 
+        if self._is_uamqp:
+            self._get_eventhub_properties = super(EventHubProducerClient, self)._get_eventhub_properties_uamqp
+            self._get_partition_properties = super(EventHubProducerClient, self)._get_partition_properties_uamqp
+            self._get_max_mesage_size = self._get_max_mesage_size_uamqp
+        else:
+            self._get_eventhub_properties = super(EventHubProducerClient, self)._get_eventhub_properties_pyamqp
+            self._get_partition_properties = super(EventHubProducerClient, self)._get_partition_properties_pyamqp
+            self._get_max_mesage_size = self._get_max_mesage_size_pyamqp
+
     def __enter__(self):
         return self
 
@@ -105,7 +117,22 @@ class EventHubProducerClient(ClientBase):
             for p_id in cast(List[str], self._partition_ids):
                 self._producers[p_id] = None
 
-    def _get_max_mesage_size(self):
+    def _get_max_mesage_size_uamqp(self):
+        # type: () -> None
+        # pylint: disable=protected-access,line-too-long
+        with self._lock:
+            if not self._max_message_size_on_link:
+                cast(
+                    EventHubProducer, self._producers[ALL_PARTITIONS]
+                )._open_with_retry()
+                self._max_message_size_on_link = (
+                    self._producers[  # type: ignore
+                        ALL_PARTITIONS
+                    ]._handler.message_handler._link.peer_max_message_size
+                    or constants.MAX_MESSAGE_LENGTH_BYTES
+                )
+
+    def _get_max_mesage_size_pyamqp(self):
         # type: () -> None
         # pylint: disable=protected-access,line-too-long
         with self._lock:
@@ -332,6 +359,7 @@ class EventHubProducerClient(ClientBase):
             max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link),
             partition_id=partition_id,
             partition_key=partition_key,
+            is_uamqp=self._is_uamqp,
         )
 
         return event_data_batch
@@ -349,7 +377,7 @@ class EventHubProducerClient(ClientBase):
         :rtype: Dict[str, Any]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
-        return super(EventHubProducerClient, self)._get_eventhub_properties()
+        return self._get_eventhub_properties()
 
     def get_partition_ids(self):
         # type:() -> List[str]
@@ -358,7 +386,7 @@ class EventHubProducerClient(ClientBase):
         :rtype: list[str]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
-        return super(EventHubProducerClient, self)._get_partition_ids()
+        return super(EventHubProducerClient,)._get_partition_ids()
 
     def get_partition_properties(self, partition_id):
         # type:(str) -> Dict[str, Any]
@@ -379,7 +407,7 @@ class EventHubProducerClient(ClientBase):
         :rtype: Dict[str, Any]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
-        return super(EventHubProducerClient, self)._get_partition_properties(
+        return self._get_partition_properties(
             partition_id
         )
 

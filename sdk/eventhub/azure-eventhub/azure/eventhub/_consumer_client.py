@@ -112,6 +112,8 @@ class EventHubConsumerClient(ClientBase):
      evaluation regardless of the load balancing strategy.
      Greedy strategy is used by default.
     :paramtype load_balancing_strategy: str or ~azure.eventhub.LoadBalancingStrategy
+    :keyword bool is_uamqp: Whether the underlying `uamqp` AMQP implementation should be used.  If True, the `uamqp`
+     implementation will be used. If False, and by default, the internal Python AMQP implementation will be used.
 
     .. admonition:: Example:
 
@@ -132,6 +134,7 @@ class EventHubConsumerClient(ClientBase):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
+        self._is_uamqp = kwargs.get("is_uamqp", False)
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)
         self._load_balancing_interval = kwargs.pop("load_balancing_interval", None)
         if self._load_balancing_interval is None:

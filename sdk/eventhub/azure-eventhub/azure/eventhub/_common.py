@@ -19,9 +19,11 @@ from typing import (
     cast,
 )
 import six
+import uamqp
 
 from ._utils import (
-    set_message_partition_key,
+    set_message_partition_key_uamqp,
+    set_message_partition_key_pyamqp,
     trace_message,
     utc_from_timestamp,
     transform_outbound_single_message,
@@ -217,9 +219,14 @@ class EventData(object):
         seq_list = [d for seq_section in body for d in seq_section]
         return str(decode_with_recurse(seq_list, encoding))
 
-    def _to_outgoing_message(self):
+    def _to_outgoing_message_pyamqp(self):
         # type: () -> EventData
-        self.message = (self._raw_amqp_message._to_outgoing_amqp_message())  # pylint:disable=protected-access
+        self.message = (self._raw_amqp_message._to_outgoing_amqp_message_pyamqp())  # pylint:disable=protected-access
+        return self
+
+    def _to_outgoing_message_uamqp(self):
+        # type: () -> EventData
+        self.message = (self._raw_amqp_message._to_outgoing_amqp_message_uamqp())  # pylint:disable=protected-access
         return self
 
     @property
@@ -489,7 +496,7 @@ class EventDataBatch(object):
      Event Hub decided by the service.
     """
 
-    def __init__(self, max_size_in_bytes=None, partition_id=None, partition_key=None):
+    def __init__(self, max_size_in_bytes=None, partition_id=None, partition_key=None, **kwargs):
         # type: (Optional[int], Optional[str], Optional[Union[str, bytes]]) -> None
 
         if partition_key and not isinstance(
@@ -502,13 +509,22 @@ class EventDataBatch(object):
                 "partition_key to only be string type, they might fail to parse the non-string value."
             )
 
+        self._is_uamqp = kwargs.pop("is_uamqp", False)
         self.max_size_in_bytes = max_size_in_bytes or constants.MAX_FRAME_SIZE_BYTES
-        self.message = BatchMessage(data=[])
         self._partition_id = partition_id
         self._partition_key = partition_key
-        self.message = set_message_partition_key(self.message, self._partition_key)
-        self._size = pyutils.get_message_encoded_size(self.message)
         self._count = 0
+
+        if self._is_uamqp:
+            self.message = uamqp.BatchMessage(data=[], multi_messages=False, properties=None)
+            set_message_partition_key_uamqp(self.message, self._partition_key)
+            self._size = self.message.gather()[0].get_message_encoded_size()
+            self._add = self._add_uamqp
+        else:
+            self.message = BatchMessage(data=[])
+            self.message = set_message_partition_key_pyamqp(self.message, self._partition_key)
+            self._size = pyutils.get_message_encoded_size(self.message)
+            self._add = self._add_pyamqp
 
     def __repr__(self):
         # type: () -> str
@@ -541,23 +557,12 @@ class EventDataBatch(object):
                     "or use EventDataBatch, which is guaranteed to be under the frame size limit"
                 )
 
-    @property
-    def size_in_bytes(self):
-        # type: () -> int
-        """The combined size of the events in the batch, in bytes.
-
-        :rtype: int
-        """
-        return self._size
-
-    def add(self, event_data):
+    def _add_uamqp(self, event_data):
         # type: (Union[EventData, AmqpAnnotatedMessage]) -> None
         """Try to add an EventData to the batch.
-
         The total size of an added event is the sum of its body, properties, etc.
         If this added size results in the batch exceeding the maximum batch size, a `ValueError` will
         be raised.
-
         :param event_data: The EventData to add to the batch.
         :type event_data: Union[~azure.eventhub.EventData, ~azure.eventhub.amqp.AmqpAnnotatedMessage]
         :rtype: None
@@ -575,7 +580,46 @@ class EventDataBatch(object):
                     "The partition key of event_data does not match the partition key of this batch."
                 )
             if not outgoing_event_data.partition_key:
-                outgoing_event_data.message = set_message_partition_key(
+                set_message_partition_key_uamqp(
+                    outgoing_event_data.message, self._partition_key
+                )
+
+        trace_message(outgoing_event_data)
+        event_data_size = outgoing_event_data.message.get_message_encoded_size()
+
+        # For a BatchMessage, if the encoded_message_size of event_data is < 256, then the overhead cost to encode that
+        # message into the BatchMessage would be 5 bytes, if >= 256, it would be 8 bytes.
+        size_after_add = (
+            self._size
+            + event_data_size
+            + _BATCH_MESSAGE_OVERHEAD_COST[0 if (event_data_size < 256) else 1]
+        )
+
+        if size_after_add > self.max_size_in_bytes:
+            raise ValueError(
+                "EventDataBatch has reached its size limit: {}".format(
+                    self.max_size_in_bytes
+                )
+            )
+
+        self.message._body_gen.append(outgoing_event_data)  # pylint: disable=protected-access
+        self._size = size_after_add
+        self._count += 1
+
+    def _add_pyamqp(self, event_data):
+        # type: (Union[EventData, AmqpAnnotatedMessage]) -> None
+        outgoing_event_data = transform_outbound_single_message(event_data, EventData)
+
+        if self._partition_key:
+            if (
+                outgoing_event_data.partition_key
+                and outgoing_event_data.partition_key != self._partition_key
+            ):
+                raise ValueError(
+                    "The partition key of event_data does not match the partition key of this batch."
+                )
+            if not outgoing_event_data.partition_key:
+                outgoing_event_data.message = set_message_partition_key_pyamqp(
                     outgoing_event_data.message, self._partition_key
                 )
 
@@ -599,3 +643,27 @@ class EventDataBatch(object):
         pyutils.add_batch(self.message, outgoing_event_data.message)
         self._size = size_after_add
         self._count += 1
+
+    @property
+    def size_in_bytes(self):
+        # type: () -> int
+        """The combined size of the events in the batch, in bytes.
+
+        :rtype: int
+        """
+        return self._size
+
+    def add(self, event_data):
+        # type: (Union[EventData, AmqpAnnotatedMessage]) -> None
+        """Try to add an EventData to the batch.
+
+        The total size of an added event is the sum of its body, properties, etc.
+        If this added size results in the batch exceeding the maximum batch size, a `ValueError` will
+        be raised.
+
+        :param event_data: The EventData to add to the batch.
+        :type event_data: Union[~azure.eventhub.EventData, ~azure.eventhub.amqp.AmqpAnnotatedMessage]
+        :rtype: None
+        :raise: :class:`ValueError`, when exceeding the size limit.
+        """
+        self._add(event_data)
