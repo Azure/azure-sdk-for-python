@@ -1,12 +1,17 @@
 # Release History
 
-## 1.22.2 (Unreleased)
+## 1.23.0 (2022-03-03)
 
 ### Features Added
+- Improve intellisense type hinting for service client methods #22891
+
+- Add a case insensitive dict `case_insensitive_dict` in `azure.core.utils`.  #23206
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+- use "\n" rather than "/n" for new line in log     #23261
 
 ### Other Changes
 
