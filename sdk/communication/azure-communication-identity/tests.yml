@@ -20,8 +20,6 @@ stages:
               - $(sub-config-communication-int-test-resources-python)
         PPE:
             SubscriptionConfigurations:
-              - $(sub-config-azure-cloud-test-resources)
               - $(sub-config-communication-ppe-test-resources-common)
               - $(sub-config-communication-ppe-test-resources-python)
-            Location: 'eastus'
       Clouds: Public,Int,PPE
