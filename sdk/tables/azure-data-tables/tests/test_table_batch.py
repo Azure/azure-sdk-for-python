@@ -1092,6 +1092,19 @@ class TestBatchUnitTests(TableTestCase):
         with pytest.raises(RequestCorrect):
             table.submit_transaction(self.batch)
 
+        conn_string = 'AccountName={};AccountKey={};TableEndpoint=http://www.mydomain.com;'.format(
+            self.tables_storage_account_name, self.tables_primary_storage_account_key)
+
+        table = TableClient.from_connection_string(
+            conn_string,
+            table_name="foo",
+            per_call_policies=[CheckBatchURL("http://www.mydomain.com", "foo")]
+        )
+        assert table.url.startswith('http://www.mydomain.com')
+        assert table.scheme == 'http'
+        with pytest.raises(RequestCorrect):
+            table.submit_transaction(self.batch)
+
     def test_batch_url_with_custom_account_endpoint_path(self):
         token = AzureSasCredential(self.generate_sas_token())
         custom_account_url = "http://local-machine:11002/custom/account/path/" + token.signature
