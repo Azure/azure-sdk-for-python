@@ -56,8 +56,6 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -94,8 +92,6 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -131,8 +127,6 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
 
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
-
-        return {}
 
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
@@ -176,5 +170,3 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
             poller = await client.begin_analyze_document("prebuilt-document", document, pages="1-2, 3")
             result = await poller.result()
             assert len(result.pages) == 3
-
-        return {}
