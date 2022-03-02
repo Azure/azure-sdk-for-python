@@ -68,6 +68,36 @@ from ._models import (
     MultiCategoryClassifyAction,
     MultiCategoryClassifyResult,
 )
+
+ActionInputTypes = List[
+    Union[
+        RecognizeEntitiesAction,
+        RecognizeLinkedEntitiesAction,
+        RecognizePiiEntitiesAction,
+        ExtractKeyPhrasesAction,
+        AnalyzeSentimentAction,
+        ExtractSummaryAction,
+        RecognizeCustomEntitiesAction,
+        SingleCategoryClassifyAction,
+        MultiCategoryClassifyAction,
+    ]
+]
+
+ActionResultTypes = List[
+    Union[
+        RecognizeEntitiesResult,
+        RecognizeLinkedEntitiesResult,
+        RecognizePiiEntitiesResult,
+        ExtractKeyPhrasesResult,
+        AnalyzeSentimentResult,
+        ExtractSummaryResult,
+        RecognizeCustomEntitiesResult,
+        SingleCategoryClassifyResult,
+        MultiCategoryClassifyResult,
+        DocumentError,
+    ]
+]
+
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
@@ -878,37 +908,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     def begin_analyze_actions(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        actions: List[
-            Union[
-                RecognizeEntitiesAction,
-                RecognizeLinkedEntitiesAction,
-                RecognizePiiEntitiesAction,
-                ExtractKeyPhrasesAction,
-                AnalyzeSentimentAction,
-                ExtractSummaryAction,
-                RecognizeCustomEntitiesAction,
-                SingleCategoryClassifyAction,
-                MultiCategoryClassifyAction,
-            ]
-        ],
+        actions: ActionInputTypes,
         **kwargs: Any,
     ) -> AnalyzeActionsLROPoller[
-        ItemPaged[
-            List[
-                Union[
-                    RecognizeEntitiesResult,
-                    RecognizeLinkedEntitiesResult,
-                    RecognizePiiEntitiesResult,
-                    ExtractKeyPhrasesResult,
-                    AnalyzeSentimentResult,
-                    ExtractSummaryResult,
-                    RecognizeCustomEntitiesResult,
-                    SingleCategoryClassifyResult,
-                    MultiCategoryClassifyResult,
-                    DocumentError,
-                ]
-            ]
-        ]
+        ItemPaged[ActionResultTypes]
     ]:
         """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
 
