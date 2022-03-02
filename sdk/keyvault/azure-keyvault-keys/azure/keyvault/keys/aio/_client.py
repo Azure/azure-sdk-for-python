@@ -675,9 +675,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace_async
-    async def release_key(
-        self, name: str, target_attestation_token: str, version: "Optional[str]" = None, **kwargs: "Any"
-    ) -> ReleaseKeyResult:
+    async def release_key(self, name: str, target_attestation_token: str, **kwargs: "Any") -> ReleaseKeyResult:
         """Releases a key.
 
         The release key operation is applicable to all key types. The target key must be marked
@@ -685,9 +683,8 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :param str name: The name of the key to get.
         :param str target_attestation_token: The attestation assertion for the target of the key release.
-        :param str version: (optional) A specific version of the key to release. If unspecified, the latest version is
-            released.
 
+        :keyword str version: A specific version of the key to release. If unspecified, the latest version is released.
         :keyword algorithm: The encryption algorithm to use to protect the released key material.
         :paramtype algorithm: ~azure.keyvault.keys.KeyExportEncryptionAlgorithm
         :keyword str nonce: A client-provided nonce for freshness.
@@ -696,10 +693,11 @@ class KeyClient(AsyncKeyVaultClientBase):
         :rtype: ~azure.keyvault.keys.ReleaseKeyResult
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
+        version = kwargs.pop("version", "")
         result = await self._client.release(
             vault_base_url=self._vault_url,
             key_name=name,
-            key_version=version or "",
+            key_version=version,
             parameters=self._models.KeyReleaseParameters(
                 target_attestation_token=target_attestation_token,
                 nonce=kwargs.pop("nonce", None),
