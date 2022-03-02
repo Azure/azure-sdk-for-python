@@ -34,6 +34,14 @@ azure.core.credentials
    :undoc-members:
    :inherited-members:
 
+azure.core.credentials_async
+---------------------
+
+.. automodule:: azure.core.credentials_async
+   :members:
+   :undoc-members:
+   :inherited-members:
+
 azure.core.exceptions
 ---------------------
 
