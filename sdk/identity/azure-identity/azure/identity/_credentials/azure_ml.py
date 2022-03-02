@@ -57,16 +57,3 @@ def _get_request(url, scope, identity_config):
     request = HttpRequest("GET", url)
     request.format_parameters(dict({"api-version": "2017-09-01", "resource": scope}, **identity_config))
     return request
-
-
-def _parse_app_service_expires_on(content):
-    # Azure ML sets the same environment variables as App Service but returns expires_on as an integer.
-    # That means we could have an Azure ML response here, so let's first try to parse expires_on as an int.
-    try:
-        content["expires_on"] = int(content["expires_on"])
-        return
-    except ValueError:
-        pass
-
-    expires_on = content["expires_on"]
-    raise ValueError("'{}' doesn't match the expected format".format(expires_on))
