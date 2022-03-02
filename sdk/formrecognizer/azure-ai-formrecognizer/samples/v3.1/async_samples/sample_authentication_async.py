@@ -51,16 +51,16 @@ class AuthenticationSampleAsync(object):
         async with form_recognizer_client:
 
             # The test is unstable in China cloud, we try to set the number of retries in the code to increase stability
-            retryTimes = 0
-            while retryTimes != 5 :
+            retry_times = 0
+            while retry_times != 5 :
                 try:
                     # Begin recognize content from url, this sample test is unstable in China cloud.(We are testing sovereign cloud test)
                     # Increasing the number of retries in the code until there is a better solution
                     poller = await form_recognizer_client.begin_recognize_content_from_url(self.url)
-                except HttpResponseError:
-                    retryTimes += 1
+                except HttpResponseError as e:
+                    retry_times += 1
                     # Print the known unstable errors
-                    print("Image URL is badly formatted. Failed to download image from input URL.")
+                    print(e.message)
                     continue
                 else:
                     break
@@ -86,16 +86,16 @@ class AuthenticationSampleAsync(object):
         # [END create_fr_client_with_aad_async]
         async with form_recognizer_client:
             # The test is unstable in China cloud, we try to set the number of retries in the code to increase stability
-            retryTimes = 0
-            while retryTimes != 5 :
+            retry_times = 0
+            while retry_times != 5 :
                 try:
                     # Begin recognize content from url, this sample test is unstable in China cloud.(We are testing sovereign cloud test)
                     # Increasing the number of retries in the code until there is a better solution
                     poller = await form_recognizer_client.begin_recognize_content_from_url(self.url)
-                except HttpResponseError:
-                    retryTimes += 1
+                except HttpResponseError as e:
+                    retry_times += 1
                     # Print the known unstable errors
-                    print("Image URL is badly formatted. Failed to download image from input URL.")
+                    print(e.message)
                     continue
                 else:
                     break

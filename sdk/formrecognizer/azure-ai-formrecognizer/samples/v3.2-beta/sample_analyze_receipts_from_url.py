@@ -50,10 +50,10 @@ def analyze_receipts_from_url():
             poller = document_analysis_client.begin_analyze_document_from_url(
                 "prebuilt-receipt", document_url=url
             )
-        except HttpResponseError:
+        except HttpResponseError as e:
             retryTimes += 1
             # Print the known unstable errors
-            print("Image URL is badly formatted. Failed to download image from input URL.")
+            print(e.message)
             continue
         else:
             break

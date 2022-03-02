@@ -45,16 +45,16 @@ class RecognizeReceiptsFromURLSample(object):
         url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png"
 
         # The test is unstable in China cloud, we try to set the number of retries in the code to increase stability
-        retryTimes = 0
-        while retryTimes != 5 :
+        retry_times = 0
+        while retry_times != 5 :
             try:
                 # Begin recognize receipts from url, this sample test is unstable in China cloud.(We are testing sovereign cloud test)
                 # Increasing the number of retries in the code until there is a better solution
                 poller = form_recognizer_client.begin_recognize_receipts_from_url(receipt_url=url)
-            except HttpResponseError:
-                retryTimes += 1
+            except HttpResponseError as e:
+                retry_times += 1
                 # Print the known unstable errors
-                print("Image URL is badly formatted. Failed to download image from input URL.")
+                print(e.message)
                 continue
             else:
                 break
