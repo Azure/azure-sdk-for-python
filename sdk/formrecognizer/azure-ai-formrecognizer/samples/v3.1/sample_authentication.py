@@ -72,6 +72,7 @@ class AuthenticationSample(object):
         """
         from azure.ai.formrecognizer import FormRecognizerClient
         from azure.identity import DefaultAzureCredential
+        from azure.core.exceptions import HttpResponseError
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         credential = DefaultAzureCredential()
@@ -80,7 +81,20 @@ class AuthenticationSample(object):
         credential_scopes = ["https://{}/.default".format(form_recognizer_endpoint_suffix[1:])]
         form_recognizer_client = FormRecognizerClient(endpoint, credential, credential_scopes=credential_scopes)
         # [END create_fr_client_with_aad]
-        poller = form_recognizer_client.begin_recognize_content_from_url(self.url)
+        # The test is unstable in China cloud, we try to set the number of retries in the code to increase stability
+        retryTimes = 0
+        while retryTimes != 5 :
+            try:
+                # Begin recognize content from url, this sample test is unstable in China cloud.(We are testing sovereign cloud test)
+                # Increasing the number of retries in the code until there is a better solution
+                poller = form_recognizer_client.begin_recognize_content_from_url(self.url)
+            except HttpResponseError:
+                retryTimes += 1
+                # Print the known unstable errors
+                print("Image URL is badly formatted. Failed to download image from input URL.")
+                continue
+            else:
+                break
         result = poller.result()
 
     def authentication_with_api_key_credential_form_training_client(self):
