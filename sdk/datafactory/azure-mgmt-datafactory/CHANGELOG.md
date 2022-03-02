@@ -1,5 +1,24 @@
 # Release History
 
+## 2.3.0 (2022-03-02)
+
+**Features**
+
+  - Added model QuickbaseLinkedService
+  - Added model ScriptActivity
+  - Added model ScriptActivityLogDestination
+  - Added model ScriptActivityParameter
+  - Added model ScriptActivityParameterDirection
+  - Added model ScriptActivityParameterType
+  - Added model ScriptActivityScriptBlock
+  - Added model ScriptActivityTypePropertiesLogSettings
+  - Added model ScriptType
+  - Added model SmartsheetLinkedService
+  - Added model TeamDeskAuthenticationType
+  - Added model TeamDeskLinkedService
+  - Added model ZendeskAuthenticationType
+  - Added model ZendeskLinkedService
+
 ## 2.2.1 (2022-02-14)
 
 **Fixes**
