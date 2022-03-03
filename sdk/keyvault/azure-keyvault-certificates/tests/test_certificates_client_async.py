@@ -32,7 +32,7 @@ import pytest
 
 from _shared.test_case_async import KeyVaultTestCase
 from _test_case import client_setup, get_decorator, CertificatesTestCase
-from test_certificates_client import CERT_CONTENT_PASSWORD_ENCODED, CERT_CONTENT_NOT_PASSWORD_ENCODED
+from certs import CERT_CONTENT_PASSWORD_ENCODED, CERT_CONTENT_NOT_PASSWORD_ENCODED
 
 
 all_api_versions = get_decorator(is_async=True)
