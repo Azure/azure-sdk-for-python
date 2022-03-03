@@ -135,6 +135,7 @@ class SchemaRegistryTests(AzureTestCase):
 
         with pytest.raises(HttpResponseError) as e:
             client.register_schema(schemaregistry_group, name, None, format)
+        assert e.value.error.code == 'InvalidRequest'
         assert e.value.status_code == 400
         assert e.value.reason == 'Bad Request'
 
@@ -143,6 +144,7 @@ class SchemaRegistryTests(AzureTestCase):
 
         with pytest.raises(HttpResponseError) as e:
             client.register_schema(schemaregistry_group, name, schema_str, 'invalid-format')
+        assert e.value.error.code == 'InvalidSchemaType'
         assert e.value.status_code == 415
         assert e.value.reason == 'Unsupported Media Type'
 
@@ -162,6 +164,7 @@ class SchemaRegistryTests(AzureTestCase):
 
         with pytest.raises(HttpResponseError) as e:
             client.get_schema_properties(schemaregistry_group, name, None, format)
+        assert e.value.error.code == 'InvalidRequest'
         assert e.value.status_code == 400
         assert e.value.reason == 'Bad Request'
 
@@ -170,11 +173,13 @@ class SchemaRegistryTests(AzureTestCase):
 
         with pytest.raises(HttpResponseError) as e:
             client.get_schema_properties(schemaregistry_group, name, schema_str, 'invalid-format')
+        assert e.value.error.code == 'InvalidSchemaType'
         assert e.value.status_code == 415
         assert e.value.reason == 'Unsupported Media Type'
 
         with pytest.raises(HttpResponseError) as e:
             client.get_schema_properties(schemaregistry_group, 'never-registered', schema_str, format)
+        assert e.value.error.code == 'ItemNotFound'
         assert e.value.status_code == 404
         assert e.value.reason == 'Not Found'
 
@@ -186,5 +191,6 @@ class SchemaRegistryTests(AzureTestCase):
 
         with pytest.raises(HttpResponseError) as e:
             client.get_schema('fakeschemaid')
+        assert e.value.error.code == 'InvalidRequest'
         assert e.value.status_code == 400
         assert e.value.reason == 'Bad Request'
