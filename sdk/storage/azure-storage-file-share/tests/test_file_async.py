@@ -1249,6 +1249,35 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
 
     @FileSharePreparer()
     @AsyncStorageTestCase.await_prepared_test
+    async def test_copy_file_ignore_readonly(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        source_file = await self._create_file(storage_account_name, storage_account_key)
+        dest_file = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path='file1copy',
+            credential=storage_account_key)
+
+        file_attributes = NTFSAttributes(read_only=True)
+        await dest_file.create_file(1024, file_attributes=file_attributes)
+
+        # Act
+        with self.assertRaises(HttpResponseError):
+            await dest_file.start_copy_from_url(source_file.url)
+
+        copy = await dest_file.start_copy_from_url(source_file.url, ignore_read_only=True)
+
+        # Assert
+        self.assertIsNotNone(copy)
+        self.assertEqual(copy['copy_status'], 'success')
+        self.assertIsNotNone(copy['copy_id'])
+
+        copy_file = await dest_file.download_file()
+        content = await copy_file.readall()
+        self.assertEqual(content, self.short_byte_data)
+
+    @FileSharePreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_copy_file_with_specifying_acl_copy_behavior_attributes_async(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         source_client = await self._create_file(storage_account_name, storage_account_key)
