@@ -6,23 +6,198 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import TYPE_CHECKING
+import functools
+from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import HttpResponse
+from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator import distributed_trace
 from azure.mgmt.core.exceptions import ARMErrorFormat
+from msrest import Serializer
 
 from .. import models as _models
+from .._vendor import _convert_request, _format_url_section
+T = TypeVar('T')
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+def build_list_by_job_execution_request(
+    resource_group_name: str,
+    server_name: str,
+    job_agent_name: str,
+    job_name: str,
+    job_execution_id: str,
+    subscription_id: str,
+    *,
+    create_time_min: Optional[datetime.datetime] = None,
+    create_time_max: Optional[datetime.datetime] = None,
+    end_time_min: Optional[datetime.datetime] = None,
+    end_time_max: Optional[datetime.datetime] = None,
+    is_active: Optional[bool] = None,
+    skip: Optional[int] = None,
+    top: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2020-11-01-preview"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions/{jobExecutionId}/targets')
+    path_format_arguments = {
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
+        "serverName": _SERIALIZER.url("server_name", server_name, 'str'),
+        "jobAgentName": _SERIALIZER.url("job_agent_name", job_agent_name, 'str'),
+        "jobName": _SERIALIZER.url("job_name", job_name, 'str'),
+        "jobExecutionId": _SERIALIZER.url("job_execution_id", job_execution_id, 'str'),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if create_time_min is not None:
+        query_parameters['createTimeMin'] = _SERIALIZER.query("create_time_min", create_time_min, 'iso-8601')
+    if create_time_max is not None:
+        query_parameters['createTimeMax'] = _SERIALIZER.query("create_time_max", create_time_max, 'iso-8601')
+    if end_time_min is not None:
+        query_parameters['endTimeMin'] = _SERIALIZER.query("end_time_min", end_time_min, 'iso-8601')
+    if end_time_max is not None:
+        query_parameters['endTimeMax'] = _SERIALIZER.query("end_time_max", end_time_max, 'iso-8601')
+    if is_active is not None:
+        query_parameters['isActive'] = _SERIALIZER.query("is_active", is_active, 'bool')
+    if skip is not None:
+        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int')
+    if top is not None:
+        query_parameters['$top'] = _SERIALIZER.query("top", top, 'int')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_list_by_step_request(
+    resource_group_name: str,
+    server_name: str,
+    job_agent_name: str,
+    job_name: str,
+    job_execution_id: str,
+    step_name: str,
+    subscription_id: str,
+    *,
+    create_time_min: Optional[datetime.datetime] = None,
+    create_time_max: Optional[datetime.datetime] = None,
+    end_time_min: Optional[datetime.datetime] = None,
+    end_time_max: Optional[datetime.datetime] = None,
+    is_active: Optional[bool] = None,
+    skip: Optional[int] = None,
+    top: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2020-11-01-preview"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions/{jobExecutionId}/steps/{stepName}/targets')
+    path_format_arguments = {
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
+        "serverName": _SERIALIZER.url("server_name", server_name, 'str'),
+        "jobAgentName": _SERIALIZER.url("job_agent_name", job_agent_name, 'str'),
+        "jobName": _SERIALIZER.url("job_name", job_name, 'str'),
+        "jobExecutionId": _SERIALIZER.url("job_execution_id", job_execution_id, 'str'),
+        "stepName": _SERIALIZER.url("step_name", step_name, 'str'),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if create_time_min is not None:
+        query_parameters['createTimeMin'] = _SERIALIZER.query("create_time_min", create_time_min, 'iso-8601')
+    if create_time_max is not None:
+        query_parameters['createTimeMax'] = _SERIALIZER.query("create_time_max", create_time_max, 'iso-8601')
+    if end_time_min is not None:
+        query_parameters['endTimeMin'] = _SERIALIZER.query("end_time_min", end_time_min, 'iso-8601')
+    if end_time_max is not None:
+        query_parameters['endTimeMax'] = _SERIALIZER.query("end_time_max", end_time_max, 'iso-8601')
+    if is_active is not None:
+        query_parameters['isActive'] = _SERIALIZER.query("is_active", is_active, 'bool')
+    if skip is not None:
+        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int')
+    if top is not None:
+        query_parameters['$top'] = _SERIALIZER.query("top", top, 'int')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+
+def build_get_request(
+    resource_group_name: str,
+    server_name: str,
+    job_agent_name: str,
+    job_name: str,
+    job_execution_id: str,
+    step_name: str,
+    target_id: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2020-11-01-preview"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions/{jobExecutionId}/steps/{stepName}/targets/{targetId}')
+    path_format_arguments = {
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
+        "serverName": _SERIALIZER.url("server_name", server_name, 'str'),
+        "jobAgentName": _SERIALIZER.url("job_agent_name", job_agent_name, 'str'),
+        "jobName": _SERIALIZER.url("job_name", job_name, 'str'),
+        "jobExecutionId": _SERIALIZER.url("job_execution_id", job_execution_id, 'str'),
+        "stepName": _SERIALIZER.url("step_name", step_name, 'str'),
+        "targetId": _SERIALIZER.url("target_id", target_id, 'str'),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
 
 class JobTargetExecutionsOperations(object):
     """JobTargetExecutionsOperations operations.
@@ -46,23 +221,23 @@ class JobTargetExecutionsOperations(object):
         self._deserialize = deserializer
         self._config = config
 
+    @distributed_trace
     def list_by_job_execution(
         self,
-        resource_group_name,  # type: str
-        server_name,  # type: str
-        job_agent_name,  # type: str
-        job_name,  # type: str
-        job_execution_id,  # type: str
-        create_time_min=None,  # type: Optional[datetime.datetime]
-        create_time_max=None,  # type: Optional[datetime.datetime]
-        end_time_min=None,  # type: Optional[datetime.datetime]
-        end_time_max=None,  # type: Optional[datetime.datetime]
-        is_active=None,  # type: Optional[bool]
-        skip=None,  # type: Optional[int]
-        top=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.JobExecutionListResult"]
+        resource_group_name: str,
+        server_name: str,
+        job_agent_name: str,
+        job_name: str,
+        job_execution_id: str,
+        create_time_min: Optional[datetime.datetime] = None,
+        create_time_max: Optional[datetime.datetime] = None,
+        end_time_min: Optional[datetime.datetime] = None,
+        end_time_max: Optional[datetime.datetime] = None,
+        is_active: Optional[bool] = None,
+        skip: Optional[int] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.JobExecutionListResult"]:
         """Lists target executions for all steps of a job execution.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -95,7 +270,8 @@ class JobTargetExecutionsOperations(object):
         :param top: The number of elements to return from the collection.
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either JobExecutionListResult or the result of cls(response)
+        :return: An iterator like instance of either JobExecutionListResult or the result of
+         cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.JobExecutionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -104,53 +280,53 @@ class JobTargetExecutionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01-preview"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list_by_job_execution.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'serverName': self._serialize.url("server_name", server_name, 'str'),
-                    'jobAgentName': self._serialize.url("job_agent_name", job_agent_name, 'str'),
-                    'jobName': self._serialize.url("job_name", job_name, 'str'),
-                    'jobExecutionId': self._serialize.url("job_execution_id", job_execution_id, 'str'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                if create_time_min is not None:
-                    query_parameters['createTimeMin'] = self._serialize.query("create_time_min", create_time_min, 'iso-8601')
-                if create_time_max is not None:
-                    query_parameters['createTimeMax'] = self._serialize.query("create_time_max", create_time_max, 'iso-8601')
-                if end_time_min is not None:
-                    query_parameters['endTimeMin'] = self._serialize.query("end_time_min", end_time_min, 'iso-8601')
-                if end_time_max is not None:
-                    query_parameters['endTimeMax'] = self._serialize.query("end_time_max", end_time_max, 'iso-8601')
-                if is_active is not None:
-                    query_parameters['isActive'] = self._serialize.query("is_active", is_active, 'bool')
-                if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                
+                request = build_list_by_job_execution_request(
+                    resource_group_name=resource_group_name,
+                    server_name=server_name,
+                    job_agent_name=job_agent_name,
+                    job_name=job_name,
+                    job_execution_id=job_execution_id,
+                    subscription_id=self._config.subscription_id,
+                    create_time_min=create_time_min,
+                    create_time_max=create_time_max,
+                    end_time_min=end_time_min,
+                    end_time_max=end_time_max,
+                    is_active=is_active,
+                    skip=skip,
+                    top=top,
+                    template_url=self.list_by_job_execution.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                
+                request = build_list_by_job_execution_request(
+                    resource_group_name=resource_group_name,
+                    server_name=server_name,
+                    job_agent_name=job_agent_name,
+                    job_name=job_name,
+                    job_execution_id=job_execution_id,
+                    subscription_id=self._config.subscription_id,
+                    create_time_min=create_time_min,
+                    create_time_max=create_time_max,
+                    end_time_min=end_time_min,
+                    end_time_max=end_time_max,
+                    is_active=is_active,
+                    skip=skip,
+                    top=top,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('JobExecutionListResult', pipeline_response)
+            deserialized = self._deserialize("JobExecutionListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -168,29 +344,30 @@ class JobTargetExecutionsOperations(object):
 
             return pipeline_response
 
+
         return ItemPaged(
             get_next, extract_data
         )
     list_by_job_execution.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions/{jobExecutionId}/targets'}  # type: ignore
 
+    @distributed_trace
     def list_by_step(
         self,
-        resource_group_name,  # type: str
-        server_name,  # type: str
-        job_agent_name,  # type: str
-        job_name,  # type: str
-        job_execution_id,  # type: str
-        step_name,  # type: str
-        create_time_min=None,  # type: Optional[datetime.datetime]
-        create_time_max=None,  # type: Optional[datetime.datetime]
-        end_time_min=None,  # type: Optional[datetime.datetime]
-        end_time_max=None,  # type: Optional[datetime.datetime]
-        is_active=None,  # type: Optional[bool]
-        skip=None,  # type: Optional[int]
-        top=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.JobExecutionListResult"]
+        resource_group_name: str,
+        server_name: str,
+        job_agent_name: str,
+        job_name: str,
+        job_execution_id: str,
+        step_name: str,
+        create_time_min: Optional[datetime.datetime] = None,
+        create_time_max: Optional[datetime.datetime] = None,
+        end_time_min: Optional[datetime.datetime] = None,
+        end_time_max: Optional[datetime.datetime] = None,
+        is_active: Optional[bool] = None,
+        skip: Optional[int] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.JobExecutionListResult"]:
         """Lists the target executions of a job step execution.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -225,7 +402,8 @@ class JobTargetExecutionsOperations(object):
         :param top: The number of elements to return from the collection.
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either JobExecutionListResult or the result of cls(response)
+        :return: An iterator like instance of either JobExecutionListResult or the result of
+         cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.JobExecutionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -234,54 +412,55 @@ class JobTargetExecutionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01-preview"
-        accept = "application/json"
-
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list_by_step.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'serverName': self._serialize.url("server_name", server_name, 'str'),
-                    'jobAgentName': self._serialize.url("job_agent_name", job_agent_name, 'str'),
-                    'jobName': self._serialize.url("job_name", job_name, 'str'),
-                    'jobExecutionId': self._serialize.url("job_execution_id", job_execution_id, 'str'),
-                    'stepName': self._serialize.url("step_name", step_name, 'str'),
-                    'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                if create_time_min is not None:
-                    query_parameters['createTimeMin'] = self._serialize.query("create_time_min", create_time_min, 'iso-8601')
-                if create_time_max is not None:
-                    query_parameters['createTimeMax'] = self._serialize.query("create_time_max", create_time_max, 'iso-8601')
-                if end_time_min is not None:
-                    query_parameters['endTimeMin'] = self._serialize.query("end_time_min", end_time_min, 'iso-8601')
-                if end_time_max is not None:
-                    query_parameters['endTimeMax'] = self._serialize.query("end_time_max", end_time_max, 'iso-8601')
-                if is_active is not None:
-                    query_parameters['isActive'] = self._serialize.query("is_active", is_active, 'bool')
-                if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                
+                request = build_list_by_step_request(
+                    resource_group_name=resource_group_name,
+                    server_name=server_name,
+                    job_agent_name=job_agent_name,
+                    job_name=job_name,
+                    job_execution_id=job_execution_id,
+                    step_name=step_name,
+                    subscription_id=self._config.subscription_id,
+                    create_time_min=create_time_min,
+                    create_time_max=create_time_max,
+                    end_time_min=end_time_min,
+                    end_time_max=end_time_max,
+                    is_active=is_active,
+                    skip=skip,
+                    top=top,
+                    template_url=self.list_by_step.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-                request = self._client.get(url, query_parameters, header_parameters)
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                
+                request = build_list_by_step_request(
+                    resource_group_name=resource_group_name,
+                    server_name=server_name,
+                    job_agent_name=job_agent_name,
+                    job_name=job_name,
+                    job_execution_id=job_execution_id,
+                    step_name=step_name,
+                    subscription_id=self._config.subscription_id,
+                    create_time_min=create_time_min,
+                    create_time_max=create_time_max,
+                    end_time_min=end_time_min,
+                    end_time_max=end_time_max,
+                    is_active=is_active,
+                    skip=skip,
+                    top=top,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('JobExecutionListResult', pipeline_response)
+            deserialized = self._deserialize("JobExecutionListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -299,23 +478,24 @@ class JobTargetExecutionsOperations(object):
 
             return pipeline_response
 
+
         return ItemPaged(
             get_next, extract_data
         )
     list_by_step.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions/{jobExecutionId}/steps/{stepName}/targets'}  # type: ignore
 
+    @distributed_trace
     def get(
         self,
-        resource_group_name,  # type: str
-        server_name,  # type: str
-        job_agent_name,  # type: str
-        job_name,  # type: str
-        job_execution_id,  # type: str
-        step_name,  # type: str
-        target_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.JobExecution"
+        resource_group_name: str,
+        server_name: str,
+        job_agent_name: str,
+        job_name: str,
+        job_execution_id: str,
+        step_name: str,
+        target_id: str,
+        **kwargs: Any
+    ) -> "_models.JobExecution":
         """Gets a target execution.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
@@ -343,32 +523,22 @@ class JobTargetExecutionsOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-11-01-preview"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'serverName': self._serialize.url("server_name", server_name, 'str'),
-            'jobAgentName': self._serialize.url("job_agent_name", job_agent_name, 'str'),
-            'jobName': self._serialize.url("job_name", job_name, 'str'),
-            'jobExecutionId': self._serialize.url("job_execution_id", job_execution_id, 'str'),
-            'stepName': self._serialize.url("step_name", step_name, 'str'),
-            'targetId': self._serialize.url("target_id", target_id, 'str'),
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_get_request(
+            resource_group_name=resource_group_name,
+            server_name=server_name,
+            job_agent_name=job_agent_name,
+            job_name=job_name,
+            job_execution_id=job_execution_id,
+            step_name=step_name,
+            target_id=target_id,
+            subscription_id=self._config.subscription_id,
+            template_url=self.get.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -382,4 +552,6 @@ class JobTargetExecutionsOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
+
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions/{jobExecutionId}/steps/{stepName}/targets/{targetId}'}  # type: ignore
+
