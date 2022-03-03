@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import os
 
 from azure.core.pipeline.policies import HttpLoggingPolicy, HeadersPolicy 
 
@@ -35,8 +36,7 @@ def get_http_logging_policy(**kwargs):
 
 def get_header_policy(**kwargs):
     header_policy = HeadersPolicy(**kwargs)
-
-    import os
+    
     useragent = os.getenv("AZURE_USERAGENT_OVERRIDE")
     if useragent:
         header_policy.add_header("x-ms-useragent", useragent)
