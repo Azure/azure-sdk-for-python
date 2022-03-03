@@ -484,7 +484,7 @@ async def test_app_service_user_assigned_identity():
                 base_url=endpoint,
                 method="GET",
                 required_headers={"X-IDENTITY-HEADER": secret, "User-Agent": USER_AGENT},
-                required_params={"api-version": "2019-08-01", "clientid": client_id, "resource": scope},
+                required_params={"api-version": "2019-08-01", "client_id": client_id, "resource": scope},
             ),
             Request(
                 base_url=endpoint,

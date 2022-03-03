@@ -39,8 +39,6 @@ def _get_client_args(**kwargs):
         # App Service managed identity isn't available in this environment
         return None
 
-    if kwargs.get("client_id"):
-        identity_config["clientid"] = kwargs.pop("client_id")
     if kwargs.get("resource_id"):
         identity_config["mi_res_id"] = kwargs.pop("resource_id")
 
