@@ -55,27 +55,27 @@ token_credential = ClientSecretCredential(
 )
 
 
-def encode_metadata_dict(encoder):
-    dict_data_ben = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
-    encoded_metadata_ben = encoder.encode(dict_data_ben, schema=SCHEMA_STRING)
+def encode_message_content_dict(encoder):
+    dict_content_ben = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
+    encoded_message_content_ben = encoder.encode(dict_content_ben, schema=SCHEMA_STRING)
 
-    print("Encoded metadata is: ", encoded_metadata_ben)
-    return EventData.from_message_data(
-        encoded_metadata_ben["data"],
-        encoded_metadata_ben["content_type"],
+    print("Encoded message content is: ", encoded_message_content_ben)
+    return EventData.from_message_content(
+        encoded_message_content_ben["content"],
+        encoded_message_content_ben["content_type"],
     )
 
-def decode_with_data_and_content_type(encoder, event_data):
-    # get data as bytes
-    data = bytearray()
-    for d in event_data.body:
-        data += d
-    data_bytes = bytes(data)
-    data_dict = {"data": data_bytes, "content_type": event_data.content_type}
-    decoded_data = encoder.decode(data_dict)
+def decode_with_content_and_content_type(encoder, event_data):
+    # get content as bytes
+    content = bytearray()
+    for c in event_data.body:
+        content += c
+    content_bytes = bytes(content)
+    message_content = {"content": content_bytes, "content_type": event_data.content_type}
+    decoded_content = encoder.decode(message_content)
 
-    print("Decoded data is: ", decoded_data)
-    return decoded_data
+    print("Decoded content is: ", decoded_content)
+    return decoded_content
 
 
 if __name__ == "__main__":
@@ -86,6 +86,6 @@ if __name__ == "__main__":
     encoder = AvroEncoder(
         client=schema_registry, group_name=GROUP_NAME, auto_register_schemas=True
     )
-    event_data = encode_metadata_dict(encoder)
-    decoded_data = decode_with_data_and_content_type(encoder, event_data)
+    event_data = encode_message_content_dict(encoder)
+    decoded_content = decode_with_content_and_content_type(encoder, event_data)
     encoder.close()
