@@ -1490,7 +1490,7 @@ class FileOperations:
         if _file_permission_copy_mode is not None:
             header_parameters['x-ms-file-permission-copy-mode'] = self._serialize.header("file_permission_copy_mode", _file_permission_copy_mode, 'str')
         if _ignore_read_only is not None:
-            header_parameters['x-ms-file-copy-ignore-read-only'] = self._serialize.header("ignore_read_only", _ignore_read_only, 'bool')
+            header_parameters['x-ms-file-copy-ignore-readonly'] = self._serialize.header("ignore_read_only", _ignore_read_only, 'bool')
         if _file_attributes is not None:
             header_parameters['x-ms-file-attributes'] = self._serialize.header("file_attributes", _file_attributes, 'str')
         if _file_creation_time is not None:

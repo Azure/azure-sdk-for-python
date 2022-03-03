@@ -9,7 +9,7 @@ steps:
       versionSpec: 3.8
 
   - pwsh: |
-      pip install packaging
+      pip install packaging==20.4
     displayName: Prep Environment
 
   # select the appropriate version from manifest if present
@@ -19,8 +19,25 @@ steps:
      scriptPath: 'scripts/devops_tasks/install_python_version.py'
      arguments: '${{ parameters.versionSpec }} --installer_folder="../_pyinstaller'
 
+  # set up bypass of standard use python version
+  - pwsh: |
+      $incoming = "${{ parameters.versionSpec }}"
+
+      if($incoming.Contains("pypy3")){
+        Write-Host "##vso[task.setvariable variable=ManualInstallNecessary]true"
+      } 
+    displayName: Check UsePythonVersion Necessity
+
+  - task: PythonScript@0
+    displayName: 'PyPy3 Specific Path Prepend'
+    condition: and(succeeded(), eq(variables.ManualInstallNecessary, 'true'))
+    inputs:
+      scriptPath: 'scripts/devops_tasks/use_pypy_version.py'
+      arguments: '${{ parameters.versionSpec }}'
+
   # use
   - task: UsePythonVersion@0
     displayName: "Use Python $(PythonVersion)"
+    condition: and(succeeded(), not(eq(variables.ManualInstallNecessary, 'true')))
     inputs:
       versionSpec: ${{ parameters.versionSpec }}

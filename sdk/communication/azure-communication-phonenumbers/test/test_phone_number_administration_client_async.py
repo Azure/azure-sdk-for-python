@@ -23,6 +23,16 @@ PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON = "Phone numbers shouldn't be purchased i
 SKIP_INT_PHONE_NUMBER_TESTS = os.getenv("COMMUNICATION_SKIP_INT_PHONENUMBERS_TEST", "false") == "true"
 INT_PHONE_NUMBER_TEST_SKIP_REASON = "Phone numbers setting SMS capability does not support in INT. Skip these tests in INT."
 
+SKIP_UPDATE_CAPABILITIES_TESTS = os.getenv("COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST", "false") == "true"
+SKIP_UPDATE_CAPABILITIES_TESTS_REASON = "Phone number capabilities are skipped."
+
+def get_test_phone_number():
+    if SKIP_UPDATE_CAPABILITIES_TESTS:
+        return os.getenv("AZURE_PHONE_NUMBER")
+
+    test_agent = os.getenv("AZURE_TEST_AGENT")
+    return os.getenv("AZURE_PHONE_NUMBER_" + test_agent)
+
 class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
     def setUp(self):
         super(PhoneNumbersClientTestAsync, self).setUp()
@@ -30,7 +40,7 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
             self.phone_number = "sanitized"
             self.country_code = "US"
         else:
-            self.phone_number = os.getenv("AZURE_PHONE_NUMBER")
+            self.phone_number = get_test_phone_number()
             self.country_code = os.getenv("AZURE_COMMUNICATION_SERVICE_COUNTRY_CODE", "US")
         self.phone_number_client = PhoneNumbersClient.from_connection_string(
             self.connection_str, 
@@ -129,6 +139,7 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
         assert poller.result()
 
     @pytest.mark.skipif(SKIP_INT_PHONE_NUMBER_TESTS, reason=INT_PHONE_NUMBER_TEST_SKIP_REASON)
+    @pytest.mark.skipif(SKIP_UPDATE_CAPABILITIES_TESTS, reason=SKIP_UPDATE_CAPABILITIES_TESTS_REASON)
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_update_phone_number_capabilities(self):
         async with self.phone_number_client:
@@ -145,6 +156,7 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
             assert poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
 
     @pytest.mark.skipif(SKIP_INT_PHONE_NUMBER_TESTS, reason=INT_PHONE_NUMBER_TEST_SKIP_REASON)
+    @pytest.mark.skipif(SKIP_UPDATE_CAPABILITIES_TESTS, reason=SKIP_UPDATE_CAPABILITIES_TESTS_REASON)
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_update_phone_number_capabilities_from_managed_identity(self):
         endpoint, access_key = parse_connection_str(self.connection_str)
