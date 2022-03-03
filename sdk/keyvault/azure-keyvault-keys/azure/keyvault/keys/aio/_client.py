@@ -734,16 +734,16 @@ class KeyClient(AsyncKeyVaultClientBase):
         return result.value
 
     @distributed_trace_async
-    async def get_key_rotation_policy(self, name: str, **kwargs: "Any") -> "KeyRotationPolicy":
+    async def get_key_rotation_policy(self, key_name: str, **kwargs: "Any") -> "KeyRotationPolicy":
         """Get the rotation policy of a Key Vault key.
 
-        :param str name: The name of the key.
+        :param str key_name: The name of the key.
 
         :return: The key rotation policy.
         :rtype: ~azure.keyvault.keys.KeyRotationPolicy
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        policy = await self._client.get_key_rotation_policy(vault_base_url=self._vault_url, key_name=name, **kwargs)
+        policy = await self._client.get_key_rotation_policy(vault_base_url=self._vault_url, key_name=key_name, **kwargs)
         return KeyRotationPolicy._from_generated(policy)
 
     @distributed_trace_async
