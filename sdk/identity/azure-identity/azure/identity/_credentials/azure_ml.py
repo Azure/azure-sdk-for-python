@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from typing import Any, Optional
 
 
-class AppServiceCredential(ManagedIdentityBase):
+class AzureMLCredential(ManagedIdentityBase):
     def get_client(self, **kwargs):
         # type: (**Any) -> Optional[ManagedIdentityClient]
         client_args = _get_client_args(**kwargs)
@@ -26,26 +26,28 @@ class AppServiceCredential(ManagedIdentityBase):
 
     def get_unavailable_message(self):
         # type: () -> str
-        return "App Service managed identity configuration not found in environment"
+        return "Azure ML managed identity configuration not found in environment"
 
 
 def _get_client_args(**kwargs):
     # type: (dict) -> Optional[dict]
     identity_config = kwargs.pop("identity_config", None) or {}
 
-    url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
-    secret = os.environ.get(EnvironmentVariables.IDENTITY_HEADER)
+    url = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
+    secret = os.environ.get(EnvironmentVariables.MSI_SECRET)
     if not (url and secret):
-        # App Service managed identity isn't available in this environment
+        # Azure ML managed identity isn't available in this environment
         return None
 
+    if kwargs.get("client_id"):
+        identity_config["clientid"] = kwargs.pop("client_id")
     if kwargs.get("resource_id"):
         identity_config["mi_res_id"] = kwargs.pop("resource_id")
 
     return dict(
         kwargs,
         identity_config=identity_config,
-        base_headers={"X-IDENTITY-HEADER": secret},
+        base_headers={"secret": secret},
         request_factory=functools.partial(_get_request, url),
     )
 
@@ -53,5 +55,5 @@ def _get_client_args(**kwargs):
 def _get_request(url, scope, identity_config):
     # type: (str, str, dict) -> HttpRequest
     request = HttpRequest("GET", url)
-    request.format_parameters(dict({"api-version": "2019-08-01", "resource": scope}, **identity_config))
+    request.format_parameters(dict({"api-version": "2017-09-01", "resource": scope}, **identity_config))
     return request
