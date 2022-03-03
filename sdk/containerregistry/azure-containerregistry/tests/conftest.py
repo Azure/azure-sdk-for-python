@@ -21,7 +21,7 @@ if sys.version_info < (3, 5):
 
 def pytest_configure(config):
     config.addinivalue_line("usefixtures", "load_registry")
-    
+
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     # sanitizes table/cosmos account names in URLs
