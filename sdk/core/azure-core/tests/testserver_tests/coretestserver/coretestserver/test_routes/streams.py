@@ -28,6 +28,9 @@ def stream_json_error():
     yield '{"error": {"code": "BadRequest", '
     yield' "message": "You made a bad request"}}'
 
+def streaming_test():
+    yield b"test"
+
 def stream_compressed_header_error():
     yield b'test'
 
@@ -52,10 +55,11 @@ def iterable():
 def error():
     return Response(stream_json_error(), status=400)
 
+
 @streams_api.route('/string', methods=['GET'])
 def string():
     return Response(
-        "test", status=200, mimetype="text/plain"
+        streaming_test(), status=200, mimetype="text/plain"
     )
 
 @streams_api.route('/compressed', methods=['GET'])
