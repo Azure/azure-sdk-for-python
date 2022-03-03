@@ -674,7 +674,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         assert "RSA-OAEP" == result.algorithm
         assert plaintext == result.plaintext
 
-        # try ommitting the key version
+        # try omitting the key version
         crypto_client = client.get_cryptography_client(key_name)
         # both clients should use the same generated client
         assert client._client == crypto_client._client
