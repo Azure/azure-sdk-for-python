@@ -84,7 +84,7 @@ print("\n.. Delete a role assignment")
 client.delete_role_assignment(scope=scope, name=role_assignment.name)
 print("Role assignment deleted successfully.")
 
-# Finally, let's delete the role definiton as well.
+# Finally, let's delete the role definition as well.
 print("\n.. Delete a role definition")
 client.delete_role_definition(scope=scope, name=definition_id)
 print("Role definition deleted successfully.")

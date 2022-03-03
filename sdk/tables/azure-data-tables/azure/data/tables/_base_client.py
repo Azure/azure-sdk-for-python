@@ -267,7 +267,7 @@ class TablesBaseClient(AccountHostsMixin):
             *reqs, policies=policies, boundary="changeset_{}".format(uuid4())  # type: ignore
         )
         request = self._client._client.post(  # pylint: disable=protected-access
-            url="https://{}/$batch".format(self._primary_hostname),
+            url="{}://{}/$batch".format(self.scheme, self._primary_hostname),
             headers={
                 "x-ms-version": self.api_version,
                 "DataServiceVersion": "3.0",

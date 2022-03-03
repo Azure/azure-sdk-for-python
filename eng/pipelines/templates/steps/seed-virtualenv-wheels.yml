@@ -1,0 +1,24 @@
+parameters:
+  WHEEL_VERSION: '0.37.0'
+  SETUPTOOLS_VERSION: '59.6.0'
+  PIP_VERSION: '20.3.3'
+
+steps:
+  - pwsh: |
+      pip install virtualenv
+    displayName: Ensure virtualenv installed
+
+  - pwsh: |
+      mkdir $(Agent.TempDirectory)/_virtualenv
+      Write-Host "##vso[task.setvariable variable=VIRTUALENV_OVERRIDE_APP_DATA]$(Agent.TempDirectory)/_virtualenv"
+    displayName: Set VIRTUALENV_OVERRIDE_APP_DATA
+
+  - pwsh: |
+      # ensure these can be pulled down from pypi.
+      $env:PIP_EXTRA_INDEX_URL="https://pypi.python.org/simple"
+      virtualenv --download --reset-app-data `
+        --pip="${{ parameters.PIP_VERSION }}" `
+        --setuptools="${{ parameters.SETUPTOOLS_VERSION }}" `
+        --wheel=="${{ parameters.WHEEL_VERSION }}" `
+        $(Agent.TempDirectory)/seed_env
+    displayName: Populate the seed dir

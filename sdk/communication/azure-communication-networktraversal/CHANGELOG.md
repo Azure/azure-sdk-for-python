@@ -7,7 +7,8 @@
 - Added support for proactive refreshing of tokens
   - `CommunicationTokenCredential` exposes a new boolean keyword argument `refresh_proactively` that defaults to `False`. If set to `True`, the refreshing of the token will be scheduled in the background ensuring continuous authentication state.
 
-## 1.0.0 (2022-02-04)
+
+## 1.0.0 (2022-02-04) (Deprecated)
 
 ### Breaking Changes
 

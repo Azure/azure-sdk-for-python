@@ -1018,7 +1018,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                                                  prefetch_count=10) as receiver:
                 received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
                 for msg in received_msgs:
-                    renewer.register(receiver, msg, max_lock_renewal_duration=10)
+                    renewer.register(receiver, msg, max_lock_renewal_duration=30)
                 time.sleep(10)
 
                 for msg in received_msgs:
@@ -1039,7 +1039,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                                                  prefetch_count=3) as receiver:
                 received_msgs = receiver.receive_messages(max_message_count=3, max_wait_time=5)
                 for msg in received_msgs:
-                    renewer.register(receiver, msg, max_lock_renewal_duration=10)
+                    renewer.register(receiver, msg, max_lock_renewal_duration=30)
                 time.sleep(10)
 
                 for msg in received_msgs:
@@ -1061,7 +1061,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                                                  prefetch_count=3) as receiver:
                 received_msgs = receiver.receive_messages(max_message_count=3, max_wait_time=5)
                 for msg in received_msgs:
-                    renewer.register(receiver, msg, max_lock_renewal_duration=10)
+                    renewer.register(receiver, msg, max_lock_renewal_duration=30)
                 time.sleep(10)
 
                 for msg in received_msgs:
@@ -1993,18 +1993,20 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 sender.send_messages(batch_message)
                 sender.send_messages(batch_message)
                 messages = []
-                with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
+                with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=20) as receiver:
                     for message in receiver:
                         messages.append(message)
-                assert len(messages) == 4
+                        receiver.complete_message(message)
+                    assert len(messages) == 4
                 # then normal message resending
                 sender.send_messages(message)
                 sender.send_messages(message)
                 messages = []
-                with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
+                with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=20) as receiver:
                     for message in receiver:
                         messages.append(message)
-                assert len(messages) == 2
+                        receiver.complete_message(message)
+                    assert len(messages) == 2
 
 
     @pytest.mark.liveTest

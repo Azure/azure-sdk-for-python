@@ -15,26 +15,25 @@ from azure.core.pipeline import AsyncPipeline
 from azure.core.async_paging import AsyncList
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import (
-    ContentDecodePolicy,
-    AsyncBearerTokenCredentialPolicy,
     AsyncRedirectPolicy,
+    AzureSasCredentialPolicy,
+    ContentDecodePolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
-    AzureSasCredentialPolicy,
 )
 from azure.core.pipeline.transport import AsyncHttpTransport
 
-from .constants import STORAGE_OAUTH_SCOPE, CONNECTION_TIMEOUT, READ_TIMEOUT
+from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT
 from .authentication import SharedKeyCredentialPolicy
 from .base_client import create_configuration
 from .policies import (
     StorageContentValidation,
-    StorageRequestHook,
-    StorageHosts,
     StorageHeadersPolicy,
+    StorageHosts,
+    StorageRequestHook,
     QueueMessagePolicy
 )
-from .policies_async import AsyncStorageResponseHook
+from .policies_async import AsyncStorageBearerTokenCredentialPolicy, AsyncStorageResponseHook
 
 from .response_handlers import process_storage_error, PartialBatchErrorException
 
@@ -70,7 +69,7 @@ class AsyncStorageAccountHostsMixin(object):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
         self._credential_policy = None
         if hasattr(credential, 'get_token'):
-            self._credential_policy = AsyncBearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
+            self._credential_policy = AsyncStorageBearerTokenCredentialPolicy(credential)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):

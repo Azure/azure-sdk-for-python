@@ -43,7 +43,7 @@ except (SyntaxError, ImportError):
         HttpResponse as _HttpResponse,
         HttpRequest as _HttpRequest
     )
-from ..utils._utils import _case_insensitive_dict
+from ..utils._utils import case_insensitive_dict
 from ..utils._pipeline_transport_rest_shared import (
     _pad_attr_name,
     BytesIOSocket,
@@ -438,7 +438,7 @@ class _RestHttpClientTransportResponseBase(_HttpResponseBaseImpl, _RestHttpClien
 
     def __init__(self, **kwargs):
         internal_response = kwargs.pop("internal_response")
-        headers = _case_insensitive_dict(internal_response.getheaders())
+        headers = case_insensitive_dict(internal_response.getheaders())
         super(_RestHttpClientTransportResponseBase, self).__init__(
             internal_response=internal_response,
             status_code=internal_response.status,
