@@ -4,14 +4,14 @@
 # ------------------------------------
 from typing import Any, Optional
 from typing_extensions import Protocol
-from .credentials import AccessToken
+from .credentials import AccessToken as _AccessToken
 
 class AsyncTokenCredential(Protocol):
     """Protocol for classes able to provide OAuth tokens."""
 
     async def get_token(
         self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
-    ) -> AccessToken:
+    ) -> _AccessToken:
         """Request an access token for `scopes`.
 
         :param str scopes: The type of access needed.
