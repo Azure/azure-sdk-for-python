@@ -27,10 +27,10 @@ class TestIdDocument(FormRecognizerTest):
     @recorded_by_proxy
     def test_identity_document_bad_endpoint(self, formrecognizer_test_api_key, **kwargs):
         with open(self.identity_document_license_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
         with pytest.raises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
-            poller = client.begin_recognize_identity_documents(myfile)
+            poller = client.begin_recognize_identity_documents(my_file)
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
@@ -57,10 +57,10 @@ class TestIdDocument(FormRecognizerTest):
     def test_passing_bad_content_type_param_passed(self, **kwargs):
         client = kwargs.pop("client")
         with open(self.identity_document_license_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
         with pytest.raises(ValueError):
             poller = client.begin_recognize_identity_documents(
-                myfile,
+                my_file,
                 content_type="application/jpeg"
             )
 
@@ -69,11 +69,11 @@ class TestIdDocument(FormRecognizerTest):
     def test_auto_detect_unsupported_stream_content(self, **kwargs):
         client = kwargs.pop("client")
         with open(self.unsupported_content_py, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         with pytest.raises(ValueError):
             poller = client.begin_recognize_identity_documents(
-                myfile
+                my_file
             )
 
     @FormRecognizerPreparer()
@@ -89,10 +89,10 @@ class TestIdDocument(FormRecognizerTest):
             responses.append(extracted_id_document)
 
         with open(self.identity_document_license_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         poller = client.begin_recognize_identity_documents(
-            identity_document=myfile,
+            identity_document=my_file,
             include_field_elements=True,
             cls=callback
         )

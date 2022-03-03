@@ -43,7 +43,7 @@ class TestCopyModel(FormRecognizerTest):
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
         model = poller.result()
 
-        target = client.get_copy_authorization(tags={"frtests": "testvalue"})
+        target = client.get_copy_authorization(tags={"testkey": "testvalue"})
 
         poller = client.begin_copy_model(model.model_id, target=target)
         copy = poller.result()
@@ -51,7 +51,7 @@ class TestCopyModel(FormRecognizerTest):
         assert copy.model_id == target["targetModelId"]
         assert copy.description is None
         assert copy.created_on
-        assert copy.tags == {"frtests": "testvalue"}
+        assert copy.tags == {"testkey": "testvalue"}
         for name, doc_type in copy.doc_types.items():
             assert name == target["targetModelId"]
             for key, field in doc_type.field_schema.items():

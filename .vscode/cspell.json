@@ -69,7 +69,7 @@
     "sdk/eventhub/azure-eventhub-checkpointstoreblob/**",
     "sdk/eventhub/azure-eventhub/**",
     "sdk/graphrbac/azure-graphrbac/**",
-    "sdk/formrecognizer/azure-ai-formrecognizer/**",
+    "sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_forms/**",
     "sdk/identity/azure-identity/tests/pod-identity/**",
     "sdk/identity/azure-identity/tests/managed-identity-live/service-fabric/**",
     "sdk/keyvault/azure-keyvault-certificates/tests/certs.py",
@@ -116,6 +116,7 @@
     "adfs",
     "adls",
     "aiohttp",
+    "allinone",
     "amqp",
     "apim",
     "asyncio",
@@ -146,6 +147,7 @@
     "delenv",
     "dependened",
     "deserialization",
+    "dmac",
     "docfx",
     "dotenv",
     "DWORD",
@@ -168,6 +170,7 @@
     "hexlify",
     "himds",
     "hmac",
+    "ierr",
     "illumos",
     "imds",
     "inotify",
@@ -233,6 +236,7 @@
     "plex",
     "pluggy",
     "popen",
+    "prebuilts",
     "pschema",
     "PSECRET",
     "pygobject",
@@ -368,6 +372,18 @@
         "FNNHHJT",
         "Zwiz",
         "nypg"
+      ]
+    },
+    {
+      "filename": "sdk/formrecognizer/azure-ai-formrecognizer/tests/*.py",
+      "words": [
+        "WDLABCD"
+      ]
+    },
+    {
+      "filename": "sdk/formrecognizer/azure-ai-formrecognizer/**",
+      "words": [
+        "mymodel"
       ]
     }
   ],

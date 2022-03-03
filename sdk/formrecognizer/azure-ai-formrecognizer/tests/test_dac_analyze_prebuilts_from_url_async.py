@@ -22,7 +22,7 @@ from preparers import GlobalClientPreparer as _GlobalClientPreparer
 DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
 
 
-class TestDACAnalyzePrebuiltsfromUrlAsync(AsyncFormRecognizerTest):
+class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()

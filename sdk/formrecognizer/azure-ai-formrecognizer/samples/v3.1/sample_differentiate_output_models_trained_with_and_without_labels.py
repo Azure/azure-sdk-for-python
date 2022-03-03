@@ -70,7 +70,7 @@ class DifferentiateOutputModelsTrainedWithAndWithoutLabels(object):
             model_id=model_trained_without_labels_id, form=form
         )
 
-        # Calling result() after kicking off each call allows for server-side paralellization
+        # Calling result() after kicking off each call allows for server-side parallelization
         forms_with_labeled_model = forms_with_labeled_model_poller.result()
         forms_with_unlabeled_model = forms_with_unlabeled_model_poller.result()
 

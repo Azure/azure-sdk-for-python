@@ -303,7 +303,7 @@
           }
         ],
         "tags": {
-          "frtests": "testvalue"
+          "testkey": "testvalue"
         }
       },
       "StatusCode": 202,
@@ -496,11 +496,11 @@
           "apiVersion": "2022-01-30-preview",
           "description": "my composed model",
           "tags": {
-            "frtests": "testvalue"
+            "testkey": "testvalue"
           }
         },
         "tags": {
-          "frtests": "testvalue"
+          "testkey": "testvalue"
         }
       }
     }

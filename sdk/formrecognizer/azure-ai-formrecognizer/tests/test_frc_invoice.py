@@ -28,19 +28,19 @@ class TestInvoice(FormRecognizerTest):
     @recorded_by_proxy
     def test_invoice_bad_endpoint(self, formrecognizer_test_api_key, **kwargs):
         with open(self.invoice_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
         with pytest.raises(ServiceRequestError):
             client = FormRecognizerClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
-            poller = client.begin_recognize_invoices(myfile)
+            poller = client.begin_recognize_invoices(my_file)
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
     def test_passing_enum_content_type(self, client):
         with open(self.invoice_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
         poller = client.begin_recognize_invoices(
-            myfile,
+            my_file,
             content_type=FormContentType.APPLICATION_PDF
         )
         result = poller.result()
@@ -71,10 +71,10 @@ class TestInvoice(FormRecognizerTest):
     def test_passing_bad_content_type_param_passed(self, **kwargs):
         client = kwargs.pop("client")
         with open(self.invoice_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
         with pytest.raises(ValueError):
             poller = client.begin_recognize_invoices(
-                myfile,
+                my_file,
                 content_type="application/jpeg"
             )
 
@@ -84,11 +84,11 @@ class TestInvoice(FormRecognizerTest):
         client = kwargs.pop("client")
 
         with open(self.unsupported_content_py, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         with pytest.raises(ValueError):
             poller = client.begin_recognize_invoices(
-                myfile
+                my_file
             )
 
     @FormRecognizerPreparer()
@@ -104,10 +104,10 @@ class TestInvoice(FormRecognizerTest):
             responses.append(extracted_invoice)
 
         with open(self.invoice_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         poller = client.begin_recognize_invoices(
-            invoice=myfile,
+            invoice=my_file,
             include_field_elements=True,
             cls=callback
         )
@@ -144,10 +144,10 @@ class TestInvoice(FormRecognizerTest):
             responses.append(extracted_invoice)
 
         with open(self.multipage_vendor_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         poller = client.begin_recognize_invoices(
-            invoice=myfile,
+            invoice=my_file,
             include_field_elements=True,
             cls=callback
         )
