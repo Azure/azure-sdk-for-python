@@ -34,22 +34,13 @@ def stream_compressed_header_error():
     yield b'test'
 
 def stream_compressed_no_header():
-    try:
-        with gzip.open('test.tar.gz', 'wb') as f:
-            f.write(b"test")
-
-        with open(os.path.join(os.path.abspath('test.tar.gz')), "rb") as fd:
-            yield fd.read()
-
-        os.remove("test.tar.gz")
-    except:
-        with gzip.open('test.tar.gz', 'wb') as f:
-            f.write(b"test")
-
-        with open(os.path.join(os.path.abspath('test.tar.gz')), "rb") as fd:
-            yield fd.read()
-            
-        os.remove("test.tar.gz")
+    with gzip.open('test.tar.gz', 'wb') as f:
+        f.write(b"test")
+    
+    with open(os.path.join(os.path.abspath('test.tar.gz')), "rb") as fd:
+        yield fd.read()
+    
+    os.remove("test.tar.gz")
 
 @streams_api.route('/basic', methods=['GET'])
 def basic():
