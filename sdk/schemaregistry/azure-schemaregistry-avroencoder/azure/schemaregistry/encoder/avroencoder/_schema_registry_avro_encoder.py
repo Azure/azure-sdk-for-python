@@ -157,7 +157,7 @@ class AvroEncoder(object):
          `(content: bytes, content_type: str, **kwargs) -> MessageType`, where `content` and `content_type`
          are positional parameters.
         :paramtype message_type: Callable or None
-        :keyword request_kwargs: The keyword arguments to be passed to the client.
+        :keyword request_kwargs: The keyword arguments for http requests to be passed to the client.
         :paramtype request_kwargs: Dict[str, Any]
         :rtype: MessageType or MessageContent
         :raises ~azure.schemaregistry.encoder.avroencoder.exceptions.SchemaParseError:
@@ -254,7 +254,7 @@ class AvroEncoder(object):
         :type message: MessageType or MessageContent
         :keyword readers_schema: An optional reader's schema as defined by the Apache Avro specification.
         :paramtype readers_schema: str or None
-        :keyword request_kwargs: The keyword arguments to be passed to the client.
+        :keyword request_kwargs: The keyword arguments for http requests to be passed to the client.
         :paramtype request_kwargs: Dict[str, Any]
         :rtype: Dict[str, Any]
         :raises ~azure.schemaregistry.encoder.avroencoder.exceptions.SchemaParseError:
