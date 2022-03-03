@@ -38,8 +38,21 @@ from .._models import (
     AnalyzeSentimentResult,
     DocumentError,
     RecognizePiiEntitiesResult,
+    RecognizeEntitiesAction,
+    RecognizePiiEntitiesAction,
+    ExtractKeyPhrasesAction,
     _AnalyzeActionsType,
+    RecognizeLinkedEntitiesAction,
+    AnalyzeSentimentAction,
     AnalyzeHealthcareEntitiesResult,
+    ExtractSummaryAction,
+    ExtractSummaryResult,
+    RecognizeCustomEntitiesAction,
+    RecognizeCustomEntitiesResult,
+    SingleCategoryClassifyAction,
+    SingleCategoryClassifyResult,
+    MultiCategoryClassifyAction,
+    MultiCategoryClassifyResult,
 )
 from .._lro import TextAnalyticsOperationResourcePolling
 from ._lro_async import (
@@ -48,7 +61,7 @@ from ._lro_async import (
     AsyncAnalyzeHealthcareEntitiesLROPoller,
     AsyncAnalyzeActionsLROPoller,
 )
-from .._text_analytics_client import ActionInputTypes, ActionResultTypes
+
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -844,9 +857,38 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     async def begin_analyze_actions(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        actions: ActionInputTypes,
+        actions: List[
+            Union[
+                RecognizeEntitiesAction,
+                RecognizeLinkedEntitiesAction,
+                RecognizePiiEntitiesAction,
+                ExtractKeyPhrasesAction,
+                AnalyzeSentimentAction,
+                ExtractSummaryAction,
+                RecognizeCustomEntitiesAction,
+                SingleCategoryClassifyAction,
+                MultiCategoryClassifyAction,
+            ]
+        ],
         **kwargs: Any,
-    ) -> AsyncAnalyzeActionsLROPoller[AsyncItemPaged[ActionResultTypes]]:
+    ) -> AsyncAnalyzeActionsLROPoller[
+        AsyncItemPaged[
+            List[
+                Union[
+                    RecognizeEntitiesResult,
+                    RecognizeLinkedEntitiesResult,
+                    RecognizePiiEntitiesResult,
+                    ExtractKeyPhrasesResult,
+                    AnalyzeSentimentResult,
+                    ExtractSummaryResult,
+                    RecognizeCustomEntitiesResult,
+                    SingleCategoryClassifyResult,
+                    MultiCategoryClassifyResult,
+                    DocumentError,
+                ]
+            ]
+        ]
+    ]:
         """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
 
         We recommend you use this function if you're looking to analyze larger documents, and / or
