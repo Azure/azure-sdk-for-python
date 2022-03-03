@@ -50,5 +50,3 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(regex='eyJ0eXAiOiJKV.*?"', value='access_token"')
     add_general_regex_sanitizer(regex='fpc=.*?;', value='fpc=fpc;')
 
-    add_general_regex_sanitizer(regex='eyJ0eXAiOiJKV.*?"', value='access_token"')
-    add_general_regex_sanitizer(regex='fpc=.*?;', value='fpc=fpc;')
