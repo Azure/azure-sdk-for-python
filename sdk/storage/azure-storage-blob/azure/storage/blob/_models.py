@@ -994,8 +994,8 @@ class ContainerSasPermissions(object):
         p_set_immutability_policy = 'i' in permission
         parsed = cls(read=p_read, write=p_write, delete=p_delete, list=p_list,
                      delete_previous_version=p_delete_previous_version, tag=p_tag, add=p_add,
-                     create=p_create, permanent_delete=p_permanent_delete, find=p_filter_by_tags, move=p_move,
-                     execute=p_execute, set_immutability_policy=p_set_immutability_policy)
+                     create=p_create, permanent_delete=p_permanent_delete, filter_by_tags=p_filter_by_tags,
+                     move=p_move, execute=p_execute, set_immutability_policy=p_set_immutability_policy)
 
         return parsed
 
