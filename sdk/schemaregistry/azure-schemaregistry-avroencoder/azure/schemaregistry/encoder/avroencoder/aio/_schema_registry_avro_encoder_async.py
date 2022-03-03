@@ -128,7 +128,7 @@ class AvroEncoder(object):
         *,
         schema: str,
         message_type: Optional[Callable] = None,
-        request_kwargs: Dict[str, Any] = None,
+        request_options: Dict[str, Any] = None,
         **kwargs: Any,
     ) -> Union[MessageType, MessageContent]:
 
@@ -154,8 +154,8 @@ class AvroEncoder(object):
          `(content: bytes, content_type: str, **kwargs) -> MessageType`, where `content` and `content_type`
          are positional parameters.
         :paramtype message_type: Callable or None
-        :keyword request_kwargs: The keyword arguments for http requests to be passed to the client.
-        :paramtype request_kwargs: Dict[str, Any]
+        :keyword request_options: The keyword arguments for http requests to be passed to the client.
+        :paramtype request_options: Dict[str, Any]
         :rtype: MessageType or MessageContent
         :raises ~azure.schemaregistry.encoder.avroencoder.exceptions.SchemaParseError:
             Indicates an issue with parsing schema.
@@ -173,8 +173,8 @@ class AvroEncoder(object):
             ).raise_with_traceback()
 
         cache_misses = self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter disable=no-member
-        request_kwargs = request_kwargs or {}
-        schema_id = await self._get_schema_id(schema_fullname, raw_input_schema, **request_kwargs)
+        request_options = request_options or {}
+        schema_id = await self._get_schema_id(schema_fullname, raw_input_schema, **request_options)
         new_cache_misses = self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter disable=no-member
         if new_cache_misses > cache_misses:
             cache_size = self._get_schema_id.cache_info().currsize  # pylint: disable=no-value-for-parameter disable=no-member
@@ -230,7 +230,7 @@ class AvroEncoder(object):
         message: Union[MessageType, MessageContent],
         *,
         readers_schema: Optional[str] = None,
-        request_kwargs: Dict[str, Any] = None,
+        request_options: Dict[str, Any] = None,
         **kwargs,   # pylint: disable=unused-argument
     ) -> Dict[str, Any]:
         """
@@ -247,8 +247,8 @@ class AvroEncoder(object):
         :type message: MessageType or MessageContent
         :keyword readers_schema: An optional reader's schema as defined by the Apache Avro specification.
         :paramtype readers_schema: str or None
-        :keyword request_kwargs: The keyword arguments for http requests to be passed to the client.
-        :paramtype request_kwargs: Dict[str, Any]
+        :keyword request_options: The keyword arguments for http requests to be passed to the client.
+        :paramtype request_options: Dict[str, Any]
         :rtype: Dict[str, Any]
         :raises ~azure.schemaregistry.encoder.avroencoder.exceptions.SchemaParseError:
             Indicates an issue with parsing schema.
@@ -277,8 +277,8 @@ class AvroEncoder(object):
         schema_id = content_type.split("+")[1]
 
         cache_misses = self._get_schema.cache_info().misses # pylint: disable=no-value-for-parameter disable=no-member
-        request_kwargs = request_kwargs or {}
-        schema_definition = await self._get_schema(schema_id, **request_kwargs)
+        request_options = request_options or {}
+        schema_definition = await self._get_schema(schema_id, **request_options)
         new_cache_misses = self._get_schema.cache_info().misses # pylint: disable=no-value-for-parameter disable=no-member
         if new_cache_misses > cache_misses:
             cache_size = self._get_schema.cache_info().currsize  # pylint: disable=no-value-for-parameter disable=no-member
