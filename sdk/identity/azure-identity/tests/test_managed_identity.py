@@ -651,7 +651,7 @@ def test_client_id_none():
     scope = "scope"
 
     def send(request, **_):
-        assert "client_id" not in request.query  # IMDS
+        assert "client_id" not in request.query
         if request.data:
             assert "client_id" not in request.body  # Cloud Shell
         return mock_response(
