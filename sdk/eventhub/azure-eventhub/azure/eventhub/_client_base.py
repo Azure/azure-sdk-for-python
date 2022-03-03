@@ -45,8 +45,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
-_Address = collections.namedtuple("Address", "hostname path")
-_AccessToken = collections.namedtuple("AccessToken", "token expires_on")
+_Address = collections.namedtuple("_Address", "hostname path")
 
 
 def _parse_conn_str(conn_str, **kwargs):
@@ -135,7 +134,7 @@ def _parse_conn_str(conn_str, **kwargs):
 
 
 def _generate_sas_token(uri, policy, key, expiry=None):
-    # type: (str, str, str, Optional[timedelta]) -> _AccessToken
+    # type: (str, str, str, Optional[timedelta]) -> AccessToken
     """Create a shared access signiture token as a string literal.
     :returns: SAS token as string literal.
     :rtype: str
@@ -146,7 +145,7 @@ def _generate_sas_token(uri, policy, key, expiry=None):
     abs_expiry = int(time.time()) + expiry.seconds
 
     token = pyamqp_utils.generate_sas_token(uri, policy, key, abs_expiry).encode()
-    return _AccessToken(token=token, expires_on=abs_expiry)
+    return AccessToken(token=token, expires_on=abs_expiry)
 
 
 def _build_uri(address, entity):
@@ -182,7 +181,7 @@ class EventHubSharedKeyCredential(object):
         self.token_type = b"servicebus.windows.net:sastoken"
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> _AccessToken
+        # type: (str, Any) -> AccessToken
         if not scopes:
             raise ValueError("No token scope provided.")
 
@@ -202,7 +201,7 @@ class EventhubAzureNamedKeyTokenCredential(object):
         self.token_type = b"servicebus.windows.net:sastoken"
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> _AccessToken
+        # type: (str, Any) -> AccessToken
         if not scopes:
             raise ValueError("No token scope provided.")
         name, key = self._credential.named_key

@@ -82,7 +82,7 @@ def get_length(data):
             data.seek(0, SEEK_END)
             length = data.tell() - current_position
             data.seek(current_position, SEEK_SET)
-        except (AttributeError, UnsupportedOperation):
+        except (AttributeError, OSError, UnsupportedOperation):
             pass
 
     return length

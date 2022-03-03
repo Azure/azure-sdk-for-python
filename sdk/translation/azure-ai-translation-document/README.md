@@ -189,6 +189,7 @@ poller = document_translation_client.begin_translation(my_input)
 
 > Note: the target_url for each target language must be unique.
 
+To translate documents under a folder, or only translate certain documents, see [sample_begin_translation_with_filters.py][sample_begin_translation_with_filters].
 See the service documentation for all [supported languages][supported_languages].
 
 ### Long-Running Operations
@@ -440,7 +441,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_cli_create_DT_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli?tabs=windows
 [azure-key-credential]: https://aka.ms/azsdk/python/core/azurekeycredential
 [supported_languages]: https://docs.microsoft.com/azure/cognitive-services/translator/language-support#translate
-[source_containers]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/get-started-with-document-translation?tabs=csharp#create-your-azure-blob-storage-containers
+[source_containers]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/get-started-with-document-translation?tabs=csharp#create-azure-blob-storage-containers
 [custom_model]: https://docs.microsoft.com/azure/cognitive-services/translator/custom-translator/quickstart-build-deploy-custom-model
 [glossary]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/overview#supported-glossary-formats
 [sas_token]: https://docs.microsoft.com/azure/cognitive-services/translator/document-translation/create-sas-tokens?tabs=Containers#create-your-sas-tokens-with-azure-storage-explorer

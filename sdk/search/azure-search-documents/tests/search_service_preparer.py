@@ -18,10 +18,9 @@ from azure_devtools.scenario_tests.exceptions import AzureTestError
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceNotFoundError
 
-
-SERVICE_URL_FMT = "https://{}.search.windows.net/indexes?api-version=2021-04-30-Preview"
+SERVICE_URL_FMT = "https://{}.{}/indexes?api-version=2021-04-30-Preview"
 TIME_TO_SLEEP = 3
-
+SEARCH_ENDPOINT_SUFFIX = environ.get("SEARCH_ENDPOINT_SUFFIX", "servicebus.windows.net")
 
 SearchEnvVarPreparer = functools.partial(
     EnvironmentVariableLoader,
@@ -57,6 +56,10 @@ def _clean_up_indexes(endpoint, api_key):
     for map in client.get_synonym_maps():
         client.delete_synonym_map(map.name)
 
+    #wipe out any existing aliases
+    for alias in client.list_aliases():
+        client.delete_alias(alias)
+
     # wipe any existing indexes
     for index in client.list_indexes():
         client.delete_index(index)
@@ -82,7 +85,7 @@ def _set_up_index(service_name, endpoint, api_key, schema, index_batch):
     if schema:
         index_name = json.loads(schema)["name"]
         response = requests.post(
-            SERVICE_URL_FMT.format(service_name),
+            SERVICE_URL_FMT.format(service_name, SEARCH_ENDPOINT_SUFFIX),
             headers={"Content-Type": "application/json", "api-key": api_key},
             data=schema,
         )
@@ -207,7 +210,7 @@ class SearchServicePreparer(AzureMgmtPreparer):
         else:
             schema = None
         self.service_name = self.create_random_name()
-        self.endpoint = "https://{}.search.windows.net".format(self.service_name)
+        self.endpoint = "https://{}.{}".format(self.service_name, SEARCH_ENDPOINT_SUFFIX)
 
         if not self.is_live:
             return {
@@ -254,7 +257,7 @@ class SearchServicePreparer(AzureMgmtPreparer):
 
         if self.schema:
             response = requests.post(
-                SERVICE_URL_FMT.format(self.service_name),
+                SERVICE_URL_FMT.format(self.service_name, SEARCH_ENDPOINT_SUFFIX),
                 headers={"Content-Type": "application/json", "api-key": api_key},
                 data=self.schema,
             )
@@ -357,7 +360,7 @@ class SearchServicePreparer(AzureMgmtPreparer):
         else:
             schema = None
         self.service_name = self.create_random_name()
-        self.endpoint = "https://{}.search.windows.net".format(self.service_name)
+        self.endpoint = "https://{}.{}".format(self.service_name, SEARCH_ENDPOINT_SUFFIX)
 
         if not self.is_live:
             return {
@@ -404,7 +407,7 @@ class SearchServicePreparer(AzureMgmtPreparer):
 
         if self.schema:
             response = requests.post(
-                SERVICE_URL_FMT.format(self.service_name),
+                SERVICE_URL_FMT.format(self.service_name, SEARCH_ENDPOINT_SUFFIX),
                 headers={"Content-Type": "application/json", "api-key": api_key},
                 data=self.schema,
             )
@@ -507,7 +510,7 @@ class SearchServicePreparer(AzureMgmtPreparer):
         else:
             schema = None
         self.service_name = self.create_random_name()
-        self.endpoint = "https://{}.search.windows.net".format(self.service_name)
+        self.endpoint = "https://{}.{}".format(self.service_name, SEARCH_ENDPOINT_SUFFIX)
 
         if not self.is_live:
             return {
@@ -554,7 +557,7 @@ class SearchServicePreparer(AzureMgmtPreparer):
 
         if self.schema:
             response = requests.post(
-                SERVICE_URL_FMT.format(self.service_name),
+                SERVICE_URL_FMT.format(self.service_name, SEARCH_ENDPOINT_SUFFIX),
                 headers={"Content-Type": "application/json", "api-key": api_key},
                 data=self.schema,
             )
@@ -657,7 +660,7 @@ class SearchServicePreparer(AzureMgmtPreparer):
         else:
             schema = None
         self.service_name = self.create_random_name()
-        self.endpoint = "https://{}.search.windows.net".format(self.service_name)
+        self.endpoint = "https://{}.{}".format(self.service_name, SEARCH_ENDPOINT_SUFFIX)
 
         if not self.is_live:
             return {
@@ -704,7 +707,7 @@ class SearchServicePreparer(AzureMgmtPreparer):
 
         if self.schema:
             response = requests.post(
-                SERVICE_URL_FMT.format(self.service_name),
+                SERVICE_URL_FMT.format(self.service_name, SEARCH_ENDPOINT_SUFFIX),
                 headers={"Content-Type": "application/json", "api-key": api_key},
                 data=self.schema,
             )

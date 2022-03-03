@@ -140,8 +140,14 @@ class JwtCredentialPolicy(SansIOHTTPPolicy):
 
     NAME_CLAIM_TYPE = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
 
-    def __init__(self, credential, user=None):
-        # type: (AzureKeyCredential, typing.Optional[str]) -> None
+    def __init__(
+        self,
+        credential: AzureKeyCredential,
+        *,
+        user: typing.Optional[str] = None,
+        origin_endpoint: typing.Optional[str] = None,
+        reverse_proxy_endpoint: typing.Optional[str] = None,
+    ) -> None:
         """Create a new instance of the policy associated with the given credential.
 
         :param credential: The azure.core.credentials.AzureKeyCredential instance to use
@@ -151,6 +157,8 @@ class JwtCredentialPolicy(SansIOHTTPPolicy):
         """
         self._credential = credential
         self._user = user
+        self._original_url = origin_endpoint
+        self._reverse_proxy_endpoint = reverse_proxy_endpoint
 
     def on_request(self, request):
         # type: (PipelineRequest) -> typing.Union[None, typing.Awaitable[None]]
@@ -159,8 +167,11 @@ class JwtCredentialPolicy(SansIOHTTPPolicy):
         :param request: Request to be modified before sent from next policy.
         :type request: ~azure.core.pipeline.PipelineRequest
         """
+        url = request.http_request.url
+        if self._reverse_proxy_endpoint:
+            url = url.replace(self._reverse_proxy_endpoint, self._original_url, 1)
         request.http_request.headers["Authorization"] = "Bearer " + self._encode(
-            request.http_request.url
+            url
         )
         return super(JwtCredentialPolicy, self).on_request(request)
 
@@ -266,7 +277,12 @@ class WebPubSubServiceClientConfiguration(Configuration):
         self.authentication_policy = kwargs.get('authentication_policy')
         if self.credential and not self.authentication_policy:
             if isinstance(self.credential, AzureKeyCredential):
-                self.authentication_policy = JwtCredentialPolicy(self.credential, kwargs.get('user'))
+                self.authentication_policy = JwtCredentialPolicy(
+                    self.credential,
+                    user=kwargs.get("user"),
+                    origin_endpoint=kwargs.get("origin_endpoint"),
+                    reverse_proxy_endpoint=kwargs.get("reverse_proxy_endpoint")
+                )
             else:
                 self.authentication_policy = policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
 

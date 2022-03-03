@@ -1624,18 +1624,20 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 await sender.send_messages(batch_message)
                 await sender.send_messages(batch_message)
                 messages = []
-                async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
+                async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=20) as receiver:
                     async for message in receiver:
                         messages.append(message)
-                assert len(messages) == 4
+                        await receiver.complete_message(message)
+                    assert len(messages) == 4
                 # then normal message resending
                 await sender.send_messages(message)
                 await sender.send_messages(message)
                 messages = []
-                async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
+                async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=20) as receiver:
                     async for message in receiver:
                         messages.append(message)
-                assert len(messages) == 2
+                        await receiver.complete_message(message)
+                    assert len(messages) == 2
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -2131,7 +2133,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    async def test_message_state_scheduled_async(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    async def test_state_scheduled_async(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string) as sb_client:
 
@@ -2146,7 +2148,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             async with receiver:
                 messages = await receiver.peek_messages()
                 for msg in messages:
-                    assert msg.message_state == ServiceBusMessageState.SCHEDULED
+                    assert msg.state == ServiceBusMessageState.SCHEDULED
 
 
     @pytest.mark.liveTest
@@ -2154,7 +2156,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    async def test_message_state_deferred_async(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    async def test_state_deferred_async(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
         async with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string) as sb_client:
 
@@ -2169,7 +2171,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             async with receiver:
                 received_msgs = await receiver.receive_messages()
                 for message in received_msgs:
-                    assert message.message_state == ServiceBusMessageState.ACTIVE
+                    assert message.state == ServiceBusMessageState.ACTIVE
                     deferred_messages.append(message.sequence_number)
                     await receiver.defer_message(message)
                 if deferred_messages:
@@ -2177,4 +2179,4 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                         sequence_numbers=deferred_messages
                         )                
                 for message in received_deferred_msg:
-                    assert message.message_state == ServiceBusMessageState.DEFERRED
+                    assert message.state == ServiceBusMessageState.DEFERRED

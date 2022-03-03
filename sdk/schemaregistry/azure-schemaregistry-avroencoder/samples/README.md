@@ -48,7 +48,7 @@ pip install azure-eventhub==5.9.0b1
 
 1. Open a terminal window and `cd` to the directory that the samples are saved in.
 2. Set the environment variables specified in the sample file you wish to run.
-3. Follow the usage described in the file, e.g. `python avro_encoder.py`
+3. Follow the usage described in the file, e.g. `python encode_and_decode_event_data_message.py`
 
 ## Next steps
 
@@ -62,4 +62,4 @@ what you can do with the Azure Schema Registry Avro Encoder library.
 [encode_and_decode_event_data_message_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroencoder/samples/async_samples/encode_and_decode_event_data_message_async.py
 [eventhub_send_integration_async_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroencoder/samples/async_samples/eventhub_send_integration_async.py
 [eventhub_receive_integration_async_sample]:  https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/schemaregistry/azure-schemaregistry-avroencoder/samples/async_samples/eventhub_receive_integration_async.py
-[api_reference]: https://docs.microsoft.com/python/api/
+[api_reference]: https://docs.microsoft.com/python/api/overview/azure/schemaregistry-avroencoder-readme
