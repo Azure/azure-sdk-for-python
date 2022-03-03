@@ -780,13 +780,13 @@ class KeyClient(KeyVaultClientBase):
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
-    def update_key_rotation_policy(self, name, **kwargs):
+    def update_key_rotation_policy(self, key_name, **kwargs):
         # type: (str, **Any) -> KeyRotationPolicy
         """Updates the rotation policy of a Key Vault key.
 
         This operation requires the keys/update permission.
 
-        :param str name: The name of the key in the given vault.
+        :param str key_name: The name of the key in the given vault.
 
         :keyword policy: The new rotation policy for the key.
         :paramtype policy: ~azure.keyvault.keys.KeyRotationPolicy
@@ -821,6 +821,6 @@ class KeyClient(KeyVaultClientBase):
         )
         new_policy = self._models.KeyRotationPolicy(lifetime_actions=lifetime_actions, attributes=attributes)
         result = self._client.update_key_rotation_policy(
-            vault_base_url=self._vault_url, key_name=name, key_rotation_policy=new_policy
+            vault_base_url=self._vault_url, key_name=key_name, key_rotation_policy=new_policy
         )
         return KeyRotationPolicy._from_generated(result)

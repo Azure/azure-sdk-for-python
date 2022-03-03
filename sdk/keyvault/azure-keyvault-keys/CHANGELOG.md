@@ -11,7 +11,8 @@
 > Only code written against a beta version such as 4.5.0b1 may be affected.
 - The optional `version` parameter in `KeyClient.release_key` is now a keyword-only argument
   ([#22981](https://github.com/Azure/azure-sdk-for-python/issues/22981))
-- Renamed the `name` parameter in `KeyClient.get_key_rotation_policy` to `key_name`
+- Renamed the `name` parameter in `KeyClient.get_key_rotation_policy` and
+  `KeyClient.update_key_rotation_policy` to `key_name`
   ([#22981](https://github.com/Azure/azure-sdk-for-python/issues/22981))
 - Enum values in `azure-keyvault-keys` are now uniformly lower-cased
   ([#22981](https://github.com/Azure/azure-sdk-for-python/issues/22981))
