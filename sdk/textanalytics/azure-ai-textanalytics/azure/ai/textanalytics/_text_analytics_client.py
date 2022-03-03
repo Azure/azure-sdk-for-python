@@ -9,12 +9,13 @@ from typing import (
     Any,
     List,
     Dict,
-    TYPE_CHECKING,
+    TYPE_CHECKING
 )
 from functools import partial
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
+from azure.core.credentials import AzureKeyCredential
 from ._base_client import TextAnalyticsClientBase, TextAnalyticsApiVersion
 from ._lro import AnalyzeActionsLROPoller, AnalyzeHealthcareEntitiesLROPoller
 from ._request_handlers import (
@@ -42,34 +43,63 @@ from ._lro import (
     AnalyzeActionsLROPollingMethod,
     AnalyzeHealthcareEntitiesLROPollingMethod,
 )
+from ._models import (
+    DetectLanguageInput,
+    TextDocumentInput,
+    DetectLanguageResult,
+    RecognizeEntitiesResult,
+    RecognizeLinkedEntitiesResult,
+    ExtractKeyPhrasesResult,
+    AnalyzeSentimentResult,
+    DocumentError,
+    RecognizePiiEntitiesResult,
+    RecognizeEntitiesAction,
+    RecognizePiiEntitiesAction,
+    RecognizeLinkedEntitiesAction,
+    ExtractKeyPhrasesAction,
+    AnalyzeSentimentAction,
+    AnalyzeHealthcareEntitiesResult,
+    ExtractSummaryAction,
+    ExtractSummaryResult,
+    RecognizeCustomEntitiesAction,
+    RecognizeCustomEntitiesResult,
+    SingleCategoryClassifyAction,
+    SingleCategoryClassifyResult,
+    MultiCategoryClassifyAction,
+    MultiCategoryClassifyResult,
+)
 
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential, AzureKeyCredential
-    from ._models import (
-        DetectLanguageInput,
-        TextDocumentInput,
-        DetectLanguageResult,
-        RecognizeEntitiesResult,
-        RecognizeLinkedEntitiesResult,
-        ExtractKeyPhrasesResult,
-        AnalyzeSentimentResult,
-        DocumentError,
-        RecognizePiiEntitiesResult,
+ActionInputTypes = List[
+    Union[
         RecognizeEntitiesAction,
-        RecognizePiiEntitiesAction,
         RecognizeLinkedEntitiesAction,
+        RecognizePiiEntitiesAction,
         ExtractKeyPhrasesAction,
         AnalyzeSentimentAction,
-        AnalyzeHealthcareEntitiesResult,
         ExtractSummaryAction,
-        ExtractSummaryResult,
         RecognizeCustomEntitiesAction,
-        RecognizeCustomEntitiesResult,
         SingleCategoryClassifyAction,
-        SingleCategoryClassifyResult,
         MultiCategoryClassifyAction,
+    ]
+]
+
+ActionResultTypes = List[
+    Union[
+        RecognizeEntitiesResult,
+        RecognizeLinkedEntitiesResult,
+        RecognizePiiEntitiesResult,
+        ExtractKeyPhrasesResult,
+        AnalyzeSentimentResult,
+        ExtractSummaryResult,
+        RecognizeCustomEntitiesResult,
+        SingleCategoryClassifyResult,
         MultiCategoryClassifyResult,
-    )
+        DocumentError,
+    ]
+]
+
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
 
 
 class TextAnalyticsClient(TextAnalyticsClientBase):
@@ -115,8 +145,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             :caption: Creating the TextAnalyticsClient with endpoint and token credential from Azure Active Directory.
     """
 
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[AzureKeyCredential, TokenCredential], Any) -> None
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "TokenCredential"],
+        **kwargs: Any
+    ) -> None:
         super().__init__(
             endpoint=endpoint, credential=credential, **kwargs
         )
@@ -128,12 +162,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
 
     @distributed_trace
-    def detect_language(  # type: ignore
+    def detect_language(
         self,
-        documents,  # type: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List[Union[DetectLanguageResult, DocumentError]]
+        documents: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]],
+        **kwargs: Any,
+    ) -> List[Union[DetectLanguageResult, DocumentError]]:
         """Detect language for a batch of documents.
 
         Returns the detected language and a numeric score between zero and
@@ -208,15 +241,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     @distributed_trace
-    def recognize_entities(  # type: ignore
+    def recognize_entities(
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List[Union[RecognizeEntitiesResult, DocumentError]]
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        **kwargs: Any,
+    ) -> List[Union[RecognizeEntitiesResult, DocumentError]]:
         """Recognize entities for a batch of documents.
 
         Identifies and categorizes entities in your text as people, places,
@@ -247,7 +279,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             level statistics in the `statistics` field of the document-level response.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-            you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+            you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
             see https://aka.ms/text-analytics-offsets
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
             logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -300,15 +332,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     @distributed_trace
-    def recognize_pii_entities(  # type: ignore
+    def recognize_pii_entities(
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List[Union[RecognizePiiEntitiesResult, DocumentError]]
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        **kwargs: Any,
+    ) -> List[Union[RecognizePiiEntitiesResult, DocumentError]]:
         """Recognize entities containing personal information for a batch of documents.
 
         Returns a list of personal information entities ("SSN",
@@ -345,10 +376,10 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             the specific PII entity categories you want to filter out. For example, if you only want to filter out
             U.S. social security numbers in a document, you can pass in
             `[PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
-        :paramtype categories_filter: list[str] or list[~azure.ai.textanalytics.PiiEntityCategory]
+        :paramtype categories_filter: list[str or ~azure.ai.textanalytics.PiiEntityCategory]
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-            you can also pass in `Utf16CodePoint` or `TextElement_v8`. For additional information
+            you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
             see https://aka.ms/text-analytics-offsets
         :keyword bool disable_service_logs: Defaults to true, meaning that Text Analytics will not log your
             input text on the service side for troubleshooting. If set to False, Text Analytics logs your
@@ -411,18 +442,17 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             ):
                 raise ValueError(
                     "'recognize_pii_entities' endpoint is only available for API version V3_1 and up"
-                )
+                ) from error
             raise error
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     @distributed_trace
-    def recognize_linked_entities(  # type: ignore
+    def recognize_linked_entities(
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List[Union[RecognizeLinkedEntitiesResult, DocumentError]]
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        **kwargs: Any,
+    ) -> List[Union[RecognizeLinkedEntitiesResult, DocumentError]]:
         """Recognize linked entities from a well-known knowledge base for a batch of documents.
 
         Identifies and disambiguates the identity of each entity found in text (for example,
@@ -454,7 +484,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             level statistics in the `statistics` field of the document-level response.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-            you can also pass in `Utf16CodePoint` or `TextElement_v8`. For additional information
+            you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
             see https://aka.ms/text-analytics-offsets
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
             logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -508,7 +538,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     def _healthcare_result_callback(
         self, doc_id_order, raw_response, _, headers, show_stats=False
@@ -526,11 +556,11 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
 
     @distributed_trace
-    def begin_analyze_healthcare_entities(  # type: ignore
+    def begin_analyze_healthcare_entities(
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        **kwargs  # type: Any
-    ):  # type: (...) -> AnalyzeHealthcareEntitiesLROPoller[ItemPaged[Union[AnalyzeHealthcareEntitiesResult, DocumentError]]]  # pylint: disable=line-too-long
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        **kwargs: Any,
+    ) -> AnalyzeHealthcareEntitiesLROPoller[ItemPaged[Union[AnalyzeHealthcareEntitiesResult, DocumentError]]]:
         """Analyze healthcare entities and identify relationships between these entities in a batch of documents.
 
         Entities are associated with references that can be found in existing knowledge bases,
@@ -552,9 +582,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             is not specified, the API will default to the latest, non-preview version.
             See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword str language: The 2 letter ISO 639-1 representation of language for the
+            entire batch. For example, use "en" for English; "es" for Spanish etc.
+            If not set, uses "en" for English as default. Per-document language will
+            take precedence over whole batch language. See https://aka.ms/talangs for
+            supported languages in Text Analytics API.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-            you can also pass in `Utf16CodePoint` or `TextElement_v8`. For additional information
+            you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
             see https://aka.ms/text-analytics-offsets
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
@@ -657,19 +692,18 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 raise ValueError(
                     "'begin_analyze_healthcare_entities' method is only available for API version \
                     V3_1 and up."
-                )
+                ) from error
             raise error
 
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     @distributed_trace
-    def extract_key_phrases(  # type: ignore
+    def extract_key_phrases(
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List[Union[ExtractKeyPhrasesResult, DocumentError]]
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        **kwargs: Any,
+    ) -> List[Union[ExtractKeyPhrasesResult, DocumentError]]:
         """Extract key phrases from a batch of documents.
 
         Returns a list of strings denoting the key phrases in the input
@@ -743,15 +777,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     @distributed_trace
-    def analyze_sentiment(  # type: ignore
+    def analyze_sentiment(
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List[Union[AnalyzeSentimentResult, DocumentError]]
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        **kwargs: Any,
+    ) -> List[Union[AnalyzeSentimentResult, DocumentError]]:
         """Analyze sentiment for a batch of documents. Turn on opinion mining with `show_opinion_mining`.
 
         Returns a sentiment prediction, as well as sentiment scores for
@@ -788,7 +821,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             level statistics in the `statistics` field of the document-level response.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-            you can also pass in `Utf16CodePoint` or `TextElement_v8`. For additional information
+            you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
             see https://aka.ms/text-analytics-offsets
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
             logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -853,7 +886,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 **kwargs
             )
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     def _analyze_result_callback(
         self, doc_id_order, task_order, raw_response, _, headers, show_stats=False
@@ -872,12 +905,14 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         )
 
     @distributed_trace
-    def begin_analyze_actions(  # type: ignore
+    def begin_analyze_actions(
         self,
-        documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-        actions,  # type: List[Union[RecognizeEntitiesAction, RecognizeLinkedEntitiesAction, RecognizePiiEntitiesAction, ExtractKeyPhrasesAction, AnalyzeSentimentAction, ExtractSummaryAction, RecognizeCustomEntitiesAction, SingleCategoryClassifyAction, MultiCategoryClassifyAction]] # pylint: disable=line-too-long
-        **kwargs  # type: Any
-    ):  # type: (...) -> AnalyzeActionsLROPoller[ItemPaged[List[Union[RecognizeEntitiesResult, RecognizeLinkedEntitiesResult, RecognizePiiEntitiesResult, ExtractKeyPhrasesResult, AnalyzeSentimentResult, ExtractSummaryResult, RecognizeCustomEntitiesResult, SingleCategoryClassifyResult, MultiCategoryClassifyResult, DocumentError]]]]  # pylint: disable=line-too-long
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        actions: ActionInputTypes,
+        **kwargs: Any,
+    ) -> AnalyzeActionsLROPoller[
+        ItemPaged[ActionResultTypes]
+    ]:
         """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
 
         We recommend you use this function if you're looking to analyze larger documents, and / or
@@ -989,8 +1024,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 action._to_generated(self._api_version, str(idx))  # pylint: disable=protected-access
                 for idx, action in enumerate(actions)
             ]
-        except AttributeError:
-            raise TypeError("Unsupported action type in list.")
+        except AttributeError as e:
+            raise TypeError("Unsupported action type in list.") from e
         task_order = [(_determine_action_type(a), a.task_name) for a in generated_tasks]
 
         try:
@@ -1070,8 +1105,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             if "API version v3.0 does not have operation 'begin_analyze'" in str(error):
                 raise ValueError(
                     "'begin_analyze_actions' endpoint is only available for API version V3_1 and up"
-                )
+                ) from error
             raise error
 
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
