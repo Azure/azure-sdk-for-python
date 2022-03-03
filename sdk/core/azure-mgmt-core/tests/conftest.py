@@ -61,3 +61,6 @@ def user_password():
     raise ValueError("Create a {} file with a 'userpass' key and two keys 'user' and 'password'".format(
         filepath
     ))
+
+    add_general_regex_sanitizer(regex='eyJ0eXAiOiJKV.*?"', value='access_token"')
+    add_general_regex_sanitizer(regex='fpc=.*?;', value='fpc=fpc;')
