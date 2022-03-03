@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- `request_kwargs` has been added to `encode` and `decode` on `AvroEncoder` as an optional parameter to be passed into client requests.
+- `request_options` has been added to `encode` and `decode` on `AvroEncoder` as an optional parameter to be passed into client requests.
 - The size of the current schema/schema ID caches will be logged at an info level when a new entry has been added.
 
 ### Breaking Changes

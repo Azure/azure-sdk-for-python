@@ -4,7 +4,7 @@
 
 ### Breaking Changes
 
-- `from_message_data` and `__message_data__` on `EventData` have been renamed `from_message_content` and `__message_content__` for interoperability with the Schema Registry Avro Encoder library. The `data` parameter has been renamed to `content`.
+- `from_message_data` on `EventData` has been renamed `from_message_content` for interoperability with the Schema Registry Avro Encoder library. The `data` parameter has been renamed to `content`.
 
 ## 5.9.0b1 (2022-02-09)
 
