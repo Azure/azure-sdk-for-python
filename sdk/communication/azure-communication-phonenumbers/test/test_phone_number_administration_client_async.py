@@ -5,7 +5,8 @@ from _shared.asynctestcase import AsyncCommunicationTestCase
 from _shared.testcase import ResponseReplacerProcessor, BodyReplacerProcessor
 from _shared.utils import (
     async_create_token_credential, 
-    get_http_logging_policy
+    get_http_logging_policy,
+    get_header_policy
 )
 from azure.communication.phonenumbers import (
     PhoneNumberAssignmentType, 
@@ -34,7 +35,8 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
             self.country_code = os.getenv("AZURE_COMMUNICATION_SERVICE_COUNTRY_CODE", "US")
         self.phone_number_client = PhoneNumbersClient.from_connection_string(
             self.connection_str, 
-            http_logging_policy=get_http_logging_policy()
+            http_logging_policy=get_http_logging_policy(),
+            headers_policy=get_header_policy()
         )
         self.recording_processors.extend([
             BodyReplacerProcessor(
@@ -42,16 +44,20 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
             ),
             PhoneNumberUriReplacer(),
             ResponseReplacerProcessor()])
-            
-    @AsyncCommunicationTestCase.await_prepared_test
-    async def test_list_purchased_phone_numbers_from_managed_identity(self):
+
+    def _get_managed_identity_phone_number_client(self):
         endpoint, access_key = parse_connection_str(self.connection_str)
         credential = async_create_token_credential()
-        phone_number_client = PhoneNumbersClient(
+        return PhoneNumbersClient(
             endpoint, 
             credential, 
-            http_logging_policy=get_http_logging_policy()
+            http_logging_policy=get_http_logging_policy(),
+            headers_policy=get_header_policy()
         )
+
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_list_purchased_phone_numbers_from_managed_identity(self):
+        phone_number_client = self._get_managed_identity_phone_number_client()
         async with phone_number_client:
             phone_numbers = phone_number_client.list_purchased_phone_numbers()
             items = []
@@ -70,13 +76,7 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
     
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_get_purchased_phone_number_from_managed_identity(self):
-        endpoint, access_key = parse_connection_str(self.connection_str)
-        credential = async_create_token_credential()
-        phone_number_client = PhoneNumbersClient(
-            endpoint, 
-            credential, 
-            http_logging_policy=get_http_logging_policy()
-        )
+        phone_number_client = self._get_managed_identity_phone_number_client()
         async with phone_number_client:
             phone_number = await phone_number_client.get_purchased_phone_number(self.phone_number)
         assert phone_number.phone_number == self.phone_number
@@ -90,13 +90,7 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
     @pytest.mark.skipif(SKIP_INT_PHONE_NUMBER_TESTS, reason=INT_PHONE_NUMBER_TEST_SKIP_REASON)
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_search_available_phone_numbers_from_managed_identity(self):
-        endpoint, access_key = parse_connection_str(self.connection_str)
-        credential = async_create_token_credential()
-        phone_number_client = PhoneNumbersClient(
-            endpoint, 
-            credential, 
-            http_logging_policy=get_http_logging_policy()
-        )
+        phone_number_client = self._get_managed_identity_phone_number_client()
         capabilities = PhoneNumberCapabilities(
             calling = PhoneNumberCapabilityType.INBOUND,
             sms = PhoneNumberCapabilityType.INBOUND_OUTBOUND
@@ -147,13 +141,7 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
     @pytest.mark.skipif(SKIP_INT_PHONE_NUMBER_TESTS, reason=INT_PHONE_NUMBER_TEST_SKIP_REASON)
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_update_phone_number_capabilities_from_managed_identity(self):
-        endpoint, access_key = parse_connection_str(self.connection_str)
-        credential = async_create_token_credential()
-        phone_number_client = PhoneNumbersClient(
-            endpoint, 
-            credential, 
-            http_logging_policy=get_http_logging_policy()
-        )
+        phone_number_client = self._get_managed_identity_phone_number_client()
         async with phone_number_client:
             current_phone_number = await phone_number_client.get_purchased_phone_number(self.phone_number)
             calling_capabilities = PhoneNumberCapabilityType.INBOUND if current_phone_number.capabilities.calling == PhoneNumberCapabilityType.OUTBOUND else PhoneNumberCapabilityType.OUTBOUND
@@ -170,13 +158,7 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
     @pytest.mark.skipif(SKIP_PURCHASE_PHONE_NUMBER_TESTS, reason=PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON)
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_purchase_phone_numbers_from_managed_identity(self):
-        endpoint, access_key = parse_connection_str(self.connection_str)
-        credential = async_create_token_credential()
-        phone_number_client = PhoneNumbersClient(
-            endpoint, 
-            credential, 
-            http_logging_policy=get_http_logging_policy()
-        )
+        phone_number_client = self._get_managed_identity_phone_number_client()
         capabilities = PhoneNumberCapabilities(
             calling = PhoneNumberCapabilityType.INBOUND,
             sms = PhoneNumberCapabilityType.INBOUND_OUTBOUND
