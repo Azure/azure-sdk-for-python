@@ -32,7 +32,7 @@ import pytest
 
 from _shared.test_case_async import KeyVaultTestCase
 from _test_case import client_setup, get_decorator, CertificatesTestCase
-from test_certificates_client import CERT_CONTENT_PASSWORD_ENCODED, CERT_CONTENT_NOT_PASSWORD_ENCODED
+from certs import CERT_CONTENT_PASSWORD_ENCODED, CERT_CONTENT_NOT_PASSWORD_ENCODED
 
 
 all_api_versions = get_decorator(is_async=True)
@@ -603,7 +603,10 @@ class CertificateClientTests(CertificatesTestCase, KeyVaultTestCase):
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
                 # parts of the request are logged on new lines in a single message
-                request_sections = message.message.split("/n")
+                if "'/n" in message.message:
+                    request_sections = message.message.split("/n")
+                else:
+                    request_sections = message.message.split("\n")
                 for section in request_sections:
                     try:
                         # the body of the request should be JSON
@@ -633,7 +636,10 @@ class CertificateClientTests(CertificatesTestCase, KeyVaultTestCase):
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
                 # parts of the request are logged on new lines in a single message
-                request_sections = message.message.split("/n")
+                if "'/n" in message.message:
+                    request_sections = message.message.split("/n")
+                else:
+                    request_sections = message.message.split("\n")
                 for section in request_sections:
                     try:
                         # the body of the request should be JSON

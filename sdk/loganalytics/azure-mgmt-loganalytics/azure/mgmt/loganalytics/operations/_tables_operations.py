@@ -229,6 +229,43 @@ def build_delete_request_initial(
         **kwargs
     )
 
+
+def build_migrate_request(
+    subscription_id: str,
+    resource_group_name: str,
+    workspace_name: str,
+    table_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-12-01-preview"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/tables/{tableName}/migrate')
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+        "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str', max_length=63, min_length=4, pattern=r'^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$'),
+        "tableName": _SERIALIZER.url("table_name", table_name, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
 class TablesOperations(object):
     """TablesOperations operations.
 
@@ -728,3 +765,56 @@ class TablesOperations(object):
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/tables/{tableName}'}  # type: ignore
+
+    @distributed_trace
+    def migrate(
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        table_name: str,
+        **kwargs: Any
+    ) -> None:
+        """Migrate a Log Analytics table from support of the Data Collector API and Custom Fields features
+        to support of Data Collection Rule-based Custom Logs.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param workspace_name: The name of the workspace.
+        :type workspace_name: str
+        :param table_name: The name of the table.
+        :type table_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        
+        request = build_migrate_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            table_name=table_name,
+            template_url=self.migrate.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    migrate.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/tables/{tableName}/migrate'}  # type: ignore
+
