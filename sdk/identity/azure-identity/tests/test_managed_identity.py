@@ -508,7 +508,7 @@ def test_app_service_2019_08_01_tenant_id():
 
 
 def test_app_service_user_assigned_identity():
-    """App Service 2019-08-01: MSI_ENDPOINT, MSI_SECRET set"""
+    """App Service 2019-08-01: IDENTITY_ENDPOINT, IDENTITY_HEADER set"""
 
     expected_token = "****"
     expires_on = 42
