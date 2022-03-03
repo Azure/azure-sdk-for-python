@@ -23,21 +23,21 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 01 Mar 2022 02:26:49 GMT
+      - Thu, 03 Mar 2022 22:32:53 GMT
       location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/example.avro.User/versions/1?api-version=2021-10
+      - https://swathip-test-eh-westus.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/example.avro.User/versions/1?api-version=2021-10
       schema-group-name:
       - swathip-test-schema
       schema-id:
-      - 08a5597bec1a47188aa3e0c99a69f5a3
+      - bc24cde138814b81b1479d73249d849d
       schema-id-location:
-      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/$schemas/08a5597bec1a47188aa3e0c99a69f5a3?api-version=2021-10
+      - https://swathip-test-eh-westus.servicebus.windows.net:443/$schemagroups/$schemas/bc24cde138814b81b1479d73249d849d?api-version=2021-10
       schema-name:
       - example.avro.User
       schema-version:
       - '1'
       schema-versions-location:
-      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/example.avro.User/versions?api-version=2021-10
+      - https://swathip-test-eh-westus.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/example.avro.User/versions?api-version=2021-10
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
