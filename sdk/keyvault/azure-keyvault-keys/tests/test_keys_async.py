@@ -624,7 +624,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         key_name = self.get_resource_name("rotation-key")
         await self._create_rsa_key(client, key_name)
 
-        actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.ROTATE, time_after_create="P2M")]
+        actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.rotate, time_after_create="P2M")]
         updated_policy = await client.update_key_rotation_policy(key_name, lifetime_actions=actions)
         fetched_policy = await client.get_key_rotation_policy(key_name)
         assert updated_policy.expires_in is None
@@ -632,12 +632,12 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
 
         updated_policy_actions = updated_policy.lifetime_actions[0]
         fetched_policy_actions = fetched_policy.lifetime_actions[0]
-        assert updated_policy_actions.action == KeyRotationPolicyAction.ROTATE
+        assert updated_policy_actions.action == KeyRotationPolicyAction.rotate
         assert updated_policy_actions.time_after_create == "P2M"
         assert updated_policy_actions.time_before_expiry is None
         _assert_lifetime_actions_equal(updated_policy_actions, fetched_policy_actions)
 
-        new_actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.NOTIFY, time_before_expiry="P30D")]
+        new_actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.notify, time_before_expiry="P30D")]
         new_policy = await client.update_key_rotation_policy(key_name, expires_in="P90D", lifetime_actions=new_actions)
         new_fetched_policy = await client.get_key_rotation_policy(key_name)
         assert new_policy.expires_in == "P90D"
@@ -645,7 +645,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
 
         new_policy_actions = new_policy.lifetime_actions[0]
         new_fetched_policy_actions = new_fetched_policy.lifetime_actions[0]
-        assert new_policy_actions.action == KeyRotationPolicyAction.NOTIFY
+        assert new_policy_actions.action == KeyRotationPolicyAction.notify
         assert new_policy_actions.time_after_create is None
         assert new_policy_actions.time_before_expiry == "P30D"
         _assert_lifetime_actions_equal(new_policy_actions, new_fetched_policy_actions)
