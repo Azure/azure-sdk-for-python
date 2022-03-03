@@ -38,21 +38,8 @@ from .._models import (
     AnalyzeSentimentResult,
     DocumentError,
     RecognizePiiEntitiesResult,
-    RecognizeEntitiesAction,
-    RecognizePiiEntitiesAction,
-    ExtractKeyPhrasesAction,
     _AnalyzeActionsType,
-    RecognizeLinkedEntitiesAction,
-    AnalyzeSentimentAction,
     AnalyzeHealthcareEntitiesResult,
-    ExtractSummaryAction,
-    ExtractSummaryResult,
-    RecognizeCustomEntitiesAction,
-    RecognizeCustomEntitiesResult,
-    SingleCategoryClassifyAction,
-    SingleCategoryClassifyResult,
-    MultiCategoryClassifyAction,
-    MultiCategoryClassifyResult,
 )
 from .._lro import TextAnalyticsOperationResourcePolling
 from ._lro_async import (
@@ -61,6 +48,7 @@ from ._lro_async import (
     AsyncAnalyzeHealthcareEntitiesLROPoller,
     AsyncAnalyzeActionsLROPoller,
 )
+from .._text_analytics_client import ActionInputTypes, ActionResultTypes
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -109,11 +97,11 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             :caption: Creating the TextAnalyticsClient with endpoint and token credential from Azure Active Directory.
     """
 
-    def __init__(  # type: ignore
+    def __init__(
         self,
         endpoint: str,
-        credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
-        **kwargs: Any,
+        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        **kwargs: Any
     ) -> None:
         super().__init__(
             endpoint=endpoint, credential=credential, **kwargs
@@ -126,7 +114,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         )
 
     @distributed_trace_async
-    async def detect_language(  # type: ignore
+    async def detect_language(
         self,
         documents: Union[List[str], List[DetectLanguageInput], List[Dict[str, str]]],
         **kwargs: Any,
@@ -205,10 +193,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 **kwargs,
             )
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     @distributed_trace_async
-    async def recognize_entities(  # type: ignore
+    async def recognize_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         **kwargs: Any,
@@ -243,7 +231,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             level statistics in the `statistics` field of the document-level response.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-            you can also pass in `Utf16CodePoint` or TextElement_v8`. For additional information
+            you can also pass in `Utf16CodeUnit` or TextElement_v8`. For additional information
             see https://aka.ms/text-analytics-offsets
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
             logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -297,10 +285,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 **kwargs,
             )
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     @distributed_trace_async
-    async def recognize_pii_entities(  # type: ignore
+    async def recognize_pii_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         **kwargs: Any,
@@ -341,10 +329,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             the specific PII entity categories you want to filter out. For example, if you only want to filter out
             U.S. social security numbers in a document, you can pass in
             `[PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
-        :paramtype categories_filter: list[str] or list[~azure.ai.textanalytics.PiiEntityCategory]
+        :paramtype categories_filter: list[str or ~azure.ai.textanalytics.PiiEntityCategory]
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-            you can also pass in `Utf16CodePoint` or `TextElement_v8`. For additional information
+            you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
             see https://aka.ms/text-analytics-offsets
         :keyword bool disable_service_logs: Defaults to true, meaning that Text Analytics will not log your
             input text on the service side for troubleshooting. If set to False, Text Analytics logs your
@@ -407,13 +395,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             ):
                 raise ValueError(
                     "'recognize_pii_entities' endpoint is only available for API version V3_1 and up"
-                )
+                ) from error
             raise error
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     @distributed_trace_async
-    async def recognize_linked_entities(  # type: ignore
+    async def recognize_linked_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         **kwargs: Any,
@@ -449,7 +437,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             level statistics in the `statistics` field of the document-level response.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-            you can also pass in `Utf16CodePoint` or `TextElement_v8`. For additional information
+            you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
             see https://aka.ms/text-analytics-offsets
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
             logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -503,10 +491,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 **kwargs,
             )
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     @distributed_trace_async
-    async def extract_key_phrases(  # type: ignore
+    async def extract_key_phrases(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         **kwargs: Any,
@@ -583,10 +571,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 **kwargs,
             )
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     @distributed_trace_async
-    async def analyze_sentiment(  # type: ignore
+    async def analyze_sentiment(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         **kwargs: Any,
@@ -627,7 +615,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             level statistics in the `statistics` field of the document-level response.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-            you can also pass in `Utf16CodePoint` or `TextElement_v8`. For additional information
+            you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
             see https://aka.ms/text-analytics-offsets
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
             logged on the service side for troubleshooting. By default, Text Analytics logs your
@@ -692,7 +680,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 **kwargs,
             )
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     def _healthcare_result_callback(
         self, doc_id_order, raw_response, _, headers, show_stats=False
@@ -710,7 +698,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         )
 
     @distributed_trace_async
-    async def begin_analyze_healthcare_entities(  # type: ignore
+    async def begin_analyze_healthcare_entities(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         **kwargs: Any,
@@ -738,8 +726,13 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             is not specified, the API will default to the latest, non-preview version.
             See here for more info: https://aka.ms/text-analytics-model-versioning
         :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword str language: The 2 letter ISO 639-1 representation of language for the
+            entire batch. For example, use "en" for English; "es" for Spanish etc.
+            If not set, uses "en" for English as default. Per-document language will
+            take precedence over whole batch language. See https://aka.ms/talangs for
+            supported languages in Text Analytics API.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
-            Can be one of 'UnicodeCodePoint' (default), 'Utf16CodePoint', or 'TextElement_v8'.
+            Can be one of 'UnicodeCodePoint' (default), 'Utf16CodeUnit', or 'TextElement_v8'.
             For additional information see https://aka.ms/text-analytics-offsets
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
@@ -839,11 +832,11 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             if "API version v3.0 does not have operation 'begin_health'" in str(error):
                 raise ValueError(
                     "'begin_analyze_healthcare_entities' endpoint is only available for API version V3_1 and up"
-                )
+                ) from error
             raise error
 
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
 
     def _analyze_result_callback(
         self, doc_id_order, task_order, raw_response, _, headers, show_stats=False
@@ -862,41 +855,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         )
 
     @distributed_trace_async
-    async def begin_analyze_actions(  # type: ignore
+    async def begin_analyze_actions(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        actions: List[
-            Union[
-                RecognizeEntitiesAction,
-                RecognizeLinkedEntitiesAction,
-                RecognizePiiEntitiesAction,
-                ExtractKeyPhrasesAction,
-                AnalyzeSentimentAction,
-                ExtractSummaryAction,
-                RecognizeCustomEntitiesAction,
-                SingleCategoryClassifyAction,
-                MultiCategoryClassifyAction,
-            ]
-        ],  # pylint: disable=line-too-long
+        actions: ActionInputTypes,
         **kwargs: Any,
-    ) -> AsyncAnalyzeActionsLROPoller[
-        AsyncItemPaged[
-            List[
-                Union[
-                    RecognizeEntitiesResult,
-                    RecognizeLinkedEntitiesResult,
-                    RecognizePiiEntitiesResult,
-                    ExtractKeyPhrasesResult,
-                    AnalyzeSentimentResult,
-                    ExtractSummaryResult,
-                    RecognizeCustomEntitiesResult,
-                    SingleCategoryClassifyResult,
-                    MultiCategoryClassifyResult,
-                    DocumentError,
-                ]
-            ]
-        ]
-    ]:  # pylint: disable=line-too-long
+    ) -> AsyncAnalyzeActionsLROPoller[AsyncItemPaged[ActionResultTypes]]:
         """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
 
         We recommend you use this function if you're looking to analyze larger documents, and / or
@@ -1010,8 +974,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 action._to_generated(self._api_version, str(idx))  # pylint: disable=protected-access
                 for idx, action in enumerate(actions)
             ]
-        except AttributeError:
-            raise TypeError("Unsupported action type in list.")
+        except AttributeError as e:
+            raise TypeError("Unsupported action type in list.") from e
         task_order = [(_determine_action_type(a), a.task_name) for a in generated_tasks]
 
         try:
@@ -1091,8 +1055,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             if "API version v3.0 does not have operation 'begin_analyze'" in str(error):
                 raise ValueError(
                     "'begin_analyze_actions' endpoint is only available for API version V3_1 and up"
-                )
+                ) from error
             raise error
 
         except HttpResponseError as error:
-            process_http_response_error(error)
+            return process_http_response_error(error)
