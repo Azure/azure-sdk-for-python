@@ -8,7 +8,7 @@ import sys
 from typing import cast, TYPE_CHECKING
 
 from .._exceptions import CredentialUnavailableError
-from .._constants import AzureAuthorityHosts, AZURE_VSCODE_CLIENT_ID, EnvironmentVariables
+from .._constants import KnownAuthorities, AZURE_VSCODE_CLIENT_ID, EnvironmentVariables
 from .._internal import normalize_authority, validate_tenant_id
 from .._internal.aad_client import AadClient
 from .._internal.get_token_mixin import GetTokenMixin
@@ -78,13 +78,13 @@ class _VSCodeCredentialBase(ABC):
         if not authority:
             # the application didn't specify an authority, so we figure it out from VS Code settings
             if self._cloud == "AzureCloud":
-                authority = AzureAuthorityHosts.AZURE_PUBLIC_CLOUD
+                authority = KnownAuthorities.AZURE_PUBLIC_CLOUD
             elif self._cloud == "AzureChinaCloud":
-                authority = AzureAuthorityHosts.AZURE_CHINA
+                authority = KnownAuthorities.AZURE_CHINA
             elif self._cloud == "AzureGermanCloud":
-                authority = AzureAuthorityHosts.AZURE_GERMANY
+                authority = KnownAuthorities.AZURE_GERMANY
             elif self._cloud == "AzureUSGovernment":
-                authority = AzureAuthorityHosts.AZURE_GOVERNMENT
+                authority = KnownAuthorities.AZURE_GOVERNMENT
             else:
                 # If the value is anything else ("AzureCustomCloud" is the only other known value),
                 # we need the user to provide the authority because VS Code has no setting for it and

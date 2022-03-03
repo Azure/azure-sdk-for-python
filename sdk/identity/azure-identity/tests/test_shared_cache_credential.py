@@ -6,7 +6,7 @@ from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity import (
     AuthenticationRecord,
-    AzureAuthorityHosts,
+    KnownAuthorities,
     CredentialUnavailableError,
     SharedTokenCacheCredential,
 )
@@ -855,7 +855,7 @@ def test_multitenant_authentication():
             )
         )
 
-    authority = AzureAuthorityHosts.AZURE_PUBLIC_CLOUD
+    authority = KnownAuthorities.AZURE_PUBLIC_CLOUD
     expected_account = get_account_event(
         "user", "object-id", "tenant-id", authority=authority, client_id="client-id", refresh_token="**"
     )
@@ -884,7 +884,7 @@ def test_multitenant_authentication_auth_record():
     second_tenant = "second-tenant"
     second_token = first_token * 2
 
-    authority = AzureAuthorityHosts.AZURE_PUBLIC_CLOUD
+    authority = KnownAuthorities.AZURE_PUBLIC_CLOUD
     object_id = "object-id"
     home_account_id = object_id + "." + default_tenant
     record = AuthenticationRecord(default_tenant, "client-id", authority, home_account_id, "user")

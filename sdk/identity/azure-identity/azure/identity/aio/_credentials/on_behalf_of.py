@@ -39,7 +39,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         requesting on-behalf-of tokens
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
-        the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
+        the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
         defines authorities for other clouds.
     :keyword password: a certificate password. Used only when **client_certificate** is provided. If this value
         is a unicode string, it will be encoded as UTF-8. If the certificate requires a different encoding, pass

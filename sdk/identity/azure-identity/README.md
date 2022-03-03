@@ -224,12 +224,12 @@ client = SecretClient("https://my-vault.vault.azure.net", default_credential)
 Credentials default to authenticating to the Azure Active Directory endpoint for
 Azure Public Cloud. To access resources in other clouds, such as Azure Government
 or a private cloud, configure credentials with the `authority` argument.
-[AzureAuthorityHosts](https://aka.ms/azsdk/python/identity/docs#azure.identity.AzureAuthorityHosts)
+[KnownAuthorities](https://aka.ms/azsdk/python/identity/docs#azure.identity.KnownAuthorities)
 defines authorities for well-known clouds:
 ```py
-from azure.identity import AzureAuthorityHosts
+from azure.identity import KnownAuthorities
 
-DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_GOVERNMENT)
+DefaultAzureCredential(authority=KnownAuthorities.AZURE_GOVERNMENT)
 ```
 Not all credentials require this configuration. Credentials which authenticate
 through a development tool, such as `AzureCliCredential`, use that tool's

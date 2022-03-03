@@ -8,7 +8,7 @@ import time
 from typing import TYPE_CHECKING
 
 from azure.core.credentials import AccessToken
-from azure.identity import AuthenticationRequiredError, AzureAuthorityHosts
+from azure.identity import AuthenticationRequiredError, KnownAuthorities
 import msal
 
 if TYPE_CHECKING:
@@ -42,7 +42,7 @@ class MsalTokenCredential(object):
     def __init__(self, tenant_id, client_id):
         # type: (str, str) -> None
         self._app = msal.PublicClientApplication(
-            client_id=client_id, authority="https://{}/{}".format(AzureAuthorityHosts.AZURE_PUBLIC_CLOUD, tenant_id)
+            client_id=client_id, authority="https://{}/{}".format(KnownAuthorities.AZURE_PUBLIC_CLOUD, tenant_id)
         )
 
     def get_token(self, *scopes, **kwargs):

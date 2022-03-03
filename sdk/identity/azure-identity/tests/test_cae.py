@@ -10,7 +10,7 @@ import time
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import (
-    AzureAuthorityHosts,
+    KnownAuthorities,
     DeviceCodeCredential,
     UsernamePasswordCredential,
     InteractiveBrowserCredential,
@@ -46,7 +46,7 @@ class CaeTestCase(AzureTestCase):
             self.cae_settings = {
                 "arm_scope": os.environ.get("CAE_ARM_SCOPE", "https://management.azure.com/.default"),
                 "arm_url": os.environ["CAE_ARM_URL"],
-                "authority": os.environ.get("CAE_AUTHORITY", AzureAuthorityHosts.AZURE_PUBLIC_CLOUD),
+                "authority": os.environ.get("CAE_AUTHORITY", KnownAuthorities.AZURE_PUBLIC_CLOUD),
                 "graph_url": os.environ.get("CAE_GRAPH_URL", "https://graph.microsoft.com"),
                 "password": os.environ.get("CAE_PASSWORD"),
                 "tenant_id": os.environ["CAE_TENANT_ID"],
@@ -60,7 +60,7 @@ class CaeTestCase(AzureTestCase):
             self.cae_settings = {
                 "arm_scope": "https://management.azure.com/.default",
                 "arm_url": "https://management.azure.com/",
-                "authority": AzureAuthorityHosts.AZURE_PUBLIC_CLOUD,
+                "authority": KnownAuthorities.AZURE_PUBLIC_CLOUD,
                 "password": "password",
                 "tenant_id": "tenant",
                 "username": "username",

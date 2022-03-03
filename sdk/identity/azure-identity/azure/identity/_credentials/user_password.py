@@ -30,7 +30,7 @@ class UsernamePasswordCredential(InteractiveCredential):
     :param str password: the user's password
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
-        the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
+        the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
         defines authorities for other clouds.
     :keyword str tenant_id: tenant ID or a domain associated with a tenant. If not provided, defaults to the
         "organizations" tenant, which supports only Azure Active Directory work or school accounts.

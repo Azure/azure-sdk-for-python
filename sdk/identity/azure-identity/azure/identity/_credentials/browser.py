@@ -32,7 +32,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
     there with the authorization code flow, using PKCE (Proof Key for Code Exchange) internally to protect the code.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
-        the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
+        the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
         defines authorities for other clouds.
     :keyword str tenant_id: an Azure Active Directory tenant ID. Defaults to the "organizations" tenant, which can
         authenticate work or school accounts.

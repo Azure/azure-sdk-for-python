@@ -50,7 +50,7 @@ class AzureApplicationCredential(ChainedTokenCredential):
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud, which is the default when no value is given for this keyword argument or
-        environment variable AZURE_AUTHORITY_HOST. :class:`~azure.identity.AzureAuthorityHosts` defines authorities for
+        environment variable AZURE_AUTHORITY_HOST. :class:`~azure.identity.KnownAuthorities` defines authorities for
         other clouds. Authority configuration applies only to service principal authentication.
     :keyword str managed_identity_client_id: The client ID of a user-assigned managed identity. Defaults to the value
         of the environment variable AZURE_CLIENT_ID, if any. If not specified, a system-assigned identity will be used.

@@ -24,7 +24,7 @@ class ClientSecretCredential(AsyncContextManager, GetTokenMixin):
     :param str client_secret: one of the service principal's client secrets
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
-          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
+          the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
           defines authorities for other clouds.
     :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
           will cache tokens in memory.

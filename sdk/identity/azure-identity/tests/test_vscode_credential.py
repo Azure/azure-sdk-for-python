@@ -7,7 +7,7 @@ import time
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
-from azure.identity import AzureAuthorityHosts, CredentialUnavailableError, VisualStudioCodeCredential
+from azure.identity import KnownAuthorities, CredentialUnavailableError, VisualStudioCodeCredential
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
@@ -35,7 +35,7 @@ def test_tenant_id():
     def get_transport(expected_tenant):
         return validating_transport(
             requests=[
-                Request(base_url="https://{}/{}".format(AzureAuthorityHosts.AZURE_PUBLIC_CLOUD, expected_tenant))
+                Request(base_url="https://{}/{}".format(KnownAuthorities.AZURE_PUBLIC_CLOUD, expected_tenant))
             ],
             responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
         )
@@ -237,10 +237,10 @@ def test_custom_cloud_no_authority():
 @pytest.mark.parametrize(
     "cloud,authority",
     (
-        ("AzureCloud", AzureAuthorityHosts.AZURE_PUBLIC_CLOUD),
-        ("AzureChinaCloud", AzureAuthorityHosts.AZURE_CHINA),
-        ("AzureGermanCloud", AzureAuthorityHosts.AZURE_GERMANY),
-        ("AzureUSGovernment", AzureAuthorityHosts.AZURE_GOVERNMENT),
+        ("AzureCloud", KnownAuthorities.AZURE_PUBLIC_CLOUD),
+        ("AzureChinaCloud", KnownAuthorities.AZURE_CHINA),
+        ("AzureGermanCloud", KnownAuthorities.AZURE_GERMANY),
+        ("AzureUSGovernment", KnownAuthorities.AZURE_GOVERNMENT),
     ),
 )
 def test_reads_cloud_settings(cloud, authority):
@@ -266,7 +266,7 @@ def test_no_user_settings():
     """the credential should default to Public Cloud and "organizations" tenant when it can't read VS Code settings"""
 
     transport = validating_transport(
-        requests=[Request(base_url="https://{}/{}".format(AzureAuthorityHosts.AZURE_PUBLIC_CLOUD, "organizations"))],
+        requests=[Request(base_url="https://{}/{}".format(KnownAuthorities.AZURE_PUBLIC_CLOUD, "organizations"))],
         responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
     )
 
