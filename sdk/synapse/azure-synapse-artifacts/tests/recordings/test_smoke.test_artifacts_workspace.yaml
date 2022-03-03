@@ -16,14 +16,14 @@ interactions:
     body:
       string: '{"error":{"code":"Unauthorized","message":"The principal ''887c42b1-7946-4c22-baa6-15043e4b1323''
         does not have the required Synapse RBAC permission to perform this action.
-        Required permission: Action: Microsoft.Synapse/workspaces/read, Scope: workspaces/workspace-jf/*."}}'
+        Required permission: Action: Microsoft.Synapse/workspaces/read, Scope: workspaces/synapse-workspace-jf/*."}}'
     headers:
       content-length:
-      - '271'
+      - '279'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 03 Mar 2022 06:08:26 GMT
+      - Thu, 03 Mar 2022 06:42:37 GMT
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

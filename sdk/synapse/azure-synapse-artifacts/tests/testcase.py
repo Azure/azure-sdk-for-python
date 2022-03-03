@@ -13,16 +13,12 @@ class SynapseArtifactsTest(AzureTestCase):
     def __init__(self, method_name, **kwargs):
         super(SynapseArtifactsTest, self).__init__(method_name, **kwargs)
 
-    def create_client(self, endpoint=None, hub=None, reverse_proxy_endpoint=None, **kwargs):
-        if kwargs.get("connection_string"):
-            return SynapseArtifactsTest.from_connection_string(kwargs.pop("connection_string"), hub, **kwargs)
+    def create_client(self, endpoint=None, **kwargs):
         credential = self.get_credential(ArtifactsClient)
         return self.create_client_from_credential(
             ArtifactsClient,
             credential=credential,
             endpoint=endpoint,
-            hub=hub,
-            reverse_proxy_endpoint=reverse_proxy_endpoint
         )
 
 
