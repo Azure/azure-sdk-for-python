@@ -1,10 +1,6 @@
 # Release History
 
-## 5.2.0b3 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 5.2.0b3 (2022-03-08)
 
 ### Bugs Fixed
 - `string_index_type` now correctly defaults to the Python default `UnicodeCodePoint` for `AnalyzeSentimentAction` and `RecognizeCustomEntitiesAction`.
