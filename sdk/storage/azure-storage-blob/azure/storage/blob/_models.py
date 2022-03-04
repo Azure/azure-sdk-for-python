@@ -923,7 +923,7 @@ class ContainerSasPermissions(object):
         Write a new blob, snapshot a blob, or copy a blob to a new blob.
     :keyword bool permanent_delete:
         To enable permanent delete on the blob is permitted.
-    :keyword bool find:
+    :keyword bool filter_by_tags:
         To enable finding blobs by tags.
     :keyword bool move:
         Move a blob or a directory and its contents to a new location.
@@ -945,7 +945,7 @@ class ContainerSasPermissions(object):
         self.permanent_delete = kwargs.pop('permanent_delete', False)
         self.list = list
         self.tag = tag
-        self.find = kwargs.pop('find', False)
+        self.filter_by_tags = kwargs.pop('filter_by_tags', False)
         self.move = kwargs.pop('move', False)
         self.execute = kwargs.pop('execute', False)
         self.set_immutability_policy = kwargs.pop('set_immutability_policy', False)
@@ -958,7 +958,7 @@ class ContainerSasPermissions(object):
                      ('y' if self.permanent_delete else '') +
                      ('l' if self.list else '') +
                      ('t' if self.tag else '') +
-                     ('f' if self.find else '') +
+                     ('f' if self.filter_by_tags else '') +
                      ('m' if self.move else '') +
                      ('e' if self.execute else '') +
                      ('i' if self.set_immutability_policy else ''))
@@ -988,14 +988,14 @@ class ContainerSasPermissions(object):
         p_permanent_delete = 'y' in permission
         p_list = 'l' in permission
         p_tag = 't' in permission
-        p_find = 'f' in permission
+        p_filter_by_tags = 'f' in permission
         p_move = 'm' in permission
         p_execute = 'e' in permission
         p_set_immutability_policy = 'i' in permission
         parsed = cls(read=p_read, write=p_write, delete=p_delete, list=p_list,
                      delete_previous_version=p_delete_previous_version, tag=p_tag, add=p_add,
-                     create=p_create, permanent_delete=p_permanent_delete, find=p_find, move=p_move,
-                     execute=p_execute, set_immutability_policy=p_set_immutability_policy)
+                     create=p_create, permanent_delete=p_permanent_delete, filter_by_tags=p_filter_by_tags,
+                     move=p_move, execute=p_execute, set_immutability_policy=p_set_immutability_policy)
 
         return parsed
 
