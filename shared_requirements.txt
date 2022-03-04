@@ -301,3 +301,5 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-servicelinker azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-sqlvirtualmachine msrest>=0.6.21
 #override azure-mgmt-sqlvirtualmachine azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-rdbms msrest>=0.6.21
+#override azure-mgmt-rdbms azure-mgmt-core>=1.3.0,<2.0.0
