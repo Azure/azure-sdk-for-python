@@ -13,7 +13,6 @@ except ImportError:
     from urllib2 import quote, unquote  # type: ignore
 import six
 
-from azure.core.pipeline.transport import HttpResponse
 from azure.core.pipeline import Pipeline
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged

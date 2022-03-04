@@ -10,8 +10,6 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Dict, TYPE_CHECKING,
     AsyncIterator)
 
-from azure.core.pipeline.transport import AsyncHttpResponse
-
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
