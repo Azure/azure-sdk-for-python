@@ -21,7 +21,7 @@ DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPrepa
 class TestTrainingAsync(AsyncFormRecognizerTest):
 
     def teardown(self):
-        self.sleep(3)
+        self.sleep(4)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()

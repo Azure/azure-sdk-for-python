@@ -26,7 +26,7 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 class TestMultiapi(AsyncFormRecognizerTest):
 
     def teardown(self):
-        self.sleep(3)
+        self.sleep(4)
 
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()

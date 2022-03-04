@@ -22,7 +22,7 @@ FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTraini
 class TestTrainingAsync(AsyncFormRecognizerTest):
 
     def teardown(self):
-        self.sleep(3)
+        self.sleep(4)
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})

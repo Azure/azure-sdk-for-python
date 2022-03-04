@@ -20,7 +20,7 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 class TestBusinessCard(FormRecognizerTest):
 
     def teardown(self):
-        self.sleep(3)
+        self.sleep(4)
 
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
