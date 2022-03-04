@@ -51,7 +51,14 @@ class KeyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     ec = "EC"  #: Elliptic Curve
     ec_hsm = "EC-HSM"  #: Elliptic Curve with a private key which is not exportable from the HSM
-    rsa = "RSA"
+    rsa = "RSA"  #: RSA (https://tools.ietf.org/html/rfc3447)
     rsa_hsm = "RSA-HSM"  #: RSA with a private key which is not exportable from the HSM
     oct = "oct"  #: Octet sequence (used to represent symmetric keys)
     oct_hsm = "oct-HSM"  #: Octet sequence with a private key which is not exportable from the HSM
+
+    @classmethod
+    def _missing_(cls, value):
+        for member in cls:
+            if member.value.lower() == value.lower():
+                return member
+        raise ValueError(f"{value} is not a valid KeyType")
