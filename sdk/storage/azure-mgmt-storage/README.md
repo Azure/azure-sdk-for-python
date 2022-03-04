@@ -3,7 +3,7 @@
 This is the Microsoft Azure Storage Management Client Library.
 This package has been tested with Python 2.7, 3.6+.
 For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
-
+ 
 
 ## _Disclaimer_
 
