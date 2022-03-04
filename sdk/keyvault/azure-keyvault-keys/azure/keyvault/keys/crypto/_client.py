@@ -32,7 +32,7 @@ def _validate_arguments(operation, algorithm, **kwargs):
     """Validates the arguments passed to perform an operation with a provided algorithm.
 
     :param KeyOperation operation: the type of operation being requested
-    :param EncyptionAlgorithm algorithm: the encryption algorithm to use for the operation
+    :param EncryptionAlgorithm algorithm: the encryption algorithm to use for the operation
     :keyword bytes iv: initialization vector
     :keyword bytes authentication_tag: authentication tag returned from an encryption
     :keyword bytes additional_authenticated_data: data that is authenticated but not encrypted

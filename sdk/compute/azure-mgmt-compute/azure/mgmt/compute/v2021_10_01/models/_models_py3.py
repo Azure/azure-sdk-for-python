@@ -1398,6 +1398,9 @@ class GalleryImage(Resource):
      ~azure.mgmt.compute.v2021_10_01.models.GalleryImagePropertiesProvisioningState
     :ivar features: A list of gallery image features.
     :vartype features: list[~azure.mgmt.compute.v2021_10_01.models.GalleryImageFeature]
+    :ivar architecture: The architecture of the image. Applicable to OS disks only. Possible values
+     include: "x64", "Arm64".
+    :vartype architecture: str or ~azure.mgmt.compute.v2021_10_01.models.Architecture
     """
 
     _validation = {
@@ -1428,6 +1431,7 @@ class GalleryImage(Resource):
         'purchase_plan': {'key': 'properties.purchasePlan', 'type': 'ImagePurchasePlan'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'features': {'key': 'properties.features', 'type': '[GalleryImageFeature]'},
+        'architecture': {'key': 'properties.architecture', 'type': 'str'},
     }
 
     def __init__(
@@ -1448,6 +1452,7 @@ class GalleryImage(Resource):
         disallowed: Optional["Disallowed"] = None,
         purchase_plan: Optional["ImagePurchasePlan"] = None,
         features: Optional[List["GalleryImageFeature"]] = None,
+        architecture: Optional[Union[str, "Architecture"]] = None,
         **kwargs
     ):
         """
@@ -1491,6 +1496,9 @@ class GalleryImage(Resource):
         :paramtype purchase_plan: ~azure.mgmt.compute.v2021_10_01.models.ImagePurchasePlan
         :keyword features: A list of gallery image features.
         :paramtype features: list[~azure.mgmt.compute.v2021_10_01.models.GalleryImageFeature]
+        :keyword architecture: The architecture of the image. Applicable to OS disks only. Possible
+         values include: "x64", "Arm64".
+        :paramtype architecture: str or ~azure.mgmt.compute.v2021_10_01.models.Architecture
         """
         super(GalleryImage, self).__init__(location=location, tags=tags, **kwargs)
         self.description = description
@@ -1507,6 +1515,7 @@ class GalleryImage(Resource):
         self.purchase_plan = purchase_plan
         self.provisioning_state = None
         self.features = features
+        self.architecture = architecture
 
 
 class GalleryImageFeature(msrest.serialization.Model):
@@ -1681,6 +1690,9 @@ class GalleryImageUpdate(UpdateResourceDefinition):
      ~azure.mgmt.compute.v2021_10_01.models.GalleryImagePropertiesProvisioningState
     :ivar features: A list of gallery image features.
     :vartype features: list[~azure.mgmt.compute.v2021_10_01.models.GalleryImageFeature]
+    :ivar architecture: The architecture of the image. Applicable to OS disks only. Possible values
+     include: "x64", "Arm64".
+    :vartype architecture: str or ~azure.mgmt.compute.v2021_10_01.models.Architecture
     """
 
     _validation = {
@@ -1709,6 +1721,7 @@ class GalleryImageUpdate(UpdateResourceDefinition):
         'purchase_plan': {'key': 'properties.purchasePlan', 'type': 'ImagePurchasePlan'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'features': {'key': 'properties.features', 'type': '[GalleryImageFeature]'},
+        'architecture': {'key': 'properties.architecture', 'type': 'str'},
     }
 
     def __init__(
@@ -1728,6 +1741,7 @@ class GalleryImageUpdate(UpdateResourceDefinition):
         disallowed: Optional["Disallowed"] = None,
         purchase_plan: Optional["ImagePurchasePlan"] = None,
         features: Optional[List["GalleryImageFeature"]] = None,
+        architecture: Optional[Union[str, "Architecture"]] = None,
         **kwargs
     ):
         """
@@ -1769,6 +1783,9 @@ class GalleryImageUpdate(UpdateResourceDefinition):
         :paramtype purchase_plan: ~azure.mgmt.compute.v2021_10_01.models.ImagePurchasePlan
         :keyword features: A list of gallery image features.
         :paramtype features: list[~azure.mgmt.compute.v2021_10_01.models.GalleryImageFeature]
+        :keyword architecture: The architecture of the image. Applicable to OS disks only. Possible
+         values include: "x64", "Arm64".
+        :paramtype architecture: str or ~azure.mgmt.compute.v2021_10_01.models.Architecture
         """
         super(GalleryImageUpdate, self).__init__(tags=tags, **kwargs)
         self.description = description
@@ -1785,6 +1802,7 @@ class GalleryImageUpdate(UpdateResourceDefinition):
         self.purchase_plan = purchase_plan
         self.provisioning_state = None
         self.features = features
+        self.architecture = architecture
 
 
 class GalleryImageVersion(Resource):
