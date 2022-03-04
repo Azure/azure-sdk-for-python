@@ -69,7 +69,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
     def __init__(self, **kwargs: "Any") -> None:
         if "tenant_id" in kwargs:
-            raise ValueError("'tenant_id' is not supported in DefaultAzureCredential.")
+            raise TypeError("'tenant_id' is not supported in DefaultAzureCredential.")
 
         authority = kwargs.pop("authority", None)
 
