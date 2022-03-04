@@ -4,32 +4,29 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines,no-self-use
-from functools import partial
+
 from io import BytesIO
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
-    TYPE_CHECKING,
-    TypeVar, Type)
-
+    TYPE_CHECKING
+)
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
-    from urlparse import urlparse  # type: ignore
-    from urllib2 import quote, unquote  # type: ignore
+    from urlparse import urlparse # type: ignore
+    from urllib2 import quote, unquote # type: ignore
 
 import six
-from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
 
 from ._shared import encode_base64
-from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query, TransportWrapper
+from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.encryption import generate_blob_encryption_data
 from ._shared.uploads import IterStreamer
 from ._shared.request_handlers import (
     add_metadata_headers, get_length, read_length,
     validate_and_format_range_headers)
-from ._shared.response_handlers import return_response_headers, process_storage_error, return_headers_and_deserialized
+from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._generated import AzureBlobStorage
 from ._generated.models import ( # pylint: disable=unused-import
     DeleteSnapshotsOptionType,
@@ -37,33 +34,26 @@ from ._generated.models import ( # pylint: disable=unused-import
     BlockLookupList,
     AppendPositionAccessConditions,
     SequenceNumberAccessConditions,
-    QueryRequest,
+    StorageErrorException,
+    UserDelegationKey,
     CpkInfo)
-from ._serialize import (
-    get_modify_conditions,
-    get_source_conditions,
-    get_cpk_scope_info,
-    get_api_version,
-    serialize_blob_tags_header,
-    serialize_blob_tags,
-    serialize_query_format, get_access_conditions
-)
-from ._deserialize import get_page_ranges_result, deserialize_blob_properties, deserialize_blob_stream, parse_tags, \
-    deserialize_pipeline_response_into_cls
-from ._quick_query_helper import BlobQueryReader
+from ._serialize import get_modify_conditions, get_source_conditions
+from ._deserialize import get_page_ranges_result, deserialize_blob_properties, deserialize_blob_stream
 from ._upload_helpers import (
     upload_block_blob,
     upload_append_blob,
-    upload_page_blob, _any_conditions)
-from ._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, QuickQueryDialect, \
-    DelimitedJsonDialect, DelimitedTextDialect
+    upload_page_blob)
+from ._models import BlobType, BlobBlock
 from ._download import StorageStreamDownloader
-from ._lease import BlobLeaseClient
+from ._lease import BlobLeaseClient, get_access_conditions
 
 if TYPE_CHECKING:
     from datetime import datetime
     from ._generated.models import BlockList
     from ._models import (  # pylint: disable=unused-import
+        ContainerProperties,
+        BlobProperties,
+        BlobSasPermissions,
         ContentSettings,
         PremiumPageBlobTier,
         StandardBlobTier,
@@ -74,15 +64,9 @@ _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
     'The require_encryption flag is set, but encryption is not supported'
     ' for this method.')
 
-ClassType = TypeVar("ClassType")
-
 
 class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-methods
     """A client to interact with a specific blob, although that blob may not yet exist.
-
-    For more optional configuration, please click
-    `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
-    #optional-configuration>`_.
 
     :param str account_url:
         The URI to the storage account. In order to create a client given the full URI to the blob,
@@ -97,22 +81,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         or the response returned from :func:`create_snapshot`.
     :param credential:
         The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials, an account
+        account URL already has a SAS token. The value can be a SAS token string, an account
         shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
-        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
-    :keyword str api_version:
-        The Storage API version to use for requests. Default value is the most recent service version that is
-        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
-
-        .. versionadded:: 12.2.0
-
+        If the URL already has a SAS token, specifying an explicit credential will take priority.
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword int max_block_size: The maximum chunk size for uploading a block blob in chunks.
         Defaults to 4*1024*1024, or 4MB.
-    :keyword int max_single_put_size: If the blob size is less than or equal max_single_put_size, then the blob will be
+    :keyword int max_single_put_size: If the blob size is less than max_single_put_size, then the blob will be
         uploaded with only one http PUT request. If the blob size is larger than max_single_put_size,
         the blob will be uploaded in chunks. Defaults to 64*1024*1024, or 64MB.
     :keyword int min_large_block_upload_threshold: The minimum chunk size required to use the memory efficient
@@ -173,12 +149,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             except TypeError:
                 self.snapshot = snapshot or path_snapshot
 
-        # This parameter is used for the hierarchy traversal. Give precedence to credential.
-        self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
         super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
 
     def _format_url(self, hostname):
         container_name = self.container_name
@@ -188,24 +161,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             self.scheme,
             hostname,
             quote(container_name),
-            quote(self.blob_name, safe='~/'),
+            quote(self.blob_name, safe='~'),
             self._query_str)
-
-    def _encode_source_url(self, source_url):
-        parsed_source_url = urlparse(source_url)
-        source_scheme = parsed_source_url.scheme
-        source_hostname = parsed_source_url.netloc.rstrip('/')
-        source_path = unquote(parsed_source_url.path)
-        source_query = parsed_source_url.query
-        result = ["{}://{}{}".format(source_scheme, source_hostname, quote(source_path, safe='~/'))]
-        if source_query:
-            result.append(source_query)
-        return '?'.join(result)
 
     @classmethod
     def from_blob_url(cls, blob_url, credential=None, snapshot=None, **kwargs):
-        # type: (Type[ClassType], str, Optional[Any], Optional[Union[str, Dict[str, Any]]], Any) -> ClassType
-        """Create BlobClient from a blob url. This doesn't support customized blob url with '/' in blob name.
+        # type: (str, Optional[Any], Optional[Union[str, Dict[str, Any]]], Any) -> BlobClient
+        """Create BlobClient from a blob url.
 
         :param str blob_url:
             The full endpoint URL to the Blob, including SAS token and snapshot if used. This could be
@@ -214,11 +176,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string,
-            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
+            access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
-            If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
-            - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+            Credentials provided here will take precedence over those in the connection string.
         :param str snapshot:
             The optional blob snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`create_snapshot`. If specified, this will override
@@ -236,18 +196,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(blob_url))
 
+        path_blob = parsed_url.path.lstrip('/').split('/')
         account_path = ""
-        if ".core." in parsed_url.netloc:
-            # .core. is indicating non-customized url. Blob name with directory info can also be parsed.
-            path_blob = parsed_url.path.lstrip('/').split('/', 1)
-        elif "localhost" in parsed_url.netloc or "127.0.0.1" in parsed_url.netloc:
-            path_blob = parsed_url.path.lstrip('/').split('/', 2)
-            account_path += '/' + path_blob[0]
-        else:
-            # for customized url. blob name that has directory info cannot be parsed.
-            path_blob = parsed_url.path.lstrip('/').split('/')
-            if len(path_blob) > 2:
-                account_path = "/" + "/".join(path_blob[:-2])
+        if len(path_blob) > 2:
+            account_path = "/" + "/".join(path_blob[:-2])
         account_url = "{}://{}{}?{}".format(
             parsed_url.scheme,
             parsed_url.netloc.rstrip('/'),
@@ -274,14 +226,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @classmethod
     def from_connection_string(
-            cls,  # type: Type[ClassType]
-            conn_str,  # type: str
+            cls, conn_str,  # type: str
             container_name,  # type: str
             blob_name,  # type: str
             snapshot=None,  # type: Optional[str]
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):  # type: (...) -> ClassType
+        ):  # type: (...) -> BlobClient
         """Create BlobClient from a Connection String.
 
         :param str conn_str:
@@ -296,8 +247,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param credential:
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
-            access key values. The value can be a SAS token string,
-            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
+            access key values. The value can be a SAS token string, an account shared access
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
         :returns: A Blob client.
@@ -333,7 +283,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         try:
             return self._client.blob.get_account_info(cls=return_response_headers, **kwargs) # type: ignore
-        except HttpResponseError as error:
+        except StorageErrorException as error:
             process_storage_error(error)
 
     def _upload_blob_options(  # pylint:disable=too-many-statements
@@ -391,17 +341,15 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         headers.update(add_metadata_headers(metadata))
         kwargs['lease_access_conditions'] = get_access_conditions(kwargs.pop('lease', None))
         kwargs['modified_access_conditions'] = get_modify_conditions(kwargs)
-        kwargs['cpk_scope_info'] = get_cpk_scope_info(kwargs)
         if content_settings:
             kwargs['blob_headers'] = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
                 blob_content_type=content_settings.content_type,
-                blob_content_md5=content_settings.content_md5,
+                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
                 blob_content_encoding=content_settings.content_encoding,
                 blob_content_language=content_settings.content_language,
                 blob_content_disposition=content_settings.content_disposition
             )
-        kwargs['blob_tags_string'] = serialize_blob_tags_header(kwargs.pop('tags', None))
         kwargs['stream'] = stream
         kwargs['length'] = length
         kwargs['overwrite'] = overwrite
@@ -410,7 +358,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         kwargs['blob_settings'] = self._config
         kwargs['max_concurrency'] = max_concurrency
         kwargs['encryption_options'] = encryption_options
-
         if blob_type == BlobType.BlockBlob:
             kwargs['client'] = self._client.block_blob
             kwargs['data'] = data
@@ -423,151 +370,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         else:
             raise ValueError("Unsupported BlobType: {}".format(blob_type))
         return kwargs
-
-    def _upload_blob_from_url_options(self, source_url, **kwargs):
-        # type: (...) -> Dict[str, Any]
-        tier = kwargs.pop('standard_blob_tier', None)
-        overwrite = kwargs.pop('overwrite', False)
-        content_settings = kwargs.pop('content_settings', None)
-        source_authorization = kwargs.pop('source_authorization', None)
-        if content_settings:
-            kwargs['blob_http_headers'] = BlobHTTPHeaders(
-                blob_cache_control=content_settings.cache_control,
-                blob_content_type=content_settings.content_type,
-                blob_content_md5=None,
-                blob_content_encoding=content_settings.content_encoding,
-                blob_content_language=content_settings.content_language,
-                blob_content_disposition=content_settings.content_disposition
-            )
-        cpk = kwargs.pop('cpk', None)
-        cpk_info = None
-        if cpk:
-            if self.scheme.lower() != 'https':
-                raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
-                               encryption_algorithm=cpk.algorithm)
-
-        options = {
-            'copy_source_authorization': source_authorization,
-            'content_length': 0,
-            'copy_source_blob_properties': kwargs.pop('include_source_blob_properties', True),
-            'source_content_md5': kwargs.pop('source_content_md5', None),
-            'copy_source': source_url,
-            'modified_access_conditions': get_modify_conditions(kwargs),
-            'blob_tags_string': serialize_blob_tags_header(kwargs.pop('tags', None)),
-            'cls': return_response_headers,
-            'lease_access_conditions': get_access_conditions(kwargs.pop('destination_lease', None)),
-            'tier': tier.value if tier else None,
-            'source_modified_access_conditions': get_source_conditions(kwargs),
-            'cpk_info': cpk_info,
-            'cpk_scope_info': get_cpk_scope_info(kwargs)
-        }
-        options.update(kwargs)
-        if not overwrite and not _any_conditions(**options): # pylint: disable=protected-access
-            options['modified_access_conditions'].if_none_match = '*'
-        return options
-
-    @distributed_trace
-    def upload_blob_from_url(self, source_url, **kwargs):
-        # type: (str, Any) -> Dict[str, Any]
-        """
-        Creates a new Block Blob where the content of the blob is read from a given URL.
-        The content of an existing blob is overwritten with the new blob.
-
-        :param str source_url:
-            A URL of up to 2 KB in length that specifies a file or blob.
-            The value should be URL-encoded as it would appear in a request URI.
-            If the source is in another account, the source must either be public
-            or must be authenticated via a shared access signature. If the source
-            is public, no authentication is required.
-            Examples:
-            https://myaccount.blob.core.windows.net/mycontainer/myblob
-
-            https://myaccount.blob.core.windows.net/mycontainer/myblob?snapshot=<DateTime>
-
-            https://otheraccount.blob.core.windows.net/mycontainer/myblob?sastoken
-        :keyword bool overwrite: Whether the blob to be uploaded should overwrite the current data.
-            If True, upload_blob will overwrite the existing data. If set to False, the
-            operation will fail with ResourceExistsError.
-        :keyword bool include_source_blob_properties:
-            Indicates if properties from the source blob should be copied. Defaults to True.
-        :keyword tags:
-            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
-            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
-            and tag values must be between 0 and 256 characters.
-            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
-            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
-        :paramtype tags: dict(str, str)
-        :keyword bytearray source_content_md5:
-            Specify the md5 that is used to verify the integrity of the source bytes.
-        :keyword ~datetime.datetime source_if_modified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only
-            if the source resource has been modified since the specified time.
-        :keyword ~datetime.datetime source_if_unmodified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only if
-            the source resource has not been modified since the specified date/time.
-        :keyword str source_etag:
-            The source ETag value, or the wildcard character (*). Used to check if the resource has changed,
-            and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions source_match_condition:
-            The source match condition to use upon the etag.
-        :keyword ~datetime.datetime if_modified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only
-            if the resource has been modified since the specified time.
-        :keyword ~datetime.datetime if_unmodified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only if
-            the resource has not been modified since the specified date/time.
-        :keyword str etag:
-            The destination ETag value, or the wildcard character (*). Used to check if the resource has changed,
-            and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition:
-            The destination match condition to use upon the etag.
-        :keyword destination_lease:
-            The lease ID specified for this header must match the lease ID of the
-            destination blob. If the request does not include the lease ID or it is not
-            valid, the operation fails with status code 412 (Precondition Failed).
-        :paramtype destination_lease: ~azure.storage.blob.BlobLeaseClient or str
-        :keyword int timeout:
-            The timeout parameter is expressed in seconds.
-        :keyword ~azure.storage.blob.ContentSettings content_settings:
-            ContentSettings object used to set blob properties. Used to set content type, encoding,
-            language, disposition, md5, and cache control.
-        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
-            Encrypts the data on the service-side with the given key.
-            Use of customer-provided keys must be done over HTTPS.
-            As the encryption key itself is provided in the request,
-            a secure connection must be established to transfer the key.
-        :keyword str encryption_scope:
-            A predefined encryption scope used to encrypt the data on the service. An encryption
-            scope can be created using the Management API and referenced here by name. If a default
-            encryption scope has been defined at the container, this value will override it if the
-            container-level scope is configured to allow overrides. Otherwise an error will be raised.
-        :keyword ~azure.storage.blob.StandardBlobTier standard_blob_tier:
-            A standard blob tier value to set the blob to. For this version of the library,
-            this is only applicable to block blobs on standard storage accounts.
-        :keyword str source_authorization:
-            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
-            the prefix of the source_authorization string.
-        """
-        options = self._upload_blob_from_url_options(
-            source_url=self._encode_source_url(source_url),
-            **kwargs)
-        try:
-            return self._client.block_blob.put_blob_from_url(**options)
-        except HttpResponseError as error:
-            process_storage_error(error)
 
     @distributed_trace
     def upload_blob(  # pylint: disable=too-many-locals
@@ -589,16 +391,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
-        :keyword tags:
-            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
-            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
-            and tag values must be between 0 and 256 characters.
-            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
-            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
-
-            .. versionadded:: 12.4.0
-
-        :paramtype tags: dict(str, str)
         :keyword bool overwrite: Whether the blob to be uploaded should overwrite the current data.
             If True, upload_blob will overwrite the existing data. If set to False, the
             operation will fail with ResourceExistsError. The exception to the above is with Append
@@ -639,12 +431,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags_match_condition:
-            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. ``\"\\\"tagname\\\"='my tag'\"``
-
-            .. versionadded:: 12.4.0
-
         :keyword ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
@@ -652,20 +438,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :keyword ~azure.storage.blob.StandardBlobTier standard_blob_tier:
             A standard blob tier value to set the blob to. For this version of the library,
             this is only applicable to block blobs on standard storage accounts.
-        :keyword ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
-            Specifies the immutability policy of a blob, blob snapshot or blob version.
-            Currently this parameter of upload_blob() API is for BlockBlob only.
-
-            .. versionadded:: 12.10.0
-                This was introduced in API version '2020-10-02'.
-
-        :keyword bool legal_hold:
-            Specified if a legal hold should be set on the blob.
-            Currently this parameter of upload_blob() API is for BlockBlob only.
-
-            .. versionadded:: 12.10.0
-                This was introduced in API version '2020-10-02'.
-
         :keyword int maxsize_condition:
             Optional conditional header. The max length in bytes permitted for
             the append blob. If the Append Block operation would cause the blob
@@ -680,14 +452,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword str encryption_scope:
-            A predefined encryption scope used to encrypt the data on the service. An encryption
-            scope can be created using the Management API and referenced here by name. If a default
-            encryption scope has been defined at the container, this value will override it if the
-            container-level scope is configured to allow overrides. Otherwise an error will be raised.
-
-            .. versionadded:: 12.2.0
-
         :keyword str encoding:
             Defaults to UTF-8.
         :keyword int timeout:
@@ -744,7 +508,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'config': self._config,
             'start_range': offset,
             'end_range': length,
-            'version_id': kwargs.pop('version_id', None),
             'validate_content': validate_content,
             'encryption_options': {
                 'required': self.require_encryption,
@@ -753,7 +516,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
             'cpk_info': cpk_info,
-            'cls': kwargs.pop('cls', None) or deserialize_blob_stream,
+            'cls': deserialize_blob_stream,
             'max_concurrency':kwargs.pop('max_concurrency', 1),
             'encoding': kwargs.pop('encoding', None),
             'timeout': kwargs.pop('timeout', None),
@@ -764,10 +527,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @distributed_trace
     def download_blob(self, offset=None, length=None, **kwargs):
-        # type: (Optional[int], Optional[int], **Any) -> StorageStreamDownloader
-        """Downloads a blob to the StorageStreamDownloader. The readall() method must
-        be used to read all the content or readinto() must be used to download the blob into
-        a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
+        # type: (Optional[int], Optional[int], **Any) -> Iterable[bytes]
+        """Downloads a blob to a stream with automatic chunking.
 
         :param int offset:
             Start of byte range to use for downloading a section of the blob.
@@ -775,13 +536,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param int length:
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
-        :keyword str version_id:
-            The version id parameter is an opaque DateTime
-            value that, when present, specifies the version of the blob to download.
-
-            .. versionadded:: 12.4.0
-            This keyword argument was introduced in API version '2019-12-12'.
-
         :keyword bool validate_content:
             If true, calculates an MD5 hash for each chunk of the blob. The storage
             service checks the hash of the content that has arrived with the hash
@@ -813,12 +567,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags_match_condition:
-            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. ``\"\\\"tagname\\\"='my tag'\"``
-
-            .. versionadded:: 12.4.0
-
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
@@ -832,7 +580,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
-        :returns: A streaming object (StorageStreamDownloader)
+        :returns: A iterable data generator (stream)
         :rtype: ~azure.storage.blob.StorageStreamDownloader
 
         .. admonition:: Example:
@@ -850,190 +598,32 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs)
         return StorageStreamDownloader(**options)
 
-    def _quick_query_options(self, query_expression,
-                             **kwargs):
-        # type: (str, **Any) -> Dict[str, Any]
-        delimiter = '\n'
-        input_format = kwargs.pop('blob_format', None)
-        if input_format == QuickQueryDialect.DelimitedJson:
-            input_format = DelimitedJsonDialect()
-        if input_format == QuickQueryDialect.DelimitedText:
-            input_format = DelimitedTextDialect()
-        input_parquet_format = input_format == "ParquetDialect"
-        if input_format and not input_parquet_format:
-            try:
-                delimiter = input_format.lineterminator
-            except AttributeError:
-                try:
-                    delimiter = input_format.delimiter
-                except AttributeError:
-                    raise ValueError("The Type of blob_format can only be DelimitedTextDialect or "
-                                     "DelimitedJsonDialect or ParquetDialect")
-        output_format = kwargs.pop('output_format', None)
-        if output_format == QuickQueryDialect.DelimitedJson:
-            output_format = DelimitedJsonDialect()
-        if output_format == QuickQueryDialect.DelimitedText:
-            output_format = DelimitedTextDialect()
-        if output_format:
-            if output_format == "ParquetDialect":
-                raise ValueError("ParquetDialect is invalid as an output format.")
-            try:
-                delimiter = output_format.lineterminator
-            except AttributeError:
-                try:
-                    delimiter = output_format.delimiter
-                except AttributeError:
-                    pass
-        else:
-            output_format = input_format if not input_parquet_format else None
-        query_request = QueryRequest(
-            expression=query_expression,
-            input_serialization=serialize_query_format(input_format),
-            output_serialization=serialize_query_format(output_format)
-        )
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = get_modify_conditions(kwargs)
-
-        cpk = kwargs.pop('cpk', None)
-        cpk_info = None
-        if cpk:
-            if self.scheme.lower() != 'https':
-                raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_info = CpkInfo(
-                encryption_key=cpk.key_value,
-                encryption_key_sha256=cpk.key_hash,
-                encryption_algorithm=cpk.algorithm
-            )
-        options = {
-            'query_request': query_request,
-            'lease_access_conditions': access_conditions,
-            'modified_access_conditions': mod_conditions,
-            'cpk_info': cpk_info,
-            'snapshot': self.snapshot,
-            'timeout': kwargs.pop('timeout', None),
-            'cls': return_headers_and_deserialized,
-        }
-        options.update(kwargs)
-        return options, delimiter
-
-    @distributed_trace
-    def query_blob(self, query_expression, **kwargs):
-        # type: (str, **Any) -> BlobQueryReader
-        """Enables users to select/project on blob/or blob snapshot data by providing simple query expressions.
-        This operations returns a BlobQueryReader, users need to use readall() or readinto() to get query data.
-
-        :param str query_expression:
-            Required. a query statement.
-        :keyword Callable[~azure.storage.blob.BlobQueryError] on_error:
-            A function to be called on any processing errors returned by the service.
-        :keyword blob_format:
-            Optional. Defines the serialization of the data currently stored in the blob. The default is to
-            treat the blob data as CSV data formatted in the default dialect. This can be overridden with
-            a custom DelimitedTextDialect, or DelimitedJsonDialect or "ParquetDialect" (passed as a string or enum).
-            These dialects can be passed through their respective classes, the QuickQueryDialect enum or as a string
-        :paramtype blob_format: ~azure.storage.blob.DelimitedTextDialect or ~azure.storage.blob.DelimitedJsonDialect
-            or ~azure.storage.blob.QuickQueryDialect or str
-        :keyword output_format:
-            Optional. Defines the output serialization for the data stream. By default the data will be returned
-            as it is represented in the blob (Parquet formats default to DelimitedTextDialect).
-            By providing an output format, the blob data will be reformatted according to that profile.
-            This value can be a DelimitedTextDialect or a DelimitedJsonDialect or ArrowDialect.
-            These dialects can be passed through their respective classes, the QuickQueryDialect enum or as a string
-        :paramtype output_format: ~azure.storage.blob.DelimitedTextDialect or ~azure.storage.blob.DelimitedJsonDialect
-            or list[~azure.storage.blob.ArrowDialect] or ~azure.storage.blob.QuickQueryDialect or str
-        :keyword lease:
-            Required if the blob has an active lease. Value can be a BlobLeaseClient object
-            or the lease ID as a string.
-        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
-        :keyword ~datetime.datetime if_modified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only
-            if the resource has been modified since the specified time.
-        :keyword ~datetime.datetime if_unmodified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only if
-            the resource has not been modified since the specified date/time.
-        :keyword str etag:
-            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
-            and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition:
-            The match condition to use upon the etag.
-        :keyword str if_tags_match_condition:
-            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. ``\"\\\"tagname\\\"='my tag'\"``
-
-            .. versionadded:: 12.4.0
-
-        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
-            Encrypts the data on the service-side with the given key.
-            Use of customer-provided keys must be done over HTTPS.
-            As the encryption key itself is provided in the request,
-            a secure connection must be established to transfer the key.
-        :keyword int timeout:
-            The timeout parameter is expressed in seconds.
-        :returns: A streaming object (BlobQueryReader)
-        :rtype: ~azure.storage.blob.BlobQueryReader
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/blob_samples_query.py
-                :start-after: [START query]
-                :end-before: [END query]
-                :language: python
-                :dedent: 4
-                :caption: select/project on blob/or blob snapshot data by providing simple query expressions.
-        """
-        errors = kwargs.pop("on_error", None)
-        error_cls = kwargs.pop("error_cls", BlobQueryError)
-        encoding = kwargs.pop("encoding", None)
-        options, delimiter = self._quick_query_options(query_expression, **kwargs)
-        try:
-            headers, raw_response_body = self._client.blob.query(**options)
-        except HttpResponseError as error:
-            process_storage_error(error)
-        return BlobQueryReader(
-            name=self.blob_name,
-            container=self.container_name,
-            errors=errors,
-            record_delimiter=delimiter,
-            encoding=encoding,
-            headers=headers,
-            response=raw_response_body,
-            error_cls=error_cls)
-
     @staticmethod
-    def _generic_delete_blob_options(delete_snapshots=None, **kwargs):
-        # type: (str, **Any) -> Dict[str, Any]
+    def _generic_delete_blob_options(delete_snapshots=False, **kwargs):
+        # type: (bool, **Any) -> Dict[str, Any]
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
         if delete_snapshots:
             delete_snapshots = DeleteSnapshotsOptionType(delete_snapshots)
         options = {
             'timeout': kwargs.pop('timeout', None),
-            'snapshot': kwargs.pop('snapshot', None),  # this is added for delete_blobs
             'delete_snapshots': delete_snapshots or None,
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions}
         options.update(kwargs)
         return options
 
-    def _delete_blob_options(self, delete_snapshots=None, **kwargs):
-        # type: (str, **Any) -> Dict[str, Any]
+    def _delete_blob_options(self, delete_snapshots=False, **kwargs):
+        # type: (bool, **Any) -> Dict[str, Any]
         if self.snapshot and delete_snapshots:
             raise ValueError("The delete_snapshots option cannot be used with a specific snapshot.")
         options = self._generic_delete_blob_options(delete_snapshots, **kwargs)
         options['snapshot'] = self.snapshot
-        options['version_id'] = kwargs.pop('version_id', None)
-        options['blob_delete_type'] = kwargs.pop('blob_delete_type', None)
         return options
 
     @distributed_trace
-    def delete_blob(self, delete_snapshots=None, **kwargs):
-        # type: (str, **Any) -> None
+    def delete_blob(self, delete_snapshots=False, **kwargs):
+        # type: (bool, **Any) -> None
         """Marks the specified blob for deletion.
 
         The blob is later deleted during garbage collection.
@@ -1051,13 +641,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Required if the blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
              - "include": Deletes the blob along with all snapshots.
-        :keyword str version_id:
-            The version id parameter is an opaque DateTime
-            value that, when present, specifies the version of the blob to delete.
-
-            .. versionadded:: 12.4.0
-            This keyword argument was introduced in API version '2019-12-12'.
-
         :keyword lease:
             Required if the blob has an active lease. If specified, delete_blob only
             succeeds if the blob's lease is active and matches this ID. Value can be a
@@ -1080,12 +663,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags_match_condition:
-            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. ``\"\\\"tagname\\\"='my tag'\"``
-
-            .. versionadded:: 12.4.0
-
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -1102,7 +679,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._delete_blob_options(delete_snapshots=delete_snapshots, **kwargs)
         try:
             self._client.blob.delete(**options)
-        except HttpResponseError as error:
+        except StorageErrorException as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -1128,36 +705,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         try:
             self._client.blob.undelete(timeout=kwargs.pop('timeout', None), **kwargs)
-        except HttpResponseError as error:
+        except StorageErrorException as error:
             process_storage_error(error)
-
-    @distributed_trace()
-    def exists(self, **kwargs):
-        # type: (**Any) -> bool
-        """
-        Returns True if a blob exists with the defined parameters, and returns
-        False otherwise.
-
-        :kwarg str version_id:
-            The version id parameter is an opaque DateTime
-            value that, when present, specifies the version of the blob to check if it exists.
-        :kwarg int timeout:
-            The timeout parameter is expressed in seconds.
-        :returns: boolean
-        """
-        try:
-            self._client.blob.get_properties(
-                snapshot=self.snapshot,
-                **kwargs)
-            return True
-        # Encrypted with CPK
-        except ResourceExistsError:
-            return True
-        except HttpResponseError as error:
-            try:
-                process_storage_error(error)
-            except ResourceNotFoundError:
-                return False
 
     @distributed_trace
     def get_blob_properties(self, **kwargs):
@@ -1169,13 +718,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
-        :keyword str version_id:
-            The version id parameter is an opaque DateTime
-            value that, when present, specifies the version of the blob to get properties.
-
-            .. versionadded:: 12.4.0
-            This keyword argument was introduced in API version '2019-12-12'.
-
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -1193,12 +735,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags_match_condition:
-            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. ``\"\\\"tagname\\\"='my tag'\"``
-
-            .. versionadded:: 12.4.0
-
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
@@ -1229,24 +765,18 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
         try:
-            cls_method = kwargs.pop('cls', None)
-            if cls_method:
-                kwargs['cls'] = partial(deserialize_pipeline_response_into_cls, cls_method)
             blob_props = self._client.blob.get_properties(
                 timeout=kwargs.pop('timeout', None),
-                version_id=kwargs.pop('version_id', None),
                 snapshot=self.snapshot,
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
-                cls=kwargs.pop('cls', None) or deserialize_blob_properties,
+                cls=deserialize_blob_properties,
                 cpk_info=cpk_info,
                 **kwargs)
-        except HttpResponseError as error:
+        except StorageErrorException as error:
             process_storage_error(error)
         blob_props.name = self.blob_name
-        if isinstance(blob_props, BlobProperties):
-            blob_props.container = self.container_name
-            blob_props.snapshot = self.snapshot
+        blob_props.container = self.container_name
         return blob_props # type: ignore
 
     def _set_http_headers_options(self, content_settings=None, **kwargs):
@@ -1258,7 +788,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             blob_headers = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
                 blob_content_type=content_settings.content_type,
-                blob_content_md5=content_settings.content_md5,
+                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
                 blob_content_encoding=content_settings.content_encoding,
                 blob_content_language=content_settings.content_language,
                 blob_content_disposition=content_settings.content_disposition
@@ -1303,12 +833,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags_match_condition:
-            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. ``\"\\\"tagname\\\"='my tag'\"``
-
-            .. versionadded:: 12.4.0
-
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified)
@@ -1317,7 +841,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._set_http_headers_options(content_settings=content_settings, **kwargs)
         try:
             return self._client.blob.set_http_headers(**options) # type: ignore
-        except HttpResponseError as error:
+        except StorageErrorException as error:
             process_storage_error(error)
 
     def _set_blob_metadata_options(self, metadata=None, **kwargs):
@@ -1326,7 +850,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         headers.update(add_metadata_headers(metadata))
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
-        cpk_scope_info = get_cpk_scope_info(kwargs)
 
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
@@ -1339,9 +862,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'timeout': kwargs.pop('timeout', None),
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
-            'cpk_scope_info': cpk_scope_info,
-            'cpk_info': cpk_info,
             'cls': return_response_headers,
+            'cpk_info': cpk_info,
             'headers': headers}
         options.update(kwargs)
         return options
@@ -1377,25 +899,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags_match_condition:
-            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. ``\"\\\"tagname\\\"='my tag'\"``
-
-            .. versionadded:: 12.4.0
-
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword str encryption_scope:
-            A predefined encryption scope used to encrypt the data on the service. An encryption
-            scope can be created using the Management API and referenced here by name. If a default
-            encryption scope has been defined at the container, this value will override it if the
-            container-level scope is configured to allow overrides. Otherwise an error will be raised.
-
-            .. versionadded:: 12.2.0
-
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified)
@@ -1403,66 +911,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._set_blob_metadata_options(metadata=metadata, **kwargs)
         try:
             return self._client.blob.set_metadata(**options)  # type: ignore
-        except HttpResponseError as error:
+        except StorageErrorException as error:
             process_storage_error(error)
-
-    @distributed_trace
-    def set_immutability_policy(self, immutability_policy, **kwargs):
-        # type: (**Any) -> Dict[str, str]
-        """The Set Immutability Policy operation sets the immutability policy on the blob.
-
-        .. versionadded:: 12.10.0
-            This operation was introduced in API version '2020-10-02'.
-
-        :param ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
-            Specifies the immutability policy of a blob, blob snapshot or blob version.
-
-            .. versionadded:: 12.10.0
-                This was introduced in API version '2020-10-02'.
-
-        :keyword int timeout:
-            The timeout parameter is expressed in seconds.
-        :returns: Key value pairs of blob tags.
-        :rtype: Dict[str, str]
-        """
-
-        kwargs['immutability_policy_expiry'] = immutability_policy.expiry_time
-        kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
-        return self._client.blob.set_immutability_policy(cls=return_response_headers, **kwargs)
-
-    @distributed_trace
-    def delete_immutability_policy(self, **kwargs):
-        # type: (**Any) -> None
-        """The Delete Immutability Policy operation deletes the immutability policy on the blob.
-
-        .. versionadded:: 12.10.0
-            This operation was introduced in API version '2020-10-02'.
-
-        :keyword int timeout:
-            The timeout parameter is expressed in seconds.
-        :returns: Key value pairs of blob tags.
-        :rtype: Dict[str, str]
-        """
-
-        self._client.blob.delete_immutability_policy(**kwargs)
-
-    @distributed_trace
-    def set_legal_hold(self, legal_hold, **kwargs):
-        # type: (bool, **Any) -> Dict[str, Union[str, datetime, bool]]
-        """The Set Legal Hold operation sets a legal hold on the blob.
-
-        .. versionadded:: 12.10.0
-            This operation was introduced in API version '2020-10-02'.
-
-        :param bool legal_hold:
-            Specified if a legal hold should be set on the blob.
-        :keyword int timeout:
-            The timeout parameter is expressed in seconds.
-        :returns: Key value pairs of blob tags.
-        :rtype: Dict[str, Union[str, datetime, bool]]
-        """
-
-        return self._client.blob.set_legal_hold(legal_hold, cls=return_response_headers, **kwargs)
 
     def _create_page_blob_options(  # type: ignore
             self, size,  # type: int
@@ -1478,13 +928,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         headers.update(add_metadata_headers(metadata))
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
-        cpk_scope_info = get_cpk_scope_info(kwargs)
         blob_headers = None
         if content_settings:
             blob_headers = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
                 blob_content_type=content_settings.content_type,
-                blob_content_md5=content_settings.content_md5,
+                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
                 blob_content_encoding=content_settings.content_encoding,
                 blob_content_language=content_settings.content_language,
                 blob_content_disposition=content_settings.content_disposition
@@ -1499,19 +948,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
 
-        immutability_policy = kwargs.pop('immutability_policy', None)
-        if immutability_policy:
-            kwargs['immutability_policy_expiry'] = immutability_policy.expiry_time
-            kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
-
         if premium_page_blob_tier:
             try:
                 headers['x-ms-access-tier'] = premium_page_blob_tier.value  # type: ignore
             except AttributeError:
                 headers['x-ms-access-tier'] = premium_page_blob_tier  # type: ignore
-
-        blob_tags_string = serialize_blob_tags_header(kwargs.pop('tags', None))
-
         options = {
             'content_length': 0,
             'blob_content_length': size,
@@ -1520,10 +961,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'timeout': kwargs.pop('timeout', None),
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
-            'cpk_scope_info': cpk_scope_info,
-            'cpk_info': cpk_info,
-            'blob_tags_string': blob_tags_string,
             'cls': return_response_headers,
+            'cpk_info': cpk_info,
             'headers': headers}
         options.update(kwargs)
         return options
@@ -1552,16 +991,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
-        :keyword tags:
-            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
-            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
-            and tag values must be between 0 and 256 characters.
-            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
-            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
-
-            .. versionadded:: 12.4.0
-
-        :paramtype tags: dict(str, str)
         :keyword int sequence_number:
             Only for Page blobs. The sequence number is a user-controlled value that you can use to
             track requests. The value of the sequence number must be between 0
@@ -1570,18 +999,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
-        :keyword ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
-            Specifies the immutability policy of a blob, blob snapshot or blob version.
-
-            .. versionadded:: 12.10.0
-                This was introduced in API version '2020-10-02'.
-
-        :keyword bool legal_hold:
-            Specified if a legal hold should be set on the blob.
-
-            .. versionadded:: 12.10.0
-                This was introduced in API version '2020-10-02'.
-
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -1604,14 +1021,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword str encryption_scope:
-            A predefined encryption scope used to encrypt the data on the service. An encryption
-            scope can be created using the Management API and referenced here by name. If a default
-            encryption scope has been defined at the container, this value will override it if the
-            container-level scope is configured to allow overrides. Otherwise an error will be raised.
-
-            .. versionadded:: 12.2.0
-
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -1625,7 +1034,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs)
         try:
             return self._client.page_blob.create(**options) # type: ignore
-        except HttpResponseError as error:
+        except StorageErrorException as error:
             process_storage_error(error)
 
     def _create_append_blob_options(self, content_settings=None, metadata=None, **kwargs):
@@ -1636,13 +1045,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         headers.update(add_metadata_headers(metadata))
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
-        cpk_scope_info = get_cpk_scope_info(kwargs)
         blob_headers = None
         if content_settings:
             blob_headers = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
                 blob_content_type=content_settings.content_type,
-                blob_content_md5=content_settings.content_md5,
+                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
                 blob_content_encoding=content_settings.content_encoding,
                 blob_content_language=content_settings.content_language,
                 blob_content_disposition=content_settings.content_disposition
@@ -1656,23 +1064,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
 
-        immutability_policy = kwargs.pop('immutability_policy', None)
-        if immutability_policy:
-            kwargs['immutability_policy_expiry'] = immutability_policy.expiry_time
-            kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
-
-        blob_tags_string = serialize_blob_tags_header(kwargs.pop('tags', None))
-
         options = {
             'content_length': 0,
             'blob_http_headers': blob_headers,
             'timeout': kwargs.pop('timeout', None),
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
-            'cpk_scope_info': cpk_scope_info,
-            'cpk_info': cpk_info,
-            'blob_tags_string': blob_tags_string,
             'cls': return_response_headers,
+            'cpk_info': cpk_info,
             'headers': headers}
         options.update(kwargs)
         return options
@@ -1688,32 +1087,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
-        :keyword tags:
-            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
-            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
-            and tag values must be between 0 and 256 characters.
-            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
-            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
-
-            .. versionadded:: 12.4.0
-
-        :paramtype tags: dict(str, str)
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
-        :keyword ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
-            Specifies the immutability policy of a blob, blob snapshot or blob version.
-
-            .. versionadded:: 12.10.0
-                This was introduced in API version '2020-10-02'.
-
-        :keyword bool legal_hold:
-            Specified if a legal hold should be set on the blob.
-
-            .. versionadded:: 12.10.0
-                This was introduced in API version '2020-10-02'.
-
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -1736,14 +1113,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword str encryption_scope:
-            A predefined encryption scope used to encrypt the data on the service. An encryption
-            scope can be created using the Management API and referenced here by name. If a default
-            encryption scope has been defined at the container, this value will override it if the
-            container-level scope is configured to allow overrides. Otherwise an error will be raised.
-
-            .. versionadded:: 12.2.0
-
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -1755,7 +1124,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs)
         try:
             return self._client.append_blob.create(**options) # type: ignore
-        except HttpResponseError as error:
+        except StorageErrorException as error:
             process_storage_error(error)
 
     def _create_snapshot_options(self, metadata=None, **kwargs):
@@ -1764,7 +1133,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         headers.update(add_metadata_headers(metadata))
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
-        cpk_scope_info = get_cpk_scope_info(kwargs)
+
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -1777,9 +1146,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'timeout': kwargs.pop('timeout', None),
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
-            'cpk_scope_info': cpk_scope_info,
-            'cpk_info': cpk_info,
             'cls': return_response_headers,
+            'cpk_info': cpk_info,
             'headers': headers}
         options.update(kwargs)
         return options
@@ -1817,11 +1185,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags_match_condition:
-            Specify a SQL where clause on blob tags to operate only on destination blob with a matching value.
-
-            .. versionadded:: 12.4.0
-
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
@@ -1831,14 +1194,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword str encryption_scope:
-            A predefined encryption scope used to encrypt the data on the service. An encryption
-            scope can be created using the Management API and referenced here by name. If a default
-            encryption scope has been defined at the container, this value will override it if the
-            container-level scope is configured to allow overrides. Otherwise an error will be raised.
-
-            .. versionadded:: 12.2.0
-
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Snapshot ID, Etag, and last modified).
@@ -1856,7 +1211,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._create_snapshot_options(metadata=metadata, **kwargs)
         try:
             return self._client.blob.create_snapshot(**options) # type: ignore
-        except HttpResponseError as error:
+        except StorageErrorException as error:
             process_storage_error(error)
 
     def _start_copy_from_url_options(self, source_url, metadata=None, incremental_copy=False, **kwargs):
@@ -1871,44 +1226,16 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 headers['x-ms-source-lease-id'] = source_lease
 
         tier = kwargs.pop('premium_page_blob_tier', None) or kwargs.pop('standard_blob_tier', None)
-        requires_sync = kwargs.pop('requires_sync', None)
-        encryption_scope_str = kwargs.pop('encryption_scope', None)
-        source_authorization = kwargs.pop('source_authorization', None)
 
-        if not requires_sync and encryption_scope_str:
-            raise ValueError("Encryption_scope is only supported for sync copy, please specify requires_sync=True")
-        if source_authorization and incremental_copy:
-            raise ValueError("Source authorization tokens are not applicable for incremental copying.")
-        #
-        # TODO: refactor start_copy_from_url api in _blob_client.py. Call _generated/_blob_operations.py copy_from_url
-        #  when requires_sync=True is set.
-        #  Currently both sync copy and async copy are calling _generated/_blob_operations.py start_copy_from_url.
-        #  As sync copy diverges more from async copy, more problem will surface.
-        if encryption_scope_str:
-            headers.update({'x-ms-encryption-scope': encryption_scope_str})
+        if kwargs.get('requires_sync'):
+            headers['x-ms-requires-sync'] = str(kwargs.pop('requires_sync'))
 
-        if requires_sync is True:
-            headers['x-ms-requires-sync'] = str(requires_sync)
-            if source_authorization:
-                headers['x-ms-copy-source-authorization'] = source_authorization
-        else:
-            if source_authorization:
-                raise ValueError("Source authorization tokens are only applicable for synchronous copy operations.")
         timeout = kwargs.pop('timeout', None)
         dest_mod_conditions = get_modify_conditions(kwargs)
-        blob_tags_string = serialize_blob_tags_header(kwargs.pop('tags', None))
-
-        immutability_policy = kwargs.pop('immutability_policy', None)
-        if immutability_policy:
-            kwargs['immutability_policy_expiry'] = immutability_policy.expiry_time
-            kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
-
         options = {
             'copy_source': source_url,
-            'seal_blob': kwargs.pop('seal_destination_blob', None),
             'timeout': timeout,
             'modified_access_conditions': dest_mod_conditions,
-            'blob_tags_string': blob_tags_string,
             'headers': headers,
             'cls': return_response_headers,
         }
@@ -1980,28 +1307,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the previously copied snapshot are transferred to the destination.
             The copied snapshots are complete copies of the original snapshot and
             can be read or copied from as usual. Defaults to False.
-        :keyword tags:
-            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
-            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
-            and tag values must be between 0 and 256 characters.
-            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
-            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
-
-            .. versionadded:: 12.4.0
-
-        :paramtype tags: dict(str, str)
-        :keyword ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
-            Specifies the immutability policy of a blob, blob snapshot or blob version.
-
-            .. versionadded:: 12.10.0
-                This was introduced in API version '2020-10-02'.
-
-        :keyword bool legal_hold:
-            Specified if a legal hold should be set on the blob.
-
-            .. versionadded:: 12.10.0
-                This was introduced in API version '2020-10-02'.
-
         :keyword ~datetime.datetime source_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -2060,30 +1365,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             this is only applicable to block blobs on standard storage accounts.
         :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
-        :keyword bool seal_destination_blob:
-            Seal the destination append blob. This operation is only for append blob.
-
-            .. versionadded:: 12.4.0
-
         :keyword bool requires_sync:
             Enforces that the service will not return a response until the copy is complete.
-        :keyword str source_authorization:
-            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
-            the prefix of the source_authorization string. This option is only available when `incremental_copy` is
-            set to False and `requires_sync` is set to True.
-
-            .. versionadded:: 12.9.0
-
-        :keyword str encryption_scope:
-            A predefined encryption scope used to encrypt the data on the sync copied blob. An encryption
-            scope can be created using the Management API and referenced here by name. If a default
-            encryption scope has been defined at the container, this value will override it if the
-            container-level scope is configured to allow overrides. Otherwise an error will be raised.
-
-            .. versionadded:: 12.10.0
-
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
-        :rtype: dict[str, Union[str, ~datetime.datetime]]
+        :rtype: dict[str, str or ~datetime.datetime]
 
         .. admonition:: Example:
 
@@ -2095,7 +1380,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 :caption: Copy a blob from a URL.
         """
         options = self._start_copy_from_url_options(
-            source_url=self._encode_source_url(source_url),
+            source_url,
             metadata=metadata,
             incremental_copy=incremental_copy,
             **kwargs)
@@ -2103,7 +1388,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if incremental_copy:
                 return self._client.page_blob.copy_incremental(**options)
             return self._client.blob.start_copy_from_url(**options)
-        except HttpResponseError as error:
+        except StorageErrorException as error:
             process_storage_error(error)
 
     def _abort_copy_options(self, copy_id, **kwargs):
@@ -2149,7 +1434,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._abort_copy_options(copy_id, **kwargs)
         try:
             self._client.blob.abort_copy_from_url(**options)
-        except HttpResponseError as error:
+        except StorageErrorException as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -2186,12 +1471,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags_match_condition:
-            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. ``\"\\\"tagname\\\"='my tag'\"``
-
-            .. versionadded:: 12.4.0
-
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A BlobLeaseClient object.
@@ -2228,17 +1507,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :type standard_blob_tier: str or ~azure.storage.blob.StandardBlobTier
         :keyword ~azure.storage.blob.RehydratePriority rehydrate_priority:
             Indicates the priority with which to rehydrate an archived blob
-        :keyword str version_id:
-            The version id parameter is an opaque DateTime
-            value that, when present, specifies the version of the blob to download.
-
-            .. versionadded:: 12.4.0
-            This keyword argument was introduced in API version '2019-12-12'.
-        :keyword str if_tags_match_condition:
-            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. ``\"\\\"tagname\\\"='my tag'\"``
-
-            .. versionadded:: 12.4.0
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword lease:
@@ -2248,20 +1516,15 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :rtype: None
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = get_modify_conditions(kwargs)
         if standard_blob_tier is None:
             raise ValueError("A StandardBlobTier must be specified")
-        if self.snapshot and kwargs.get('version_id'):
-            raise ValueError("Snapshot and version_id cannot be set at the same time")
         try:
             self._client.blob.set_tier(
                 tier=standard_blob_tier,
-                snapshot=self.snapshot,
                 timeout=kwargs.pop('timeout', None),
-                modified_access_conditions=mod_conditions,
                 lease_access_conditions=access_conditions,
                 **kwargs)
-        except HttpResponseError as error:
+        except StorageErrorException as error:
             process_storage_error(error)
 
     def _stage_block_options(
@@ -2285,7 +1548,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             data = data[:length]
 
         validate_content = kwargs.pop('validate_content', False)
-        cpk_scope_info = get_cpk_scope_info(kwargs)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -2302,9 +1564,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'timeout': kwargs.pop('timeout', None),
             'lease_access_conditions': access_conditions,
             'validate_content': validate_content,
-            'cpk_scope_info': cpk_scope_info,
-            'cpk_info': cpk_info,
-            'cls': return_response_headers,
+            'cpk_info': cpk_info
         }
         options.update(kwargs)
         return options
@@ -2316,12 +1576,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             length=None,  # type: Optional[int]
             **kwargs
         ):
-        # type: (...) -> Dict[str, Any]
+        # type: (...) -> None
         """Creates a new block to be committed as part of a blob.
 
-        :param str block_id: A string value that identifies the block.
-             The string should be less than or equal to 64 bytes in size.
-             For a given blob, the block_id must be the same size for each block.
+        :param str block_id: A valid Base64 string value that identifies the
+             block. Prior to encoding, the string must be less than or equal to 64
+             bytes in size. For a given blob, the length of the value specified for
+             the block_id parameter must be the same size for each block.
         :param data: The blob data.
         :param int length: Size of the block.
         :keyword bool validate_content:
@@ -2344,18 +1605,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword str encryption_scope:
-            A predefined encryption scope used to encrypt the data on the service. An encryption
-            scope can be created using the Management API and referenced here by name. If a default
-            encryption scope has been defined at the container, this value will override it if the
-            container-level scope is configured to allow overrides. Otherwise an error will be raised.
-
-            .. versionadded:: 12.2.0
-
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: Blob property dict.
-        :rtype: dict[str, Any]
+        :rtype: None
         """
         options = self._stage_block_options(
             block_id,
@@ -2363,8 +1615,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             length=length,
             **kwargs)
         try:
-            return self._client.block_blob.stage_block(**options)
-        except HttpResponseError as error:
+            self._client.block_blob.stage_block(**options)
+        except StorageErrorException as error:
             process_storage_error(error)
 
     def _stage_block_from_url_options(
@@ -2376,7 +1628,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs
         ):
         # type: (...) -> Dict[str, Any]
-        source_authorization = kwargs.pop('source_authorization', None)
         if source_length is not None and source_offset is None:
             raise ValueError("Source offset value must not be None if length is set.")
         if source_length is not None:
@@ -2387,7 +1638,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if source_offset is not None:
             range_header, _ = validate_and_format_range_headers(source_offset, source_length)
 
-        cpk_scope_info = get_cpk_scope_info(kwargs)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -2396,7 +1646,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
         options = {
-            'copy_source_authorization': source_authorization,
             'block_id': block_id,
             'content_length': 0,
             'source_url': source_url,
@@ -2404,29 +1653,29 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'source_content_md5': bytearray(source_content_md5) if source_content_md5 else None,
             'timeout': kwargs.pop('timeout', None),
             'lease_access_conditions': access_conditions,
-            'cpk_scope_info': cpk_scope_info,
-            'cpk_info': cpk_info,
             'cls': return_response_headers,
+            'cpk_info': cpk_info
         }
         options.update(kwargs)
         return options
 
     @distributed_trace
     def stage_block_from_url(
-            self, block_id,  # type: Union[str, int]
+            self, block_id,  # type: str
             source_url,  # type: str
             source_offset=None,  # type: Optional[int]
             source_length=None,  # type: Optional[int]
             source_content_md5=None,  # type: Optional[Union[bytes, bytearray]]
             **kwargs
         ):
-        # type: (...) -> Dict[str, Any]
+        # type: (...) -> None
         """Creates a new block to be committed as part of a blob where
         the contents are read from a URL.
 
-        :param str block_id: A string value that identifies the block.
-             The string should be less than or equal to 64 bytes in size.
-             For a given blob, the block_id must be the same size for each block.
+        :param str block_id: A valid Base64 string value that identifies the
+             block. Prior to encoding, the string must be less than or equal to 64
+             bytes in size. For a given blob, the length of the value specified for
+             the block_id parameter must be the same size for each block.
         :param str source_url: The URL.
         :param int source_offset:
             Start of byte range to use for the block.
@@ -2444,32 +1693,20 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword str encryption_scope:
-            A predefined encryption scope used to encrypt the data on the service. An encryption
-            scope can be created using the Management API and referenced here by name. If a default
-            encryption scope has been defined at the container, this value will override it if the
-            container-level scope is configured to allow overrides. Otherwise an error will be raised.
-
-            .. versionadded:: 12.2.0
-
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :keyword str source_authorization:
-            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
-            the prefix of the source_authorization string.
-        :returns: Blob property dict.
-        :rtype: dict[str, Any]
+        :rtype: None
         """
         options = self._stage_block_from_url_options(
             block_id,
-            source_url=self._encode_source_url(source_url),
+            source_url,
             source_offset=source_offset,
             source_length=source_length,
             source_content_md5=source_content_md5,
             **kwargs)
         try:
-            return self._client.block_blob.stage_block_from_url(**options)
-        except HttpResponseError as error:
+            self._client.block_blob.stage_block_from_url(**options)
+        except StorageErrorException as error:
             process_storage_error(error)
 
     def _get_block_list_result(self, blocks):
@@ -2496,27 +1733,20 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
-        :keyword str if_tags_match_condition:
-            Specify a SQL where clause on blob tags to operate only on destination blob with a matching value.
-
-            .. versionadded:: 12.4.0
-
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A tuple of two lists - committed and uncommitted blocks
         :rtype: tuple(list(~azure.storage.blob.BlobBlock), list(~azure.storage.blob.BlobBlock))
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = get_modify_conditions(kwargs)
         try:
             blocks = self._client.block_blob.get_block_list(
                 list_type=block_list_type,
                 snapshot=self.snapshot,
                 timeout=kwargs.pop('timeout', None),
                 lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
                 **kwargs)
-        except HttpResponseError as error:
+        except StorageErrorException as error:
             process_storage_error(error)
         return self._get_block_list_result(blocks)
 
@@ -2549,14 +1779,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             blob_headers = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
                 blob_content_type=content_settings.content_type,
-                blob_content_md5=content_settings.content_md5,
+                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
                 blob_content_encoding=content_settings.content_encoding,
                 blob_content_language=content_settings.content_language,
                 blob_content_disposition=content_settings.content_disposition
             )
 
         validate_content = kwargs.pop('validate_content', False)
-        cpk_scope_info = get_cpk_scope_info(kwargs)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -2565,13 +1794,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
 
-        immutability_policy = kwargs.pop('immutability_policy', None)
-        if immutability_policy:
-            kwargs['immutability_policy_expiry'] = immutability_policy.expiry_time
-            kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
-
         tier = kwargs.pop('standard_blob_tier', None)
-        blob_tags_string = serialize_blob_tags_header(kwargs.pop('tags', None))
 
         options = {
             'blocks': block_lookup,
@@ -2581,11 +1804,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'modified_access_conditions': mod_conditions,
             'cls': return_response_headers,
             'validate_content': validate_content,
-            'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
-            'tier': tier.value if tier else None,
-            'blob_tags_string': blob_tags_string,
-            'headers': headers
+            'tier': tier.value if tier else None
         }
         options.update(kwargs)
         return options
@@ -2609,32 +1829,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict[str, str]
-        :keyword tags:
-            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
-            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
-            and tag values must be between 0 and 256 characters.
-            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
-            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
-
-            .. versionadded:: 12.4.0
-
-        :paramtype tags: dict(str, str)
         :keyword lease:
             Required if the blob has an active lease. Value can be a BlobLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
-        :keyword ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
-            Specifies the immutability policy of a blob, blob snapshot or blob version.
-
-            .. versionadded:: 12.10.0
-                This was introduced in API version '2020-10-02'.
-
-        :keyword bool legal_hold:
-            Specified if a legal hold should be set on the blob.
-
-            .. versionadded:: 12.10.0
-                This was introduced in API version '2020-10-02'.
-
         :keyword bool validate_content:
             If true, calculates an MD5 hash of the page content. The storage
             service checks the hash of the content that has arrived
@@ -2659,11 +1857,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags_match_condition:
-            Specify a SQL where clause on blob tags to operate only on destination blob with a matching value.
-
-            .. versionadded:: 12.4.0
-
         :keyword ~azure.storage.blob.StandardBlobTier standard_blob_tier:
             A standard blob tier value to set the blob to. For this version of the library,
             this is only applicable to block blobs on standard storage accounts.
@@ -2672,14 +1865,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword str encryption_scope:
-            A predefined encryption scope used to encrypt the data on the service. An encryption
-            scope can be created using the Management API and referenced here by name. If a default
-            encryption scope has been defined at the container, this value will override it if the
-            container-level scope is configured to allow overrides. Otherwise an error will be raised.
-
-            .. versionadded:: 12.2.0
-
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -2692,7 +1877,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs)
         try:
             return self._client.block_blob.commit_block_list(**options) # type: ignore
-        except HttpResponseError as error:
+        except StorageErrorException as error:
             process_storage_error(error)
 
     @distributed_trace
@@ -2705,12 +1890,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
         :type premium_page_blob_tier: ~azure.storage.blob.PremiumPageBlobTier
-        :keyword str if_tags_match_condition:
-            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. ``\"\\\"tagname\\\"='my tag'\"``
-
-            .. versionadded:: 12.4.0
-
         :keyword int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
@@ -2722,7 +1901,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :rtype: None
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = get_modify_conditions(kwargs)
         if premium_page_blob_tier is None:
             raise ValueError("A PremiumPageBlobTier must be specified")
         try:
@@ -2730,112 +1908,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 tier=premium_page_blob_tier,
                 timeout=kwargs.pop('timeout', None),
                 lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
                 **kwargs)
-        except HttpResponseError as error:
-            process_storage_error(error)
-
-    def _set_blob_tags_options(self, tags=None, **kwargs):
-        # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Any]
-        tags = serialize_blob_tags(tags)
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = get_modify_conditions(kwargs)
-
-        options = {
-            'tags': tags,
-            'lease_access_conditions': access_conditions,
-            'modified_access_conditions': mod_conditions,
-            'cls': return_response_headers}
-        options.update(kwargs)
-        return options
-
-    @distributed_trace
-    def set_blob_tags(self, tags=None, **kwargs):
-        # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Any]
-        """The Set Tags operation enables users to set tags on a blob or specific blob version, but not snapshot.
-            Each call to this operation replaces all existing tags attached to the blob. To remove all
-            tags from the blob, call this operation with no tags set.
-
-        .. versionadded:: 12.4.0
-            This operation was introduced in API version '2019-12-12'.
-
-        :param tags:
-            Name-value pairs associated with the blob as tag. Tags are case-sensitive.
-            The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
-            and tag values must be between 0 and 256 characters.
-            Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
-            space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
-        :type tags: dict(str, str)
-        :keyword str version_id:
-            The version id parameter is an opaque DateTime
-            value that, when present, specifies the version of the blob to add tags to.
-        :keyword bool validate_content:
-            If true, calculates an MD5 hash of the tags content. The storage
-            service checks the hash of the content that has arrived
-            with the hash that was sent. This is primarily valuable for detecting
-            bitflips on the wire if using http instead of https, as https (the default),
-            will already validate. Note that this MD5 hash is not stored with the
-            blob.
-        :keyword str if_tags_match_condition:
-            Specify a SQL where clause on blob tags to operate only on destination blob with a matching value.
-            eg. ``\"\\\"tagname\\\"='my tag'\"``
-        :keyword lease:
-            Required if the blob has an active lease. Value can be a BlobLeaseClient object
-            or the lease ID as a string.
-        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
-        :keyword int timeout:
-            The timeout parameter is expressed in seconds.
-        :returns: Blob-updated property dict (Etag and last modified)
-        :rtype: Dict[str, Any]
-        """
-        options = self._set_blob_tags_options(tags=tags, **kwargs)
-        try:
-            return self._client.blob.set_tags(**options)
-        except HttpResponseError as error:
-            process_storage_error(error)
-
-    def _get_blob_tags_options(self, **kwargs):
-        # type: (**Any) -> Dict[str, str]
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = get_modify_conditions(kwargs)
-
-        options = {
-            'version_id': kwargs.pop('version_id', None),
-            'snapshot': self.snapshot,
-            'lease_access_conditions': access_conditions,
-            'modified_access_conditions': mod_conditions,
-            'timeout': kwargs.pop('timeout', None),
-            'cls': return_headers_and_deserialized}
-        return options
-
-    @distributed_trace
-    def get_blob_tags(self, **kwargs):
-        # type: (**Any) -> Dict[str, str]
-        """The Get Tags operation enables users to get tags on a blob or specific blob version, or snapshot.
-
-        .. versionadded:: 12.4.0
-            This operation was introduced in API version '2019-12-12'.
-
-        :keyword str version_id:
-            The version id parameter is an opaque DateTime
-            value that, when present, specifies the version of the blob to add tags to.
-        :keyword str if_tags_match_condition:
-            Specify a SQL where clause on blob tags to operate only on destination blob with a matching value.
-            eg. ``\"\\\"tagname\\\"='my tag'\"``
-        :keyword lease:
-            Required if the blob has an active lease. Value can be a BlobLeaseClient object
-            or the lease ID as a string.
-        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
-        :keyword int timeout:
-            The timeout parameter is expressed in seconds.
-        :returns: Key value pairs of blob tags.
-        :rtype: Dict[str, str]
-        """
-        options = self._get_blob_tags_options(**kwargs)
-        try:
-            _, tags = self._client.blob.get_tags(**options)
-            return parse_tags(tags) # pylint: disable=protected-access
-        except HttpResponseError as error:
+        except StorageErrorException as error:
             process_storage_error(error)
 
     def _get_page_ranges_options( # type: ignore
@@ -2921,12 +1995,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags_match_condition:
-            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. ``\"\\\"tagname\\\"='my tag'\"``
-
-            .. versionadded:: 12.4.0
-
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns:
@@ -2944,80 +2012,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 ranges = self._client.page_blob.get_page_ranges_diff(**options)
             else:
                 ranges = self._client.page_blob.get_page_ranges(**options)
-        except HttpResponseError as error:
-            process_storage_error(error)
-        return get_page_ranges_result(ranges)
-
-    @distributed_trace
-    def get_page_range_diff_for_managed_disk(
-            self, previous_snapshot_url,  # type: str
-            offset=None, # type: Optional[int]
-            length=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]
-        """Returns the list of valid page ranges for a managed disk or snapshot.
-
-        .. note::
-            This operation is only available for managed disk accounts.
-
-        .. versionadded:: 12.2.0
-            This operation was introduced in API version '2019-07-07'.
-
-        :param previous_snapshot_url:
-            Specifies the URL of a previous snapshot of the managed disk.
-            The response will only contain pages that were changed between the target blob and
-            its previous snapshot.
-        :param int offset:
-            Start of byte range to use for getting valid page ranges.
-            If no length is given, all bytes after the offset will be searched.
-            Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the length must be a modulus of
-            512.
-        :param int length:
-            Number of bytes to use for getting valid page ranges.
-            If length is given, offset must be provided.
-            This range will return valid page ranges from the offset start up to
-            the specified length.
-            Pages must be aligned with 512-byte boundaries, the start offset
-            must be a modulus of 512 and the length must be a modulus of
-            512.
-        :keyword lease:
-            Required if the blob has an active lease. Value can be a BlobLeaseClient object
-            or the lease ID as a string.
-        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
-        :keyword ~datetime.datetime if_modified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only
-            if the resource has been modified since the specified time.
-        :keyword ~datetime.datetime if_unmodified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only if
-            the resource has not been modified since the specified date/time.
-        :keyword str etag:
-            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
-            and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition:
-            The match condition to use upon the etag.
-        :keyword int timeout:
-            The timeout parameter is expressed in seconds.
-        :returns:
-            A tuple of two lists of page ranges as dictionaries with 'start' and 'end' keys.
-            The first element are filled page ranges, the 2nd element is cleared page ranges.
-        :rtype: tuple(list(dict(str, str), list(dict(str, str))
-        """
-        options = self._get_page_ranges_options(
-            offset=offset,
-            length=length,
-            prev_snapshot_url=previous_snapshot_url,
-            **kwargs)
-        try:
-            ranges = self._client.page_blob.get_page_ranges_diff(**options)
-        except HttpResponseError as error:
+        except StorageErrorException as error:
             process_storage_error(error)
         return get_page_ranges_result(ranges)
 
@@ -3070,12 +2065,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags_match_condition:
-            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. ``\"\\\"tagname\\\"='my tag'\"``
-
-            .. versionadded:: 12.4.0
-
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -3085,7 +2074,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             sequence_number_action, sequence_number=sequence_number, **kwargs)
         try:
             return self._client.page_blob.update_sequence_number(**options) # type: ignore
-        except HttpResponseError as error:
+        except StorageErrorException as error:
             process_storage_error(error)
 
     def _resize_blob_options(self, size, **kwargs):
@@ -3144,12 +2133,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags_match_condition:
-            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. ``\"\\\"tagname\\\"='my tag'\"``
-
-            .. versionadded:: 12.4.0
-
         :keyword ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
@@ -3162,7 +2145,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._resize_blob_options(size, **kwargs)
         try:
             return self._client.page_blob.resize(**options) # type: ignore
-        except HttpResponseError as error:
+        except StorageErrorException as error:
             process_storage_error(error)
 
     def _upload_page_options( # type: ignore
@@ -3190,7 +2173,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if_sequence_number_equal_to=kwargs.pop('if_sequence_number_eq', None)
         )
         mod_conditions = get_modify_conditions(kwargs)
-        cpk_scope_info = get_cpk_scope_info(kwargs)
+
         validate_content = kwargs.pop('validate_content', False)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
@@ -3209,7 +2192,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'sequence_number_access_conditions': seq_conditions,
             'modified_access_conditions': mod_conditions,
             'validate_content': validate_content,
-            'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
             'cls': return_response_headers}
         options.update(kwargs)
@@ -3274,25 +2256,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags_match_condition:
-            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. ``\"\\\"tagname\\\"='my tag'\"``
-
-            .. versionadded:: 12.4.0
-
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword str encryption_scope:
-            A predefined encryption scope used to encrypt the data on the service. An encryption
-            scope can be created using the Management API and referenced here by name. If a default
-            encryption scope has been defined at the container, this value will override it if the
-            container-level scope is configured to allow overrides. Otherwise an error will be raised.
-
-            .. versionadded:: 12.2.0
-
         :keyword str encoding:
             Defaults to UTF-8.
         :keyword int timeout:
@@ -3307,7 +2275,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             **kwargs)
         try:
             return self._client.page_blob.upload_pages(**options) # type: ignore
-        except HttpResponseError as error:
+        except StorageErrorException as error:
             process_storage_error(error)
 
     def _upload_pages_from_url_options(  # type: ignore
@@ -3339,11 +2307,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if_sequence_number_less_than=kwargs.pop('if_sequence_number_lt', None),
             if_sequence_number_equal_to=kwargs.pop('if_sequence_number_eq', None)
         )
-        source_authorization = kwargs.pop('source_authorization', None)
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
         source_mod_conditions = get_source_conditions(kwargs)
-        cpk_scope_info = get_cpk_scope_info(kwargs)
+
         source_content_md5 = kwargs.pop('source_content_md5', None)
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
@@ -3354,7 +2321,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                                encryption_algorithm=cpk.algorithm)
 
         options = {
-            'copy_source_authorization': source_authorization,
             'source_url': source_url,
             'content_length': 0,
             'source_range': source_range,
@@ -3365,7 +2331,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'sequence_number_access_conditions': seq_conditions,
             'modified_access_conditions': mod_conditions,
             'source_modified_access_conditions': source_mod_conditions,
-            'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
             'cls': return_response_headers}
         options.update(kwargs)
@@ -3448,33 +2413,17 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The destination match condition to use upon the etag.
-        :keyword str if_tags_match_condition:
-            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. ``\"\\\"tagname\\\"='my tag'\"``
-
-            .. versionadded:: 12.4.0
-
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword str encryption_scope:
-            A predefined encryption scope used to encrypt the data on the service. An encryption
-            scope can be created using the Management API and referenced here by name. If a default
-            encryption scope has been defined at the container, this value will override it if the
-            container-level scope is configured to allow overrides. Otherwise an error will be raised.
-
-            .. versionadded:: 12.2.0
-
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :keyword str source_authorization:
-            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
-            the prefix of the source_authorization string.
         """
+
         options = self._upload_pages_from_url_options(
-            source_url=self._encode_source_url(source_url),
+            source_url=source_url,
             offset=offset,
             length=length,
             source_offset=source_offset,
@@ -3482,7 +2431,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         )
         try:
             return self._client.page_blob.upload_pages_from_url(**options)  # type: ignore
-        except HttpResponseError as error:
+        except StorageErrorException as error:
             process_storage_error(error)
 
     def _clear_page_options(self, offset, length, **kwargs):
@@ -3568,12 +2517,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags_match_condition:
-            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. ``\"\\\"tagname\\\"='my tag'\"``
-
-            .. versionadded:: 12.4.0
-
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
@@ -3587,7 +2530,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options = self._clear_page_options(offset, length, **kwargs)
         try:
             return self._client.page_blob.clear_pages(**options)  # type: ignore
-        except HttpResponseError as error:
+        except StorageErrorException as error:
             process_storage_error(error)
 
     def _append_block_options( # type: ignore
@@ -3621,7 +2564,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             )
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
-        cpk_scope_info = get_cpk_scope_info(kwargs)
+
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -3638,7 +2581,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'append_position_access_conditions': append_conditions,
             'modified_access_conditions': mod_conditions,
             'validate_content': validate_content,
-            'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
             'cls': return_response_headers}
         options.update(kwargs)
@@ -3698,12 +2640,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :keyword str if_tags_match_condition:
-            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. ``\"\\\"tagname\\\"='my tag'\"``
-
-            .. versionadded:: 12.4.0
-
         :keyword str encoding:
             Defaults to UTF-8.
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
@@ -3711,14 +2647,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword str encryption_scope:
-            A predefined encryption scope used to encrypt the data on the service. An encryption
-            scope can be created using the Management API and referenced here by name. If a default
-            encryption scope has been defined at the container, this value will override it if the
-            container-level scope is configured to allow overrides. Otherwise an error will be raised.
-
-            .. versionadded:: 12.2.0
-
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
@@ -3731,7 +2659,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         )
         try:
             return self._client.append_blob.append_block(**options) # type: ignore
-        except HttpResponseError as error:
+        except StorageErrorException as error:
             process_storage_error(error)
 
     def _append_block_from_url_options(  # type: ignore
@@ -3764,11 +2692,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 max_size=maxsize_condition,
                 append_position=appendpos_condition
             )
-        source_authorization = kwargs.pop('source_authorization', None)
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
         source_mod_conditions = get_source_conditions(kwargs)
-        cpk_scope_info = get_cpk_scope_info(kwargs)
+
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -3778,7 +2705,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                                encryption_algorithm=cpk.algorithm)
 
         options = {
-            'copy_source_authorization': source_authorization,
             'source_url': copy_source_url,
             'content_length': 0,
             'source_range': source_range,
@@ -3788,7 +2714,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'append_position_access_conditions': append_conditions,
             'modified_access_conditions': mod_conditions,
             'source_modified_access_conditions': source_mod_conditions,
-            'cpk_scope_info': cpk_scope_info,
             'cpk_info': cpk_info,
             'cls': return_response_headers,
             'timeout': kwargs.pop('timeout', None)}
@@ -3847,12 +2772,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The destination match condition to use upon the etag.
-        :keyword str if_tags_match_condition:
-            Specify a SQL where clause on blob tags to operate only on blob with a matching value.
-            eg. ``\"\\\"tagname\\\"='my tag'\"``
-
-            .. versionadded:: 12.4.0
-
         :keyword ~datetime.datetime source_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -3875,129 +2794,16 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
-        :keyword str encryption_scope:
-            A predefined encryption scope used to encrypt the data on the service. An encryption
-            scope can be created using the Management API and referenced here by name. If a default
-            encryption scope has been defined at the container, this value will override it if the
-            container-level scope is configured to allow overrides. Otherwise an error will be raised.
-
-            .. versionadded:: 12.2.0
-
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :keyword str source_authorization:
-            Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
-            the prefix of the source_authorization string.
         """
         options = self._append_block_from_url_options(
-            copy_source_url=self._encode_source_url(copy_source_url),
+            copy_source_url,
             source_offset=source_offset,
             source_length=source_length,
             **kwargs
         )
         try:
             return self._client.append_blob.append_block_from_url(**options) # type: ignore
-        except HttpResponseError as error:
+        except StorageErrorException as error:
             process_storage_error(error)
-
-    def _seal_append_blob_options(self, **kwargs):
-        # type: (...) -> Dict[str, Any]
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-
-        appendpos_condition = kwargs.pop('appendpos_condition', None)
-        append_conditions = None
-        if appendpos_condition is not None:
-            append_conditions = AppendPositionAccessConditions(
-                append_position=appendpos_condition
-            )
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = get_modify_conditions(kwargs)
-
-        options = {
-            'timeout': kwargs.pop('timeout', None),
-            'lease_access_conditions': access_conditions,
-            'append_position_access_conditions': append_conditions,
-            'modified_access_conditions': mod_conditions,
-            'cls': return_response_headers}
-        options.update(kwargs)
-        return options
-
-    @distributed_trace
-    def seal_append_blob(self, **kwargs):
-        # type: (...) -> Dict[str, Union[str, datetime, int]]
-        """The Seal operation seals the Append Blob to make it read-only.
-
-            .. versionadded:: 12.4.0
-
-        :keyword int appendpos_condition:
-            Optional conditional header, used only for the Append Block operation.
-            A number indicating the byte offset to compare. Append Block will
-            succeed only if the append position is equal to this number. If it
-            is not, the request will fail with the AppendPositionConditionNotMet error
-            (HTTP status code 412 - Precondition Failed).
-        :keyword lease:
-            Required if the blob has an active lease. Value can be a BlobLeaseClient object
-            or the lease ID as a string.
-        :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
-        :keyword ~datetime.datetime if_modified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only
-            if the resource has been modified since the specified time.
-        :keyword ~datetime.datetime if_unmodified_since:
-            A DateTime value. Azure expects the date value passed in to be UTC.
-            If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.
-            Specify this header to perform the operation only if
-            the resource has not been modified since the specified date/time.
-        :keyword str etag:
-            An ETag value, or the wildcard character (*). Used to check if the resource has changed,
-            and act according to the condition specified by the `match_condition` parameter.
-        :keyword ~azure.core.MatchConditions match_condition:
-            The match condition to use upon the etag.
-        :keyword int timeout:
-            The timeout parameter is expressed in seconds.
-        :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
-        :rtype: dict(str, Any)
-        """
-        options = self._seal_append_blob_options(**kwargs)
-        try:
-            return self._client.append_blob.seal(**options) # type: ignore
-        except HttpResponseError as error:
-            process_storage_error(error)
-
-    @distributed_trace
-    def _get_container_client(self): # pylint: disable=client-method-missing-kwargs
-        # type: (...) -> ContainerClient
-        """Get a client to interact with the blob's parent container.
-
-        The container need not already exist. Defaults to current blob's credentials.
-
-        :returns: A ContainerClient.
-        :rtype: ~azure.storage.blob.ContainerClient
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/blob_samples_containers.py
-                :start-after: [START get_container_client_from_blob_client]
-                :end-before: [END get_container_client_from_blob_client]
-                :language: python
-                :dedent: 8
-                :caption: Get container client from blob object.
-        """
-        from ._container_client import ContainerClient
-        if not isinstance(self._pipeline._transport, TransportWrapper): # pylint: disable = protected-access
-            _pipeline = Pipeline(
-                transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-                policies=self._pipeline._impl_policies # pylint: disable = protected-access
-            )
-        else:
-            _pipeline = self._pipeline   # pylint: disable = protected-access
-        return ContainerClient(
-            "{}://{}".format(self.scheme, self.primary_hostname), container_name=self.container_name,
-            credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
-            _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
-            require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function)
