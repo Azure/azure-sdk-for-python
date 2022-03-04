@@ -175,7 +175,7 @@ class EventHubConsumer(
         self._last_received_event = event_data
         return event_data
 
-    async def _callback_coroutine(self, batch, max_batch_size, max_wait_time):
+    async def _callback_task(self, batch, max_batch_size, max_wait_time):
         while self._callback_task_run:
             try:
                 async with self._message_buffer_lock:
@@ -197,7 +197,7 @@ class EventHubConsumer(
             except asyncio.CancelledError:
                 raise
 
-    async def _receive_coroutine(self):
+    async def _receive_task(self):
         max_retries = (
             self._client._config.max_retries  # pylint:disable=protected-access
         )
@@ -231,8 +231,8 @@ class EventHubConsumer(
     async def receive(self, batch=False, max_batch_size=300, max_wait_time=None) -> None:
         self._callback_task_run = True
         self._last_callback_called_time = time.time()
-        callback_task = asyncio.ensure_future(self._callback_coroutine(batch, max_batch_size, max_wait_time))
-        receive_task = asyncio.ensure_future(self._receive_coroutine())
+        callback_task = asyncio.ensure_future(self._callback_task(batch, max_batch_size, max_wait_time))
+        receive_task = asyncio.ensure_future(self._receive_task())
 
         try:
             await receive_task
