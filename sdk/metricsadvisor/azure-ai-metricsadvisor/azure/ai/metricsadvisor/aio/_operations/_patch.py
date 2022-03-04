@@ -66,13 +66,12 @@ from ..._operations._patch import (
 )
 from ...models import *
 
+
 async def _extract_data_default(deserializer, pipeline_response):
     response_json = pipeline_response.http_response.json()
-    list_of_elem = [
-        deserializer(l)
-        for l in response_json["value"]
-    ]
+    list_of_elem = [deserializer(l) for l in response_json["value"]]
     return response_json.get("@nextLink", None) or None, AsyncList(list_of_elem)
+
 
 class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGenerated, OperationMixinHelpers):
     def _paging_helper(
@@ -516,10 +515,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
             **kwargs
         )
         return self._paging_helper(
-            initial_request=initial_request,
-            next_request=next_request,
-            deserializer=AnomalyAlert.deserialize,
-            **kwargs
+            initial_request=initial_request, next_request=next_request, deserializer=AnomalyAlert.deserialize, **kwargs
         )
 
     def _list_anomalies_for_detection_configuration(
@@ -531,10 +527,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
     ):
         # type: (...) -> AsyncItemPaged[DataPointAnomaly]
         initial_request, next_request, kwargs = self._list_anomalies_for_detection_configuration_requests(
-            detection_configuration_id=detection_configuration_id,
-            start_time=start_time,
-            end_time=end_time,
-            **kwargs
+            detection_configuration_id=detection_configuration_id, start_time=start_time, end_time=end_time, **kwargs
         )
         return self._paging_helper(
             initial_request=initial_request,
@@ -574,10 +567,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         )
 
         return self._paging_helper(
-            initial_request=initial_request,
-            next_request=next_request,
-            deserializer=lambda x: x,
-            **kwargs
+            initial_request=initial_request, next_request=next_request, deserializer=lambda x: x, **kwargs
         )
 
     def _list_incidents_for_detection_configuration(
@@ -588,16 +578,10 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         **kwargs: Any
     ) -> AsyncItemPaged[AnomalyIncident]:
         initial_request, next_request, kwargs = self._list_incidents_for_detection_configuration_requests(
-            detection_configuration_id=detection_configuration_id,
-            start_time=start_time,
-            end_time=end_time,
-            **kwargs
+            detection_configuration_id=detection_configuration_id, start_time=start_time, end_time=end_time, **kwargs
         )
         return self._paging_helper(
-            initial_request=initial_request,
-            next_request=next_request,
-            deserializer=AnomalyIncident.serialize,
-            **kwargs
+            initial_request=initial_request, next_request=next_request, deserializer=AnomalyIncident.serialize, **kwargs
         )
 
     @distributed_trace
@@ -624,15 +608,10 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
     def list_metric_dimension_values(self, metric_id, dimension_name, **kwargs):
         # type: (str, str, Any) -> AsyncItemPaged[str]
         initial_request, next_request, kwargs = self._list_metric_dimension_values_requests(
-            metric_id=metric_id,
-            dimension_name=dimension_name,
-            **kwargs
+            metric_id=metric_id, dimension_name=dimension_name, **kwargs
         )
         return self._paging_helper(
-            initial_request=initial_request,
-            next_request=next_request,
-            deserializer=AnomalyIncident.serialize,
-            **kwargs
+            initial_request=initial_request, next_request=next_request, deserializer=AnomalyIncident.serialize, **kwargs
         )
 
     @distributed_trace
@@ -646,20 +625,15 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
     ):
         # type: (...) -> AsyncItemPaged[MetricSeriesData]
         initial_request, next_request, kwargs = self._list_metric_series_data_requests(
-            metric_id=metric_id,
-            series_keys=series_keys,
-            start_time=start_time,
-            end_time=end_time,
-            **kwargs
+            metric_id=metric_id, series_keys=series_keys, start_time=start_time, end_time=end_time, **kwargs
         )
+
         def _deserializer(series):
             generated = generated_models.MetricSeriesData.serialize(series)
             return MetricSeriesData._from_generated(generated)
+
         return self._paging_helper(
-            initial_request=initial_request,
-            next_request=next_request,
-            deserializer=_deserializer,
-            **kwargs
+            initial_request=initial_request, next_request=next_request, deserializer=_deserializer, **kwargs
         )
 
     @distributed_trace
@@ -694,10 +668,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
     ):
         # type: (...) -> AsyncItemPaged[EnrichmentStatus]
         initial_request, next_request, kwargs = self._list_metric_enrichment_status_requests(
-            metric_id=metric_id,
-            start_time=start_time,
-            end_time=end_time,
-            **kwargs
+            metric_id=metric_id, start_time=start_time, end_time=end_time, **kwargs
         )
         return self._paging_helper(
             initial_request=initial_request,
@@ -705,6 +676,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
             deserializer=EnrichmentStatus.deserialize,
             **kwargs
         )
+
 
 __all__ = ["MetricsAdvisorClientOperationsMixin"]
 
