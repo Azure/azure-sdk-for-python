@@ -2,6 +2,15 @@
 
 ### 4.3.0b3 (Unreleased)
 
+>[WARNING]
+>The default `Session` consistency bugfix will impact customers whose database accounts have a `Bounded Staleness` or `Strong`
+> consistency level, and were previously not sending `Session` as a consistency_level parameter when initializing
+> their clients.
+> Default consistency level for the sync and async clients is no longer "Session" and will instead be set to the 
+  consistency level of the user's cosmos account setting on initialization if not passed during client initialization. 
+> Please see [Consistency Levels in Azure Cosmos DB](https://docs.microsoft.com/azure/cosmos-db/consistency-levels) 
+> for more details on consistency levels, or the README section on this change [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos#note-on-client-consistency-levels).
+
 #### Features Added
 - Added support for split-proof queries for the async client
 
