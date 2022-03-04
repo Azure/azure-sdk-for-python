@@ -1,0 +1,42 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-receipt:analyze?stringIndexType=unicodeCodePoint\u0026api-version=2022-01-30-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "225",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b4 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "640b73e3-9b4e-11ec-af40-c8348e073d30"
+      },
+      "RequestBody": {
+        "urlSource": "\u003C_io.BufferedReader name=\u0027C:\\\\Users\\\\caperal\\\\Documents\\\\Python\\\\azure-sdk-for-python\\\\sdk\\\\formrecognizer\\\\azure-ai-formrecognizer\\\\tests\\\\sample_forms\\\\receipt\\\\contoso-receipt.png\u0027\u003E"
+      },
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "apim-request-id": "5da1e70b-a46e-4e74-8d8a-5843d31d2c57",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 04 Mar 2022 00:02:32 GMT",
+        "Server": "istio-envoy",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "10"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InvalidArgument",
+          "message": "Invalid argument.",
+          "innererror": {
+            "code": "InvalidContentSourceFormat",
+            "message": "Invalid content source: Url must be http or https."
+          }
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}
