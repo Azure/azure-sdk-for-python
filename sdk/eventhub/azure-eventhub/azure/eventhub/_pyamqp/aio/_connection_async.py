@@ -422,8 +422,7 @@ class Connection(object):
 
     async def _listen_one_frame(self, **kwargs):
         new_frame = await self._read_frame(**kwargs)
-        if await self._process_incoming_frame(*new_frame):
-            raise ValueError("Stop")  # Stop listening
+        return await self._process_incoming_frame(*new_frame)
 
     async def listen(self, wait=False, batch=1, **kwargs):
         try:
@@ -451,11 +450,9 @@ class Connection(object):
                     description="Connection was already closed."
                 )
                 return
-            try:
-                for _ in range(batch):
-                    await asyncio.ensure_future(self._listen_one_frame(**kwargs))
-            except ValueError:
-                pass
+            for _ in range(batch):
+                if await asyncio.ensure_future(self._listen_one_frame(**kwargs)):
+                    break
         except (OSError, IOError, SSLError, socket.error) as exc:
             self._error = AMQPConnectionError(
                 ErrorCondition.SocketError,
