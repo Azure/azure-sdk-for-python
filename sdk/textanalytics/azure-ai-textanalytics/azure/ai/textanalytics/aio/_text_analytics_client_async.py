@@ -38,8 +38,21 @@ from .._models import (
     AnalyzeSentimentResult,
     DocumentError,
     RecognizePiiEntitiesResult,
+    RecognizeEntitiesAction,
+    RecognizePiiEntitiesAction,
+    ExtractKeyPhrasesAction,
     _AnalyzeActionsType,
+    RecognizeLinkedEntitiesAction,
+    AnalyzeSentimentAction,
     AnalyzeHealthcareEntitiesResult,
+    ExtractSummaryAction,
+    ExtractSummaryResult,
+    RecognizeCustomEntitiesAction,
+    RecognizeCustomEntitiesResult,
+    SingleCategoryClassifyAction,
+    SingleCategoryClassifyResult,
+    MultiCategoryClassifyAction,
+    MultiCategoryClassifyResult,
 )
 from .._lro import TextAnalyticsOperationResourcePolling
 from ._lro_async import (
@@ -48,7 +61,7 @@ from ._lro_async import (
     AsyncAnalyzeHealthcareEntitiesLROPoller,
     AsyncAnalyzeActionsLROPoller,
 )
-from .._text_analytics_client import ActionInputTypes, ActionResultTypes
+
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -58,20 +71,19 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     """The Text Analytics API is a suite of text analytics web services built with best-in-class
     Microsoft machine learning algorithms. The API can be used to analyze unstructured text for
     tasks such as sentiment analysis, key phrase extraction, entities recognition,
-    and language detection. No training data is needed to use this API - just bring your text data.
+    and language detection, and more. No training data is needed to use this API - just bring your text data.
     This API uses advanced natural language processing techniques to deliver best in class predictions.
 
     Further documentation can be found in
-    https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview
+    https://docs.microsoft.com/azure/cognitive-services/language-service/overview
 
     :param str endpoint: Supported Cognitive Services or Text Analytics resource
-        endpoints (protocol and hostname, for example: https://westus2.api.cognitive.microsoft.com).
+        endpoints (protocol and hostname, for example: 'https://<resource-name>.cognitiveservices.azure.com').
     :param credential: Credentials needed for the client to connect to Azure.
         This can be the an instance of AzureKeyCredential if using a
         cognitive services/text analytics API key or a token credential
         from :mod:`azure.identity`.
-    :type credential: :class:`~azure.core.credentials.AzureKeyCredential`
-        or :class:`~azure.core.credentials_async.AsyncTokenCredential`
+    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials_async.AsyncTokenCredential
     :keyword str default_country_hint: Sets the default country_hint to use for all operations.
         Defaults to "US". If you don't want to use a country hint, pass the string "none".
     :keyword str default_language: Sets the default language to use for all operations.
@@ -125,8 +137,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         one. Scores close to one indicate 100% certainty that the identified
         language is true. See https://aka.ms/talangs for the list of enabled languages.
 
-        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/concepts/data-limits?tabs=version-3
-        for document length limits, maximum batch size, and supported text encoding.
+        See https://aka.ms/azsdk/textanalytics/data-limits for service data limits.
 
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and country_hint on a per-item basis you must
@@ -134,8 +145,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             dict representations of :class:`~azure.ai.textanalytics.DetectLanguageInput`, like
             `{"id": "1", "country_hint": "us", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.ai.textanalytics.DetectLanguageInput] or
-            list[dict[str, str]]
+            list[str] or list[~azure.ai.textanalytics.DetectLanguageInput] or list[dict[str, str]]
         :keyword str country_hint: Country of origin hint for the entire batch. Accepts two
             letter country codes specified by ISO 3166-1 alpha-2. Per-document
             country hints will take precedence over whole batch hints. Defaults to
@@ -207,8 +217,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         organizations, date/time, quantities, percentages, currencies, and more.
         For the list of supported entity types, check: https://aka.ms/taner
 
-        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/concepts/data-limits?tabs=version-3
-        for document length limits, maximum batch size, and supported text encoding.
+        See https://aka.ms/azsdk/textanalytics/data-limits for service data limits.
 
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
@@ -216,8 +225,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
-            list[dict[str, str]]
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -299,8 +307,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         "Bank Account", etc) in the document.  For the list of supported entity types,
         check https://aka.ms/tanerpii
 
-        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/concepts/data-limits?tabs=version-3
-        for document length limits, maximum batch size, and supported text encoding.
+        See https://aka.ms/azsdk/textanalytics/data-limits for service data limits.
 
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
@@ -308,8 +315,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
-            list[dict[str, str]]
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -413,8 +419,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         Roman god of war). Recognized entities are associated with URLs to a well-known
         knowledge base, like Wikipedia.
 
-        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/concepts/data-limits?tabs=version-3
-        for document length limits, maximum batch size, and supported text encoding.
+        See https://aka.ms/azsdk/textanalytics/data-limits for service data limits.
 
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
@@ -422,8 +427,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
-            list[dict[str, str]]
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -506,8 +510,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         were wonderful staff", the API returns the main talking points: "food"
         and "wonderful staff"
 
-        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/concepts/data-limits?tabs=version-3
-        for document length limits, maximum batch size, and supported text encoding.
+        See https://aka.ms/azsdk/textanalytics/data-limits for service data limits.
 
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
@@ -515,8 +518,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
-            list[dict[str, str]]
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
             If not set, uses "en" for English as default. Per-document language will
@@ -585,8 +587,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         each sentiment class (Positive, Negative, and Neutral) for the document
         and each sentence within it.
 
-        See https://docs.microsoft.com/azure/cognitive-services/text-analytics/concepts/data-limits?tabs=version-3
-        for document length limits, maximum batch size, and supported text encoding.
+        See https://aka.ms/azsdk/textanalytics/data-limits for service data limits.
 
         :param documents: The set of documents to process as part of this batch.
             If you wish to specify the ID and language on a per-item basis you must
@@ -594,8 +595,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
-            list[dict[str, str]]
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
         :keyword bool show_opinion_mining: Whether to mine the opinions of a sentence and conduct more
             granular analysis around the aspects of a product or service (also known as
             aspect-based sentiment analysis). If set to true, the returned
@@ -719,8 +719,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
-            list[dict[str, str]]
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
         :keyword str model_version: This value indicates which model will
             be used for scoring, e.g. "latest", "2019-10-01". If a model-version
             is not specified, the API will default to the latest, non-preview version.
@@ -858,9 +857,38 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     async def begin_analyze_actions(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        actions: ActionInputTypes,
+        actions: List[
+            Union[
+                RecognizeEntitiesAction,
+                RecognizeLinkedEntitiesAction,
+                RecognizePiiEntitiesAction,
+                ExtractKeyPhrasesAction,
+                AnalyzeSentimentAction,
+                ExtractSummaryAction,
+                RecognizeCustomEntitiesAction,
+                SingleCategoryClassifyAction,
+                MultiCategoryClassifyAction,
+            ]
+        ],
         **kwargs: Any,
-    ) -> AsyncAnalyzeActionsLROPoller[AsyncItemPaged[ActionResultTypes]]:
+    ) -> AsyncAnalyzeActionsLROPoller[
+        AsyncItemPaged[
+            List[
+                Union[
+                    RecognizeEntitiesResult,
+                    RecognizeLinkedEntitiesResult,
+                    RecognizePiiEntitiesResult,
+                    ExtractKeyPhrasesResult,
+                    AnalyzeSentimentResult,
+                    ExtractSummaryResult,
+                    RecognizeCustomEntitiesResult,
+                    SingleCategoryClassifyResult,
+                    MultiCategoryClassifyResult,
+                    DocumentError,
+                ]
+            ]
+        ]
+    ]:
         """Start a long-running operation to perform a variety of text analysis actions over a batch of documents.
 
         We recommend you use this function if you're looking to analyze larger documents, and / or
@@ -876,8 +904,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
             `{"id": "1", "language": "en", "text": "hello world"}`.
         :type documents:
-            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or
-            list[dict[str, str]]
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
         :param actions: A heterogeneous list of actions to perform on the input documents.
             Each action object encapsulates the parameters used for the particular action type.
             The action results will be in the same order of the input actions.
@@ -912,7 +939,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             :class:`~azure.ai.textanalytics.AnalyzeSentimentResult` of "world".
         :rtype:
             ~azure.ai.textanalytics.aio.AsyncAnalyzeActionsLROPoller[~azure.core.async_paging.AsyncItemPaged[
-            list[RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult,
+            list[RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult or
             ExtractKeyPhrasesResult or AnalyzeSentimentResult or ExtractSummaryAction or RecognizeCustomEntitiesResult
             or SingleCategoryClassifyResult or MultiCategoryClassifyResult or DocumentError]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError or NotImplementedError:
