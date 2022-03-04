@@ -482,21 +482,21 @@ class EventHubConsumerClient(ClientBaseAsync):
          the process of load-balance. The callback should be defined like: `on_error(partition_context, error)`.
          The `on_error` callback will also be called if an unhandled exception is raised during
          the `on_event` callback.
-        :paramtype on_error: Callable[[~azure.eventhub.aio.PartitionContext, Exception]]
+        :paramtype on_error: typing.Callable[[~azure.eventhub.aio.PartitionContext, Exception]]
         :keyword on_partition_initialize: The callback function that will be called after a consumer for a certain
          partition finishes initialization. It would also be called when a new internal partition consumer is created
          to take over the receiving process for a failed and closed internal partition consumer.
          The callback takes a single parameter: `partition_context`
          which contains the partition information. The callback should be defined
          like: `on_partition_initialize(partition_context)`.
-        :paramtype on_partition_initialize: Callable[[~azure.eventhub.aio.PartitionContext]]
+        :paramtype on_partition_initialize: typing.Callable[[~azure.eventhub.aio.PartitionContext]]
         :keyword on_partition_close: The callback function that will be called after a consumer for a certain
          partition is closed. It would be also called when error is raised during receiving after retry attempts are
          exhausted. The callback takes two parameters: `partition_context` which contains partition
          information and `reason` for the close. The callback should be defined like:
          `on_partition_close(partition_context, reason)`.
          Please refer to :class:`CloseReason<azure.eventhub.CloseReason>` for the various closing reasons.
-        :paramtype on_partition_close: Callable[[~azure.eventhub.aio.PartitionContext, ~azure.eventhub.CloseReason]]
+        :paramtype on_partition_close: typing.Callable[[~azure.eventhub.aio.PartitionContext, ~azure.eventhub.CloseReason]]
         :rtype: None
 
         .. admonition:: Example:
@@ -598,21 +598,21 @@ class EventHubConsumerClient(ClientBaseAsync):
          the process of load-balance. The callback should be defined like: `on_error(partition_context, error)`.
          The `on_error` callback will also be called if an unhandled exception is raised during
          the `on_event` callback.
-        :paramtype on_error: Callable[[~azure.eventhub.aio.PartitionContext, Exception]]
+        :paramtype on_error: typing.Callable[[~azure.eventhub.aio.PartitionContext, Exception]]
         :keyword on_partition_initialize: The callback function that will be called after a consumer for a certain
          partition finishes initialization. It would also be called when a new internal partition consumer is created
          to take over the receiving process for a failed and closed internal partition consumer.
          The callback takes a single parameter: `partition_context`
          which contains the partition information. The callback should be defined
          like: `on_partition_initialize(partition_context)`.
-        :paramtype on_partition_initialize: Callable[[~azure.eventhub.aio.PartitionContext]]
+        :paramtype on_partition_initialize: typing.Callable[[~azure.eventhub.aio.PartitionContext]]
         :keyword on_partition_close: The callback function that will be called after a consumer for a certain
          partition is closed. It would be also called when error is raised during receiving after retry attempts are
          exhausted. The callback takes two parameters: `partition_context` which contains partition
          information and `reason` for the close. The callback should be defined like:
          `on_partition_close(partition_context, reason)`.
          Please refer to :class:`CloseReason<azure.eventhub.CloseReason>` for the various closing reasons.
-        :paramtype on_partition_close: Callable[[~azure.eventhub.aio.PartitionContext, ~azure.eventhub.CloseReason]]
+        :paramtype on_partition_close: typing.Callable[[~azure.eventhub.aio.PartitionContext, ~azure.eventhub.CloseReason]]
         :rtype: None
 
         .. admonition:: Example:

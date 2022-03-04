@@ -153,7 +153,7 @@ class AvroEncoder(object):
          If callback function, it must have the following method signature:
          `(content: bytes, content_type: str, **kwargs) -> MessageType`, where `content` and `content_type`
          are positional parameters.
-        :paramtype message_type: Callable or None
+        :paramtype message_type: typing.Callable or None
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: Dict[str, Any]
         :rtype: MessageType or MessageContent

@@ -467,7 +467,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         :param message: The message to send in the management request.
         :paramtype message: Any
         :param callback: The callback which is used to parse the returning message.
-        :paramtype callback: Callable[int, ~uamqp.message.Message, str]
+        :paramtype callback: typing.Callable[int, ~uamqp.message.Message, str]
         :param keep_alive_associated_link: A boolean flag for keeping associated amqp sender/receiver link alive when
          executing operation on mgmt links.
         :param timeout: timeout in seconds executing the mgmt operation.
