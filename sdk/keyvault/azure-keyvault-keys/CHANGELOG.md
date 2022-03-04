@@ -7,6 +7,9 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- `KeyType` now ignores casing during declaration, which resolves a scenario where Key Vault
+  keys created with non-standard casing could not be fetched with the SDK
+  ([#22797](https://github.com/Azure/azure-sdk-for-python/issues/22797))
 
 ### Other Changes
 - (From 4.5.0b6) Python 2.7 is no longer supported. Please use Python version 3.6 or later.

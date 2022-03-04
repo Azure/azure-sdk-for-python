@@ -18,6 +18,7 @@ from azure.keyvault.keys import (
     KeyReleasePolicy,
     KeyRotationLifetimeAction,
     KeyRotationPolicyAction,
+    KeyType,
 )
 import pytest
 from six import byte2int
@@ -709,3 +710,15 @@ def test_custom_hook_policy():
 
     client = KeyClient("...", object(), custom_hook_policy=CustomHookPolicy())
     assert isinstance(client._client._config.custom_hook_policy, CustomHookPolicy)
+
+
+def test_case_insensitive_key_type():
+    """Ensure a KeyType can be created regardless of casing since the service can create keys with non-standard casing.
+    See https://github.com/Azure/azure-sdk-for-python/issues/22797
+    """
+    # KeyType with all upper-case value
+    assert KeyType("rsa") == KeyType.rsa
+    # KeyType with all lower-case value
+    assert KeyType("OCT") == KeyType.oct
+    # KeyType with mixed-case value
+    assert KeyType("oct-hsm") == KeyType.oct_hsm
