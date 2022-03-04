@@ -247,7 +247,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         :keyword file_last_write_time:
             Last write time for the file.
         :paramtype file_last_write_time:~datetime.datetime or str
-        :keyword dict(str,str) metadata:
+        :keyword Dict[str,str] metadata:
             A name-value pair to associate with a file storage object.
         :keyword lease:
             Required if the destination file has an active lease. Value can be a ShareLeaseClient object
@@ -377,7 +377,8 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
 
         :kwarg int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: boolean
+        :returns: True if the directory exists, False otherwise.
+        :rtype: bool
         """
         try:
             await self._client.directory.get_properties(**kwargs)
