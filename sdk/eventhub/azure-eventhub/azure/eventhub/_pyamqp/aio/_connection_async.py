@@ -452,6 +452,7 @@ class Connection(object):
                 return
             for _ in range(batch):
                 if await asyncio.ensure_future(self._listen_one_frame(**kwargs)):
+                    # TODO: compare the perf difference between ensure_future and direct await
                     break
         except (OSError, IOError, SSLError, socket.error) as exc:
             self._error = AMQPConnectionError(

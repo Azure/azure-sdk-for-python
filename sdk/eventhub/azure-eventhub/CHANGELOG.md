@@ -1,20 +1,11 @@
 # Release History
 
-## 5.8.0b3 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 5.8.0a3 (2022-03-08)
 
 ### Other Changes
 
-## 0.2.0a1 (unreleased)
+- Improved the performance of async sending and receiving.
 
-- Swapped out Proton dependency for uAMQP.
-
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/eventhub/azure-eventhub/HISTORY.png)
 ## 5.8.0a2 (2022-02-09)
 
 ### Features Added
