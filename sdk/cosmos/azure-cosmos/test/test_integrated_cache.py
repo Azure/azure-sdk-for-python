@@ -64,7 +64,7 @@ class TestIntegratedCache(unittest.TestCase):
         self.assertTrue(self.client.client_connection.last_request_headers[
                             headers.DedicatedGatewayCacheStaleness] == time_ms)
 
-        self.container.read_all_items()
+        self.container.read_all_items(max_integrated_cache_staleness_in_ms=time_ms)
         self.assertTrue(headers.DedicatedGatewayCacheStaleness in self.client.client_connection.last_request_headers)
         self.assertTrue(self.client.client_connection.last_request_headers[
                             headers.DedicatedGatewayCacheStaleness] == time_ms)
