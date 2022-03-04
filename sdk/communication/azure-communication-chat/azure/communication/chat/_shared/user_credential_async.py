@@ -16,11 +16,12 @@ from .utils_async import AsyncTimer
 class CommunicationTokenCredential(object):
     """Credential type used for authenticating to an Azure Communication service.
     :param str token: The token used to authenticate to an Azure Communication service.
-    :keyword callable token_refresher: The async token
-     refresher to provide capacity to fetch a fresh token. The returned token must be valid (expiration
-     date must be in the future).
+    :keyword token_refresher: The async token refresher to provide capacity to fetch a fresh token.
+     The returned token must be valid (expiration date must be in the future).
+    :paramtype token_refresher: Callable[[], Awaitable[AccessToken]]
     :keyword bool refresh_proactively: Whether to refresh the token proactively or not.
-    :raises: TypeError
+    :raises: TypeError if paramater 'token' is not a string
+    :raises: ValueError if the 'refresh_proactively' is enabled without providing the 'token_refresher' function.
     """
 
     _ON_DEMAND_REFRESHING_INTERVAL_MINUTES = 2
@@ -32,12 +33,12 @@ class CommunicationTokenCredential(object):
         self._token = create_access_token(token)
         self._token_refresher = kwargs.pop('token_refresher', None)
         self._refresh_proactively = kwargs.pop('refresh_proactively', False)
+        if(self._refresh_proactively and self._token_refresher is None):
+            raise ValueError("'token_refresher' must not be None.")
         self._timer = None
         self._async_mutex = Lock()
         self._lock = Condition(self._async_mutex)
         self._some_thread_refreshing = False
-        if self._refresh_proactively:
-            self._schedule_refresh()
 
     async def get_token(self, *scopes, **kwargs):  # pylint: disable=unused-argument
         # type (*str, **Any) -> AccessToken
@@ -117,13 +118,13 @@ class CommunicationTokenCredential(object):
     def _is_token_valid(cls, token):
         return get_current_utc_as_int() < token.expires_on
 
-    async def close(self) -> None:
-        pass
-
     async def __aenter__(self):
+        if self._refresh_proactively:
+            self._schedule_refresh()
         return self
 
     async def __aexit__(self, *args):
-        if self._timer is not None:
-            self._timer.cancel()
         await self.close()
+
+    async def close(self) -> None:
+        self._timer = None

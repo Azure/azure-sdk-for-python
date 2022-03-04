@@ -26,5 +26,4 @@ class AsyncTimer:
         await self._callback()
 
     def cancel(self):
-        if self._task is not None:
-            self._task.cancel()
+        self._task = None
