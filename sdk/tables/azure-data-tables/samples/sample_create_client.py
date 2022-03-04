@@ -22,7 +22,6 @@ USAGE:
     4) AZURE_STORAGE_ACCESS_KEY - the storage account access key
 """
 
-from datetime import datetime, timedelta
 from dotenv import find_dotenv, load_dotenv
 import os
 
