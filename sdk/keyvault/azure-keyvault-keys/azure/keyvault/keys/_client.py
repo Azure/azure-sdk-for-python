@@ -780,31 +780,29 @@ class KeyClient(KeyVaultClientBase):
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
-    def update_key_rotation_policy(self, key_name, **kwargs):
-        # type: (str, **Any) -> KeyRotationPolicy
+    def update_key_rotation_policy(self, key_name, policy, **kwargs):
+        # type: (str, KeyRotationPolicy, **Any) -> KeyRotationPolicy
         """Updates the rotation policy of a Key Vault key.
 
         This operation requires the keys/update permission.
 
         :param str key_name: The name of the key in the given vault.
+        :param policy: The new rotation policy for the key.
+        :type policy: ~azure.keyvault.keys.KeyRotationPolicy
 
-        :keyword policy: The new rotation policy for the key.
-        :paramtype policy: ~azure.keyvault.keys.KeyRotationPolicy
         :keyword lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a key. This will
-            override the lifetime actions of a provided ``policy``.
+            override the lifetime actions of the provided ``policy``.
         :paramtype lifetime_actions: Iterable[~azure.keyvault.keys.KeyRotationLifetimeAction]
         :keyword str expires_in: The expiry time of the policy that will be applied on new key versions, defined as an
             ISO 8601 duration. For example: 90 days is "P90D", 3 months is "P3M", and 48 hours is "PT48H". See
             `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_ for more information on ISO 8601 durations.
-            This will override the expiry time of a provided ``policy``.
+            This will override the expiry time of the provided ``policy``.
 
         :return: The updated rotation policy.
         :rtype: ~azure.keyvault.keys.KeyRotationPolicy
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        policy = kwargs.pop("policy", None)
-        lifetime_actions = kwargs.pop("lifetime_actions", getattr(policy, "lifetime_actions", None))
-
+        lifetime_actions = kwargs.pop("lifetime_actions", policy.lifetime_actions)
         if lifetime_actions:
             lifetime_actions = [
                 self._models.LifetimeActions(
@@ -816,9 +814,7 @@ class KeyClient(KeyVaultClientBase):
                 for action in lifetime_actions
             ]
 
-        attributes = self._models.KeyRotationPolicyAttributes(
-            expiry_time=kwargs.pop("expires_in", getattr(policy, "expires_in", None))
-        )
+        attributes = self._models.KeyRotationPolicyAttributes(expiry_time=kwargs.pop("expires_in", policy.expires_in))
         new_policy = self._models.KeyRotationPolicy(lifetime_actions=lifetime_actions, attributes=attributes)
         result = self._client.update_key_rotation_policy(
             vault_base_url=self._vault_url, key_name=key_name, key_rotation_policy=new_policy

@@ -629,9 +629,9 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         key_name = self.get_resource_name("rotation-key")
         self._create_rsa_key(client, key_name)
 
-        # updating a rotation policy without providing a full policy
+        # updating a rotation policy with an empty policy and override
         actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.rotate, time_after_create="P2M")]
-        updated_policy = client.update_key_rotation_policy(key_name, lifetime_actions=actions)
+        updated_policy = client.update_key_rotation_policy(key_name, KeyRotationPolicy(), lifetime_actions=actions)
         fetched_policy = client.get_key_rotation_policy(key_name)
         assert updated_policy.expires_in is None
         _assert_rotation_policies_equal(updated_policy, fetched_policy)

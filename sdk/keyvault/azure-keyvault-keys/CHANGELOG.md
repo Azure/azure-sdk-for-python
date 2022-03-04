@@ -3,12 +3,12 @@
 ## 4.5.0b7 (Unreleased)
 
 ### Features Added
-- `KeyClient.update_key_rotation_policy` accepts a `policy` keyword-only argument
-  ([#22981](https://github.com/Azure/azure-sdk-for-python/issues/22981))
 
 ### Breaking Changes
 > These changes do not impact the API of stable versions such as 4.4.0.
 > Only code written against a beta version such as 4.5.0b1 may be affected.
+- `KeyClient.update_key_rotation_policy` accepts a required `policy` argument
+  ([#22981](https://github.com/Azure/azure-sdk-for-python/issues/22981))
 - The optional `version` parameter in `KeyClient.release_key` is now a keyword-only argument
   ([#22981](https://github.com/Azure/azure-sdk-for-python/issues/22981))
 - Renamed the `name` parameter in `KeyClient.get_key_rotation_policy` and

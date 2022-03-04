@@ -320,18 +320,18 @@ class KeyRotationPolicy(object):
     :ivar str id: The identifier of the key rotation policy.
     :ivar lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a key.
     :type lifetime_actions: list[~azure.keyvault.keys.KeyRotationLifetimeAction]
-    :ivar str expires_in: The expiry time of the policy that will be applied on new key versions, defined as an ISO
-        8601 duration. For example, 90 days is "P90D".  See `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_
-        for more information on ISO 8601 durations.
+    :ivar str expires_in: The expiry time of the policy that will be applied on new key versions, defined as an ISO 8601
+        duration. For example, 90 days is "P90D".  See `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_ for
+        more information on ISO 8601 durations.
     :ivar created_on: When the policy was created, in UTC
     :type created_on: ~datetime.datetime
     :ivar updated_on: When the policy was last updated, in UTC
     :type updated_on: ~datetime.datetime
     """
 
-    def __init__(self, policy_id, **kwargs):
-        # type: (str, **Any) -> None
-        self.id = policy_id
+    def __init__(self, **kwargs):
+        # type: (**Any) -> None
+        self.id = kwargs.get("policy_id", None)
         self.lifetime_actions = kwargs.get("lifetime_actions", None)
         self.expires_in = kwargs.get("expires_in", None)
         self.created_on = kwargs.get("created_on", None)
