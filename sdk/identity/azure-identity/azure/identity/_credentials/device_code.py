@@ -48,7 +48,7 @@ class DeviceCodeCredential(InteractiveCredential):
         - ``user_code`` (str) the code the user must enter there
         - ``expires_on`` (datetime.datetime) the UTC time at which the code will expire
         If this argument isn't provided, the credential will print instructions to stdout.
-    :paramtype prompt_callback: Callable[str, str, ~datetime.datetime]
+    :paramtype prompt_callback: typing.Callable[str, str, ~datetime.datetime]
     :keyword AuthenticationRecord authentication_record: :class:`AuthenticationRecord` returned by :func:`authenticate`
     :keyword bool disable_automatic_authentication: if True, :func:`get_token` will raise
         :class:`AuthenticationRequiredError` when user interaction is required to acquire a token. Defaults to False.
