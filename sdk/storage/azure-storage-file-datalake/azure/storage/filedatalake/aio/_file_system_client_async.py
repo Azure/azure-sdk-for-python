@@ -7,8 +7,9 @@
 # pylint: disable=invalid-overridden-method
 import functools
 from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Dict, TYPE_CHECKING,
-    AsyncIterator)
+    Union, Optional, Any, Dict,
+    TYPE_CHECKING
+)
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace

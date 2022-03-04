@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from typing import Optional, Any, Union, TypeVar, Iterator
+from typing import Optional, Any, Union, TypeVar
 
 try:
     from urllib.parse import urlparse, quote, unquote
