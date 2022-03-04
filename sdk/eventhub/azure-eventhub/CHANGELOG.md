@@ -1,14 +1,10 @@
 # Release History
 
-## 5.8.0a3 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 5.8.0a3 (2022-03-08)
 
 ### Other Changes
+
+- Improved the performance of async sending and receiving.
 
 ## 5.8.0a2 (2022-02-09)
 
