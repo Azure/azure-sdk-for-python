@@ -17,8 +17,8 @@
 
 # Core
 # PRLabel: %Azure.Core
-/sdk/core/                                                           @lmazuel @xiangyan99 @johanste
-/sdk/core/azure-core/                                                @lmazuel @xiangyan99 @iscai-msft @kashifkhan
+/sdk/core/                                                           @lmazuel @annatisch @johanste
+/sdk/core/azure-core/                                                @lmazuel @annatisch @johanste @xiangyan99 @tjprescott @iscai-msft @kashifkhan
 /sdk/core/azure-mgmt-core/                                           @msyyc
 /sdk/core/azure-core-tracing-opencensus/                             @rakshith91
 /sdk/core/azure-core-tracing-opentelemetry/                          @rakshith91
