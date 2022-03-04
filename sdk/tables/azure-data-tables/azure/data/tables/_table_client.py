@@ -77,7 +77,7 @@ class TableClient(TablesBaseClient):
         """
         if not table_name:
             raise ValueError("Please specify a table name.")
-        _validate_table_name(table_name)
+        #_validate_table_name(table_name)
         self.table_name = table_name
         super(TableClient, self).__init__(endpoint, **kwargs)
 

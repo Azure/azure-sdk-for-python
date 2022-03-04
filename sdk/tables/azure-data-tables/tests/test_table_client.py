@@ -104,6 +104,36 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
         for table in tables:
             count += 1
 
+    @tables_decorator
+    @recorded_by_proxy
+    def test_table_names(self, tables_storage_account_name, tables_primary_storage_account_key):
+        import os
+        # storage_account_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
+        # storage_endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
+        # storage_account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
+        # storage_conn_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+        #     storage_account_name, storage_account_key, storage_endpoint_suffix
+        # )
+        # table_storage_service = TableServiceClient.from_connection_string(conn_str=storage_conn_string)
+        
+        # tests below should be success
+        # client = table_storage_service.create_table(table_name="tablestorage")
+        
+        # tests below should raise an error
+        # client = table_storage_service.create_table(table_name="1")
+        # error msg: azure.core.exceptions.HttpResponseError: The specified resource name length is not within the permissible limits.
+        # client = table_storage_service.create_table(table_name="ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt")
+        # error msg: azure.core.exceptions.HttpResponseError: The specified resource name length is not within the permissible limits.
+        # client = table_storage_service.create_table(table_name="////////////////////////////////////////////////////////////////////////////////////////")
+        # error msg: azure.core.exceptions.HttpResponseError: The specified resource name length is not within the permissible limits.
+        
+        cosmos_account_key = os.getenv("TABLES_PRIMARY_COSMOS_ACCOUNT_KEY")
+        cosmos_account_name = os.getenv("TABLES_COSMOS_ACCOUNT_NAME")
+        # table_cosmos_service = TableServiceClient(self.account_url(cosmos_account_name, "cosmos"), credential=cosmos_account_key)
+        # the creation of the TableServiceClient above is failed which says the credential is unsupported.
+        # tests below should be success
+        # client = table_cosmos_service.create_table(table_name="tablecosmos")
+
 
 class TestTableUnitTests(TableTestCase):
     tables_storage_account_name = "fake_storage_account"
