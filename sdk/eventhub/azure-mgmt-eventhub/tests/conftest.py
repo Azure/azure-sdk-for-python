@@ -30,3 +30,7 @@ import sys
 collect_ignore_glob = []
 if sys.version_info < (3, 5) or platform.python_implementation() == "PyPy":
     collect_ignore_glob.append("*_async.py")
+
+    add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
+    add_header_regex_sanitizer(key="Cookie", value="cookie;")
+    add_body_key_sanitizer(json_path="$..access_token", value="access_token")
