@@ -47,8 +47,7 @@ setup(
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
+        "Programming Language :: Python :: 3 :: Only",
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
@@ -66,13 +65,10 @@ setup(
     package_data={
         'pytyped': ['py.typed'],
     },
+    python_requires=">=3.6",
     install_requires=[
         'requests>=2.18.4',
         'six>=1.11.0',
+        "typing-extensions>=4.0.1",
     ],
-    extras_require={
-        ":python_version<'3.0'": ['azure-nspkg'],
-        ":python_version<'3.4'": ['enum34>=1.0.4'],
-        ":python_version<'3.5'": ['typing'],
-    }
 )

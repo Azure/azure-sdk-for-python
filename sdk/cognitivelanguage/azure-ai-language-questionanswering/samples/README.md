@@ -1,4 +1,4 @@
-.---
+---
 page_type: sample
 languages:
   - python
@@ -24,6 +24,10 @@ These sample programs show common scenarios for the QuestionAnswering client's o
 |[sample_query_knowledgebase.py][query_knowledgebase] and [sample_query_knowledgebase_async.py][query_knowledgebase_async]|Ask a question from a knowledge base|
 |[sample_chat.py][chat] and [sample_chat_async.py][chat_async]|Ask a follow-up question (chit-chat)|
 |[sample_query_text.py][query_text] and [sample_query_text_async.py][query_text_async]|Ask a question from provided text data|
+|[sample_create_and_deploy_project.py][create_and_deploy] and [sample_create_and_deploy_project_async.py][create_and_deploy_async]|sample for creating and deploying a Qna project|
+|[sample_export_import_project.py][export_import] and [sample_export_import_project_async.py][export_import_async]|sample for exporting and importing a project|
+|[sample_update_knowledge_sources.py][add_knowledge_sources] and [sample_update_knowledge_sources_async.py][add_knowledge_sources_async]|sample for adding knowledge sources|
+
 
 
 ### Prerequisites
@@ -55,5 +59,13 @@ pip install --pre azure-ai-language-questionanswering
 [chat_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/async_samples/sample_chat_async.py
 [query_text]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/sample_query_text.py
 [query_text_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/async_samples/sample_query_text_async.py
+
+[create_and_deploy]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/authoring/sample_create_and_deploy_project.py
+[create_and_deploy_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/authoring/async_samples/sample_create_and_deploy_project_async.py
+[export_import]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/authoring/sample_export_import_project.py
+[export_import_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/authoring/async_samples/sample_export_import_project_async.py
+[add_knowledge_sources]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/authoring/sample_update_knowledge_sources.py
+[add_knowledge_sources_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/authoring/async_samples/sample_update_knowledge_sources_async.py
+
 [pip]: https://pypi.org/project/pip/
 [azure_subscription]: https://azure.microsoft.com/free/

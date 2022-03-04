@@ -2,7 +2,7 @@ import asyncio
 import functools
 
 from .. import StorageTestCase
-from ...fake_async_credential import AsyncFakeCredential
+from ...fake_credentials_async import AsyncFakeCredential
 
 from azure_devtools.scenario_tests.patches import mock_in_unit_test
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function

@@ -1,14 +1,57 @@
 # Release History
 
-## 12.10.0b2 (Unreleased)
+## 12.10.0 (2022-03-08)
 
-### Features Added
+This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
 
-### Breaking Changes
+### Stable release of preview features
+- Added support for service version 2021-02-12, 2021-04-10.
+- Account level SAS tokens now supports two new permissions:
+    - `permanent_delete`
+    - `set_immutability_policy`
+- Encryption Scope is now supported for Sync Blob Copy (`copy_from_url()`).
+- Encryption Scope is now supported as a SAS permission.
+- Added support for blob names containing invalid XML characters. 
+  Previously \uFFFE and \uFFFF would fail if present in blob name.
+- Added support for listing system containers with get_blob_containers().
+- Added support for `find_blobs_by_tags()` on a container.
+- Added support for `Find (f)` container SAS permission.
 
 ### Bugs Fixed
+- Added all missing Service SAS permissions.
+- Fixed a bug that prevented `upload_blob()` from working with an OS pipe
+reader stream on Linux. (#23131)
 
-### Other Changes
+## 12.10.0b4 (2022-02-24)
+
+### Features Added
+- Updated clients to support both SAS and OAuth together.
+- Updated OAuth implementation to use the AAD scope returned in a Bearer challenge.
+
+### Bugs Fixed
+- Addressed a few `mypy` typing hint errors.
+
+## 12.10.0b3 (2022-02-08)
+
+This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
+
+### Features Added
+- Added support for service version 2021-04-10.
+- Added support for `find_blobs_by_tags()` on a container.
+- Added support for `Find (f)` container SAS permission.
+
+### Bugs Fixed
+- Update `azure-core` dependency to avoid inconsistent dependencies from being installed.
+
+## 12.10.0b2 (2021-12-13)
+
+### Features Added
+- Added support for service version 2021-02-12
+- Added support for blob names container invalid XML characters. Previously \uFFFE and \uFFFF would fail if present in blob name.
+- Added support for listing system containers with get_blob_containers().
+
+### Bugs Fixed
+- BlobPrefix for aio operations is now exposed to be imported, previously it was private.
 
 ## 12.10.0b1 (2021-11-08)
 **New Features**

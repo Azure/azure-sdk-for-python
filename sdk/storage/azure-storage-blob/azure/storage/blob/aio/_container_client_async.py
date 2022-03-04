@@ -30,10 +30,11 @@ from .._generated.models import SignedIdentifier
 from .._deserialize import deserialize_container_properties
 from .._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
 from .._container_client import ContainerClient as ContainerClientBase, _get_blob_name
-from .._models import ContainerProperties, BlobType, BlobProperties  # pylint: disable=unused-import
+from .._models import ContainerProperties, BlobType, BlobProperties, FilteredBlob  # pylint: disable=unused-import
 from ._list_blobs_helper import BlobPropertiesPaged, BlobPrefix
 from ._lease_async import BlobLeaseClient
 from ._blob_client_async import BlobClient
+from ._models import FilteredBlobPaged
 
 if TYPE_CHECKING:
     from .._models import PublicAccess
@@ -682,6 +683,38 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             results_per_page=results_per_page,
             delimiter=delimiter)
 
+    @distributed_trace
+    def find_blobs_by_tags(
+        self, filter_expression,  # type: str
+        **kwargs  # type: Optional[Any]
+    ):
+        # type: (...) -> AsyncItemPaged[FilteredBlob]
+        """Returns a generator to list the blobs under the specified container whose tags
+        match the given search expression.
+        The generator will lazily follow the continuation tokens returned by
+        the service.
+
+        :param str filter_expression:
+            The expression to find blobs whose tags matches the specified condition.
+            eg. "\"yourtagname\"='firsttag' and \"yourtagname2\"='secondtag'"
+        :keyword int results_per_page:
+            The max result per page when paginating.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: An iterable (auto-paging) response of FilteredBlob.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.BlobProperties]
+        """
+        results_per_page = kwargs.pop('results_per_page', None)
+        timeout = kwargs.pop('timeout', None)
+        command = functools.partial(
+            self._client.container.filter_blobs,
+            timeout=timeout,
+            where=filter_expression,
+            **kwargs)
+        return AsyncItemPaged(
+            command, results_per_page=results_per_page,
+            page_iterator_class=FilteredBlobPaged)
+
     @distributed_trace_async
     async def upload_blob(
             self, name,  # type: Union[str, BlobProperties]
@@ -902,6 +935,13 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         :param int length:
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
+        :keyword str version_id:
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to download.
+
+            .. versionadded:: 12.4.0
+            This keyword argument was introduced in API version '2019-12-12'.
+
         :keyword bool validate_content:
             If true, calculates an MD5 hash for each chunk of the blob. The storage
             service checks the hash of the content that has arrived with the hash
@@ -978,6 +1018,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         After specified number of days, blobs' data is removed from the service during garbage collection.
         Soft deleted blobs or snapshots are accessible through :func:`list_blobs()` specifying `include=["deleted"]`
         Soft-deleted blobs or snapshots can be restored using :func:`~BlobClient.undelete()`
+
+        The maximum number of blobs that can be deleted in a single request is 256.
 
         :param blobs:
             The blobs to delete. This can be a single blob, or multiple values can
@@ -1065,6 +1107,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         A block blob's tier determines Hot/Cool/Archive storage type.
         This operation does not update the blob's ETag.
 
+        The maximum number of blobs that can be updated in a single request is 256.
+
         :param standard_blob_tier:
             Indicates the tier to be set on all blobs. Options include 'Hot', 'Cool',
             'Archive'. The hot tier is optimized for storing data that is accessed
@@ -1127,6 +1171,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         **kwargs
     ) -> AsyncIterator[AsyncHttpResponse]:
         """Sets the page blob tiers on the blobs. This API is only supported for page blobs on premium accounts.
+
+        The maximum number of blobs that can be updated in a single request is 256.
 
         :param premium_page_blob_tier:
             A page blob tier value to set on all blobs to. The tier correlates to the size of the

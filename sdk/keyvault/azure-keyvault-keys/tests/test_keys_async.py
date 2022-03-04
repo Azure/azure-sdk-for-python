@@ -9,7 +9,7 @@ import functools
 import json
 import logging
 
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.keyvault.keys import (
     ApiVersion,
@@ -23,7 +23,7 @@ import pytest
 from six import byte2int
 
 from _shared.test_case_async import KeyVaultTestCase
-from _test_case import client_setup, get_attestation_token, get_decorator, get_release_policy, KeysTestCase
+from _test_case import client_setup, get_attestation_token, get_decorator, get_release_policy, is_public_cloud, KeysTestCase
 from test_key_client import _assert_lifetime_actions_equal, _assert_rotation_policies_equal
 
 
@@ -31,6 +31,7 @@ all_api_versions = get_decorator(is_async=True)
 only_hsm = get_decorator(only_hsm=True, is_async=True)
 only_hsm_7_3_preview = get_decorator(only_hsm=True, is_async=True, api_versions=[ApiVersion.V7_3_PREVIEW])
 only_vault_7_3_preview = get_decorator(only_vault=True, is_async=True, api_versions=[ApiVersion.V7_3_PREVIEW])
+only_7_3_preview = get_decorator(is_async=True, api_versions=[ApiVersion.V7_3_PREVIEW])
 logging_enabled = get_decorator(is_async=True, logging_enable=True)
 logging_disabled = get_decorator(is_async=True, logging_enable=False)
 
@@ -183,7 +184,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         ec_key_name = self.get_resource_name("crud-ec-key")
         tags = {"purpose": "unit test", "test name": "CreateECKeyTest"}
         ec_key = await self._create_ec_key(
-            client, enabled=True, key_name=ec_key_name, hardware_protected=True, tags=tags
+            client, enabled=True, key_name=ec_key_name, hardware_protected=is_hsm, tags=tags
         )
         assert ec_key.properties.enabled
         assert tags == ec_key.properties.tags
@@ -424,7 +425,10 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
                 # parts of the request are logged on new lines in a single message
-                request_sections = message.message.split("/n")
+                if "'/n" in message.message:
+                    request_sections = message.message.split("/n")
+                else:
+                    request_sections = message.message.split("\n")
                 for section in request_sections:
                     try:
                         # the body of the request should be JSON
@@ -455,7 +459,10 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
                 # parts of the request are logged on new lines in a single message
-                request_sections = message.message.split("/n")
+                if "'/n" in message.message:
+                    request_sections = message.message.split("/n")
+                else:
+                    request_sections = message.message.split("\n")
                 for section in request_sections:
                     try:
                         # the body of the request should be JSON
@@ -485,7 +492,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
             assert all(random_bytes != rb for rb in generated_random_bytes)
             generated_random_bytes.append(random_bytes)
 
-    @only_hsm_7_3_preview()
+    @only_7_3_preview()
     @client_setup
     async def test_key_release(self, client, **kwargs):
         attestation_uri = self._get_attestation_uri()
@@ -521,7 +528,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         release_result = await client.release_key(imported_key_name, attestation)
         assert release_result.value
 
-    @only_hsm_7_3_preview()
+    @only_7_3_preview()
     @client_setup
     async def test_update_release_policy(self, client, **kwargs):
         attestation_uri = self._get_attestation_uri()
@@ -530,7 +537,12 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         key = await self._create_rsa_key(
             client, key_name, hardware_protected=True, exportable=True, release_policy=release_policy
         )
-        assert key.properties.release_policy.encoded_policy
+
+        policy = json.loads(key.properties.release_policy.encoded_policy.decode())
+        claim_condition = policy["anyOf"][0]["anyOf"][0]["equals"]
+        # for some reason, claim_condition may be 'true' here for KV, but should be True here for MHSM
+        claim_condition = claim_condition if isinstance(claim_condition, bool) else json.loads(claim_condition)
+        assert claim_condition is True
 
         new_release_policy_json = {
             "anyOf": [
@@ -549,11 +561,51 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         policy_string = json.dumps(new_release_policy_json).encode()
         new_release_policy = KeyReleasePolicy(policy_string)
 
-        await self._update_key_properties(client, key, new_release_policy)
+        updated_key = await self._update_key_properties(client, key, new_release_policy)
+        updated_policy = json.loads(updated_key.properties.release_policy.encoded_policy.decode())
+        claim_condition = updated_policy["anyOf"][0]["anyOf"][0]["equals"]
+        claim_condition = claim_condition if isinstance(claim_condition, bool) else json.loads(claim_condition)
+        assert claim_condition is False
+
+    # Immutable policies aren't currently supported on Managed HSM
+    @only_vault_7_3_preview()
+    @client_setup
+    async def test_immutable_release_policy(self, client, **kwargs):
+        attestation_uri = self._get_attestation_uri()
+        release_policy = get_release_policy(attestation_uri, immutable=True)
+        key_name = self.get_resource_name("key-name")
+        key = await self._create_rsa_key(
+            client, key_name, hardware_protected=True, exportable=True, release_policy=release_policy
+        )
+        assert key.properties.release_policy.encoded_policy
+        assert key.properties.release_policy.immutable
+
+        new_release_policy_json = {
+            "anyOf": [
+                {
+                    "anyOf": [
+                        {
+                            "claim": "sdk-test",
+                            "equals": False
+                        }
+                    ],
+                    "authority": attestation_uri.rstrip("/") + "/"
+                }
+            ],
+            "version": "1.0.0"
+        }
+        policy_string = json.dumps(new_release_policy_json).encode()
+        new_release_policy = KeyReleasePolicy(policy_string, immutable=True)
+
+        with pytest.raises(HttpResponseError):
+            await self._update_key_properties(client, key, new_release_policy)
 
     @only_vault_7_3_preview()
     @client_setup
     async def test_key_rotation(self, client, **kwargs):
+        if (not is_public_cloud() and self.is_live):
+            pytest.skip("This test not supprot in usgov/china region. Follow up with service team.")
+
         key_name = self.get_resource_name("rotation-key")
         key = await self._create_rsa_key(client, key_name)
         rotated_key = await client.rotate_key(key_name)
@@ -566,6 +618,9 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
     @only_vault_7_3_preview()
     @client_setup
     async def test_key_rotation_policy(self, client, **kwargs):
+        if (not is_public_cloud() and self.is_live):
+            pytest.skip("This test not supprot in usgov/china region. Follow up with service team.")
+
         key_name = self.get_resource_name("rotation-key")
         await self._create_rsa_key(client, key_name)
 
@@ -616,7 +671,7 @@ class KeyVaultKeyTest(KeysTestCase, KeyVaultTestCase):
         assert "RSA-OAEP" == result.algorithm
         assert plaintext == result.plaintext
 
-        # try ommitting the key version
+        # try omitting the key version
         crypto_client = client.get_cryptography_client(key_name)
         # both clients should use the same generated client
         assert client._client == crypto_client._client

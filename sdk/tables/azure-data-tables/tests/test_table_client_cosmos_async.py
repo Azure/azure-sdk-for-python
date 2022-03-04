@@ -7,7 +7,8 @@ from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 import pytest
 import platform
 
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.data.tables.aio import TableServiceClient, TableClient
 from azure.data.tables import __version__ as VERSION
@@ -28,9 +29,10 @@ _CONNECTION_ENDPOINTS = {'table': 'TableEndpoint', 'cosmos': 'TableEndpoint'}
 
 _CONNECTION_ENDPOINTS_SECONDARY = {'table': 'TableSecondaryEndpoint', 'cosmos': 'TableSecondaryEndpoint'}
 
-class TestTableClient(AzureTestCase, AsyncTableTestCase):
+class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @cosmos_decorator_async
+    @recorded_by_proxy_async
     async def test_user_agent_default_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         service = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
 
@@ -50,6 +52,7 @@ class TestTableClient(AzureTestCase, AsyncTableTestCase):
             count += 1
 
     @cosmos_decorator_async
+    @recorded_by_proxy_async
     async def test_user_agent_custom_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         custom_app = "TestApp/v1.0"
         service = TableServiceClient(
@@ -83,6 +86,7 @@ class TestTableClient(AzureTestCase, AsyncTableTestCase):
             count += 1
 
     @cosmos_decorator_async
+    @recorded_by_proxy_async
     async def test_user_agent_append(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         service = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
 
@@ -416,6 +420,7 @@ class TestTableClientUnit(AsyncTableTestCase):
             assert service.credential.named_key.name == self.tables_cosmos_account_name
             assert service.credential.named_key.key == self.tables_primary_cosmos_account_key
             assert service._primary_hostname == 'local-machine:11002/custom/account/path'
+            assert service.scheme ==  'http'
 
         service = TableServiceClient(endpoint=custom_account_url)
         assert service.account_name == "custom"
@@ -423,6 +428,7 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert service._primary_hostname == 'local-machine:11002/custom/account/path'
         # mine doesnt have a question mark at the end
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
+        assert service.scheme ==  'http'
 
         service = TableClient(endpoint=custom_account_url, table_name="foo")
         assert service.account_name == "custom"
@@ -430,6 +436,7 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert service.credential == None
         assert service._primary_hostname == 'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
+        assert service.scheme ==  'http'
 
         service = TableClient.from_table_url("http://local-machine:11002/custom/account/path/foo" + self.sas_token.signature)
         assert service.account_name == "custom"
@@ -437,6 +444,7 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert service.credential == None
         assert service._primary_hostname == 'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
+        assert service.scheme ==  'http'
 
     @pytest.mark.asyncio
     async def test_create_table_client_with_complete_table_url_async(self):
@@ -499,6 +507,7 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert client.credential.named_key.name == 'localhost'
         assert client.credential.named_key.key == self.tables_primary_cosmos_account_key
         assert client._cosmos_endpoint
+        assert client.scheme ==  'http'
 
         client = TableServiceClient("http://localhost:8902/", credential=emulator_credential)
         assert client.url == "http://localhost:8902"
@@ -506,6 +515,7 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert client.credential.named_key.name == 'localhost'
         assert client.credential.named_key.key == self.tables_primary_cosmos_account_key
         assert client._cosmos_endpoint
+        assert client.scheme ==  'http'
 
         table = TableClient.from_connection_string(emulator_connstr, 'tablename')
         assert table.url == "http://localhost:8902"
@@ -514,6 +524,7 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert table.credential.named_key.name == 'localhost'
         assert table.credential.named_key.key == self.tables_primary_cosmos_account_key
         assert table._cosmos_endpoint
+        assert table.scheme ==  'http'
 
         table = TableClient("http://localhost:8902/", "tablename", credential=emulator_credential)
         assert table.url == "http://localhost:8902"
@@ -522,6 +533,7 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert table.credential.named_key.name == 'localhost'
         assert table.credential.named_key.key == self.tables_primary_cosmos_account_key
         assert table._cosmos_endpoint
+        assert table.scheme ==  'http'
 
         table = TableClient.from_table_url("http://localhost:8902/Tables('tablename')", credential=emulator_credential)
         assert table.url == "http://localhost:8902"
@@ -530,6 +542,7 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert table.credential.named_key.name == 'localhost'
         assert table.credential.named_key.key == self.tables_primary_cosmos_account_key
         assert table._cosmos_endpoint
+        assert table.scheme ==  'http'
 
     @pytest.mark.asyncio
     async def test_closing_pipeline_client_async(self):

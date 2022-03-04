@@ -23,7 +23,7 @@ import asyncio
 from dotenv import find_dotenv, load_dotenv
 import os
 
-from azure.containerregistry import TagOrder
+from azure.containerregistry import ArtifactTagOrder
 from azure.containerregistry.aio import ContainerRegistryClient
 from azure.identity.aio import DefaultAzureCredential
 
@@ -35,23 +35,21 @@ class DeleteTagsAsync(object):
     async def delete_tags(self):
         # [START list_repository_names]
         audience = "https://management.azure.com"
-        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+        endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         credential = DefaultAzureCredential()
-        client = ContainerRegistryClient(account_url, credential, audience=audience)
+        client = ContainerRegistryClient(endpoint, credential, audience=audience)
 
         async with client:
             async for repository in client.list_repository_names():
                 print(repository)
                 # [END list_repository_names]
 
-                # [START list_tag_properties]
                 # Keep the three most recent tags, delete everything else
                 tag_count = 0
-                async for tag in client.list_tag_properties(repository, order_by=TagOrder.LAST_UPDATE_TIME_DESCENDING):
+                async for tag in client.list_tag_properties(repository, order_by=ArtifactTagOrder.LAST_UPDATED_ON_DESCENDING):
                     tag_count += 1
                     if tag_count > 3:
                         await client.delete_tag(repository, tag.name)
-                # [END list_tag_properties]
 
 
 async def main():

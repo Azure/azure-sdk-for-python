@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -8,6 +7,7 @@ from datetime import datetime
 import functools
 from testcase import DocumentTranslationTest
 from preparer import DocumentTranslationPreparer, DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
+from devtools_testutils import recorded_by_proxy
 from azure.ai.translation.document import DocumentTranslationClient
 import pytest
 
@@ -16,73 +16,85 @@ DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClient
 
 class TestAllDocumentStatuses(DocumentTranslationTest):
 
-
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_document_statuses(self, client):
+    @recorded_by_proxy
+    def test_list_document_statuses(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         docs_count = 5
         target_language = "es"
 
         # submit and validate operation
-        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, language_code=target_language, wait=True)
+        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, language_code=target_language, wait=True, variables=variables)
 
         # list docs statuses
         doc_statuses = list(client.list_document_statuses(poller.id)) # convert from generic iterator to list
-        self.assertEqual(len(doc_statuses), docs_count)
+        assert len(doc_statuses) == docs_count
 
         for document in doc_statuses:
             self._validate_doc_status(document, target_language)
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_document_statuses_with_pagination(self, client):
+    @recorded_by_proxy
+    def test_list_document_statuses_with_pagination(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         docs_count = 10
         results_per_page = 2
         no_of_pages = docs_count // results_per_page
         target_language = "es"
 
         # submit and validate operation
-        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, language_code=target_language, wait=True)
+        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, language_code=target_language, wait=True, variables=variables)
 
         # check doc statuses
         doc_statuses_pages = list(client.list_document_statuses(translation_id=poller.id, results_per_page=results_per_page).by_page())
-        self.assertEqual(len(doc_statuses_pages), no_of_pages)
+        assert len(doc_statuses_pages) == no_of_pages
 
         # iterate by page
         for page in doc_statuses_pages:
             page_items = list(page)
-            self.assertLessEqual(len(page_items), results_per_page)
+            assert len(page_items) <=  results_per_page
             for document in page_items:
                 self._validate_doc_status(document, target_language)
-
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_document_statuses_with_skip(self, client):
+    @recorded_by_proxy
+    def test_list_document_statuses_with_skip(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         docs_count = 10
         skip = 2
         target_language = "es"
 
         # submit and validate operation
-        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, language_code=target_language, wait=True)
+        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, language_code=target_language, wait=True, variables=variables)
 
         # check doc statuses
         doc_statuses = list(client.list_document_statuses(translation_id=poller.id, skip=skip))
-        self.assertEqual(len(doc_statuses), docs_count - skip)
+        assert len(doc_statuses) == docs_count - skip
 
         # iterate over docs
         for document in doc_statuses:
             self._validate_doc_status(document, target_language)
-
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_document_statuses_filter_by_status(self, client):
+    @recorded_by_proxy
+    def test_list_document_statuses_filter_by_status(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         docs_count = 10
         target_language = "es"
 
         # submit and validate operation
-        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, language_code=target_language, wait=True)
+        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, language_code=target_language, wait=True, variables=variables)
 
         # list operations
         statuses = ["NotStarted"]
@@ -96,70 +108,83 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         statuses = ["Failed"]
         doc_statuses = list(client.list_document_statuses(poller.id, statuses=statuses))
         assert(len(doc_statuses) == 0)
-
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_document_statuses_filter_by_ids(self, client):
+    @recorded_by_proxy
+    def test_list_document_statuses_filter_by_ids(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         docs_count = 5
         target_language = "es"
 
         # submit and validate operation
-        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, language_code=target_language, wait=True)
+        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, language_code=target_language, wait=True, variables=variables)
 
         # filter ids
         doc_statuses = list(client.list_document_statuses(poller.id)) # convert from generic iterator to list
-        self.assertEqual(len(doc_statuses), docs_count)
+        assert len(doc_statuses) == docs_count
         ids = [doc.id for doc in doc_statuses]
         ids = ids[:docs_count//2]
 
         # do the testing
         doc_statuses = list(client.list_document_statuses(poller.id, document_ids=ids))
-        self.assertEqual(len(doc_statuses), len(ids))
+        assert len(doc_statuses) == len(ids)
         for document in doc_statuses:
             self._validate_doc_status(document, target_language, ids=ids)
-
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_document_statuses_order_by_creation_time_asc(self, client):
+    @recorded_by_proxy
+    def test_list_document_statuses_order_by_creation_time_asc(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         docs_count = 5
         target_language = "es"
 
         # submit and validate operation
-        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, language_code=target_language, wait=True)
+        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, language_code=target_language, wait=True, variables=variables)
 
         # check doc statuses
         doc_statuses = list(client.list_document_statuses(poller.id, order_by=["created_on asc"])) # convert from generic iterator to list
-        self.assertEqual(len(doc_statuses), docs_count)
+        assert len(doc_statuses) == docs_count
 
-        curr = datetime.min
+        current = datetime.min
         for document in doc_statuses:
-            assert(document.created_on.replace(tzinfo=None) >= curr.replace(tzinfo=None))
-            curr = document.created_on
-
+            assert(document.created_on.replace(tzinfo=None) >= current.replace(tzinfo=None))
+            current = document.created_on
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_document_statuses_order_by_creation_time_desc(self, client):
+    @recorded_by_proxy
+    def test_list_document_statuses_order_by_creation_time_desc(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         docs_count = 5
         target_language = "es"
 
         # submit and validate operation
-        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, language_code=target_language, wait=True)
+        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, language_code=target_language, wait=True, variables=variables)
 
         # check doc statuses
         doc_statuses = list(client.list_document_statuses(poller.id, order_by=["created_on desc"])) # convert from generic iterator to list
-        self.assertEqual(len(doc_statuses), docs_count)
+        assert len(doc_statuses) == docs_count
 
-        curr = datetime.max
+        current = datetime.max
         for document in doc_statuses:
-            assert(document.created_on.replace(tzinfo=None) <= curr.replace(tzinfo=None))
-            curr = document.created_on
+            assert(document.created_on.replace(tzinfo=None) <= current.replace(tzinfo=None))
+            current = document.created_on
+        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    def test_list_document_statuses_mixed_filters(self, client):
+    @recorded_by_proxy
+    def test_list_document_statuses_mixed_filters(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
         docs_count = 10
         target_language = "es"
         skip = 1
@@ -167,11 +192,11 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
         statuses = ["Succeeded"]
 
         # submit and validate operation
-        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, language_code=target_language, wait=True)
+        poller = self._begin_and_validate_translation_with_multiple_docs(client, docs_count, language_code=target_language, wait=True, variables=variables)
 
         # get ids
         doc_statuses = list(client.list_document_statuses(poller.id)) # convert from generic iterator to list
-        self.assertEqual(len(doc_statuses), docs_count)
+        assert len(doc_statuses) == docs_count
         ids = [doc.id for doc in doc_statuses]
         ids = ids[:docs_count//2]
 
@@ -186,21 +211,22 @@ class TestAllDocumentStatuses(DocumentTranslationTest):
             skip=skip,
             results_per_page=results_per_page
         ).by_page()
-        self.assertIsNotNone(filtered_docs)
+        assert filtered_docs is not None
 
         # check statuses
         counter = 0
-        curr_time = datetime.min
+        current_time = datetime.min
         for page in filtered_docs:
             page_docs = list(page)
-            self.assertLessEqual(len(page_docs), results_per_page) # assert paging
+            assert len(page_docs) <=  results_per_page # assert paging
             for doc in page_docs:
                 counter += 1
                 # assert ordering
-                assert(doc.created_on.replace(tzinfo=None) >= curr_time.replace(tzinfo=None))
-                curr_time = doc.created_on
+                assert(doc.created_on.replace(tzinfo=None) >= current_time.replace(tzinfo=None))
+                current_time = doc.created_on
                 # assert filters
-                self.assertIn(doc.status, statuses)
-                self.assertIn(doc.id, ids)
+                assert doc.status in statuses
+                assert doc.id in ids
 
         assert(counter == len(ids) - skip)
+        return variables

@@ -1,3 +1,6 @@
+## _Disclaimer_
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 # Azure Cosmos DB SQL API client library for Python
 
 Azure Cosmos DB is a globally distributed, multi-model database service that supports document, key-value, wide-column, and graph databases.
@@ -23,7 +26,7 @@ New releases of this SDK won't support Python 2.x starting January 1st, 2022. Pl
 
 * Azure subscription - [Create a free account][azure_sub]
 * Azure [Cosmos DB account][cosmos_account] - SQL API
-* [Python 2.7 or 3.6+][python]
+* [Python 3.6+][python]
 
 If you need a Cosmos DB SQL API account, you can create one with this [Azure CLI][azure_cli] command:
 
@@ -111,7 +114,7 @@ Currently the features below are **not supported**. For alternatives options, ch
 * Change Feed: Read from the beggining
 * Change Feed: Pull model
 * Cross-partition ORDER BY for mixed types
-* Integrated Cache using the default consistency level, that is "Session". To take advantage of the new [Cosmos DB Integrated Cache](https://docs.microsoft.com/azure/cosmos-db/integrated-cache), it is required to explicitly set CosmosClient consistency level to "Eventual": `consistency_level= Eventual`.
+* Cross partition queries do not handle partition splits (410 Gone errors)
 
 ### Control Plane Limitations:
 
@@ -140,10 +143,6 @@ Typically you can use [Azure Portal](https://portal.azure.com/), [Azure Cosmos D
 ### AAD Support Workaround
 
 A possible workaround is to use managed identities to [programmatically](https://docs.microsoft.com/azure/cosmos-db/managed-identity-based-authentication) get the keys.
-
-## Consistency Level
-
-Please be aware that this SDK has "Session" as the default consistency level, and it **overrides** your Cosmos DB database account default option. Click [here](https://docs.microsoft.com/azure/cosmos-db/consistency-levels#eventual-consistency) to learn more about Cosmos DB consistency levels.
 
 ## Boolean Data Type
 
@@ -432,9 +431,10 @@ print(json.dumps(container_props['defaultTtl']))
 
 For more information on TTL, see [Time to Live for Azure Cosmos DB data][cosmos_ttl].
 
-### Using the asynchronous client
+### Using the asynchronous client (Preview)
 
 The asynchronous cosmos client is a separate client that looks and works in a similar fashion to the existing synchronous client. However, the async client needs to be imported separately and its methods need to be used with the async/await keywords.
+The Async client needs to be initialized and closed after usage. The example below shows how to do so by using the client's __aenter__() and close() methods.
 
 ```Python
 from azure.cosmos.aio import CosmosClient
@@ -442,13 +442,14 @@ import os
 
 URL = os.environ['ACCOUNT_URI']
 KEY = os.environ['ACCOUNT_KEY']
-client = CosmosClient(URL, credential=KEY)
 DATABASE_NAME = 'testDatabase'
-database = client.get_database_client(DATABASE_NAME)
-CONTAINER_NAME = 'products'
-container = database.get_container_client(CONTAINER_NAME)
+CONTAINER_NAME = 'products'    
 
-async def create_items():
+async def create_products():
+    client = CosmosClient(URL, credential=KEY)
+    await client.__aenter__()
+    database = client.get_database_client(DATABASE_NAME)
+    container = database.get_container_client(CONTAINER_NAME)
     for i in range(10):
         await container.upsert_item({
                 'id': 'item{0}'.format(i),
@@ -459,7 +460,7 @@ async def create_items():
     await client.close() # the async client must be closed manually if it's not initialized in a with statement
 ```
 
-It is also worth pointing out that the asynchronous client has to be closed manually after its use, either by initializing it using async with or calling the close() method directly like shown above.
+Instead of manually opening and closing the client, it is highly recommended to use the `async with` keywords. This creates a context manager that will initialize and later close the client once you're out of the statement. The example below shows how to do so.
 
 ```Python
 from azure.cosmos.aio import CosmosClient
@@ -470,19 +471,20 @@ KEY = os.environ['ACCOUNT_KEY']
 DATABASE_NAME = 'testDatabase'
 CONTAINER_NAME = 'products'
 
-async with CosmosClient(URL, credential=KEY) as client: # the with statement will automatically close the async client
-    database = client.get_database_client(DATABASE_NAME)
-    container = database.get_container_client(CONTAINER_NAME)
-    for i in range(10):
-        await container.upsert_item({
-                'id': 'item{0}'.format(i),
-                'productName': 'Widget',
-                'productModel': 'Model {0}'.format(i)
-            }
-        )
+async def create_products():
+    async with CosmosClient(URL, credential=KEY) as client: # the with statement will automatically initialize and close the async client
+        database = client.get_database_client(DATABASE_NAME)
+        container = database.get_container_client(CONTAINER_NAME)
+        for i in range(10):
+            await container.upsert_item({
+                    'id': 'item{0}'.format(i),
+                    'productName': 'Widget',
+                    'productModel': 'Model {0}'.format(i)
+                }
+            )
 ```
 
-### Queries with the asynchronous client
+### Queries with the asynchronous client (Preview)
 
 Unlike the synchronous client, the async client does not have an `enable_cross_partition` flag in the request. Queries without a specified partition key value will attempt to do a cross partition query by default. 
 

@@ -27,6 +27,7 @@ class _Constants(object):
     """Constants used in the azure-cosmos package"""
 
     UserConsistencyPolicy = "userConsistencyPolicy"
+    DefaultConsistencyLevel = "defaultConsistencyLevel"
 
     # GlobalDB related constants
     WritableLocations = "writableLocations"

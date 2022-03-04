@@ -30,6 +30,7 @@ async def sample_manage_models_async():
     from azure.core.credentials import AzureKeyCredential
     from azure.core.exceptions import ResourceNotFoundError
     from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
+    from azure.ai.formrecognizer import DocumentBuildMode
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
@@ -55,7 +56,7 @@ async def sample_manage_models_async():
         # [END list_models_async]
 
         # let's build a model to use for this sample
-        poller = await document_model_admin_client.begin_build_model(container_sas_url, description="model for sample")
+        poller = await document_model_admin_client.begin_build_model(container_sas_url, DocumentBuildMode.TEMPLATE, description="model for sample")
         model = await poller.result()
 
         # [START get_model_async]
@@ -80,5 +81,4 @@ async def main():
     await sample_manage_models_async()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

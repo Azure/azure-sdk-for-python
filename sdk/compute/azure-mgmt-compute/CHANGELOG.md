@@ -1,5 +1,97 @@
 # Release History
 
+## 26.1.0 (2022-02-28)
+
+**Features**
+
+  - Model Disk has a new parameter data_access_auth_mode
+  - Model DiskUpdate has a new parameter data_access_auth_mode
+  - Model GalleryImage has a new parameter architecture
+  - Model GalleryImageUpdate has a new parameter architecture
+  - Model PurchasePlan has a new parameter promotion_code
+  - Model Snapshot has a new parameter data_access_auth_mode
+  - Model SnapshotUpdate has a new parameter data_access_auth_mode
+  - Model SupportedCapabilities has a new parameter architecture
+  - Model VirtualMachineImage has a new parameter architecture
+
+## 26.0.0 (2022-02-14)
+
+**Features**
+
+  - Model Gallery has a new parameter sharing_status
+  - Model GalleryApplicationVersionPublishingProfile has a new parameter target_extended_locations
+  - Model GalleryArtifactPublishingProfileBase has a new parameter target_extended_locations
+  - Model GalleryImageVersionPublishingProfile has a new parameter target_extended_locations
+  - Model GalleryUpdate has a new parameter sharing_status
+  - Model OSDiskImageEncryption has a new parameter security_profile
+  - Model SharingProfile has a new parameter community_gallery_info
+
+**Breaking changes**
+
+  - Operation GalleriesOperations.get has a new signature
+
+## 25.0.0 (2022-01-28)
+
+**Features**
+
+  - Added operation DedicatedHostsOperations.begin_restart
+  - Model AutomaticRepairsPolicy has a new parameter repair_action
+  - Model CapacityReservation has a new parameter time_created
+  - Model CapacityReservationUpdate has a new parameter time_created
+  - Model DedicatedHost has a new parameter time_created
+  - Model DedicatedHostUpdate has a new parameter time_created
+  - Model ImageReference has a new parameter community_gallery_image_id
+  - Model ManagedDiskParameters has a new parameter security_profile
+  - Model RestorePoint has a new parameter instance_view
+  - Model RestorePoint has a new parameter source_restore_point
+  - Model VirtualMachine has a new parameter time_created
+  - Model VirtualMachineExtension has a new parameter protected_settings_from_key_vault
+  - Model VirtualMachineExtensionUpdate has a new parameter protected_settings_from_key_vault
+  - Model VirtualMachineScaleSet has a new parameter time_created
+  - Model VirtualMachineScaleSetExtension has a new parameter protected_settings_from_key_vault
+  - Model VirtualMachineScaleSetExtensionUpdate has a new parameter protected_settings_from_key_vault
+  - Model VirtualMachineScaleSetManagedDiskParameters has a new parameter security_profile
+  - Model VirtualMachineScaleSetOSProfile has a new parameter allow_extension_operations
+  - Model VirtualMachineScaleSetUpdatePublicIPAddressConfiguration has a new parameter public_ip_prefix
+  - Model VirtualMachineScaleSetVMExtension has a new parameter protected_settings_from_key_vault
+  - Model VirtualMachineScaleSetVMExtensionUpdate has a new parameter protected_settings_from_key_vault
+  - Model VirtualMachineScaleSetVMProfile has a new parameter hardware_profile
+  - Model VirtualMachineUpdate has a new parameter time_created
+
+**Breaking changes**
+
+  - Model PurchasePlan no longer has parameter promotion_code
+  - Operation RestorePointsOperations.get has a new signature
+  - Operation VirtualMachineScaleSetsOperations.force_recovery_service_fabric_platform_update_domain_walk has a new signature
+  - Operation VirtualMachineScaleSetsOperations.force_recovery_service_fabric_platform_update_domain_walk has a new signature
+  - Operation VirtualMachinesOperations.list has a new signature
+  - Operation VirtualMachinesOperations.list_all has a new signature
+
+## 24.0.1 (2022-01-17)
+
+**Bugfixes**
+
+  - Added support for Python3.6 back
+
+## 24.0.0 (2022-01-06)
+
+**Features**
+
+  - Model AccessUri has a new parameter security_data_access_sas
+  - Model CreationData has a new parameter security_data_uri
+  - Model DiskRestorePoint has a new parameter replication_state
+  - Model DiskRestorePoint has a new parameter source_resource_location
+  - Model DiskSecurityProfile has a new parameter secure_vm_disk_encryption_set_id
+  - Model GrantAccessData has a new parameter get_secure_vm_guest_state_sas
+  - Model PurchasePlan has a new parameter promotion_code
+  - Model RestorePoint has a new parameter time_created
+  - Model Snapshot has a new parameter security_profile
+  - Model SnapshotUpdate has a new parameter supported_capabilities
+
+**Breaking changes**
+
+  - Model RestorePoint no longer has parameter provisioning_details
+
 ## 23.1.0 (2021-10-12)
 
 **Features**

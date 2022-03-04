@@ -1,5 +1,23 @@
 # Release History
 
+## 2.1.0b2 (2022-02-28)
+
+**Features**
+
+  - Model ConfigurationStoreUpdateParameters has a new parameter enable_purge_protection
+
+## 2.1.0b1 (2022-02-16)
+
+**Features**
+
+  - Added operation ConfigurationStoresOperations.begin_purge_deleted
+  - Added operation ConfigurationStoresOperations.get_deleted
+  - Added operation ConfigurationStoresOperations.list_deleted
+  - Added operation Operations.regional_check_name_availability
+  - Model ConfigurationStore has a new parameter create_mode
+  - Model ConfigurationStore has a new parameter enable_purge_protection
+  - Model ConfigurationStore has a new parameter soft_delete_retention_in_days
+
 ## 2.0.0 (2021-06-21)
 
 **Features**

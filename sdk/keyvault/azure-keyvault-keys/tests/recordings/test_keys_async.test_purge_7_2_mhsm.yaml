@@ -9,7 +9,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey02750e04/create?api-version=7.2
   response:
@@ -29,7 +29,7 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestkey02750e04/create?api-version=7.2
+    url: https://mcpatinokvhsm.managedhsm.azure.net/keys/livekvtestkey02750e04/create?api-version=7.2
 - request:
     body: '{"kty": "RSA-HSM"}'
     headers:
@@ -40,605 +40,605 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey02750e04/create?api-version=7.2
   response:
     body:
-      string: '{"attributes":{"created":1620410449,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410449},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey02750e04/0c6736acf80d41e4089d67ec4f822de4","kty":"RSA-HSM","n":"6qkvU8k5Lcdy-ELYz4ktMYVTwnJlFKSA_mEdTnPKIbi4I-pcHm9teSk549TU9K3R1xYDyHTCbeDAESlwYeFpuWoIAqPHW6UxkI4yHWA6a6_S0Fw0VvjWEPoqrZkgn-0nRbT4lyRFD64YecQojPPizHj_QNrdb6yL0TZa58Io0vdQp3oH8QaTTN55o97ADae7ce7W3HEWlhVP2qqVoxsnB_Xvzqc85MS5Pulk5Y6LeOTBFIaOLbFIuhVCazWEoXCml2Y5WqUhK3T1KzynXo_lzVWOgHWA3yqL-UsWtCkAJNQwYFwJ72bMBXK4sAeXVaNrlhi01uCf5exytS4Sr5K7pw"}}'
+      string: '{"attributes":{"created":1643835450,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835450},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey02750e04/6114374b4f28481e0403a7fbb6b50c28","kty":"RSA-HSM","n":"iXqa58sEagPlvlCVNwwSKo46cWwUdWKIhX0QOSXwNMp5rCDj2ihRrKFyrD9u-FosIFdQo1-QoLwFxttBD9Z1sNXoHB_lkrMLPe-IayntJZhPp0ejMX83apwEWqdTHOML_lCuERtUFTQaKY5-dEbDtcIqtx3KGrWSo00eLTa8PU57mHBIXdVofVInMDyYvwKMfEwuhsR2yOIDeAk1NbfB0j6APjLT-ozA2ISM5rTDenMKFZ2TORlYGgfAXciDLkQAN0TsyAYpey2ZPWjBSp68GynKep5ZG_gZd54JJaBgH3WfljIpvGCaMfUCz7hlL_9RSli6dCmKjOqtcEIXIVnyRQ"}}'
     headers:
       cache-control: no-cache
-      content-length: '720'
+      content-length: '727'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
-      x-ms-server-latency: '235'
-    status:
-      code: 200
-      message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestkey02750e04/create?api-version=7.2
-- request:
-    body: '{"kty": "RSA-HSM"}'
-    headers:
-      Accept:
-      - application/json
-      Content-Length:
-      - '18'
-      Content-Type:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey12750e04/create?api-version=7.2
-  response:
-    body:
-      string: '{"attributes":{"created":1620410451,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410451},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey12750e04/1cddca5bcb444e0734893ea6bff06a4a","kty":"RSA-HSM","n":"uU0UbrLg03c8gNLDqwR1OiQrk7ahiekoU1hu-kxXXpgzXOZ_tSjQK_aiblt6lzMna9mEZrgOpMKm2ghT1FXsIUZ6_V9SR3ejqfG-Tqu4y-BgaOdDzCjrSUx8wQBrg7FYr3yvCDrbiwqUTeFDkoG7RNK_ss0cIFzfViDSXnMuOMgyhwhaDTn-EwXYeOsrLxZAxgbtk-cme6Z1auFe3lyRfVpMnmc2WWtyLWBbvPOwFCmL5pQmFw-ETDWOdQNTxhpxe_x6nxDBmNRKTePol2V9UEt6eFqHTAfzGpEMtBsjM2HZ98osV1NqCWeQChiQ_d1V-U55jRShipeySHnClYJI9Q"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '720'
-      content-security-policy: default-src 'self'
-      content-type: application/json; charset=utf-8
-      strict-transport-security: max-age=31536000; includeSubDomains
-      x-content-type-options: nosniff
-      x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
-      x-ms-server-latency: '271'
-    status:
-      code: 200
-      message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestkey12750e04/create?api-version=7.2
-- request:
-    body: '{"kty": "RSA-HSM"}'
-    headers:
-      Accept:
-      - application/json
-      Content-Length:
-      - '18'
-      Content-Type:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey22750e04/create?api-version=7.2
-  response:
-    body:
-      string: '{"attributes":{"created":1620410453,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410453},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey22750e04/8307eadb454c075ca7088efa1811670c","kty":"RSA-HSM","n":"suEU8I5RtwdGYTwCcwF7aqeLr70OktVI4EgVpY1vMwNHYgVl8Pv27RrWZVEZz0Lozfirw2xeN13upGFPznfjptnd9X-qUje5piGPZfC4Mh1HtXQRYKbc2eF3OxzL8N5iNyM31vmknlIm_wNnZr1ExJ98zlD-4vj70VKFTb48SQ4eCzb8Uc6QRDNMSBMViWGo7dgVwW0vxq86yIi24dYJ_8tbqs1zVxQDQxGjLIK6zxSM0wQ-aWT4Xm4e4i9DPb0sxhA6mNncO4Tp0Vf9g0rVTvjnDR0xh9tSOUUvfdwnjnHc8UCiLgnDZHZKLoiDgu5e-Mz0bY_MDsfwjizKb9r-kQ"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '720'
-      content-security-policy: default-src 'self'
-      content-type: application/json; charset=utf-8
-      strict-transport-security: max-age=31536000; includeSubDomains
-      x-content-type-options: nosniff
-      x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
-      x-ms-server-latency: '214'
-    status:
-      code: 200
-      message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestkey22750e04/create?api-version=7.2
-- request:
-    body: '{"kty": "RSA-HSM"}'
-    headers:
-      Accept:
-      - application/json
-      Content-Length:
-      - '18'
-      Content-Type:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey32750e04/create?api-version=7.2
-  response:
-    body:
-      string: '{"attributes":{"created":1620410456,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410456},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey32750e04/c0edf1e31a0f414c19f33bda60a162a2","kty":"RSA-HSM","n":"ik10ZecSYNKWqdTUp1BB5DyJYV8Ue1ll7bWl_BEZavJGqfzwh-WFsjvQnJ7EZZbhZwUn7y3ImhGUt7s9sPVZHM398LlsOcFb2gKaU8vJqnWAPNwSIf7fxNjgqNa3pslV0Ormub5XhxL7TmyJppqs7aFpBe1v9B_iWbA-84fuWYr2sv1eiBCmyVuheJvORKhY2QxdLDzyyBN4l1CuBrS1I61idUEAECAcRjGes_8CmT1QmaNJpQ9ADdJBz3EetPcI1gSyw8gMKbQC2SCywxJOrq9Vi1NAkRlIt0JGauGmzQx7k-8IDEMVubpikvP664rKynhftbM_ZXW8cM0dd6m4FQ"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '720'
-      content-security-policy: default-src 'self'
-      content-type: application/json; charset=utf-8
-      strict-transport-security: max-age=31536000; includeSubDomains
-      x-content-type-options: nosniff
-      x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
-      x-ms-server-latency: '247'
-    status:
-      code: 200
-      message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestkey32750e04/create?api-version=7.2
-- request:
-    body: '{"kty": "RSA-HSM"}'
-    headers:
-      Accept:
-      - application/json
-      Content-Length:
-      - '18'
-      Content-Type:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey42750e04/create?api-version=7.2
-  response:
-    body:
-      string: '{"attributes":{"created":1620410458,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410458},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey42750e04/281b5b2c4d764f0d8a8ef645bc20a7d3","kty":"RSA-HSM","n":"oloDZcXbRcmoPBIxb1GXXdk6CCgxS-OXVnlm-8FFkifVuyj29LvhlEvvxnluG5sFdkODuAQlydbvokyHiSS9wBsmtl8-3W6wBsTfoEC2xPrBkHOhxjgDjtnYk3pNXNLjWicC0EawAAHIhiJsMzDmyKe3_283lwgr2IVs3fDqO1OzEnda4VwCohou45yTJzMH6pk9dwkM8VLGTpo3Je_CfdmpXtz4og6JeiQkBg6v--wAncE-Ic5jmWOBuUkbTGKeeeLlFJZkKOZERFVgq7KwGjJlT2bGIckqaOU5qIiVWFd-esOMfuzr7egIiIpI2opibCmXKFvMraxKsPeZ3nfcPQ"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '720'
-      content-security-policy: default-src 'self'
-      content-type: application/json; charset=utf-8
-      strict-transport-security: max-age=31536000; includeSubDomains
-      x-content-type-options: nosniff
-      x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
-      x-ms-server-latency: '234'
-    status:
-      code: 200
-      message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestkey42750e04/create?api-version=7.2
-- request:
-    body: '{"kty": "RSA-HSM"}'
-    headers:
-      Accept:
-      - application/json
-      Content-Length:
-      - '18'
-      Content-Type:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey52750e04/create?api-version=7.2
-  response:
-    body:
-      string: '{"attributes":{"created":1620410460,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410460},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey52750e04/6490c46c64ff4b91b973f6dea6d495f6","kty":"RSA-HSM","n":"i6R79mjW5hdx6bbwy7Lq7ZwoU3NU2flEVok9ZYDgh_i8ojf5_DM79w_nQkFW_lrTgFhccusf061QoZwalxPvuQmSlPZEF222Wse1eP1jc2alPbzeeRKh3IeVbVzoKhzpHL8E5sDmnnanlZcp-4_uGbKASV4i1HM2nAaOGXvjtlowVqdO6w6lGrOJaJBdo5E2j5YMPYf8Y1-gcmptQGUupAJ1CPN5pGnWYDJrcacDvV24WrIIrRZsTFla7cYNcEq2v4PU8dEMw2f1MU_jd6hvJcqmLDMvstg8mvRpCqmANF7OK_Uz01LKEdCk-TdqV2bjdtE1xK63Z6cXIbJFQP8xvQ"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '720'
-      content-security-policy: default-src 'self'
-      content-type: application/json; charset=utf-8
-      strict-transport-security: max-age=31536000; includeSubDomains
-      x-content-type-options: nosniff
-      x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
-      x-ms-server-latency: '304'
-    status:
-      code: 200
-      message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestkey52750e04/create?api-version=7.2
-- request:
-    body: '{"kty": "RSA-HSM"}'
-    headers:
-      Accept:
-      - application/json
-      Content-Length:
-      - '18'
-      Content-Type:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
-    method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey62750e04/create?api-version=7.2
-  response:
-    body:
-      string: '{"attributes":{"created":1620410463,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410463},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey62750e04/db0e7d75570545dc9269452195bc1275","kty":"RSA-HSM","n":"oSL1i2oBIgaFrjvhkjSBRVuuprLHPkF5gvNUzywpNwdN-kwuwSsp_Vkm-Z8TS_XfZgXkrIipRoOP622yBQuO7R20wNk71XDnf3sIWlKpYIIkJkgC9tuTkxYWkNmF6eL6DAlfKysGBV20RcJHgq5OYaFHdMxXwJ9LYdtC1Qr1DyKYTZgm79b2nxk2Crh2CZEmHAP1p8hqR2Qf1RvVnvIxAdRic_nYeXZvz7UseopRBjX7YF1xWBnQ9t0EQnhsO2VbY-dwAXGHxcJoXytCpTBq51IMrCLYdHp-cDqCydBnUKooa1jCm7-MIZm5n-Zk8JwJo63B8s14008JArYLUgG9zQ"}}'
-    headers:
-      cache-control: no-cache
-      content-length: '720'
-      content-security-policy: default-src 'self'
-      content-type: application/json; charset=utf-8
-      strict-transport-security: max-age=31536000; includeSubDomains
-      x-content-type-options: nosniff
-      x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
+      x-ms-keyvault-region: westus2
       x-ms-server-latency: '216'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestkey62750e04/create?api-version=7.2
+    url: https://mcpatinokvhsm.managedhsm.azure.net/keys/livekvtestkey02750e04/create?api-version=7.2
+- request:
+    body: '{"kty": "RSA-HSM"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '18'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: POST
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey12750e04/create?api-version=7.2
+  response:
+    body:
+      string: '{"attributes":{"created":1643835452,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835452},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey12750e04/3fcb3d0fd3874024346528b7cc2a768b","kty":"RSA-HSM","n":"vD56yKExJrfk7KFvzjoIAzb0YvwDnA2CCtG_t_wC_kmh-NimW8-dGe3GrPfp7-QNuZYxsWN-LMzXx-zmfISA2q5IOvHmcbLN4geVVeRM6EgPifsrBjJ6Y4Gntx-J5ReSkX9czIEYIovT8WUQjkWgHuia-X_Y9x1s5t1GIHk9XaaUT25KPXycBYgiDP7cShb7WzploA042FIpc7vEB-5nrZo-zhF5qC-TQhrz2uiEifh3Mb0B9FJohQ77ExdPV3tlMAI0kkV7SXzcc91hExBHLSa0Ak8kAv_2SYvLkhizi2cjuGPLmE8rd5CvDm3jzWFl2D2LtkU6JCS-EVjD9aoNOQ"}}'
+    headers:
+      cache-control: no-cache
+      content-length: '727'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
+      x-ms-keyvault-region: westus2
+      x-ms-server-latency: '217'
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinokvhsm.managedhsm.azure.net/keys/livekvtestkey12750e04/create?api-version=7.2
+- request:
+    body: '{"kty": "RSA-HSM"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '18'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: POST
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey22750e04/create?api-version=7.2
+  response:
+    body:
+      string: '{"attributes":{"created":1643835454,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835454},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey22750e04/4426f27301a302259fb0136c86699e60","kty":"RSA-HSM","n":"jQS26pqfuTfQMttpW67qdv-kZiAIK5VlrYCqdPGBK-GQxWVBgWfvoqAUAQRG8G6BFeiVMqChsBO6mk6__W3tjBmSuBCsYLit1kArZIwld_drgaZyOyBCyNONeNSZJZ4gGkqjyHpvgWbboKPgdqudVFEok2DVRh2F2QWsGM_qD7IHNW6PRl1V_suAdq5dUhQ8jsmf61njefwXSa0tMsqFoT5VRTqPSwxhdYVDrF3IsOUZ53nJl9t_DMcKVOhp0ZjVRC-q9DzrIFcVxsCp50AqKNo7QZL53gPwuXx6xePeEnlPkkHishYCK_pVzhIhPCd8sFyFNlmhLzMvur34Q3ymMw"}}'
+    headers:
+      cache-control: no-cache
+      content-length: '727'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
+      x-ms-keyvault-region: westus2
+      x-ms-server-latency: '205'
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinokvhsm.managedhsm.azure.net/keys/livekvtestkey22750e04/create?api-version=7.2
+- request:
+    body: '{"kty": "RSA-HSM"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '18'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: POST
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey32750e04/create?api-version=7.2
+  response:
+    body:
+      string: '{"attributes":{"created":1643835457,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835457},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey32750e04/af84248806514f9e8b97b0dfd7ca2f5e","kty":"RSA-HSM","n":"rXBTuaVHWbCnlv_l-1HpHbAGwImHS57MjFiOk7RNFT37JwgwsZPg3jF6-gfDJeZ7siGphrcLqGx67cLUj7qYKLINmkeU3Xs6Ix65-T1TTqF62ge4Y22rJq5tAR4P9tQg7bDzd_vZNBgqq8-IYzWmOLnGBQUeyrFFp91aV2ObcQI0WPBuwn1Qtye8xk44KLcNUteV1EJSi20fGR-NoJeZoIUU4sZg5rWjKSDAXH7rENtWJM73BuevqbpewGjVPd2APNUln2ZOgjmWCaTriGqNiwykGDgd03gY-3gdZvdd2zmLLoabt8Up2J2g6B4jIeFeHNC7J4Jaml67f5yKxBnuuw"}}'
+    headers:
+      cache-control: no-cache
+      content-length: '727'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
+      x-ms-keyvault-region: westus2
+      x-ms-server-latency: '238'
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinokvhsm.managedhsm.azure.net/keys/livekvtestkey32750e04/create?api-version=7.2
+- request:
+    body: '{"kty": "RSA-HSM"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '18'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: POST
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey42750e04/create?api-version=7.2
+  response:
+    body:
+      string: '{"attributes":{"created":1643835459,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835459},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey42750e04/c572a5ddf2e402291fae645f6c2e5627","kty":"RSA-HSM","n":"luDO9KI6EmuYoMFEK2ND1RpwS8HnWIg1eaEhduJqyRF6Pz_JLDNi2r4JNNrLbN_fXFT4oreXWxXcJmytRLTPA2EvlZDFz4S1cOnXYYuPGh03k-umOVwPODL01Mm7WQCzpEqT-n_WAqfG_Z9AedWs1XXqxycnuOcz7qTn2tmoVkUMvlDB7SMltMtbbBt573K9INlpWBl9bDgruhhWl73V1pEajPgwEkxUXaFCCokphMBFikLlNjYuPmQKkgxiWrXoDAXKTWty8YgWtDlTSD3iZgQHicWp2khNEPgdBSO322THDTG8Nhdz--I6XwkJxavlWHuMwm0AwK40S2kyq6oBgQ"}}'
+    headers:
+      cache-control: no-cache
+      content-length: '727'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
+      x-ms-keyvault-region: westus2
+      x-ms-server-latency: '260'
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinokvhsm.managedhsm.azure.net/keys/livekvtestkey42750e04/create?api-version=7.2
+- request:
+    body: '{"kty": "RSA-HSM"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '18'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: POST
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey52750e04/create?api-version=7.2
+  response:
+    body:
+      string: '{"attributes":{"created":1643835461,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835461},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey52750e04/806ed19e96600ce3266d3615c051f7bb","kty":"RSA-HSM","n":"tgv5qiDNuMps1TmxR-CTIrRY-osSAMZnJmRVmDYcY0Mz8swYoubhSYvjXZUg7TrA9e0hVHkvYPio-gkDsEzzl5QorNAxP14Suk7n_w4_oxYumunrBkP3FGZYNPEdQUhu3asVWhi8wPP1nlArc9a05sUMwDUlWNjq8XZEw1TgUACHM8LgJFSbeIl4uZ9-u3Ram8xqptVsmcK9IBKkFB5l-hIRcsLnQf1ptybi-an7R9ywhw5UE9kiYBd94g4flp-5waQDQTYNYj6urrtGWuGzuOROkYMPEIBZKBuVOYACVm1nonv8tVdghtKwXcaT82VLvOGWV_ZlrVWGYSPBpcgtXw"}}'
+    headers:
+      cache-control: no-cache
+      content-length: '727'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
+      x-ms-keyvault-region: westus2
+      x-ms-server-latency: '206'
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinokvhsm.managedhsm.azure.net/keys/livekvtestkey52750e04/create?api-version=7.2
+- request:
+    body: '{"kty": "RSA-HSM"}'
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '18'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: POST
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey62750e04/create?api-version=7.2
+  response:
+    body:
+      string: '{"attributes":{"created":1643835463,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835463},"key":{"e":"AQAB","key_ops":["wrapKey","decrypt","encrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey62750e04/5b9bfa9dee754ae295aa6e53353c483a","kty":"RSA-HSM","n":"jm4O73RCuchpuItB9HotoGlptPQg8htDEpedsDrsMlibaLzzyCtWxMgo9kFYfw9G2CSNohm3R2Sp2VNB_uYtrULoGCC9NdCb32Epd-L3AmMcAxtVNzJOiFfHnDxLESjJA-EzFZSpmYiswS0oR1mECPhi9z_HZ43XTFBr1g8JGN7c4GOMGz2cvVSzPdQkgucPGr3BSRVP3Ur4ofoORnxJihky6Fuh_baHxpl_rIyx2ADnczKQDxlgb6XjHD9tDp3YzkUvRqU-Mp0bdABQQpHLJn3CLSjKvSFxF6W9-Z1_AfmDm1NPfSO_MKiEutjGyIXL7YKjcALETWs_vpON-DvcKw"}}'
+    headers:
+      cache-control: no-cache
+      content-length: '727'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
+      x-ms-keyvault-region: westus2
+      x-ms-server-latency: '205'
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinokvhsm.managedhsm.azure.net/keys/livekvtestkey62750e04/create?api-version=7.2
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: DELETE
     uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey02750e04?api-version=7.2
   response:
     body:
-      string: '{"attributes":{"created":1620410449,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410449},"deletedDate":1620410463,"key":{"e":"AQAB","key_ops":["wrapKey","encrypt","decrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey02750e04/0c6736acf80d41e4089d67ec4f822de4","kty":"RSA-HSM","n":"6qkvU8k5Lcdy-ELYz4ktMYVTwnJlFKSA_mEdTnPKIbi4I-pcHm9teSk549TU9K3R1xYDyHTCbeDAESlwYeFpuWoIAqPHW6UxkI4yHWA6a6_S0Fw0VvjWEPoqrZkgn-0nRbT4lyRFD64YecQojPPizHj_QNrdb6yL0TZa58Io0vdQp3oH8QaTTN55o97ADae7ce7W3HEWlhVP2qqVoxsnB_Xvzqc85MS5Pulk5Y6LeOTBFIaOLbFIuhVCazWEoXCml2Y5WqUhK3T1KzynXo_lzVWOgHWA3yqL-UsWtCkAJNQwYFwJ72bMBXK4sAeXVaNrlhi01uCf5exytS4Sr5K7pw"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey02750e04","scheduledPurgeDate":1628186463}'
+      string: '{"attributes":{"created":1643835450,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835450},"deletedDate":1643835464,"key":{"e":"AQAB","key_ops":["wrapKey","encrypt","decrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey02750e04/6114374b4f28481e0403a7fbb6b50c28","kty":"RSA-HSM","n":"iXqa58sEagPlvlCVNwwSKo46cWwUdWKIhX0QOSXwNMp5rCDj2ihRrKFyrD9u-FosIFdQo1-QoLwFxttBD9Z1sNXoHB_lkrMLPe-IayntJZhPp0ejMX83apwEWqdTHOML_lCuERtUFTQaKY5-dEbDtcIqtx3KGrWSo00eLTa8PU57mHBIXdVofVInMDyYvwKMfEwuhsR2yOIDeAk1NbfB0j6APjLT-ozA2ISM5rTDenMKFZ2TORlYGgfAXciDLkQAN0TsyAYpey2ZPWjBSp68GynKep5ZG_gZd54JJaBgH3WfljIpvGCaMfUCz7hlL_9RSli6dCmKjOqtcEIXIVnyRQ"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey02750e04","scheduledPurgeDate":1644440264}'
     headers:
       cache-control: no-cache
-      content-length: '871'
+      content-length: '876'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
-      x-ms-server-latency: '214'
+      x-ms-keyvault-region: westus2
+      x-ms-server-latency: '144'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestkey02750e04?api-version=7.2
+    url: https://mcpatinokvhsm.managedhsm.azure.net/keys/livekvtestkey02750e04?api-version=7.2
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey02750e04?api-version=7.2
   response:
     body:
-      string: '{"attributes":{"created":1620410449,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410449},"deletedDate":1620410463,"key":{"e":"AQAB","key_ops":["verify","sign","unwrapKey","encrypt","decrypt","wrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey02750e04/0c6736acf80d41e4089d67ec4f822de4","kty":"RSA-HSM","n":"6qkvU8k5Lcdy-ELYz4ktMYVTwnJlFKSA_mEdTnPKIbi4I-pcHm9teSk549TU9K3R1xYDyHTCbeDAESlwYeFpuWoIAqPHW6UxkI4yHWA6a6_S0Fw0VvjWEPoqrZkgn-0nRbT4lyRFD64YecQojPPizHj_QNrdb6yL0TZa58Io0vdQp3oH8QaTTN55o97ADae7ce7W3HEWlhVP2qqVoxsnB_Xvzqc85MS5Pulk5Y6LeOTBFIaOLbFIuhVCazWEoXCml2Y5WqUhK3T1KzynXo_lzVWOgHWA3yqL-UsWtCkAJNQwYFwJ72bMBXK4sAeXVaNrlhi01uCf5exytS4Sr5K7pw"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey02750e04","scheduledPurgeDate":1628186463}'
+      string: '{"attributes":{"created":1643835450,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835450},"deletedDate":1643835464,"key":{"e":"AQAB","key_ops":["verify","sign","unwrapKey","encrypt","decrypt","wrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey02750e04/6114374b4f28481e0403a7fbb6b50c28","kty":"RSA-HSM","n":"iXqa58sEagPlvlCVNwwSKo46cWwUdWKIhX0QOSXwNMp5rCDj2ihRrKFyrD9u-FosIFdQo1-QoLwFxttBD9Z1sNXoHB_lkrMLPe-IayntJZhPp0ejMX83apwEWqdTHOML_lCuERtUFTQaKY5-dEbDtcIqtx3KGrWSo00eLTa8PU57mHBIXdVofVInMDyYvwKMfEwuhsR2yOIDeAk1NbfB0j6APjLT-ozA2ISM5rTDenMKFZ2TORlYGgfAXciDLkQAN0TsyAYpey2ZPWjBSp68GynKep5ZG_gZd54JJaBgH3WfljIpvGCaMfUCz7hlL_9RSli6dCmKjOqtcEIXIVnyRQ"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey02750e04","scheduledPurgeDate":1644440264}'
     headers:
       cache-control: no-cache
-      content-length: '871'
+      content-length: '876'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210407-3-27236ed1-develop
+      x-ms-build-version: 1.0.20220117-1-eb2a1acb-1.0.20211206-1-be739728-develop
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
-      x-ms-server-latency: '55'
+      x-ms-keyvault-region: westus2
+      x-ms-server-latency: '33'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/livekvtestkey02750e04?api-version=7.2
+    url: https://mcpatinokvhsm.managedhsm.azure.net/deletedkeys/livekvtestkey02750e04?api-version=7.2
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: DELETE
     uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey12750e04?api-version=7.2
   response:
     body:
-      string: '{"attributes":{"created":1620410451,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410451},"deletedDate":1620410464,"key":{"e":"AQAB","key_ops":["wrapKey","encrypt","decrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey12750e04/1cddca5bcb444e0734893ea6bff06a4a","kty":"RSA-HSM","n":"uU0UbrLg03c8gNLDqwR1OiQrk7ahiekoU1hu-kxXXpgzXOZ_tSjQK_aiblt6lzMna9mEZrgOpMKm2ghT1FXsIUZ6_V9SR3ejqfG-Tqu4y-BgaOdDzCjrSUx8wQBrg7FYr3yvCDrbiwqUTeFDkoG7RNK_ss0cIFzfViDSXnMuOMgyhwhaDTn-EwXYeOsrLxZAxgbtk-cme6Z1auFe3lyRfVpMnmc2WWtyLWBbvPOwFCmL5pQmFw-ETDWOdQNTxhpxe_x6nxDBmNRKTePol2V9UEt6eFqHTAfzGpEMtBsjM2HZ98osV1NqCWeQChiQ_d1V-U55jRShipeySHnClYJI9Q"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey12750e04","scheduledPurgeDate":1628186464}'
+      string: '{"attributes":{"created":1643835452,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835452},"deletedDate":1643835464,"key":{"e":"AQAB","key_ops":["wrapKey","encrypt","decrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey12750e04/3fcb3d0fd3874024346528b7cc2a768b","kty":"RSA-HSM","n":"vD56yKExJrfk7KFvzjoIAzb0YvwDnA2CCtG_t_wC_kmh-NimW8-dGe3GrPfp7-QNuZYxsWN-LMzXx-zmfISA2q5IOvHmcbLN4geVVeRM6EgPifsrBjJ6Y4Gntx-J5ReSkX9czIEYIovT8WUQjkWgHuia-X_Y9x1s5t1GIHk9XaaUT25KPXycBYgiDP7cShb7WzploA042FIpc7vEB-5nrZo-zhF5qC-TQhrz2uiEifh3Mb0B9FJohQ77ExdPV3tlMAI0kkV7SXzcc91hExBHLSa0Ak8kAv_2SYvLkhizi2cjuGPLmE8rd5CvDm3jzWFl2D2LtkU6JCS-EVjD9aoNOQ"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey12750e04","scheduledPurgeDate":1644440264}'
     headers:
       cache-control: no-cache
-      content-length: '871'
+      content-length: '876'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
-      x-ms-server-latency: '149'
+      x-ms-keyvault-region: westus2
+      x-ms-server-latency: '140'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestkey12750e04?api-version=7.2
+    url: https://mcpatinokvhsm.managedhsm.azure.net/keys/livekvtestkey12750e04?api-version=7.2
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey12750e04?api-version=7.2
   response:
     body:
-      string: '{"attributes":{"created":1620410451,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410451},"deletedDate":1620410463,"key":{"e":"AQAB","key_ops":["verify","sign","unwrapKey","encrypt","decrypt","wrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey12750e04/1cddca5bcb444e0734893ea6bff06a4a","kty":"RSA-HSM","n":"uU0UbrLg03c8gNLDqwR1OiQrk7ahiekoU1hu-kxXXpgzXOZ_tSjQK_aiblt6lzMna9mEZrgOpMKm2ghT1FXsIUZ6_V9SR3ejqfG-Tqu4y-BgaOdDzCjrSUx8wQBrg7FYr3yvCDrbiwqUTeFDkoG7RNK_ss0cIFzfViDSXnMuOMgyhwhaDTn-EwXYeOsrLxZAxgbtk-cme6Z1auFe3lyRfVpMnmc2WWtyLWBbvPOwFCmL5pQmFw-ETDWOdQNTxhpxe_x6nxDBmNRKTePol2V9UEt6eFqHTAfzGpEMtBsjM2HZ98osV1NqCWeQChiQ_d1V-U55jRShipeySHnClYJI9Q"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey12750e04","scheduledPurgeDate":1628186463}'
+      string: '{"attributes":{"created":1643835452,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835452},"deletedDate":1643835464,"key":{"e":"AQAB","key_ops":["verify","sign","unwrapKey","encrypt","decrypt","wrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey12750e04/3fcb3d0fd3874024346528b7cc2a768b","kty":"RSA-HSM","n":"vD56yKExJrfk7KFvzjoIAzb0YvwDnA2CCtG_t_wC_kmh-NimW8-dGe3GrPfp7-QNuZYxsWN-LMzXx-zmfISA2q5IOvHmcbLN4geVVeRM6EgPifsrBjJ6Y4Gntx-J5ReSkX9czIEYIovT8WUQjkWgHuia-X_Y9x1s5t1GIHk9XaaUT25KPXycBYgiDP7cShb7WzploA042FIpc7vEB-5nrZo-zhF5qC-TQhrz2uiEifh3Mb0B9FJohQ77ExdPV3tlMAI0kkV7SXzcc91hExBHLSa0Ak8kAv_2SYvLkhizi2cjuGPLmE8rd5CvDm3jzWFl2D2LtkU6JCS-EVjD9aoNOQ"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey12750e04","scheduledPurgeDate":1644440264}'
     headers:
       cache-control: no-cache
-      content-length: '871'
+      content-length: '876'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210407-3-27236ed1-develop
+      x-ms-build-version: 1.0.20220117-1-eb2a1acb-1.0.20211206-1-be739728-develop
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
-      x-ms-server-latency: '29'
+      x-ms-keyvault-region: westus2
+      x-ms-server-latency: '28'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/livekvtestkey12750e04?api-version=7.2
+    url: https://mcpatinokvhsm.managedhsm.azure.net/deletedkeys/livekvtestkey12750e04?api-version=7.2
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: DELETE
     uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey22750e04?api-version=7.2
   response:
     body:
-      string: '{"attributes":{"created":1620410453,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410453},"deletedDate":1620410464,"key":{"e":"AQAB","key_ops":["wrapKey","encrypt","decrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey22750e04/8307eadb454c075ca7088efa1811670c","kty":"RSA-HSM","n":"suEU8I5RtwdGYTwCcwF7aqeLr70OktVI4EgVpY1vMwNHYgVl8Pv27RrWZVEZz0Lozfirw2xeN13upGFPznfjptnd9X-qUje5piGPZfC4Mh1HtXQRYKbc2eF3OxzL8N5iNyM31vmknlIm_wNnZr1ExJ98zlD-4vj70VKFTb48SQ4eCzb8Uc6QRDNMSBMViWGo7dgVwW0vxq86yIi24dYJ_8tbqs1zVxQDQxGjLIK6zxSM0wQ-aWT4Xm4e4i9DPb0sxhA6mNncO4Tp0Vf9g0rVTvjnDR0xh9tSOUUvfdwnjnHc8UCiLgnDZHZKLoiDgu5e-Mz0bY_MDsfwjizKb9r-kQ"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey22750e04","scheduledPurgeDate":1628186464}'
+      string: '{"attributes":{"created":1643835454,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835454},"deletedDate":1643835464,"key":{"e":"AQAB","key_ops":["wrapKey","encrypt","decrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey22750e04/4426f27301a302259fb0136c86699e60","kty":"RSA-HSM","n":"jQS26pqfuTfQMttpW67qdv-kZiAIK5VlrYCqdPGBK-GQxWVBgWfvoqAUAQRG8G6BFeiVMqChsBO6mk6__W3tjBmSuBCsYLit1kArZIwld_drgaZyOyBCyNONeNSZJZ4gGkqjyHpvgWbboKPgdqudVFEok2DVRh2F2QWsGM_qD7IHNW6PRl1V_suAdq5dUhQ8jsmf61njefwXSa0tMsqFoT5VRTqPSwxhdYVDrF3IsOUZ53nJl9t_DMcKVOhp0ZjVRC-q9DzrIFcVxsCp50AqKNo7QZL53gPwuXx6xePeEnlPkkHishYCK_pVzhIhPCd8sFyFNlmhLzMvur34Q3ymMw"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey22750e04","scheduledPurgeDate":1644440264}'
     headers:
       cache-control: no-cache
-      content-length: '871'
+      content-length: '876'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
-      x-ms-server-latency: '137'
-    status:
-      code: 200
-      message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestkey22750e04?api-version=7.2
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey22750e04?api-version=7.2
-  response:
-    body:
-      string: '{"attributes":{"created":1620410453,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410453},"deletedDate":1620410464,"key":{"e":"AQAB","key_ops":["verify","sign","unwrapKey","encrypt","decrypt","wrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey22750e04/8307eadb454c075ca7088efa1811670c","kty":"RSA-HSM","n":"suEU8I5RtwdGYTwCcwF7aqeLr70OktVI4EgVpY1vMwNHYgVl8Pv27RrWZVEZz0Lozfirw2xeN13upGFPznfjptnd9X-qUje5piGPZfC4Mh1HtXQRYKbc2eF3OxzL8N5iNyM31vmknlIm_wNnZr1ExJ98zlD-4vj70VKFTb48SQ4eCzb8Uc6QRDNMSBMViWGo7dgVwW0vxq86yIi24dYJ_8tbqs1zVxQDQxGjLIK6zxSM0wQ-aWT4Xm4e4i9DPb0sxhA6mNncO4Tp0Vf9g0rVTvjnDR0xh9tSOUUvfdwnjnHc8UCiLgnDZHZKLoiDgu5e-Mz0bY_MDsfwjizKb9r-kQ"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey22750e04","scheduledPurgeDate":1628186464}'
-    headers:
-      cache-control: no-cache
-      content-length: '871'
-      content-security-policy: default-src 'self'
-      content-type: application/json; charset=utf-8
-      strict-transport-security: max-age=31536000; includeSubDomains
-      x-content-type-options: nosniff
-      x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210407-3-27236ed1-develop
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
-      x-ms-server-latency: '35'
-    status:
-      code: 200
-      message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/livekvtestkey22750e04?api-version=7.2
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
-    method: DELETE
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey32750e04?api-version=7.2
-  response:
-    body:
-      string: '{"attributes":{"created":1620410456,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410456},"deletedDate":1620410464,"key":{"e":"AQAB","key_ops":["wrapKey","encrypt","decrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey32750e04/c0edf1e31a0f414c19f33bda60a162a2","kty":"RSA-HSM","n":"ik10ZecSYNKWqdTUp1BB5DyJYV8Ue1ll7bWl_BEZavJGqfzwh-WFsjvQnJ7EZZbhZwUn7y3ImhGUt7s9sPVZHM398LlsOcFb2gKaU8vJqnWAPNwSIf7fxNjgqNa3pslV0Ormub5XhxL7TmyJppqs7aFpBe1v9B_iWbA-84fuWYr2sv1eiBCmyVuheJvORKhY2QxdLDzyyBN4l1CuBrS1I61idUEAECAcRjGes_8CmT1QmaNJpQ9ADdJBz3EetPcI1gSyw8gMKbQC2SCywxJOrq9Vi1NAkRlIt0JGauGmzQx7k-8IDEMVubpikvP664rKynhftbM_ZXW8cM0dd6m4FQ"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey32750e04","scheduledPurgeDate":1628186464}'
-    headers:
-      cache-control: no-cache
-      content-length: '871'
-      content-security-policy: default-src 'self'
-      content-type: application/json; charset=utf-8
-      strict-transport-security: max-age=31536000; includeSubDomains
-      x-content-type-options: nosniff
-      x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
-      x-ms-server-latency: '155'
-    status:
-      code: 200
-      message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestkey32750e04?api-version=7.2
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
-    method: GET
-    uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey32750e04?api-version=7.2
-  response:
-    body:
-      string: '{"attributes":{"created":1620410456,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410456},"deletedDate":1620410464,"key":{"e":"AQAB","key_ops":["verify","sign","unwrapKey","encrypt","decrypt","wrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey32750e04/c0edf1e31a0f414c19f33bda60a162a2","kty":"RSA-HSM","n":"ik10ZecSYNKWqdTUp1BB5DyJYV8Ue1ll7bWl_BEZavJGqfzwh-WFsjvQnJ7EZZbhZwUn7y3ImhGUt7s9sPVZHM398LlsOcFb2gKaU8vJqnWAPNwSIf7fxNjgqNa3pslV0Ormub5XhxL7TmyJppqs7aFpBe1v9B_iWbA-84fuWYr2sv1eiBCmyVuheJvORKhY2QxdLDzyyBN4l1CuBrS1I61idUEAECAcRjGes_8CmT1QmaNJpQ9ADdJBz3EetPcI1gSyw8gMKbQC2SCywxJOrq9Vi1NAkRlIt0JGauGmzQx7k-8IDEMVubpikvP664rKynhftbM_ZXW8cM0dd6m4FQ"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey32750e04","scheduledPurgeDate":1628186464}'
-    headers:
-      cache-control: no-cache
-      content-length: '871'
-      content-security-policy: default-src 'self'
-      content-type: application/json; charset=utf-8
-      strict-transport-security: max-age=31536000; includeSubDomains
-      x-content-type-options: nosniff
-      x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210407-3-27236ed1-develop
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
-      x-ms-server-latency: '34'
-    status:
-      code: 200
-      message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/livekvtestkey32750e04?api-version=7.2
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
-    method: DELETE
-    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey42750e04?api-version=7.2
-  response:
-    body:
-      string: '{"attributes":{"created":1620410458,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410458},"deletedDate":1620410464,"key":{"e":"AQAB","key_ops":["wrapKey","encrypt","decrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey42750e04/281b5b2c4d764f0d8a8ef645bc20a7d3","kty":"RSA-HSM","n":"oloDZcXbRcmoPBIxb1GXXdk6CCgxS-OXVnlm-8FFkifVuyj29LvhlEvvxnluG5sFdkODuAQlydbvokyHiSS9wBsmtl8-3W6wBsTfoEC2xPrBkHOhxjgDjtnYk3pNXNLjWicC0EawAAHIhiJsMzDmyKe3_283lwgr2IVs3fDqO1OzEnda4VwCohou45yTJzMH6pk9dwkM8VLGTpo3Je_CfdmpXtz4og6JeiQkBg6v--wAncE-Ic5jmWOBuUkbTGKeeeLlFJZkKOZERFVgq7KwGjJlT2bGIckqaOU5qIiVWFd-esOMfuzr7egIiIpI2opibCmXKFvMraxKsPeZ3nfcPQ"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey42750e04","scheduledPurgeDate":1628186464}'
-    headers:
-      cache-control: no-cache
-      content-length: '871'
-      content-security-policy: default-src 'self'
-      content-type: application/json; charset=utf-8
-      strict-transport-security: max-age=31536000; includeSubDomains
-      x-content-type-options: nosniff
-      x-frame-options: SAMEORIGIN
-      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
+      x-ms-keyvault-region: westus2
       x-ms-server-latency: '145'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestkey42750e04?api-version=7.2
+    url: https://mcpatinokvhsm.managedhsm.azure.net/keys/livekvtestkey22750e04?api-version=7.2
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey42750e04?api-version=7.2
+    uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey22750e04?api-version=7.2
   response:
     body:
-      string: '{"attributes":{"created":1620410458,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410458},"deletedDate":1620410464,"key":{"e":"AQAB","key_ops":["verify","sign","unwrapKey","encrypt","decrypt","wrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey42750e04/281b5b2c4d764f0d8a8ef645bc20a7d3","kty":"RSA-HSM","n":"oloDZcXbRcmoPBIxb1GXXdk6CCgxS-OXVnlm-8FFkifVuyj29LvhlEvvxnluG5sFdkODuAQlydbvokyHiSS9wBsmtl8-3W6wBsTfoEC2xPrBkHOhxjgDjtnYk3pNXNLjWicC0EawAAHIhiJsMzDmyKe3_283lwgr2IVs3fDqO1OzEnda4VwCohou45yTJzMH6pk9dwkM8VLGTpo3Je_CfdmpXtz4og6JeiQkBg6v--wAncE-Ic5jmWOBuUkbTGKeeeLlFJZkKOZERFVgq7KwGjJlT2bGIckqaOU5qIiVWFd-esOMfuzr7egIiIpI2opibCmXKFvMraxKsPeZ3nfcPQ"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey42750e04","scheduledPurgeDate":1628186464}'
+      string: '{"attributes":{"created":1643835454,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835454},"deletedDate":1643835464,"key":{"e":"AQAB","key_ops":["verify","sign","unwrapKey","encrypt","decrypt","wrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey22750e04/4426f27301a302259fb0136c86699e60","kty":"RSA-HSM","n":"jQS26pqfuTfQMttpW67qdv-kZiAIK5VlrYCqdPGBK-GQxWVBgWfvoqAUAQRG8G6BFeiVMqChsBO6mk6__W3tjBmSuBCsYLit1kArZIwld_drgaZyOyBCyNONeNSZJZ4gGkqjyHpvgWbboKPgdqudVFEok2DVRh2F2QWsGM_qD7IHNW6PRl1V_suAdq5dUhQ8jsmf61njefwXSa0tMsqFoT5VRTqPSwxhdYVDrF3IsOUZ53nJl9t_DMcKVOhp0ZjVRC-q9DzrIFcVxsCp50AqKNo7QZL53gPwuXx6xePeEnlPkkHishYCK_pVzhIhPCd8sFyFNlmhLzMvur34Q3ymMw"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey22750e04","scheduledPurgeDate":1644440264}'
     headers:
       cache-control: no-cache
-      content-length: '871'
+      content-length: '876'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210407-3-27236ed1-develop
+      x-ms-build-version: 1.0.20220117-1-eb2a1acb-1.0.20211206-1-be739728-develop
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
+      x-ms-keyvault-region: westus2
+      x-ms-server-latency: '38'
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinokvhsm.managedhsm.azure.net/deletedkeys/livekvtestkey22750e04?api-version=7.2
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: DELETE
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey32750e04?api-version=7.2
+  response:
+    body:
+      string: '{"attributes":{"created":1643835457,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835457},"deletedDate":1643835464,"key":{"e":"AQAB","key_ops":["wrapKey","encrypt","decrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey32750e04/af84248806514f9e8b97b0dfd7ca2f5e","kty":"RSA-HSM","n":"rXBTuaVHWbCnlv_l-1HpHbAGwImHS57MjFiOk7RNFT37JwgwsZPg3jF6-gfDJeZ7siGphrcLqGx67cLUj7qYKLINmkeU3Xs6Ix65-T1TTqF62ge4Y22rJq5tAR4P9tQg7bDzd_vZNBgqq8-IYzWmOLnGBQUeyrFFp91aV2ObcQI0WPBuwn1Qtye8xk44KLcNUteV1EJSi20fGR-NoJeZoIUU4sZg5rWjKSDAXH7rENtWJM73BuevqbpewGjVPd2APNUln2ZOgjmWCaTriGqNiwykGDgd03gY-3gdZvdd2zmLLoabt8Up2J2g6B4jIeFeHNC7J4Jaml67f5yKxBnuuw"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey32750e04","scheduledPurgeDate":1644440264}'
+    headers:
+      cache-control: no-cache
+      content-length: '876'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
+      x-ms-keyvault-region: westus2
+      x-ms-server-latency: '169'
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinokvhsm.managedhsm.azure.net/keys/livekvtestkey32750e04?api-version=7.2
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: GET
+    uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey32750e04?api-version=7.2
+  response:
+    body:
+      string: '{"attributes":{"created":1643835457,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835457},"deletedDate":1643835464,"key":{"e":"AQAB","key_ops":["verify","sign","unwrapKey","encrypt","decrypt","wrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey32750e04/af84248806514f9e8b97b0dfd7ca2f5e","kty":"RSA-HSM","n":"rXBTuaVHWbCnlv_l-1HpHbAGwImHS57MjFiOk7RNFT37JwgwsZPg3jF6-gfDJeZ7siGphrcLqGx67cLUj7qYKLINmkeU3Xs6Ix65-T1TTqF62ge4Y22rJq5tAR4P9tQg7bDzd_vZNBgqq8-IYzWmOLnGBQUeyrFFp91aV2ObcQI0WPBuwn1Qtye8xk44KLcNUteV1EJSi20fGR-NoJeZoIUU4sZg5rWjKSDAXH7rENtWJM73BuevqbpewGjVPd2APNUln2ZOgjmWCaTriGqNiwykGDgd03gY-3gdZvdd2zmLLoabt8Up2J2g6B4jIeFeHNC7J4Jaml67f5yKxBnuuw"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey32750e04","scheduledPurgeDate":1644440264}'
+    headers:
+      cache-control: no-cache
+      content-length: '876'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-build-version: 1.0.20220117-1-eb2a1acb-1.0.20211206-1-be739728-develop
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
+      x-ms-keyvault-region: westus2
       x-ms-server-latency: '35'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/livekvtestkey42750e04?api-version=7.2
+    url: https://mcpatinokvhsm.managedhsm.azure.net/deletedkeys/livekvtestkey32750e04?api-version=7.2
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: DELETE
+    uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey42750e04?api-version=7.2
+  response:
+    body:
+      string: '{"attributes":{"created":1643835459,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835459},"deletedDate":1643835465,"key":{"e":"AQAB","key_ops":["wrapKey","encrypt","decrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey42750e04/c572a5ddf2e402291fae645f6c2e5627","kty":"RSA-HSM","n":"luDO9KI6EmuYoMFEK2ND1RpwS8HnWIg1eaEhduJqyRF6Pz_JLDNi2r4JNNrLbN_fXFT4oreXWxXcJmytRLTPA2EvlZDFz4S1cOnXYYuPGh03k-umOVwPODL01Mm7WQCzpEqT-n_WAqfG_Z9AedWs1XXqxycnuOcz7qTn2tmoVkUMvlDB7SMltMtbbBt573K9INlpWBl9bDgruhhWl73V1pEajPgwEkxUXaFCCokphMBFikLlNjYuPmQKkgxiWrXoDAXKTWty8YgWtDlTSD3iZgQHicWp2khNEPgdBSO322THDTG8Nhdz--I6XwkJxavlWHuMwm0AwK40S2kyq6oBgQ"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey42750e04","scheduledPurgeDate":1644440265}'
+    headers:
+      cache-control: no-cache
+      content-length: '876'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
+      x-ms-keyvault-region: westus2
+      x-ms-server-latency: '141'
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinokvhsm.managedhsm.azure.net/keys/livekvtestkey42750e04?api-version=7.2
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
+    method: GET
+    uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey42750e04?api-version=7.2
+  response:
+    body:
+      string: '{"attributes":{"created":1643835459,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835459},"deletedDate":1643835465,"key":{"e":"AQAB","key_ops":["verify","sign","unwrapKey","encrypt","decrypt","wrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey42750e04/c572a5ddf2e402291fae645f6c2e5627","kty":"RSA-HSM","n":"luDO9KI6EmuYoMFEK2ND1RpwS8HnWIg1eaEhduJqyRF6Pz_JLDNi2r4JNNrLbN_fXFT4oreXWxXcJmytRLTPA2EvlZDFz4S1cOnXYYuPGh03k-umOVwPODL01Mm7WQCzpEqT-n_WAqfG_Z9AedWs1XXqxycnuOcz7qTn2tmoVkUMvlDB7SMltMtbbBt573K9INlpWBl9bDgruhhWl73V1pEajPgwEkxUXaFCCokphMBFikLlNjYuPmQKkgxiWrXoDAXKTWty8YgWtDlTSD3iZgQHicWp2khNEPgdBSO322THDTG8Nhdz--I6XwkJxavlWHuMwm0AwK40S2kyq6oBgQ"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey42750e04","scheduledPurgeDate":1644440265}'
+    headers:
+      cache-control: no-cache
+      content-length: '876'
+      content-security-policy: default-src 'self'
+      content-type: application/json; charset=utf-8
+      strict-transport-security: max-age=31536000; includeSubDomains
+      x-content-type-options: nosniff
+      x-frame-options: SAMEORIGIN
+      x-ms-build-version: 1.0.20220117-1-eb2a1acb-1.0.20211206-1-be739728-develop
+      x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
+      x-ms-keyvault-region: westus2
+      x-ms-server-latency: '36'
+    status:
+      code: 200
+      message: OK
+    url: https://mcpatinokvhsm.managedhsm.azure.net/deletedkeys/livekvtestkey42750e04?api-version=7.2
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: DELETE
     uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey52750e04?api-version=7.2
   response:
     body:
-      string: '{"attributes":{"created":1620410460,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410460},"deletedDate":1620410465,"key":{"e":"AQAB","key_ops":["wrapKey","encrypt","decrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey52750e04/6490c46c64ff4b91b973f6dea6d495f6","kty":"RSA-HSM","n":"i6R79mjW5hdx6bbwy7Lq7ZwoU3NU2flEVok9ZYDgh_i8ojf5_DM79w_nQkFW_lrTgFhccusf061QoZwalxPvuQmSlPZEF222Wse1eP1jc2alPbzeeRKh3IeVbVzoKhzpHL8E5sDmnnanlZcp-4_uGbKASV4i1HM2nAaOGXvjtlowVqdO6w6lGrOJaJBdo5E2j5YMPYf8Y1-gcmptQGUupAJ1CPN5pGnWYDJrcacDvV24WrIIrRZsTFla7cYNcEq2v4PU8dEMw2f1MU_jd6hvJcqmLDMvstg8mvRpCqmANF7OK_Uz01LKEdCk-TdqV2bjdtE1xK63Z6cXIbJFQP8xvQ"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey52750e04","scheduledPurgeDate":1628186465}'
+      string: '{"attributes":{"created":1643835461,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835461},"deletedDate":1643835465,"key":{"e":"AQAB","key_ops":["wrapKey","encrypt","decrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey52750e04/806ed19e96600ce3266d3615c051f7bb","kty":"RSA-HSM","n":"tgv5qiDNuMps1TmxR-CTIrRY-osSAMZnJmRVmDYcY0Mz8swYoubhSYvjXZUg7TrA9e0hVHkvYPio-gkDsEzzl5QorNAxP14Suk7n_w4_oxYumunrBkP3FGZYNPEdQUhu3asVWhi8wPP1nlArc9a05sUMwDUlWNjq8XZEw1TgUACHM8LgJFSbeIl4uZ9-u3Ram8xqptVsmcK9IBKkFB5l-hIRcsLnQf1ptybi-an7R9ywhw5UE9kiYBd94g4flp-5waQDQTYNYj6urrtGWuGzuOROkYMPEIBZKBuVOYACVm1nonv8tVdghtKwXcaT82VLvOGWV_ZlrVWGYSPBpcgtXw"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey52750e04","scheduledPurgeDate":1644440265}'
     headers:
       cache-control: no-cache
-      content-length: '871'
+      content-length: '876'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
-      x-ms-server-latency: '166'
+      x-ms-keyvault-region: westus2
+      x-ms-server-latency: '149'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestkey52750e04?api-version=7.2
+    url: https://mcpatinokvhsm.managedhsm.azure.net/keys/livekvtestkey52750e04?api-version=7.2
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey52750e04?api-version=7.2
   response:
     body:
-      string: '{"attributes":{"created":1620410460,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410460},"deletedDate":1620410465,"key":{"e":"AQAB","key_ops":["verify","sign","unwrapKey","encrypt","decrypt","wrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey52750e04/6490c46c64ff4b91b973f6dea6d495f6","kty":"RSA-HSM","n":"i6R79mjW5hdx6bbwy7Lq7ZwoU3NU2flEVok9ZYDgh_i8ojf5_DM79w_nQkFW_lrTgFhccusf061QoZwalxPvuQmSlPZEF222Wse1eP1jc2alPbzeeRKh3IeVbVzoKhzpHL8E5sDmnnanlZcp-4_uGbKASV4i1HM2nAaOGXvjtlowVqdO6w6lGrOJaJBdo5E2j5YMPYf8Y1-gcmptQGUupAJ1CPN5pGnWYDJrcacDvV24WrIIrRZsTFla7cYNcEq2v4PU8dEMw2f1MU_jd6hvJcqmLDMvstg8mvRpCqmANF7OK_Uz01LKEdCk-TdqV2bjdtE1xK63Z6cXIbJFQP8xvQ"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey52750e04","scheduledPurgeDate":1628186465}'
+      string: '{"attributes":{"created":1643835461,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835461},"deletedDate":1643835465,"key":{"e":"AQAB","key_ops":["verify","sign","unwrapKey","encrypt","decrypt","wrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey52750e04/806ed19e96600ce3266d3615c051f7bb","kty":"RSA-HSM","n":"tgv5qiDNuMps1TmxR-CTIrRY-osSAMZnJmRVmDYcY0Mz8swYoubhSYvjXZUg7TrA9e0hVHkvYPio-gkDsEzzl5QorNAxP14Suk7n_w4_oxYumunrBkP3FGZYNPEdQUhu3asVWhi8wPP1nlArc9a05sUMwDUlWNjq8XZEw1TgUACHM8LgJFSbeIl4uZ9-u3Ram8xqptVsmcK9IBKkFB5l-hIRcsLnQf1ptybi-an7R9ywhw5UE9kiYBd94g4flp-5waQDQTYNYj6urrtGWuGzuOROkYMPEIBZKBuVOYACVm1nonv8tVdghtKwXcaT82VLvOGWV_ZlrVWGYSPBpcgtXw"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey52750e04","scheduledPurgeDate":1644440265}'
     headers:
       cache-control: no-cache
-      content-length: '871'
+      content-length: '876'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210407-3-27236ed1-develop
+      x-ms-build-version: 1.0.20220117-1-eb2a1acb-1.0.20211206-1-be739728-develop
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
-      x-ms-server-latency: '48'
+      x-ms-keyvault-region: westus2
+      x-ms-server-latency: '32'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/livekvtestkey52750e04?api-version=7.2
+    url: https://mcpatinokvhsm.managedhsm.azure.net/deletedkeys/livekvtestkey52750e04?api-version=7.2
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: DELETE
     uri: https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey62750e04?api-version=7.2
   response:
     body:
-      string: '{"attributes":{"created":1620410463,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410463},"deletedDate":1620410465,"key":{"e":"AQAB","key_ops":["wrapKey","encrypt","decrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey62750e04/db0e7d75570545dc9269452195bc1275","kty":"RSA-HSM","n":"oSL1i2oBIgaFrjvhkjSBRVuuprLHPkF5gvNUzywpNwdN-kwuwSsp_Vkm-Z8TS_XfZgXkrIipRoOP622yBQuO7R20wNk71XDnf3sIWlKpYIIkJkgC9tuTkxYWkNmF6eL6DAlfKysGBV20RcJHgq5OYaFHdMxXwJ9LYdtC1Qr1DyKYTZgm79b2nxk2Crh2CZEmHAP1p8hqR2Qf1RvVnvIxAdRic_nYeXZvz7UseopRBjX7YF1xWBnQ9t0EQnhsO2VbY-dwAXGHxcJoXytCpTBq51IMrCLYdHp-cDqCydBnUKooa1jCm7-MIZm5n-Zk8JwJo63B8s14008JArYLUgG9zQ"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey62750e04","scheduledPurgeDate":1628186465}'
+      string: '{"attributes":{"created":1643835463,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835463},"deletedDate":1643835465,"key":{"e":"AQAB","key_ops":["wrapKey","encrypt","decrypt","unwrapKey","sign","verify"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey62750e04/5b9bfa9dee754ae295aa6e53353c483a","kty":"RSA-HSM","n":"jm4O73RCuchpuItB9HotoGlptPQg8htDEpedsDrsMlibaLzzyCtWxMgo9kFYfw9G2CSNohm3R2Sp2VNB_uYtrULoGCC9NdCb32Epd-L3AmMcAxtVNzJOiFfHnDxLESjJA-EzFZSpmYiswS0oR1mECPhi9z_HZ43XTFBr1g8JGN7c4GOMGz2cvVSzPdQkgucPGr3BSRVP3Ur4ofoORnxJihky6Fuh_baHxpl_rIyx2ADnczKQDxlgb6XjHD9tDp3YzkUvRqU-Mp0bdABQQpHLJn3CLSjKvSFxF6W9-Z1_AfmDm1NPfSO_MKiEutjGyIXL7YKjcALETWs_vpON-DvcKw"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey62750e04","scheduledPurgeDate":1644440265}'
     headers:
       cache-control: no-cache
-      content-length: '871'
+      content-length: '876'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
-      x-ms-server-latency: '139'
+      x-ms-keyvault-region: westus2
+      x-ms-server-latency: '143'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/keys/livekvtestkey62750e04?api-version=7.2
+    url: https://mcpatinokvhsm.managedhsm.azure.net/keys/livekvtestkey62750e04?api-version=7.2
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey62750e04?api-version=7.2
   response:
     body:
-      string: '{"attributes":{"created":1620410463,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410463},"deletedDate":1620410465,"key":{"e":"AQAB","key_ops":["verify","sign","unwrapKey","encrypt","decrypt","wrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey62750e04/db0e7d75570545dc9269452195bc1275","kty":"RSA-HSM","n":"oSL1i2oBIgaFrjvhkjSBRVuuprLHPkF5gvNUzywpNwdN-kwuwSsp_Vkm-Z8TS_XfZgXkrIipRoOP622yBQuO7R20wNk71XDnf3sIWlKpYIIkJkgC9tuTkxYWkNmF6eL6DAlfKysGBV20RcJHgq5OYaFHdMxXwJ9LYdtC1Qr1DyKYTZgm79b2nxk2Crh2CZEmHAP1p8hqR2Qf1RvVnvIxAdRic_nYeXZvz7UseopRBjX7YF1xWBnQ9t0EQnhsO2VbY-dwAXGHxcJoXytCpTBq51IMrCLYdHp-cDqCydBnUKooa1jCm7-MIZm5n-Zk8JwJo63B8s14008JArYLUgG9zQ"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey62750e04","scheduledPurgeDate":1628186465}'
+      string: '{"attributes":{"created":1643835463,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835463},"deletedDate":1643835465,"key":{"e":"AQAB","key_ops":["verify","sign","unwrapKey","encrypt","decrypt","wrapKey"],"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey62750e04/5b9bfa9dee754ae295aa6e53353c483a","kty":"RSA-HSM","n":"jm4O73RCuchpuItB9HotoGlptPQg8htDEpedsDrsMlibaLzzyCtWxMgo9kFYfw9G2CSNohm3R2Sp2VNB_uYtrULoGCC9NdCb32Epd-L3AmMcAxtVNzJOiFfHnDxLESjJA-EzFZSpmYiswS0oR1mECPhi9z_HZ43XTFBr1g8JGN7c4GOMGz2cvVSzPdQkgucPGr3BSRVP3Ur4ofoORnxJihky6Fuh_baHxpl_rIyx2ADnczKQDxlgb6XjHD9tDp3YzkUvRqU-Mp0bdABQQpHLJn3CLSjKvSFxF6W9-Z1_AfmDm1NPfSO_MKiEutjGyIXL7YKjcALETWs_vpON-DvcKw"},"recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey62750e04","scheduledPurgeDate":1644440265}'
     headers:
       cache-control: no-cache
-      content-length: '871'
+      content-length: '876'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210407-3-27236ed1-develop
+      x-ms-build-version: 1.0.20220117-1-eb2a1acb-1.0.20211206-1-be739728-develop
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
-      x-ms-server-latency: '31'
+      x-ms-keyvault-region: westus2
+      x-ms-server-latency: '33'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/livekvtestkey62750e04?api-version=7.2
+    url: https://mcpatinokvhsm.managedhsm.azure.net/deletedkeys/livekvtestkey62750e04?api-version=7.2
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: DELETE
     uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey02750e04?api-version=7.2
   response:
@@ -653,19 +653,19 @@ interactions:
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
-      x-ms-server-latency: '150'
+      x-ms-keyvault-region: westus2
+      x-ms-server-latency: '105'
     status:
       code: 204
       message: ''
-    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/livekvtestkey02750e04?api-version=7.2
+    url: https://mcpatinokvhsm.managedhsm.azure.net/deletedkeys/livekvtestkey02750e04?api-version=7.2
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: DELETE
     uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey12750e04?api-version=7.2
   response:
@@ -680,19 +680,19 @@ interactions:
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
-      x-ms-server-latency: '109'
+      x-ms-keyvault-region: westus2
+      x-ms-server-latency: '95'
     status:
       code: 204
       message: ''
-    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/livekvtestkey12750e04?api-version=7.2
+    url: https://mcpatinokvhsm.managedhsm.azure.net/deletedkeys/livekvtestkey12750e04?api-version=7.2
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: DELETE
     uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey22750e04?api-version=7.2
   response:
@@ -707,19 +707,19 @@ interactions:
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
+      x-ms-keyvault-region: westus2
       x-ms-server-latency: '110'
     status:
       code: 204
       message: ''
-    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/livekvtestkey22750e04?api-version=7.2
+    url: https://mcpatinokvhsm.managedhsm.azure.net/deletedkeys/livekvtestkey22750e04?api-version=7.2
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: DELETE
     uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey32750e04?api-version=7.2
   response:
@@ -734,19 +734,19 @@ interactions:
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
-      x-ms-server-latency: '135'
+      x-ms-keyvault-region: westus2
+      x-ms-server-latency: '109'
     status:
       code: 204
       message: ''
-    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/livekvtestkey32750e04?api-version=7.2
+    url: https://mcpatinokvhsm.managedhsm.azure.net/deletedkeys/livekvtestkey32750e04?api-version=7.2
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: DELETE
     uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey42750e04?api-version=7.2
   response:
@@ -761,19 +761,19 @@ interactions:
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
-      x-ms-server-latency: '109'
+      x-ms-keyvault-region: westus2
+      x-ms-server-latency: '90'
     status:
       code: 204
       message: ''
-    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/livekvtestkey42750e04?api-version=7.2
+    url: https://mcpatinokvhsm.managedhsm.azure.net/deletedkeys/livekvtestkey42750e04?api-version=7.2
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: DELETE
     uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey52750e04?api-version=7.2
   response:
@@ -788,19 +788,19 @@ interactions:
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
-      x-ms-server-latency: '140'
+      x-ms-keyvault-region: westus2
+      x-ms-server-latency: '109'
     status:
       code: 204
       message: ''
-    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/livekvtestkey52750e04?api-version=7.2
+    url: https://mcpatinokvhsm.managedhsm.azure.net/deletedkeys/livekvtestkey52750e04?api-version=7.2
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: DELETE
     uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey62750e04?api-version=7.2
   response:
@@ -815,257 +815,255 @@ interactions:
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
-      x-ms-server-latency: '97'
+      x-ms-keyvault-region: westus2
+      x-ms-server-latency: '102'
     status:
       code: 204
       message: ''
-    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/livekvtestkey62750e04?api-version=7.2
+    url: https://mcpatinokvhsm.managedhsm.azure.net/deletedkeys/livekvtestkey62750e04?api-version=7.2
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey02750e04?api-version=7.2
   response:
     body:
       string: '{"error":{"code":"KeyNotFound","message":"Key not found: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey02750e04
-        (Activity ID: 325161d4-af5e-11eb-8b96-0022484499a0)"}}'
+        (Activity ID: c600b3bc-846a-11ec-b3de-002248787cb1)"}}'
     headers:
       cache-control: no-cache
-      content-length: '190'
+      content-length: '188'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210407-3-27236ed1-develop
-      x-ms-server-latency: '34'
+      x-ms-build-version: 1.0.20220117-1-eb2a1acb-1.0.20211206-1-be739728-develop
+      x-ms-server-latency: '28'
     status:
       code: 404
       message: Not Found
-    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/livekvtestkey02750e04?api-version=7.2
+    url: https://mcpatinokvhsm.managedhsm.azure.net/deletedkeys/livekvtestkey02750e04?api-version=7.2
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey12750e04?api-version=7.2
   response:
     body:
       string: '{"error":{"code":"KeyNotFound","message":"Key not found: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey12750e04
-        (Activity ID: 3260c7d2-af5e-11eb-8b96-0022484499a0)"}}'
+        (Activity ID: c607686a-846a-11ec-b3de-002248787cb1)"}}'
     headers:
       cache-control: no-cache
-      content-length: '190'
+      content-length: '188'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210407-3-27236ed1-develop
-      x-ms-server-latency: '35'
+      x-ms-build-version: 1.0.20220117-1-eb2a1acb-1.0.20211206-1-be739728-develop
+      x-ms-server-latency: '31'
     status:
       code: 404
       message: Not Found
-    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/livekvtestkey12750e04?api-version=7.2
+    url: https://mcpatinokvhsm.managedhsm.azure.net/deletedkeys/livekvtestkey12750e04?api-version=7.2
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey22750e04?api-version=7.2
   response:
     body:
       string: '{"error":{"code":"KeyNotFound","message":"Key not found: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey22750e04
-        (Activity ID: 32706b24-af5e-11eb-8b96-0022484499a0)"}}'
+        (Activity ID: c60e97f2-846a-11ec-b3de-002248787cb1)"}}'
     headers:
       cache-control: no-cache
-      content-length: '190'
+      content-length: '188'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210407-3-27236ed1-develop
-      x-ms-server-latency: '25'
+      x-ms-build-version: 1.0.20220117-1-eb2a1acb-1.0.20211206-1-be739728-develop
+      x-ms-server-latency: '36'
     status:
       code: 404
       message: Not Found
-    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/livekvtestkey22750e04?api-version=7.2
+    url: https://mcpatinokvhsm.managedhsm.azure.net/deletedkeys/livekvtestkey22750e04?api-version=7.2
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey32750e04?api-version=7.2
   response:
     body:
       string: '{"error":{"code":"KeyNotFound","message":"Key not found: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey32750e04
-        (Activity ID: 327eadec-af5e-11eb-8b96-0022484499a0)"}}'
+        (Activity ID: c616c490-846a-11ec-b3de-002248787cb1)"}}'
     headers:
       cache-control: no-cache
-      content-length: '190'
+      content-length: '188'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210407-3-27236ed1-develop
-      x-ms-server-latency: '27'
+      x-ms-build-version: 1.0.20220117-1-eb2a1acb-1.0.20211206-1-be739728-develop
+      x-ms-server-latency: '33'
     status:
       code: 404
       message: Not Found
-    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/livekvtestkey32750e04?api-version=7.2
+    url: https://mcpatinokvhsm.managedhsm.azure.net/deletedkeys/livekvtestkey32750e04?api-version=7.2
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey42750e04?api-version=7.2
   response:
     body:
       string: '{"error":{"code":"KeyNotFound","message":"Key not found: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey42750e04
-        (Activity ID: 328d6e40-af5e-11eb-8b96-0022484499a0)"}}'
+        (Activity ID: c61e45da-846a-11ec-b3de-002248787cb1)"}}'
     headers:
       cache-control: no-cache
-      content-length: '190'
+      content-length: '188'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210407-3-27236ed1-develop
-      x-ms-server-latency: '35'
+      x-ms-build-version: 1.0.20220117-1-eb2a1acb-1.0.20211206-1-be739728-develop
+      x-ms-server-latency: '31'
     status:
       code: 404
       message: Not Found
-    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/livekvtestkey42750e04?api-version=7.2
+    url: https://mcpatinokvhsm.managedhsm.azure.net/deletedkeys/livekvtestkey42750e04?api-version=7.2
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey52750e04?api-version=7.2
   response:
     body:
       string: '{"error":{"code":"KeyNotFound","message":"Key not found: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey52750e04
-        (Activity ID: 329d74f2-af5e-11eb-8b96-0022484499a0)"}}'
+        (Activity ID: c6258f8e-846a-11ec-b3de-002248787cb1)"}}'
     headers:
       cache-control: no-cache
-      content-length: '190'
+      content-length: '188'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210407-3-27236ed1-develop
-      x-ms-server-latency: '26'
+      x-ms-build-version: 1.0.20220117-1-eb2a1acb-1.0.20211206-1-be739728-develop
+      x-ms-server-latency: '33'
     status:
       code: 404
       message: Not Found
-    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/livekvtestkey52750e04?api-version=7.2
+    url: https://mcpatinokvhsm.managedhsm.azure.net/deletedkeys/livekvtestkey52750e04?api-version=7.2
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey62750e04?api-version=7.2
   response:
     body:
       string: '{"error":{"code":"KeyNotFound","message":"Key not found: https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey62750e04
-        (Activity ID: 32abd038-af5e-11eb-8b96-0022484499a0)"}}'
+        (Activity ID: c62ca49a-846a-11ec-b3de-002248787cb1)"}}'
     headers:
       cache-control: no-cache
-      content-length: '190'
+      content-length: '188'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210407-3-27236ed1-develop
-      x-ms-server-latency: '40'
+      x-ms-build-version: 1.0.20220117-1-eb2a1acb-1.0.20211206-1-be739728-develop
+      x-ms-server-latency: '29'
     status:
       code: 404
       message: Not Found
-    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys/livekvtestkey62750e04?api-version=7.2
+    url: https://mcpatinokvhsm.managedhsm.azure.net/deletedkeys/livekvtestkey62750e04?api-version=7.2
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://managedhsmname.managedhsm.azure.net/deletedkeys?api-version=7.2
   response:
     body:
-      string: '{"nextLink":"https://managedhsmname.managedhsm.azure.net/deletedkeys?maxresults=25&$skiptoken=K1JJRDp-VGk0V0FPdU9MUzNuQUFBQUFBQUFBQT09I1JUOjEjVFJDOjEwI0lTVjoyI0lFTzo2NTU2NyNRQ0Y6Mw","value":[{"attributes":{"created":1620408483,"enabled":true,"exp":2524723200,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620408484},"deletedDate":1620408485,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestcrud-rsa-keyf5a713c8","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestcrud-rsa-keyf5a713c8","scheduledPurgeDate":1628184485,"tags":{"foo":"updated
-        tag"}},{"attributes":{"created":1620408590,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620408590},"deletedDate":1620408607,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey0cc6012dc","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey0cc6012dc","scheduledPurgeDate":1628184607},{"attributes":{"created":1620408592,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620408592},"deletedDate":1620408606,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey1cc6012dc","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey1cc6012dc","scheduledPurgeDate":1628184606},{"attributes":{"created":1620408595,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620408595},"deletedDate":1620408606,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey2cc6012dc","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey2cc6012dc","scheduledPurgeDate":1628184606},{"attributes":{"created":1620408597,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620408597},"deletedDate":1620408605,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey3cc6012dc","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey3cc6012dc","scheduledPurgeDate":1628184605},{"attributes":{"created":1620408600,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620408600},"deletedDate":1620408605,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey4cc6012dc","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey4cc6012dc","scheduledPurgeDate":1628184605},{"attributes":{"created":1620408602,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620408602},"deletedDate":1620408605,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey5cc6012dc","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey5cc6012dc","scheduledPurgeDate":1628184605},{"attributes":{"created":1620408604,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620408604},"deletedDate":1620408606,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey6cc6012dc","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey6cc6012dc","scheduledPurgeDate":1628184606},{"attributes":{"created":1620409950,"enabled":true,"exp":2524723200,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620409952},"deletedDate":1620409952,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestcrud-rsa-keyf89b13da","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestcrud-rsa-keyf89b13da","scheduledPurgeDate":1628185952,"tags":{"foo":"updated
-        tag"}},{"attributes":{"created":1620410052,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410052},"deletedDate":1620410067,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey0cf3012ee","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey0cf3012ee","scheduledPurgeDate":1628186067}]}'
+      string: '{"nextLink":"https://managedhsmname.managedhsm.azure.net/deletedkeys?maxresults=25&$skiptoken=K1JJRDp-eTJabUFLOHItZFZSQUFBQUFBQUFBQT09I1JUOjEjVFJDOjEwI0lTVjoyI0lFTzo2NTU2NyNRQ0Y6NA","value":[{"attributes":{"created":1643835092,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835092},"deletedDate":1643835106,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey0cf3012ee","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey0cf3012ee","scheduledPurgeDate":1644439906},{"attributes":{"created":1643835094,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835094},"deletedDate":1643835106,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey1cf3012ee","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey1cf3012ee","scheduledPurgeDate":1644439906},{"attributes":{"created":1643835096,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835096},"deletedDate":1643835106,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey2cf3012ee","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey2cf3012ee","scheduledPurgeDate":1644439906},{"attributes":{"created":1643835099,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835099},"deletedDate":1643835106,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey3cf3012ee","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey3cf3012ee","scheduledPurgeDate":1644439906},{"attributes":{"created":1643835101,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835101},"deletedDate":1643835106,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey4cf3012ee","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey4cf3012ee","scheduledPurgeDate":1644439906},{"attributes":{"created":1643835103,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835103},"deletedDate":1643835107,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey5cf3012ee","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey5cf3012ee","scheduledPurgeDate":1644439907},{"attributes":{"created":1643835105,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835105},"deletedDate":1643835107,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey6cf3012ee","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey6cf3012ee","scheduledPurgeDate":1644439907},{"attributes":{"created":1643835110,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835110},"deletedDate":1643835124,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey076031650","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey076031650","scheduledPurgeDate":1644439924},{"attributes":{"created":1643835112,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835112},"deletedDate":1643835124,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey176031650","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey176031650","scheduledPurgeDate":1644439924},{"attributes":{"created":1643835114,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835114},"deletedDate":1643835124,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey276031650","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey276031650","scheduledPurgeDate":1644439924}]}'
     headers:
       cache-control: no-cache
-      content-length: '4187'
+      content-length: '4111'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210407-3-27236ed1-develop
+      x-ms-build-version: 1.0.20220117-1-eb2a1acb-1.0.20211206-1-be739728-develop
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
-      x-ms-server-latency: '36'
+      x-ms-keyvault-region: westus2
+      x-ms-server-latency: '41'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys?api-version=7.2
+    url: https://mcpatinokvhsm.managedhsm.azure.net/deletedkeys?api-version=7.2
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-keyvault-keys/4.4.0b5 Python/3.5.3 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-keyvault-keys/4.5.0b6 Python/3.10.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://managedhsmname.managedhsm.azure.net/deletedkeys?maxresults=25&$skiptoken=K1JJRDp-VGk0V0FPdU9MUzNuQUFBQUFBQUFBQT09I1JUOjEjVFJDOjEwI0lTVjoyI0lFTzo2NTU2NyNRQ0Y6Mw
+    uri: https://managedhsmname.managedhsm.azure.net/deletedkeys?api-version=7.2&maxresults=25&$skiptoken=K1JJRDp-eTJabUFLOHItZFZSQUFBQUFBQUFBQT09I1JUOjEjVFJDOjEwI0lTVjoyI0lFTzo2NTU2NyNRQ0Y6NA
   response:
     body:
-      string: '{"value":[{"attributes":{"created":1620410054,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410054},"deletedDate":1620410068,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey1cf3012ee","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey1cf3012ee","scheduledPurgeDate":1628186068},{"attributes":{"created":1620410057,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410057},"deletedDate":1620410066,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey2cf3012ee","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey2cf3012ee","scheduledPurgeDate":1628186066},{"attributes":{"created":1620410059,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410059},"deletedDate":1620410068,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey3cf3012ee","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey3cf3012ee","scheduledPurgeDate":1628186068},{"attributes":{"created":1620410061,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410061},"deletedDate":1620410067,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey4cf3012ee","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey4cf3012ee","scheduledPurgeDate":1628186067},{"attributes":{"created":1620410064,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410064},"deletedDate":1620410067,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey5cf3012ee","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey5cf3012ee","scheduledPurgeDate":1628186067},{"attributes":{"created":1620410066,"enabled":true,"exportable":false,"recoverableDays":90,"recoveryLevel":"Recoverable+Purgeable","updated":1620410066},"deletedDate":1620410068,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey6cf3012ee","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey6cf3012ee","scheduledPurgeDate":1628186068}]}'
+      string: '{"value":[{"attributes":{"created":1643835117,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835117},"deletedDate":1643835125,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey376031650","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey376031650","scheduledPurgeDate":1644439925},{"attributes":{"created":1643835119,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835119},"deletedDate":1643835125,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey476031650","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey476031650","scheduledPurgeDate":1644439925},{"attributes":{"created":1643835121,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835121},"deletedDate":1643835125,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey576031650","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey576031650","scheduledPurgeDate":1644439925},{"attributes":{"created":1643835124,"enabled":true,"exportable":false,"recoverableDays":7,"recoveryLevel":"CustomizedRecoverable+Purgeable","updated":1643835124},"deletedDate":1643835125,"kid":"https://managedhsmname.managedhsm.azure.net/keys/livekvtestkey676031650","recoveryId":"https://managedhsmname.managedhsm.azure.net/deletedkeys/livekvtestkey676031650","scheduledPurgeDate":1644439925}]}'
     headers:
       cache-control: no-cache
-      content-length: '2333'
+      content-length: '1579'
       content-security-policy: default-src 'self'
       content-type: application/json; charset=utf-8
       strict-transport-security: max-age=31536000; includeSubDomains
       x-content-type-options: nosniff
       x-frame-options: SAMEORIGIN
-      x-ms-build-version: 1.0.20210407-3-27236ed1-develop
+      x-ms-build-version: 1.0.20220117-1-eb2a1acb-1.0.20211206-1-be739728-develop
       x-ms-keyvault-network-info: conn_type=Ipv4;addr=172.92.159.124;act_addr_fam=Ipv4;
-      x-ms-keyvault-region: centralus
-      x-ms-server-latency: '31'
+      x-ms-keyvault-region: westus2
+      x-ms-server-latency: '39'
     status:
       code: 200
       message: OK
-    url: https://mcpatinotesthsm.managedhsm.azure.net/deletedkeys?maxresults=25&$skiptoken=K1JJRDp-VGk0V0FPdU9MUzNuQUFBQUFBQUFBQT09I1JUOjEjVFJDOjEwI0lTVjoyI0lFTzo2NTU2NyNRQ0Y6Mw
+    url: https://mcpatinokvhsm.managedhsm.azure.net/deletedkeys?api-version=7.2&maxresults=25&$skiptoken=K1JJRDp-eTJabUFLOHItZFZSQUFBQUFBQUFBQT09I1JUOjEjVFJDOjEwI0lTVjoyI0lFTzo2NTU2NyNRQ0Y6NA
 version: 1

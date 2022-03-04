@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -42,7 +40,7 @@ def sample_extract_key_phrases():
     articles = [
         """
         Washington, D.C. Autumn in DC is a uniquely beautiful season. The leaves fall from the trees
-        in a city chockful of forrests, leaving yellow leaves on the ground and a clearer view of the
+        in a city chock-full of forests, leaving yellow leaves on the ground and a clearer view of the
         blue sky above...
         """,
         """

@@ -10,7 +10,8 @@
 FILE: sample_hello_world_async.py
 
 DESCRIPTION:
-    These samples demonstrate creating a ContainerRegistryClient and a ContainerRepository
+    This sample demonstrate creating a ContainerRegistryClient and iterating
+    through the collection of tags in the repository with anonymous access.
 
 USAGE:
     python sample_hello_world_async.py
@@ -27,23 +28,17 @@ from azure.containerregistry.aio import ContainerRegistryClient
 from azure.identity.aio import DefaultAzureCredential
 
 
-class CreateClientsAsync(object):
+class HelloWorldAsync(object):
     def __init__(self):
         load_dotenv(find_dotenv())
 
-    async def create_registry_client(self):
-        # Instantiate the ContainerRegistryClient
-        # [START create_registry_client]
-        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-        audience = "https://management.azure.com"
-        client = ContainerRegistryClient(account_url, DefaultAzureCredential(), audience=audience)
-        # [END create_registry_client]
-
     async def basic_sample(self):
-        # Instantiate the client
-        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+        # Instantiate an instance of ContainerRegistryClient
+        # [START create_registry_client]
+        endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         audience = "https://management.azure.com"
-        client = ContainerRegistryClient(account_url, DefaultAzureCredential(), audience=audience)
+        client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience=audience)
+        # [END create_registry_client]
         async with client:
             # Iterate through all the repositories
             async for repository_name in client.list_repository_names():
@@ -58,8 +53,7 @@ class CreateClientsAsync(object):
 
 
 async def main():
-    sample = CreateClientsAsync()
-    await sample.create_registry_client()
+    sample = HelloWorldAsync()
     await sample.basic_sample()
 
 
