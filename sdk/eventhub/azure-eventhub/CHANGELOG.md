@@ -1,6 +1,5 @@
 # Release History
 
-<<<<<<< HEAD
 ## 5.10.0 (2022-06-08)
 
 ### Features Added
@@ -59,6 +58,12 @@
 ### Breaking Changes
 
 - `from_message_data` on `EventData` has been renamed `from_message_content` for interoperability with the Schema Registry Avro Encoder library. The `data` parameter has been renamed to `content`.
+
+## 5.8.0a3 (2022-03-08)
+
+### Other Changes
+
+- Improved the performance of async sending and receiving.
 
 ## 5.9.0b1 (2022-02-09)
 
