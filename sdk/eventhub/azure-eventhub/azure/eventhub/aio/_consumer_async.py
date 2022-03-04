@@ -125,6 +125,9 @@ class EventHubConsumer(
         )
         self._message_buffer = deque()  # type: Deque[Message]
         self._last_received_event = None  # type: Optional[EventData]
+        self._message_buffer_lock = asyncio.Lock()
+        self._last_callback_called_time = None
+        self._callback_task_run = None
 
     def _create_handler(self, auth: "JWTTokenAuthAsync") -> None:
         source = Source(self._source, filters={})
@@ -162,7 +165,8 @@ class EventHubConsumer(
         await self._do_retryable_operation(self._open, operation_need_param=False)
 
     async def _message_received(self, message: Message) -> None:
-        self._message_buffer.append(message)
+        async with self._message_buffer_lock:
+            self._message_buffer.append(message)
 
     def _next_message_in_buffer(self):
         # pylint:disable=protected-access
@@ -171,54 +175,64 @@ class EventHubConsumer(
         self._last_received_event = event_data
         return event_data
 
-    async def receive(self, batch=False, max_batch_size=300, max_wait_time=None) -> None:
+    async def _callback_task(self, batch, max_batch_size, max_wait_time):
+        while self._callback_task_run:
+            async with self._message_buffer_lock:
+                messages = [
+                    self._message_buffer.popleft() for _ in range(min(max_batch_size, len(self._message_buffer)))
+                ]
+            events = [EventData._from_message(message) for message in messages]
+            now_time = time.time()
+            if len(events) > 0:
+                await self._on_event_received(events if batch else events[0])
+                self._last_callback_called_time = now_time
+            else:
+                if max_wait_time and (now_time - self._last_callback_called_time) > max_wait_time:
+                    # no events received, and need to callback
+                    await self._on_event_received([] if batch else None)
+                    self._last_callback_called_time = now_time
+                # backoff a bit to avoid throttling CPU when no events are coming
+                await asyncio.sleep(0.05)
+
+    async def _receive_task(self):
         max_retries = (
             self._client._config.max_retries  # pylint:disable=protected-access
         )
-        has_not_fetched_once = True  # ensure one trip when max_wait_time is very small
-        deadline = time.time() + (max_wait_time or 0)  # max_wait_time can be None
-        while len(self._message_buffer) < max_batch_size and \
-                (time.time() < deadline or has_not_fetched_once):
-            retried_times = 0
-            has_not_fetched_once = False
-            while retried_times <= max_retries:
-                try:
-                    await self._open()
-                    await cast(ReceiveClientAsync, self._handler).do_work_async(batch=self._prefetch)
-                    break
-                except asyncio.CancelledError:  # pylint: disable=try-except-raise
-                    raise
-                except Exception as exception:  # pylint: disable=broad-except
-                    if (
+        retried_times = 0
+        while retried_times <= max_retries:
+            try:
+                await self._open()
+                await cast(ReceiveClientAsync, self._handler).do_work_async(batch=self._prefetch)
+            except asyncio.CancelledError:  # pylint: disable=try-except-raise
+                raise
+            except Exception as exception:  # pylint: disable=broad-except
+                if (
                         isinstance(exception, error.AMQPLinkError)
                         and exception.condition == error.ErrorCondition.LinkStolen  # pylint: disable=no-member
-                    ):
-                        raise await self._handle_exception(exception)
-                    if not self.running:  # exit by close
-                        return
-                    if self._last_received_event:
-                        self._offset = self._last_received_event.offset
-                    last_exception = await self._handle_exception(exception)
-                    retried_times += 1
-                    if retried_times > max_retries:
-                        _LOGGER.info(
-                            "%r operation has exhausted retry. Last exception: %r.",
-                            self._name,
-                            last_exception,
-                        )
-                        raise last_exception
+                ):
+                    raise await self._handle_exception(exception)
+                if not self.running:  # exit by close
+                    return
+                if self._last_received_event:
+                    self._offset = self._last_received_event.offset
+                last_exception = await self._handle_exception(exception)
+                retried_times += 1
+                if retried_times > max_retries:
+                    _LOGGER.info(
+                        "%r operation has exhausted retry. Last exception: %r.",
+                        self._name,
+                        last_exception,
+                    )
+                    raise last_exception
 
-        if self._message_buffer:
-            while self._message_buffer:
-                if batch:
-                    events_for_callback = []  # type: List[EventData]
-                    for _ in range(min(max_batch_size, len(self._message_buffer))):
-                        events_for_callback.append(self._next_message_in_buffer())
-                    await self._on_event_received(events_for_callback)
-                else:
-                    await self._on_event_received(self._next_message_in_buffer())
-        elif max_wait_time:
-            if batch:
-                await self._on_event_received([])
-            else:
-                await self._on_event_received(None)
+    async def receive(self, batch=False, max_batch_size=300, max_wait_time=None) -> None:
+        self._callback_task_run = True
+        self._last_callback_called_time = time.time()
+        callback_task = asyncio.ensure_future(self._callback_task(batch, max_batch_size, max_wait_time))
+        receive_task = asyncio.ensure_future(self._receive_task())
+
+        try:
+            await receive_task
+        finally:
+            self._callback_task_run = False
+            await callback_task

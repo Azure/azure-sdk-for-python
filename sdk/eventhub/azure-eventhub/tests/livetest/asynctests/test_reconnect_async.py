@@ -127,13 +127,9 @@ async def test_receive_connection_idle_timeout_and_reconnect_async(connstr_sende
             await consumer._handler.do_work_async()
             assert consumer._handler._connection.state == constants.ConnectionState.END
 
-            duration = 10
-            now_time = time.time()
-            end_time = now_time + duration
-
-            while now_time < end_time:
-                await consumer.receive()
-                await asyncio.sleep(0.01)
-                now_time = time.time()
+            try:
+                await asyncio.wait_for(consumer.receive(), timeout=10)
+            except asyncio.TimeoutError:
+                pass
 
             assert on_event_received.event.body_as_str() == "Event"

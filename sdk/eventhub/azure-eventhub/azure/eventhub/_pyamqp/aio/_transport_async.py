@@ -276,13 +276,7 @@ class AsyncTransport(object):
         try:
             while toread:
                 try:
-                    # TODO: await self.reader.readexactly would not return until it has received something which
-                    #  is problematic in the case timeout is required while no frame coming in.
-                    #  asyncio.wait_for is used here for timeout control
-                    #  set socket timeout does not work, not triggering socket error maybe should be a different config?
-                    #  also we could consider using a low level socket instead of high level reader/writer
-                    #  https://docs.python.org/3/library/asyncio-eventloop.html
-                    view[nbytes:nbytes + toread] = await asyncio.wait_for(self.reader.readexactly(toread), timeout=1)
+                    view[nbytes:nbytes + toread] = await self.reader.readexactly(toread)
                     nbytes = toread
                 except asyncio.IncompleteReadError as exc:
                     pbytes = len(exc.partial)

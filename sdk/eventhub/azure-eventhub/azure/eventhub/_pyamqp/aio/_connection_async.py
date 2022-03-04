@@ -126,7 +126,8 @@ class Connection(object):
         self.state = new_state
         _LOGGER.info("Connection '%s' state changed: %r -> %r", self._container_id, previous_state, new_state)
 
-        await asyncio.gather(*[session._on_connection_state_change() for session in self.outgoing_endpoints.values()])
+        for session in self.outgoing_endpoints.values():
+            await session._on_connection_state_change()
 
     async def _connect(self):
         try:
@@ -205,11 +206,11 @@ class Connection(object):
 
     async def _outgoing_empty(self):
         if self.network_trace:
-            _LOGGER.info("<- empty()", extra=self.network_trace_params)
+            _LOGGER.info("-> empty()", extra=self.network_trace_params)
         try:
             if self._can_write():
                 await self.transport.write(EMPTY_FRAME)
-                self._last_frame_sent_time = time.time()
+                self.last_frame_sent_time = time.time()
         except (OSError, IOError, SSLError, socket.error) as exc:
             self._error = AMQPConnectionError(
                 ErrorCondition.SocketError,
@@ -421,8 +422,7 @@ class Connection(object):
 
     async def _listen_one_frame(self, **kwargs):
         new_frame = await self._read_frame(**kwargs)
-        if await self._process_incoming_frame(*new_frame):
-            raise ValueError("Stop")  # Stop listening
+        return await self._process_incoming_frame(*new_frame)
 
     async def listen(self, wait=False, batch=1, **kwargs):
         try:
@@ -450,12 +450,9 @@ class Connection(object):
                     description="Connection was already closed."
                 )
                 return
-            try:
-                tasks = [asyncio.ensure_future(self._listen_one_frame(**kwargs)) for _ in range(batch)]
-                await asyncio.gather(*tasks)
-            except ValueError:
-                for task in tasks:
-                    task.cancel()
+            for _ in range(batch):
+                if await asyncio.ensure_future(self._listen_one_frame(**kwargs)):
+                    break
         except (OSError, IOError, SSLError, socket.error) as exc:
             self._error = AMQPConnectionError(
                 ErrorCondition.SocketError,
