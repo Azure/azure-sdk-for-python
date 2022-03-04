@@ -177,25 +177,22 @@ class EventHubConsumer(
 
     async def _callback_task(self, batch, max_batch_size, max_wait_time):
         while self._callback_task_run:
-            try:
-                async with self._message_buffer_lock:
-                    messages = [
-                        self._message_buffer.popleft() for _ in range(min(max_batch_size, len(self._message_buffer)))
-                    ]
-                events = [EventData._from_message(message) for message in messages]
-                now_time = time.time()
-                if len(events) > 0:
-                    await self._on_event_received(events if batch else events[0])
+            async with self._message_buffer_lock:
+                messages = [
+                    self._message_buffer.popleft() for _ in range(min(max_batch_size, len(self._message_buffer)))
+                ]
+            events = [EventData._from_message(message) for message in messages]
+            now_time = time.time()
+            if len(events) > 0:
+                await self._on_event_received(events if batch else events[0])
+                self._last_callback_called_time = now_time
+            else:
+                if max_wait_time and (now_time - self._last_callback_called_time) > max_wait_time:
+                    # no events received, and need to callback
+                    await self._on_event_received([] if batch else None)
                     self._last_callback_called_time = now_time
-                else:
-                    if max_wait_time and (now_time - self._last_callback_called_time) > max_wait_time:
-                        # no events received, and need to callback
-                        await self._on_event_received([] if batch else None)
-                        self._last_callback_called_time = now_time
-                    # backoff a bit to avoid throttling CPU when no events are coming
-                    await asyncio.sleep(0.05)
-            except asyncio.CancelledError:
-                raise
+                # backoff a bit to avoid throttling CPU when no events are coming
+                await asyncio.sleep(0.05)
 
     async def _receive_task(self):
         max_retries = (
