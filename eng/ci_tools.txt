@@ -2,7 +2,7 @@
 cryptography<4
 setuptools==44.1.0; python_version == '2.7'
 setuptools==46.4.0; python_version >= '3.5'
-virtualenv==20.0.23
+virtualenv==20.13.2
 wheel==0.37.0
 Jinja2==2.11.2
 packaging==20.4
