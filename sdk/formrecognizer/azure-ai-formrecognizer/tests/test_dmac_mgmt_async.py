@@ -45,8 +45,6 @@ class TestManagementAsync(AsyncFormRecognizerTest):
             async with client:
                 result = await client.get_account_info()
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     async def test_get_model_empty_model_id(self, **kwargs):
@@ -89,8 +87,6 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         assert info.model_limit
         assert info.model_count
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -106,8 +102,6 @@ class TestManagementAsync(AsyncFormRecognizerTest):
                     assert key
                     assert field["type"]
                 assert doc_type.field_confidence is None
-
-        return {}
 
     @pytest.mark.skip()
     @FormRecognizerPreparer()
@@ -196,8 +190,6 @@ class TestManagementAsync(AsyncFormRecognizerTest):
                 assert error.message
                 assert error.details
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     async def test_get_operation_bad_model_id(self, **kwargs):
@@ -223,5 +215,3 @@ class TestManagementAsync(AsyncFormRecognizerTest):
                 assert dac._api_version == DocumentAnalysisApiVersion.V2022_01_30_PREVIEW
             await dtc.get_account_info()
             assert transport.session is not None
-
-        return {}

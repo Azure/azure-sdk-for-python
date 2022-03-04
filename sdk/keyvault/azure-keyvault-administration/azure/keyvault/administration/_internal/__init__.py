@@ -26,14 +26,14 @@ def parse_vault_id(url):
     try:
         parsed_uri = urlparse(url)
     except Exception:  # pylint: disable=broad-except
-        raise ValueError("'{}' is not not a valid url".format(url))
+        raise ValueError("'{}' is not a valid url".format(url))
     if not (parsed_uri.scheme and parsed_uri.hostname):
-        raise ValueError("'{}' is not not a valid url".format(url))
+        raise ValueError("'{}' is not a valid url".format(url))
 
     path = list(filter(None, parsed_uri.path.split("/")))
 
     if len(path) < 2 or len(path) > 3:
-        raise ValueError("'{}' is not not a valid vault url".format(url))
+        raise ValueError("'{}' is not a valid vault url".format(url))
 
     return _VaultId(
         vault_url="{}://{}".format(parsed_uri.scheme, parsed_uri.hostname),

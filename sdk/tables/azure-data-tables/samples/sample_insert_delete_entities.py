@@ -41,8 +41,8 @@ class InsertDeleteEntity(object):
         self.table_name = "SampleInsertDelete"
 
         self.entity = {
-            u"PartitionKey": u"color",
-            u"RowKey": u"brand",
+            "PartitionKey": "color",
+            "RowKey": "brand",
             "text": "Marker",
             "color": "Purple",
             "price": 4.99,
@@ -82,7 +82,7 @@ class InsertDeleteEntity(object):
 
             # Create entity to delete (to showcase etag)
             try:
-                resp = table_client.create_entity(entity=self.entity)
+                table_client.create_entity(entity=self.entity)
             except ResourceExistsError:
                 print("Entity already exists!")
 

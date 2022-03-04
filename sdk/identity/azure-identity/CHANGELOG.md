@@ -1,8 +1,12 @@
 # Release History
 
-## 1.8.0b2 (Unreleased)
+## 1.9.0b1 (Unreleased)
 
 ### Features Added
+
+- Added `validate_authority` support for msal client  #22625
+- Added `resource_id` support for user-assigned managed identity  #22329
+- Added `ClientAssertionCredential` support  #22328
 
 ### Breaking Changes
 
@@ -10,13 +14,23 @@
 
 ### Other Changes
 
-## 1.8.0b1 (2022-02-08)
+## 1.8.0 (2022-03-01)
 
-### Features Added
+### Bugs Fixed
 
-- Added `validate_authority` support for msal client  #22625
-- Added `resource_id` support for user-assigned managed identity  #22329
-- Added `ClientAssertionCredential` support  #22328
+- Handle injected "tenant_id" and "claims" ([#23138](https://github.com/Azure/azure-sdk-for-python/issues/23138))
+  
+  "tenant_id" argument in get_token() method is only supported by:
+
+  - `AuthorizationCodeCredential`
+  - `AzureCliCredential`
+  - `AzurePowerShellCredential`
+  - `InteractiveBrowserCredential`
+  - `DeviceCodeCredential`
+  - `EnvironmentCredential`
+  - `UsernamePasswordCredential`
+
+   it is ignored by other types of credentials.
 
 ### Other Changes
 

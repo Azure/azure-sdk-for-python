@@ -492,7 +492,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
     @distributed_trace
     def delete_alert_configuration(self, *alert_configuration_id, **kwargs):
-        # type: (*str, Any) -> None
+        # type: (str, Any) -> None
         """Delete an anomaly alert configuration by its ID.
 
         :param str alert_configuration_id: anomaly alert configuration unique id.
@@ -513,7 +513,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
     @distributed_trace
     def delete_detection_configuration(self, *detection_configuration_id, **kwargs):
-        # type: (*str, Any) -> None
+        # type: (str, Any) -> None
         """Delete an anomaly detection configuration by its ID.
 
         :param str detection_configuration_id: anomaly detection configuration unique id.
@@ -534,7 +534,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
     @distributed_trace
     def delete_data_feed(self, *data_feed_id, **kwargs):
-        # type: (*str, Any) -> None
+        # type: (str, Any) -> None
         """Delete a data feed by its ID.
 
         :param str data_feed_id: The data feed unique id.
@@ -555,7 +555,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
     @distributed_trace
     def delete_hook(self, *hook_id, **kwargs):
-        # type: (*str, Any) -> None
+        # type: (str, Any) -> None
         """Delete a web or email hook by its ID.
 
         :param str hook_id: Hook unique ID.
@@ -1024,7 +1024,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
     @distributed_trace
     def delete_datasource_credential(self, *credential_id, **kwargs):
-        # type: (*str, Any) -> None
+        # type: (str, Any) -> None
         """Delete a datasource credential by its ID.
 
         :param str credential_id: Datasource credential unique ID.

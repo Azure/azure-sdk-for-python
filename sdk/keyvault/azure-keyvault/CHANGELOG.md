@@ -51,7 +51,7 @@ This version uses a next-generation code generator that *might* introduce breaki
   At a glance:
 
   - "is" should not be used at all.
-  - "format" will return the string value, where "%s" string formatting will return `NameOfEnum.stringvalue`. Format syntax should be prefered.
+  - "format" will return the string value, where "%s" string formatting will return `NameOfEnum.stringvalue`. Format syntax should be preferred.
 
 - New Long Running Operation:
 
@@ -102,7 +102,7 @@ This version uses a next-generation code generator that *might* introduce breaki
 
 ## 0.3.3 (2017-05-10)
 
-* Reverting to 0.3.0, since behavior of 0.3.2 is not satisfaying either.
+* Reverting to 0.3.0, since behavior of 0.3.2 is not satisfying either.
 
 ## 0.3.2 (2017-05-09)
 
@@ -129,8 +129,8 @@ This version uses a next-generation code generator that *might* introduce breaki
   - verify(self, key_identifier, ...
   - wrap_key(self, key_identifier, ...
   - unwrap_key(self, key_identifier, ...
-  - update_secret(self, secret_identifer, ...
-  - get_secret(self, secret_identifer, ...
+  - update_secret(self, secret_identifier, ...
+  - get_secret(self, secret_identifier, ...
   - get_certificate(self, certificate_identifier, ...
 
 ## 0.2.0 (2017-04-09)

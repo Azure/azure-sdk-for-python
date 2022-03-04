@@ -1,0 +1,105 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/translator/text/batch/v1.0/batches",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "262",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-translation-document/1.0.0b7 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "0ece65cb-9127-11ec-83e0-b831b58100e8"
+      },
+      "RequestBody": {
+        "inputs": [
+          {
+            "source": {
+              "sourceUrl": "https://fakeendpoint.blob.core.windows.net/srcc1e345b6-7529-4276-bc96-d3f943142680?se=end\u0026sp=rl\u0026sv=2021-04-10\u0026sr=c\u0026sig=fake_token_value",
+              "filter": {}
+            },
+            "targets": [
+              {
+                "targetUrl": "https://idont.ex.ist",
+                "language": "es"
+              }
+            ]
+          }
+        ]
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "57decb55-5050-426c-b75b-f86f8bfe11a1",
+        "Content-Length": "0",
+        "Date": "Sat, 19 Feb 2022 01:55:47 GMT",
+        "Operation-Location": "https://fakeendpoint.cognitiveservices.azure.com/translator/text/batch/v1.0/batches/9b70ad80-68cf-41c7-84f8-e490f17c742c",
+        "Set-Cookie": [
+          "ARRAffinity=a374f049af0321e021a66f6ba57004d2e31d3140f1d09889270a08e39d2850a6;Path=/;HttpOnly;Secure;Domain=mtbatch.nam.microsofttranslator.com",
+          "ARRAffinitySameSite=a374f049af0321e021a66f6ba57004d2e31d3140f1d09889270a08e39d2850a6;Path=/;HttpOnly;SameSite=None;Secure;Domain=mtbatch.nam.microsofttranslator.com"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "X-Powered-By": "ASP.NET",
+        "X-RequestId": "57decb55-5050-426c-b75b-f86f8bfe11a1"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/translator/text/batch/v1.0/batches/9b70ad80-68cf-41c7-84f8-e490f17c742c",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-translation-document/1.0.0b7 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "0ece65cb-9127-11ec-83e0-b831b58100e8"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "7be91557-c5cc-4938-8b74-1cf5a5ffc4ef",
+        "Cache-Control": "public, max-age=1",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 19 Feb 2022 01:55:48 GMT",
+        "ETag": "\u002298FE811357007B5A258FBE3CFA31308BB595ACA884FD6BE58789F53A8F4AC828\u0022",
+        "Set-Cookie": [
+          "ARRAffinity=09a10d9e036c982a6acf1ed7f4e9558b44845127dddc55af67b87cd656dd4d77;Path=/;HttpOnly;Secure;Domain=mtbatch.nam.microsofttranslator.com",
+          "ARRAffinitySameSite=09a10d9e036c982a6acf1ed7f4e9558b44845127dddc55af67b87cd656dd4d77;Path=/;HttpOnly;SameSite=None;Secure;Domain=mtbatch.nam.microsofttranslator.com"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "X-Powered-By": "ASP.NET",
+        "X-RequestId": "7be91557-c5cc-4938-8b74-1cf5a5ffc4ef"
+      },
+      "ResponseBody": {
+        "id": "9b70ad80-68cf-41c7-84f8-e490f17c742c",
+        "createdDateTimeUtc": "2022-02-19T01:55:47.9967202Z",
+        "lastActionDateTimeUtc": "2022-02-19T01:55:48.1344465Z",
+        "status": "ValidationFailed",
+        "error": {
+          "code": "InvalidRequest",
+          "message": "Cannot access target document location with the current permissions.",
+          "target": "Operation",
+          "innerError": {
+            "code": "InvalidTargetDocumentAccessLevel",
+            "message": "Cannot access target document location with the current permissions."
+          }
+        },
+        "summary": {
+          "total": 0,
+          "failed": 0,
+          "success": 0,
+          "inProgress": 0,
+          "notYetStarted": 0,
+          "cancelled": 0,
+          "totalCharacterCharged": 0
+        }
+      }
+    }
+  ],
+  "Variables": {
+    "source_container_name": "srcc1e345b6-7529-4276-bc96-d3f943142680"
+  }
+}

@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import logging
 from typing import TYPE_CHECKING
 
 try:
@@ -35,9 +34,6 @@ from ._error import (
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineRequest  # pylint: disable=ungrouped-imports
-
-
-logger = logging.getLogger(__name__)
 
 
 class AzureSigningError(ClientAuthenticationError):
@@ -126,7 +122,6 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
             + self._get_canonicalized_resource_query(request.http_request)
         )
         self._add_authorization_header(request.http_request, string_to_sign)
-        logger.debug("String_to_sign=%s", string_to_sign)
 
     def _get_canonicalized_resource_query(self, request):
         for name, value in request.query.items():

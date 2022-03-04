@@ -26,10 +26,10 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -54,6 +54,12 @@ class Resource(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -75,38 +81,38 @@ class ContainerService(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     :ivar provisioning_state: The current deployment or provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
-    :param orchestrator_profile: Profile for the container service orchestrator.
-    :type orchestrator_profile:
+    :ivar orchestrator_profile: Profile for the container service orchestrator.
+    :vartype orchestrator_profile:
      ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceOrchestratorProfile
-    :param custom_profile: Properties to configure a custom container service cluster.
-    :type custom_profile:
+    :ivar custom_profile: Properties to configure a custom container service cluster.
+    :vartype custom_profile:
      ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceCustomProfile
-    :param service_principal_profile: Information about a service principal identity for the
-     cluster to use for manipulating Azure APIs. Exact one of secret or keyVaultSecretRef need to be
+    :ivar service_principal_profile: Information about a service principal identity for the cluster
+     to use for manipulating Azure APIs. Exact one of secret or keyVaultSecretRef need to be
      specified.
-    :type service_principal_profile:
+    :vartype service_principal_profile:
      ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServicePrincipalProfile
-    :param master_profile: Profile for the container service master.
-    :type master_profile:
+    :ivar master_profile: Profile for the container service master.
+    :vartype master_profile:
      ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceMasterProfile
-    :param agent_pool_profiles: Properties of the agent pool.
-    :type agent_pool_profiles:
+    :ivar agent_pool_profiles: Properties of the agent pool.
+    :vartype agent_pool_profiles:
      list[~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceAgentPoolProfile]
-    :param windows_profile: Profile for Windows VMs in the container service cluster.
-    :type windows_profile:
+    :ivar windows_profile: Profile for Windows VMs in the container service cluster.
+    :vartype windows_profile:
      ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceWindowsProfile
-    :param linux_profile: Profile for Linux VMs in the container service cluster.
-    :type linux_profile:
+    :ivar linux_profile: Profile for Linux VMs in the container service cluster.
+    :vartype linux_profile:
      ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceLinuxProfile
-    :param diagnostics_profile: Profile for diagnostics in the container service cluster.
-    :type diagnostics_profile:
+    :ivar diagnostics_profile: Profile for diagnostics in the container service cluster.
+    :vartype diagnostics_profile:
      ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceDiagnosticsProfile
     """
 
@@ -150,6 +156,38 @@ class ContainerService(Resource):
         diagnostics_profile: Optional["ContainerServiceDiagnosticsProfile"] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword orchestrator_profile: Profile for the container service orchestrator.
+        :paramtype orchestrator_profile:
+         ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceOrchestratorProfile
+        :keyword custom_profile: Properties to configure a custom container service cluster.
+        :paramtype custom_profile:
+         ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceCustomProfile
+        :keyword service_principal_profile: Information about a service principal identity for the
+         cluster to use for manipulating Azure APIs. Exact one of secret or keyVaultSecretRef need to be
+         specified.
+        :paramtype service_principal_profile:
+         ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServicePrincipalProfile
+        :keyword master_profile: Profile for the container service master.
+        :paramtype master_profile:
+         ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceMasterProfile
+        :keyword agent_pool_profiles: Properties of the agent pool.
+        :paramtype agent_pool_profiles:
+         list[~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceAgentPoolProfile]
+        :keyword windows_profile: Profile for Windows VMs in the container service cluster.
+        :paramtype windows_profile:
+         ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceWindowsProfile
+        :keyword linux_profile: Profile for Linux VMs in the container service cluster.
+        :paramtype linux_profile:
+         ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceLinuxProfile
+        :keyword diagnostics_profile: Profile for diagnostics in the container service cluster.
+        :paramtype diagnostics_profile:
+         ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceDiagnosticsProfile
+        """
         super(ContainerService, self).__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
         self.orchestrator_profile = orchestrator_profile
@@ -169,13 +207,13 @@ class ContainerServiceAgentPoolProfile(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Unique name of the agent pool profile in the context of the subscription
+    :ivar name: Required. Unique name of the agent pool profile in the context of the subscription
      and resource group.
-    :type name: str
-    :param count: Number of agents (VMs) to host docker containers. Allowed values must be in the
+    :vartype name: str
+    :ivar count: Number of agents (VMs) to host docker containers. Allowed values must be in the
      range of 1 to 100 (inclusive). The default value is 1.
-    :type count: int
-    :param vm_size: Required. Size of agent VMs. Possible values include: "Standard_A1",
+    :vartype count: int
+    :ivar vm_size: Required. Size of agent VMs. Possible values include: "Standard_A1",
      "Standard_A10", "Standard_A11", "Standard_A1_v2", "Standard_A2", "Standard_A2_v2",
      "Standard_A2m_v2", "Standard_A3", "Standard_A4", "Standard_A4_v2", "Standard_A4m_v2",
      "Standard_A5", "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A8_v2",
@@ -213,29 +251,29 @@ class ContainerServiceAgentPoolProfile(msrest.serialization.Model):
      "Standard_NC24rs_v2", "Standard_NC24rs_v3", "Standard_NC24s_v2", "Standard_NC24s_v3",
      "Standard_NC6", "Standard_NC6s_v2", "Standard_NC6s_v3", "Standard_ND12s", "Standard_ND24rs",
      "Standard_ND24s", "Standard_ND6s", "Standard_NV12", "Standard_NV24", "Standard_NV6".
-    :type vm_size: str or
+    :vartype vm_size: str or
      ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceVMSizeTypes
-    :param os_disk_size_gb: OS Disk Size in GB to be used to specify the disk size for every
-     machine in this master/agent pool. If you specify 0, it will apply the default osDisk size
-     according to the vmSize specified.
-    :type os_disk_size_gb: int
-    :param dns_prefix: DNS prefix to be used to create the FQDN for the agent pool.
-    :type dns_prefix: str
+    :ivar os_disk_size_gb: OS Disk Size in GB to be used to specify the disk size for every machine
+     in this master/agent pool. If you specify 0, it will apply the default osDisk size according to
+     the vmSize specified.
+    :vartype os_disk_size_gb: int
+    :ivar dns_prefix: DNS prefix to be used to create the FQDN for the agent pool.
+    :vartype dns_prefix: str
     :ivar fqdn: FQDN for the agent pool.
     :vartype fqdn: str
-    :param ports: Ports number array used to expose on this agent pool. The default opened ports
-     are different based on your choice of orchestrator.
-    :type ports: list[int]
-    :param storage_profile: Storage profile specifies what kind of storage used. Choose from
+    :ivar ports: Ports number array used to expose on this agent pool. The default opened ports are
+     different based on your choice of orchestrator.
+    :vartype ports: list[int]
+    :ivar storage_profile: Storage profile specifies what kind of storage used. Choose from
      StorageAccount and ManagedDisks. Leave it empty, we will choose for you based on the
      orchestrator choice. Possible values include: "StorageAccount", "ManagedDisks".
-    :type storage_profile: str or
+    :vartype storage_profile: str or
      ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceStorageProfileTypes
-    :param vnet_subnet_id: VNet SubnetID specifies the VNet's subnet identifier.
-    :type vnet_subnet_id: str
-    :param os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default to
+    :ivar vnet_subnet_id: VNet SubnetID specifies the VNet's subnet identifier.
+    :vartype vnet_subnet_id: str
+    :ivar os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default to
      Linux. Possible values include: "Linux", "Windows". Default value: "Linux".
-    :type os_type: str or ~azure.mgmt.containerservice.v2017_07_01.models.OSType
+    :vartype os_type: str or ~azure.mgmt.containerservice.v2017_07_01.models.OSType
     """
 
     _validation = {
@@ -273,6 +311,73 @@ class ContainerServiceAgentPoolProfile(msrest.serialization.Model):
         os_type: Optional[Union[str, "OSType"]] = "Linux",
         **kwargs
     ):
+        """
+        :keyword name: Required. Unique name of the agent pool profile in the context of the
+         subscription and resource group.
+        :paramtype name: str
+        :keyword count: Number of agents (VMs) to host docker containers. Allowed values must be in the
+         range of 1 to 100 (inclusive). The default value is 1.
+        :paramtype count: int
+        :keyword vm_size: Required. Size of agent VMs. Possible values include: "Standard_A1",
+         "Standard_A10", "Standard_A11", "Standard_A1_v2", "Standard_A2", "Standard_A2_v2",
+         "Standard_A2m_v2", "Standard_A3", "Standard_A4", "Standard_A4_v2", "Standard_A4m_v2",
+         "Standard_A5", "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A8_v2",
+         "Standard_A8m_v2", "Standard_A9", "Standard_B2ms", "Standard_B2s", "Standard_B4ms",
+         "Standard_B8ms", "Standard_D1", "Standard_D11", "Standard_D11_v2", "Standard_D11_v2_Promo",
+         "Standard_D12", "Standard_D12_v2", "Standard_D12_v2_Promo", "Standard_D13", "Standard_D13_v2",
+         "Standard_D13_v2_Promo", "Standard_D14", "Standard_D14_v2", "Standard_D14_v2_Promo",
+         "Standard_D15_v2", "Standard_D16_v3", "Standard_D16s_v3", "Standard_D1_v2", "Standard_D2",
+         "Standard_D2_v2", "Standard_D2_v2_Promo", "Standard_D2_v3", "Standard_D2s_v3", "Standard_D3",
+         "Standard_D32_v3", "Standard_D32s_v3", "Standard_D3_v2", "Standard_D3_v2_Promo", "Standard_D4",
+         "Standard_D4_v2", "Standard_D4_v2_Promo", "Standard_D4_v3", "Standard_D4s_v3",
+         "Standard_D5_v2", "Standard_D5_v2_Promo", "Standard_D64_v3", "Standard_D64s_v3",
+         "Standard_D8_v3", "Standard_D8s_v3", "Standard_DS1", "Standard_DS11", "Standard_DS11_v2",
+         "Standard_DS11_v2_Promo", "Standard_DS12", "Standard_DS12_v2", "Standard_DS12_v2_Promo",
+         "Standard_DS13", "Standard_DS13-2_v2", "Standard_DS13-4_v2", "Standard_DS13_v2",
+         "Standard_DS13_v2_Promo", "Standard_DS14", "Standard_DS14-4_v2", "Standard_DS14-8_v2",
+         "Standard_DS14_v2", "Standard_DS14_v2_Promo", "Standard_DS15_v2", "Standard_DS1_v2",
+         "Standard_DS2", "Standard_DS2_v2", "Standard_DS2_v2_Promo", "Standard_DS3", "Standard_DS3_v2",
+         "Standard_DS3_v2_Promo", "Standard_DS4", "Standard_DS4_v2", "Standard_DS4_v2_Promo",
+         "Standard_DS5_v2", "Standard_DS5_v2_Promo", "Standard_E16_v3", "Standard_E16s_v3",
+         "Standard_E2_v3", "Standard_E2s_v3", "Standard_E32-16s_v3", "Standard_E32-8s_v3",
+         "Standard_E32_v3", "Standard_E32s_v3", "Standard_E4_v3", "Standard_E4s_v3",
+         "Standard_E64-16s_v3", "Standard_E64-32s_v3", "Standard_E64_v3", "Standard_E64s_v3",
+         "Standard_E8_v3", "Standard_E8s_v3", "Standard_F1", "Standard_F16", "Standard_F16s",
+         "Standard_F16s_v2", "Standard_F1s", "Standard_F2", "Standard_F2s", "Standard_F2s_v2",
+         "Standard_F32s_v2", "Standard_F4", "Standard_F4s", "Standard_F4s_v2", "Standard_F64s_v2",
+         "Standard_F72s_v2", "Standard_F8", "Standard_F8s", "Standard_F8s_v2", "Standard_G1",
+         "Standard_G2", "Standard_G3", "Standard_G4", "Standard_G5", "Standard_GS1", "Standard_GS2",
+         "Standard_GS3", "Standard_GS4", "Standard_GS4-4", "Standard_GS4-8", "Standard_GS5",
+         "Standard_GS5-16", "Standard_GS5-8", "Standard_H16", "Standard_H16m", "Standard_H16mr",
+         "Standard_H16r", "Standard_H8", "Standard_H8m", "Standard_L16s", "Standard_L32s",
+         "Standard_L4s", "Standard_L8s", "Standard_M128-32ms", "Standard_M128-64ms", "Standard_M128ms",
+         "Standard_M128s", "Standard_M64-16ms", "Standard_M64-32ms", "Standard_M64ms", "Standard_M64s",
+         "Standard_NC12", "Standard_NC12s_v2", "Standard_NC12s_v3", "Standard_NC24", "Standard_NC24r",
+         "Standard_NC24rs_v2", "Standard_NC24rs_v3", "Standard_NC24s_v2", "Standard_NC24s_v3",
+         "Standard_NC6", "Standard_NC6s_v2", "Standard_NC6s_v3", "Standard_ND12s", "Standard_ND24rs",
+         "Standard_ND24s", "Standard_ND6s", "Standard_NV12", "Standard_NV24", "Standard_NV6".
+        :paramtype vm_size: str or
+         ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceVMSizeTypes
+        :keyword os_disk_size_gb: OS Disk Size in GB to be used to specify the disk size for every
+         machine in this master/agent pool. If you specify 0, it will apply the default osDisk size
+         according to the vmSize specified.
+        :paramtype os_disk_size_gb: int
+        :keyword dns_prefix: DNS prefix to be used to create the FQDN for the agent pool.
+        :paramtype dns_prefix: str
+        :keyword ports: Ports number array used to expose on this agent pool. The default opened ports
+         are different based on your choice of orchestrator.
+        :paramtype ports: list[int]
+        :keyword storage_profile: Storage profile specifies what kind of storage used. Choose from
+         StorageAccount and ManagedDisks. Leave it empty, we will choose for you based on the
+         orchestrator choice. Possible values include: "StorageAccount", "ManagedDisks".
+        :paramtype storage_profile: str or
+         ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceStorageProfileTypes
+        :keyword vnet_subnet_id: VNet SubnetID specifies the VNet's subnet identifier.
+        :paramtype vnet_subnet_id: str
+        :keyword os_type: OsType to be used to specify os type. Choose from Linux and Windows. Default
+         to Linux. Possible values include: "Linux", "Windows". Default value: "Linux".
+        :paramtype os_type: str or ~azure.mgmt.containerservice.v2017_07_01.models.OSType
+        """
         super(ContainerServiceAgentPoolProfile, self).__init__(**kwargs)
         self.name = name
         self.count = count
@@ -291,8 +396,8 @@ class ContainerServiceCustomProfile(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param orchestrator: Required. The name of the custom orchestrator to use.
-    :type orchestrator: str
+    :ivar orchestrator: Required. The name of the custom orchestrator to use.
+    :vartype orchestrator: str
     """
 
     _validation = {
@@ -309,6 +414,10 @@ class ContainerServiceCustomProfile(msrest.serialization.Model):
         orchestrator: str,
         **kwargs
     ):
+        """
+        :keyword orchestrator: Required. The name of the custom orchestrator to use.
+        :paramtype orchestrator: str
+        """
         super(ContainerServiceCustomProfile, self).__init__(**kwargs)
         self.orchestrator = orchestrator
 
@@ -318,8 +427,8 @@ class ContainerServiceDiagnosticsProfile(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param vm_diagnostics: Required. Profile for diagnostics on the container service VMs.
-    :type vm_diagnostics:
+    :ivar vm_diagnostics: Required. Profile for diagnostics on the container service VMs.
+    :vartype vm_diagnostics:
      ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceVMDiagnostics
     """
 
@@ -337,6 +446,11 @@ class ContainerServiceDiagnosticsProfile(msrest.serialization.Model):
         vm_diagnostics: "ContainerServiceVMDiagnostics",
         **kwargs
     ):
+        """
+        :keyword vm_diagnostics: Required. Profile for diagnostics on the container service VMs.
+        :paramtype vm_diagnostics:
+         ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceVMDiagnostics
+        """
         super(ContainerServiceDiagnosticsProfile, self).__init__(**kwargs)
         self.vm_diagnostics = vm_diagnostics
 
@@ -346,10 +460,10 @@ class ContainerServiceLinuxProfile(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param admin_username: Required. The administrator username to use for Linux VMs.
-    :type admin_username: str
-    :param ssh: Required. SSH configuration for Linux-based VMs running on Azure.
-    :type ssh: ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceSshConfiguration
+    :ivar admin_username: Required. The administrator username to use for Linux VMs.
+    :vartype admin_username: str
+    :ivar ssh: Required. SSH configuration for Linux-based VMs running on Azure.
+    :vartype ssh: ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceSshConfiguration
     """
 
     _validation = {
@@ -369,6 +483,13 @@ class ContainerServiceLinuxProfile(msrest.serialization.Model):
         ssh: "ContainerServiceSshConfiguration",
         **kwargs
     ):
+        """
+        :keyword admin_username: Required. The administrator username to use for Linux VMs.
+        :paramtype admin_username: str
+        :keyword ssh: Required. SSH configuration for Linux-based VMs running on Azure.
+        :paramtype ssh:
+         ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceSshConfiguration
+        """
         super(ContainerServiceLinuxProfile, self).__init__(**kwargs)
         self.admin_username = admin_username
         self.ssh = ssh
@@ -379,8 +500,8 @@ class ContainerServiceListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of container services.
-    :type value: list[~azure.mgmt.containerservice.v2017_07_01.models.ContainerService]
+    :ivar value: The list of container services.
+    :vartype value: list[~azure.mgmt.containerservice.v2017_07_01.models.ContainerService]
     :ivar next_link: The URL to get the next set of container service results.
     :vartype next_link: str
     """
@@ -400,6 +521,10 @@ class ContainerServiceListResult(msrest.serialization.Model):
         value: Optional[List["ContainerService"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The list of container services.
+        :paramtype value: list[~azure.mgmt.containerservice.v2017_07_01.models.ContainerService]
+        """
         super(ContainerServiceListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -412,12 +537,12 @@ class ContainerServiceMasterProfile(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param count: Number of masters (VMs) in the container service cluster. Allowed values are 1,
-     3, and 5. The default value is 1. Possible values include: 1, 3, 5. Default value: "1".
-    :type count: str or ~azure.mgmt.containerservice.v2017_07_01.models.Count
-    :param dns_prefix: Required. DNS prefix to be used to create the FQDN for the master pool.
-    :type dns_prefix: str
-    :param vm_size: Required. Size of agent VMs. Possible values include: "Standard_A1",
+    :ivar count: Number of masters (VMs) in the container service cluster. Allowed values are 1, 3,
+     and 5. The default value is 1. Possible values include: 1, 3, 5. Default value: "1".
+    :vartype count: int or ~azure.mgmt.containerservice.v2017_07_01.models.Count
+    :ivar dns_prefix: Required. DNS prefix to be used to create the FQDN for the master pool.
+    :vartype dns_prefix: str
+    :ivar vm_size: Required. Size of agent VMs. Possible values include: "Standard_A1",
      "Standard_A10", "Standard_A11", "Standard_A1_v2", "Standard_A2", "Standard_A2_v2",
      "Standard_A2m_v2", "Standard_A3", "Standard_A4", "Standard_A4_v2", "Standard_A4m_v2",
      "Standard_A5", "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A8_v2",
@@ -455,21 +580,21 @@ class ContainerServiceMasterProfile(msrest.serialization.Model):
      "Standard_NC24rs_v2", "Standard_NC24rs_v3", "Standard_NC24s_v2", "Standard_NC24s_v3",
      "Standard_NC6", "Standard_NC6s_v2", "Standard_NC6s_v3", "Standard_ND12s", "Standard_ND24rs",
      "Standard_ND24s", "Standard_ND6s", "Standard_NV12", "Standard_NV24", "Standard_NV6".
-    :type vm_size: str or
+    :vartype vm_size: str or
      ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceVMSizeTypes
-    :param os_disk_size_gb: OS Disk Size in GB to be used to specify the disk size for every
-     machine in this master/agent pool. If you specify 0, it will apply the default osDisk size
-     according to the vmSize specified.
-    :type os_disk_size_gb: int
-    :param vnet_subnet_id: VNet SubnetID specifies the VNet's subnet identifier.
-    :type vnet_subnet_id: str
-    :param first_consecutive_static_ip: FirstConsecutiveStaticIP used to specify the first static
-     ip of masters.
-    :type first_consecutive_static_ip: str
-    :param storage_profile: Storage profile specifies what kind of storage used. Choose from
+    :ivar os_disk_size_gb: OS Disk Size in GB to be used to specify the disk size for every machine
+     in this master/agent pool. If you specify 0, it will apply the default osDisk size according to
+     the vmSize specified.
+    :vartype os_disk_size_gb: int
+    :ivar vnet_subnet_id: VNet SubnetID specifies the VNet's subnet identifier.
+    :vartype vnet_subnet_id: str
+    :ivar first_consecutive_static_ip: FirstConsecutiveStaticIP used to specify the first static ip
+     of masters.
+    :vartype first_consecutive_static_ip: str
+    :ivar storage_profile: Storage profile specifies what kind of storage used. Choose from
      StorageAccount and ManagedDisks. Leave it empty, we will choose for you based on the
      orchestrator choice. Possible values include: "StorageAccount", "ManagedDisks".
-    :type storage_profile: str or
+    :vartype storage_profile: str or
      ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceStorageProfileTypes
     :ivar fqdn: FQDN for the master pool.
     :vartype fqdn: str
@@ -498,13 +623,74 @@ class ContainerServiceMasterProfile(msrest.serialization.Model):
         *,
         dns_prefix: str,
         vm_size: Union[str, "ContainerServiceVMSizeTypes"],
-        count: Optional[Union[int, "Count"]] = "1",
+        count: Optional[Union[int, "Count"]] = 1,
         os_disk_size_gb: Optional[int] = None,
         vnet_subnet_id: Optional[str] = None,
         first_consecutive_static_ip: Optional[str] = "10.240.255.5",
         storage_profile: Optional[Union[str, "ContainerServiceStorageProfileTypes"]] = None,
         **kwargs
     ):
+        """
+        :keyword count: Number of masters (VMs) in the container service cluster. Allowed values are 1,
+         3, and 5. The default value is 1. Possible values include: 1, 3, 5. Default value: "1".
+        :paramtype count: int or ~azure.mgmt.containerservice.v2017_07_01.models.Count
+        :keyword dns_prefix: Required. DNS prefix to be used to create the FQDN for the master pool.
+        :paramtype dns_prefix: str
+        :keyword vm_size: Required. Size of agent VMs. Possible values include: "Standard_A1",
+         "Standard_A10", "Standard_A11", "Standard_A1_v2", "Standard_A2", "Standard_A2_v2",
+         "Standard_A2m_v2", "Standard_A3", "Standard_A4", "Standard_A4_v2", "Standard_A4m_v2",
+         "Standard_A5", "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A8_v2",
+         "Standard_A8m_v2", "Standard_A9", "Standard_B2ms", "Standard_B2s", "Standard_B4ms",
+         "Standard_B8ms", "Standard_D1", "Standard_D11", "Standard_D11_v2", "Standard_D11_v2_Promo",
+         "Standard_D12", "Standard_D12_v2", "Standard_D12_v2_Promo", "Standard_D13", "Standard_D13_v2",
+         "Standard_D13_v2_Promo", "Standard_D14", "Standard_D14_v2", "Standard_D14_v2_Promo",
+         "Standard_D15_v2", "Standard_D16_v3", "Standard_D16s_v3", "Standard_D1_v2", "Standard_D2",
+         "Standard_D2_v2", "Standard_D2_v2_Promo", "Standard_D2_v3", "Standard_D2s_v3", "Standard_D3",
+         "Standard_D32_v3", "Standard_D32s_v3", "Standard_D3_v2", "Standard_D3_v2_Promo", "Standard_D4",
+         "Standard_D4_v2", "Standard_D4_v2_Promo", "Standard_D4_v3", "Standard_D4s_v3",
+         "Standard_D5_v2", "Standard_D5_v2_Promo", "Standard_D64_v3", "Standard_D64s_v3",
+         "Standard_D8_v3", "Standard_D8s_v3", "Standard_DS1", "Standard_DS11", "Standard_DS11_v2",
+         "Standard_DS11_v2_Promo", "Standard_DS12", "Standard_DS12_v2", "Standard_DS12_v2_Promo",
+         "Standard_DS13", "Standard_DS13-2_v2", "Standard_DS13-4_v2", "Standard_DS13_v2",
+         "Standard_DS13_v2_Promo", "Standard_DS14", "Standard_DS14-4_v2", "Standard_DS14-8_v2",
+         "Standard_DS14_v2", "Standard_DS14_v2_Promo", "Standard_DS15_v2", "Standard_DS1_v2",
+         "Standard_DS2", "Standard_DS2_v2", "Standard_DS2_v2_Promo", "Standard_DS3", "Standard_DS3_v2",
+         "Standard_DS3_v2_Promo", "Standard_DS4", "Standard_DS4_v2", "Standard_DS4_v2_Promo",
+         "Standard_DS5_v2", "Standard_DS5_v2_Promo", "Standard_E16_v3", "Standard_E16s_v3",
+         "Standard_E2_v3", "Standard_E2s_v3", "Standard_E32-16s_v3", "Standard_E32-8s_v3",
+         "Standard_E32_v3", "Standard_E32s_v3", "Standard_E4_v3", "Standard_E4s_v3",
+         "Standard_E64-16s_v3", "Standard_E64-32s_v3", "Standard_E64_v3", "Standard_E64s_v3",
+         "Standard_E8_v3", "Standard_E8s_v3", "Standard_F1", "Standard_F16", "Standard_F16s",
+         "Standard_F16s_v2", "Standard_F1s", "Standard_F2", "Standard_F2s", "Standard_F2s_v2",
+         "Standard_F32s_v2", "Standard_F4", "Standard_F4s", "Standard_F4s_v2", "Standard_F64s_v2",
+         "Standard_F72s_v2", "Standard_F8", "Standard_F8s", "Standard_F8s_v2", "Standard_G1",
+         "Standard_G2", "Standard_G3", "Standard_G4", "Standard_G5", "Standard_GS1", "Standard_GS2",
+         "Standard_GS3", "Standard_GS4", "Standard_GS4-4", "Standard_GS4-8", "Standard_GS5",
+         "Standard_GS5-16", "Standard_GS5-8", "Standard_H16", "Standard_H16m", "Standard_H16mr",
+         "Standard_H16r", "Standard_H8", "Standard_H8m", "Standard_L16s", "Standard_L32s",
+         "Standard_L4s", "Standard_L8s", "Standard_M128-32ms", "Standard_M128-64ms", "Standard_M128ms",
+         "Standard_M128s", "Standard_M64-16ms", "Standard_M64-32ms", "Standard_M64ms", "Standard_M64s",
+         "Standard_NC12", "Standard_NC12s_v2", "Standard_NC12s_v3", "Standard_NC24", "Standard_NC24r",
+         "Standard_NC24rs_v2", "Standard_NC24rs_v3", "Standard_NC24s_v2", "Standard_NC24s_v3",
+         "Standard_NC6", "Standard_NC6s_v2", "Standard_NC6s_v3", "Standard_ND12s", "Standard_ND24rs",
+         "Standard_ND24s", "Standard_ND6s", "Standard_NV12", "Standard_NV24", "Standard_NV6".
+        :paramtype vm_size: str or
+         ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceVMSizeTypes
+        :keyword os_disk_size_gb: OS Disk Size in GB to be used to specify the disk size for every
+         machine in this master/agent pool. If you specify 0, it will apply the default osDisk size
+         according to the vmSize specified.
+        :paramtype os_disk_size_gb: int
+        :keyword vnet_subnet_id: VNet SubnetID specifies the VNet's subnet identifier.
+        :paramtype vnet_subnet_id: str
+        :keyword first_consecutive_static_ip: FirstConsecutiveStaticIP used to specify the first static
+         ip of masters.
+        :paramtype first_consecutive_static_ip: str
+        :keyword storage_profile: Storage profile specifies what kind of storage used. Choose from
+         StorageAccount and ManagedDisks. Leave it empty, we will choose for you based on the
+         orchestrator choice. Possible values include: "StorageAccount", "ManagedDisks".
+        :paramtype storage_profile: str or
+         ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceStorageProfileTypes
+        """
         super(ContainerServiceMasterProfile, self).__init__(**kwargs)
         self.count = count
         self.dns_prefix = dns_prefix
@@ -521,14 +707,14 @@ class ContainerServiceOrchestratorProfile(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param orchestrator_type: Required. The orchestrator to use to manage container service cluster
+    :ivar orchestrator_type: Required. The orchestrator to use to manage container service cluster
      resources. Valid values are Kubernetes, Swarm, DCOS, DockerCE and Custom. Possible values
      include: "Kubernetes", "Swarm", "DCOS", "DockerCE", "Custom".
-    :type orchestrator_type: str or
+    :vartype orchestrator_type: str or
      ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceOrchestratorTypes
-    :param orchestrator_version: The version of the orchestrator to use. You can specify the
+    :ivar orchestrator_version: The version of the orchestrator to use. You can specify the
      major.minor.patch part of the actual version.For example, you can specify version as "1.6.11".
-    :type orchestrator_version: str
+    :vartype orchestrator_version: str
     """
 
     _validation = {
@@ -547,6 +733,16 @@ class ContainerServiceOrchestratorProfile(msrest.serialization.Model):
         orchestrator_version: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword orchestrator_type: Required. The orchestrator to use to manage container service
+         cluster resources. Valid values are Kubernetes, Swarm, DCOS, DockerCE and Custom. Possible
+         values include: "Kubernetes", "Swarm", "DCOS", "DockerCE", "Custom".
+        :paramtype orchestrator_type: str or
+         ~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceOrchestratorTypes
+        :keyword orchestrator_version: The version of the orchestrator to use. You can specify the
+         major.minor.patch part of the actual version.For example, you can specify version as "1.6.11".
+        :paramtype orchestrator_version: str
+        """
         super(ContainerServiceOrchestratorProfile, self).__init__(**kwargs)
         self.orchestrator_type = orchestrator_type
         self.orchestrator_version = orchestrator_version
@@ -557,12 +753,13 @@ class ContainerServicePrincipalProfile(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param client_id: Required. The ID for the service principal.
-    :type client_id: str
-    :param secret: The secret password associated with the service principal in plain text.
-    :type secret: str
-    :param key_vault_secret_ref: Reference to a secret stored in Azure Key Vault.
-    :type key_vault_secret_ref: ~azure.mgmt.containerservice.v2017_07_01.models.KeyVaultSecretRef
+    :ivar client_id: Required. The ID for the service principal.
+    :vartype client_id: str
+    :ivar secret: The secret password associated with the service principal in plain text.
+    :vartype secret: str
+    :ivar key_vault_secret_ref: Reference to a secret stored in Azure Key Vault.
+    :vartype key_vault_secret_ref:
+     ~azure.mgmt.containerservice.v2017_07_01.models.KeyVaultSecretRef
     """
 
     _validation = {
@@ -583,6 +780,15 @@ class ContainerServicePrincipalProfile(msrest.serialization.Model):
         key_vault_secret_ref: Optional["KeyVaultSecretRef"] = None,
         **kwargs
     ):
+        """
+        :keyword client_id: Required. The ID for the service principal.
+        :paramtype client_id: str
+        :keyword secret: The secret password associated with the service principal in plain text.
+        :paramtype secret: str
+        :keyword key_vault_secret_ref: Reference to a secret stored in Azure Key Vault.
+        :paramtype key_vault_secret_ref:
+         ~azure.mgmt.containerservice.v2017_07_01.models.KeyVaultSecretRef
+        """
         super(ContainerServicePrincipalProfile, self).__init__(**kwargs)
         self.client_id = client_id
         self.secret = secret
@@ -594,9 +800,9 @@ class ContainerServiceSshConfiguration(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param public_keys: Required. The list of SSH public keys used to authenticate with Linux-based
+    :ivar public_keys: Required. The list of SSH public keys used to authenticate with Linux-based
      VMs. Only expect one key specified.
-    :type public_keys:
+    :vartype public_keys:
      list[~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceSshPublicKey]
     """
 
@@ -614,6 +820,12 @@ class ContainerServiceSshConfiguration(msrest.serialization.Model):
         public_keys: List["ContainerServiceSshPublicKey"],
         **kwargs
     ):
+        """
+        :keyword public_keys: Required. The list of SSH public keys used to authenticate with
+         Linux-based VMs. Only expect one key specified.
+        :paramtype public_keys:
+         list[~azure.mgmt.containerservice.v2017_07_01.models.ContainerServiceSshPublicKey]
+        """
         super(ContainerServiceSshConfiguration, self).__init__(**kwargs)
         self.public_keys = public_keys
 
@@ -623,9 +835,9 @@ class ContainerServiceSshPublicKey(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key_data: Required. Certificate public key used to authenticate with VMs through SSH.
-     The certificate must be in PEM format with or without headers.
-    :type key_data: str
+    :ivar key_data: Required. Certificate public key used to authenticate with VMs through SSH. The
+     certificate must be in PEM format with or without headers.
+    :vartype key_data: str
     """
 
     _validation = {
@@ -642,6 +854,11 @@ class ContainerServiceSshPublicKey(msrest.serialization.Model):
         key_data: str,
         **kwargs
     ):
+        """
+        :keyword key_data: Required. Certificate public key used to authenticate with VMs through SSH.
+         The certificate must be in PEM format with or without headers.
+        :paramtype key_data: str
+        """
         super(ContainerServiceSshPublicKey, self).__init__(**kwargs)
         self.key_data = key_data
 
@@ -653,8 +870,8 @@ class ContainerServiceVMDiagnostics(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param enabled: Required. Whether the VM diagnostic agent is provisioned on the VM.
-    :type enabled: bool
+    :ivar enabled: Required. Whether the VM diagnostic agent is provisioned on the VM.
+    :vartype enabled: bool
     :ivar storage_uri: The URI of the storage account where diagnostics are stored.
     :vartype storage_uri: str
     """
@@ -675,6 +892,10 @@ class ContainerServiceVMDiagnostics(msrest.serialization.Model):
         enabled: bool,
         **kwargs
     ):
+        """
+        :keyword enabled: Required. Whether the VM diagnostic agent is provisioned on the VM.
+        :paramtype enabled: bool
+        """
         super(ContainerServiceVMDiagnostics, self).__init__(**kwargs)
         self.enabled = enabled
         self.storage_uri = None
@@ -685,10 +906,10 @@ class ContainerServiceWindowsProfile(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param admin_username: Required. The administrator username to use for Windows VMs.
-    :type admin_username: str
-    :param admin_password: Required. The administrator password to use for Windows VMs.
-    :type admin_password: str
+    :ivar admin_username: Required. The administrator username to use for Windows VMs.
+    :vartype admin_username: str
+    :ivar admin_password: Required. The administrator password to use for Windows VMs.
+    :vartype admin_password: str
     """
 
     _validation = {
@@ -708,6 +929,12 @@ class ContainerServiceWindowsProfile(msrest.serialization.Model):
         admin_password: str,
         **kwargs
     ):
+        """
+        :keyword admin_username: Required. The administrator username to use for Windows VMs.
+        :paramtype admin_username: str
+        :keyword admin_password: Required. The administrator password to use for Windows VMs.
+        :paramtype admin_password: str
+        """
         super(ContainerServiceWindowsProfile, self).__init__(**kwargs)
         self.admin_username = admin_username
         self.admin_password = admin_password
@@ -718,12 +945,12 @@ class KeyVaultSecretRef(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param vault_id: Required. Key vault identifier.
-    :type vault_id: str
-    :param secret_name: Required. The secret name.
-    :type secret_name: str
-    :param version: The secret version.
-    :type version: str
+    :ivar vault_id: Required. Key vault identifier.
+    :vartype vault_id: str
+    :ivar secret_name: Required. The secret name.
+    :vartype secret_name: str
+    :ivar version: The secret version.
+    :vartype version: str
     """
 
     _validation = {
@@ -745,6 +972,14 @@ class KeyVaultSecretRef(msrest.serialization.Model):
         version: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword vault_id: Required. Key vault identifier.
+        :paramtype vault_id: str
+        :keyword secret_name: Required. The secret name.
+        :paramtype secret_name: str
+        :keyword version: The secret version.
+        :paramtype version: str
+        """
         super(KeyVaultSecretRef, self).__init__(**kwargs)
         self.vault_id = vault_id
         self.secret_name = secret_name
@@ -756,12 +991,12 @@ class OrchestratorProfile(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param orchestrator_type: Orchestrator type.
-    :type orchestrator_type: str
-    :param orchestrator_version: Required. Orchestrator version (major, minor, patch).
-    :type orchestrator_version: str
-    :param is_preview: Whether Kubernetes version is currently in preview.
-    :type is_preview: bool
+    :ivar orchestrator_type: Orchestrator type.
+    :vartype orchestrator_type: str
+    :ivar orchestrator_version: Required. Orchestrator version (major, minor, patch).
+    :vartype orchestrator_version: str
+    :ivar is_preview: Whether Kubernetes version is currently in preview.
+    :vartype is_preview: bool
     """
 
     _validation = {
@@ -782,6 +1017,14 @@ class OrchestratorProfile(msrest.serialization.Model):
         is_preview: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword orchestrator_type: Orchestrator type.
+        :paramtype orchestrator_type: str
+        :keyword orchestrator_version: Required. Orchestrator version (major, minor, patch).
+        :paramtype orchestrator_version: str
+        :keyword is_preview: Whether Kubernetes version is currently in preview.
+        :paramtype is_preview: bool
+        """
         super(OrchestratorProfile, self).__init__(**kwargs)
         self.orchestrator_type = orchestrator_type
         self.orchestrator_version = orchestrator_version
@@ -793,16 +1036,16 @@ class OrchestratorVersionProfile(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param orchestrator_type: Required. Orchestrator type.
-    :type orchestrator_type: str
-    :param orchestrator_version: Required. Orchestrator version (major, minor, patch).
-    :type orchestrator_version: str
-    :param default: Installed by default if version is not specified.
-    :type default: bool
-    :param is_preview: Whether Kubernetes version is currently in preview.
-    :type is_preview: bool
-    :param upgrades: The list of available upgrade versions.
-    :type upgrades: list[~azure.mgmt.containerservice.v2017_07_01.models.OrchestratorProfile]
+    :ivar orchestrator_type: Required. Orchestrator type.
+    :vartype orchestrator_type: str
+    :ivar orchestrator_version: Required. Orchestrator version (major, minor, patch).
+    :vartype orchestrator_version: str
+    :ivar default: Installed by default if version is not specified.
+    :vartype default: bool
+    :ivar is_preview: Whether Kubernetes version is currently in preview.
+    :vartype is_preview: bool
+    :ivar upgrades: The list of available upgrade versions.
+    :vartype upgrades: list[~azure.mgmt.containerservice.v2017_07_01.models.OrchestratorProfile]
     """
 
     _validation = {
@@ -828,6 +1071,18 @@ class OrchestratorVersionProfile(msrest.serialization.Model):
         upgrades: Optional[List["OrchestratorProfile"]] = None,
         **kwargs
     ):
+        """
+        :keyword orchestrator_type: Required. Orchestrator type.
+        :paramtype orchestrator_type: str
+        :keyword orchestrator_version: Required. Orchestrator version (major, minor, patch).
+        :paramtype orchestrator_version: str
+        :keyword default: Installed by default if version is not specified.
+        :paramtype default: bool
+        :keyword is_preview: Whether Kubernetes version is currently in preview.
+        :paramtype is_preview: bool
+        :keyword upgrades: The list of available upgrade versions.
+        :paramtype upgrades: list[~azure.mgmt.containerservice.v2017_07_01.models.OrchestratorProfile]
+        """
         super(OrchestratorVersionProfile, self).__init__(**kwargs)
         self.orchestrator_type = orchestrator_type
         self.orchestrator_version = orchestrator_version
@@ -849,8 +1104,8 @@ class OrchestratorVersionProfileListResult(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Type of the orchestrator version profile list result.
     :vartype type: str
-    :param orchestrators: Required. List of orchestrator version profiles.
-    :type orchestrators:
+    :ivar orchestrators: Required. List of orchestrator version profiles.
+    :vartype orchestrators:
      list[~azure.mgmt.containerservice.v2017_07_01.models.OrchestratorVersionProfile]
     """
 
@@ -874,6 +1129,11 @@ class OrchestratorVersionProfileListResult(msrest.serialization.Model):
         orchestrators: List["OrchestratorVersionProfile"],
         **kwargs
     ):
+        """
+        :keyword orchestrators: Required. List of orchestrator version profiles.
+        :paramtype orchestrators:
+         list[~azure.mgmt.containerservice.v2017_07_01.models.OrchestratorVersionProfile]
+        """
         super(OrchestratorVersionProfileListResult, self).__init__(**kwargs)
         self.id = None
         self.name = None
