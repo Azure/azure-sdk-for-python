@@ -437,13 +437,14 @@ class TableTestCase(object):
 
     def _set_up(self, account_name, credential, url="table"):
         # self.table_name = self.get_resource_name("uttable")
+        
         # valid names
         # self.table_name = "tablecosmos"
         # self.table_name = "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
         # table_name is in length of 254
-        # error message: azure.core.exceptions.HttpResponseError: Message: {"Errors":["The input name is invalid. Ensure to provide a unique non-empty string less than '255' characters.","The request payload is invalid. Ensure to provide a valid request payload."]}
+        
         # invalid names
-        self.table_name = "---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
+        # self.table_name = "---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
         # table_name is in length of 255
         # error message: azure.core.exceptions.HttpResponseError: Message: {"Errors":["The input name is invalid. Ensure to provide a unique non-empty string less than '255' characters.","The request payload is invalid. Ensure to provide a valid request payload."]}
         # self.table_name = "tablecosmos "
