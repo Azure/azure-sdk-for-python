@@ -1705,6 +1705,7 @@ class CheckDocstringAdmonitionNewline(BaseChecker):
     # this line makes it work for async functions
     visit_asyncfunctiondef = visit_functiondef
 
+
 class CheckNoAliasGeneratedCode(BaseChecker):
     __implements__ = IAstroidChecker
 
@@ -1712,14 +1713,16 @@ class CheckNoAliasGeneratedCode(BaseChecker):
     priority = -1
     msgs = {
         "C4745": (
-            "The generated code is aliased",
-            "generated-code-does-not-need-alias",
+            "Aliasing and exposing generated code."
+            "This messes up sphinx, intellisense, and apiview, so please modify the name of the generated code through"
+            " the swagger / directives, or code customizations",
+            "aliasing-generated-code",
             "Do not alias models imported from the generated code.",
         ),
     }
     options = (
         (
-            "ignore-generated-code-does-not-need-alias",
+            "ignore-aliasing-generated-code",
             {
                 "default": False,
                 "type": "yn",
@@ -1733,27 +1736,26 @@ class CheckNoAliasGeneratedCode(BaseChecker):
         super(CheckNoAliasGeneratedCode, self).__init__(linter)
 
     def visit_module(self, node):
-            """Visits __init__.py and checks to see that any aliased names do not appear in __all__"""
-            try:
-                if node.file.endswith("__init__.py"):
-                    #Node Body is the number of import statements from X import 
-                    aliased = []
-                    for nod in node.body:
-                        
-                        if isinstance(nod, astroid.ImportFrom):
-                            # If the model has been aliased
-                            for name in nod.names: 
-                                if name[1] != None:
-                                    aliased.append(name[1])
+        """Visits __init__.py and checks to see that any aliased names do not appear in __all__"""
+        try:
+            if node.file.endswith("__init__.py"):
+                aliased = []
+                for nod in node.body:
 
-                        if isinstance(nod, astroid.Assign):
-                            for i in nod.assigned_stmts():
-                                for j in i.elts:
-                                    if j.value in aliased:
-                                        self.add_message(
-                                            msgid="generated-code-does-not-need-alias", node=node, confidence=None
-                                        )
-            except Exception:
+                    if isinstance(nod, astroid.ImportFrom):
+                        # If the model has been aliased
+                        for name in nod.names:
+                            if name[1] != None:
+                                aliased.append(name[1])
+
+                    if isinstance(nod, astroid.Assign):
+                        for i in nod.assigned_stmts():
+                            for j in i.elts:
+                                if j.value in aliased:
+                                    self.add_message(
+                                        msgid="aliasing-generated-code", node=node, confidence=None
+                                    )
+        except Exception:
                 logger.debug("Pylint custom checker failed to check if package is aliased.")
                 pass
 
