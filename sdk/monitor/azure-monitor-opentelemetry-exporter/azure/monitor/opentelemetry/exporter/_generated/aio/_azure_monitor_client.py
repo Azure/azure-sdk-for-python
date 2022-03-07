@@ -6,20 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+from copy import deepcopy
+from typing import Any, Awaitable
 
-from azure.core import AsyncPipelineClient
 from msrest import Deserializer, Serializer
 
+from azure.core import AsyncPipelineClient
+from azure.core.rest import AsyncHttpResponse, HttpRequest
+
+from .. import models
 from ._configuration import AzureMonitorClientConfiguration
 from .operations import AzureMonitorClientOperationsMixin
-from .. import models
-
 
 class AzureMonitorClient(AzureMonitorClientOperationsMixin):
-    """Opentelemetry Exporter for Azure Monitor.
+    """OpenTelemetry Exporter for Azure Monitor.
 
-    :param host: Breeze endpoint: https://dc.services.visualstudio.com.
+    :param host: Breeze endpoint: https://dc.services.visualstudio.com. Default value is
+     "https://dc.services.visualstudio.com".
     :type host: str
     """
 
@@ -28,15 +31,45 @@ class AzureMonitorClient(AzureMonitorClientOperationsMixin):
         host: str = "https://dc.services.visualstudio.com",
         **kwargs: Any
     ) -> None:
-        base_url = '{Host}/v2'
-        self._config = AzureMonitorClientConfiguration(host, **kwargs)
-        self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        _base_url = '{Host}/v2.1'
+        self._config = AzureMonitorClientConfiguration(host=host, **kwargs)
+        self._client = AsyncPipelineClient(base_url=_base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
+        self._serialize.client_side_validation = False
 
+
+    def _send_request(
+        self,
+        request: HttpRequest,
+        **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
+        """Runs the network request through the client's chained policies.
+
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = await client._send_request(request)
+        <AsyncHttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.AsyncHttpResponse
+        """
+
+        request_copy = deepcopy(request)
+        path_format_arguments = {
+            "Host": self._serialize.url("self._config.host", self._config.host, 'str', skip_quote=True),
+        }
+
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        return self._client.send_request(request_copy, **kwargs)
 
     async def close(self) -> None:
         await self._client.close()

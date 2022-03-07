@@ -7,7 +7,7 @@
 From `azure-monitor-opentelemetry-exporter/`:
 
 ```
-rmdir ./azure/opentelemetry/exporter/azuremonitor/_generated
+rmdir ./azure/monitor/opentelemetry/exporter/_generated
 autorest ./swagger/README.md --python --v3
 ```
 
@@ -20,8 +20,8 @@ generated-metadata: false
 license-header: MICROSOFT_MIT_NO_VERSION
 no-namespace-folders: true
 trace: false
-output-folder: ../azure/opentelemetry/exporter/azuremonitor/_generated
-source-code-folder-path: ./azure/opentelemetry/exporter/azuremonitor/_generated
+output-folder: ../azure/monitor/opentelemetry/exporter/_generated
+source-code-folder-path: ./azure/monitor/opentelemetry/exporter/_generated
 input-file: 
     - https://github.com/Azure/azure-rest-api-specs/blob/main/specification/applicationinsights/data-plane/Monitor.Exporters/preview/v2.1/swagger.json
 
