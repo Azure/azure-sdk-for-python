@@ -1738,11 +1738,12 @@ class CheckNoAliasGeneratedCode(BaseChecker):
     def visit_module(self, node):
         """Visits __init__.py and checks to see that any aliased names do not appear in __all__"""
         try:
+        
             if node.file.endswith("__init__.py"):
                 aliased = []
+              
                 for nod in node.body:
-
-                    if isinstance(nod, astroid.ImportFrom):
+                    if isinstance(nod, astroid.ImportFrom) or isinstance(nod, astroid.Import):
                         # If the model has been aliased
                         for name in nod.names:
                             if name[1] != None:
@@ -1755,6 +1756,7 @@ class CheckNoAliasGeneratedCode(BaseChecker):
                                     self.add_message(
                                         msgid="aliasing-generated-code", node=model_name, confidence=None
                                     )
+    
         except Exception:
                 logger.debug("Pylint custom checker failed to check if package is aliased.")
                 pass
