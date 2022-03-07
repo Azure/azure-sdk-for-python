@@ -113,31 +113,22 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
         # storage table names must be alphanumeric, cannot begin with a number, and must be between 3 and 63 chars long.       
         invalid_table_names = ["1table", "a"*2, "a"*64, "a//"]
         for invalid_name in invalid_table_names:
-            with pytest.raises(HttpResponseError):
-                client = TableClient(endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_name)
-                async with client:
+            client = TableClient(
+                endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_name)
+            async with client:
+                with pytest.raises(HttpResponseError):
                     await client.create_table()
-            with pytest.raises(HttpResponseError):
-                client = TableClient(endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_name)
-                async with client:
+                with pytest.raises(HttpResponseError):
                     await client.create_entity({'PartitionKey': 'foo'})
-            with pytest.raises(HttpResponseError):
-                client = TableClient(endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_name)
-                async with client:
+                with pytest.raises(HttpResponseError):
                     await client.upsert_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
-            with pytest.raises(HttpResponseError):
-                client = TableClient(endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_name)
-                async with client:
+                with pytest.raises(HttpResponseError):
                     await client.delete_entity("PK", "RK")
-            with pytest.raises(HttpResponseError):
-                client = TableClient(endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_name)
-                async with client:
+                with pytest.raises(HttpResponseError):
                     await client.get_table_access_policy()
-            with pytest.raises(HttpResponseError):
-                client = TableClient(endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_name)
-                batch = []
-                batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
-                async with client:
+                with pytest.raises(HttpResponseError):
+                    batch = []
+                    batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
                     await client.submit_transaction(batch)
 
 

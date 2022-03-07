@@ -113,23 +113,19 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
         # storage table names must be alphanumeric, cannot begin with a number, and must be between 3 and 63 chars long.       
         invalid_table_names = ["1table", "a"*2, "a"*64, "a//"]
         for invalid_name in invalid_table_names:
+            client = TableClient(
+                endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_name)
             with pytest.raises(HttpResponseError):
-                client = TableClient(endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_name)
                 client.create_table()
             with pytest.raises(HttpResponseError):
-                client = TableClient(endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_name)
                 client.create_entity({'PartitionKey': 'foo'})
             with pytest.raises(HttpResponseError):
-                client = TableClient(endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_name)
                 client.upsert_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
             with pytest.raises(HttpResponseError):
-                client = TableClient(endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_name)
                 client.delete_entity("PK", "RK")
             with pytest.raises(HttpResponseError):
-                client = TableClient(endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_name)
                 client.get_table_access_policy()
             with pytest.raises(HttpResponseError):
-                client = TableClient(endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_name)
                 batch = []
                 batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
                 client.submit_transaction(batch)
