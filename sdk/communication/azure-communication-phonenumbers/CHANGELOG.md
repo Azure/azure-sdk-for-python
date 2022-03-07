@@ -3,7 +3,7 @@
 ## 1.2.0 (Unreleased)
 
 ### Features Added
-- Adds env var AZURE_USERAGENT_OVERRIDE, that overrides the header 'x-ms-useragent' on the tests
+- Adds env var `AZURE_USERAGENT_OVERRIDE`, that overrides the header `x-ms-useragent` on the tests
 
 ### Breaking Changes
 
