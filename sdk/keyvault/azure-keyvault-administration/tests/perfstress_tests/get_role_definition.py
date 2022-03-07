@@ -50,7 +50,7 @@ class GetRoleDefinitionTest(PerfStressTest):
 
     def run_sync(self):
         """The synchronous perf test."""
-        self.client.get_role_definition(self.role_name)
+        self.client.get_role_definition(self.scope, self.role_name)
 
     async def run_async(self):
         """The asynchronous perf test."""
