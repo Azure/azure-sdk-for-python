@@ -1,5 +1,5 @@
 # Microsoft Azure SDK for Python
- 
+
 This is the Microsoft Azure Advisor Client Library.
 This package has been tested with Python 3.6+.
 For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
