@@ -27,5 +27,4 @@ input-file:
 
 python: true
 v3: true
-use: "@autorest/python@5.5.0"
 ```
