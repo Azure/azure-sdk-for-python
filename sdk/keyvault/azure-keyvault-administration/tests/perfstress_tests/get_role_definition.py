@@ -54,4 +54,4 @@ class GetRoleDefinitionTest(PerfStressTest):
 
     async def run_async(self):
         """The asynchronous perf test."""
-        await self.async_client.get_role_definition(self.role_name)
+        await self.async_client.get_role_definition(self.scope, self.role_name)
