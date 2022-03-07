@@ -25,7 +25,7 @@ class GetRoleDefinitionTest(PerfStressTest):
         self.async_credential = AsyncDefaultAzureCredential()
 
         # Create clients
-        vault_url = self.get_from_env("AZURE_KEYVAULT_URL")
+        vault_url = self.get_from_env("AZURE_MANAGEDHSM_URL")
         self.client = KeyVaultAccessControlClient(vault_url, self.credential, **self._client_kwargs)
         self.async_client = AsyncKeyVaultAccessControlClient(vault_url, self.async_credential, **self._client_kwargs)
         self.role_name = "livekvtestgetroledefperfadmin"
