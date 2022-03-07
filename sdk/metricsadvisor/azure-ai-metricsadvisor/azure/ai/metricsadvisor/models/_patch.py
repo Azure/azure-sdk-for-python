@@ -1798,7 +1798,7 @@ class DataFeedIngestionProgress(generated_models.DataFeedIngestionProgress):
         )[:1024]
 
 
-class MetricSeriesData:
+class MetricSeriesData(generated_models.MetricSeriesData):
     """MetricSeriesData.
 
     :ivar metric_id: metric unique id.
@@ -1811,25 +1811,10 @@ class MetricSeriesData:
     :vartype values: list[float]
     """
 
-    def __init__(self, **kwargs):
-        self.metric_id = kwargs.get("metric_id", None)
-        self.series_key = kwargs.get("series_key", None)
-        self.timestamps = kwargs.get("timestamps", None)
-        self.values = kwargs.get("values", None)
-
     def __repr__(self):
         return "MetricSeriesData(metric_id={}, series_key={}, timestamps={}, values={})".format(
             self.metric_id, self.series_key, self.timestamps, self.values
         )[:1024]
-
-    @classmethod
-    def _from_generated(cls, data):
-        return cls(
-            metric_id=data.id.metric_id,
-            series_key=data.id.dimension,
-            timestamps=data.timestamp_list,
-            values=data.value_list,
-        )
 
 
 class MetricEnrichedSeriesData(generated_models.MetricEnrichedSeriesData):
@@ -2914,6 +2899,93 @@ class SeriesIdentity(msrest.serialization.Model):
     def __init__(self, *, dimension: Dict[str, str], **kwargs):
         super(SeriesIdentity, self).__init__(**kwargs)
         self.dimension = dimension
+
+
+class FeedbackDimensionFilter(msrest.serialization.Model):
+    _validation = {
+        "dimension": {"required": True},
+    }
+
+    _attribute_map = {
+        "dimension": {"key": "dimension", "type": "{str}"},
+    }
+
+    def __init__(self, *, dimension: Dict[str, str], **kwargs):
+        super(FeedbackDimensionFilter, self).__init__(**kwargs)
+        self.dimension = dimension
+
+
+class MetricFeedbackFilter(msrest.serialization.Model):
+    """MetricFeedbackFilter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param metric_id: Required. filter feedbacks by metric id.
+    :type metric_id: str
+    :param dimension_filter:
+    :type dimension_filter: ~azure.ai.metricsadvisor.models.FeedbackDimensionFilter
+    :param feedback_type: filter feedbacks by type. Possible values include: "Anomaly",
+     "ChangePoint", "Period", "Comment".
+    :type feedback_type: str or ~azure.ai.metricsadvisor.models.FeedbackType
+    :param start_time: start time filter under chosen time mode.
+    :type start_time: ~datetime.datetime
+    :param end_time: end time filter under chosen time mode.
+    :type end_time: ~datetime.datetime
+    :param time_mode: time mode to filter feedback. Possible values include: "MetricTimestamp",
+     "FeedbackCreatedTime".
+    :type time_mode: str or ~azure.ai.metricsadvisor.models.FeedbackQueryTimeMode
+    """
+
+    _validation = {
+        "metric_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "metric_id": {"key": "metricId", "type": "str"},
+        "dimension_filter": {"key": "dimensionFilter", "type": "FeedbackDimensionFilter"},
+        "feedback_type": {"key": "feedbackType", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "time_mode": {"key": "timeMode", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        metric_id: str,
+        dimension_filter: Optional[FeedbackDimensionFilter] = None,
+        feedback_type: Optional[Union[str, "generated_models.FeedbackType"]] = None,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        time_mode: Optional[Union[str, "FeedbackQueryTimeMode"]] = None,
+        **kwargs
+    ):
+        super(MetricFeedbackFilter, self).__init__(**kwargs)
+        self.metric_id = metric_id
+        self.dimension_filter = dimension_filter
+        self.feedback_type = feedback_type
+        self.start_time = start_time
+        self.end_time = end_time
+        self.time_mode = time_mode
+
+
+class ErrorCode(msrest.serialization.Model):
+    """ErrorCode.
+    :param message:
+    :type message: str
+    :param code:
+    :type code: str
+    """
+
+    _attribute_map = {
+        "message": {"key": "message", "type": "str"},
+        "code": {"key": "code", "type": "str"},
+    }
+
+    def __init__(self, *, message: Optional[str] = None, code: Optional[str] = None, **kwargs):
+        super(ErrorCode, self).__init__(**kwargs)
+        self.message = message
+        self.code = code
 
 
 __all__ = [

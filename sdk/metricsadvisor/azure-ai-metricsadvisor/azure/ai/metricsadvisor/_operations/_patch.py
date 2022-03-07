@@ -45,6 +45,9 @@ from ..models._patch import (
     IngestionProgressResetOptions,
     IngestionStatusQueryOptions,
     MetricDimensionQueryOptions,
+    MetricFeedbackFilter,
+    MetricSeriesQueryOptions,
+    ErrorCode,
 )
 from msrest import Serializer
 from azure.core.paging import ItemPaged
@@ -231,15 +234,17 @@ class OperationMixinHelpers:
             series=series_list,
         )
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-        return (
-            build_list_metric_enriched_series_data_request(
-                configuration_id=detection_configuration_id,
-                json=detection_series_query.serialize(),
-                content_type=content_type,
-            ),
-            build_list_metric_enriched_series_data_request(configuration_id=detection_configuration_id),
-            kwargs,
+        initial_request = build_list_metric_enriched_series_data_request(
+            configuration_id=detection_configuration_id,
+            json=detection_series_query.serialize(),
+            content_type=content_type,
         )
+        next_request = build_list_metric_enriched_series_data_request(
+            configuration_id=detection_configuration_id,
+            json=detection_series_query.serialize(),
+            content_type=content_type,
+        )
+        return initial_request, next_request, kwargs
 
     def _list_feedback_requests(self, metric_id: str, **kwargs) -> Tuple[HttpRequest, HttpRequest, Any]:
         dimension_filter = None
@@ -274,13 +279,13 @@ class OperationMixinHelpers:
         converted_end_time = self._convert_datetime(end_time)
         body = IngestionStatusQueryOptions(start_time=converted_start_time, end_time=converted_end_time)
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-        return (
-            build_list_data_feed_ingestion_status_request(
-                data_feed_id=data_feed_id, json=body.serialize(), content_type=content_type, skip=skip
-            ),
-            build_list_data_feed_ingestion_status_request(data_feed_id=data_feed_id),
-            kwargs,
+        initial_request = build_list_data_feed_ingestion_status_request(
+            data_feed_id=data_feed_id, json=body.serialize(), content_type=content_type, skip=skip
         )
+        next_request = build_list_data_feed_ingestion_status_request(
+            data_feed_id=data_feed_id, json=body.serialize(), content_type=content_type
+        )
+        return initial_request, next_request, kwargs
 
     def _list_metric_series_definitions_requests(self, metric_id, active_since, **kwargs):
         dimension_filter = kwargs.pop("dimension_filter", None)
@@ -288,15 +293,20 @@ class OperationMixinHelpers:
             active_since=active_since,
             dimension_filter=dimension_filter,
         )
-
-        request = build_list_metric_series_definitions_request(
+        content_type = kwargs.pop("content_type", "application/json")
+        initial_request = build_list_metric_series_definitions_request(
             metric_id=metric_id,
-            content_type=kwargs.pop("content_type", "application/json"),
+            content_type=content_type,
             json=metric_series_query_options.serialize(),
             skip=kwargs.pop("skip", None),
             maxpagesize=kwargs.pop("maxpagesize", None),
         )
-        return request, build_list_metric_series_definitions_request(metric_id=metric_id), kwargs
+        next_request = build_list_metric_series_definitions_request(
+            metric_id=metric_id,
+            content_type=content_type,
+            json=metric_series_query_options.serialize(),
+        )
+        return initial_request, next_request, kwargs
 
     def _list_alerts_requests(
         self,
@@ -316,16 +326,18 @@ class OperationMixinHelpers:
             end_time=converted_end_time,
             time_mode=time_mode,
         )
-        return (
-            build_list_alerts_request(
-                configuration_id=alert_configuration_id,
-                skip=skip,
-                json=alerting_result_query.serialize(),
-                content_type=content_type,
-            ),
-            build_list_alerts_request(configuration_id=alert_configuration_id),
-            kwargs,
+        initial_request = build_list_alerts_request(
+            configuration_id=alert_configuration_id,
+            skip=skip,
+            json=alerting_result_query.serialize(),
+            content_type=content_type,
         )
+        next_request = build_list_alerts_request(
+            configuration_id=alert_configuration_id,
+            json=alerting_result_query.serialize(),
+            content_type=content_type,
+        )
+        return initial_request, next_request, kwargs
 
     def _list_anomalies_for_detection_configuration_requests(
         self,
@@ -343,16 +355,18 @@ class OperationMixinHelpers:
             filter=kwargs.pop("filter", None),
         )
         content_type = kwargs.pop("content_type", "application/json")
-        return (
-            build_get_anomalies_by_anomaly_detection_configuration_request(
-                configuration_id=detection_configuration_id,
-                skip=skip,
-                json=detection_anomaly_result_query.serialize(),
-                content_type=content_type,
-            ),
-            build_get_anomalies_by_anomaly_detection_configuration_request(configuration_id=detection_configuration_id),
-            kwargs,
+        initial_request = build_get_anomalies_by_anomaly_detection_configuration_request(
+            configuration_id=detection_configuration_id,
+            skip=skip,
+            json=detection_anomaly_result_query.serialize(),
+            content_type=content_type,
         )
+        next_request = build_get_anomalies_by_anomaly_detection_configuration_request(
+            configuration_id=detection_configuration_id,
+            json=detection_anomaly_result_query.serialize(),
+            content_type=content_type,
+        )
+        return initial_request, next_request, kwargs
 
     def _list_anomaly_dimension_values_requests(
         self, detection_configuration_id, dimension_name, start_time, end_time, **kwargs
@@ -375,7 +389,11 @@ class OperationMixinHelpers:
             json=anomaly_dimension_query.serialize(),
             content_type=content_type,
         )
-        next_request = build_list_anomaly_dimension_values_request(configuration_id=detection_configuration_id)
+        next_request = build_list_anomaly_dimension_values_request(
+            configuration_id=detection_configuration_id,
+            json=anomaly_dimension_query.serialize(),
+            content_type=content_type,
+        )
         return initial_request, next_request, kwargs
 
     def _list_incidents_for_detection_configuration_requests(
@@ -389,7 +407,7 @@ class OperationMixinHelpers:
         filter_condition = condition._to_generated() if condition else None
         converted_start_time = self._convert_datetime(start_time)
         converted_end_time = self._convert_datetime(end_time)
-
+        content_type = kwargs.pop("content_type", "application/json")
         detection_incident_result_query = DetectionIncidentResultQuery(
             start_time=converted_start_time,
             end_time=converted_end_time,
@@ -398,10 +416,12 @@ class OperationMixinHelpers:
         initial_request = build_get_incidents_by_anomaly_detection_configuration_request(
             configuration_id=detection_configuration_id,
             json=detection_incident_result_query.serialize(),
-            content_type=kwargs.pop("content_type", "application/json"),
+            content_type=content_type,
         )
         next_request = build_get_incidents_by_anomaly_detection_configuration_request(
-            configuration_id=detection_configuration_id
+            configuration_id=detection_configuration_id,
+            json=detection_incident_result_query.serialize(),
+            content_type=content_type,
         )
         return initial_request, next_request, kwargs
 
@@ -410,7 +430,7 @@ class OperationMixinHelpers:
     ) -> Tuple[HttpRequest, HttpRequest, Any]:
         skip = kwargs.pop("skip", None)
         dimension_value_filter = kwargs.pop("dimension_value_filter", None)
-
+        content_type = kwargs.pop("content_type", "application/json")
         metric_dimension_query_options = MetricDimensionQueryOptions(
             dimension_name=dimension_name,
             dimension_value_filter=dimension_value_filter,
@@ -419,9 +439,13 @@ class OperationMixinHelpers:
             metric_id=metric_id,
             json=metric_dimension_query_options.serialize(),
             skip=skip,
-            content_type=kwargs.pop("content_type", "application/json"),
+            content_type=content_type,
         )
-        next_request = build_list_metric_dimension_values_request(metric_id=metric_id)
+        next_request = build_list_metric_dimension_values_request(
+            metric_id=metric_id,
+            json=metric_dimension_query_options.serialize(),
+            content_type=content_type,
+        )
         return initial_request, next_request, kwargs
 
     def _list_metric_series_data_requests(
@@ -470,6 +494,47 @@ class OperationMixinHelpers:
         )
         next_request = build_list_metric_enrichment_status_request(metric_id=metric_id)
         return initial_request, next_request, kwargs
+
+    def _list_incidents_for_alert_requests(
+        self,
+        alert_configuration_id: str,
+        alert_id: str,
+        *,
+        skip: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
+        **kwargs: Any
+    ) -> Tuple[HttpRequest, HttpRequest, Any]:
+        initial_request = build_list_incidents_for_alert_request(
+            alert_configuration_id=alert_configuration_id,
+            alert_id=alert_id,
+            skip=skip,
+            maxpagesize=maxpagesize,
+        )
+        next_request = build_list_incidents_for_alert_request(
+            alert_configuration_id=alert_configuration_id,
+            alert_id=alert_id,
+        )
+        return initial_request, next_request, kwargs
+
+    def _list_anomalies_for_alert_requests(
+        self, alert_configuration_id: str, alert_id: str, **kwargs: Any
+    ) -> Tuple[HttpRequest, HttpRequest, Any]:
+        initial_request = build_list_anomalies_for_alert_request(
+            alert_configuration_id=alert_configuration_id,
+            alert_id=alert_id,
+            skip=kwargs.pop("skip", None),
+        )
+        next_request = build_list_anomalies_for_alert_request(
+            alert_configuration_id=alert_configuration_id, alert_id=alert_id
+        )
+        return initial_request, next_request, kwargs
+
+    def _list_incident_root_causes_requests(self, detection_configuration_id: str, incident_id: str, **kwargs):
+        initial_request = build_list_incident_root_causes_request(
+            detection_configuration_id=detection_configuration_id,
+            incident_id=incident_id,
+        )
+        return initial_request, initial_request, kwargs
 
     def _update_alert_configuration_helper(
         self, alert_configuration: Union[str, AnomalyAlertConfiguration], **kwargs
@@ -1090,6 +1155,20 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         )
 
     @distributed_trace
+    def _list_anomalies_for_alert(
+        self, alert_configuration_id: str, alert_id: str, **kwargs: Any
+    ) -> Iterable[DataPointAnomaly]:
+        initial_request, next_request, kwargs = self._list_anomalies_for_alert_requests(
+            alert_configuration_id=alert_configuration_id, alert_id=alert_id, **kwargs
+        )
+        return self._paging_helper(
+            initial_request=initial_request,
+            next_request=next_request,
+            deserializer=DataPointAnomaly.deserialize,
+            **kwargs
+        )
+
+    @distributed_trace
     def list_anomalies(self, **kwargs):
         # type: (Any) -> ItemPaged[DataPointAnomaly]
         alert_configuration_id = kwargs.get("alert_configuration_id", None)
@@ -1107,7 +1186,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
             return self._list_anomalies_for_detection_configuration(**kwargs)
         if not alert_configuration_id or not alert_id:
             raise TypeError('"alert_configuration_id" and "alert_id" are required')
-        return self.list_anomalies_for_alert(**kwargs)  # type: ignore
+        return self._list_anomalies_for_alert(**kwargs)  # type: ignore
 
     @distributed_trace
     def list_anomaly_dimension_values(self, detection_configuration_id, dimension_name, start_time, end_time, **kwargs):
@@ -1130,7 +1209,34 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
             detection_configuration_id=detection_configuration_id, start_time=start_time, end_time=end_time, **kwargs
         )
         return self._paging_helper(
-            initial_request=initial_request, next_request=next_request, deserializer=AnomalyIncident.serialize, **kwargs
+            initial_request=initial_request,
+            next_request=next_request,
+            deserializer=AnomalyIncident.deserialize,
+            **kwargs
+        )
+
+    @distributed_trace
+    def _list_incidents_for_alert(
+        self,
+        alert_configuration_id: str,
+        alert_id: str,
+        *,
+        skip: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterable[AnomalyIncident]:
+        initial_request, next_request, kwargs = self._list_incidents_for_alert_requests(
+            alert_configuration_id=alert_configuration_id,
+            alert_id=alert_id,
+            skip=skip,
+            maxpagesize=maxpagesize,
+            **kwargs
+        )
+        return self._paging_helper(
+            initial_request=initial_request,
+            next_request=next_request,
+            deserializer=AnomalyIncident.deserialize,
+            **kwargs
         )
 
     @distributed_trace
@@ -1151,7 +1257,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
             return self._list_incidents_for_detection_configuration(**kwargs)
         if not alert_configuration_id or not alert_id:
             raise TypeError('"alert_configuration_id" and "alert_id" are required')
-        return self.list_incidents_for_alert(**kwargs)  # type: ignore
+        return self._list_incidents_for_alert(**kwargs)  # type: ignore
 
     @distributed_trace
     def list_metric_dimension_values(self, metric_id, dimension_name, **kwargs):
@@ -1160,7 +1266,10 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
             metric_id=metric_id, dimension_name=dimension_name, **kwargs
         )
         return self._paging_helper(
-            initial_request=initial_request, next_request=next_request, deserializer=AnomalyIncident.serialize, **kwargs
+            initial_request=initial_request,
+            next_request=next_request,
+            deserializer=lambda x: x,
+            **kwargs
         )
 
     @distributed_trace
@@ -1177,12 +1286,11 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
             metric_id=metric_id, series_keys=series_keys, start_time=start_time, end_time=end_time, **kwargs
         )
 
-        def _deserializer(series):
-            generated = generated_models.MetricSeriesData.serialize(series)
-            return MetricSeriesData._from_generated(generated)
-
         return self._paging_helper(
-            initial_request=initial_request, next_request=next_request, deserializer=_deserializer, **kwargs
+            initial_request=initial_request,
+            next_request=next_request,
+            deserializer=MetricSeriesData.deserialize,
+            **kwargs
         )
 
     @distributed_trace
@@ -1194,16 +1302,12 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
             metric_id, active_since, **kwargs
         )
 
-        def extract_data(pipeline_response):
-            deserialized = MetricSeriesList.deserialize(pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, iter(list_of_elem)
-
         next_request.method = "POST"
         return self._paging_helper(
-            extract_data=extract_data, initial_request=initial_request, next_request=next_request, **kwargs
+            initial_request=initial_request,
+            next_request=next_request,
+            deserializer=MetricSeriesDefinition.deserialize,
+            **kwargs
         )
 
     @distributed_trace
@@ -1216,6 +1320,20 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
             initial_request=initial_request,
             next_request=next_request,
             deserializer=EnrichmentStatus.deserialize,
+            **kwargs
+        )
+
+    @distributed_trace
+    def list_incident_root_causes(
+        self, detection_configuration_id: str, incident_id: str, **kwargs: Any
+    ) -> ItemPaged[IncidentRootCause]:
+        initial_request, next_request, kwargs = self._list_incident_root_causes_requests(
+            detection_configuration_id=detection_configuration_id, incident_id=incident_id, **kwargs
+        )
+        return self._paging_helper(
+            initial_request=initial_request,
+            next_request=next_request,
+            deserializer=IncidentRootCause.deserialize,
             **kwargs
         )
 

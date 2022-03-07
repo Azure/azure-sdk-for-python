@@ -314,8 +314,6 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                     configuration_id=configuration_id,
                     content_type=content_type,
                     json=_json,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -408,8 +406,6 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                 request = build_list_anomalies_for_alert_request(
                     alert_configuration_id=alert_configuration_id,
                     alert_id=alert_id,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -502,8 +498,6 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                 request = build_list_incidents_for_alert_request(
                     alert_configuration_id=alert_configuration_id,
                     alert_id=alert_id,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -766,8 +760,6 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
 
                 request = build_list_alert_configurations_request(
                     configuration_id=configuration_id,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -952,8 +944,6 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                     configuration_id=configuration_id,
                     content_type=content_type,
                     json=_json,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1052,8 +1042,6 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                     configuration_id=configuration_id,
                     content_type=content_type,
                     json=_json,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1143,7 +1131,6 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                     configuration_id=configuration_id,
                     content_type=content_type,
                     json=_json,
-                    maxpagesize=maxpagesize,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1226,8 +1213,6 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
 
                 request = build_get_incidents_by_anomaly_detection_configuration_next_pages_request(
                     configuration_id=configuration_id,
-                    maxpagesize=maxpagesize,
-                    token=token,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1431,10 +1416,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
 
             else:
 
-                request = build_list_datasource_credentials_request(
-                    skip=skip,
-                    maxpagesize=maxpagesize,
-                )
+                request = build_list_datasource_credentials_request()
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -1665,15 +1647,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
 
             else:
 
-                request = build_list_data_feeds_request(
-                    data_feed_name=data_feed_name,
-                    data_source_type=data_source_type,
-                    granularity_name=granularity_name,
-                    status=status,
-                    creator=creator,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
-                )
+                request = build_list_data_feeds_request()
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -1978,8 +1952,6 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                 request = build_list_feedback_request(
                     content_type=content_type,
                     json=_json,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2111,11 +2083,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
 
             else:
 
-                request = build_list_hooks_request(
-                    hook_name=hook_name,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
-                )
+                request = build_list_hooks_request()
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -2389,8 +2357,6 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                     data_feed_id=data_feed_id,
                     content_type=content_type,
                     json=_json,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2658,8 +2624,6 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                     metric_id=metric_id,
                     content_type=content_type,
                     json=_json,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2752,8 +2716,6 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                     metric_id=metric_id,
                     content_type=content_type,
                     json=_json,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2836,8 +2798,6 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
 
                 request = build_list_detection_configurations_request(
                     metric_id=metric_id,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2930,8 +2890,6 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                     metric_id=metric_id,
                     content_type=content_type,
                     json=_json,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(

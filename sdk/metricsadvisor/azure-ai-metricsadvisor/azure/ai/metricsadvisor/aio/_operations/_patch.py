@@ -25,9 +25,8 @@
 #
 # --------------------------------------------------------------------------
 import datetime
-import six
 import functools
-from typing import List, Dict, Any, Optional, Union, cast, overload
+from typing import List, Dict, Any, Optional, Union, cast
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -41,14 +40,8 @@ from azure.core.exceptions import (
 )
 from ...models import _models_py3 as generated_models
 from ...models._patch import (
-    AlertingResultQuery,
-    AnomalyDimensionQuery,
-    DetectionAnomalyResultQuery,
-    DetectionIncidentResultQuery,
-    DetectionSeriesQuery,
-    EnrichmentStatusQueryOption,
     IngestionProgressResetOptions,
-    IngestionStatusQueryOptions,
+    ErrorCode,
 )
 
 from ._operations import MetricsAdvisorClientOperationsMixin as MetricsAdvisorClientOperationsMixinGenerated
@@ -61,7 +54,6 @@ from ..._operations._patch import (
     build_get_alert_configuration_request,
     build_list_alert_configurations_request,
     build_list_metric_series_definitions_request,
-    build_list_data_feed_ingestion_status_request,
     OperationMixinHelpers,
 )
 from ...models import *
@@ -537,6 +529,20 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         )
 
     @distributed_trace
+    def _list_anomalies_for_alert(
+        self, alert_configuration_id: str, alert_id: str, **kwargs: Any
+    ) -> AsyncItemPaged[DataPointAnomaly]:
+        initial_request, next_request, kwargs = self._list_anomalies_for_alert_requests(
+            alert_configuration_id=alert_configuration_id, alert_id=alert_id, **kwargs
+        )
+        return self._paging_helper(
+            initial_request=initial_request,
+            next_request=next_request,
+            deserializer=DataPointAnomaly.deserialize,
+            **kwargs
+        )
+
+    @distributed_trace
     def list_anomalies(self, **kwargs: Any) -> AsyncItemPaged[DataPointAnomaly]:
         alert_configuration_id = kwargs.get("alert_configuration_id", None)
         alert_id = kwargs.get("alert_id", None)
@@ -553,7 +559,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
             return self._list_anomalies_for_detection_configuration(**kwargs)
         if not alert_configuration_id or not alert_id:
             raise TypeError('"alert_configuration_id" and "alert_id" are required')
-        return self.list_anomalies_for_alert(**kwargs)  # type: ignore
+        return self._list_anomalies_for_alert(**kwargs)  # type: ignore
 
     @distributed_trace
     def list_anomaly_dimension_values(self, detection_configuration_id, dimension_name, start_time, end_time, **kwargs):
@@ -581,7 +587,34 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
             detection_configuration_id=detection_configuration_id, start_time=start_time, end_time=end_time, **kwargs
         )
         return self._paging_helper(
-            initial_request=initial_request, next_request=next_request, deserializer=AnomalyIncident.serialize, **kwargs
+            initial_request=initial_request,
+            next_request=next_request,
+            deserializer=AnomalyIncident.deserialize,
+            **kwargs
+        )
+
+    @distributed_trace
+    def _list_incidents_for_alert(
+        self,
+        alert_configuration_id: str,
+        alert_id: str,
+        *,
+        skip: Optional[int] = None,
+        maxpagesize: Optional[int] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[AnomalyIncident]:
+        initial_request, next_request, kwargs = self._list_incidents_for_alert_requests(
+            alert_configuration_id=alert_configuration_id,
+            alert_id=alert_id,
+            skip=skip,
+            maxpagesize=maxpagesize,
+            **kwargs
+        )
+        return self._paging_helper(
+            initial_request=initial_request,
+            next_request=next_request,
+            deserializer=AnomalyIncident.deserialize,
+            **kwargs
         )
 
     @distributed_trace
@@ -602,7 +635,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
             return self._list_incidents_for_detection_configuration(**kwargs)
         if not alert_configuration_id or not alert_id:
             raise TypeError('"alert_configuration_id" and "alert_id" are required')
-        return self.list_incidents_for_alert(**kwargs)  # type: ignore
+        return self._list_incidents_for_alert(**kwargs)  # type: ignore
 
     @distributed_trace
     def list_metric_dimension_values(self, metric_id, dimension_name, **kwargs):
@@ -611,7 +644,10 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
             metric_id=metric_id, dimension_name=dimension_name, **kwargs
         )
         return self._paging_helper(
-            initial_request=initial_request, next_request=next_request, deserializer=AnomalyIncident.serialize, **kwargs
+            initial_request=initial_request,
+            next_request=next_request,
+            deserializer=lambda x: x,
+            **kwargs
         )
 
     @distributed_trace
@@ -628,12 +664,11 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
             metric_id=metric_id, series_keys=series_keys, start_time=start_time, end_time=end_time, **kwargs
         )
 
-        def _deserializer(series):
-            generated = generated_models.MetricSeriesData.serialize(series)
-            return MetricSeriesData._from_generated(generated)
-
         return self._paging_helper(
-            initial_request=initial_request, next_request=next_request, deserializer=_deserializer, **kwargs
+            initial_request=initial_request,
+            next_request=next_request,
+            deserializer=MetricSeriesData.deserialize,
+            **kwargs
         )
 
     @distributed_trace
@@ -641,21 +676,15 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         # type: (str, datetime.datetime, Any) -> AsyncItemPaged[MetricSeriesDefinition]
         cls = kwargs.pop("cls", None)
 
-        initial_request, kwargs = self._list_metric_series_definitions_initial_request(
+        initial_request, next_request, kwargs = self._list_metric_series_definitions_requests(
             metric_id, active_since, **kwargs
         )
-
-        async def extract_data(pipeline_response):
-            deserialized = MetricSeriesList.deserialize(pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        next_request = build_list_metric_series_definitions_request(metric_id=metric_id)
         next_request.method = "POST"
         return self._paging_helper(
-            extract_data=extract_data, initial_request=initial_request, next_request=next_request, **kwargs
+            initial_request=initial_request,
+            next_request=next_request,
+            deserializer=MetricSeriesDefinition.deserialize,
+            **kwargs
         )
 
     @distributed_trace
@@ -674,6 +703,20 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
             initial_request=initial_request,
             next_request=next_request,
             deserializer=EnrichmentStatus.deserialize,
+            **kwargs
+        )
+
+    @distributed_trace
+    def list_incident_root_causes(
+        self, detection_configuration_id: str, incident_id: str, **kwargs: Any
+    ) -> AsyncItemPaged[IncidentRootCause]:
+        initial_request, next_request, kwargs = self._list_incident_root_causes_requests(
+            detection_configuration_id=detection_configuration_id, incident_id=incident_id, **kwargs
+        )
+        return self._paging_helper(
+            initial_request=initial_request,
+            next_request=next_request,
+            deserializer=IncidentRootCause.deserialize,
             **kwargs
         )
 

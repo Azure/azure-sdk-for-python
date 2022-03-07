@@ -70,6 +70,7 @@ from ._models_py3 import MongoDbDataFeedSource
 from ._models_py3 import NotificationHook
 from ._models_py3 import PeriodFeedback
 from ._models_py3 import RootCauseList
+from ._models_py3 import SeriesIdentity
 from ._models_py3 import SeriesResultList
 from ._models_py3 import SeverityCondition
 from ._models_py3 import SeverityFilterCondition
@@ -170,6 +171,7 @@ __all__ = [
     "NotificationHook",
     "PeriodFeedback",
     "RootCauseList",
+    "SeriesIdentity",
     "SeriesResultList",
     "SeverityCondition",
     "SeverityFilterCondition",

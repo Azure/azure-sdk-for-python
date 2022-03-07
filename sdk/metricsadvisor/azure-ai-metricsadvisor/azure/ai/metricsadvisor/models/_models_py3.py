@@ -561,8 +561,8 @@ class AnomalyIncident(msrest.serialization.Model):
     :vartype value_of_root_node: float
     :ivar expected_value_of_root_node: expected value of the root node given by smart detector.
     :vartype expected_value_of_root_node: float
-    :ivar dimension: Required. dimension specified for series.
-    :vartype dimension: dict[str, str]
+    :ivar dimension_key: Required. dimension specified for series group.
+    :vartype dimension_key: dict[str, str]
     """
 
     _validation = {
@@ -576,7 +576,7 @@ class AnomalyIncident(msrest.serialization.Model):
         "status": {"readonly": True},
         "value_of_root_node": {"readonly": True},
         "expected_value_of_root_node": {"readonly": True},
-        "dimension": {"required": True},
+        "dimension_key": {"required": True},
     }
 
     _attribute_map = {
@@ -590,7 +590,7 @@ class AnomalyIncident(msrest.serialization.Model):
         "status": {"key": "property.incidentStatus", "type": "str"},
         "value_of_root_node": {"key": "property.valueOfRootNode", "type": "float"},
         "expected_value_of_root_node": {"key": "property.expectedValueOfRootNode", "type": "float"},
-        "dimension": {"key": "rootNode.dimension", "type": "{str}"},
+        "dimension_key": {"key": "rootNode.dimension", "type": "{str}"},
     }
 
     def __init__(
@@ -600,7 +600,7 @@ class AnomalyIncident(msrest.serialization.Model):
         start_time: datetime.datetime,
         last_time: datetime.datetime,
         severity: Union[str, "_models.AnomalySeverity"],
-        dimension: Dict[str, str],
+        dimension_key: Dict[str, str],
         **kwargs
     ):
         """
@@ -613,8 +613,8 @@ class AnomalyIncident(msrest.serialization.Model):
         :keyword severity: Required. max severity of latest anomalies in the incident. Possible values
          include: "Low", "Medium", "High".
         :paramtype severity: str or ~azure.ai.metricsadvisor.models.AnomalySeverity
-        :keyword dimension: Required. dimension specified for series.
-        :paramtype dimension: dict[str, str]
+        :keyword dimension_key: Required. dimension specified for series group.
+        :paramtype dimension_key: dict[str, str]
         """
         super(AnomalyIncident, self).__init__(**kwargs)
         self.data_feed_id = None
@@ -627,7 +627,7 @@ class AnomalyIncident(msrest.serialization.Model):
         self.status = None
         self.value_of_root_node = None
         self.expected_value_of_root_node = None
-        self.dimension = dimension
+        self.dimension_key = dimension_key
 
 
 class AnomalyResultList(msrest.serialization.Model):
@@ -3133,33 +3133,35 @@ class MetricSeriesData(msrest.serialization.Model):
     :vartype timestamps: list[~datetime.datetime]
     :ivar values: values of the data related to this time series.
     :vartype values: list[float]
-    :ivar metric_id: metric unique id.
+    :ivar series_key: dimension specified for series group.
+    :vartype series_key: dict[str, str]
+    :ivar metric_id:
     :vartype metric_id: str
-    :ivar dimension: dimension name and value pair.
-    :vartype dimension: dict[str, str]
     """
 
     _validation = {
         "timestamps": {"readonly": True},
         "values": {"readonly": True},
         "metric_id": {"readonly": True},
-        "dimension": {"readonly": True},
     }
 
     _attribute_map = {
         "timestamps": {"key": "timestampList", "type": "[iso-8601]"},
         "values": {"key": "valueList", "type": "[float]"},
+        "series_key": {"key": "id.dimension", "type": "{str}"},
         "metric_id": {"key": "id.metricId", "type": "str"},
-        "dimension": {"key": "id.dimension", "type": "{str}"},
     }
 
-    def __init__(self, **kwargs):
-        """ """
+    def __init__(self, *, series_key: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword series_key: dimension specified for series group.
+        :paramtype series_key: dict[str, str]
+        """
         super(MetricSeriesData, self).__init__(**kwargs)
         self.timestamps = None
         self.values = None
+        self.series_key = series_key
         self.metric_id = None
-        self.dimension = None
 
 
 class MetricSeriesDefinition(msrest.serialization.Model):
@@ -3489,6 +3491,32 @@ class RootCauseList(msrest.serialization.Model):
         """
         super(RootCauseList, self).__init__(**kwargs)
         self.value = value
+
+
+class SeriesIdentity(msrest.serialization.Model):
+    """SeriesIdentity.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar dimension: Required. dimension specified for series.
+    :vartype dimension: dict[str, str]
+    """
+
+    _validation = {
+        "dimension": {"required": True},
+    }
+
+    _attribute_map = {
+        "dimension": {"key": "dimension", "type": "{str}"},
+    }
+
+    def __init__(self, *, dimension: Dict[str, str], **kwargs):
+        """
+        :keyword dimension: Required. dimension specified for series.
+        :paramtype dimension: dict[str, str]
+        """
+        super(SeriesIdentity, self).__init__(**kwargs)
+        self.dimension = dimension
 
 
 class SeriesResultList(msrest.serialization.Model):

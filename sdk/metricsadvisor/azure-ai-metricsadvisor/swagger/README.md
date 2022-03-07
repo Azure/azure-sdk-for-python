@@ -428,12 +428,12 @@ directive:
         $.properties["group"] = {"required": ["dimension"], "type": "object", "properties": { "dimension": { "x-ms-client-name": "seriesGroupKey", "description": "dimension specified for series group", "type": "object", "additionalProperties": { "type": "string" }}}};
 ```
 
-### Change SeriesIdentity just for IncidentResult
+### Change SeriesIdentity just for AnomalyIncident
 
 ```yaml
 directive:
   - from: swagger-document
-    where: $["definitions"]["IncidentResult"]
+    where: $["definitions"]["AnomalyIncident"]
     transform: >
         $.properties["rootNode"] = {"required": ["dimension"], "type": "object", "properties": { "dimension": { "x-ms-client-name": "dimensionKey", "description": "dimension specified for series group", "type": "object", "additionalProperties": { "type": "string" }}}};
 ```
@@ -458,7 +458,15 @@ directive:
         $.properties["series"] = {"required": ["dimension"], "type": "object", "properties": { "dimension": { "x-ms-client-name": "seriesKey", "description": "dimension specified for series group", "type": "object", "additionalProperties": { "type": "string" }}}};
 ```
 
+### Change SeriesKey just for MetricSeriesData
 
+```yaml
+directive:
+  - from: swagger-document
+    where: $["definitions"]["MetricSeriesData"]
+    transform: >
+        $.properties["id"] = {"type": "object", "properties": { "dimension": { "x-ms-client-name": "seriesKey", "description": "dimension specified for series group", "type": "object", "additionalProperties": { "type": "string" }}, "metricId": {"format": "uuid", "type": "string", "readOnly": true}}};
+```
 
 ### Make get_root_cause_of_incident_by_anomaly_detection_configuration pageable
 
