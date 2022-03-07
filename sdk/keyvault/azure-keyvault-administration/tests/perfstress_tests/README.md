@@ -12,7 +12,7 @@ The following environment variables will need to be set for the tests to access 
 AZURE_TENANT_ID=<tenant ID of testing service principal>
 AZURE_CLIENT_ID=<client ID of testing service principal>
 AZURE_CLIENT_SECRET=<client secret of testing service principal>
-AZURE_KEYVAULT_URL=<URL of the testing key vault>
+AZURE_MANAGEDHSM_URL=<URL of the testing key vault>
 ```
 
 ### Setup for perf test runs

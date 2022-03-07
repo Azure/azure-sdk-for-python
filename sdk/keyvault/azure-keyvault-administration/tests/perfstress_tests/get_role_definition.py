@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import uuid
 from azure_devtools.perfstress_tests import PerfStressTest
 from azure.identity import DefaultAzureCredential
 from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
@@ -28,7 +29,7 @@ class GetRoleDefinitionTest(PerfStressTest):
         vault_url = self.get_from_env("AZURE_MANAGEDHSM_URL")
         self.client = KeyVaultAccessControlClient(vault_url, self.credential, **self._client_kwargs)
         self.async_client = AsyncKeyVaultAccessControlClient(vault_url, self.async_credential, **self._client_kwargs)
-        self.role_name = "livekvtestgetroledefperfadmin"
+        self.role_name = uuid.uuid4()
         self.scope = KeyVaultRoleScope.GLOBAL
         self.permissions = [KeyVaultPermission(data_actions=[KeyVaultDataAction.CREATE_HSM_KEY])]
     
