@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -21,21 +21,19 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_create_data_flow_debug_session_request_initial(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
@@ -58,14 +56,15 @@ def build_create_data_flow_debug_session_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_query_data_flow_debug_sessions_by_workspace_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
 
     accept = "application/json"
@@ -90,9 +89,11 @@ def build_query_data_flow_debug_sessions_by_workspace_request(
 
 
 def build_add_data_flow_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
@@ -115,14 +116,18 @@ def build_add_data_flow_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_delete_data_flow_debug_session_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
@@ -145,14 +150,18 @@ def build_delete_data_flow_debug_session_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_execute_command_request_initial(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
@@ -175,10 +184,11 @@ def build_execute_command_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
-# fmt: on
 class DataFlowDebugSessionOperations(object):
     """DataFlowDebugSessionOperations operations.
 
@@ -203,10 +213,9 @@ class DataFlowDebugSessionOperations(object):
 
     def _create_data_flow_debug_session_initial(
         self,
-        request,  # type: "_models.CreateDataFlowDebugSessionRequest"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional["_models.CreateDataFlowDebugSessionResponse"]
+        request: "_models.CreateDataFlowDebugSessionRequest",
+        **kwargs: Any
+    ) -> Optional["_models.CreateDataFlowDebugSessionResponse"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.CreateDataFlowDebugSessionResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -257,10 +266,9 @@ class DataFlowDebugSessionOperations(object):
     @distributed_trace
     def begin_create_data_flow_debug_session(
         self,
-        request,  # type: "_models.CreateDataFlowDebugSessionRequest"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.CreateDataFlowDebugSessionResponse"]
+        request: "_models.CreateDataFlowDebugSessionRequest",
+        **kwargs: Any
+    ) -> LROPoller["_models.CreateDataFlowDebugSessionResponse"]:
         """Creates a data flow debug session.
 
         :param request: Data flow debug session definition.
@@ -331,9 +339,8 @@ class DataFlowDebugSessionOperations(object):
     @distributed_trace
     def query_data_flow_debug_sessions_by_workspace(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.QueryDataFlowDebugSessionsResponse"]
+        **kwargs: Any
+    ) -> Iterable["_models.QueryDataFlowDebugSessionsResponse"]:
         """Query all active data flow debug sessions.
 
         :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
@@ -413,10 +420,9 @@ class DataFlowDebugSessionOperations(object):
     @distributed_trace
     def add_data_flow(
         self,
-        request,  # type: "_models.DataFlowDebugPackage"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.AddDataFlowToDebugSessionResponse"
+        request: "_models.DataFlowDebugPackage",
+        **kwargs: Any
+    ) -> "_models.AddDataFlowToDebugSessionResponse":
         """Add a data flow into debug session.
 
         :param request: Data flow debug session definition with debug content.
@@ -473,10 +479,9 @@ class DataFlowDebugSessionOperations(object):
     @distributed_trace
     def delete_data_flow_debug_session(
         self,
-        request,  # type: "_models.DeleteDataFlowDebugSessionRequest"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        request: "_models.DeleteDataFlowDebugSessionRequest",
+        **kwargs: Any
+    ) -> None:
         """Deletes a data flow debug session.
 
         :param request: Data flow debug session definition for deletion.
@@ -528,10 +533,9 @@ class DataFlowDebugSessionOperations(object):
 
     def _execute_command_initial(
         self,
-        request,  # type: "_models.DataFlowDebugCommandRequest"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional["_models.DataFlowDebugCommandResponse"]
+        request: "_models.DataFlowDebugCommandRequest",
+        **kwargs: Any
+    ) -> Optional["_models.DataFlowDebugCommandResponse"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.DataFlowDebugCommandResponse"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -582,10 +586,9 @@ class DataFlowDebugSessionOperations(object):
     @distributed_trace
     def begin_execute_command(
         self,
-        request,  # type: "_models.DataFlowDebugCommandRequest"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.DataFlowDebugCommandResponse"]
+        request: "_models.DataFlowDebugCommandRequest",
+        **kwargs: Any
+    ) -> LROPoller["_models.DataFlowDebugCommandResponse"]:
         """Execute a data flow debug command.
 
         :param request: Data flow debug command definition.

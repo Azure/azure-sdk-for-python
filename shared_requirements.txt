@@ -184,7 +184,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-servicebus typing-extensions>=3.7.4.3
 #override azure-synapse-accesscontrol azure-core>=1.20.0,<2.0.0
 #override azure-synapse-spark azure-core>=1.20.0,<2.0.0
-#override azure-synapse-artifacts azure-core>=1.20.0,<2.0.0
+#override azure-synapse-artifacts azure-core>=1.20.1,<2.0.0
 #override azure-synapse-monitoring azure-core>=1.20.0,<2.0.0
 #override azure-synapse-managedprivateendpoints azure-core>=1.20.0,<2.0.0
 #override azure-ai-anomalydetector azure-core>=1.6.0,<2.0.0
