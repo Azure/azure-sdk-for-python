@@ -9021,6 +9021,8 @@ class VirtualMachineImage(VirtualMachineImageResource):
     :vartype disallowed: ~azure.mgmt.compute.v2021_11_01.models.DisallowedConfiguration
     :ivar features:
     :vartype features: list[~azure.mgmt.compute.v2021_11_01.models.VirtualMachineImageFeature]
+    :ivar architecture: Specifies the Architecture Type. Possible values include: "x64", "Arm64".
+    :vartype architecture: str or ~azure.mgmt.compute.v2021_11_01.models.ArchitectureTypes
     """
 
     _validation = {
@@ -9041,6 +9043,7 @@ class VirtualMachineImage(VirtualMachineImageResource):
         'hyper_v_generation': {'key': 'properties.hyperVGeneration', 'type': 'str'},
         'disallowed': {'key': 'properties.disallowed', 'type': 'DisallowedConfiguration'},
         'features': {'key': 'properties.features', 'type': '[VirtualMachineImageFeature]'},
+        'architecture': {'key': 'properties.architecture', 'type': 'str'},
     }
 
     def __init__(
@@ -9058,6 +9061,7 @@ class VirtualMachineImage(VirtualMachineImageResource):
         hyper_v_generation: Optional[Union[str, "HyperVGenerationTypes"]] = None,
         disallowed: Optional["DisallowedConfiguration"] = None,
         features: Optional[List["VirtualMachineImageFeature"]] = None,
+        architecture: Optional[Union[str, "ArchitectureTypes"]] = None,
         **kwargs
     ):
         """
@@ -9093,6 +9097,9 @@ class VirtualMachineImage(VirtualMachineImageResource):
         :paramtype disallowed: ~azure.mgmt.compute.v2021_11_01.models.DisallowedConfiguration
         :keyword features:
         :paramtype features: list[~azure.mgmt.compute.v2021_11_01.models.VirtualMachineImageFeature]
+        :keyword architecture: Specifies the Architecture Type. Possible values include: "x64",
+         "Arm64".
+        :paramtype architecture: str or ~azure.mgmt.compute.v2021_11_01.models.ArchitectureTypes
         """
         super(VirtualMachineImage, self).__init__(id=id, name=name, location=location, tags=tags, extended_location=extended_location, **kwargs)
         self.plan = plan
@@ -9102,6 +9109,7 @@ class VirtualMachineImage(VirtualMachineImageResource):
         self.hyper_v_generation = hyper_v_generation
         self.disallowed = disallowed
         self.features = features
+        self.architecture = architecture
 
 
 class VirtualMachineImageFeature(msrest.serialization.Model):

@@ -18,6 +18,7 @@ from azure.keyvault.keys import (
     KeyReleasePolicy,
     KeyRotationLifetimeAction,
     KeyRotationPolicyAction,
+    KeyType,
 )
 import pytest
 from six import byte2int
@@ -428,7 +429,10 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
                 # parts of the request are logged on new lines in a single message
-                request_sections = message.message.split("/n")
+                if "'/n" in message.message:
+                    request_sections = message.message.split("/n")
+                else:
+                    request_sections = message.message.split("\n")
                 for section in request_sections:
                     try:
                         # the body of the request should be JSON
@@ -459,7 +463,10 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         for message in mock_handler.messages:
             if message.levelname == "DEBUG" and message.funcName == "on_request":
                 # parts of the request are logged on new lines in a single message
-                request_sections = message.message.split("/n")
+                if "'/n" in message.message:
+                    request_sections = message.message.split("/n")
+                else:
+                    request_sections = message.message.split("\n")
                 for section in request_sections:
                     try:
                         # the body of the request should be JSON
@@ -668,7 +675,7 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         assert "RSA-OAEP" == result.algorithm
         assert plaintext == result.plaintext
 
-        # try ommitting the key version
+        # try omitting the key version
         crypto_client = client.get_cryptography_client(key_name)
         # both clients should use the same generated client
         assert client._client == crypto_client._client
@@ -703,3 +710,15 @@ def test_custom_hook_policy():
 
     client = KeyClient("...", object(), custom_hook_policy=CustomHookPolicy())
     assert isinstance(client._client._config.custom_hook_policy, CustomHookPolicy)
+
+
+def test_case_insensitive_key_type():
+    """Ensure a KeyType can be created regardless of casing since the service can create keys with non-standard casing.
+    See https://github.com/Azure/azure-sdk-for-python/issues/22797
+    """
+    # KeyType with all upper-case value
+    assert KeyType("rsa") == KeyType.rsa
+    # KeyType with all lower-case value
+    assert KeyType("OCT") == KeyType.oct
+    # KeyType with mixed-case value
+    assert KeyType("oct-hsm") == KeyType.oct_hsm

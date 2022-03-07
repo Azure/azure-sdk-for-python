@@ -508,6 +508,7 @@ from ._models_py3 import QueryDataFlowDebugSessionsResponse
 from ._models_py3 import QuickBooksLinkedService
 from ._models_py3 import QuickBooksObjectDataset
 from ._models_py3 import QuickBooksSource
+from ._models_py3 import QuickbaseLinkedService
 from ._models_py3 import RecurrenceSchedule
 from ._models_py3 import RecurrenceScheduleOccurrence
 from ._models_py3 import RedirectIncompatibleRowSettings
@@ -570,6 +571,10 @@ from ._models_py3 import SapTableSource
 from ._models_py3 import ScheduleTrigger
 from ._models_py3 import ScheduleTriggerRecurrence
 from ._models_py3 import ScriptAction
+from ._models_py3 import ScriptActivity
+from ._models_py3 import ScriptActivityParameter
+from ._models_py3 import ScriptActivityScriptBlock
+from ._models_py3 import ScriptActivityTypePropertiesLogSettings
 from ._models_py3 import SecretBase
 from ._models_py3 import SecureString
 from ._models_py3 import SelfDependencyTumblingWindowTriggerReference
@@ -592,6 +597,7 @@ from ._models_py3 import ShopifyLinkedService
 from ._models_py3 import ShopifyObjectDataset
 from ._models_py3 import ShopifySource
 from ._models_py3 import SkipErrorFile
+from ._models_py3 import SmartsheetLinkedService
 from ._models_py3 import SnowflakeDataset
 from ._models_py3 import SnowflakeExportCopyCommand
 from ._models_py3 import SnowflakeImportCopyCommand
@@ -644,6 +650,7 @@ from ._models_py3 import TabularSource
 from ._models_py3 import TabularTranslator
 from ._models_py3 import TarGZipReadSettings
 from ._models_py3 import TarReadSettings
+from ._models_py3 import TeamDeskLinkedService
 from ._models_py3 import TeradataLinkedService
 from ._models_py3 import TeradataPartitionSettings
 from ._models_py3 import TeradataSource
@@ -692,6 +699,7 @@ from ._models_py3 import XeroSource
 from ._models_py3 import XmlDataset
 from ._models_py3 import XmlReadSettings
 from ._models_py3 import XmlSource
+from ._models_py3 import ZendeskLinkedService
 from ._models_py3 import ZipDeflateReadSettings
 from ._models_py3 import ZohoLinkedService
 from ._models_py3 import ZohoObjectDataset
@@ -769,6 +777,10 @@ from ._data_factory_management_client_enums import (
     SapHanaAuthenticationType,
     SapHanaPartitionOption,
     SapTablePartitionOption,
+    ScriptActivityLogDestination,
+    ScriptActivityParameterDirection,
+    ScriptActivityParameterType,
+    ScriptType,
     SelfHostedIntegrationRuntimeNodeStatus,
     ServiceNowAuthenticationType,
     ServicePrincipalCredentialType,
@@ -785,6 +797,7 @@ from ._data_factory_management_client_enums import (
     SsisPackageLocationType,
     StoredProcedureParameterType,
     SybaseAuthenticationType,
+    TeamDeskAuthenticationType,
     TeradataAuthenticationType,
     TeradataPartitionOption,
     TriggerRunStatus,
@@ -794,6 +807,7 @@ from ._data_factory_management_client_enums import (
     WebActivityMethod,
     WebAuthenticationType,
     WebHookActivityMethod,
+    ZendeskAuthenticationType,
 )
 
 __all__ = [
@@ -1299,6 +1313,7 @@ __all__ = [
     'QuickBooksLinkedService',
     'QuickBooksObjectDataset',
     'QuickBooksSource',
+    'QuickbaseLinkedService',
     'RecurrenceSchedule',
     'RecurrenceScheduleOccurrence',
     'RedirectIncompatibleRowSettings',
@@ -1361,6 +1376,10 @@ __all__ = [
     'ScheduleTrigger',
     'ScheduleTriggerRecurrence',
     'ScriptAction',
+    'ScriptActivity',
+    'ScriptActivityParameter',
+    'ScriptActivityScriptBlock',
+    'ScriptActivityTypePropertiesLogSettings',
     'SecretBase',
     'SecureString',
     'SelfDependencyTumblingWindowTriggerReference',
@@ -1383,6 +1402,7 @@ __all__ = [
     'ShopifyObjectDataset',
     'ShopifySource',
     'SkipErrorFile',
+    'SmartsheetLinkedService',
     'SnowflakeDataset',
     'SnowflakeExportCopyCommand',
     'SnowflakeImportCopyCommand',
@@ -1435,6 +1455,7 @@ __all__ = [
     'TabularTranslator',
     'TarGZipReadSettings',
     'TarReadSettings',
+    'TeamDeskLinkedService',
     'TeradataLinkedService',
     'TeradataPartitionSettings',
     'TeradataSource',
@@ -1483,6 +1504,7 @@ __all__ = [
     'XmlDataset',
     'XmlReadSettings',
     'XmlSource',
+    'ZendeskLinkedService',
     'ZipDeflateReadSettings',
     'ZohoLinkedService',
     'ZohoObjectDataset',
@@ -1557,6 +1579,10 @@ __all__ = [
     'SapHanaAuthenticationType',
     'SapHanaPartitionOption',
     'SapTablePartitionOption',
+    'ScriptActivityLogDestination',
+    'ScriptActivityParameterDirection',
+    'ScriptActivityParameterType',
+    'ScriptType',
     'SelfHostedIntegrationRuntimeNodeStatus',
     'ServiceNowAuthenticationType',
     'ServicePrincipalCredentialType',
@@ -1573,6 +1599,7 @@ __all__ = [
     'SsisPackageLocationType',
     'StoredProcedureParameterType',
     'SybaseAuthenticationType',
+    'TeamDeskAuthenticationType',
     'TeradataAuthenticationType',
     'TeradataPartitionOption',
     'TriggerRunStatus',
@@ -1582,4 +1609,5 @@ __all__ = [
     'WebActivityMethod',
     'WebAuthenticationType',
     'WebHookActivityMethod',
+    'ZendeskAuthenticationType',
 ]

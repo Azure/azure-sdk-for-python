@@ -86,8 +86,6 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(AsyncFormRecognizerTest):
         assert len(business_card.fields.get("CompanyNames").value) == 1
         assert business_card.fields.get("CompanyNames").value[0].value == "Contoso"
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -111,8 +109,6 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(AsyncFormRecognizerTest):
             assert passport["Sex"].value == "F"
             assert passport["CountryRegion"].value == "CAN"
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -135,8 +131,6 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(AsyncFormRecognizerTest):
         assert id_document.fields.get("Address").value == "123 STREET ADDRESS YOUR CITY WA 99999-1234"
         assert id_document.fields.get("CountryRegion").value == "USA"
         assert id_document.fields.get("Region").value == "Washington"
-
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -162,8 +156,6 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(AsyncFormRecognizerTest):
         assert invoice.fields.get("Items").value[0].value["Amount"].value.symbol ==  "$"
         assert invoice.fields.get("DueDate").value, date(2017, 6 ==  24)
 
-        return {}
-
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
     async def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
@@ -178,8 +170,6 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(AsyncFormRecognizerTest):
             poller2 = await client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg)
             await poller2.wait()
             assert poller2._polling_method._timeout ==  7  # goes back to client default
-
-        return {}
 
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
@@ -204,8 +194,6 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(AsyncFormRecognizerTest):
             async with client:
                 poller = await client.begin_analyze_document_from_url("prebuilt-receipt", "https://fakeuri.com/blank%20space")
         assert "https://fakeuri.com/blank%20space" in  e.value.response.request.body
-
-        return {}
 
     @pytest.mark.skip()
     @FormRecognizerPreparer()
@@ -234,8 +222,6 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(AsyncFormRecognizerTest):
                 )
                 result = await poller.result()
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -245,8 +231,6 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(AsyncFormRecognizerTest):
             async with client:
                 poller = await client.begin_analyze_document_from_url("prebuilt-receipt", "https://badurl.jpg")
                 result = await poller.result()
-
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -261,8 +245,6 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(AsyncFormRecognizerTest):
             async with client:
                 poller = await client.begin_analyze_document_from_url("prebuilt-receipt", receipt)
                 result = await poller.result()
-
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -304,8 +286,6 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -328,8 +308,6 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(AsyncFormRecognizerTest):
         assert receipt.doc_type == "receipt.retailMeal"
 
         assert len(result.pages) == 1
-
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -364,8 +342,6 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(AsyncFormRecognizerTest):
         assert receipt.doc_type == "receipt.retailMeal"
 
         assert len(result.pages) == 2
-
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -407,8 +383,6 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
-        return {}
-
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -434,8 +408,6 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(AsyncFormRecognizerTest):
             result = await poller.result()
             assert result
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -445,8 +417,6 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(AsyncFormRecognizerTest):
             async with client:
                 await client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg, locale="not a locale")
         assert "InvalidArgument" == e.value.error.code
-
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -458,5 +428,3 @@ class TestDACAnalyzePrebuiltsfromUrlAsync(AsyncFormRecognizerTest):
             assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
             result = await poller.result()
             assert result
-
-        return {}

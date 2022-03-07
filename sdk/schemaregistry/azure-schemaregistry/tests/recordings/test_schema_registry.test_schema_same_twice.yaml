@@ -23,21 +23,21 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 08 Nov 2021 19:21:29 GMT
+      - Fri, 25 Feb 2022 20:18:59 GMT
       location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7/versions/1?api-version=2021-10
+      - https://swathip-test-eh-westus.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7/versions/1?api-version=2021-10
       schema-group-name:
       - swathip-test-schema
       schema-id:
-      - bdc1e883287a477f99e003cc3573c94c
+      - ce5b9f31e14c46eb81ddb2b2b5cadafd
       schema-id-location:
-      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/$schemas/bdc1e883287a477f99e003cc3573c94c?api-version=2021-10
+      - https://swathip-test-eh-westus.servicebus.windows.net:443/$schemagroups/$schemas/ce5b9f31e14c46eb81ddb2b2b5cadafd?api-version=2021-10
       schema-name:
       - test-schema-twice863b11a7
       schema-version:
       - '1'
       schema-versions-location:
-      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/test-schema-twice863b11a7/versions?api-version=2021-10
+      - https://swathip-test-eh-westus.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/test-schema-twice863b11a7/versions?api-version=2021-10
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -69,21 +69,21 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 08 Nov 2021 19:21:30 GMT
+      - Fri, 25 Feb 2022 20:18:59 GMT
       location:
-      - https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7/versions/1?api-version=2021-10
+      - https://swathip-test-eh-westus.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-twice863b11a7/versions/1?api-version=2021-10
       schema-group-name:
       - swathip-test-schema
       schema-id:
-      - bdc1e883287a477f99e003cc3573c94c
+      - ce5b9f31e14c46eb81ddb2b2b5cadafd
       schema-id-location:
-      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/$schemas/bdc1e883287a477f99e003cc3573c94c?api-version=2021-10
+      - https://swathip-test-eh-westus.servicebus.windows.net:443/$schemagroups/$schemas/ce5b9f31e14c46eb81ddb2b2b5cadafd?api-version=2021-10
       schema-name:
       - test-schema-twice863b11a7
       schema-version:
       - '1'
       schema-versions-location:
-      - https://swathip-test-eventhubs.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/test-schema-twice863b11a7/versions?api-version=2021-10
+      - https://swathip-test-eh-westus.servicebus.windows.net:443/$schemagroups/swathip-test-schema/schemas/test-schema-twice863b11a7/versions?api-version=2021-10
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

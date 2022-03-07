@@ -834,7 +834,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         :keyword file_last_write_time:
             Last write time for the file.
         :paramtype file_last_write_time:~datetime.datetime or str
-        :keyword dict(str,str) metadata:
+        :keyword Dict[str,str] metadata:
             A name-value pair to associate with a file storage object.
         :keyword source_lease:
             Required if the source file has an active lease. Value can be a ShareLeaseClient object

@@ -382,6 +382,30 @@ class StorageCommonBlobTest(StorageTestCase):
         # Assert
         self.assertEqual(data, raw_data*2)
 
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_upload_blob_from_pipe(self, storage_account_name, storage_account_key):
+        # Different OSs have different behavior, so this can't be recorded.
+
+        self._setup(storage_account_name, storage_account_key)
+        blob_name = self._get_blob_reference()
+        data = b"Hello World"
+
+        reader_fd, writer_fd = os.pipe()
+
+        with os.fdopen(writer_fd, 'wb') as writer:
+            writer.write(data)
+
+        # Act
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        with os.fdopen(reader_fd, mode='rb') as reader:
+            blob.upload_blob(data=reader, overwrite=True)
+
+        blob_data = blob.download_blob().readall()
+
+        # Assert
+        self.assertEqual(data, blob_data)
+
     @BlobPreparer()
     def test_get_blob_with_existing_blob(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
@@ -1797,6 +1821,53 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertTrue(blob_response.ok)
         self.assertEqual(self.byte_data, blob_response.content)
         self.assertTrue(container_response.ok)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_blob_service_sas(self, storage_account_name, storage_account_key):
+        # SAS URL is calculated from storage key, so this test runs live only
+
+        self._setup(storage_account_name, storage_account_key)
+        container = self.bsc.get_container_client(self.container_name)
+        blob_name = self._create_block_blob(overwrite=True)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+
+        # Generate SAS with all available permissions
+        container_sas = generate_container_sas(
+            container.account_name,
+            container.container_name,
+            account_key=container.credential.account_key,
+            permission=ContainerSasPermissions(
+                read=True, write=True, delete=True, list=True, delete_previous_version=True,
+                tag=True, add=True, create=True, permanent_delete=True, filter_by_tags=True, move=True,
+                execute=True, set_immutability_policy=True
+            ),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+
+        blob_sas = generate_blob_sas(
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            snapshot=blob.snapshot,
+            account_key=blob.credential.account_key,
+            permission=BlobSasPermissions(
+                read=True, add=True, create=True, write=True, delete=True, delete_previous_version=True,
+                permanent_delete=True, tag=True, move=True, execute=True, set_immutability_policy=True
+            ),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # Act
+        container_client = ContainerClient.from_container_url(container.url, credential=container_sas)
+        blob_list = list(container_client.list_blobs())
+
+        blob_client = BlobClient.from_blob_url(blob.url, credential=blob_sas)
+        blob_props = blob_client.get_blob_properties()
+
+        # Assert
+        self.assertIsNotNone(blob_list)
+        self.assertIsNotNone(blob_props)
 
     @pytest.mark.live_test_only
     @BlobPreparer()

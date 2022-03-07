@@ -1,5 +1,11 @@
 # Release History
 
+## 5.9.0b2 (Unreleased)
+
+### Breaking Changes
+
+- `from_message_data` on `EventData` has been renamed `from_message_content` for interoperability with the Schema Registry Avro Encoder library. The `data` parameter has been renamed to `content`.
+
 ## 5.9.0b1 (2022-02-09)
 
 ### Features Added

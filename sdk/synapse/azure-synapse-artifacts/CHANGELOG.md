@@ -1,14 +1,10 @@
 # Release History
 
-## 0.12.0 (Unreleased)
+## 0.12.0 (2022-03-07)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- re-generated based on tag package-artifacts-composite-v3
 
 ## 0.11.0 (2022-01-11)
 
