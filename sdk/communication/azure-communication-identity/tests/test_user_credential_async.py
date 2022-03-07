@@ -39,6 +39,18 @@ class TestCommunicationTokenCredential(TestCase):
         credential = CommunicationTokenCredential(initial_token)
         access_token = await credential.get_token()
         assert initial_token == access_token.token
+    
+    @pytest.mark.asyncio 
+    async def test_communicationtokencredential_throws_if_refresh_proactively_enabled_without_token_refresher(self):
+        with pytest.raises(ValueError) as err:
+            CommunicationTokenCredential(self.sample_token, refresh_proactively=True)
+        assert str(err.value) == "'token_refresher' must not be None."
+        with pytest.raises(ValueError) as err:
+            CommunicationTokenCredential(
+                self.sample_token, 
+                refresh_proactively=True,
+                token_refresher=None)
+        assert str(err.value) == "'token_refresher' must not be None."
 
     @pytest.mark.asyncio
     async def test_refresher_should_be_called_immediately_with_expired_token(self):
@@ -213,10 +225,12 @@ class TestCommunicationTokenCredential(TestCase):
             generate_token_with_custom_expiry(30 * 60))
         refresher = MagicMock(return_value=refreshed_token)
         expired_token = generate_token_with_custom_expiry(-10 * 60)
-
-        async with CommunicationTokenCredential(
+        credential = CommunicationTokenCredential(
                 expired_token,
                 token_refresher=refresher,
-                refresh_proactively=True) as credential:
+                refresh_proactively=True)
+        async with  credential:
             assert credential._timer is not None
         assert refresher.call_count == 0
+        async with  credential:
+            assert credential._timer is not None

@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from threading import Lock, Condition, Timer
+from threading import Lock, Condition, Timer, TIMEOUT_MAX
 from datetime import timedelta
 from typing import Any
 import six
@@ -94,8 +94,9 @@ class CommunicationTokenCredential(object):
             # Schedule the next refresh for when it gets in to the soon-to-expire window.
             timespan = token_ttl - timedelta(
                 minutes=self._DEFAULT_AUTOREFRESH_INTERVAL_MINUTES).total_seconds()
-        self._timer = Timer(timespan, self._update_token_and_reschedule)
-        self._timer.start()
+        if timespan <= TIMEOUT_MAX:
+            self._timer = Timer(timespan, self._update_token_and_reschedule)
+            self._timer.start()
 
     def _wait_till_lock_owner_finishes_refreshing(self):
         self._lock.release()
