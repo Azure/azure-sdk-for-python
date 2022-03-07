@@ -125,4 +125,6 @@ class CommunicationTokenCredential(object):
         self.close()
 
     def close(self) -> None:
+        if self._timer is not None:
+            self._timer.cancel()
         self._timer = None

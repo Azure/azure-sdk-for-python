@@ -28,9 +28,9 @@ class TestCommunicationTokenCredential(TestCase):
             100)  # 1/1/1970
 
     def test_communicationtokencredential_decodes_token(self):
-        credential = CommunicationTokenCredential(self.sample_token)
-        access_token = credential.get_token()
-        self.assertEqual(access_token.token, self.sample_token)
+        with CommunicationTokenCredential(self.sample_token) as credential:
+            access_token = credential.get_token()
+            self.assertEqual(access_token.token, self.sample_token)
 
     def test_communicationtokencredential_throws_if_invalid_token(self):
         self.assertRaises(
@@ -51,27 +51,24 @@ class TestCommunicationTokenCredential(TestCase):
         assert str(err.value) == "'token_refresher' must not be None."
 
     def test_communicationtokencredential_static_token_returns_expired_token(self):
-        credential = CommunicationTokenCredential(self.expired_token)
-        self.assertEqual(credential.get_token().token, self.expired_token)
+        with CommunicationTokenCredential(self.expired_token) as credential:
+            self.assertEqual(credential.get_token().token, self.expired_token)
 
     def test_communicationtokencredential_token_expired_refresh_called(self):
         refresher = MagicMock(
             return_value=create_access_token(self.sample_token))
-        access_token = CommunicationTokenCredential(
-            self.expired_token,
-            token_refresher=refresher).get_token()
+        with CommunicationTokenCredential(self.expired_token, token_refresher=refresher) as credential:
+            access_token = credential.get_token()
         refresher.assert_called_once()
         self.assertEqual(access_token.token, self.sample_token)
 
     def test_communicationtokencredential_raises_if_refresher_returns_expired_token(self):
         refresher = MagicMock(
             return_value=create_access_token(self.expired_token))
-        credential = CommunicationTokenCredential(
-            self.expired_token, token_refresher=refresher)
-
-        with self.assertRaises(ValueError):
-            credential.get_token()
-        self.assertEqual(refresher.call_count, 1)
+        with CommunicationTokenCredential(self.expired_token, token_refresher=refresher) as credential:
+            with self.assertRaises(ValueError):
+                credential.get_token()
+            self.assertEqual(refresher.call_count, 1)
 
     def test_uses_initial_token_as_expected(self):
         refresher = MagicMock(
