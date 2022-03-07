@@ -1736,7 +1736,12 @@ class CheckNoAliasGeneratedCode(BaseChecker):
         super(CheckNoAliasGeneratedCode, self).__init__(linter)
 
     def visit_module(self, node):
-        """Visits __init__.py and checks to see that any aliased names do not appear in __all__"""
+        """Visits __init__.py and checks that there are not aliased models.
+
+        :param node: module node
+        :type node: ast.Module
+        :return: None
+        """
         try:
         
             if node.file.endswith("__init__.py"):
