@@ -266,3 +266,25 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-servicelinker msrest>=0.6.21
 #override azure-mgmt-sqlvirtualmachine msrest>=0.6.21
 #override azure-mgmt-rdbms msrest>=0.6.21
+#override azure-cognitiveservices-anomalydetector azure-mgmt-core<2.0.0,>=1.2.0
+#override azure-cognitiveservices-formrecognizer azure-mgmt-core<2.0.0,>=1.2.0
+#override azure-cognitiveservices-knowledge-qnamaker azure-mgmt-core<2.0.0,>=1.2.0
+#override azure-cognitiveservices-language-luis azure-mgmt-core<2.0.0,>=1.2.0
+#override azure-cognitiveservices-language-spellcheck azure-mgmt-core<2.0.0,>=1.2.0
+#override azure-cognitiveservices-language-textanalytics azure-mgmt-core<2.0.0,>=1.2.0
+#override azure-cognitiveservices-personalizer azure-mgmt-core<2.0.0,>=1.2.0
+#override azure-cognitiveservices-search-autosuggest azure-mgmt-core<2.0.0,>=1.2.0
+#override azure-cognitiveservices-search-customimagesearch azure-mgmt-core<2.0.0,>=1.2.0
+#override azure-cognitiveservices-search-customsearch azure-mgmt-core<2.0.0,>=1.2.0
+#override azure-cognitiveservices-search-entitysearch azure-mgmt-core<2.0.0,>=1.2.0
+#override azure-cognitiveservices-search-imagesearch azure-mgmt-core<2.0.0,>=1.2.0
+#override azure-cognitiveservices-search-imagesearch azure-mgmt-core<2.0.0,>=1.2.0
+#override azure-cognitiveservices-search-videosearch azure-mgmt-core<2.0.0,>=1.2.0
+#override azure-cognitiveservices-search-visualsearch azure-mgmt-core<2.0.0,>=1.2.0
+#override azure-cognitiveservices-search-websearch azure-mgmt-core<2.0.0,>=1.2.0
+#override azure-cognitiveservices-vision-contentmoderator azure-mgmt-core<2.0.0,>=1.2.0
+#override azure-cognitiveservices-vision-customvision azure-mgmt-core<2.0.0,>=1.2.0
+#override azure-cognitiveservices-vision-face azure-mgmt-core<2.0.0,>=1.2.0
+#override azure-graphrbac azure-mgmt-core<2.0.0,>=1.2.0
+#override azure-mgmt-storagesync azure-mgmt-core<2.0.0,>=1.2.0
+
