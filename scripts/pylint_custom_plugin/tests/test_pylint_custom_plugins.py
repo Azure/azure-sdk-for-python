@@ -2569,6 +2569,7 @@ class TestCheckDocstringAdmonitionNewline(pylint.testutils.CheckerTestCase):
                 )
         ):
             self.checker.visit_classdef(class_node)
+            
     
 class TestCheckNoAliasGeneratedCode(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.CheckNoAliasGeneratedCode
