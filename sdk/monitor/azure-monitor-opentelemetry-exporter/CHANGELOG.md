@@ -11,7 +11,7 @@
 ### Other Changes
 
 - Update swagger to newest version
-    ([#20445](https://github.com/Azure/azure-sdk-for-python/pull/20445))
+    ([#23377](https://github.com/Azure/azure-sdk-for-python/pull/23377))
 
 ## 1.0.0b5 (2021-10-05)
 
