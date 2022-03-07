@@ -727,6 +727,18 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
             **kwargs
         )
 
+    @distributed_trace
+    def list_detection_configurations(
+        self, metric_id: str, **kwargs: Any
+    ) -> AsyncItemPaged[AnomalyDetectionConfiguration]:
+        initial_request, next_request, kwargs = self._list_detection_configurations_requests(metric_id, **kwargs)
+        return self._paging_helper(
+            initial_request=initial_request,
+            next_request=next_request,
+            deserializer=AnomalyDetectionConfiguration.deserialize,
+            **kwargs
+        )
+
 
 __all__ = ["MetricsAdvisorClientOperationsMixin"]
 

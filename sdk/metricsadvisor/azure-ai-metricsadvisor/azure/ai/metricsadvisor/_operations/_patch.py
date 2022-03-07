@@ -145,24 +145,20 @@ class OperationMixinHelpers:
         unset = object()
         update_kwargs = {}
         update_kwargs["name"] = kwargs.pop("name", unset)
-        update_kwargs["wholeMetricConfiguration"] = kwargs.pop("whole_series_detection_condition", unset)
-        update_kwargs["dimensionGroupOverrideConfigurations"] = kwargs.pop("series_group_detection_conditions", unset)
-        update_kwargs["seriesOverrideConfigurations"] = kwargs.pop("series_detection_conditions", unset)
+        update_kwargs["whole_series_detection_condition"] = kwargs.pop("whole_series_detection_condition", unset)
+        update_kwargs["series_group_detection_conditions"] = kwargs.pop("series_group_detection_conditions", unset)
+        update_kwargs["series_detection_conditions"] = kwargs.pop("series_detection_conditions", unset)
         update_kwargs["description"] = kwargs.pop("description", unset)
 
         update = {key: value for key, value in update_kwargs.items() if value != unset}
         if isinstance(detection_configuration, str):
             detection_configuration_id = detection_configuration
-            detection_config_patch = update
-            for key in update.keys():
-                if key in kwargs:
-                    kwargs.pop(key)
+            detection_config_patch = AnomalyDetectionConfiguration.from_dict(update).serialize()
         else:
             detection_configuration_id = detection_configuration.id
             detection_config_patch = AnomalyDetectionConfiguration(
                 name=update.pop("name", detection_configuration.name),
                 metric_id=detection_configuration.metric_id,
-                id=detection_configuration.id,
                 description=update.pop("description", detection_configuration.description),
                 whole_series_detection_condition=update.pop(
                     "whole_series_detection_condition", detection_configuration.whole_series_detection_condition
@@ -173,7 +169,8 @@ class OperationMixinHelpers:
                 series_detection_conditions=update.pop(
                     "series_detection_conditions", detection_configuration.series_detection_conditions
                 ),
-            )
+            ).serialize()
+            detection_config_patch.pop("metricId")
         return detection_configuration_id, detection_config_patch, kwargs
 
     def _update_data_feed_helper(self, data_feed: Union[str, DataFeed], **kwargs) -> UpdateHelperRetval:
@@ -542,6 +539,12 @@ class OperationMixinHelpers:
         initial_request = build_list_hooks_request(hook_name=hook_name, skip=skip)
         return initial_request, build_list_hooks_request(), kwargs
 
+    def _list_detection_configurations_requests(self, metric_id: str, **kwargs: Any):
+        skip = kwargs.pop("skip", None)
+        initial_request = build_list_detection_configurations_request(metric_id=metric_id, skip=skip)
+        next_request = build_list_detection_configurations_request(metric_id=metric_id)
+        return initial_request, next_request, kwargs
+
     def _update_alert_configuration_helper(
         self, alert_configuration: Union[str, AnomalyAlertConfiguration], **kwargs
     ) -> Tuple[HttpRequest, Any]:
@@ -667,16 +670,10 @@ class OperationMixinHelpers:
                 "certificateKey": "certificate_key",
                 "certificatePassword": "certificate_password",
             }
-        shared_kwargs = {
-            "externalLink": "external_link",
-            "description": "description",
-            "hookName": "name"
-        }
+        shared_kwargs = {"externalLink": "external_link", "description": "description", "hookName": "name"}
         for rest_name, attr_name in shared_kwargs.items():
-            hook_patch[rest_name] = passed_kwargs.pop(
-                attr_name, hook_patch.get(rest_name)
-            )
-        hook_patch['hookParameter'] = hook_patch.get("hookParameter", {})
+            hook_patch[rest_name] = passed_kwargs.pop(attr_name, hook_patch.get(rest_name))
+        hook_patch["hookParameter"] = hook_patch.get("hookParameter", {})
         for rest_name, attr_name in specific_kwargs.items():
             hook_patch["hookParameter"][rest_name] = passed_kwargs.pop(
                 attr_name, hook_patch["hookParameter"].get(rest_name)
@@ -1374,6 +1371,16 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
             initial_request=initial_request,
             next_request=next_request,
             deserializer=NotificationHook.deserialize,
+            **kwargs
+        )
+
+    @distributed_trace
+    def list_detection_configurations(self, metric_id: str, **kwargs: Any) -> ItemPaged[AnomalyDetectionConfiguration]:
+        initial_request, next_request, kwargs = self._list_detection_configurations_requests(metric_id, **kwargs)
+        return self._paging_helper(
+            initial_request=initial_request,
+            next_request=next_request,
+            deserializer=AnomalyDetectionConfiguration.deserialize,
             **kwargs
         )
 

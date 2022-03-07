@@ -820,7 +820,7 @@ class AnomalyDetectionConfiguration(generated_models.AnomalyDetectionConfigurati
         )
 
 
-class DataFeedSource(dict):
+class DataFeedSource(DictMixin):
     """DataFeedSource base class
 
     :ivar data_source_type: Required. data source type.Constant filled by server.  Possible values

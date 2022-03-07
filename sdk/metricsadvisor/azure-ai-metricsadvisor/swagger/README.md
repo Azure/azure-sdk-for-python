@@ -561,7 +561,7 @@ directive:
       $["parameters"][1]["schema"]["$ref"] = "#/definitions/Anything";
   - where-operation: updateDetectionConfiguration
     transform: >
-      $["parameters"][1]["schema"]["$ref"] = "#/definitions/AnomalyDetectionConfiguration";
+      $["parameters"][1]["schema"]["$ref"] = "#/definitions/Anything";
   - where-operation: listAlerts
     transform: >
       $["parameters"][3]["schema"]["$ref"] = "#/definitions/Anything";
