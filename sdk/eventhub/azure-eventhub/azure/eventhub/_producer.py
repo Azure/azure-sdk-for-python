@@ -85,7 +85,7 @@ class EventHubProducer(
         # type: (EventHubProducerClient, str, Any) -> None
         partition = kwargs.get("partition", None)
         send_timeout = kwargs.get("send_timeout", 60)
-        keep_alive = kwargs.get("keep_alive", None)
+        keep_alive_interval = kwargs.get("keep_alive_interval")
         auto_reconnect = kwargs.get("auto_reconnect", True)
         idle_timeout = kwargs.get("idle_timeout", None)
 
@@ -99,7 +99,7 @@ class EventHubProducer(
         self._timeout = send_timeout
         self._idle_timeout = (idle_timeout * 1000) if idle_timeout else None
         self._error = None
-        self._keep_alive = keep_alive
+        self._keep_alive_interval = keep_alive_interval
         self._auto_reconnect = auto_reconnect
         self._retry_policy = errors.ErrorPolicy(
             max_retries=self._client._config.max_retries, on_error=_error_handler  # pylint: disable=protected-access
@@ -127,7 +127,7 @@ class EventHubProducer(
             msg_timeout=self._timeout * 1000,
             idle_timeout=self._idle_timeout,
             error_policy=self._retry_policy,
-            keep_alive_interval=self._keep_alive,
+            keep_alive_interval=self._keep_alive_interval,
             client_name=self._name,
             link_properties=self._link_properties,
             properties=create_properties(self._client._config.user_agent),  # pylint: disable=protected-access

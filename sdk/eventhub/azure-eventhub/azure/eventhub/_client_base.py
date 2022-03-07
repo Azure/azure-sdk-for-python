@@ -279,7 +279,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             self._credential = EventhubAzureNamedKeyTokenCredential(credential)  # type: ignore
         else:
             self._credential = credential  # type: ignore
-        self._keep_alive = kwargs.get("keep_alive", 30)
+        self._keep_alive_interval = kwargs.get("keep_alive_interval")
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
         self._mgmt_target = "amqps://{}/{}".format(
             self._address.hostname, self.eventhub_name

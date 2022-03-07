@@ -76,6 +76,11 @@ class EventHubProducerClient(ClientBase):
     :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
+    :keyword keep_alive_interval: If set, a thread will be started to keep the connection
+     alive during periods of user inactivity. The value will determine how long the
+     thread will sleep (in seconds) between pinging the connection. If 0 or None, no
+     thread will be started. Default is None.
+    :paramtype keep_alive_interval: int or None
 
     .. admonition:: Example:
 
@@ -176,6 +181,7 @@ class EventHubProducerClient(ClientBase):
             partition=partition_id,
             send_timeout=send_timeout,
             idle_timeout=self._idle_timeout,
+            keep_alive_interval=self._keep_alive_interval
         )
         return handler
 
@@ -221,6 +227,11 @@ class EventHubProducerClient(ClientBase):
         :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
          authenticate the identity of the connection endpoint.
          Default is None in which case `certifi.where()` will be used.
+        :keyword keep_alive_interval: If set, a thread will be started to keep the connection
+         alive during periods of user inactivity. The value will determine how long the
+         thread will sleep (in seconds) between pinging the connection. If 0 or None, no
+         thread will be started. Default is None.
+        :paramtype keep_alive_interval: int or None
         :rtype: ~azure.eventhub.EventHubProducerClient
 
         .. admonition:: Example:
