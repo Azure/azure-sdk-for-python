@@ -1705,6 +1705,58 @@ class CheckDocstringAdmonitionNewline(BaseChecker):
     # this line makes it work for async functions
     visit_asyncfunctiondef = visit_functiondef
 
+class CheckNoAliasGeneratedCode(BaseChecker):
+    __implements__ = IAstroidChecker
+
+    name = "check-alias"
+    priority = -1
+    msgs = {
+        "C4745": (
+            "The generated code is aliased",
+            "generated-code-does-not-need-alias",
+            "Do not alias models imported from the generated code.",
+        ),
+    }
+    options = (
+        (
+            "ignore-generated-code-does-not-need-alias",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow generated code to be aliased.",
+            },
+        ),
+    )
+
+    def __init__(self, linter=None):
+        super(CheckNoAliasGeneratedCode, self).__init__(linter)
+
+    def visit_module(self, node):
+            """Visits __init__.py and checks to see that any aliased names do not appear in __all__"""
+            try:
+                if node.file.endswith("__init__.py"):
+                    #Node Body is the number of import statements from X import 
+                    aliased = []
+                    for nod in node.body:
+                        
+                        if isinstance(nod, astroid.ImportFrom):
+                            # If the model has been aliased
+                            for name in nod.names: 
+                                if name[1] != None:
+                                    aliased.append(name[1])
+
+                        if isinstance(nod, astroid.Assign):
+                            for i in nod.assigned_stmts():
+                                for j in i.elts:
+                                    if j.value in aliased:
+                                        self.add_message(
+                                            msgid="generated-code-does-not-need-alias", node=node, confidence=None
+                                        )
+            except Exception:
+                logger.debug("Pylint custom checker failed to check if package is aliased.")
+                pass
+
 
 # if a linter is registered in this function then it will be checked with pylint
 def register(linter):
@@ -1723,6 +1775,7 @@ def register(linter):
     linter.register_checker(PackageNameDoesNotUseUnderscoreOrPeriod(linter))
     linter.register_checker(ServiceClientUsesNameWithClientSuffix(linter))
     linter.register_checker(CheckDocstringAdmonitionNewline(linter))
+    linter.register_checker(CheckNoAliasGeneratedCode(linter))
 
     # disabled by default, use pylint --enable=check-docstrings if you want to use it
     linter.register_checker(CheckDocstringParameters(linter))
