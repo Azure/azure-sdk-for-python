@@ -644,10 +644,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
             metric_id=metric_id, dimension_name=dimension_name, **kwargs
         )
         return self._paging_helper(
-            initial_request=initial_request,
-            next_request=next_request,
-            deserializer=lambda x: x,
-            **kwargs
+            initial_request=initial_request, next_request=next_request, deserializer=lambda x: x, **kwargs
         )
 
     @distributed_trace
@@ -717,6 +714,16 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
             initial_request=initial_request,
             next_request=next_request,
             deserializer=IncidentRootCause.deserialize,
+            **kwargs
+        )
+
+    @distributed_trace
+    def list_hooks(self, **kwargs: Any) -> AsyncItemPaged[NotificationHook]:
+        initial_request, next_request, kwargs = self._list_hooks_requests(**kwargs)
+        return self._paging_helper(
+            initial_request=initial_request,
+            next_request=next_request,
+            deserializer=NotificationHook.deserialize,
             **kwargs
         )
 

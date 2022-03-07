@@ -3288,7 +3288,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         return deserialized
 
     @distributed_trace
-    def update_hook(self, hook_id: str, body: "_models.NotificationHook", **kwargs: Any) -> "_models.NotificationHook":
+    def update_hook(self, hook_id: str, body: Any, **kwargs: Any) -> "_models.NotificationHook":
         """Update a hook.
 
         Update a hook.
@@ -3296,7 +3296,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         :param hook_id: Hook unique ID.
         :type hook_id: str
         :param body: Update hook request.
-        :type body: ~azure.ai.metricsadvisor.models.NotificationHook
+        :type body: any
         :return: NotificationHook
         :rtype: ~azure.ai.metricsadvisor.models.NotificationHook
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -3307,7 +3307,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, "NotificationHook")
+        _json = self._serialize.body(body, "object")
 
         request = build_update_hook_request(
             hook_id=hook_id,

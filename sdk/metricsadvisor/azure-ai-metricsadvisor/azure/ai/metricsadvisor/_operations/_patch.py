@@ -536,6 +536,12 @@ class OperationMixinHelpers:
         )
         return initial_request, initial_request, kwargs
 
+    def _list_hooks_requests(self, **kwargs):
+        hook_name = kwargs.pop("hook_name", None)
+        skip = kwargs.pop("skip", None)
+        initial_request = build_list_hooks_request(hook_name=hook_name, skip=skip)
+        return initial_request, build_list_hooks_request(), kwargs
+
     def _update_alert_configuration_helper(
         self, alert_configuration: Union[str, AnomalyAlertConfiguration], **kwargs
     ) -> Tuple[HttpRequest, Any]:
@@ -625,8 +631,8 @@ class OperationMixinHelpers:
     def _update_hook_helper(
         self, hook: Union[str, EmailNotificationHook, WebNotificationHook], **kwargs: Any
     ) -> Tuple[str, Union[JSONType, NotificationHook], Any]:
-        hook_patch = None
-        hook_type = kwargs.get("hook_type")
+        hook_patch = {}
+        hook_type = kwargs.pop("hook_type", None)
         hook_kwarg_names = [
             "name",
             "description",
@@ -639,15 +645,42 @@ class OperationMixinHelpers:
             "certificate_password",
             "hook_type",
         ]
+        specific_kwargs = {}
+        passed_kwargs = {k: v for k, v in kwargs.items() if k in hook_kwarg_names}
         if isinstance(hook, str):
             hook_id = hook
             if hook_type is None:
                 raise ValueError("hook_type must be passed with a hook ID.")
-            hook_patch = {k: v for k, v in kwargs.items() if k in hook_kwarg_names}
+            hook_class = EmailNotificationHook if hook_type.lower() == "email" else WebNotificationHook
+            hook_patch = hook_class.from_dict(passed_kwargs).serialize()
 
         else:
-            hook_patch = hook
             hook_id = hook.id
+            hook_patch = hook.serialize()
+        if hook_patch["hookType"] == "Email" and "emails_to_alert" in passed_kwargs:
+            specific_kwargs = {"toList": "emails_to_alert"}
+        elif hook_patch["hookType"] == "Webhook":
+            specific_kwargs = {
+                "endpoint": "endpoint",
+                "password": "password",
+                "username": "username",
+                "certificateKey": "certificate_key",
+                "certificatePassword": "certificate_password",
+            }
+        shared_kwargs = {
+            "externalLink": "external_link",
+            "description": "description",
+            "hookName": "name"
+        }
+        for rest_name, attr_name in shared_kwargs.items():
+            hook_patch[rest_name] = passed_kwargs.pop(
+                attr_name, hook_patch.get(rest_name)
+            )
+        hook_patch['hookParameter'] = hook_patch.get("hookParameter", {})
+        for rest_name, attr_name in specific_kwargs.items():
+            hook_patch["hookParameter"][rest_name] = passed_kwargs.pop(
+                attr_name, hook_patch["hookParameter"].get(rest_name)
+            )
         for k in hook_kwarg_names:
             if k in kwargs:
                 kwargs.pop(k)
@@ -1266,10 +1299,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
             metric_id=metric_id, dimension_name=dimension_name, **kwargs
         )
         return self._paging_helper(
-            initial_request=initial_request,
-            next_request=next_request,
-            deserializer=lambda x: x,
-            **kwargs
+            initial_request=initial_request, next_request=next_request, deserializer=lambda x: x, **kwargs
         )
 
     @distributed_trace
@@ -1334,6 +1364,16 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
             initial_request=initial_request,
             next_request=next_request,
             deserializer=IncidentRootCause.deserialize,
+            **kwargs
+        )
+
+    @distributed_trace
+    def list_hooks(self, **kwargs: Any) -> ItemPaged[NotificationHook]:
+        initial_request, next_request, kwargs = self._list_hooks_requests(**kwargs)
+        return self._paging_helper(
+            initial_request=initial_request,
+            next_request=next_request,
+            deserializer=NotificationHook.deserialize,
             **kwargs
         )
 

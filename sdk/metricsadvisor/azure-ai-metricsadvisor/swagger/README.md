@@ -558,7 +558,7 @@ declare-directive:
 directive:
   - where-operation: updateHook
     transform: >
-      $["parameters"][1]["schema"]["$ref"] = "#/definitions/NotificationHook";
+      $["parameters"][1]["schema"]["$ref"] = "#/definitions/Anything";
   - where-operation: updateDetectionConfiguration
     transform: >
       $["parameters"][1]["schema"]["$ref"] = "#/definitions/AnomalyDetectionConfiguration";

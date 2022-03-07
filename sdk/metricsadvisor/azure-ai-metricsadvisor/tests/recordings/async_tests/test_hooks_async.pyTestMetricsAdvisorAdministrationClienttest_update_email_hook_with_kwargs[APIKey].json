@@ -1,31 +1,41 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/bac60bec-bbff-45f7-85e7-fe74857235a3",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/19fc2d98-0238-4571-aeef-f1fdd7630582",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "178",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "3a1a758e-5e21-11ec-ae89-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.9.7 (macOS-12.2.1-x86_64-i386-64bit)",
+        "x-ms-client-request-id": "a2781952-9e60-11ec-bbd8-acde48001122"
       },
-      "RequestBody": "{\u0022hookName\u0022: \u0022update5362fca1-f29b-4db5-9d59-a89d90f0497b\u0022, \u0022description\u0022: \u0022update\u0022, \u0022externalLink\u0022: \u0022update\u0022, \u0022hookType\u0022: \u0022Email\u0022, \u0022hookParameter\u0022: {\u0022toList\u0022: [\u0022myemail@m.com\u0022]}}",
+      "RequestBody": {
+        "hookType": "Email",
+        "hookName": "updatec0b58b3f-fdf0-4c87-81ab-439b524cc141",
+        "description": "update",
+        "externalLink": "update",
+        "hookParameter": {
+          "toList": [
+            "myemail@m.com"
+          ]
+        }
+      },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "f7afaa04-fd0d-4b48-9884-73feab2fd829",
+        "apim-request-id": "e0a1ea8a-6a40-4dd0-b7fa-316cc6f3cf5e",
         "Content-Length": "252",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Dec 2021 03:35:34 GMT",
+        "Date": "Mon, 07 Mar 2022 21:50:42 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "540",
-        "X-Request-ID": "f7afaa04-fd0d-4b48-9884-73feab2fd829"
+        "x-envoy-upstream-service-time": "392",
+        "X-Request-ID": "e0a1ea8a-6a40-4dd0-b7fa-316cc6f3cf5e"
       },
       "ResponseBody": {
-        "hookId": "bac60bec-bbff-45f7-85e7-fe74857235a3",
-        "hookName": "update5362fca1-f29b-4db5-9d59-a89d90f0497b",
+        "hookId": "19fc2d98-0238-4571-aeef-f1fdd7630582",
+        "hookName": "updatec0b58b3f-fdf0-4c87-81ab-439b524cc141",
         "hookType": "Email",
         "externalLink": "update",
         "description": "update",
@@ -40,29 +50,29 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/bac60bec-bbff-45f7-85e7-fe74857235a3",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/19fc2d98-0238-4571-aeef-f1fdd7630582",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "3a73ac12-5e21-11ec-8e45-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.9.7 (macOS-12.2.1-x86_64-i386-64bit)",
+        "x-ms-client-request-id": "a2d6b71e-9e60-11ec-bbd8-acde48001122"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "71b88748-998b-4a45-8642-463c27bcd593",
+        "apim-request-id": "de8e5065-77ac-4161-b9df-c8f0de8d5055",
         "Content-Length": "252",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Dec 2021 03:35:35 GMT",
+        "Date": "Mon, 07 Mar 2022 21:50:42 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "320",
-        "X-Request-ID": "71b88748-998b-4a45-8642-463c27bcd593"
+        "x-envoy-upstream-service-time": "189",
+        "X-Request-ID": "de8e5065-77ac-4161-b9df-c8f0de8d5055"
       },
       "ResponseBody": {
-        "hookId": "bac60bec-bbff-45f7-85e7-fe74857235a3",
-        "hookName": "update5362fca1-f29b-4db5-9d59-a89d90f0497b",
+        "hookId": "19fc2d98-0238-4571-aeef-f1fdd7630582",
+        "hookName": "updatec0b58b3f-fdf0-4c87-81ab-439b524cc141",
         "hookType": "Email",
         "externalLink": "update",
         "description": "update",
@@ -77,32 +87,32 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/bac60bec-bbff-45f7-85e7-fe74857235a3",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/hooks/19fc2d98-0238-4571-aeef-f1fdd7630582",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "3aaa55d6-5e21-11ec-8b7f-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.9.7 (macOS-12.2.1-x86_64-i386-64bit)",
+        "x-ms-client-request-id": "a308b08e-9e60-11ec-bbd8-acde48001122"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "apim-request-id": "70cfbb0c-94ae-48e2-add5-67df107ebd7e",
+        "apim-request-id": "4f4ed2d9-1f9c-450f-8492-90533c770b60",
         "Content-Length": "0",
-        "Date": "Thu, 16 Dec 2021 03:35:35 GMT",
+        "Date": "Mon, 07 Mar 2022 21:50:43 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "344",
-        "X-Request-ID": "70cfbb0c-94ae-48e2-add5-67df107ebd7e"
+        "x-envoy-upstream-service-time": "194",
+        "X-Request-ID": "4f4ed2d9-1f9c-450f-8492-90533c770b60"
       },
       "ResponseBody": null
     }
   ],
   "Variables": {
-    "email_hook_id": "bac60bec-bbff-45f7-85e7-fe74857235a3",
-    "email_hook_name": "emailhook7b2cba86-ef70-4e6f-9ac6-ce1073037b60",
-    "hook_updated_name": "update5362fca1-f29b-4db5-9d59-a89d90f0497b"
+    "email_hook_id": "19fc2d98-0238-4571-aeef-f1fdd7630582",
+    "email_hook_name": "emailhooke178b940-7f05-4ff3-a274-f56868127a82",
+    "hook_updated_name": "updatec0b58b3f-fdf0-4c87-81ab-439b524cc141"
   }
 }
