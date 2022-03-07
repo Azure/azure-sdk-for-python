@@ -1,4 +1,5 @@
 import time
+import pytest
 from azure.mgmt.resource import ResourceManagementClient
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 from azure.mgmt.netapp.models import SnapshotPolicy, SnapshotPolicyPatch, HourlySchedule, DailySchedule, VolumeSnapshotProperties, VolumePatchPropertiesDataProtection, VolumePatch
@@ -122,6 +123,7 @@ class TestNetAppSnapshotPolicy(AzureMgmtRecordedTestCase):
         delete_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1, live=self.is_live)
         delete_account(self.client, TEST_RG, TEST_ACC_1)
 
+    @pytest.mark.live_test_only
     @recorded_by_proxy
     def test_assign_snapshot_policy_to_volume(self):
         # create volume and snapshot policy

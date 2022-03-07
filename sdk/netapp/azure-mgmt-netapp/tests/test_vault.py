@@ -1,3 +1,4 @@
+import pytest
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 from test_volume import create_volume, delete_volume, delete_pool, delete_account
 from setup import *
@@ -11,6 +12,7 @@ class TestNetAppVault(AzureMgmtRecordedTestCase):
 
     # Before tests are run live a resource group needs to be created along with vnet and subnet
     # Note that when tests are run in live mode it is best to run one test at a time.
+    @pytest.mark.live_test_only
     @recorded_by_proxy
     def test_get_vault(self):
         create_volume(self.client)
