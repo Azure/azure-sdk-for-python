@@ -12,6 +12,7 @@ from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from azure.data.tables import TableServiceClient, TableClient
 from azure.data.tables import __version__ as  VERSION
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+from azure.core.exceptions import HttpResponseError
 
 from _shared.testcase import (
     TableTestCase,
@@ -107,6 +108,63 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
         count = 0
         for table in tables:
             count += 1
+            
+    @cosmos_decorator
+    @recorded_by_proxy
+    def test_table_name_errors_bad_chars(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        endpoint = self.account_url(tables_cosmos_account_name, "cosmos")
+        
+        # cosmos table names must be a non-empty string without chars '\', '/', '#', '?', and less than 255 chars.
+        invalid_table_names = ["\\", "//", "#", "?"]
+        for invalid_name in invalid_table_names:
+            with pytest.raises(HttpResponseError):
+                client = TableClient(endpoint=endpoint, credential=tables_primary_cosmos_account_key, table_name=invalid_name)
+                client.create_table()
+            with pytest.raises(HttpResponseError):
+                client = TableClient(endpoint=endpoint, credential=tables_primary_cosmos_account_key, table_name=invalid_name)
+                client.delete_table()
+            with pytest.raises(HttpResponseError):
+                client = TableClient(endpoint=endpoint, credential=tables_primary_cosmos_account_key, table_name=invalid_name)
+                client.create_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
+            with pytest.raises(HttpResponseError):
+                client = TableClient(endpoint=endpoint, credential=tables_primary_cosmos_account_key, table_name=invalid_name)
+                client.upsert_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
+            with pytest.raises(HttpResponseError):
+                client = TableClient(endpoint=endpoint, credential=tables_primary_cosmos_account_key, table_name=invalid_name)
+                client.delete_entity("PK", "RK")
+            with pytest.raises(HttpResponseError):
+                client = TableClient(endpoint=endpoint, credential=tables_primary_cosmos_account_key, table_name=invalid_name)
+                client.get_table_access_policy()
+            with pytest.raises(HttpResponseError):
+                client = TableClient(endpoint=endpoint, credential=tables_primary_cosmos_account_key, table_name=invalid_name)
+                batch = []
+                batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
+                client.submit_transaction(batch)
+            
+    @cosmos_decorator
+    @recorded_by_proxy
+    def test_table_name_errors_bad_length(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        endpoint = self.account_url(tables_cosmos_account_name, "cosmos")
+        
+        # cosmos table names must be a non-empty string without chars '\', '/', '#', '?', and less than 255 chars.
+        invalid_name = "-"*255
+        with pytest.raises(HttpResponseError):
+            client = TableClient(endpoint=endpoint, credential=tables_primary_cosmos_account_key, table_name=invalid_name)
+            client.create_table()
+        with pytest.raises(HttpResponseError):
+            client = TableClient(endpoint=endpoint, credential=tables_primary_cosmos_account_key, table_name=invalid_name)
+            client.create_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
+        with pytest.raises(HttpResponseError):
+            client = TableClient(endpoint=endpoint, credential=tables_primary_cosmos_account_key, table_name=invalid_name)
+            client.upsert_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
+        with pytest.raises(HttpResponseError):
+            client = TableClient(endpoint=endpoint, credential=tables_primary_cosmos_account_key, table_name=invalid_name)
+            client.get_table_access_policy()
+        with pytest.raises(HttpResponseError):
+            client = TableClient(endpoint=endpoint, credential=tables_primary_cosmos_account_key, table_name=invalid_name)
+            batch = []
+            batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
+            client.submit_transaction(batch)
 
 
 class TestTableClientUnit(TableTestCase):
