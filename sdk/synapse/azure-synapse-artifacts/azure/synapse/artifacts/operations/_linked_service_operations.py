@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -21,21 +21,16 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_get_linked_services_by_workspace_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
 
     accept = "application/json"
@@ -60,13 +55,15 @@ def build_get_linked_services_by_workspace_request(
 
 
 def build_create_or_update_linked_service_request_initial(
-    linked_service_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    linked_service_name: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    if_match: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-    if_match = kwargs.pop('if_match', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
@@ -94,17 +91,19 @@ def build_create_or_update_linked_service_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_get_linked_service_request(
-    linked_service_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    linked_service_name: str,
+    *,
+    if_none_match: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
-    if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
@@ -135,10 +134,9 @@ def build_get_linked_service_request(
 
 
 def build_delete_linked_service_request_initial(
-    linked_service_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    linked_service_name: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
 
     accept = "application/json"
@@ -168,10 +166,12 @@ def build_delete_linked_service_request_initial(
 
 
 def build_rename_linked_service_request_initial(
-    linked_service_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    linked_service_name: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
@@ -199,10 +199,11 @@ def build_rename_linked_service_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
-# fmt: on
 class LinkedServiceOperations(object):
     """LinkedServiceOperations operations.
 
@@ -228,9 +229,8 @@ class LinkedServiceOperations(object):
     @distributed_trace
     def get_linked_services_by_workspace(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.LinkedServiceListResponse"]
+        **kwargs: Any
+    ) -> Iterable["_models.LinkedServiceListResponse"]:
         """Lists linked services.
 
         :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
@@ -308,12 +308,11 @@ class LinkedServiceOperations(object):
 
     def _create_or_update_linked_service_initial(
         self,
-        linked_service_name,  # type: str
-        properties,  # type: "_models.LinkedService"
-        if_match=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional["_models.LinkedServiceResource"]
+        linked_service_name: str,
+        properties: "_models.LinkedService",
+        if_match: Optional[str] = None,
+        **kwargs: Any
+    ) -> Optional["_models.LinkedServiceResource"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LinkedServiceResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -362,12 +361,11 @@ class LinkedServiceOperations(object):
     @distributed_trace
     def begin_create_or_update_linked_service(
         self,
-        linked_service_name,  # type: str
-        properties,  # type: "_models.LinkedService"
-        if_match=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.LinkedServiceResource"]
+        linked_service_name: str,
+        properties: "_models.LinkedService",
+        if_match: Optional[str] = None,
+        **kwargs: Any
+    ) -> LROPoller["_models.LinkedServiceResource"]:
         """Creates or updates a linked service.
 
         :param linked_service_name: The linked service name.
@@ -444,11 +442,10 @@ class LinkedServiceOperations(object):
     @distributed_trace
     def get_linked_service(
         self,
-        linked_service_name,  # type: str
-        if_none_match=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional["_models.LinkedServiceResource"]
+        linked_service_name: str,
+        if_none_match: Optional[str] = None,
+        **kwargs: Any
+    ) -> Optional["_models.LinkedServiceResource"]:
         """Gets a linked service.
 
         :param linked_service_name: The linked service name.
@@ -508,10 +505,9 @@ class LinkedServiceOperations(object):
 
     def _delete_linked_service_initial(
         self,
-        linked_service_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        linked_service_name: str,
+        **kwargs: Any
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -548,10 +544,9 @@ class LinkedServiceOperations(object):
     @distributed_trace
     def begin_delete_linked_service(
         self,
-        linked_service_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        linked_service_name: str,
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Deletes a linked service.
 
         :param linked_service_name: The linked service name.
@@ -614,11 +609,10 @@ class LinkedServiceOperations(object):
 
     def _rename_linked_service_initial(
         self,
-        linked_service_name,  # type: str
-        new_name=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        linked_service_name: str,
+        new_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -660,11 +654,10 @@ class LinkedServiceOperations(object):
     @distributed_trace
     def begin_rename_linked_service(
         self,
-        linked_service_name,  # type: str
-        new_name=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        linked_service_name: str,
+        new_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Renames a linked service.
 
         :param linked_service_name: The linked service name.

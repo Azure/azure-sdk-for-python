@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, IO, Iterable, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -21,21 +21,16 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, IO, Iterable, Optional, TypeVar, Union
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_list_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
 
     accept = "application/json"
@@ -60,10 +55,9 @@ def build_list_request(
 
 
 def build_flush_request_initial(
-    library_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    library_name: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
 
     accept = "application/json"
@@ -93,10 +87,9 @@ def build_flush_request_initial(
 
 
 def build_get_operation_result_request(
-    operation_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    operation_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
 
     accept = "application/json"
@@ -126,10 +119,9 @@ def build_get_operation_result_request(
 
 
 def build_delete_request_initial(
-    library_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    library_name: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
 
     accept = "application/json"
@@ -159,10 +151,9 @@ def build_delete_request_initial(
 
 
 def build_get_request(
-    library_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    library_name: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
 
     accept = "application/json"
@@ -192,10 +183,9 @@ def build_get_request(
 
 
 def build_create_request_initial(
-    library_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    library_name: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
 
     accept = "application/json"
@@ -225,14 +215,15 @@ def build_create_request_initial(
 
 
 def build_append_request(
-    library_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    library_name: str,
+    *,
+    content: Any,
+    blob_condition_append_position: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
     comp = kwargs.pop('comp', "appendblock")  # type: str
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-    blob_condition_append_position = kwargs.pop('blob_condition_append_position', None)  # type: Optional[int]
 
     accept = "application/json"
     # Construct URL
@@ -261,10 +252,10 @@ def build_append_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        content=content,
         **kwargs
     )
 
-# fmt: on
 class LibraryOperations(object):
     """LibraryOperations operations.
 
@@ -290,9 +281,8 @@ class LibraryOperations(object):
     @distributed_trace
     def list(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.LibraryListResponse"]
+        **kwargs: Any
+    ) -> Iterable["_models.LibraryListResponse"]:
         """Lists Library.
 
         :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
@@ -369,10 +359,9 @@ class LibraryOperations(object):
 
     def _flush_initial(
         self,
-        library_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional["_models.LibraryResourceInfo"]
+        library_name: str,
+        **kwargs: Any
+    ) -> Optional["_models.LibraryResourceInfo"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LibraryResourceInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -415,10 +404,9 @@ class LibraryOperations(object):
     @distributed_trace
     def begin_flush(
         self,
-        library_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.LibraryResourceInfo"]
+        library_name: str,
+        **kwargs: Any
+    ) -> LROPoller["_models.LibraryResourceInfo"]:
         """Flush Library.
 
         :param library_name: file name to upload. Minimum length of the filename should be 1 excluding
@@ -487,10 +475,9 @@ class LibraryOperations(object):
     @distributed_trace
     def get_operation_result(
         self,
-        operation_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Union["_models.LibraryResource", "_models.OperationResult"]
+        operation_id: str,
+        **kwargs: Any
+    ) -> Union["_models.LibraryResource", "_models.OperationResult"]:
         """Get Operation result for Library.
 
         :param operation_id: operation id for which status is requested.
@@ -548,10 +535,9 @@ class LibraryOperations(object):
 
     def _delete_initial(
         self,
-        library_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional["_models.LibraryResourceInfo"]
+        library_name: str,
+        **kwargs: Any
+    ) -> Optional["_models.LibraryResourceInfo"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LibraryResourceInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -594,10 +580,9 @@ class LibraryOperations(object):
     @distributed_trace
     def begin_delete(
         self,
-        library_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.LibraryResourceInfo"]
+        library_name: str,
+        **kwargs: Any
+    ) -> LROPoller["_models.LibraryResourceInfo"]:
         """Delete Library.
 
         :param library_name: file name to upload. Minimum length of the filename should be 1 excluding
@@ -666,10 +651,9 @@ class LibraryOperations(object):
     @distributed_trace
     def get(
         self,
-        library_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional["_models.LibraryResource"]
+        library_name: str,
+        **kwargs: Any
+    ) -> Optional["_models.LibraryResource"]:
         """Get Library.
 
         :param library_name: file name to upload. Minimum length of the filename should be 1 excluding
@@ -725,10 +709,9 @@ class LibraryOperations(object):
 
     def _create_initial(
         self,
-        library_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional["_models.LibraryResourceInfo"]
+        library_name: str,
+        **kwargs: Any
+    ) -> Optional["_models.LibraryResourceInfo"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LibraryResourceInfo"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -771,10 +754,9 @@ class LibraryOperations(object):
     @distributed_trace
     def begin_create(
         self,
-        library_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.LibraryResourceInfo"]
+        library_name: str,
+        **kwargs: Any
+    ) -> LROPoller["_models.LibraryResourceInfo"]:
         """Creates a library with the library name.
 
         :param library_name: file name to upload. Minimum length of the filename should be 1 excluding
@@ -843,12 +825,11 @@ class LibraryOperations(object):
     @distributed_trace
     def append(
         self,
-        library_name,  # type: str
-        content,  # type: IO
-        blob_condition_append_position=None,  # type: Optional[int]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        library_name: str,
+        content: IO,
+        blob_condition_append_position: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
         """Append the content to the library resource created using the create operation. The maximum
         content size is 4MiB. Content larger than 4MiB must be appended in 4MiB chunks.
 
