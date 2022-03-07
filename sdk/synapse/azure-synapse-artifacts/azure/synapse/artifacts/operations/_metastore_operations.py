@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -18,22 +18,20 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_register_request(
-    id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-07-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
@@ -61,15 +59,16 @@ def build_register_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_get_database_operations_request(
-    id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-07-01-preview")  # type: str
 
     accept = "application/json"
@@ -99,10 +98,12 @@ def build_get_database_operations_request(
 
 
 def build_update_request(
-    id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-07-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
@@ -130,15 +131,16 @@ def build_update_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_delete_request(
-    id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-07-01-preview")  # type: str
 
     accept = "application/json"
@@ -166,7 +168,6 @@ def build_delete_request(
         **kwargs
     )
 
-# fmt: on
 class MetastoreOperations(object):
     """MetastoreOperations operations.
 
@@ -192,11 +193,10 @@ class MetastoreOperations(object):
     @distributed_trace
     def register(
         self,
-        id,  # type: str
-        input_folder,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.MetastoreRegistrationResponse"
+        id: str,
+        input_folder: str,
+        **kwargs: Any
+    ) -> "_models.MetastoreRegistrationResponse":
         """Register files in Syms.
 
         :param id: The name of the database to be created. The name can contain only alphanumeric
@@ -258,10 +258,9 @@ class MetastoreOperations(object):
     @distributed_trace
     def get_database_operations(
         self,
-        id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.MetastoreRequestSuccessResponse"
+        id: str,
+        **kwargs: Any
+    ) -> "_models.MetastoreRequestSuccessResponse":
         """Gets status of the database.
 
         :param id:
@@ -315,11 +314,10 @@ class MetastoreOperations(object):
     @distributed_trace
     def update(
         self,
-        id,  # type: str
-        input_folder,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.MetastoreUpdationResponse"
+        id: str,
+        input_folder: str,
+        **kwargs: Any
+    ) -> "_models.MetastoreUpdationResponse":
         """Update files in Syms.
 
         :param id: The name of the database to be updated.
@@ -380,10 +378,9 @@ class MetastoreOperations(object):
     @distributed_trace
     def delete(
         self,
-        id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        id: str,
+        **kwargs: Any
+    ) -> None:
         """Remove files in Syms.
 
         :param id:
