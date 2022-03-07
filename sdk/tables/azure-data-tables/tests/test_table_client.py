@@ -106,33 +106,33 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_table_names(self, tables_storage_account_name, tables_primary_storage_account_key):
-        import os
-        # storage_account_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
-        # storage_endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
-        # storage_account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        # storage_conn_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-        #     storage_account_name, storage_account_key, storage_endpoint_suffix
-        # )
-        # table_storage_service = TableServiceClient.from_connection_string(conn_str=storage_conn_string)
-        
-        # tests below should be success
-        # client = table_storage_service.create_table(table_name="tablestorage")
-        
-        # tests below should raise an error
-        # client = table_storage_service.create_table(table_name="1")
-        # error msg: azure.core.exceptions.HttpResponseError: The specified resource name length is not within the permissible limits.
-        # client = table_storage_service.create_table(table_name="ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt")
-        # error msg: azure.core.exceptions.HttpResponseError: The specified resource name length is not within the permissible limits.
-        # client = table_storage_service.create_table(table_name="////////////////////////////////////////////////////////////////////////////////////////")
-        # error msg: azure.core.exceptions.HttpResponseError: The specified resource name length is not within the permissible limits.
-        
-        cosmos_account_key = os.getenv("TABLES_PRIMARY_COSMOS_ACCOUNT_KEY")
-        cosmos_account_name = os.getenv("TABLES_COSMOS_ACCOUNT_NAME")
-        # table_cosmos_service = TableServiceClient(self.account_url(cosmos_account_name, "cosmos"), credential=cosmos_account_key)
-        # the creation of the TableServiceClient above is failed which says the credential is unsupported.
-        # tests below should be success
-        # client = table_cosmos_service.create_table(table_name="tablecosmos")
+    def test_table_name_errors(self, tables_storage_account_name, tables_primary_storage_account_key):
+        from azure.core.exceptions import HttpResponseError
+        endpoint = self.account_url(tables_storage_account_name, "table")
+
+        # storage table names must be alphanumeric, cannot begin with a number, and must be between 3 and 63 chars long.       
+        invalid_table_names = ["1table", "a"*2, "a"*64, "a//"]
+        for invalid_name in invalid_table_names:
+            with pytest.raises(HttpResponseError):
+                client = TableClient(endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_name)
+                client.create_table()
+            with pytest.raises(HttpResponseError):
+                client = TableClient(endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_name)
+                client.create_entity({'PartitionKey': 'foo'})
+            with pytest.raises(HttpResponseError):
+                client = TableClient(endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_name)
+                client.upsert_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
+            with pytest.raises(HttpResponseError):
+                client = TableClient(endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_name)
+                client.delete_entity("PK", "RK")
+            with pytest.raises(HttpResponseError):
+                client = TableClient(endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_name)
+                client.get_table_access_policy()
+            with pytest.raises(HttpResponseError):
+                client = TableClient(endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_name)
+                batch = []
+                batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
+                client.submit_transaction(batch)
 
 
 class TestTableUnitTests(TableTestCase):

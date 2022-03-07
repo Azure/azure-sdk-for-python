@@ -436,28 +436,7 @@ class TableTestCase(object):
         return entity, metadata["etag"]
 
     def _set_up(self, account_name, credential, url="table"):
-        # self.table_name = self.get_resource_name("uttable")
-        
-        # valid names
-        # self.table_name = "tablecosmos"
-        # self.table_name = "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
-        # table_name is in length of 254
-        
-        # invalid names
-        # self.table_name = "---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
-        # table_name is in length of 255
-        # error message: azure.core.exceptions.HttpResponseError: Message: {"Errors":["The input name is invalid. Ensure to provide a unique non-empty string less than '255' characters.","The request payload is invalid. Ensure to provide a valid request payload."]}
-        # self.table_name = "tablecosmos "
-        # error message: azure.core.exceptions.HttpResponseError: The resource name can't end with space.
-        # self.table_name = "///"
-        # error mesage: azure.core.exceptions.HttpResponseError: The resource name presented contains invalid character '/'.
-        # self.table_name = "\\\\"
-        # error message: azure.core.exceptions.HttpResponseError: The resource name presented contains invalid character '\'.
-        # self.table_name = "###"
-        # error message: azure.core.exceptions.HttpResponseError: The resource name presented contains invalid character '#'.
-        # self.table_name = "???"
-        # error message: azure.core.exceptions.HttpResponseError: The resource name presented contains invalid character '?'.
-        
+        self.table_name = self.get_resource_name("uttable")        
         self.ts = TableServiceClient(
             self.account_url(account_name, url), credential=credential, table_name=self.table_name
         )
