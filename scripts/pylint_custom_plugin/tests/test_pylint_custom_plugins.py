@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from msilib.schema import File
 import astroid
 import pylint.testutils
 
