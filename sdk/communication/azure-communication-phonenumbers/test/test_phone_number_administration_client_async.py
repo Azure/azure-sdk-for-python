@@ -5,8 +5,8 @@ from _shared.asynctestcase import AsyncCommunicationTestCase
 from _shared.testcase import ResponseReplacerProcessor, BodyReplacerProcessor
 from _shared.utils import (
     async_create_token_credential, 
-    get_http_logging_policy,
-    get_header_policy
+    get_header_policy,
+    get_http_logging_policy
 )
 from azure.communication.phonenumbers import (
     PhoneNumberAssignmentType, 

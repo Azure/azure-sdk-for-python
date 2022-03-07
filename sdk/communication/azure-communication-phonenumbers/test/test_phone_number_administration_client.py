@@ -4,8 +4,8 @@ from azure.communication.phonenumbers import PhoneNumbersClient
 from _shared.testcase import CommunicationTestCase, ResponseReplacerProcessor, BodyReplacerProcessor
 from _shared.utils import (
     create_token_credential, 
-    get_http_logging_policy,
-    get_header_policy
+    get_header_policy,
+    get_http_logging_policy
 )
 from azure.communication.phonenumbers import (
     PhoneNumberAssignmentType, 
