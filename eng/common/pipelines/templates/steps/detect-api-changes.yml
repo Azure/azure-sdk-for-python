@@ -1,14 +1,9 @@
 parameters:
   ArtifactPath: $(Build.ArtifactStagingDirectory)
   Artifacts: []
-
+variables:
+  ApiChangeDetectRequestUrl: "https://apiview.dev/PullRequest/DetectApiChanges"
 steps:
-  - pwsh: |
-      $apiChangeDetectRequestUrl = "https://apiview.dev/PullRequest/DetectApiChanges"
-      echo "##vso[task.setvariable variable=ApiChangeDetectRequestUrl]$apiChangeDetectRequestUrl"
-    displayName: "Set API change detect request URL"
-    condition: eq(variables['ApiChangeDetectRequestUrl'], '')
-
   - task: Powershell@2
     inputs:
       filePath: $(Build.SourcesDirectory)/eng/common/scripts/Detect-Api-Changes.ps1
