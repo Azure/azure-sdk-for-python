@@ -37,7 +37,7 @@ class AzureMonitorClient(AzureMonitorClientOperationsMixin):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        _base_url = '{Host}/v2'
+        _base_url = '{Host}/v2.1'
         self._config = AzureMonitorClientConfiguration(host=host, **kwargs)
         self._client = PipelineClient(base_url=_base_url, config=self._config, **kwargs)
 

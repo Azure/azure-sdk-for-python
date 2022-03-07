@@ -46,10 +46,6 @@ class BaseExporter:
         self._api_version = kwargs.get('api_version') or _SERVICE_API_LATEST
         self._consecutive_redirects = 0  # To prevent circular redirects
 
-        temp_suffix = self._instrumentation_key or ""
-        default_storage_path = os.path.join(
-            tempfile.gettempdir(), _TEMPDIR_PREFIX + temp_suffix
-        )
         config = AzureMonitorClientConfiguration(
             parsed_connection_string.endpoint, **kwargs)
         policies = [
@@ -70,6 +66,10 @@ class BaseExporter:
         ]
         self.client = AzureMonitorClient(
             host=parsed_connection_string.endpoint, connection_timeout=self._timeout, policies=policies, **kwargs)
+        temp_suffix = self._instrumentation_key or ""
+        default_storage_path = os.path.join(
+            tempfile.gettempdir(), _TEMPDIR_PREFIX + temp_suffix
+        )
         self.storage = LocalFileStorage(
             path=default_storage_path,
             max_size=50 * 1024 * 1024,  # Maximum size in bytes.

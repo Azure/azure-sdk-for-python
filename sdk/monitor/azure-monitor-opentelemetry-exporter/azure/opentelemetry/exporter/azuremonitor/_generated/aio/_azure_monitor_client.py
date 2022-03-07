@@ -31,7 +31,7 @@ class AzureMonitorClient(AzureMonitorClientOperationsMixin):
         host: str = "https://dc.services.visualstudio.com",
         **kwargs: Any
     ) -> None:
-        _base_url = '{Host}/v2'
+        _base_url = '{Host}/v2.1'
         self._config = AzureMonitorClientConfiguration(host=host, **kwargs)
         self._client = AsyncPipelineClient(base_url=_base_url, config=self._config, **kwargs)
 

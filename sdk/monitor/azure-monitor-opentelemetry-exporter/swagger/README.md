@@ -23,7 +23,7 @@ trace: false
 output-folder: ../azure/opentelemetry/exporter/azuremonitor/_generated
 source-code-folder-path: ./azure/opentelemetry/exporter/azuremonitor/_generated
 input-file: 
-    - https://github.com/Azure/azure-rest-api-specs/blob/master/specification/applicationinsights/data-plane/Monitor.Exporters/preview/2020-09-15_Preview/swagger.json
+    - https://github.com/Azure/azure-rest-api-specs/blob/main/specification/applicationinsights/data-plane/Monitor.Exporters/preview/v2.1/swagger.json
 
 python: true
 v3: true
