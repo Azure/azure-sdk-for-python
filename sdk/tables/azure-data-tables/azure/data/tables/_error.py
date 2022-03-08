@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import sys
-from re import match
+import re
 from enum import Enum
 
 from azure.core.exceptions import (
@@ -28,7 +28,6 @@ else:
     _str = str
 
 
-
 def _to_str(value):
     return _str(value) if value is not None else None
 
@@ -39,6 +38,19 @@ _ERROR_UNKNOWN = "Unknown error ({0})"
 _ERROR_VALUE_NONE = "{0} should not be None."
 _ERROR_UNKNOWN_KEY_WRAP_ALGORITHM = "Unknown key wrap algorithm."
 
+# Storage table validation regex breakdown:
+# ^ Match start of string.
+# [a-zA-Z]{1} Match an letter for exactly 1 character.
+# [a-zA-Z0-9]{2,62} Match any alphanumeric character for between 2 and 62 characters.
+# $ End of string
+_STORAGE_VALID_TABLE = re.compile(r"^[a-zA-Z]{1}[a-zA-Z0-9]{2,62}$")
+
+# Cosmos table validation regex breakdown:
+# ^ Match start of string.
+# [^/\#?]{0,254} Match any character that is not /\#? for between 0-254 characters.
+# [^ /\#?]{1} Match any character that is not /\#? or a space for exactly 1 character.
+# $ End of string
+_COSMOS_VALID_TABLE = re.compile(r"^[^/\#?]{0,254}[^ /\#?]{1}$")
 
 def _validate_not_none(param_name, param):
     if param is None:
@@ -60,10 +72,17 @@ def _wrap_exception(ex, desired_type):
     return desired_type("{}: {}".format(ex.__class__.__name__, msg))
 
 
-def _validate_table_name(table_name):
-    if match("^[a-zA-Z]{1}[a-zA-Z0-9]{2,62}$", table_name) is None:
+def _validate_storage_tablename(table_name):
+    if _STORAGE_VALID_TABLE.match(table_name) is None:
         raise ValueError(
             "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long."
+        )
+
+
+def _validate_cosmos_tablename(table_name):
+    if _COSMOS_VALID_TABLE.match(table_name) is None:
+        raise ValueError(
+            "Table names names must contain from 1-255 characters, and they cannot contain /, \\, #, ?, or a trailing space."  # pylint: disable=line-too-long
         )
 
 
@@ -156,8 +175,18 @@ def _reraise_error(decoded_error):
         raise decoded_error
 
 
-def _process_table_error(storage_error):
+def _process_table_error(storage_error, table_name=None):
     decoded_error = _decode_error(storage_error.response, storage_error.message)
+    if table_name:
+        if decoded_error.error_code == 'InvalidResourceName' and 'The specifed resource name contains invalid characters' in decoded_error.message:
+            _validate_storage_tablename(table_name)
+        elif decoded_error.error_code == 'OutOfRangeInput' and 'The specified resource name length is not within the permissible limits' in decoded_error.message:
+            _validate_storage_tablename(table_name)
+        elif decoded_error.error_code == 'InternalServerError' and ('The resource name presented contains invalid character' in decoded_error.message
+                or 'The resource name can\'t end with space'in decoded_error.message):
+            _validate_cosmos_tablename(table_name)
+        elif decoded_error.error_code =='BadRequest' and 'The input name is invalid. Ensure to provide a unique non-empty string less than' in decoded_error.message:
+            _validate_cosmos_tablename(table_name)
     _reraise_error(decoded_error)
 
 

@@ -26,7 +26,6 @@ from .._serialize import serialize_iso, _parameter_filter_substitution, _prepare
 from .._deserialize import deserialize_iso, _return_headers_and_deserialized
 from .._error import (
     _process_table_error,
-    _validate_table_name,
     _decode_error,
     _reraise_error
 )
@@ -75,7 +74,6 @@ class TableClient(AsyncTablesBaseClient):
         """
         if not table_name:
             raise ValueError("Please specify a table name.")
-        # _validate_table_name(table_name)
         self.table_name = table_name
         super(TableClient, self).__init__(endpoint, credential=credential, **kwargs)
 
@@ -180,7 +178,7 @@ class TableClient(AsyncTablesBaseClient):
                 **kwargs
             )
         except HttpResponseError as error:
-            _process_table_error(error)
+            _process_table_error(error, table_name=self.table_name)
         output = {}  # type: Dict[str, Optional[TableAccessPolicy]]
         for identifier in cast(List[SignedIdentifier], identifiers):
             if identifier.access_policy:
@@ -223,7 +221,7 @@ class TableClient(AsyncTablesBaseClient):
             )
         except HttpResponseError as error:
             try:
-                _process_table_error(error)
+                _process_table_error(error, table_name=self.table_name)
             except HttpResponseError as table_error:
                 if (table_error.error_code == 'InvalidXmlDocument'  # type: ignore
                 and len(identifiers) > 5):
@@ -254,7 +252,7 @@ class TableClient(AsyncTablesBaseClient):
         try:
             result = await self._client.table.create(table_properties, **kwargs)
         except HttpResponseError as error:
-            _process_table_error(error)
+            _process_table_error(error, table_name=self.table_name)
         return TableItem(name=result.table_name)  # type: ignore
 
     @distributed_trace_async
@@ -280,7 +278,7 @@ class TableClient(AsyncTablesBaseClient):
         except HttpResponseError as error:
             if error.status_code == 404:
                 return
-            _process_table_error(error)
+            _process_table_error(error, table_name=self.table_name)
 
     @overload
     async def delete_entity(self, partition_key: str, row_key: str, **kwargs: Any) -> None:
@@ -354,7 +352,7 @@ class TableClient(AsyncTablesBaseClient):
         except HttpResponseError as error:
             if error.status_code == 404:
                 return
-            _process_table_error(error)
+            _process_table_error(error, table_name=self.table_name)
 
     @distributed_trace_async
     async def create_entity(
@@ -471,7 +469,7 @@ class TableClient(AsyncTablesBaseClient):
             else:
                 raise ValueError("Mode type '{}' is not supported.".format(mode))
         except HttpResponseError as error:
-            _process_table_error(error)
+            _process_table_error(error, table_name=self.table_name)
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     @distributed_trace
@@ -596,7 +594,7 @@ class TableClient(AsyncTablesBaseClient):
             )
             properties = _convert_to_entity(entity)
         except HttpResponseError as error:
-            _process_table_error(error)
+            _process_table_error(error, table_name=self.table_name)
         return properties
 
     @distributed_trace_async
@@ -659,7 +657,7 @@ class TableClient(AsyncTablesBaseClient):
                     )
                 )
         except HttpResponseError as error:
-            _process_table_error(error)
+            _process_table_error(error, table_name=self.table_name)
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     @distributed_trace_async
