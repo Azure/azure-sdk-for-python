@@ -218,30 +218,30 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
 
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
-        # try:
-        #     # Act
-        #     entity = TableEntity()
-        #     entity['PartitionKey'] = '001'
-        #     entity['RowKey'] = 'batch_insert_replace'
-        #     entity['test'] = True
-        #     entity['test2'] = 'value'
-        #     entity['test3'] = 3
-        #     entity['test4'] = EntityProperty(1234567890, EdmType.INT32)
-        #     entity['test5'] = datetime.utcnow()
+        try:
+            # Act
+            entity = TableEntity()
+            entity['PartitionKey'] = '001'
+            entity['RowKey'] = 'batch_insert_replace'
+            entity['test'] = True
+            entity['test2'] = 'value'
+            entity['test3'] = 3
+            entity['test4'] = EntityProperty(1234567890, EdmType.INT32)
+            entity['test5'] = datetime.utcnow()
 
-        #     batch = [('upsert', entity, {'mode': UpdateMode.REPLACE})]
-        #     transaction_result = self.table.submit_transaction(batch)
+            batch = [('upsert', entity, {'mode': UpdateMode.REPLACE})]
+            transaction_result = self.table.submit_transaction(batch)
 
-        #     # Assert
-        #     self._assert_valid_batch_transaction(transaction_result, 1)
-        #     assert 'etag' in transaction_result[0]
+            # Assert
+            self._assert_valid_batch_transaction(transaction_result, 1)
+            assert 'etag' in transaction_result[0]
 
-        #     entity = self.table.get_entity('001', 'batch_insert_replace')
-        #     assert entity is not None
-        #     assert 'value' ==  entity['test2']
-        #     assert 1234567890 ==  entity['test4']
-        # finally:
-        #     self._tear_down()
+            entity = self.table.get_entity('001', 'batch_insert_replace')
+            assert entity is not None
+            assert 'value' ==  entity['test2']
+            assert 1234567890 ==  entity['test4']
+        finally:
+            self._tear_down()
 
     @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @cosmos_decorator
