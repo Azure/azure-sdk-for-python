@@ -1713,7 +1713,7 @@ class CheckNoAliasGeneratedCode(BaseChecker):
     priority = -1
     msgs = {
         "C4745": (
-            "Aliasing and exposing generated code."
+            "Exposing aliased generated code."
             "This messes up sphinx, intellisense, and apiview, so please modify the name of the generated code through"
             " the swagger / directives, or code customizations",
             "aliasing-generated-code",
