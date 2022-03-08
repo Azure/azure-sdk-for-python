@@ -52,7 +52,6 @@ omit_funct_dict = {
     "Omit_management": omit_mgmt,
 }
 
-
 def filter_for_compatibility(package_set):
     collected_packages = []
     v = sys.version_info

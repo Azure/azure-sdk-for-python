@@ -32,7 +32,7 @@ from packaging.version import parse
 
 DEV_REQ_FILE = "dev_requirements.txt"
 NEW_DEV_REQ_FILE = "new_dev_requirements.txt"
-NEW_REQ_PACKAGES = ["azure-core", "azure-mgmt-core"]
+
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -87,71 +87,6 @@ def str_to_bool(input_string):
     else:
         return False
 
-
-def parse_setup(setup_path):
-    setup_filename = os.path.join(setup_path, "setup.py")
-    mock_setup = textwrap.dedent(
-        """\
-    def setup(*args, **kwargs):
-        __setup_calls__.append((args, kwargs))
-    """
-    )
-    parsed_mock_setup = ast.parse(mock_setup, filename=setup_filename)
-    with io.open(setup_filename, "r", encoding="utf-8-sig") as setup_file:
-        parsed = ast.parse(setup_file.read())
-        for index, node in enumerate(parsed.body[:]):
-            if (
-                not isinstance(node, ast.Expr)
-                or not isinstance(node.value, ast.Call)
-                or not hasattr(node.value.func, "id")
-                or node.value.func.id != "setup"
-            ):
-                continue
-            parsed.body[index:index] = parsed_mock_setup.body
-            break
-
-    fixed = ast.fix_missing_locations(parsed)
-    codeobj = compile(fixed, setup_filename, "exec")
-    local_vars = {}
-    global_vars = {"__setup_calls__": []}
-    current_dir = os.getcwd()
-    working_dir = os.path.dirname(setup_filename)
-    os.chdir(working_dir)
-    exec(codeobj, global_vars, local_vars)
-    os.chdir(current_dir)
-    _, kwargs = global_vars["__setup_calls__"][0]
-
-    try:
-        python_requires = kwargs["python_requires"]
-    # most do not define this, fall back to what we define as universal
-    except KeyError as e:
-        python_requires = ">=2.7"
-
-    version = kwargs["version"]
-    name = kwargs["name"]
-
-    requires = []
-    if "install_requires" in kwargs:
-        requires = kwargs["install_requires"]
-
-    return name, version, python_requires, requires
-
-
-def parse_requirements_file(file_location):
-    with open(file_location, "r") as f:
-        reqs = f.read()
-
-    return dict((req.name, req) for req in parse_requirements(reqs))
-
-
-def parse_setup_requires(setup_path):
-    _, _, python_requires, _ = parse_setup(setup_path)
-
-    return python_requires
-
-
-def get_name_from_specifier(version):
-    return re.split(r"[><=]", version)[0]
 
 def run_check_call(
     command_array,
@@ -210,19 +145,6 @@ def is_error_code_5_allowed(target_pkg, pkg_name):
         return True
     else:
         return False
-
-
-def parse_require(req):
-    """
-    Parses the incoming version specification and returns a tuple of the requirement name and specifier.
-
-    "azure-core<2.0.0,>=1.11.0" -> [azure-core, <2.0.0,>=1.11.0]
-    """
-    req_object = Requirement.parse(req.split(";")[0])
-    pkg_name = req_object.key
-    spec = SpecifierSet(str(req_object).replace(pkg_name, ""))
-    return [pkg_name, spec]
-
 
 def find_whl(package_name, version, whl_directory):
     if not os.path.exists(whl_directory):
@@ -355,9 +277,3 @@ def get_installed_packages(paths=None):
     ws = WorkingSet(paths) if paths else working_set
     return ["{0}=={1}".format(p.project_name, p.version) for p in ws]
 
-
-def get_package_properties(setup_py_path):
-    """Parse setup.py and return package details like package name, version, whether it's new SDK"""
-    pkgName, version, _, requires = parse_setup(setup_py_path)
-    is_new_sdk = pkgName in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x)[0] in NEW_REQ_PACKAGES), requires))
-    return pkgName, version, is_new_sdk, setup_py_path
