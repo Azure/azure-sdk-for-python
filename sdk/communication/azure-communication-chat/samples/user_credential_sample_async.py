@@ -57,7 +57,7 @@ class CommunicationTokenCredentialSamples(object):
         # previous token approaches expiry. Using this method, your requests are less likely to be blocked to acquire a fresh token
         fetch_token_from_server = lambda: None 
         async with CommunicationTokenCredential(
-            self.token, token_refresher=fetch_token_from_server, refresh_proactively=True) as credential:
+            self.token, token_refresher=fetch_token_from_server, proactive_refresh=True) as credential:
             tokenresponse = await credential.get_token()
             print("Token issued with value: " + tokenresponse.token)
             

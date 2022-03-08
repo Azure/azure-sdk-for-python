@@ -7,8 +7,8 @@
 from asyncio import Condition, Lock
 from datetime import timedelta
 from typing import Any
-import six
 import sys
+import six
 from .utils import get_current_utc_as_int
 from .utils import create_access_token
 from .utils_async import AsyncTimer
@@ -20,9 +20,9 @@ class CommunicationTokenCredential(object):
     :keyword token_refresher: The async token refresher to provide capacity to fetch a fresh token.
      The returned token must be valid (expiration date must be in the future).
     :paramtype token_refresher: Callable[[], Awaitable[AccessToken]]
-    :keyword bool refresh_proactively: Whether to refresh the token proactively or not.
+    :keyword bool proactive_refresh: Whether to refresh the token proactively or not.
     :raises: TypeError if paramater 'token' is not a string
-    :raises: ValueError if the 'refresh_proactively' is enabled without providing the 'token_refresher' function.
+    :raises: ValueError if the 'proactive_refresh' is enabled without providing the 'token_refresher' function.
     """
 
     _ON_DEMAND_REFRESHING_INTERVAL_MINUTES = 2
@@ -33,8 +33,8 @@ class CommunicationTokenCredential(object):
             raise TypeError("Token must be a string.")
         self._token = create_access_token(token)
         self._token_refresher = kwargs.pop('token_refresher', None)
-        self._refresh_proactively = kwargs.pop('refresh_proactively', False)
-        if(self._refresh_proactively and self._token_refresher is None):
+        self._proactive_refresh = kwargs.pop('proactive_refresh', False)
+        if(self._proactive_refresh and self._token_refresher is None):
             raise ValueError("'token_refresher' must not be None.")
         self._timer = None
         self._async_mutex = Lock()
@@ -82,7 +82,7 @@ class CommunicationTokenCredential(object):
                     self._some_thread_refreshing = False
                     self._lock.notify_all()
                 raise
-        if self._refresh_proactively:
+        if self._proactive_refresh:
             self._schedule_refresh()
         return self._token
 
@@ -109,7 +109,7 @@ class CommunicationTokenCredential(object):
         await self._lock.acquire()
 
     def _is_token_expiring_soon(self, token):
-        if self._refresh_proactively:
+        if self._proactive_refresh:
             interval = timedelta(
                 minutes=self._DEFAULT_AUTOREFRESH_INTERVAL_MINUTES)
         else:
@@ -123,7 +123,7 @@ class CommunicationTokenCredential(object):
         return get_current_utc_as_int() < token.expires_on
 
     async def __aenter__(self):
-        if self._refresh_proactively:
+        if self._proactive_refresh:
             self._schedule_refresh()
         return self
 
