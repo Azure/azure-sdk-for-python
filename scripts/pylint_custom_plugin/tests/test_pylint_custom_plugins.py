@@ -2568,4 +2568,4 @@ class TestCheckDocstringAdmonitionNewline(pylint.testutils.CheckerTestCase):
                     msg_id="docstring-admonition-needs-newline", node=class_node
                 )
         ):
-            self.checker.visit_classdef(class_node) 
+            self.checker.visit_classdef(class_node)
