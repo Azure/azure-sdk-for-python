@@ -26,7 +26,7 @@ pr:
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
-    ServiceDirectory: ./../scripts/pylint_custom_plugin
+    ServiceDirectory: ../../scripts/pylint_custom_plugin
     TestProxy: false
     Artifacts:
     - name: pylint_custom_plugin
