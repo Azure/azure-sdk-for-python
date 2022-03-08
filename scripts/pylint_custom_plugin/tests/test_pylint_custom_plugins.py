@@ -3,9 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import argparse
 import astroid
-import configparser
 import pylint.testutils
 
 from azure.core import PipelineClient
