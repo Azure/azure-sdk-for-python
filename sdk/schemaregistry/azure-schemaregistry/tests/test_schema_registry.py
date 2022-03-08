@@ -25,20 +25,24 @@ from azure.schemaregistry import SchemaRegistryClient
 from azure.identity import ClientSecretCredential
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
 
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 
-SchemaRegistryPowerShellPreparer = functools.partial(PowerShellPreparer, "schemaregistry", schemaregistry_fully_qualified_namespace="fake_resource.servicebus.windows.net/", schemaregistry_group="fakegroup")
+SchemaRegistryEnvironmentVariableLoader = functools.partial(EnvironmentVariableLoader, "schemaregistry", schemaregistry_fully_qualified_namespace="fake_resource.servicebus.windows.net/", schemaregistry_group="fakegroup")
 
 
-class SchemaRegistryTests(AzureTestCase):
+class TestSchemaRegistry(AzureRecordedTestCase):
 
-    def create_client(self, fully_qualified_namespace):
+    def create_client(self, **kwargs):
+        fully_qualified_namespace = kwargs.pop("fully_qualified_namespace")
         credential = self.get_credential(SchemaRegistryClient)
         return self.create_client_from_credential(SchemaRegistryClient, credential, fully_qualified_namespace=fully_qualified_namespace)
 
-    @SchemaRegistryPowerShellPreparer()
-    def test_schema_basic(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
-        client = self.create_client(schemaregistry_fully_qualified_namespace)
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy
+    def test_schema_basic(self, **kwargs):
+        schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
+        schemaregistry_group = kwargs.pop("schemaregistry_group")
+        client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         name = self.get_resource_name('test-schema-basic')
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         format = "Avro"
@@ -58,9 +62,12 @@ class SchemaRegistryTests(AzureTestCase):
         assert returned_schema_properties.id == schema_properties.id
         assert returned_schema_properties.format == "Avro"
 
-    @SchemaRegistryPowerShellPreparer()
-    def test_schema_update(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
-        client = self.create_client(schemaregistry_fully_qualified_namespace)
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy
+    def test_schema_update(self, **kwargs):
+        schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
+        schemaregistry_group = kwargs.pop("schemaregistry_group")
+        client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         name = self.get_resource_name('test-schema-update')
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         format = "Avro"
@@ -82,9 +89,12 @@ class SchemaRegistryTests(AzureTestCase):
         assert new_schema.definition == schema_str_new
         assert new_schema.properties.format == "Avro"
 
-    @SchemaRegistryPowerShellPreparer()
-    def test_schema_same_twice(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
-        client = self.create_client(schemaregistry_fully_qualified_namespace)
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy
+    def test_schema_same_twice(self, **kwargs):
+        schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
+        schemaregistry_group = kwargs.pop("schemaregistry_group")
+        client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         name = self.get_resource_name('test-schema-twice')
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}"""
         format = "Avro"
@@ -92,8 +102,11 @@ class SchemaRegistryTests(AzureTestCase):
         schema_properties_second = client.register_schema(schemaregistry_group, name, schema_str, format)
         assert schema_properties.id == schema_properties_second.id
 
-    @SchemaRegistryPowerShellPreparer()
-    def test_schema_negative_wrong_credential(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy
+    def test_schema_negative_wrong_credential(self, **kwargs):
+        schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
+        schemaregistry_group = kwargs.pop("schemaregistry_group")
         credential = ClientSecretCredential(tenant_id="fake", client_id="fake", client_secret="fake")
         client = SchemaRegistryClient(fully_qualified_namespace=schemaregistry_fully_qualified_namespace, credential=credential)
         name = self.get_resource_name('test-schema-negative')
@@ -102,18 +115,23 @@ class SchemaRegistryTests(AzureTestCase):
         with pytest.raises(ClientAuthenticationError):
             client.register_schema(schemaregistry_group, name, schema_str, format)
 
-    @SchemaRegistryPowerShellPreparer()
-    def test_schema_negative_wrong_endpoint(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
-        client = self.create_client("nonexist.servicebus.windows.net")
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy
+    def test_schema_negative_wrong_endpoint(self, **kwargs):
+        schemaregistry_group = kwargs.pop("schemaregistry_group")
+        client = self.create_client(fully_qualified_namespace="nonexist.servicebus.windows.net")
         name = self.get_resource_name('test-schema-nonexist')
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         format = "Avro"
-        with pytest.raises(ServiceRequestError):
+        with pytest.raises(HttpResponseError):
             client.register_schema(schemaregistry_group, name, schema_str, format)
 
-    @SchemaRegistryPowerShellPreparer()
-    def test_schema_negative_no_schema(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
-        client = self.create_client(schemaregistry_fully_qualified_namespace)
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy
+    def test_schema_negative_no_schema(self, **kwargs):
+        schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
+        schemaregistry_group = kwargs.pop("schemaregistry_group")
+        client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         with pytest.raises(HttpResponseError):
             client.get_schema('a')
 
