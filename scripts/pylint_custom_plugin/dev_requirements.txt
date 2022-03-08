@@ -1,0 +1,2 @@
+pylint==2.5.2
+astroid>=2.5
