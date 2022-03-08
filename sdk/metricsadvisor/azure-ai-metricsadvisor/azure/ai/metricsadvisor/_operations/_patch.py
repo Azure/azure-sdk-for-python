@@ -139,6 +139,16 @@ class OperationMixinHelpers:
 
         return AnomalyAlertConfiguration._from_generated(deserialized)
 
+    def _deserialize_datasource_credential(self, response) -> DatasourceCredentialUnion:
+        type_to_datasource_credential = {
+            "AzureSQLConnectionString": DatasourceSqlConnectionString,
+            "DataLakeGen2SharedKey": DatasourceDataLakeGen2SharedKey,
+            "ServicePrincipal": DatasourceServicePrincipal,
+            "ServicePrincipalInKV": DatasourceServicePrincipalInKeyVault,
+        }
+        datasource_class = type_to_datasource_credential[response["dataSourceCredentialType"]]
+        return datasource_class.deserialize(response)
+
     def _update_detection_configuration_helper(
         self, detection_configuration, **kwargs
     ) -> Tuple[str, Union[JSONType, AnomalyDetectionConfiguration], Any]:
@@ -580,10 +590,10 @@ class OperationMixinHelpers:
 
         else:
             alert_configuration_id = alert_configuration.id
-            alert_configuration_patch = alert_configuration._to_generated()
+            alert_configuration_patch = alert_configuration._to_generated(**update).serialize()
         content_type = kwargs.pop("content_type", "application/merge-patch+json")  # type: Optional[str]
 
-        _json = self._serialize.body(alert_configuration_patch, "AnomalyAlertingConfiguration")
+        _json = self._serialize.body(alert_configuration_patch, "object")
 
         request = build_update_alert_configuration_request(
             configuration_id=alert_configuration_id,
@@ -1008,17 +1018,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         maxpagesize: Optional[int] = None,
         **kwargs: Any
     ) -> ItemPaged[DataFeed]:
-        deserializer = self._deserialize_data_feed
-
-        def extract_data(deserializer, pipeline_response):
-            response_json = pipeline_response.http_response.json()
-            list_of_elem = []
-            for l in response_json["value"]:
-                list_of_elem.append(deserializer(l))
-            return response_json.get("@nextLink", None) or None, iter(list_of_elem)
-
         return self._paging_helper(
-            extract_data=functools.partial(extract_data, deserializer),
             initial_request=build_list_data_feeds_request(
                 data_feed_name=data_feed_name,
                 data_source_type=data_source_type,
@@ -1029,6 +1029,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
                 maxpagesize=maxpagesize,
             ),
             next_request=build_list_data_feeds_request(),
+            deserializer=self._deserialize_data_feed,
             **kwargs
         )
 
@@ -1036,31 +1037,23 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
     def list_alert_configurations(
         self, detection_configuration_id: str, **kwargs: Any
     ) -> ItemPaged[AnomalyAlertConfiguration]:
-        deserializer = self._deserialize
-
-        def extract_data(deserializer, pipeline_response):
-            response_json = pipeline_response.http_response.json()
-            list_of_elem = []
-            for l in response_json["value"]:
-                config_to_generated = functools.partial(deserializer, generated_models.MetricAlertConfiguration)
-                l["metricAlertingConfigurations"] = [
-                    config_to_generated(config) for config in l.get("metricAlertingConfigurations", [])
-                ]
-                list_of_elem.append(
-                    AnomalyAlertConfiguration._from_generated(
-                        deserializer(generated_models.AnomalyAlertConfiguration, l)
-                    )
-                )
-            return response_json.get("@nextLink", None) or None, iter(list_of_elem)
+        def _deserialize(deserializer, line):
+            config_to_generated = functools.partial(deserializer, generated_models.MetricAlertConfiguration)
+            line["metricAlertingConfigurations"] = [
+                config_to_generated(config) for config in line.get("metricAlertingConfigurations", [])
+            ]
+            return AnomalyAlertConfiguration._from_generated(
+                deserializer(generated_models.AnomalyAlertConfiguration, line)
+            )
 
         return self._paging_helper(
-            extract_data=functools.partial(extract_data, deserializer),
             initial_request=build_list_alert_configurations_request(
                 configuration_id=detection_configuration_id,
                 skip=kwargs.pop("skip", None),
                 maxpagesize=kwargs.pop("maxpagesize", None),
             ),
             next_request=build_list_alert_configurations_request(configuration_id=detection_configuration_id),
+            deserializer=functools.partial(_deserialize, self._deserialize),
             **kwargs
         )
 
@@ -1096,12 +1089,18 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         return self.get_datasource_credential(credential_id)
 
     @distributed_trace
+    def get_datasource_credential(self, credential_id: str, **kwargs: Any) -> DatasourceCredentialUnion:
+        response = super().get_datasource_credential(credential_id=credential_id, **kwargs)
+        return self._deserialize_datasource_credential(response)
+
+    @distributed_trace
     def update_datasource_credential(
         self,
-        datasource_credential,  # type: DatasourceCredential
+        datasource_credential,  # type: DatasourceCredentialUnion
         **kwargs  # type: Any
     ):
-        return super().update_datasource_credential(datasource_credential.id, datasource_credential, **kwargs)
+        response = super().update_datasource_credential(datasource_credential.id, datasource_credential, **kwargs)
+        return self._deserialize_datasource_credential(response)
 
     @distributed_trace
     def delete_datasource_credential(self, *credential_id, **kwargs):
@@ -1396,7 +1395,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         return self._paging_helper(
             initial_request=initial_request,
             next_request=next_request,
-            deserializer=DatasourceCredential.deserialize,
+            deserializer=self._deserialize_datasource_credential,
             **kwargs
         )
 

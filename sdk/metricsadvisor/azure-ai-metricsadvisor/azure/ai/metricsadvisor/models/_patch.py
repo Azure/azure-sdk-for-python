@@ -716,7 +716,11 @@ class MetricAlertConfiguration(generated_models.MetricAlertConfiguration):
         return generated_models.MetricAlertConfiguration(
             detection_configuration_id=self.detection_configuration_id,
             anomaly_scope_type=MetricAnomalyAlertScopeType._to_generated(self.alert_scope.scope_type),
-            dimension_anomaly_scope=self.alert_scope.series_group_in_scope,
+            dimension_anomaly_scope=generated_models.DimensionGroupIdentity(
+                dimension=self.alert_scope.series_group_in_scope
+            )
+            if self.alert_scope.series_group_in_scope
+            else None,
             top_n_anomaly_scope=self.alert_scope.top_n_group_in_scope,
             negation_operation=self.negation_operation,
             severity_filter=self.alert_conditions.severity_condition if self.alert_conditions else None,
@@ -781,15 +785,16 @@ class AnomalyAlertConfiguration(generated_models.AnomalyAlertConfiguration):
             dimensions_to_split_alert=config.dimensions_to_split_alert,
         )
 
-    def _to_generated(self):
+    def _to_generated(self, **kwargs):
+        metric_alert_configurations = kwargs.pop("metricAlertingConfigurations", self.metric_alert_configurations)
         return generated_models.AnomalyAlertConfiguration(
-            name=self.name,
-            metric_alert_configurations=[  # type: ignore
-                config._to_generated() for config in self.metric_alert_configurations
-            ],
-            hook_ids=self.hook_ids,
-            cross_metrics_operator=self.cross_metrics_operator,
-            description=self.description,
+            name=kwargs.pop("name", self.name),
+            metric_alert_configurations=[
+                config._to_generated() for config in metric_alert_configurations
+            ],  # type: ignore
+            hook_ids=kwargs.pop("hookIds", self.hook_ids),
+            cross_metrics_operator=kwargs.pop("crossMetricsOperator", self.cross_metrics_operator),
+            description=kwargs.pop("description", self.description),
             dimensions_to_split_alert=self.dimensions_to_split_alert,
         )
 

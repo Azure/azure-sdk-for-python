@@ -1200,7 +1200,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
     @distributed_trace
     def update_alert_configuration(
-        self, configuration_id: str, body: "_models.AnomalyAlertConfiguration", **kwargs: Any
+        self, configuration_id: str, body: Any, **kwargs: Any
     ) -> "_models.AnomalyAlertConfiguration":
         """Update anomaly alerting configuration.
 
@@ -1209,7 +1209,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         :param configuration_id: anomaly alerting configuration unique id.
         :type configuration_id: str
         :param body: anomaly alerting configuration.
-        :type body: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
+        :type body: any
         :return: AnomalyAlertConfiguration
         :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1220,7 +1220,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, "AnomalyAlertConfiguration")
+        _json = self._serialize.body(body, "object")
 
         request = build_update_alert_configuration_request(
             configuration_id=configuration_id,
@@ -2532,9 +2532,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def update_datasource_credential(
-        self, credential_id: str, body: "_models.DatasourceCredential", **kwargs: Any
-    ) -> "_models.DatasourceCredential":
+    def update_datasource_credential(self, credential_id: str, body: Any, **kwargs: Any) -> Any:
         """Update a data source credential.
 
         Update a data source credential.
@@ -2542,18 +2540,18 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
         :param credential_id: Data source credential unique ID.
         :type credential_id: str
         :param body: Update data source credential request.
-        :type body: ~azure.ai.metricsadvisor.models.DatasourceCredential
-        :return: DatasourceCredential
-        :rtype: ~azure.ai.metricsadvisor.models.DatasourceCredential
+        :type body: any
+        :return: any
+        :rtype: any
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DatasourceCredential"]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, "DatasourceCredential")
+        _json = self._serialize.body(body, "object")
 
         request = build_update_datasource_credential_request(
             credential_id=credential_id,
@@ -2575,7 +2573,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
             error = self._deserialize.failsafe_deserialize("object", pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("DatasourceCredential", pipeline_response)
+        deserialized = self._deserialize("object", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -2622,18 +2620,18 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def get_datasource_credential(self, credential_id: str, **kwargs: Any) -> "_models.DatasourceCredential":
+    def get_datasource_credential(self, credential_id: str, **kwargs: Any) -> Any:
         """Get a data source credential.
 
         Get a data source credential.
 
         :param credential_id: Data source credential unique ID.
         :type credential_id: str
-        :return: DatasourceCredential
-        :rtype: ~azure.ai.metricsadvisor.models.DatasourceCredential
+        :return: any
+        :rtype: any
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DatasourceCredential"]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
@@ -2655,7 +2653,7 @@ class MetricsAdvisorClientOperationsMixin(object):  # pylint: disable=too-many-p
             error = self._deserialize.failsafe_deserialize("object", pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("DatasourceCredential", pipeline_response)
+        deserialized = self._deserialize("object", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

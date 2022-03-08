@@ -576,10 +576,10 @@ directive:
       $["parameters"][3]["schema"]["$ref"] = "#/definitions/Anything";
   - where-operation: updateAlertConfiguration
     transform: >
-      $["parameters"][1]["schema"]["$ref"] = "#/definitions/AnomalyAlertConfiguration";
+      $["parameters"][1]["schema"]["$ref"] = "#/definitions/Anything";
   - where-operation: updateDatasourceCredential
     transform: >
-      $["parameters"][1]["schema"]["$ref"] = "#/definitions/DataSourceCredential";
+      $["parameters"][1]["schema"]["$ref"] = "#/definitions/Anything";
   - where-operation: updateDataFeed
     transform: >
       $["parameters"][1]["schema"]["$ref"] = "#/definitions/Anything";
@@ -640,6 +640,12 @@ directive:
 ```yaml
 directive:
   - where-operation: updateDataFeed
+    transform: >
+      $["responses"]["200"]["schema"]["$ref"] = "#/definitions/Anything";
+  - where-operation: getDatasourceCredential
+    transform: >
+      $["responses"]["200"]["schema"]["$ref"] = "#/definitions/Anything";
+  - where-operation: updateDatasourceCredential
     transform: >
       $["responses"]["200"]["schema"]["$ref"] = "#/definitions/Anything";
 ```

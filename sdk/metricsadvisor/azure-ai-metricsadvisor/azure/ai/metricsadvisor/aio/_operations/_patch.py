@@ -102,7 +102,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         response_headers = await super().create_alert_configuration(
             AnomalyAlertConfiguration(
                 name=name,
-                metric_alert_configurations=metric_alert_configurations,
+                metric_alert_configurations=[m._to_generated() for m in metric_alert_configurations],
                 hook_ids=hook_ids,
                 cross_metrics_operator=cross_metrics_operator,
                 description=kwargs.pop("description", None),
@@ -197,14 +197,10 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
             error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize(generated_models.DataFeed, pipeline_response)
-
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, self._deserialize(generated_models.DataFeed, pipeline_response), {})
         json_response = response.json()
-        return DataFeed._from_generated(
-            deserialized, json_response["dataSourceParameter"], json_response["dataSourceType"]
-        )
+        return self._deserialize_data_feed(json_response)
 
     @distributed_trace_async
     async def get_alert_configuration(self, alert_configuration_id: str, **kwargs: Any) -> AnomalyAlertConfiguration:
@@ -323,25 +319,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         maxpagesize: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[DataFeed]:
-        deserializer = functools.partial(self._deserialize, generated_models.DataFeed)
-
-        async def extract_data(deserializer, pipeline_response):
-            response_json = pipeline_response.http_response.json()
-            list_of_elem = []
-            for l in response_json["value"]:
-                data_source_type = l["dataSourceType"]  # this gets popped during deserialization
-                data_source_parameter = l["dataSourceParameter"]
-                list_of_elem.append(
-                    DataFeed._from_generated(
-                        deserializer(l),
-                        data_source_parameter,
-                        data_source_type,
-                    )
-                )
-            return response_json.get("@nextLink", None) or None, AsyncList(list_of_elem)
-
         return self._paging_helper(
-            extract_data=functools.partial(extract_data, deserializer),
             initial_request=build_list_data_feeds_request(
                 data_feed_name=data_feed_name,
                 data_source_type=data_source_type,
@@ -352,6 +330,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
                 maxpagesize=maxpagesize,
             ),
             next_request=build_list_data_feeds_request(),
+            deserializer=self._deserialize_data_feed,
             **kwargs
         )
 
@@ -359,31 +338,23 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
     def list_alert_configurations(
         self, detection_configuration_id: str, **kwargs: Any
     ) -> AsyncItemPaged[AnomalyAlertConfiguration]:
-        deserializer = self._deserialize
-
-        async def extract_data(deserializer, pipeline_response):
-            response_json = pipeline_response.http_response.json()
-            list_of_elem = []
-            for l in response_json["value"]:
-                config_to_generated = functools.partial(deserializer, generated_models.MetricAlertConfiguration)
-                l["metricAlertingConfigurations"] = [
-                    config_to_generated(config) for config in l.get("metricAlertingConfigurations", [])
-                ]
-                list_of_elem.append(
-                    AnomalyAlertConfiguration._from_generated(
-                        deserializer(generated_models.AnomalyAlertConfiguration, l)
-                    )
-                )
-            return response_json.get("@nextLink", None) or None, AsyncList(list_of_elem)
+        def _deserialize(deserializer, line):
+            config_to_generated = functools.partial(deserializer, generated_models.MetricAlertConfiguration)
+            line["metricAlertingConfigurations"] = [
+                config_to_generated(config) for config in line.get("metricAlertingConfigurations", [])
+            ]
+            return AnomalyAlertConfiguration._from_generated(
+                deserializer(generated_models.AnomalyAlertConfiguration, line)
+            )
 
         return self._paging_helper(
-            extract_data=functools.partial(extract_data, deserializer),
             initial_request=build_list_alert_configurations_request(
                 configuration_id=detection_configuration_id,
                 skip=kwargs.pop("skip", None),
                 maxpagesize=kwargs.pop("maxpagesize", None),
             ),
             next_request=build_list_alert_configurations_request(configuration_id=detection_configuration_id),
+            deserializer=functools.partial(_deserialize, self._deserialize),
             **kwargs
         )
 
@@ -425,7 +396,13 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
     async def update_datasource_credential(
         self, datasource_credential: DatasourceCredentialUnion, **kwargs: Any
     ) -> DatasourceCredentialUnion:
-        return await super().update_datasource_credential(datasource_credential.id, datasource_credential, **kwargs)
+        response = await super().update_datasource_credential(datasource_credential.id, datasource_credential, **kwargs)
+        return self._deserialize_datasource_credential(response)
+
+    @distributed_trace
+    async def get_datasource_credential(self, credential_id: str, **kwargs: Any) -> DatasourceCredentialUnion:
+        response = await super().get_datasource_credential(credential_id=credential_id, **kwargs)
+        return self._deserialize_datasource_credential(response)
 
     @distributed_trace_async
     async def delete_datasource_credential(self, *credential_id: str, **kwargs: Any) -> None:
@@ -451,18 +428,8 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
     def list_feedback(self, metric_id: str, **kwargs: Any) -> AsyncItemPaged[Union[MetricFeedback, FeedbackUnion]]:
         deserializer = functools.partial(self._deserialize, generated_models.MetricFeedback)
         initial_request, next_request, kwargs = self._list_feedback_requests(metric_id, **kwargs)
-
-        async def extract_data(deserializer, pipeline_response):
-            response_json = pipeline_response.http_response.json()
-            list_of_elem = []
-            list_of_elem = [deserializer(l) for l in response_json["value"]]
-            return response_json.get("@nextLink", None) or None, AsyncList(list_of_elem)
-
         return self._paging_helper(
-            extract_data=functools.partial(extract_data, deserializer),
-            initial_request=initial_request,
-            next_request=next_request,
-            **kwargs
+            initial_request=initial_request, next_request=next_request, deserializer=deserializer, **kwargs
         )
 
     @distributed_trace
@@ -736,6 +703,16 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
             initial_request=initial_request,
             next_request=next_request,
             deserializer=AnomalyDetectionConfiguration.deserialize,
+            **kwargs
+        )
+
+    @distributed_trace
+    def list_datasource_credentials(self, **kwargs: Any) -> AsyncItemPaged[DatasourceCredential]:
+        initial_request, next_request, kwargs = self._list_datasource_credentials_requests(**kwargs)
+        return self._paging_helper(
+            initial_request=initial_request,
+            next_request=next_request,
+            deserializer=self._deserialize_datasource_credential,
             **kwargs
         )
 
