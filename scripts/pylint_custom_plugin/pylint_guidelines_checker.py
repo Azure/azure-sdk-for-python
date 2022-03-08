@@ -1763,7 +1763,7 @@ class CheckNoAliasGeneratedCode(BaseChecker):
                                     )
     
         except Exception:
-                logger.debug("Pylint custom checker failed to check if package is aliased.")
+                logger.debug("Pylint custom checker failed to check if model is aliased.")
                 pass
 
 
