@@ -24,4 +24,13 @@ pr:
     - scripts/pylint_custom_plugin
 
 extends:
-  template: ../../eng/pipelines/templates/steps/run_pylint.yml
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+  parameters:
+    ServiceDirectory: ./../scripts/pylint_custom_plugin
+    TestProxy: false
+    Artifacts:
+    - name: pylint_custom_plugin
+      safeName: pylintcustomplugin
+ 
+ 
+  #template: ../../eng/pipelines/templates/steps/run_pylint.yml
