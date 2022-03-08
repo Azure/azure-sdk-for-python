@@ -710,6 +710,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :keyword file_last_write_time:
             Last write time for the file.
         :paramtype file_last_write_time:~datetime.datetime or str
+        :keyword ~azure.storage.fileshare.ContentSettings content_settings:
+            ContentSettings object used to set file properties of new file.
+            Rename operation currently only supports content type.
         :keyword dict(str,str) metadata:
             A name-value pair to associate with a file storage object.
         :keyword source_lease:
@@ -744,6 +747,13 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
 
         kwargs.update(get_rename_smb_properties(kwargs))
 
+        file_http_headers = None
+        content_settings = kwargs.pop('content_settings', None)
+        if content_settings:
+            file_http_headers = FileHTTPHeaders(
+                file_content_type=content_settings.content_type
+            )
+
         timeout = kwargs.pop('timeout', None)
         overwrite = kwargs.pop('overwrite', None)
         metadata = kwargs.pop('metadata', None)
@@ -758,6 +768,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
                 self.url,
                 timeout=timeout,
                 replace_if_exists=overwrite,
+                file_http_headers=file_http_headers,
                 source_lease_access_conditions=source_access_conditions,
                 destination_lease_access_conditions=dest_access_conditions,
                 headers=headers,

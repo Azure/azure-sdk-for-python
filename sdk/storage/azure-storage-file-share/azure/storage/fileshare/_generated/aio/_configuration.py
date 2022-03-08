@@ -23,7 +23,7 @@ class AzureFileStorageConfiguration(Configuration):  # pylint: disable=too-many-
      desired operation.
     :type url: str
     :keyword version: Specifies the version of the operation to use for this request. The default
-     value is "2021-04-10". Note that overriding this default value may result in unsupported
+     value is "2021-06-08". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype version: str
     :keyword file_range_write_from_url: Only update is supported: - Update: Writes the bytes
@@ -38,7 +38,7 @@ class AzureFileStorageConfiguration(Configuration):  # pylint: disable=too-many-
         **kwargs: Any
     ) -> None:
         super(AzureFileStorageConfiguration, self).__init__(**kwargs)
-        version = kwargs.pop('version', "2021-04-10")  # type: str
+        version = kwargs.pop('version', "2021-06-08")  # type: str
         file_range_write_from_url = kwargs.pop('file_range_write_from_url', "update")  # type: str
 
         if url is None:

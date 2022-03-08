@@ -35,7 +35,7 @@ def build_create_request(
 ):
     # type: (...) -> HttpRequest
     restype = kwargs.pop('restype', "share")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
     quota = kwargs.pop('quota', None)  # type: Optional[int]
@@ -88,7 +88,7 @@ def build_get_properties_request(
 ):
     # type: (...) -> HttpRequest
     restype = kwargs.pop('restype', "share")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     sharesnapshot = kwargs.pop('sharesnapshot', None)  # type: Optional[str]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
@@ -132,7 +132,7 @@ def build_delete_request(
 ):
     # type: (...) -> HttpRequest
     restype = kwargs.pop('restype', "share")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     sharesnapshot = kwargs.pop('sharesnapshot', None)  # type: Optional[str]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     delete_snapshots = kwargs.pop('delete_snapshots', None)  # type: Optional[Union[str, "_models.DeleteSnapshotsOptionType"]]
@@ -181,7 +181,7 @@ def build_acquire_lease_request(
     comp = kwargs.pop('comp', "lease")  # type: str
     action = kwargs.pop('action', "acquire")  # type: str
     restype = kwargs.pop('restype', "share")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     duration = kwargs.pop('duration', None)  # type: Optional[int]
     proposed_lease_id = kwargs.pop('proposed_lease_id', None)  # type: Optional[str]
@@ -235,7 +235,7 @@ def build_release_lease_request(
     comp = kwargs.pop('comp', "lease")  # type: str
     action = kwargs.pop('action', "release")  # type: str
     restype = kwargs.pop('restype', "share")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     lease_id = kwargs.pop('lease_id')  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     sharesnapshot = kwargs.pop('sharesnapshot', None)  # type: Optional[str]
@@ -285,7 +285,7 @@ def build_change_lease_request(
     comp = kwargs.pop('comp', "lease")  # type: str
     action = kwargs.pop('action', "change")  # type: str
     restype = kwargs.pop('restype', "share")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     lease_id = kwargs.pop('lease_id')  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     proposed_lease_id = kwargs.pop('proposed_lease_id', None)  # type: Optional[str]
@@ -338,7 +338,7 @@ def build_renew_lease_request(
     comp = kwargs.pop('comp', "lease")  # type: str
     action = kwargs.pop('action', "renew")  # type: str
     restype = kwargs.pop('restype', "share")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     lease_id = kwargs.pop('lease_id')  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     sharesnapshot = kwargs.pop('sharesnapshot', None)  # type: Optional[str]
@@ -388,7 +388,7 @@ def build_break_lease_request(
     comp = kwargs.pop('comp', "lease")  # type: str
     action = kwargs.pop('action', "break")  # type: str
     restype = kwargs.pop('restype', "share")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     break_period = kwargs.pop('break_period', None)  # type: Optional[int]
     lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
@@ -441,7 +441,7 @@ def build_create_snapshot_request(
     # type: (...) -> HttpRequest
     restype = kwargs.pop('restype', "share")  # type: str
     comp = kwargs.pop('comp', "snapshot")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
 
@@ -484,7 +484,7 @@ def build_create_permission_request(
     # type: (...) -> HttpRequest
     restype = kwargs.pop('restype', "share")  # type: str
     comp = kwargs.pop('comp', "filepermission")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
 
@@ -527,7 +527,7 @@ def build_get_permission_request(
     # type: (...) -> HttpRequest
     restype = kwargs.pop('restype', "share")  # type: str
     comp = kwargs.pop('comp', "filepermission")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     file_permission_key = kwargs.pop('file_permission_key')  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
 
@@ -569,7 +569,7 @@ def build_set_properties_request(
     # type: (...) -> HttpRequest
     restype = kwargs.pop('restype', "share")  # type: str
     comp = kwargs.pop('comp', "properties")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     quota = kwargs.pop('quota', None)  # type: Optional[int]
     access_tier = kwargs.pop('access_tier', None)  # type: Optional[Union[str, "_models.ShareAccessTier"]]
@@ -621,7 +621,7 @@ def build_set_metadata_request(
     # type: (...) -> HttpRequest
     restype = kwargs.pop('restype', "share")  # type: str
     comp = kwargs.pop('comp', "metadata")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     metadata = kwargs.pop('metadata', None)  # type: Optional[Dict[str, str]]
     lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
@@ -667,7 +667,7 @@ def build_get_access_policy_request(
     # type: (...) -> HttpRequest
     restype = kwargs.pop('restype', "share")  # type: str
     comp = kwargs.pop('comp', "acl")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
 
@@ -710,7 +710,7 @@ def build_set_access_policy_request(
     # type: (...) -> HttpRequest
     restype = kwargs.pop('restype', "share")  # type: str
     comp = kwargs.pop('comp', "acl")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
@@ -756,7 +756,7 @@ def build_get_statistics_request(
     # type: (...) -> HttpRequest
     restype = kwargs.pop('restype', "share")  # type: str
     comp = kwargs.pop('comp', "stats")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     lease_id = kwargs.pop('lease_id', None)  # type: Optional[str]
 
@@ -799,7 +799,7 @@ def build_restore_request(
     # type: (...) -> HttpRequest
     restype = kwargs.pop('restype', "share")  # type: str
     comp = kwargs.pop('comp', "undelete")  # type: str
-    version = kwargs.pop('version', "2021-04-10")  # type: str
+    version = kwargs.pop('version', "2021-06-08")  # type: str
     timeout = kwargs.pop('timeout', None)  # type: Optional[int]
     request_id_parameter = kwargs.pop('request_id_parameter', None)  # type: Optional[str]
     deleted_share_name = kwargs.pop('deleted_share_name', None)  # type: Optional[str]
