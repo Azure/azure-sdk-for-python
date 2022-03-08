@@ -1362,7 +1362,6 @@ class DataFeed(msrest.serialization.Model):
         "viewers": {"unique": True},
         "is_admin": {"readonly": True},
         "creator": {"readonly": True},
-        "status": {"readonly": True},
         "created_time": {"readonly": True},
     }
 
@@ -1426,6 +1425,7 @@ class DataFeed(msrest.serialization.Model):
         access_mode: Optional[Union[str, "_models.DataFeedAccessMode"]] = "Private",
         admins: Optional[List[str]] = None,
         viewers: Optional[List[str]] = None,
+        status: Optional[Union[str, "_models.DataFeedStatus"]] = None,
         action_link_template: Optional[str] = "",
         authentication_type: Optional[Union[str, "_models.DatasourceAuthenticationType"]] = "Basic",
         credential_id: Optional[str] = None,
@@ -1487,6 +1487,8 @@ class DataFeed(msrest.serialization.Model):
         :paramtype admins: list[str]
         :keyword viewers: data feed viewer.
         :paramtype viewers: list[str]
+        :keyword status: data feed status. Possible values include: "Active", "Paused".
+        :paramtype status: str or ~azure.ai.metricsadvisor.models.DataFeedStatus
         :keyword action_link_template: action link for alert.
         :paramtype action_link_template: str
         :keyword authentication_type: authentication type for corresponding data source. Possible
@@ -1525,7 +1527,7 @@ class DataFeed(msrest.serialization.Model):
         self.viewers = viewers
         self.is_admin = None
         self.creator = None
-        self.status = None
+        self.status = status
         self.created_time = None
         self.action_link_template = action_link_template
         self.authentication_type = authentication_type

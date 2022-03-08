@@ -48,6 +48,7 @@ from ..models._patch import (
     MetricFeedbackFilter,
     MetricSeriesQueryOptions,
     ErrorCode,
+    FeedbackDimensionFilter,
 )
 from msrest import Serializer
 from azure.core.paging import ItemPaged
@@ -203,11 +204,15 @@ class OperationMixinHelpers:
             data_feed_id = data_feed
             if "dataStartFrom" in update:
                 update["dataStartFrom"] = Serializer.serialize_iso(update["dataStartFrom"])
+            if "dataSourceParameter" in update:
+                update["authenticationType"] = update["dataSourceParameter"].authentication_type
+                update["credentialId"] = update["dataSourceParameter"].credential_id
+                update["dataSourceParameter"] = update["dataSourceParameter"]
             data_feed_patch = update
 
         else:
             data_feed_id = data_feed.id
-            data_feed_patch = data_feed._to_generated()
+            data_feed_patch = data_feed._to_generated(**update).serialize()
         return data_feed_id, data_feed_patch, kwargs
 
     def _list_metric_enriched_series_data_requests(
@@ -714,6 +719,13 @@ class OperationMixinHelpers:
 
         return prepare_request
 
+    def _deserialize_data_feed(self, json_response) -> DataFeed:
+        data_source_parameter = json_response["dataSourceParameter"]
+        data_source_type = json_response["dataSourceType"]
+        return DataFeed._from_generated(
+            self._deserialize(generated_models.DataFeed, json_response), data_source_parameter, data_source_type
+        )
+
 
 def _extract_data_default(deserializer, pipeline_response):
     response_json = pipeline_response.http_response.json()
@@ -862,14 +874,9 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
             error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize(generated_models.DataFeed, pipeline_response)
-
         if cls:
-            return cls(pipeline_response, deserialized, {})
-        json_response = response.json()
-        return DataFeed._from_generated(
-            deserialized, json_response["dataSourceParameter"], json_response["dataSourceType"]
-        )
+            return cls(pipeline_response, self._deserialize(generated_models.DataFeed, pipeline_response), {})
+        return self._deserialize_data_feed(response.json())
 
     @distributed_trace
     def get_alert_configuration(self, alert_configuration_id, **kwargs):
@@ -949,7 +956,8 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
     @distributed_trace
     def update_data_feed(self, data_feed: Union[str, DataFeed], **kwargs: Any) -> DataFeed:
         data_feed_id, data_feed_patch, kwargs = self._update_data_feed_helper(data_feed, **kwargs)
-        return super().update_data_feed(data_feed_id, data_feed_patch, **kwargs)
+        response = super().update_data_feed(data_feed_id, data_feed_patch, **kwargs)
+        return self._deserialize_data_feed(response)
 
     @distributed_trace
     def update_alert_configuration(
@@ -994,21 +1002,13 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         maxpagesize: Optional[int] = None,
         **kwargs: Any
     ) -> ItemPaged[DataFeed]:
-        deserializer = functools.partial(self._deserialize, generated_models.DataFeed)
+        deserializer = self._deserialize_data_feed
 
         def extract_data(deserializer, pipeline_response):
             response_json = pipeline_response.http_response.json()
             list_of_elem = []
             for l in response_json["value"]:
-                data_source_type = l["dataSourceType"]  # this gets popped during deserialization
-                data_source_parameter = l["dataSourceParameter"]
-                list_of_elem.append(
-                    DataFeed._from_generated(
-                        deserializer(l),
-                        data_source_parameter,
-                        data_source_type,
-                    )
-                )
+                list_of_elem.append(deserializer(l))
             return response_json.get("@nextLink", None) or None, iter(list_of_elem)
 
         return self._paging_helper(

@@ -582,7 +582,7 @@ directive:
       $["parameters"][1]["schema"]["$ref"] = "#/definitions/DataSourceCredential";
   - where-operation: updateDataFeed
     transform: >
-      $["parameters"][1]["schema"]["$ref"] = "#/definitions/DataFeed";
+      $["parameters"][1]["schema"]["$ref"] = "#/definitions/Anything";
   - where-operation: listAnomalyDimensionValues
     transform: >
       $["parameters"][3]["schema"]["$ref"] = "#/definitions/Anything";
@@ -633,6 +633,15 @@ directive:
     transform: >
       $["properties"]["status"]["x-ms-enum"] = undefined;
       $["properties"]["status"]["enum"] = undefined;
+```
+
+### Change Response Types
+
+```yaml
+directive:
+  - where-operation: updateDataFeed
+    transform: >
+      $["responses"]["200"]["schema"]["$ref"] = "#/definitions/Anything";
 ```
 
 ### Remove ErrorCode
@@ -1112,12 +1121,25 @@ directive:
         $.properties["dataSourceParameter"] = {"type": "object"};
 ```
 
+```yaml
+declare-directive:
+    make-not-readonly: >-
+        [{
+        from: 'swagger-document',
+        transform: `if ($.properties[${JSON.stringify($)}]) { $.properties[${JSON.stringify($)}]["readOnly"] = false; }`
+        },
+        {
+        from: 'openapi-document',
+        transform: `if ($.properties[${JSON.stringify($)}]) { $.properties[${JSON.stringify($)}]["readOnly"] = false; }`
+        }]
+```
+
 ### Make AnomalyAlertConfiguration id property not readonly
 
 ```yaml
 directive:
-  - from: swagger-document
-    where: $["definitions"]["AnomalyAlertConfiguration"]
-    transform: >
-        $.properties["anomalyAlertingConfigurationId"]["readOnly"] = false;
+  - where-model: AnomalyAlertConfiguration
+    make-not-readonly: anomalyAlertingConfigurationId
+  - where-model: DataFeed
+    make-not-readonly: status
 ```

@@ -450,41 +450,57 @@ class DataFeed(generated_models.DataFeed):  # pylint:disable=too-many-instance-a
             status=data_feed.status,
         )
 
-    def _to_generated(self) -> generated_models.DataFeed:
+    def _to_generated(self, **kwargs) -> generated_models.DataFeed:
+        rollup_type = kwargs.pop("needRollup", None)
+        if rollup_type:
+            DataFeedRollupType._to_generated(rollup_type)
         retval = generated_models.DataFeed(
-            data_source_parameter=TYPE_TO_DATA_SOURCE[self.source.data_source_type].serialize(self.source),
-            id=self.id,
-            name=self.name,
-            data_feed_description=self.data_feed_description,
-            granularity_name=self.granularity.granularity_type,
-            granularity_amount=self.granularity.custom_granularity_value,
-            metrics=self.schema.metrics,
-            dimension=self.schema.dimensions,
-            timestamp_column=self.schema.timestamp_column,
-            data_start_from=self.ingestion_settings.ingestion_begin_time if self.ingestion_settings else None,
-            start_offset_in_seconds=self.ingestion_settings.ingestion_start_offset,
-            max_concurrency=self.ingestion_settings.data_source_request_concurrency,
-            min_retry_interval_in_seconds=self.ingestion_settings.stop_retry_after,
-            stop_retry_after_in_seconds=self.ingestion_settings.stop_retry_after,
-            need_rollup=self.rollup_settings.rollup_type if self.rollup_settings else None,
-            roll_up_method=self.rollup_settings.rollup_method if self.rollup_settings else None,
-            roll_up_columns=self.rollup_settings.auto_rollup_group_by_column_names if self.rollup_settings else None,
-            all_up_identification=self.rollup_settings.rollup_identification_value if self.rollup_settings else None,
-            fill_missing_point_type=self.missing_data_point_fill_settings.fill_type
+            data_source_parameter=kwargs.pop(
+                "dataSourceParameter", TYPE_TO_DATA_SOURCE[self.source.data_source_type].serialize(self.source)
+            ),
+            id=kwargs.pop("id", self.id),
+            name=kwargs.pop("dataFeedName", None) or self.name,
+            data_feed_description=kwargs.pop("dataFeedDescription", self.data_feed_description),
+            granularity_name=kwargs.pop("granularityName", self.granularity.granularity_type),
+            granularity_amount=kwargs.pop("granularityAmount", self.granularity.custom_granularity_value),
+            metrics=kwargs.pop("metrics", self.schema.metrics),
+            dimension=kwargs.pop("dimension", self.schema.dimensions),
+            timestamp_column=kwargs.pop("timestampColumn", self.schema.timestamp_column),
+            data_start_from=kwargs.pop("dataStartFrom", self.ingestion_settings.ingestion_begin_time),
+            start_offset_in_seconds=kwargs.pop("startOffsetInSeconds", self.ingestion_settings.ingestion_start_offset),
+            max_concurrency=kwargs.pop("maxConcurrency", self.ingestion_settings.data_source_request_concurrency),
+            min_retry_interval_in_seconds=kwargs.pop(
+                "minRetryIntervalInSeconds", self.ingestion_settings.ingestion_retry_delay
+            ),
+            stop_retry_after_in_seconds=kwargs.pop("stopRetryAfterInSeconds", self.ingestion_settings.stop_retry_after),
+            need_rollup=rollup_type or self.rollup_settings.rollup_type if self.rollup_settings else None,
+            roll_up_method=kwargs.pop("rollUpMethod", None) or self.rollup_settings.rollup_method
+            if self.rollup_settings
+            else None,
+            roll_up_columns=kwargs.pop("rollUpColumns", None) or self.rollup_settings.auto_rollup_group_by_column_names
+            if self.rollup_settings
+            else None,
+            all_up_identification=kwargs.pop("allUpIdentification", None)
+            or self.rollup_settings.rollup_identification_value
+            if self.rollup_settings
+            else None,
+            fill_missing_point_type=kwargs.pop("fillMissingPointType", None)
+            or self.missing_data_point_fill_settings.fill_type
             if self.missing_data_point_fill_settings
             else None,
-            fill_missing_point_value=self.missing_data_point_fill_settings.custom_fill_value
+            fill_missing_point_value=kwargs.pop("fillMissingPointValue", None)
+            or self.missing_data_point_fill_settings.custom_fill_value
             if self.missing_data_point_fill_settings
             else None,
-            access_mode=self.access_mode,
-            admins=self.admins,
-            viewers=self.viewers,
-            is_admin=self.is_admin,
-            status=self.status,
-            created_time=self.created_time,
-            action_link_template=self.action_link_template,
-            authentication_type=self.source.authentication_type,
-            credential_id=self.source.credential_id,
+            access_mode=kwargs.pop("viewMode", self.access_mode),
+            admins=kwargs.pop("admins", self.admins),
+            viewers=kwargs.pop("viewers", self.viewers),
+            is_admin=kwargs.pop("isAdmin", self.is_admin),
+            status=kwargs.pop("status", self.status),
+            created_time=kwargs.pop("createdTime", self.created_time),
+            action_link_template=kwargs.pop("actionLinkTemplate", self.action_link_template),
+            authentication_type=kwargs.pop("authenticationType", self.source.authentication_type),
+            credential_id=kwargs.pop("credentialId", self.source.credential_id),
         )
         retval.data_source_type = self.source.data_source_type
         return retval

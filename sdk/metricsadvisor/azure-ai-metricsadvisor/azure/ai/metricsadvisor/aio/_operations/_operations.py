@@ -1776,7 +1776,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         return deserialized
 
     @distributed_trace_async
-    async def update_data_feed(self, data_feed_id: str, body: "_models.DataFeed", **kwargs: Any) -> "_models.DataFeed":
+    async def update_data_feed(self, data_feed_id: str, body: Any, **kwargs: Any) -> Any:
         """Update a data feed.
 
         Update a data feed.
@@ -1784,18 +1784,18 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :param data_feed_id: The data feed unique id.
         :type data_feed_id: str
         :param body: parameters to update a data feed.
-        :type body: ~azure.ai.metricsadvisor.models.DataFeed
-        :return: DataFeed
-        :rtype: ~azure.ai.metricsadvisor.models.DataFeed
+        :type body: any
+        :return: any
+        :rtype: any
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DataFeed"]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, "DataFeed")
+        _json = self._serialize.body(body, "object")
 
         request = build_update_data_feed_request(
             data_feed_id=data_feed_id,
@@ -1817,7 +1817,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
             error = self._deserialize.failsafe_deserialize("object", pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("DataFeed", pipeline_response)
+        deserialized = self._deserialize("object", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
