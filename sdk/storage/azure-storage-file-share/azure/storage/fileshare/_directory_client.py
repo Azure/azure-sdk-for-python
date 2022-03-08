@@ -369,7 +369,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         :paramtype file_last_write_time:~datetime.datetime or str
         :keyword Dict[str,str] metadata:
             A name-value pair to associate with a file storage object.
-        :keyword lease:
+        :keyword destination_lease:
             Required if the destination file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
@@ -403,14 +403,14 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
 
-        access_conditions = get_dest_access_conditions(kwargs.pop('lease', None))
+        destination_access_conditions = get_dest_access_conditions(kwargs.pop('destination_lease', None))
 
         try:
             new_directory_client._client.directory.rename(  # pylint: disable=protected-access
                 self.url,
                 timeout=timeout,
                 replace_if_exists=overwrite,
-                destination_lease_access_conditions=access_conditions,
+                destination_lease_access_conditions=destination_access_conditions,
                 headers=headers,
                 **kwargs)
 
