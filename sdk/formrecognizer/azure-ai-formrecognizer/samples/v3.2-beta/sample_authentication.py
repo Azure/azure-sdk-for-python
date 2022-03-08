@@ -45,9 +45,24 @@ def authentication_with_api_key_credential_document_analysis_client():
 
     document_analysis_client = DocumentAnalysisClient(endpoint, AzureKeyCredential(key))
     # [END create_da_client_with_key]
-    poller = document_analysis_client.begin_analyze_document_from_url(
-        "prebuilt-layout", url
-    )
+
+    # The test is unstable in China cloud, we try to set the number of retries in the code to increase stability
+    retry_times = 0
+    while retry_times != 5 :
+        try:
+            # Begin analyze document from url, this sample test is unstable in China cloud.(We are testing sovereign cloud test)
+            # Increasing the number of retries in the code until there is a better solution
+            poller = document_analysis_client.begin_analyze_document_from_url(
+                "prebuilt-layout", url
+            )
+        except HttpResponseError as e:
+            retry_times += 1
+            # Print the known unstable errors
+            print(e.message)
+            continue
+        else:
+            break
+    print("--------Retry times: {}--------".format(retry_times))
     result = poller.result()
 
 
@@ -66,9 +81,24 @@ def authentication_with_azure_active_directory_document_analysis_client():
     credential_scopes = ["https://{}/.default".format(form_recognizer_endpoint_suffix[1:])]
     document_analysis_client = DocumentAnalysisClient(endpoint, credential, credential_scopes=credential_scopes)
     # [END create_da_client_with_aad]
-    poller = document_analysis_client.begin_analyze_document_from_url(
-        "prebuilt-layout", url
-    )
+
+    # The test is unstable in China cloud, we try to set the number of retries in the code to increase stability
+    retry_times = 0
+    while retry_times != 5 :
+        try:
+            # Begin analyze document from url, this sample test is unstable in China cloud.(We are testing sovereign cloud test)
+            # Increasing the number of retries in the code until there is a better solution
+            poller = document_analysis_client.begin_analyze_document_from_url(
+                "prebuilt-layout", url
+            )
+        except HttpResponseError as e:
+            retry_times += 1
+            # Print the known unstable errors
+            print(e.message)
+            continue
+        else:
+            break
+    print("--------Retry times: {}--------".format(retry_times))
     result = poller.result()
 
 
