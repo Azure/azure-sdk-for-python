@@ -1,4 +1,3 @@
-# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,10 +5,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_monitor_client import AzureMonitorClient
-__all__ = ['AzureMonitorClient']
+from azure.core.pipeline.transport import HttpRequest
 
-# `._patch.py` is used for handwritten extensions to the generated code
-# Example: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md
-from ._patch import patch_sdk
-patch_sdk()
+def _convert_request(request, files=None):
+    data = request.content if not files else None
+    request = HttpRequest(method=request.method, url=request.url, headers=request.headers, data=data)
+    if files:
+        request.set_formdata_body(files)
+    return request
