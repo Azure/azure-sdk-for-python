@@ -23,6 +23,9 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 class TestDACAnalyzePrebuilts(FormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -143,11 +146,11 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
             responses.append(extracted_invoice)
 
         with open(self.invoice_tiff, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         poller = client.begin_analyze_document(
             model="prebuilt-invoice",
-            document=myfile,
+            document=my_file,
             cls=callback
         )
 
@@ -226,11 +229,11 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
     def test_fail_passing_content_type(self, **kwargs):
         client = kwargs.pop("client")
         with open(self.receipt_png, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
         with pytest.raises(TypeError):
             poller = client.begin_analyze_document(
                 "prebuilt-receipt",
-                myfile,
+                my_file,
                 content_type=FormContentType.IMAGE_PNG
             )
 
@@ -239,10 +242,10 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
     @recorded_by_proxy
     def test_receipt_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
         with open(self.receipt_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
         with pytest.raises(ServiceRequestError):
             client = DocumentAnalysisClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
-            poller = client.begin_analyze_document("prebuilt-receipt", myfile)
+            poller = client.begin_analyze_document("prebuilt-receipt", my_file)
 
     @FormRecognizerPreparer()
     @recorded_by_proxy
@@ -293,12 +296,12 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
     def test_auto_detect_unsupported_stream_content(self, client):
 
         with open(self.unsupported_content_py, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         with pytest.raises(HttpResponseError):
             poller = client.begin_analyze_document(
                 "prebuilt-receipt",
-                myfile
+                my_file
             )
 
     @pytest.mark.live_test_only
@@ -315,11 +318,11 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
             responses.append(extracted_receipt)
 
         with open(self.receipt_png, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         poller = client.begin_analyze_document(
             "prebuilt-receipt",
-            document=myfile,
+            document=my_file,
             cls=callback
         )
 
@@ -355,11 +358,11 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
             responses.append(extracted_receipt)
 
         with open(self.receipt_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         poller = client.begin_analyze_document(
             "prebuilt-receipt",
-            document=myfile,
+            document=my_file,
             cls=callback
         )
 
@@ -456,11 +459,11 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
             responses.append(extracted_receipt)
 
         with open(self.multipage_receipt_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         poller = client.begin_analyze_document(
             "prebuilt-receipt",
-            document=myfile,
+            document=my_file,
             cls=callback
         )
 

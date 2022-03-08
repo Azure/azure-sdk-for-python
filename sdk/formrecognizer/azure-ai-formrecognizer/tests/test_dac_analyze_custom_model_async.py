@@ -22,6 +22,9 @@ DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPrepa
 
 class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @FormRecognizerPreparer()
     async def test_analyze_document_none_model_id(self, **kwargs):
         formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
@@ -56,7 +59,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
             responses.append(document)
 
         with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         async with client:
             build_polling = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
@@ -65,7 +68,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
             async with da_client:
                 poller = await da_client.begin_analyze_document(
                     model.model_id,
-                    myfile,
+                    my_file,
                     cls=callback
                 )
                 document = await poller.result()
@@ -104,7 +107,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
             responses.append(document)
 
         with open(self.multipage_invoice_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         async with client:
             build_poller = await client.begin_build_model(formrecognizer_multipage_storage_container_sas_url, "template")
@@ -113,7 +116,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
             async with da_client:
                 poller = await da_client.begin_analyze_document(
                     model.model_id,
-                    myfile,
+                    my_file,
                     cls=callback
                 )
                 document = await poller.result()
@@ -143,7 +146,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
         set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
         with open(self.selection_form_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         responses = []
 
@@ -159,7 +162,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
 
             poller = await da_client.begin_analyze_document(
                 model.model_id,
-                myfile,
+                my_file,
                 cls=callback
             )
             document = await poller.result()
@@ -190,14 +193,14 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
         da_client = client.get_document_analysis_client()
 
         with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         async with client:
             build_poller = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
             model = await build_poller.result()
 
             async with da_client:
-                poller = await da_client.begin_analyze_document(model.model_id, myfile, pages="1")
+                poller = await da_client.begin_analyze_document(model.model_id, my_file, pages="1")
                 assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
                 result = await poller.result()
                 assert result
@@ -210,7 +213,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
         da_client = client.get_document_analysis_client()
 
         with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         async with client:
             build_polling = await client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
@@ -219,7 +222,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
             async with da_client:
                 poller = await da_client.begin_analyze_document(
                     model.model_id,
-                    myfile,
+                    my_file,
                 )
                 result = await poller.result()
 
