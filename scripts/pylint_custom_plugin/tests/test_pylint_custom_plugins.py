@@ -2648,3 +2648,34 @@ class TestCheckNoAliasGeneratedCode(pylint.testutils.CheckerTestCase):
 
         with self.assertNoMessages():
             self.checker.visit_module(node)
+
+    def test_from_import_alias(self):
+        import_one = astroid.extract_node(
+            'import Something'
+           
+        )
+        import_two =  astroid.extract_node(
+            'from Something2 import SomethingToo as SomethingTwo'
+           
+        )
+        assign_one = astroid.extract_node(
+        """
+            __all__ =(
+            "Something",
+            "SomethingTwo", 
+            ) 
+          """
+        )
+      
+        module_node = astroid.Module(name = "node", file="__init__.py", doc = """ """)
+        module_node.body = [import_one,import_two,assign_one]
+
+        for name in module_node.body[-1].assigned_stmts():
+            err_node = name.elts[1]
+     
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="aliasing-generated-code", node=err_node ,confidence=None
+                )
+        ):
+            self.checker.visit_module(module_node)
