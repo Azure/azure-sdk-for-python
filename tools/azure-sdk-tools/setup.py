@@ -32,7 +32,7 @@ setup(
     author_email="azpysdkhelp@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python",
     packages=find_packages(),
-    long_description="Specific tools for Azure SDK for Python testing",
+    long_description="",
     install_requires=DEPENDENCIES,
     entry_points={
         "console_scripts": [
@@ -42,7 +42,12 @@ setup(
             "auto_package=packaging_tools.auto_package:generate_main",
             "sdk_generator=packaging_tools.sdk_generator:generate_main",
             "sdk_package=packaging_tools.sdk_package:generate_main",
+            "azci=azci:main"
         ],
     },
-    extras_require={":python_version>='3.5'": ["pytest-asyncio>=0.9.0"]},
+    extras_require={
+        ":python_version>='3.5'": ["pytest-asyncio>=0.9.0"]
+        "build": []
+        "test": []
+    },
 )
