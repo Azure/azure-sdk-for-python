@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 import pytest
 import platform
 
@@ -12,7 +12,7 @@ from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.data.tables.aio import TableServiceClient, TableClient
-from azure.data.tables import __version__ as VERSION
+from azure.data.tables import __version__ as VERSION, TableTransactionError
 
 from _shared.asynctestcase import AsyncTableTestCase
 from _shared.testcase import SLEEP_DELAY
@@ -114,7 +114,7 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             client = TableClient(
                 endpoint=endpoint, credential=tables_primary_cosmos_account_key, table_name=invalid_name)
             async with client:
-                with pytest.raises(HttpResponseError):
+                with pytest.raises(ValueError):
                     await client.create_table()
                 with pytest.raises(HttpResponseError):
                     await client.delete_table()
@@ -126,7 +126,7 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     await client.delete_entity("PK", "RK")
                 with pytest.raises(HttpResponseError):
                     await client.get_table_access_policy()
-                with pytest.raises(HttpResponseError):
+                with pytest.raises(TableTransactionError):
                     batch = []
                     batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
                     await client.submit_transaction(batch)
@@ -139,15 +139,13 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
         # cosmos table names must be a non-empty string without chars '\', '/', '#', '?', and less than 255 chars.
         client = TableClient(endpoint=endpoint, credential=tables_primary_cosmos_account_key, table_name="-"*255)
         async with client:
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(ValueError):
                 await client.create_table()
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(ResourceNotFoundError):
                 await client.create_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(ResourceNotFoundError):
                 await client.upsert_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
-            with pytest.raises(HttpResponseError):
-                await client.get_table_access_policy()
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(TableTransactionError):
                 batch = []
                 batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
                 await client.submit_transaction(batch)

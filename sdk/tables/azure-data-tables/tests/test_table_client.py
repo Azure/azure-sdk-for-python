@@ -3,12 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from multiprocessing.sharedctypes import Value
 import pytest
 import platform
 
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
-from azure.data.tables import TableServiceClient, TableClient
+from azure.data.tables._error import _validate_storage_tablename
+from azure.data.tables import TableServiceClient, TableClient, TableTransactionError
 from azure.data.tables import __version__ as VERSION
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 
@@ -115,17 +117,17 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
         for invalid_name in invalid_table_names:
             client = TableClient(
                 endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_name)
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(ValueError):
                 client.create_table()
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(ValueError):
                 client.create_entity({'PartitionKey': 'foo'})
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(ValueError):
                 client.upsert_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(ValueError):
                 client.delete_entity("PK", "RK")
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(ValueError):
                 client.get_table_access_policy()
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(TableTransactionError):
                 batch = []
                 batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
                 client.submit_transaction(batch)
@@ -634,3 +636,21 @@ class TestTableUnitTests(TableTestCase):
         assert table.credential.named_key.key == azurite_credential.named_key.key
         assert table.credential.named_key.name == azurite_credential.named_key.name
         assert not table._cosmos_endpoint
+    
+    def test_validate_storage_tablename(self):
+        with pytest.raises(ValueError):
+            _validate_storage_tablename("a")
+        with pytest.raises(ValueError):
+            _validate_storage_tablename("aa")
+        _validate_storage_tablename("aaa")
+        _validate_storage_tablename("a"*63)
+        with pytest.raises(ValueError):
+            _validate_storage_tablename("a"*64)
+        with pytest.raises(ValueError):
+            _validate_storage_tablename("aaa-")
+        with pytest.raises(ValueError):
+            _validate_storage_tablename("aaa ")
+        with pytest.raises(ValueError):
+            _validate_storage_tablename("a aa")
+        with pytest.raises(ValueError):
+            _validate_storage_tablename("1aaa")

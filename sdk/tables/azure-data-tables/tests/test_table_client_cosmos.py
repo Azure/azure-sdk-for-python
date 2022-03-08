@@ -9,10 +9,11 @@ import sys
 
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
-from azure.data.tables import TableServiceClient, TableClient
+from azure.data.tables._error import _validate_cosmos_tablename
+from azure.data.tables import TableServiceClient, TableClient, TableTransactionError
 from azure.data.tables import __version__ as  VERSION
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 from _shared.testcase import (
     TableTestCase,
@@ -119,7 +120,7 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
         for invalid_name in invalid_table_names:
             client = TableClient(
                 endpoint=endpoint, credential=tables_primary_cosmos_account_key, table_name=invalid_name)
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(ValueError):
                 client.create_table()
             with pytest.raises(HttpResponseError):
                 client.delete_table()
@@ -129,9 +130,7 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
                 client.upsert_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
             with pytest.raises(HttpResponseError):
                 client.delete_entity("PK", "RK")
-            with pytest.raises(HttpResponseError):
-                client.get_table_access_policy()
-            with pytest.raises(HttpResponseError):
+            with pytest.raises(TableTransactionError):
                 batch = []
                 batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
                 client.submit_transaction(batch)
@@ -143,15 +142,13 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
         
         # cosmos table names must be a non-empty string without chars '\', '/', '#', '?', and less than 255 chars.
         client = TableClient(endpoint=endpoint, credential=tables_primary_cosmos_account_key, table_name="-"*255)
-        with pytest.raises(HttpResponseError):
+        with pytest.raises(ValueError):
             client.create_table()
-        with pytest.raises(HttpResponseError):
+        with pytest.raises(ResourceNotFoundError):
             client.create_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
-        with pytest.raises(HttpResponseError):
+        with pytest.raises(ResourceNotFoundError):
             client.upsert_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
-        with pytest.raises(HttpResponseError):
-            client.get_table_access_policy()
-        with pytest.raises(HttpResponseError):
+        with pytest.raises(TableTransactionError):
             batch = []
             batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
             client.submit_transaction(batch)
@@ -625,3 +622,21 @@ class TestTableClientUnit(TableTestCase):
                 table_name='table')
 
             service.close()
+
+    def test_validate_cosmos_tablename(self):
+        _validate_cosmos_tablename("a")
+        _validate_cosmos_tablename("1")
+        _validate_cosmos_tablename("=-{}!@")
+        _validate_cosmos_tablename("a"*254)
+        with pytest.raises(ValueError):
+            _validate_cosmos_tablename("\\")
+        with pytest.raises(ValueError):
+            _validate_cosmos_tablename("/")
+        with pytest.raises(ValueError):
+            _validate_cosmos_tablename("#")
+        with pytest.raises(ValueError):
+            _validate_cosmos_tablename("?")
+        with pytest.raises(ValueError):
+            _validate_cosmos_tablename("a ")
+        with pytest.raises(ValueError):
+            _validate_cosmos_tablename("a"*255)

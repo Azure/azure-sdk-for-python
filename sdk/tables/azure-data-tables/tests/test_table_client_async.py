@@ -12,6 +12,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.data.tables.aio import TableServiceClient, TableClient
+from azure.data.tables import TableTransactionError
 from azure.data.tables._version import VERSION
 
 from _shared.asynctestcase import AsyncTableTestCase
@@ -116,17 +117,17 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
             client = TableClient(
                 endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_name)
             async with client:
-                with pytest.raises(HttpResponseError):
+                with pytest.raises(ValueError):
                     await client.create_table()
-                with pytest.raises(HttpResponseError):
+                with pytest.raises(ValueError):
                     await client.create_entity({'PartitionKey': 'foo'})
-                with pytest.raises(HttpResponseError):
+                with pytest.raises(ValueError):
                     await client.upsert_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
-                with pytest.raises(HttpResponseError):
+                with pytest.raises(ValueError):
                     await client.delete_entity("PK", "RK")
-                with pytest.raises(HttpResponseError):
+                with pytest.raises(ValueError):
                     await client.get_table_access_policy()
-                with pytest.raises(HttpResponseError):
+                with pytest.raises(TableTransactionError):
                     batch = []
                     batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
                     await client.submit_transaction(batch)

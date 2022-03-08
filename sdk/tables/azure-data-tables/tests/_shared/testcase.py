@@ -436,7 +436,7 @@ class TableTestCase(object):
         return entity, metadata["etag"]
 
     def _set_up(self, account_name, credential, url="table"):
-        self.table_name = self.get_resource_name("uttable")        
+        self.table_name = self.get_resource_name("uttable")
         self.ts = TableServiceClient(
             self.account_url(account_name, url), credential=credential, table_name=self.table_name
         )

@@ -126,7 +126,6 @@ class AsyncTableTestCase(TableTestCase):
         account_url = self.account_url(account_name, url)
         self.ts = TableServiceClient(account_url, credential=credential)
         self.table_name = self.get_resource_name("uttable")
-        self.table_name = "tablecosmos"
         self.table = self.ts.get_table_client(self.table_name)
         if self.is_live:
             try:
