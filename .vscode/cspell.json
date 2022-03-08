@@ -107,7 +107,6 @@
     "eng/common/docgeneration/Generate-DocIndex.ps1",
     "eng/**/*.py",
     ".gitignore"
-    
   ],
   "words": [
     "aad",
@@ -380,10 +379,10 @@
     {
       "filename": "sdk/formrecognizer/azure-ai-formrecognizer/**",
       "words": [
-        "mymodel",
         "allinone",
         "dmac",
-        "ierr"
+        "ierr",
+        "mymodel"
       ]
     }
   ],
