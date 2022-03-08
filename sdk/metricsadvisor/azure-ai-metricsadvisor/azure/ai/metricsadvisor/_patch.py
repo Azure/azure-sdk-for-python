@@ -1280,6 +1280,7 @@ class MetricsAdvisorClient(object):
     @overload
     def list_anomalies(
         self,
+        *,
         alert_configuration_id,  # type: str
         alert_id,  # type: str
         **kwargs  # type: Any
@@ -1309,6 +1310,7 @@ class MetricsAdvisorClient(object):
     @overload
     def list_anomalies(
         self,
+        *,
         detection_configuration_id,  # type: str
         start_time,  # type: Union[str, datetime.datetime]
         end_time,  # type: Union[str, datetime.datetime]

@@ -550,6 +550,12 @@ class OperationMixinHelpers:
         next_request = build_list_detection_configurations_request(metric_id=metric_id)
         return initial_request, next_request, kwargs
 
+    def _list_datasource_credentials_requests(self, **kwargs):
+        skip = kwargs.pop("skip", None)
+        initial_request = build_list_datasource_credentials_request(skip=skip)
+        next_request = build_list_datasource_credentials_request()
+        return initial_request, next_request, kwargs
+
     def _update_alert_configuration_helper(
         self, alert_configuration: Union[str, AnomalyAlertConfiguration], **kwargs
     ) -> Tuple[HttpRequest, Any]:
@@ -1381,6 +1387,16 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
             initial_request=initial_request,
             next_request=next_request,
             deserializer=AnomalyDetectionConfiguration.deserialize,
+            **kwargs
+        )
+
+    @distributed_trace
+    def list_datasource_credentials(self, **kwargs: Any) -> ItemPaged[DatasourceCredential]:
+        initial_request, next_request, kwargs = self._list_datasource_credentials_requests(**kwargs)
+        return self._paging_helper(
+            initial_request=initial_request,
+            next_request=next_request,
+            deserializer=DatasourceCredential.deserialize,
             **kwargs
         )
 

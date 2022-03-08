@@ -1174,7 +1174,7 @@ class MetricsAdvisorClient(object):
 
     @overload
     def list_anomalies(
-        self, alert_configuration_id: str, alert_id: str, **kwargs: Any
+        self, *, alert_configuration_id: str, alert_id: str, **kwargs: Any
     ) -> AsyncItemPaged[DataPointAnomaly]:
         """Query anomalies under a specific alert.
 
@@ -1200,6 +1200,7 @@ class MetricsAdvisorClient(object):
     @overload
     def list_anomalies(
         self,
+        *,
         detection_configuration_id: str,
         start_time: Union[str, datetime.datetime],
         end_time: Union[str, datetime.datetime],
