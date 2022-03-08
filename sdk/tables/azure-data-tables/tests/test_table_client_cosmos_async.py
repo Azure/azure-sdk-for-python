@@ -517,18 +517,6 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert service.account_name ==  self.tables_cosmos_account_name
 
     @pytest.mark.asyncio
-    async def test_create_table_client_with_invalid_name_async(self):
-        # Arrange
-        table_url = "https://{}.table.cosmos.azure.com:443/foo".format("cosmos_account_name")
-        invalid_table_name = "my_table"
-
-        # Assert
-        with pytest.raises(ValueError) as excinfo:
-            service = TableClient(endpoint=table_url, table_name=invalid_table_name, credential="self.tables_primary_cosmos_account_key")
-
-        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(excinfo)
-
-    @pytest.mark.asyncio
     async def test_error_with_malformed_conn_str_async(self):
         # Arrange
 

@@ -109,7 +109,6 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
     def test_table_name_errors(self, tables_storage_account_name, tables_primary_storage_account_key):
-        from azure.core.exceptions import HttpResponseError
         endpoint = self.account_url(tables_storage_account_name, "table")
 
         # storage table names must be alphanumeric, cannot begin with a number, and must be between 3 and 63 chars long.       
@@ -131,6 +130,30 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
                 batch = []
                 batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
                 client.submit_transaction(batch)
+    
+    @tables_decorator
+    @recorded_by_proxy            
+    def test_table_name_errors_underscore(self, tables_storage_account_name, tables_primary_storage_account_key):
+        from azure.core.exceptions import HttpResponseError
+        
+        endpoint = self.account_url(tables_storage_account_name, "table")
+        invalid_table_name = "my_table"
+        client = TableClient(
+            endpoint=endpoint, table_name=invalid_table_name, credential=tables_primary_storage_account_key)
+        with pytest.raises(ValueError):
+            client.create_table()
+        with pytest.raises(HttpResponseError):
+            client.create_entity({'PartitionKey': 'foo'})
+        with pytest.raises(ValueError):
+            client.upsert_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
+        with pytest.raises(ValueError):
+            client.delete_entity("PK", "RK")
+        with pytest.raises(ValueError):
+            client.get_table_access_policy()
+        with pytest.raises(TableTransactionError):
+            batch = []
+            batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
+            client.submit_transaction(batch)
 
 
 class TestTableUnitTests(TableTestCase):
@@ -464,17 +487,6 @@ class TestTableUnitTests(TableTestCase):
         assert service.scheme == 'https'
         assert service.table_name == 'bar'
         assert service.account_name == self.tables_storage_account_name
-
-    def test_create_table_client_with_invalid_name(self):
-        # Arrange
-        table_url = "https://{}.table.core.windows.net:443/foo".format("test")
-        invalid_table_name = "my_table"
-
-        # Assert
-        with pytest.raises(ValueError) as excinfo:
-            service = TableClient(endpoint=table_url, table_name=invalid_table_name, credential="self.tables_primary_storage_account_key")
-
-        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long." in str(excinfo)
 
     def test_error_with_malformed_conn_str(self):
         # Arrange

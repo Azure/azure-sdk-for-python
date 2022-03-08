@@ -108,7 +108,6 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
     @tables_decorator_async
     @recorded_by_proxy_async
     async def test_table_name_errors(self, tables_storage_account_name, tables_primary_storage_account_key):
-        from azure.core.exceptions import HttpResponseError
         endpoint = self.account_url(tables_storage_account_name, "table")
 
         # storage table names must be alphanumeric, cannot begin with a number, and must be between 3 and 63 chars long.       
@@ -131,6 +130,31 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     batch = []
                     batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
                     await client.submit_transaction(batch)
+    
+    @tables_decorator_async
+    @recorded_by_proxy_async
+    async def test_table_name_errors_underscore(self, tables_storage_account_name, tables_primary_storage_account_key):
+        from azure.core.exceptions import HttpResponseError
+        endpoint = self.account_url(tables_storage_account_name, "table")
+
+        invalid_table_name = "my_table"
+        client = TableClient(
+            endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_table_name)
+        async with client:
+            with pytest.raises(ValueError):
+                await client.create_table()
+            with pytest.raises(HttpResponseError):
+                await client.create_entity({'PartitionKey': 'foo'})
+            with pytest.raises(ValueError):
+                await client.upsert_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
+            with pytest.raises(ValueError):
+                await client.delete_entity("PK", "RK")
+            with pytest.raises(ValueError):
+                await client.get_table_access_policy()
+            with pytest.raises(TableTransactionError):
+                batch = []
+                batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
+                await client.submit_transaction(batch)
 
 
 class TestTableClientUnit(AsyncTableTestCase):
@@ -499,18 +523,6 @@ class TestTableClientUnit(AsyncTableTestCase):
         assert service.scheme == 'https'
         assert service.table_name == 'bar'
         assert service.account_name == self.tables_storage_account_name
-
-    @pytest.mark.asyncio
-    async def test_create_table_client_with_invalid_name_async(self):
-        # Arrange
-        table_url = "https://{}.table.core.windows.net:443/foo".format("storage_account_name")
-        invalid_table_name = "my_table"
-
-        # Assert
-        with pytest.raises(ValueError) as excinfo:
-            service = TableClient(endpoint=table_url, table_name=invalid_table_name, credential="self.tables_primary_storage_account_key")
-
-        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long."in str(excinfo)
 
     @pytest.mark.asyncio
     async def test_error_with_malformed_conn_str_async(self):
