@@ -5,7 +5,7 @@ import sys
 
 from .run_configuration import RunConfiguration
 from .variables import ENV_NAME_REPO_ROOT
-
+from .build import build_action
 
 class EntryArgParser(argparse.ArgumentParser):
     def error(self, message):
@@ -65,7 +65,7 @@ def determine_target_packages(glob_str: str) -> list[str]:
     pass
 
 
-def build(args, repo_root_arg=None):
+def build(args, repo_root_arg=None) -> None:
     parser = argparse.ArgumentParser(
         description="""This is the primary entrypoint for the "build" action. This command is used to build any package within the sdk-for-python repository.""",
     )
@@ -115,10 +115,7 @@ def build(args, repo_root_arg=None):
     calculated_args, unmatched_args = parser.parse_known_args(args)
     run_config = RunConfiguration(repo_root_arg, args)
     print(run_config)
-
-    # run 
-
-    pass
+    build_action(run_config, calculated_args)
 
 
 def test(args, repo_root_arg=None):
