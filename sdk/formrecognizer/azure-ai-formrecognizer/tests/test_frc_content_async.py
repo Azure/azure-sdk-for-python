@@ -24,6 +24,9 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 
 class TestContentFromStreamAsync(AsyncFormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @pytest.mark.skip()
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
