@@ -1754,13 +1754,14 @@ class CheckNoAliasGeneratedCode(BaseChecker):
                             if name[1] != None:
                                 aliased.append(name[1])
 
-                    if isinstance(nod, astroid.Assign):
-                        for models in nod.assigned_stmts():
-                            for model_name in models.elts:
-                                if model_name.value in aliased:
-                                    self.add_message(
-                                        msgid="aliasing-generated-code", node=model_name, confidence=None
-                                    )
+                    if isinstance(nod, astroid.Assign): 
+                        if nod.targets[0].as_string() == "__all__":
+                            for models in nod.assigned_stmts():
+                                for model_name in models.elts:
+                                    if model_name.value in aliased:
+                                        self.add_message(
+                                            msgid="aliasing-generated-code", node=model_name, confidence=None
+                                        )
     
         except Exception:
                 logger.debug("Pylint custom checker failed to check if model is aliased.")
