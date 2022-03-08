@@ -19,6 +19,9 @@ DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPrepa
 
 class TestTraining(FormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
