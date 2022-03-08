@@ -106,7 +106,7 @@
     "eng/tox/tox.ini",
     "eng/common/docgeneration/Generate-DocIndex.ps1",
     "eng/**/*.py",
-    ".gitignore",
+    ".gitignore"
     
   ],
   "words": [
@@ -116,7 +116,6 @@
     "adfs",
     "adls",
     "aiohttp",
-    "allinone",
     "amqp",
     "apim",
     "asyncio",
@@ -147,7 +146,6 @@
     "delenv",
     "dependened",
     "deserialization",
-    "dmac",
     "docfx",
     "dotenv",
     "DWORD",
@@ -170,7 +168,6 @@
     "hexlify",
     "himds",
     "hmac",
-    "ierr",
     "illumos",
     "imds",
     "inotify",
@@ -383,7 +380,10 @@
     {
       "filename": "sdk/formrecognizer/azure-ai-formrecognizer/**",
       "words": [
-        "mymodel"
+        "mymodel",
+        "allinone",
+        "dmac",
+        "ierr"
       ]
     }
   ],
