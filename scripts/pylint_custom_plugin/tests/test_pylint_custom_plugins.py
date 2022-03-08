@@ -3,13 +3,14 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import argparse
 import astroid
+import configparser
 import pylint.testutils
 
 from azure.core import PipelineClient
 from azure.core.configuration import Configuration
 from pylint_custom_plugin import pylint_guidelines_checker as checker
-
 
 class TestClientMethodsHaveTracingDecorators(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.ClientMethodsHaveTracingDecorators
@@ -2638,3 +2639,12 @@ class TestCheckNoAliasGeneratedCode(pylint.testutils.CheckerTestCase):
 
         with self.assertNoMessages():
             self.checker.visit_module(module_node)
+    
+    def test_disable_pylint(self):
+
+        file = open("./test_files/__init__.py")
+        node = astroid.parse(file.read())
+        file.close()
+
+        with self.assertNoMessages():
+            self.checker.visit_module(node)
