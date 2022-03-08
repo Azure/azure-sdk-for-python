@@ -194,14 +194,3 @@ def _is_retryable_code(response_code: int) -> bool:
         503,  # Service Unavailable
         504,  # Gateway timeout
     ))
-
-
-def get_trace_export_result(result: ExportResult) -> SpanExportResult:
-    if result == ExportResult.SUCCESS:
-        return SpanExportResult.SUCCESS
-    if result in (
-        ExportResult.FAILED_RETRYABLE,
-        ExportResult.FAILED_NOT_RETRYABLE,
-    ):
-        return SpanExportResult.FAILURE
-    return None
