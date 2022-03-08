@@ -22,7 +22,8 @@ from ._entity import TableEntity
 from ._error import (
     _process_table_error,
     _reraise_error,
-    _decode_error
+    _decode_error,
+    _validate_tablename_error
 )
 from ._generated.models import (
     SignedIdentifier,
@@ -406,7 +407,8 @@ class TableClient(TablesBaseClient):
                     raise ValueError("PartitionKey must be present in an entity")
                 if entity.get("RowKey") is None:
                     raise ValueError("RowKey must be present in an entity")
-            _reraise_error(error)
+            _validate_tablename_error(decoded, self.table_name)
+            _reraise_error(decoded)
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     @distributed_trace

@@ -39,7 +39,12 @@ from ._constants import (
     STORAGE_OAUTH_SCOPE,
     SERVICE_HOST_BASE,
 )
-from ._error import RequestTooLargeError, TableTransactionError, _decode_error
+from ._error import (
+    RequestTooLargeError,
+    TableTransactionError,
+    _decode_error,
+    _validate_tablename_error
+)
 from ._models import LocationMode
 from ._authentication import SharedKeyCredentialPolicy
 from ._policies import (
@@ -290,7 +295,9 @@ class TablesBaseClient(AccountHostsMixin):
                 error_message="The transaction request was too large",
                 error_type=RequestTooLargeError)
         if response.status_code != 202:
-            raise _decode_error(response)
+            decoded = _decode_error(response)
+            _validate_tablename_error(decoded, self.table_name)
+            raise decoded
 
         parts = list(response.parts())
         error_parts = [p for p in parts if not 200 <= p.status_code < 300]
@@ -300,10 +307,12 @@ class TablesBaseClient(AccountHostsMixin):
                     response,
                     error_message="The transaction request was too large",
                     error_type=RequestTooLargeError)
-            raise _decode_error(
+            decoded = _decode_error(
                 response=error_parts[0],
                 error_type=TableTransactionError
             )
+            _validate_tablename_error(decoded, self.table_name)
+            raise decoded
         return [extract_batch_part_metadata(p) for p in parts]
 
     def close(self):

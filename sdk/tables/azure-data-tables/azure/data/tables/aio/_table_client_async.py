@@ -27,7 +27,8 @@ from .._deserialize import deserialize_iso, _return_headers_and_deserialized
 from .._error import (
     _process_table_error,
     _decode_error,
-    _reraise_error
+    _reraise_error,
+    _validate_tablename_error
 )
 from .._models import UpdateMode
 from .._deserialize import _convert_to_entity, _trim_service_metadata
@@ -393,7 +394,8 @@ class TableClient(AsyncTablesBaseClient):
                     raise ValueError("PartitionKey must be present in an entity")
                 if entity.get("RowKey") is None:
                     raise ValueError("RowKey must be present in an entity")
-            _reraise_error(error)
+            _validate_tablename_error(decoded, self.table_name)
+            _reraise_error(decoded)
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
 
