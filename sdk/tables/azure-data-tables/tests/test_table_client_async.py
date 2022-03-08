@@ -141,17 +141,17 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
         client = TableClient(
             endpoint=endpoint, credential=tables_primary_storage_account_key, table_name=invalid_table_name)
         async with client:
-            with pytest.raises(ValueError):
+            with pytest.raises(HttpResponseError):
                 await client.create_table()
             with pytest.raises(HttpResponseError):
                 await client.create_entity({'PartitionKey': 'foo'})
-            with pytest.raises(ValueError):
+            with pytest.raises(HttpResponseError):
                 await client.upsert_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
-            with pytest.raises(ValueError):
+            with pytest.raises(HttpResponseError):
                 await client.delete_entity("PK", "RK")
-            with pytest.raises(ValueError):
+            with pytest.raises(HttpResponseError):
                 await client.get_table_access_policy()
-            with pytest.raises(TableTransactionError):
+            with pytest.raises(TypeError):
                 batch = []
                 batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
                 await client.submit_transaction(batch)

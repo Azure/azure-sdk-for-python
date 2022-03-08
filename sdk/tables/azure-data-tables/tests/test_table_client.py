@@ -140,17 +140,17 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
         invalid_table_name = "my_table"
         client = TableClient(
             endpoint=endpoint, table_name=invalid_table_name, credential=tables_primary_storage_account_key)
-        with pytest.raises(ValueError):
+        with pytest.raises(HttpResponseError):
             client.create_table()
         with pytest.raises(HttpResponseError):
             client.create_entity({'PartitionKey': 'foo'})
-        with pytest.raises(ValueError):
+        with pytest.raises(HttpResponseError):
             client.upsert_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
-        with pytest.raises(ValueError):
+        with pytest.raises(HttpResponseError):
             client.delete_entity("PK", "RK")
-        with pytest.raises(ValueError):
+        with pytest.raises(HttpResponseError):
             client.get_table_access_policy()
-        with pytest.raises(TableTransactionError):
+        with pytest.raises(TypeError):
             batch = []
             batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
             client.submit_transaction(batch)
