@@ -166,7 +166,8 @@ class MgmtSqlTest(AzureMgmtRecordedTestCase):
 #--------------------------------------------------------------------------
         # /ManagedInstanceOperations/get/List the managed instance management operations[get]
 #--------------------------------------------------------------------------
-        result = self.client.managed_instance_operations.list_by_managed_instance(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME)
+        # result = self.client.managed_instance_operations.list_by_managed_instance(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME)
+        result = self.client.managed_instance_operations.list()
 
 #--------------------------------------------------------------------------
         # /ManagedInstanceOperations/get/Gets the managed instance management operation[get]
