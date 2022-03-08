@@ -141,6 +141,7 @@ class TestNetAppBackup(AzureMgmtRecordedTestCase):
 
         clean_up(self.client, disable_bp=False, live=self.is_live)
 
+    @pytest.mark.live_test_only
     @recorded_by_proxy
     def test_get_backup_by_name(self):
         create_backup(self.client, live=self.is_live)
