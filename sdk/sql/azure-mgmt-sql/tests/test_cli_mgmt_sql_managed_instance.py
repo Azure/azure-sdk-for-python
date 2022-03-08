@@ -10,7 +10,7 @@
 #   ManagedInstances: 6/8
 #   ManagedInstanceOperations: 1/3
 
-import unittest
+import pytest
 
 import azure.mgmt.sql
 from azure.core.exceptions import HttpResponseError
@@ -18,7 +18,7 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 
 AZURE_LOCATION = 'eastus'
 
-class MgmtSqlTest(AzureMgmtRecordedTestCase):
+class TestMgmtSql(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
         self.client = self.create_mgmt_client(
@@ -167,7 +167,7 @@ class MgmtSqlTest(AzureMgmtRecordedTestCase):
         # /ManagedInstanceOperations/get/List the managed instance management operations[get]
 #--------------------------------------------------------------------------
         # result = self.client.managed_instance_operations.list_by_managed_instance(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME)
-        result = self.client.managed_instance_operations.list()
+        result = self.client.managed_instances.list()
         page_result = [item for item in result]
 
 #--------------------------------------------------------------------------
@@ -180,7 +180,7 @@ class MgmtSqlTest(AzureMgmtRecordedTestCase):
 #--------------------------------------------------------------------------
         # result = self.mgmt_client.managed_instance_operations.cancel(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME, operation_id=OPERATION_ID)
 
-    @unittest.skip("it will take a long time.")
+    @pytest.mark.skip("it will take a long time.")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_managed_instances(self, resource_group):
 
