@@ -50,7 +50,7 @@ _STORAGE_VALID_TABLE = re.compile(r"^[a-zA-Z]{1}[a-zA-Z0-9]{2,62}$")
 # [^/\#?]{0,254} Match any character that is not /\#? for between 0-254 characters.
 # [^ /\#?]{1} Match any character that is not /\#? or a space for exactly 1 character.
 # $ End of string
-_COSMOS_VALID_TABLE = re.compile(r"^[^/\#?]{0,254}[^ /\#?]{1}$")
+_COSMOS_VALID_TABLE = re.compile(r"^[^/\\#?]{0,254}[^ /\\#?]{1}$")
 
 def _validate_not_none(param_name, param):
     if param is None:
@@ -99,14 +99,6 @@ def _decode_error(response, error_message=None, error_type=None, **kwargs):  # p
                     error_message = error_body["odata.error"][info]["value"]
                 else:
                     additional_data[info.tag] = info.text
-
-            # Special case: there was a playback error during test execution (test proxy only)
-            message = error_body.get("Message")
-            if message and message.startswith("Unable to find a record for the request"):
-                error = ResourceNotFoundError(message=error_message, response=response)
-                error.error_code = 404
-                error.additional_info = additional_data
-                return error
         else:
             if error_body:
                 for info in error_body.iter():
@@ -178,14 +170,18 @@ def _reraise_error(decoded_error):
 def _process_table_error(storage_error, table_name=None):
     decoded_error = _decode_error(storage_error.response, storage_error.message)
     if table_name:
-        if decoded_error.error_code == 'InvalidResourceName' and 'The specifed resource name contains invalid characters' in decoded_error.message:
+        if (decoded_error.error_code == 'InvalidResourceName' and
+            'The specifed resource name contains invalid characters' in decoded_error.message):
             _validate_storage_tablename(table_name)
-        elif decoded_error.error_code == 'OutOfRangeInput' and 'The specified resource name length is not within the permissible limits' in decoded_error.message:
+        elif (decoded_error.error_code == 'OutOfRangeInput' and
+              'The specified resource name length is not within the permissible limits' in decoded_error.message):
             _validate_storage_tablename(table_name)
-        elif decoded_error.error_code == 'InternalServerError' and ('The resource name presented contains invalid character' in decoded_error.message
-                or 'The resource name can\'t end with space'in decoded_error.message):
+        elif (decoded_error.error_code == 'InternalServerError' and
+              ('The resource name presented contains invalid character' in decoded_error.message or
+               'The resource name can\'t end with space'in decoded_error.message)):
             _validate_cosmos_tablename(table_name)
-        elif decoded_error.error_code =='BadRequest' and 'The input name is invalid. Ensure to provide a unique non-empty string less than' in decoded_error.message:
+        elif (decoded_error.error_code == 'BadRequest' and
+              'The input name is invalid. Ensure to provide a unique non-empty string less than' in decoded_error.message):  # pylint: disable=line-too-long
             _validate_cosmos_tablename(table_name)
     _reraise_error(decoded_error)
 
