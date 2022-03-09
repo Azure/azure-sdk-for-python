@@ -253,18 +253,22 @@ class ServiceBusReceiver(
     next = __next__  # for python2.7
 
     def _iter_next(self):
-        self._open()
-        if not self._message_iter:
-            self._message_iter = self._handler.receive_messages_iter()
-        uamqp_message = next(self._message_iter)
-        message = self._build_message(uamqp_message)
-        if (
-            self._auto_lock_renewer
-            and not self._session
-            and self._receive_mode != ServiceBusReceiveMode.RECEIVE_AND_DELETE
-        ):
-            self._auto_lock_renewer.register(self, message)
-        return message
+        try:
+            self._receive_context.set()
+            self._open()
+            if not self._message_iter:
+                self._message_iter = self._handler.receive_messages_iter()
+            uamqp_message = next(self._message_iter)
+            message = self._build_message(uamqp_message)
+            if (
+                self._auto_lock_renewer
+                and not self._session
+                and self._receive_mode != ServiceBusReceiveMode.RECEIVE_AND_DELETE
+            ):
+                self._auto_lock_renewer.register(self, message)
+            return message
+        finally:
+            self._receive_context.clear()
 
     @classmethod
     def _from_connection_string(cls, conn_str, **kwargs):
@@ -569,7 +573,6 @@ class ServiceBusReceiver(
             try:
                 self._handler._connection.work()  # pylint: disable=protected-access
                 time.sleep(5)
-                print('I am keeping alive')
                 _LOGGER.debug("Keep receiving alive")
             except Exception as e:
                 _LOGGER.info("Keep receiving failed %r", e)
