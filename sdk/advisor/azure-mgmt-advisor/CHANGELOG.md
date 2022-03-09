@@ -15,6 +15,21 @@
   - Model ResourceRecommendationBase has a new parameter potential_benefits
   - Model ResourceRecommendationBase has a new parameter remediation
 
+## 9.1.0 (2022-03-09)
+
+**Features**
+
+  - Model ResourceMetadata has a new parameter action
+  - Model ResourceMetadata has a new parameter plural
+  - Model ResourceMetadata has a new parameter singular
+  - Model ResourceRecommendationBase has a new parameter actions
+  - Model ResourceRecommendationBase has a new parameter description
+  - Model ResourceRecommendationBase has a new parameter exposed_metadata_properties
+  - Model ResourceRecommendationBase has a new parameter label
+  - Model ResourceRecommendationBase has a new parameter learn_more_link
+  - Model ResourceRecommendationBase has a new parameter potential_benefits
+  - Model ResourceRecommendationBase has a new parameter remediation
+
 ## 9.0.0 (2020-12-22)
 
 **Features**
