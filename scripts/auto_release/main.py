@@ -85,10 +85,8 @@ def all_files(path: str, files: List[str]):
 
 
 def checkout_azure_default_branch():
-    # usr = 'Azure'
-    usr = 'azclibot'
-    # branch = 'main'
-    branch = 't2-advisor-2022-03-09-54263'
+    usr = 'Azure'
+    branch = 'main'
     print_exec(f'git remote add {usr} https://github.com/{usr}/azure-sdk-for-python.git')
     print_check(f'git fetch {usr} {branch}')
     print_check(f'git checkout {usr}/{branch}')
@@ -416,7 +414,6 @@ class CodegenTestPR:
     def check_file(self):
         self.check_pprint_name()
         self.check_sdk_readme_and_setup()
-        # self.check_sdk_setup()
         self.check_version()
         self.check_changelog_file()
         self.check_ci_file()
@@ -562,7 +559,7 @@ class CodegenTestPR:
         # commit all code
         print_exec('git add sdk/')
         print_exec('git commit -m \"code and test\"')
-        print_exec('git push origin HEAD -f')
+        print_check('git push origin HEAD -f')
 
         # create PR
         self.create_pr_proc()
