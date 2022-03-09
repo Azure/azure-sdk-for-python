@@ -2583,7 +2583,7 @@ class TestCheckEnum(pylint.testutils.CheckerTestCase):
 
         with self.assertAddsMessages(
                         pylint.testutils.Message(
-                            msg_id="enum-must-be-uppercase", node=function_node
+                            msg_id="enum-must-be-uppercase", node=function_node.body[0].targets[0]
                         )
                 ):
                     self.checker.visit_classdef(function_node)
