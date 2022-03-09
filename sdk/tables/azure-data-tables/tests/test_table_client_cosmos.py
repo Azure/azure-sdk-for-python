@@ -110,6 +110,7 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
         for table in tables:
             count += 1
             
+    @pytest.mark.live_test_only
     @cosmos_decorator
     @recorded_by_proxy
     def test_table_name_errors_bad_chars(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -146,6 +147,7 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
                 client.submit_transaction(batch)
             assert "Table names names must contain from 1-255 characters" in str(error.value)
             
+    @pytest.mark.live_test_only
     @cosmos_decorator
     @recorded_by_proxy
     def test_table_name_errors_bad_length(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):

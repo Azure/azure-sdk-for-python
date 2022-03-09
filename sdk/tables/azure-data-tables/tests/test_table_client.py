@@ -106,6 +106,7 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
         for table in tables:
             count += 1
 
+    @pytest.mark.live_test_only
     @tables_decorator
     @recorded_by_proxy
     def test_table_name_errors(self, tables_storage_account_name, tables_primary_storage_account_key):

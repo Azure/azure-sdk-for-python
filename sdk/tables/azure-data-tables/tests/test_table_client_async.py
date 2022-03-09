@@ -105,6 +105,7 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
         async for table in tables:
             count += 1
     
+    @pytest.mark.live_test_only
     @tables_decorator_async
     @recorded_by_proxy_async
     async def test_table_name_errors(self, tables_storage_account_name, tables_primary_storage_account_key):

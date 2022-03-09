@@ -103,6 +103,7 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
         async for table in tables:
             count += 1
             
+    @pytest.mark.live_test_only
     @cosmos_decorator_async
     @recorded_by_proxy_async
     async def test_table_name_errors_bad_chars(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -140,6 +141,7 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                     await client.submit_transaction(batch)
                 assert "Table names names must contain from 1-255 characters" in str(error.value)
         
+    @pytest.mark.live_test_only
     @cosmos_decorator_async
     @recorded_by_proxy_async
     async def test_table_name_errors_bad_length(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
