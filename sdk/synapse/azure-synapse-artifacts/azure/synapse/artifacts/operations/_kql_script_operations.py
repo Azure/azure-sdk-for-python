@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -20,22 +20,20 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_create_or_update_request_initial(
-    kql_script_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    kql_script_name: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-11-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
@@ -63,15 +61,16 @@ def build_create_or_update_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_get_by_name_request(
-    kql_script_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    kql_script_name: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-11-01-preview")  # type: str
 
     accept = "application/json"
@@ -101,10 +100,9 @@ def build_get_by_name_request(
 
 
 def build_delete_by_name_request_initial(
-    kql_script_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    kql_script_name: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-11-01-preview")  # type: str
 
     accept = "application/json"
@@ -134,10 +132,12 @@ def build_delete_by_name_request_initial(
 
 
 def build_rename_request_initial(
-    kql_script_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    kql_script_name: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2021-11-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
@@ -165,10 +165,11 @@ def build_rename_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
-# fmt: on
 class KqlScriptOperations(object):
     """KqlScriptOperations operations.
 
@@ -193,11 +194,10 @@ class KqlScriptOperations(object):
 
     def _create_or_update_initial(
         self,
-        kql_script_name,  # type: str
-        kql_script,  # type: "_models.KqlScriptResource"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional["_models.KqlScriptResource"]
+        kql_script_name: str,
+        kql_script: "_models.KqlScriptResource",
+        **kwargs: Any
+    ) -> Optional["_models.KqlScriptResource"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.KqlScriptResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -244,11 +244,10 @@ class KqlScriptOperations(object):
     @distributed_trace
     def begin_create_or_update(
         self,
-        kql_script_name,  # type: str
-        kql_script,  # type: "_models.KqlScriptResource"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.KqlScriptResource"]
+        kql_script_name: str,
+        kql_script: "_models.KqlScriptResource",
+        **kwargs: Any
+    ) -> LROPoller["_models.KqlScriptResource"]:
         """Creates or updates a KQL Script.
 
         :param kql_script_name: KQL script name.
@@ -321,10 +320,9 @@ class KqlScriptOperations(object):
     @distributed_trace
     def get_by_name(
         self,
-        kql_script_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.KqlScriptResource"
+        kql_script_name: str,
+        **kwargs: Any
+    ) -> "_models.KqlScriptResource":
         """Get KQL script by name.
 
         :param kql_script_name: KQL script name.
@@ -377,10 +375,9 @@ class KqlScriptOperations(object):
 
     def _delete_by_name_initial(
         self,
-        kql_script_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        kql_script_name: str,
+        **kwargs: Any
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -417,10 +414,9 @@ class KqlScriptOperations(object):
     @distributed_trace
     def begin_delete_by_name(
         self,
-        kql_script_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        kql_script_name: str,
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Delete KQL script by name.
 
         :param kql_script_name: KQL script name.
@@ -483,11 +479,10 @@ class KqlScriptOperations(object):
 
     def _rename_initial(
         self,
-        kql_script_name,  # type: str
-        new_name=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        kql_script_name: str,
+        new_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -529,11 +524,10 @@ class KqlScriptOperations(object):
     @distributed_trace
     def begin_rename(
         self,
-        kql_script_name,  # type: str
-        new_name=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        kql_script_name: str,
+        new_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Rename KQL script.
 
         :param kql_script_name: KQL script name.

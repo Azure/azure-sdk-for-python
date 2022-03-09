@@ -22,26 +22,24 @@ T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 class ServiceOperations:
-    """ServiceOperations async operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.storage.filedatalake.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.storage.filedatalake.aio.AzureDataLakeStorageRESTAPI`'s
+        :attr:`service` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs) -> None:
+        args = list(args)
+        self._client = args.pop(0) if args else kwargs.pop("client")
+        self._config = args.pop(0) if args else kwargs.pop("config")
+        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
+        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
+
 
     @distributed_trace
     def list_file_systems(
@@ -57,26 +55,29 @@ class ServiceOperations:
 
         List filesystems and their properties in given account.
 
-        :param prefix: Filters results to filesystems within the specified prefix.
+        :param prefix: Filters results to filesystems within the specified prefix. Default value is
+         None.
         :type prefix: str
         :param continuation: Optional.  When deleting a directory, the number of paths that are deleted
          with each invocation is limited.  If the number of paths to be deleted exceeds this limit, a
          continuation token is returned in this response header.  When a continuation token is returned
          in the response, it must be specified in a subsequent invocation of the delete operation to
-         continue deleting the directory.
+         continue deleting the directory. Default value is None.
         :type continuation: str
         :param max_results: An optional value that specifies the maximum number of items to return. If
-         omitted or greater than 5,000, the response will include up to 5,000 items.
+         omitted or greater than 5,000, the response will include up to 5,000 items. Default value is
+         None.
         :type max_results: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :keyword resource: The value must be "account" for all account operations. The default value is
+        :keyword resource: The value must be "account" for all account operations. Default value is
          "account". Note that overriding this default value may result in unsupported behavior.
         :paramtype resource: str
         :keyword callable cls: A custom type or function that will be passed the direct response

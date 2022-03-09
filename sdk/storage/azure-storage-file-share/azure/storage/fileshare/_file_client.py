@@ -837,7 +837,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         :keyword ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties of new file.
             Rename operation currently only supports content type.
-        :keyword dict(str,str) metadata:
+        :keyword Dict[str,str] metadata:
             A name-value pair to associate with a file storage object.
         :keyword source_lease:
             Required if the source file has an active lease. Value can be a ShareLeaseClient object

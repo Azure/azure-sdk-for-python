@@ -1533,26 +1533,24 @@ def build_set_tags_request(
 
 # fmt: on
 class BlobOperations(object):  # pylint: disable=too-many-public-methods
-    """BlobOperations operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.storage.blob.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.storage.blob.AzureBlobStorage`'s
+        :attr:`blob` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs):
+        args = list(args)
+        self._client = args.pop(0) if args else kwargs.pop("client")
+        self._config = args.pop(0) if args else kwargs.pop("config")
+        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
+        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
+
 
     @distributed_trace
     def download(
@@ -1577,34 +1575,36 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
          see :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
-         a Snapshot of a Blob.</a>`.
+         a Snapshot of a Blob.</a>`. Default value is None.
         :type snapshot: str
         :param version_id: The version id parameter is an opaque DateTime value that, when present,
          specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
+         Default value is None.
         :type version_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :param range: Return only the bytes of the blob in the specified range.
+        :param range: Return only the bytes of the blob in the specified range. Default value is None.
         :type range: str
         :param range_get_content_md5: When set to true and specified together with the Range, the
          service returns the MD5 hash for the range, as long as the range is less than or equal to 4 MB
-         in size.
+         in size. Default value is None.
         :type range_get_content_md5: bool
         :param range_get_content_crc64: When set to true and specified together with the Range, the
          service returns the CRC64 hash for the range, as long as the range is less than or equal to 4
-         MB in size.
+         MB in size. Default value is None.
         :type range_get_content_crc64: bool
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
-        :param cpk_info: Parameter group.
+        :param cpk_info: Parameter group. Default value is None.
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IO, or the result of cls(response)
@@ -1797,24 +1797,26 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
          see :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
-         a Snapshot of a Blob.</a>`.
+         a Snapshot of a Blob.</a>`. Default value is None.
         :type snapshot: str
         :param version_id: The version id parameter is an opaque DateTime value that, when present,
          specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
+         Default value is None.
         :type version_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
-        :param cpk_info: Parameter group.
+        :param cpk_info: Parameter group. Default value is None.
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -1971,29 +1973,32 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
          see :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
-         a Snapshot of a Blob.</a>`.
+         a Snapshot of a Blob.</a>`. Default value is None.
         :type snapshot: str
         :param version_id: The version id parameter is an opaque DateTime value that, when present,
          specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
+         Default value is None.
         :type version_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param delete_snapshots: Required if the blob has associated snapshots. Specify one of the
          following two options: include: Delete the base blob and all of its snapshots. only: Delete
-         only the blob's snapshots and not the blob itself.
+         only the blob's snapshots and not the blob itself. Default value is None.
         :type delete_snapshots: str or ~azure.storage.blob.models.DeleteSnapshotsOptionType
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :param blob_delete_type: Optional.  Only possible value is 'permanent', which specifies to
-         permanently delete a blob if blob soft delete is enabled. The default value is "Permanent".
+         permanently delete a blob if blob soft delete is enabled. Possible values are "Permanent" or
+         None. Default value is "Permanent".
         :type blob_delete_type: str
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -2079,13 +2084,14 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. The default value is "undelete". Note that overriding this default value
-         may result in unsupported behavior.
+        :keyword comp: comp. Default value is "undelete". Note that overriding this default value may
+         result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -2154,14 +2160,15 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param expires_on: The time to set the blob to expiry.
+        :param expires_on: The time to set the blob to expiry. Default value is None.
         :type expires_on: str
-        :keyword comp: comp. The default value is "expiry". Note that overriding this default value may
+        :keyword comp: comp. Default value is "expiry". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -2234,19 +2241,20 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param blob_http_headers: Parameter group.
+        :param blob_http_headers: Parameter group. Default value is None.
         :type blob_http_headers: ~azure.storage.blob.models.BlobHTTPHeaders
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. The default value is "properties". Note that overriding this default value
-         may result in unsupported behavior.
+        :keyword comp: comp. Default value is "properties". Note that overriding this default value may
+         result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -2357,20 +2365,22 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :param immutability_policy_expiry: Specifies the date time when the blobs immutability policy
-         is set to expire.
+         is set to expire. Default value is None.
         :type immutability_policy_expiry: ~datetime.datetime
         :param immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
+         Default value is None.
         :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. The default value is "immutabilityPolicies". Note that overriding this
-         default value may result in unsupported behavior.
+        :keyword comp: comp. Default value is "immutabilityPolicies". Note that overriding this default
+         value may result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -2443,13 +2453,14 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. The default value is "immutabilityPolicies". Note that overriding this
-         default value may result in unsupported behavior.
+        :keyword comp: comp. Default value is "immutabilityPolicies". Note that overriding this default
+         value may result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -2517,13 +2528,14 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. The default value is "legalhold". Note that overriding this default value
-         may result in unsupported behavior.
+        :keyword comp: comp. Default value is "legalhold". Note that overriding this default value may
+         result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -2596,7 +2608,7 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param metadata: Optional. Specifies a user-defined name-value pair associated with the blob.
          If no name-value pairs are specified, the operation will copy the metadata from the source blob
@@ -2604,21 +2616,22 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
          blob is created with the specified metadata, and metadata is not copied from the source blob or
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
-         information.
+         information. Default value is None.
         :type metadata: dict[str, str]
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
-        :param cpk_info: Parameter group.
+        :param cpk_info: Parameter group. Default value is None.
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
-        :param cpk_scope_info: Parameter group.
+        :param cpk_scope_info: Parameter group. Default value is None.
         :type cpk_scope_info: ~azure.storage.blob.models.CpkScopeInfo
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. The default value is "metadata". Note that overriding this default value
-         may result in unsupported behavior.
+        :keyword comp: comp. Default value is "metadata". Note that overriding this default value may
+         result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -2728,25 +2741,26 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param duration: Specifies the duration of the lease, in seconds, or negative one (-1) for a
          lease that never expires. A non-infinite lease can be between 15 and 60 seconds. A lease
-         duration cannot be changed using renew or change.
+         duration cannot be changed using renew or change. Default value is None.
         :type duration: int
         :param proposed_lease_id: Proposed lease ID, in a GUID string format. The Blob service returns
          400 (Invalid request) if the proposed lease ID is not in the correct format. See Guid
-         Constructor (String) for a list of valid GUID string formats.
+         Constructor (String) for a list of valid GUID string formats. Default value is None.
         :type proposed_lease_id: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. The default value is "lease". Note that overriding this default value may
+        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
-        :keyword action: Describes what lease action to take. The default value is "acquire". Note that
+        :keyword action: Describes what lease action to take. Default value is "acquire". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -2840,17 +2854,18 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. The default value is "lease". Note that overriding this default value may
+        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
-        :keyword action: Describes what lease action to take. The default value is "release". Note that
+        :keyword action: Describes what lease action to take. Default value is "release". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -2942,17 +2957,18 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. The default value is "lease". Note that overriding this default value may
+        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
-        :keyword action: Describes what lease action to take. The default value is "renew". Note that
+        :keyword action: Describes what lease action to take. Default value is "renew". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -3050,17 +3066,18 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. The default value is "lease". Note that overriding this default value may
+        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
-        :keyword action: Describes what lease action to take. The default value is "change". Note that
+        :keyword action: Describes what lease action to take. Default value is "change". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -3152,7 +3169,7 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param break_period: For a break operation, proposed duration the lease should continue before
          it is broken, in seconds, between 0 and 60. This break period is only used if it is shorter
@@ -3160,17 +3177,18 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
          lease will not be available before the break period has expired, but the lease may be held for
          longer than the break period. If this header does not appear with a break operation, a
          fixed-duration lease breaks after the remaining lease period elapses, and an infinite lease
-         breaks immediately.
+         breaks immediately. Default value is None.
         :type break_period: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. The default value is "lease". Note that overriding this default value may
+        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
-        :keyword action: Describes what lease action to take. The default value is "break". Note that
+        :keyword action: Describes what lease action to take. Default value is "break". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -3263,7 +3281,7 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param metadata: Optional. Specifies a user-defined name-value pair associated with the blob.
          If no name-value pairs are specified, the operation will copy the metadata from the source blob
@@ -3271,21 +3289,22 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
          blob is created with the specified metadata, and metadata is not copied from the source blob or
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
-         information.
+         information. Default value is None.
         :type metadata: dict[str, str]
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param cpk_info: Parameter group.
+        :param cpk_info: Parameter group. Default value is None.
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
-        :param cpk_scope_info: Parameter group.
+        :param cpk_scope_info: Parameter group. Default value is None.
         :type cpk_scope_info: ~azure.storage.blob.models.CpkScopeInfo
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
-        :keyword comp: comp. The default value is "snapshot". Note that overriding this default value
-         may result in unsupported behavior.
+        :keyword comp: comp. Default value is "snapshot". Note that overriding this default value may
+         result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -3407,7 +3426,7 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param metadata: Optional. Specifies a user-defined name-value pair associated with the blob.
          If no name-value pairs are specified, the operation will copy the metadata from the source blob
@@ -3415,34 +3434,37 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
          blob is created with the specified metadata, and metadata is not copied from the source blob or
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
-         information.
+         information. Default value is None.
         :type metadata: dict[str, str]
-        :param tier: Optional. Indicates the tier to be set on the blob.
+        :param tier: Optional. Indicates the tier to be set on the blob. Default value is None.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param rehydrate_priority: Optional: Indicates the priority with which to rehydrate an archived
-         blob.
+         blob. Default value is None.
         :type rehydrate_priority: str or ~azure.storage.blob.models.RehydratePriority
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param blob_tags_string: Optional.  Used to set blob tags in various blob operations.
+        :param blob_tags_string: Optional.  Used to set blob tags in various blob operations. Default
+         value is None.
         :type blob_tags_string: str
         :param seal_blob: Overrides the sealed state of the destination blob.  Service version
-         2019-12-12 and newer.
+         2019-12-12 and newer. Default value is None.
         :type seal_blob: bool
         :param immutability_policy_expiry: Specifies the date time when the blobs immutability policy
-         is set to expire.
+         is set to expire. Default value is None.
         :type immutability_policy_expiry: ~datetime.datetime
         :param immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
+         Default value is None.
         :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
-        :param legal_hold: Specified if a legal hold should be set on the blob.
+        :param legal_hold: Specified if a legal hold should be set on the blob. Default value is None.
         :type legal_hold: bool
-        :param source_modified_access_conditions: Parameter group.
+        :param source_modified_access_conditions: Parameter group. Default value is None.
         :type source_modified_access_conditions:
          ~azure.storage.blob.models.SourceModifiedAccessConditions
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -3573,7 +3595,7 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param metadata: Optional. Specifies a user-defined name-value pair associated with the blob.
          If no name-value pairs are specified, the operation will copy the metadata from the source blob
@@ -3581,39 +3603,42 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
          blob is created with the specified metadata, and metadata is not copied from the source blob or
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
-         information.
+         information. Default value is None.
         :type metadata: dict[str, str]
-        :param tier: Optional. Indicates the tier to be set on the blob.
+        :param tier: Optional. Indicates the tier to be set on the blob. Default value is None.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :param source_content_md5: Specify the md5 calculated for the range of bytes that must be read
-         from the copy source.
+         from the copy source. Default value is None.
         :type source_content_md5: bytearray
-        :param blob_tags_string: Optional.  Used to set blob tags in various blob operations.
+        :param blob_tags_string: Optional.  Used to set blob tags in various blob operations. Default
+         value is None.
         :type blob_tags_string: str
         :param immutability_policy_expiry: Specifies the date time when the blobs immutability policy
-         is set to expire.
+         is set to expire. Default value is None.
         :type immutability_policy_expiry: ~datetime.datetime
         :param immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
+         Default value is None.
         :type immutability_policy_mode: str or ~azure.storage.blob.models.BlobImmutabilityPolicyMode
-        :param legal_hold: Specified if a legal hold should be set on the blob.
+        :param legal_hold: Specified if a legal hold should be set on the blob. Default value is None.
         :type legal_hold: bool
         :param copy_source_authorization: Only Bearer type is supported. Credentials should be a valid
-         OAuth access token to copy source.
+         OAuth access token to copy source. Default value is None.
         :type copy_source_authorization: str
-        :param source_modified_access_conditions: Parameter group.
+        :param source_modified_access_conditions: Parameter group. Default value is None.
         :type source_modified_access_conditions:
          ~azure.storage.blob.models.SourceModifiedAccessConditions
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
-        :param cpk_scope_info: Parameter group.
+        :param cpk_scope_info: Parameter group. Default value is None.
         :type cpk_scope_info: ~azure.storage.blob.models.CpkScopeInfo
         :keyword x_ms_requires_sync: This header indicates that this is a synchronous Copy Blob From
-         URL instead of a Asynchronous Copy Blob. The default value is "true". Note that overriding this
+         URL instead of a Asynchronous Copy Blob. Default value is "true". Note that overriding this
          default value may result in unsupported behavior.
         :paramtype x_ms_requires_sync: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -3739,17 +3764,18 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
-        :keyword comp: comp. The default value is "copy". Note that overriding this default value may
+        :keyword comp: comp. Default value is "copy". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
-        :keyword copy_action_abort_constant: Copy action. The default value is "abort". Note that
+        :keyword copy_action_abort_constant: Copy action. Default value is "abort". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype copy_action_abort_constant: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -3835,27 +3861,29 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
          see :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
-         a Snapshot of a Blob.</a>`.
+         a Snapshot of a Blob.</a>`. Default value is None.
         :type snapshot: str
         :param version_id: The version id parameter is an opaque DateTime value that, when present,
          specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
+         Default value is None.
         :type version_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param rehydrate_priority: Optional: Indicates the priority with which to rehydrate an archived
-         blob.
+         blob. Default value is None.
         :type rehydrate_priority: str or ~azure.storage.blob.models.RehydratePriority
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. The default value is "tier". Note that overriding this default value may
+        :keyword comp: comp. Default value is "tier". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -3934,11 +3962,11 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         # type: (...) -> None
         """Returns the sku name and account kind.
 
-        :keyword restype: restype. The default value is "account". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. The default value is "properties". Note that overriding this default value
+        :keyword restype: restype. Default value is "account". Note that overriding this default value
          may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. Default value is "properties". Note that overriding this default value may
+         result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -4012,25 +4040,26 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
          see :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
-         a Snapshot of a Blob.</a>`.
+         a Snapshot of a Blob.</a>`. Default value is None.
         :type snapshot: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param query_request: the query request.
+        :param query_request: the query request. Default value is None.
         :type query_request: ~azure.storage.blob.models.QueryRequest
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
-        :param cpk_info: Parameter group.
+        :param cpk_info: Parameter group. Default value is None.
         :type cpk_info: ~azure.storage.blob.models.CpkInfo
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. The default value is "query". Note that overriding this default value may
+        :keyword comp: comp. Default value is "query". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -4207,25 +4236,27 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
          see :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
-         a Snapshot of a Blob.</a>`.
+         a Snapshot of a Blob.</a>`. Default value is None.
         :type snapshot: str
         :param version_id: The version id parameter is an opaque DateTime value that, when present,
          specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
+         Default value is None.
         :type version_id: str
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
-        :keyword comp: comp. The default value is "tags". Note that overriding this default value may
+        :keyword comp: comp. Default value is "tags". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -4310,27 +4341,29 @@ class BlobOperations(object):  # pylint: disable=too-many-public-methods
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param version_id: The version id parameter is an opaque DateTime value that, when present,
          specifies the version of the blob to operate on. It's for service version 2019-10-10 and newer.
+         Default value is None.
         :type version_id: str
         :param transactional_content_md5: Specify the transactional md5 for the body, to be validated
-         by the service.
+         by the service. Default value is None.
         :type transactional_content_md5: bytearray
         :param transactional_content_crc64: Specify the transactional crc64 for the body, to be
-         validated by the service.
+         validated by the service. Default value is None.
         :type transactional_content_crc64: bytearray
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param tags: Blob tags.
+        :param tags: Blob tags. Default value is None.
         :type tags: ~azure.storage.blob.models.BlobTags
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
-        :keyword comp: comp. The default value is "tags". Note that overriding this default value may
+        :keyword comp: comp. Default value is "tags". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response

@@ -564,9 +564,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         self,
         offset=None,  # type: Optional[int]
         length=None,  # type: Optional[int]
-        **kwargs
+        **kwargs  # type: Any
     ):
-        # type: (Optional[int], Optional[int], Any) -> StorageStreamDownloader
+        # type: (...) -> StorageStreamDownloader
         """Downloads a file to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the file into
         a stream. Using chunks() returns an async iterator which allows the user to iterate over the content in chunks.
@@ -713,7 +713,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         :keyword ~azure.storage.fileshare.ContentSettings content_settings:
             ContentSettings object used to set file properties of new file.
             Rename operation currently only supports content type.
-        :keyword dict(str,str) metadata:
+        :keyword Dict[str,str] metadata:
             A name-value pair to associate with a file storage object.
         :keyword source_lease:
             Required if the source file has an active lease. Value can be a ShareLeaseClient object

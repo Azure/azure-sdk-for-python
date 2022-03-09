@@ -11,6 +11,13 @@ from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ArchitectureTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Specifies the Architecture Type
+    """
+
+    X64 = "x64"
+    ARM64 = "Arm64"
+
 class AvailabilitySetSkuTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Specifies the sku of an Availability Set. Use 'Aligned' for virtual machines with managed disks
     and 'Classic' for virtual machines with unmanaged disks. Default value is 'Classic'.

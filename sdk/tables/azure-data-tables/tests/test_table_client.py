@@ -392,12 +392,14 @@ class TestTableUnitTests(TableTestCase):
             assert service.credential.named_key.name == self.tables_storage_account_name
             assert service.credential.named_key.key == self.tables_primary_storage_account_key
             assert service._primary_hostname == 'local-machine:11002/custom/account/path'
+            assert service.scheme == 'http'
 
         service = TableServiceClient(endpoint=custom_account_url)
         assert service.account_name == "custom"
         assert service.credential == None
         assert service._primary_hostname == 'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
+        assert service.scheme == 'http'
 
         service = TableClient(endpoint=custom_account_url, table_name="foo")
         assert service.account_name == "custom"
@@ -405,6 +407,7 @@ class TestTableUnitTests(TableTestCase):
         assert service.credential == None
         assert service._primary_hostname == 'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
+        assert service.scheme == 'http'
 
         service = TableClient.from_table_url("http://local-machine:11002/custom/account/path/foo" + token.signature)
         assert service.account_name == "custom"
@@ -412,6 +415,7 @@ class TestTableUnitTests(TableTestCase):
         assert service.credential == None
         assert service._primary_hostname == 'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
+        assert service.scheme == 'http'
 
     def test_create_table_client_with_complete_table_url(self):
         # Arrange
@@ -550,6 +554,7 @@ class TestTableUnitTests(TableTestCase):
         assert client.credential.named_key.key == self.tables_primary_storage_account_key
         assert client.credential.named_key.name == "devstoreaccount1"
         assert not client._cosmos_endpoint
+        assert client.scheme == 'http'
 
         client = TableServiceClient.from_connection_string(https_connstr)
         assert client.account_name == "devstoreaccount1"
@@ -559,6 +564,7 @@ class TestTableUnitTests(TableTestCase):
         assert client.credential.named_key.key == self.tables_primary_storage_account_key
         assert client.credential.named_key.name == "devstoreaccount1"
         assert not client._cosmos_endpoint
+        assert client.scheme == 'https'
 
         table = TableClient(account_url, "tablename", credential=azurite_credential)
         assert table.account_name == "myaccount"
@@ -579,6 +585,7 @@ class TestTableUnitTests(TableTestCase):
         assert table.credential.named_key.key == self.tables_primary_storage_account_key
         assert table.credential.named_key.name == "devstoreaccount1"
         assert not table._cosmos_endpoint
+        assert table.scheme == 'http'
 
         table = TableClient.from_connection_string(https_connstr, "tablename")
         assert table.account_name == "devstoreaccount1"
@@ -589,6 +596,7 @@ class TestTableUnitTests(TableTestCase):
         assert table.credential.named_key.key == self.tables_primary_storage_account_key
         assert table.credential.named_key.name == "devstoreaccount1"
         assert not table._cosmos_endpoint
+        assert table.scheme == 'https'
 
         table_url = "https://127.0.0.1:10002/myaccount/Tables('tablename')"
         table = TableClient.from_table_url(table_url, credential=azurite_credential)

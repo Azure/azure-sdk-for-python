@@ -59,26 +59,26 @@ class AvroEncoderAsyncTests(AzureTestCase):
             schema_str = "{\"type\": \"record\", \"name\": \"User\", \"namespace\": \"example.avro\", \"fields\": [{\"type\": \"string\", \"name\": \"name\"}, {\"type\": [\"int\", \"null\"], \"name\": \"favorite_number\"}, {\"type\": [\"string\", \"null\"], \"name\": \"favorite_color\"}]}"
             schema = avro.schema.parse(schema_str)
 
-            dict_data = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
-            encoded_metadata = await sr_avro_encoder.encode(dict_data, schema=schema_str)
-            content_type = encoded_metadata["content_type"]
-            encoded_data = encoded_metadata["data"]
+            dict_content = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
+            encoded_message_content = await sr_avro_encoder.encode(dict_content, schema=schema_str)
+            content_type = encoded_message_content["content_type"]
+            encoded_content = encoded_message_content["content"]
 
             assert content_type.split("+")[0] == 'avro/binary'
             schema_properties = await sr_client.get_schema_properties(schemaregistry_group, schema.fullname, str(schema), "Avro")
             schema_id = schema_properties.id
             assert content_type.split("+")[1] == schema_id
 
-            encoded_data_dict = {"data": encoded_data, "content_type": content_type}
-            decoded_data = await sr_avro_encoder.decode(encoded_data_dict)
-            assert decoded_data["name"] == u"Ben"
-            assert decoded_data["favorite_number"] == 7
-            assert decoded_data["favorite_color"] == u"red"
+            encoded_content_dict = {"content": encoded_content, "content_type": content_type}
+            decoded_content = await sr_avro_encoder.decode(encoded_content_dict)
+            assert decoded_content["name"] == u"Ben"
+            assert decoded_content["favorite_number"] == 7
+            assert decoded_content["favorite_color"] == u"red"
 
             # check that AvroEncoder won't work with message types that don't follow protocols
             class BadExample:
-                def __init__(self, not_data):
-                    self.not_data = not_data
+                def __init__(self, not_content):
+                    self.not_content = not_content
 
             with pytest.raises(SchemaEncodeError) as e:    # caught avro SchemaParseError
                 await sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_str, message_type=BadExample) 
@@ -91,28 +91,28 @@ class AvroEncoderAsyncTests(AzureTestCase):
 
             # check that AvroEncoder will work with message types that follow protocols
             class GoodExample:
-                def __init__(self, data: bytes, content_type: str, **kwargs):
-                    self.data = data
+                def __init__(self, content: bytes, content_type: str, **kwargs):
+                    self.content = content
                     self.content_type = content_type
                     self.extra = kwargs.pop('extra', None)
 
-                def __message_data__(self):
-                    return {"data": self.data, "content_type": self.content_type}
+                def __message_content__(self):
+                    return {"content": self.content, "content_type": self.content_type}
 
-            def good_callback(data: bytes, content_type: str, **kwargs):
-                return GoodExample(data, content_type, **kwargs)
+            def good_callback(content: bytes, content_type: str, **kwargs):
+                return GoodExample(content, content_type, **kwargs)
                 
-            good_ex_obj = await sr_avro_encoder.encode(dict_data, schema=schema_str, message_type=GoodExample, extra='val')
-            good_ex_callback = await sr_avro_encoder.encode(dict_data, schema=schema_str, message_type=good_callback, extra='val')
-            decoded_data_obj = await sr_avro_encoder.decode(message=good_ex_obj)
-            decoded_data_callback = await sr_avro_encoder.decode(message=good_ex_callback)
+            good_ex_obj = await sr_avro_encoder.encode(dict_content, schema=schema_str, message_type=GoodExample, extra='val')
+            good_ex_callback = await sr_avro_encoder.encode(dict_content, schema=schema_str, message_type=good_callback, extra='val')
+            decoded_content_obj = await sr_avro_encoder.decode(message=good_ex_obj)
+            decoded_content_callback = await sr_avro_encoder.decode(message=good_ex_callback)
 
-            assert decoded_data_obj["name"] == u"Ben"
-            assert decoded_data_obj["favorite_number"] == 7
-            assert decoded_data_obj["favorite_color"] == u"red"
-            assert decoded_data_callback["name"] == u"Ben"
-            assert decoded_data_callback["favorite_number"] == 7
-            assert decoded_data_callback["favorite_color"] == u"red"
+            assert decoded_content_obj["name"] == u"Ben"
+            assert decoded_content_obj["favorite_number"] == 7
+            assert decoded_content_obj["favorite_color"] == u"red"
+            assert decoded_content_callback["name"] == u"Ben"
+            assert decoded_content_callback["favorite_number"] == 7
+            assert decoded_content_callback["favorite_color"] == u"red"
 
     @pytest.mark.asyncio
     @SchemaRegistryPowerShellPreparer()
@@ -125,21 +125,21 @@ class AvroEncoderAsyncTests(AzureTestCase):
             schema_str = "{\"type\": \"record\", \"name\": \"User\", \"namespace\": \"example.avro\", \"fields\": [{\"type\": \"string\", \"name\": \"name\"}, {\"type\": [\"int\", \"null\"], \"name\": \"favorite_number\"}, {\"type\": [\"string\", \"null\"], \"name\": \"favorite_color\"}]}"
             schema = avro.schema.parse(schema_str)
 
-            dict_data = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
-            encoded_metadata = await sr_avro_encoder.encode(dict_data, schema=schema_str)
-            content_type = encoded_metadata["content_type"]
-            encoded_data = encoded_metadata["data"]
+            dict_content = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
+            encoded_message_content = await sr_avro_encoder.encode(dict_content, schema=schema_str)
+            content_type = encoded_message_content["content_type"]
+            encoded_content = encoded_message_content["content"]
 
             assert content_type.split("+")[0] == 'avro/binary'
             schema_properties = await sr_client.get_schema_properties(schemaregistry_group, schema.fullname, str(schema), "Avro")
             schema_id = schema_properties.id
             assert content_type.split("+")[1] == schema_id
 
-            encoded_data_dict = {"data": encoded_data, "content_type": content_type}
-            decoded_data = await sr_avro_encoder.decode(encoded_data_dict)
-            assert decoded_data["name"] == u"Ben"
-            assert decoded_data["favorite_number"] == 7
-            assert decoded_data["favorite_color"] == u"red"
+            encoded_content_dict = {"content": encoded_content, "content_type": content_type}
+            decoded_content = await sr_avro_encoder.decode(encoded_content_dict)
+            assert decoded_content["name"] == u"Ben"
+            assert decoded_content["favorite_number"] == 7
+            assert decoded_content["favorite_color"] == u"red"
 
     @pytest.mark.asyncio
     @SchemaRegistryPowerShellPreparer()
@@ -149,34 +149,34 @@ class AvroEncoderAsyncTests(AzureTestCase):
 
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
 
-        dict_data = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
-        encoded_metadata = await sr_avro_encoder.encode(dict_data, schema=schema_str)
-        content_type = encoded_metadata["content_type"]
-        encoded_data = encoded_metadata["data"]
+        dict_content = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
+        encoded_message_content = await sr_avro_encoder.encode(dict_content, schema=schema_str)
+        content_type = encoded_message_content["content_type"]
+        encoded_content = encoded_message_content["content"]
 
         # readers_schema with removed field
         readers_schema_remove_field = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]}]}"""
-        encoded_data_dict = {"data": encoded_data, "content_type": content_type}
-        decoded_data = await sr_avro_encoder.decode(encoded_data_dict, readers_schema=readers_schema_remove_field)
-        assert decoded_data["name"] == u"Ben"
-        assert decoded_data["favorite_number"] == 7
+        encoded_content_dict = {"content": encoded_content, "content_type": content_type}
+        decoded_content = await sr_avro_encoder.decode(encoded_content_dict, readers_schema=readers_schema_remove_field)
+        assert decoded_content["name"] == u"Ben"
+        assert decoded_content["favorite_number"] == 7
 
         # readers_schema with extra field with default
         readers_schema_extra_field = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}, {"name":"favorite_city","type":["string","null"], "default": "Redmond"}]}"""
-        encoded_data_dict = {"data": encoded_data, "content_type": content_type}
-        decoded_data = await sr_avro_encoder.decode(encoded_data_dict, readers_schema=readers_schema_extra_field)
-        assert decoded_data["name"] == u"Ben"
-        assert decoded_data["favorite_number"] == 7
-        assert decoded_data["favorite_color"] == "red"
-        assert decoded_data["favorite_city"] == "Redmond"
+        encoded_content_dict = {"content": encoded_content, "content_type": content_type}
+        decoded_content = await sr_avro_encoder.decode(encoded_content_dict, readers_schema=readers_schema_extra_field)
+        assert decoded_content["name"] == u"Ben"
+        assert decoded_content["favorite_number"] == 7
+        assert decoded_content["favorite_color"] == "red"
+        assert decoded_content["favorite_city"] == "Redmond"
 
         # readers_schema with changed name results in error
         readers_schema_change_name = """{"namespace":"fakeexample.avro","type":"record","name":"fake_user","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         with pytest.raises(SchemaDecodeError):
-            encoded_data_dict = {"data": encoded_data, "content_type": content_type}
-            decoded_data = await sr_avro_encoder.decode(encoded_data_dict, readers_schema=readers_schema_change_name)
-            print(decoded_data)
-
+            encoded_content_dict = {"content": encoded_content, "content_type": content_type}
+            decoded_content = await sr_avro_encoder.decode(encoded_content_dict, readers_schema=readers_schema_change_name)
+            print(decoded_content)
+    
 
     ################################################################# 
     ######################### PARSE SCHEMAS #########################
@@ -345,8 +345,8 @@ class AvroEncoderAsyncTests(AzureTestCase):
             "type":"error",
             "fields":[{"name":"name","type":"string"}]
         }"""
-        encoded_metadata = await sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_error_type) 
-        schema_id = encoded_metadata["content_type"].split("+")[1]
+        encoded_message_content = await sr_avro_encoder.encode({"name": u"Ben"}, schema=schema_error_type) 
+        schema_id = encoded_message_content["content_type"].split("+")[1]
         registered_schema = await sr_client.get_schema(schema_id)
         decoded_registered_schema = json.loads(registered_schema.definition)
         assert decoded_registered_schema["type"] == "error"
@@ -437,8 +437,8 @@ class AvroEncoderAsyncTests(AzureTestCase):
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
 
         null_type = """{"type": "null"}"""
-        encoded_metadata = await sr_avro_encoder.encode(None, schema=null_type) 
-        assert len(encoded_metadata["data"]) == 0 # assert no data encoded
+        encoded_message_content = await sr_avro_encoder.encode(None, schema=null_type) 
+        assert len(encoded_message_content["content"]) == 0 # assert no content encoded
 
     @SchemaRegistryPowerShellPreparer()
     async def test_encode_record(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
@@ -463,7 +463,7 @@ class AvroEncoderAsyncTests(AzureTestCase):
                 {"name":"randb","type":"bytes"}
             ]
         }"""
-        data = {
+        content = {
             "name": u"Ben",
             "age": 3,
             "married": False,
@@ -471,6 +471,6 @@ class AvroEncoderAsyncTests(AzureTestCase):
             "randb": b"\u00FF"
         }
 
-        encoded_metadata = await sr_avro_encoder.encode(data, schema=schema_record)
-        decoded_data = await sr_avro_encoder.decode(encoded_metadata)
-        assert decoded_data == data
+        encoded_message_content = await sr_avro_encoder.encode(content, schema=schema_record)
+        decoded_content = await sr_avro_encoder.decode(encoded_message_content)
+        assert decoded_content == content

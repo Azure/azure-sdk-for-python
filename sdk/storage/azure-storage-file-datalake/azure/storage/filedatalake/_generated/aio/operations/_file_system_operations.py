@@ -21,26 +21,24 @@ T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 class FileSystemOperations:
-    """FileSystemOperations async operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.storage.filedatalake.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.storage.filedatalake.aio.AzureDataLakeStorageRESTAPI`'s
+        :attr:`file_system` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs) -> None:
+        args = list(args)
+        self._client = args.pop(0) if args else kwargs.pop("client")
+        self._config = args.pop(0) if args else kwargs.pop("config")
+        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
+        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
+
 
     @distributed_trace_async
     async def create(  # pylint: disable=inconsistent-return-statements
@@ -56,12 +54,13 @@ class FileSystemOperations:
         operation fails.  This operation does not support conditional HTTP requests.
 
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param properties: Optional. User-defined properties to be stored with the filesystem, in the
          format of a comma-separated list of name and value pairs "n1=v1, n2=v2, ...", where each value
@@ -69,7 +68,8 @@ class FileSystemOperations:
          ISO-8859-1 character set.  If the filesystem exists, any properties not included in the list
          will be removed.  All properties are removed if the header is omitted.  To merge new and
          existing properties, first get all existing properties and the current E-Tag, then make a
-         conditional request with the E-Tag and include values for all properties.
+         conditional request with the E-Tag and include values for all properties. Default value is
+         None.
         :type properties: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -138,12 +138,13 @@ class FileSystemOperations:
         <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
 
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param properties: Optional. User-defined properties to be stored with the filesystem, in the
          format of a comma-separated list of name and value pairs "n1=v1, n2=v2, ...", where each value
@@ -151,9 +152,10 @@ class FileSystemOperations:
          ISO-8859-1 character set.  If the filesystem exists, any properties not included in the list
          will be removed.  All properties are removed if the header is omitted.  To merge new and
          existing properties, first get all existing properties and the current E-Tag, then make a
-         conditional request with the E-Tag and include values for all properties.
+         conditional request with the E-Tag and include values for all properties. Default value is
+         None.
         :type properties: str
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -224,12 +226,13 @@ class FileSystemOperations:
         All system and user-defined filesystem properties are specified in the response headers.
 
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -303,14 +306,15 @@ class FileSystemOperations:
         <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
 
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -385,24 +389,26 @@ class FileSystemOperations:
         :param recursive: Required.
         :type recursive: bool
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param continuation: Optional.  When deleting a directory, the number of paths that are deleted
          with each invocation is limited.  If the number of paths to be deleted exceeds this limit, a
          continuation token is returned in this response header.  When a continuation token is returned
          in the response, it must be specified in a subsequent invocation of the delete operation to
-         continue deleting the directory.
+         continue deleting the directory. Default value is None.
         :type continuation: str
         :param path: Optional.  Filters results to paths within the specified directory. An error
-         occurs if the directory does not exist.
+         occurs if the directory does not exist. Default value is None.
         :type path: str
         :param max_results: An optional value that specifies the maximum number of items to return. If
-         omitted or greater than 5,000, the response will include up to 5,000 items.
+         omitted or greater than 5,000, the response will include up to 5,000 items. Default value is
+         None.
         :type max_results: int
         :param upn: Optional. Valid only when Hierarchical Namespace is enabled for the account. If
          "true", the user identity values returned in the x-ms-owner, x-ms-group, and x-ms-acl response
@@ -484,41 +490,44 @@ class FileSystemOperations:
     ) -> "_models.ListBlobsHierarchySegmentResponse":
         """The List Blobs operation returns a list of the blobs under the specified container.
 
-        :param prefix: Filters results to filesystems within the specified prefix.
+        :param prefix: Filters results to filesystems within the specified prefix. Default value is
+         None.
         :type prefix: str
         :param delimiter: When the request includes this parameter, the operation returns a BlobPrefix
          element in the response body that acts as a placeholder for all blobs whose names begin with
          the same substring up to the appearance of the delimiter character. The delimiter may be a
-         single character or a string.
+         single character or a string. Default value is None.
         :type delimiter: str
         :param marker: A string value that identifies the portion of the list of containers to be
          returned with the next listing operation. The operation returns the NextMarker value within the
          response body if the listing operation did not return all containers remaining to be listed
          with the current page. The NextMarker value can be used as the value for the marker parameter
          in a subsequent call to request the next page of list items. The marker value is opaque to the
-         client.
+         client. Default value is None.
         :type marker: str
         :param max_results: An optional value that specifies the maximum number of items to return. If
-         omitted or greater than 5,000, the response will include up to 5,000 items.
+         omitted or greater than 5,000, the response will include up to 5,000 items. Default value is
+         None.
         :type max_results: int
         :param include: Include this parameter to specify one or more datasets to include in the
-         response.
+         response. Default value is None.
         :type include: list[str or ~azure.storage.filedatalake.models.ListBlobsIncludeItem]
         :param showonly: Include this parameter to specify one or more datasets to include in the
-         response. The default value is "deleted".
+         response. Possible values are "deleted" or None. Default value is "deleted".
         :type showonly: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :keyword restype: restype. The default value is "container". Note that overriding this default
+        :keyword restype: restype. Default value is "container". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
-        :keyword comp: comp. The default value is "list". Note that overriding this default value may
+        :keyword comp: comp. Default value is "list". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response

@@ -215,26 +215,24 @@ def build_list_queues_segment_request(
 
 # fmt: on
 class ServiceOperations(object):
-    """ServiceOperations operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.storage.queue.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.storage.queue.AzureQueueStorage`'s
+        :attr:`service` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs):
+        args = list(args)
+        self._client = args.pop(0) if args else kwargs.pop("client")
+        self._config = args.pop(0) if args else kwargs.pop("config")
+        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
+        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
+
 
     @distributed_trace
     def set_properties(  # pylint: disable=inconsistent-return-statements
@@ -252,16 +250,17 @@ class ServiceOperations(object):
         :type storage_service_properties: ~azure.storage.queue.models.StorageServiceProperties
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
-         Timeouts for Queue Service Operations.</a>.
+         Timeouts for Queue Service Operations.</a>. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :keyword restype: restype. The default value is "service". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. The default value is "properties". Note that overriding this default value
+        :keyword restype: restype. Default value is "service". Note that overriding this default value
          may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. Default value is "properties". Note that overriding this default value may
+         result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -330,16 +329,17 @@ class ServiceOperations(object):
 
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
-         Timeouts for Queue Service Operations.</a>.
+         Timeouts for Queue Service Operations.</a>. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :keyword restype: restype. The default value is "service". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. The default value is "properties". Note that overriding this default value
+        :keyword restype: restype. Default value is "service". Note that overriding this default value
          may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. Default value is "properties". Note that overriding this default value may
+         result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageServiceProperties, or the result of cls(response)
@@ -408,15 +408,16 @@ class ServiceOperations(object):
 
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
-         Timeouts for Queue Service Operations.</a>.
+         Timeouts for Queue Service Operations.</a>. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :keyword restype: restype. The default value is "service". Note that overriding this default
-         value may result in unsupported behavior.
+        :keyword restype: restype. Default value is "service". Note that overriding this default value
+         may result in unsupported behavior.
         :paramtype restype: str
-        :keyword comp: comp. The default value is "stats". Note that overriding this default value may
+        :keyword comp: comp. Default value is "stats". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -488,32 +489,34 @@ class ServiceOperations(object):
         """The List Queues Segment operation returns a list of the queues under the specified account.
 
         :param prefix: Filters the results to return only queues whose name begins with the specified
-         prefix.
+         prefix. Default value is None.
         :type prefix: str
         :param marker: A string value that identifies the portion of the list of queues to be returned
          with the next listing operation. The operation returns the NextMarker value within the response
          body if the listing operation did not return all queues remaining to be listed with the current
          page. The NextMarker value can be used as the value for the marker parameter in a subsequent
-         call to request the next page of list items. The marker value is opaque to the client.
+         call to request the next page of list items. The marker value is opaque to the client. Default
+         value is None.
         :type marker: str
         :param maxresults: Specifies the maximum number of queues to return. If the request does not
          specify maxresults, or specifies a value greater than 5000, the server will return up to 5000
          items. Note that if the listing operation crosses a partition boundary, then the service will
          return a continuation token for retrieving the remainder of the results. For this reason, it is
          possible that the service will return fewer results than specified by maxresults, or than the
-         default of 5000.
+         default of 5000. Default value is None.
         :type maxresults: int
         :param include: Include this parameter to specify that the queues' metadata be returned as part
-         of the response body.
+         of the response body. Default value is None.
         :type include: list[str]
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
-         Timeouts for Queue Service Operations.</a>.
+         Timeouts for Queue Service Operations.</a>. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. The default value is "list". Note that overriding this default value may
+        :keyword comp: comp. Default value is "list". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response

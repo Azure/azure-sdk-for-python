@@ -1,5 +1,24 @@
 # Release History
 
+## 1.9.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.9.0b1 (2022-03-08)
+
+### Features Added
+
+- Added `validate_authority` support for msal client  ([#22625](https://github.com/Azure/azure-sdk-for-python/issues/22625))
+- Added `resource_id` support for user-assigned managed identity  ([#22329](https://github.com/Azure/azure-sdk-for-python/issues/22329))
+- Added `ClientAssertionCredential` support  ([#22328](https://github.com/Azure/azure-sdk-for-python/issues/22328))
+- Updated App service API version to "2019-08-01" ([#23034](https://github.com/Azure/azure-sdk-for-python/issues/23034))
+
 ## 1.8.0 (2022-03-01)
 
 ### Bugs Fixed

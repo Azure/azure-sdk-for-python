@@ -32,15 +32,14 @@ class AzureFileStorage:
     :param url: The URL of the service account, share, directory or file that is the target of the
      desired operation.
     :type url: str
-    :param base_url: Service URL. Default value is ''.
+    :param base_url: Service URL. Default value is "".
     :type base_url: str
-    :keyword version: Specifies the version of the operation to use for this request. The default
-     value is "2021-06-08". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword version: Specifies the version of the operation to use for this request. Default value
+     is "2021-06-08". Note that overriding this default value may result in unsupported behavior.
     :paramtype version: str
     :keyword file_range_write_from_url: Only update is supported: - Update: Writes the bytes
-     downloaded from the source url into the specified range. The default value is "update". Note
-     that overriding this default value may result in unsupported behavior.
+     downloaded from the source url into the specified range. Default value is "update". Note that
+     overriding this default value may result in unsupported behavior.
     :paramtype file_range_write_from_url: str
     """
 
