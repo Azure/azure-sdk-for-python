@@ -77,8 +77,8 @@ class TextAnalyticsAsyncLROPollingMethod(AsyncLROBasePolling):
                 for err in job["errors"]:
                     error_message += "({}) {}".format(err["code"], err["message"])
                 raise HttpResponseError(message=error_message, response=self._pipeline_response.http_response)
-            except KeyError:
-                raise OperationFailed("Operation failed or canceled")
+            except KeyError as e:
+                raise OperationFailed("Operation failed or canceled") from e
 
         final_get_url = self._operation.get_final_get_url(self._pipeline_response)
         if final_get_url:
@@ -181,11 +181,10 @@ class AsyncAnalyzeHealthcareEntitiesLROPoller(AsyncLROPoller[PollingReturnType])
     @classmethod
     def from_continuation_token(  # type: ignore
         cls,
-        polling_method,  # type: AsyncAnalyzeHealthcareEntitiesLROPollingMethod
-        continuation_token,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> AsyncAnalyzeHealthcareEntitiesLROPoller
+        polling_method: AsyncAnalyzeHealthcareEntitiesLROPollingMethod,
+        continuation_token: str,
+        **kwargs: Any
+    ) -> "AsyncAnalyzeHealthcareEntitiesLROPoller":
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
             continuation_token, **kwargs
         )
@@ -402,8 +401,12 @@ class AsyncAnalyzeActionsLROPoller(AsyncLROPoller[PollingReturnType]):
         return self.polling_method().id
 
     @classmethod
-    def from_continuation_token(cls, polling_method, continuation_token, **kwargs):  # type: ignore
-        # type: (AsyncAnalyzeActionsLROPollingMethod, str, Any) -> AsyncAnalyzeActionsLROPoller
+    def from_continuation_token(  # type: ignore
+        cls,
+        polling_method: AsyncAnalyzeActionsLROPollingMethod,
+        continuation_token: str,
+        **kwargs: Any
+    ) -> "AsyncAnalyzeActionsLROPoller":  # type: ignore
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
             continuation_token, **kwargs
         )

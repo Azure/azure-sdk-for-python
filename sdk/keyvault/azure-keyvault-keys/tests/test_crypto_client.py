@@ -237,7 +237,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         assert imported_key is not None
         crypto_client = self.create_crypto_client(imported_key, api_version=key_client.api_version)
         # Use 256-bit AES algorithms for the 256-bit key
-        symmetric_algorithms = [algo for algo in EncryptionAlgorithm if algo.startswith("A256")]
+        symmetric_algorithms = [algorithm for algorithm in EncryptionAlgorithm if algorithm.startswith("A256")]
 
         supports_nothing = mock.Mock(supports=mock.Mock(return_value=False))
         with mock.patch(crypto_client.__module__ + ".get_local_cryptography_provider", lambda *_: supports_nothing):
@@ -296,7 +296,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         key = self._create_rsa_key(key_client, key_name, size=4096, hardware_protected=is_hsm)
         crypto_client = self.create_crypto_client(key, api_version=key_client.api_version)
 
-        rsa_encrypt_algorithms = [algo for algo in EncryptionAlgorithm if algo.startswith("RSA")]
+        rsa_encrypt_algorithms = [algorithm for algorithm in EncryptionAlgorithm if algorithm.startswith("RSA")]
         for encrypt_algorithm in rsa_encrypt_algorithms:
             result = crypto_client.encrypt(encrypt_algorithm, self.plaintext)
             self.assertEqual(result.key_id, key.id)
@@ -313,7 +313,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         crypto_client = self.create_crypto_client(key, api_version=key_client.api_version)
         local_client = CryptographyClient.from_jwk(key.key)
 
-        rsa_encrypt_algorithms = [algo for algo in EncryptionAlgorithm if algo.startswith("RSA")]
+        rsa_encrypt_algorithms = [algorithm for algorithm in EncryptionAlgorithm if algorithm.startswith("RSA")]
         for encrypt_algorithm in rsa_encrypt_algorithms:
             result = local_client.encrypt(encrypt_algorithm, self.plaintext)
             self.assertEqual(result.key_id, key.id)
@@ -388,7 +388,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         key = self._create_rsa_key(key_client, key_name, size=4096, hardware_protected=is_hsm)
         crypto_client = self.create_crypto_client(key, api_version=key_client.api_version)
 
-        for wrap_algorithm in (algo for algo in KeyWrapAlgorithm if algo.startswith("RSA")):
+        for wrap_algorithm in (algorithm for algorithm in KeyWrapAlgorithm if algorithm.startswith("RSA")):
             result = crypto_client.wrap_key(wrap_algorithm, self.plaintext)
             self.assertEqual(result.key_id, key.id)
 
@@ -404,7 +404,7 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         crypto_client = self.create_crypto_client(key, api_version=key_client.api_version)
         local_client = CryptographyClient.from_jwk(key.key)
 
-        for wrap_algorithm in (algo for algo in KeyWrapAlgorithm if algo.startswith("RSA")):
+        for wrap_algorithm in (algorithm for algorithm in KeyWrapAlgorithm if algorithm.startswith("RSA")):
             result = local_client.wrap_key(wrap_algorithm, self.plaintext)
             self.assertEqual(result.key_id, key.id)
 
@@ -529,8 +529,8 @@ class CryptoClientTests(KeysTestCase, KeyVaultTestCase):
         # operations should not succeed with a key whose nbf is in the future
         the_year_3000 = datetime(3000, 1, 1, tzinfo=_UTC)
 
-        rsa_wrap_algorithms = [algo for algo in KeyWrapAlgorithm if algo.startswith("RSA")]
-        rsa_encryption_algorithms = [algo for algo in EncryptionAlgorithm if algo.startswith("RSA")]
+        rsa_wrap_algorithms = [algorithm for algorithm in KeyWrapAlgorithm if algorithm.startswith("RSA")]
+        rsa_encryption_algorithms = [algorithm for algorithm in EncryptionAlgorithm if algorithm.startswith("RSA")]
         key_name = self.get_resource_name("rsa-not-yet-valid")
         not_yet_valid_key = self._create_rsa_key(
             key_client, key_name, not_before=the_year_3000, hardware_protected=is_hsm

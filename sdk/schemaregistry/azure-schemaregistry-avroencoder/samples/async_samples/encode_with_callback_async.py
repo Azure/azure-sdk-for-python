@@ -57,17 +57,17 @@ token_credential = ClientSecretCredential(
 
 async def encode_with_callback(encoder):
 
-    # Callback MUST have these parameters in the following order: (data, content_type, **kwargs)
-    def sample_create_event_data(data, content_type, **kwargs):
+    # Callback MUST have these parameters in the following order: (content, content_type, **kwargs)
+    def sample_create_event_data(content, content_type, **kwargs):
         print("Creating sample EventData with callback.")
-        return EventData.from_message_data(data, content_type, **kwargs)
+        return EventData.from_message_content(content, content_type, **kwargs)
 
-    dict_data_ben = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
+    dict_content_ben = {"name": "Ben", "favorite_number": 7, "favorite_color": "red"}
     event_data_ben = await encoder.encode(
-        dict_data_ben, schema=SCHEMA_STRING, message_type=sample_create_event_data
+        dict_content_ben, schema=SCHEMA_STRING, message_type=sample_create_event_data
     )
 
-    print("Encoded data is: ", next(event_data_ben.body))
+    print("Encoded content is: ", next(event_data_ben.body))
     print("Encoded content type is: ", event_data_ben.content_type)
     return event_data_ben
 

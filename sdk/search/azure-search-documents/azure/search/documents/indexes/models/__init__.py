@@ -34,6 +34,7 @@ from ._index import (
 from . import _edm as SearchFieldDataType
 from ..._generated.models import SuggestOptions
 from .._generated.models import (
+    SearchAlias,
     AzureMachineLearningSkill,
     AnalyzeResult,
     AnalyzedTokenInfo,
@@ -184,6 +185,7 @@ from ._models import (
 
 
 __all__ = (
+    "SearchAlias",
     "AzureMachineLearningSkill",
     "AnalyzeTextOptions",
     "AnalyzeResult",
