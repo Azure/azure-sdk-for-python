@@ -560,8 +560,8 @@ class CodegenTestPR:
         # commit all code
         print_exec('git add sdk/')
         print_exec('git commit -m \"code and test\"')
-        print_exec('git remote add azure https://github.com/Azure/azure-sdk-for-python.git')
-        print_check('git push azure HEAD -f')
+        print_exec('git remote add azclibot https://github.com/azclibot/azure-sdk-for-python.git')
+        print_check('git push azclibot HEAD -f')
 
         # create PR
         self.create_pr_proc()
