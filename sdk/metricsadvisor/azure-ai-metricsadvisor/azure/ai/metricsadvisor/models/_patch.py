@@ -17,15 +17,6 @@ from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 if TYPE_CHECKING:
-    from ._models_py3 import (
-        AnomalySeverity,
-        SnoozeScope,
-        AnomalyDetectorDirection,
-        DataFeedGranularityType,
-        DataPointAnomaly,
-        AnomalyIncident,
-        IncidentRootCause,
-    )
     from .._operations._patch import DataFeedSourceUnion
 
 _SERIALIZER = msrest.Serializer()
@@ -191,7 +182,7 @@ class DataFeedGranularity:
     """
 
     def __init__(self, granularity_type, **kwargs):
-        # type: (Union[str, DataFeedGranularityType], Any) -> None
+        # type: (Union[str, generated_models.DataFeedGranularityType], Any) -> None
         self.granularity_type = granularity_type
         self.custom_granularity_value = kwargs.get("custom_granularity_value", None)
 
@@ -357,7 +348,7 @@ class DataFeed(generated_models.DataFeed):  # pylint:disable=too-many-instance-a
     :ivar str action_link_template: action link for alert.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=super-init-not-called
         self,
         name: str,
         source: "DataFeedSourceUnion",
@@ -577,8 +568,8 @@ class SeverityCondition(generated_models.SeverityCondition):
 
     def __init__(
         self,
-        min_alert_severity: Union[str, "AnomalySeverity"],
-        max_alert_severity: Union[str, "AnomalySeverity"],
+        min_alert_severity: Union[str, "generated_models.AnomalySeverity"],
+        max_alert_severity: Union[str, "generated_models.AnomalySeverity"],
         **kwargs: Any
     ) -> None:
         super().__init__(min_alert_severity=min_alert_severity, max_alert_severity=max_alert_severity)
@@ -601,7 +592,11 @@ class MetricAnomalyAlertSnoozeCondition(generated_models.MetricAnomalyAlertSnooz
     """
 
     def __init__(
-        self, auto_snooze: int, snooze_scope: Union[str, "SnoozeScope"], only_for_successive: bool, **kwargs: Any
+        self,
+        auto_snooze: int,
+        snooze_scope: Union[str, "generated_models.SnoozeScope"],
+        only_for_successive: bool,
+        **kwargs: Any
     ) -> None:
         super().__init__(
             auto_snooze=auto_snooze, snooze_scope=snooze_scope, only_for_successive=only_for_successive, **kwargs
@@ -652,7 +647,7 @@ class MetricBoundaryCondition(generated_models.MetricBoundaryCondition):
      metric should be specified only when using other metric to filter.
     """
 
-    def __init__(self, direction: Union[str, "AnomalyDetectorDirection"], **kwargs: Any) -> None:
+    def __init__(self, direction: Union[str, "generated_models.AnomalyDetectorDirection"], **kwargs: Any) -> None:
         super().__init__(direction=direction, **kwargs)
 
     def __repr__(self):
@@ -683,7 +678,7 @@ class MetricAlertConfiguration(generated_models.MetricAlertConfiguration):
     :paramtype alert_snooze_condition: ~azure.ai.metricsadvisor.models.MetricAnomalyAlertSnoozeCondition
     """
 
-    def __init__(self, detection_configuration_id: str, alert_scope: MetricAnomalyAlertScope, **kwargs: Any) -> None:
+    def __init__(self, detection_configuration_id: str, alert_scope: MetricAnomalyAlertScope, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
         self.detection_configuration_id = detection_configuration_id
         self.alert_scope = alert_scope
         self.negation_operation = kwargs.get("negation_operation", None)
@@ -1576,7 +1571,7 @@ class ChangeThresholdCondition(generated_models.ChangeThresholdCondition):
         change_percentage: float,
         shift_point: int,
         within_range: bool,
-        anomaly_detector_direction: Union[str, "AnomalyDetectorDirection"],
+        anomaly_detector_direction: Union[str, "generated_models.AnomalyDetectorDirection"],
         suppress_condition: "SuppressCondition",
         **kwargs: Any
     ) -> None:
@@ -1634,7 +1629,7 @@ class SmartDetectionCondition(generated_models.SmartDetectionCondition):
     def __init__(
         self,
         sensitivity: float,
-        anomaly_detector_direction: Union[str, "AnomalyDetectorDirection"],
+        anomaly_detector_direction: Union[str, "generated_models.AnomalyDetectorDirection"],
         suppress_condition: "SuppressCondition",
         **kwargs: Any
     ) -> None:
@@ -1672,7 +1667,7 @@ class HardThresholdCondition(generated_models.HardThresholdCondition):
 
     def __init__(
         self,
-        anomaly_detector_direction: Union[str, "AnomalyDetectorDirection"],
+        anomaly_detector_direction: Union[str, "generated_models.AnomalyDetectorDirection"],
         suppress_condition: "SuppressCondition",
         **kwargs: Any
     ) -> None:

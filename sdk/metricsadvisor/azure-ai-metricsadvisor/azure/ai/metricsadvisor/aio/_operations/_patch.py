@@ -53,10 +53,9 @@ from ..._operations._patch import (
     build_list_data_feeds_request,
     build_get_alert_configuration_request,
     build_list_alert_configurations_request,
-    build_list_metric_series_definitions_request,
     OperationMixinHelpers,
 )
-from ...models import *
+from ...models import *  # pylint: disable=unused-wildcard-import,wildcard-import
 
 
 async def _extract_data_default(deserializer, pipeline_response):
@@ -65,7 +64,7 @@ async def _extract_data_default(deserializer, pipeline_response):
     return response_json.get("@nextLink", None) or None, AsyncList(list_of_elem)
 
 
-class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGenerated, OperationMixinHelpers):
+class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGenerated, OperationMixinHelpers):  # pylint: disable=too-many-public-methods
     def _paging_helper(
         self, *, extract_data=None, initial_request: HttpRequest, next_request: HttpRequest, deserializer=None, **kwargs
     ) -> AsyncItemPaged:
@@ -74,7 +73,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         error_map.update(kwargs.pop("error_map", {}))
 
         prepare_request = self._get_paging_prepare_request(
-            initial_request=initial_request, next_request=next_request, **kwargs
+            initial_request=initial_request, next_request=next_request
         )
 
         async def get_next(next_link=None):
@@ -95,14 +94,16 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def create_alert_configuration(
+    async def create_alert_configuration(  # pylint: disable=arguments-differ
         self, name: str, metric_alert_configurations: List[MetricAlertConfiguration], hook_ids: List[str], **kwargs: Any
     ) -> AnomalyAlertConfiguration:
         cross_metrics_operator = kwargs.pop("cross_metrics_operator", None)
         response_headers = await super().create_alert_configuration(
             AnomalyAlertConfiguration(
                 name=name,
-                metric_alert_configurations=[m._to_generated() for m in metric_alert_configurations],
+                metric_alert_configurations=[
+                    m._to_generated() for m in metric_alert_configurations  # pylint: disable=protected-access
+                ],
                 hook_ids=hook_ids,
                 cross_metrics_operator=cross_metrics_operator,
                 description=kwargs.pop("description", None),
@@ -115,7 +116,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         return await self.get_alert_configuration(config_id)
 
     @distributed_trace_async
-    async def create_data_feed(
+    async def create_data_feed(  # pylint: disable=arguments-differ
         self,
         name: str,
         source: DataFeedSourceUnion,
@@ -136,13 +137,15 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
             if attr in kwargs:
                 kwargs.pop(attr)
         response_headers = await super().create_data_feed(  # type: ignore
-            data_feed._to_generated(), cls=lambda pipeline_response, _, response_headers: response_headers, **kwargs
+            data_feed._to_generated(),  # pylint: disable=protected-access
+            cls=lambda pipeline_response, _, response_headers: response_headers,
+            **kwargs
         )
         data_feed_id = response_headers["Location"].split("dataFeeds/")[1]
         return await self.get_data_feed(data_feed_id)
 
     @distributed_trace_async
-    async def create_hook(
+    async def create_hook(  # pylint: disable=arguments-differ
         self, hook: Union[EmailNotificationHook, WebNotificationHook], **kwargs: Any
     ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
         response_headers = await super().create_hook(  # type: ignore
@@ -152,7 +155,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         return await self.get_hook(hook_id)
 
     @distributed_trace_async
-    async def create_detection_configuration(
+    async def create_detection_configuration(  # pylint: disable=arguments-differ
         self, name: str, metric_id: str, whole_series_detection_condition: MetricDetectionCondition, **kwargs: Any
     ) -> AnomalyDetectionConfiguration:
         config = AnomalyDetectionConfiguration(
@@ -203,7 +206,9 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         return self._deserialize_data_feed(json_response)
 
     @distributed_trace_async
-    async def get_alert_configuration(self, alert_configuration_id: str, **kwargs: Any) -> AnomalyAlertConfiguration:
+    async def get_alert_configuration(  # pylint: disable=arguments-differ
+        self, alert_configuration_id: str, **kwargs: Any
+    ) -> AnomalyAlertConfiguration:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
@@ -228,7 +233,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         return self._deserialize_anomaly_detection_configuration(pipeline_response, **kwargs)
 
     @distributed_trace_async
-    async def refresh_data_feed_ingestion(
+    async def refresh_data_feed_ingestion(  # pylint: disable=arguments-differ
         self,
         data_feed_id: str,
         start_time: Union[str, datetime.datetime],
@@ -272,12 +277,14 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         await super().delete_hook(hook_id[0], **kwargs)
 
     @distributed_trace_async
-    async def update_data_feed(self, data_feed: Union[str, DataFeed], **kwargs: Any) -> DataFeed:
+    async def update_data_feed(  # pylint: disable=arguments-differ
+        self, data_feed: Union[str, DataFeed], **kwargs: Any
+    ) -> DataFeed:
         data_feed_id, data_feed_patch, kwargs = self._update_data_feed_helper(data_feed, **kwargs)
         return await super().update_data_feed(data_feed_id, data_feed_patch, **kwargs)
 
     @distributed_trace_async
-    async def update_alert_configuration(
+    async def update_alert_configuration(  # pylint: disable=arguments-differ
         self, alert_configuration: Union[str, AnomalyAlertConfiguration], **kwargs: Any
     ) -> AnomalyAlertConfiguration:
         request, kwargs = self._update_alert_configuration_helper(alert_configuration, **kwargs)
@@ -287,7 +294,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         return self._deserialize_anomaly_detection_configuration(pipeline_response, **kwargs)
 
     @distributed_trace_async
-    async def update_detection_configuration(
+    async def update_detection_configuration(  # pylint: disable=arguments-differ
         self, detection_configuration: Union[str, AnomalyDetectionConfiguration], **kwargs: Any
     ) -> AnomalyDetectionConfiguration:
         detection_configuration_id, detection_config_patch, kwargs = self._update_detection_configuration_helper(
@@ -299,7 +306,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         )
 
     @distributed_trace_async
-    async def update_hook(
+    async def update_hook(  # pylint: disable=arguments-differ
         self, hook: Union[str, EmailNotificationHook, WebNotificationHook], **kwargs: Any
     ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
         hook_id, hook_patch, kwargs = self._update_hook_helper(hook, **kwargs)
@@ -307,7 +314,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         return await super().update_hook(hook_id, hook_patch, **kwargs)
 
     @distributed_trace
-    def list_data_feeds(
+    def list_data_feeds(  # pylint: disable=arguments-differ
         self,
         *,
         data_feed_name: Optional[str] = None,
@@ -335,7 +342,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         )
 
     @distributed_trace
-    def list_alert_configurations(
+    def list_alert_configurations(  # pylint: disable=arguments-differ
         self, detection_configuration_id: str, **kwargs: Any
     ) -> AsyncItemPaged[AnomalyAlertConfiguration]:
         def _deserialize(deserializer, line):
@@ -343,7 +350,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
             line["metricAlertingConfigurations"] = [
                 config_to_generated(config) for config in line.get("metricAlertingConfigurations", [])
             ]
-            return AnomalyAlertConfiguration._from_generated(
+            return AnomalyAlertConfiguration._from_generated(  # pylint: disable=protected-access
                 deserializer(generated_models.AnomalyAlertConfiguration, line)
             )
 
@@ -359,14 +366,13 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         )
 
     @distributed_trace
-    def list_data_feed_ingestion_status(
+    def list_data_feed_ingestion_status(  # pylint: disable=arguments-differ
         self,
-        data_feed_id,  # type: str
-        start_time,  # type: Union[str, datetime.datetime]
-        end_time,  # type: Union[str, datetime.datetime]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> AsyncItemPaged[DataFeedIngestionStatus]
+        data_feed_id: str,
+        start_time: Union[str, datetime.datetime],
+        end_time: Union[str, datetime.datetime],
+        **kwargs: Any
+    ) -> AsyncItemPaged[DataFeedIngestionStatus]:
         initial_request, next_request, kwargs = self._list_data_feed_ingestion_status_requests(
             data_feed_id, start_time, end_time, **kwargs
         )
@@ -378,12 +384,11 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         )
 
     @distributed_trace_async
-    async def create_datasource_credential(
+    async def create_datasource_credential(  # pylint: disable=arguments-differ
         self,
-        datasource_credential,  # type: DatasourceCredentialUnion
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> DatasourceCredentialUnion
+        datasource_credential: DatasourceCredentialUnion,
+        **kwargs: Any
+    ) -> DatasourceCredentialUnion:
         response_headers = await super().create_datasource_credential(  # type: ignore
             datasource_credential,  # type: ignore
             cls=lambda pipeline_response, _, response_headers: response_headers,
@@ -393,7 +398,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         return await self.get_datasource_credential(credential_id)
 
     @distributed_trace_async
-    async def update_datasource_credential(
+    async def update_datasource_credential(  # pylint: disable=arguments-differ
         self, datasource_credential: DatasourceCredentialUnion, **kwargs: Any
     ) -> DatasourceCredentialUnion:
         response = await super().update_datasource_credential(datasource_credential.id, datasource_credential, **kwargs)
@@ -425,7 +430,9 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         return self._get_feedback_deserialize(pipeline_response, cls=cls, error_map=error_map, **kwargs)
 
     @distributed_trace
-    def list_feedback(self, metric_id: str, **kwargs: Any) -> AsyncItemPaged[Union[MetricFeedback, FeedbackUnion]]:
+    def list_feedback(  # pylint: disable=arguments-differ
+        self, metric_id: str, **kwargs: Any
+    ) -> AsyncItemPaged[Union[MetricFeedback, FeedbackUnion]]:
         deserializer = functools.partial(self._deserialize, generated_models.MetricFeedback)
         initial_request, next_request, kwargs = self._list_feedback_requests(metric_id, **kwargs)
         return self._paging_helper(
@@ -433,15 +440,14 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         )
 
     @distributed_trace
-    def list_metric_enriched_series_data(
+    def list_metric_enriched_series_data(  # pylint: disable=arguments-differ
         self,
-        detection_configuration_id,  # type: str
-        series,  # type: Union[List[SeriesIdentity], List[Dict[str, str]]]
-        start_time,  # type: Union[str, datetime.datetime]
-        end_time,  # type: Union[str, datetime.datetime]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> AsyncItemPaged[MetricEnrichedSeriesData]
+        detection_configuration_id: str,
+        series: Union[List[SeriesIdentity], List[Dict[str, str]]],
+        start_time: Union[str, datetime.datetime],
+        end_time: Union[str, datetime.datetime],
+        **kwargs: Any
+    ) -> AsyncItemPaged[MetricEnrichedSeriesData]:
         initial_request, next_request, kwargs = self._list_metric_enriched_series_data_requests(
             detection_configuration_id=detection_configuration_id,
             series=series,
@@ -458,7 +464,7 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         )
 
     @distributed_trace
-    def list_alerts(
+    def list_alerts(  # pylint: disable=arguments-differ
         self,
         alert_configuration_id: str,
         start_time: Union[str, datetime.datetime],
@@ -529,8 +535,14 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         return self._list_anomalies_for_alert(**kwargs)  # type: ignore
 
     @distributed_trace
-    def list_anomaly_dimension_values(self, detection_configuration_id, dimension_name, start_time, end_time, **kwargs):
-        # type: (str, str, Union[str, datetime.datetime], Union[str, datetime.datetime], Any) -> AsyncItemPaged[str]
+    def list_anomaly_dimension_values(  # pylint: disable=arguments-differ
+        self,
+        detection_configuration_id: str,
+        dimension_name: str,
+        start_time: Union[str, datetime.datetime],
+        end_time: Union[str, datetime.datetime],
+        **kwargs: Any
+    ) -> AsyncItemPaged[str]:
         initial_request, next_request, kwargs = self._list_anomaly_dimension_values_requests(
             detection_configuration_id=detection_configuration_id,
             dimension_name=dimension_name,
@@ -605,8 +617,9 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         return self._list_incidents_for_alert(**kwargs)  # type: ignore
 
     @distributed_trace
-    def list_metric_dimension_values(self, metric_id, dimension_name, **kwargs):
-        # type: (str, str, Any) -> AsyncItemPaged[str]
+    def list_metric_dimension_values(  # pylint: disable=arguments-differ
+        self, metric_id: str, dimension_name: str, **kwargs: Any
+    ) -> AsyncItemPaged[str]:
         initial_request, next_request, kwargs = self._list_metric_dimension_values_requests(
             metric_id=metric_id, dimension_name=dimension_name, **kwargs
         )
@@ -615,15 +628,14 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         )
 
     @distributed_trace
-    def list_metric_series_data(
+    def list_metric_series_data(  # pylint: disable=arguments-differ
         self,
-        metric_id,  # type: str
-        series_keys,  # type: List[Dict[str, str]]
-        start_time,  # type: Union[str, datetime.datetime]
-        end_time,  # type: Union[str, datetime.datetime]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> AsyncItemPaged[MetricSeriesData]
+        metric_id: str,
+        series_keys: List[Dict[str, str]],
+        start_time: Union[str, datetime.datetime],
+        end_time: Union[str, datetime.datetime],
+        **kwargs: Any
+    ) -> AsyncItemPaged[MetricSeriesData]:
         initial_request, next_request, kwargs = self._list_metric_series_data_requests(
             metric_id=metric_id, series_keys=series_keys, start_time=start_time, end_time=end_time, **kwargs
         )
@@ -636,10 +648,9 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         )
 
     @distributed_trace
-    def list_metric_series_definitions(self, metric_id, active_since, **kwargs):
-        # type: (str, datetime.datetime, Any) -> AsyncItemPaged[MetricSeriesDefinition]
-        cls = kwargs.pop("cls", None)
-
+    def list_metric_series_definitions(  # pylint: disable=arguments-differ
+        self, metric_id: str, active_since: datetime.datetime, **kwargs: Any
+    ) -> AsyncItemPaged[MetricSeriesDefinition]:
         initial_request, next_request, kwargs = self._list_metric_series_definitions_requests(
             metric_id, active_since, **kwargs
         )
@@ -652,14 +663,13 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
         )
 
     @distributed_trace
-    def list_metric_enrichment_status(
+    def list_metric_enrichment_status(  # pylint: disable=arguments-differ
         self,
-        metric_id,  # type: str
-        start_time,  # type: Union[str, datetime.datetime]
-        end_time,  # type: Union[str, datetime.datetime]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> AsyncItemPaged[EnrichmentStatus]
+        metric_id: str,
+        start_time: Union[str, datetime.datetime],
+        end_time: Union[str, datetime.datetime],
+        **kwargs: Any
+    ) -> AsyncItemPaged[EnrichmentStatus]:
         initial_request, next_request, kwargs = self._list_metric_enrichment_status_requests(
             metric_id=metric_id, start_time=start_time, end_time=end_time, **kwargs
         )
@@ -720,5 +730,5 @@ class MetricsAdvisorClientOperationsMixin(MetricsAdvisorClientOperationsMixinGen
 __all__ = ["MetricsAdvisorClientOperationsMixin"]
 
 
-def patch_sdk():
+def patch_sdk():  # pylint: disable=function-redefined
     pass

@@ -1,4 +1,4 @@
-# coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 #
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -25,14 +25,23 @@
 #
 # --------------------------------------------------------------------------
 import functools
-import six
 import datetime
-from typing import Any, Callable, List, Tuple, Union, cast, overload, Dict, Optional
+from typing import Any, Callable, List, Tuple, Union, cast, Dict, Optional
+from msrest import Serializer
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.rest import HttpRequest
-from ._operations import *
+from azure.core.paging import ItemPaged
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
+
+from ._operations import *  # pylint: disable=unused-wildcard-import,wildcard-import
 from ._operations import MetricsAdvisorClientOperationsMixin as _MetricsAdvisorClientOperationsMixin
-from ..models import *
+from ..models import *  # pylint: disable=unused-wildcard-import,wildcard-import
 from ..models import _models_py3 as generated_models
 from ..models._patch import (
     AlertingResultQuery,
@@ -50,16 +59,6 @@ from ..models._patch import (
     ErrorCode,
     FeedbackDimensionFilter,
 )
-from msrest import Serializer
-from azure.core.paging import ItemPaged
-from azure.core.exceptions import (
-    ClientAuthenticationError,
-    HttpResponseError,
-    ResourceExistsError,
-    ResourceNotFoundError,
-    map_error,
-)
-
 
 DatasourceCredentialUnion = Union[
     DatasourceSqlConnectionString,
@@ -97,7 +96,8 @@ UpdateHelperRetval = Tuple[str, Union[JSONType, DataFeed], Any]
 
 
 class OperationMixinHelpers:
-    def _convert_to_sub_feedback(self, feedback):
+    @staticmethod
+    def _convert_to_sub_feedback(feedback):
         # type: (MetricFeedback) -> Union[AnomalyFeedback, ChangePointFeedback, CommentFeedback, PeriodFeedback]
         if feedback.feedback_type == "Anomaly":
             return AnomalyFeedback.from_dict(feedback.serialize())
@@ -109,7 +109,8 @@ class OperationMixinHelpers:
             return PeriodFeedback.from_dict(feedback.serialize())  # type: ignore
         raise HttpResponseError("Invalid feedback type returned in the response.")
 
-    def _construct_data_feed(self, **kwargs):
+    @staticmethod
+    def _construct_data_feed(**kwargs):
         granularity = kwargs.pop("granularity", None)
         schema = kwargs.pop("schema", None)
         ingestion_settings = kwargs.pop("ingestion_settings", None)
@@ -128,18 +129,19 @@ class OperationMixinHelpers:
         response_json = pipeline_response.http_response.json()
         try:
             response_json["metricAlertingConfigurations"] = [
-                self._deserialize(generated_models.MetricAlertConfiguration, m)
+                self._deserialize(generated_models.MetricAlertConfiguration, m)  # pylint: disable=no-member
                 for m in response_json["metricAlertingConfigurations"]
             ]
         except KeyError:
             raise ValueError(response_json)
-        deserialized = self._deserialize(generated_models.AnomalyAlertConfiguration, response_json)
+        deserialized = self._deserialize(generated_models.AnomalyAlertConfiguration, response_json)  # pylint: disable=no-member
         if cls:
             return cls(pipeline_response, deserialized, {})
 
-        return AnomalyAlertConfiguration._from_generated(deserialized)
+        return AnomalyAlertConfiguration._from_generated(deserialized)  # pylint: disable=protected-access
 
-    def _deserialize_datasource_credential(self, response) -> DatasourceCredentialUnion:
+    @staticmethod
+    def _deserialize_datasource_credential(response) -> DatasourceCredentialUnion:
         type_to_datasource_credential = {
             "AzureSQLConnectionString": DatasourceSqlConnectionString,
             "DataLakeGen2SharedKey": DatasourceDataLakeGen2SharedKey,
@@ -149,8 +151,9 @@ class OperationMixinHelpers:
         datasource_class = type_to_datasource_credential[response["dataSourceCredentialType"]]
         return datasource_class.deserialize(response)
 
+    @staticmethod
     def _update_detection_configuration_helper(
-        self, detection_configuration, **kwargs
+        detection_configuration, **kwargs
     ) -> Tuple[str, Union[JSONType, AnomalyDetectionConfiguration], Any]:
 
         unset = object()
@@ -184,7 +187,8 @@ class OperationMixinHelpers:
             detection_config_patch.pop("metricId")
         return detection_configuration_id, detection_config_patch, kwargs
 
-    def _update_data_feed_helper(self, data_feed: Union[str, DataFeed], **kwargs) -> UpdateHelperRetval:
+    @staticmethod
+    def _update_data_feed_helper(data_feed: Union[str, DataFeed], **kwargs) -> UpdateHelperRetval:
         unset = object()
         update_kwargs = {}
         update_kwargs["dataFeedName"] = kwargs.pop("name", unset)
@@ -222,7 +226,7 @@ class OperationMixinHelpers:
 
         else:
             data_feed_id = data_feed.id
-            data_feed_patch = data_feed._to_generated(**update).serialize()
+            data_feed_patch = data_feed._to_generated(**update).serialize()  # pylint: disable=protected-access
         return data_feed_id, data_feed_patch, kwargs
 
     def _list_metric_enriched_series_data_requests(
@@ -262,7 +266,7 @@ class OperationMixinHelpers:
         dimension_filter = None
         dimension_key = kwargs.pop("dimension_key", None)
         if dimension_key:
-            dimension_filter = FeedbackDimensionFilter(dimension_key=dimension_key)
+            dimension_filter = FeedbackDimensionFilter(dimension=dimension_key)
         feedback_type = kwargs.pop("feedback_type", None)
         start_time = kwargs.pop("start_time", None)
         end_time = kwargs.pop("end_time", None)
@@ -299,7 +303,8 @@ class OperationMixinHelpers:
         )
         return initial_request, next_request, kwargs
 
-    def _list_metric_series_definitions_requests(self, metric_id, active_since, **kwargs):
+    @staticmethod
+    def _list_metric_series_definitions_requests(metric_id, active_since, **kwargs):
         dimension_filter = kwargs.pop("dimension_filter", None)
         metric_series_query_options = MetricSeriesQueryOptions(
             active_since=active_since,
@@ -416,7 +421,7 @@ class OperationMixinHelpers:
         **kwargs: Any
     ) -> Tuple[HttpRequest, HttpRequest, Any]:
         condition = kwargs.pop("filter", None)
-        filter_condition = condition._to_generated() if condition else None
+        filter_condition = condition._to_generated() if condition else None  # pylint: disable=protected-access
         converted_start_time = self._convert_datetime(start_time)
         converted_end_time = self._convert_datetime(end_time)
         content_type = kwargs.pop("content_type", "application/json")
@@ -437,8 +442,9 @@ class OperationMixinHelpers:
         )
         return initial_request, next_request, kwargs
 
+    @staticmethod
     def _list_metric_dimension_values_requests(
-        self, metric_id, dimension_name, **kwargs
+        metric_id, dimension_name, **kwargs
     ) -> Tuple[HttpRequest, HttpRequest, Any]:
         skip = kwargs.pop("skip", None)
         dimension_value_filter = kwargs.pop("dimension_value_filter", None)
@@ -507,8 +513,8 @@ class OperationMixinHelpers:
         next_request = build_list_metric_enrichment_status_request(metric_id=metric_id)
         return initial_request, next_request, kwargs
 
+    @staticmethod
     def _list_incidents_for_alert_requests(
-        self,
         alert_configuration_id: str,
         alert_id: str,
         *,
@@ -528,8 +534,9 @@ class OperationMixinHelpers:
         )
         return initial_request, next_request, kwargs
 
+    @staticmethod
     def _list_anomalies_for_alert_requests(
-        self, alert_configuration_id: str, alert_id: str, **kwargs: Any
+        alert_configuration_id: str, alert_id: str, **kwargs: Any
     ) -> Tuple[HttpRequest, HttpRequest, Any]:
         initial_request = build_list_anomalies_for_alert_request(
             alert_configuration_id=alert_configuration_id,
@@ -541,26 +548,30 @@ class OperationMixinHelpers:
         )
         return initial_request, next_request, kwargs
 
-    def _list_incident_root_causes_requests(self, detection_configuration_id: str, incident_id: str, **kwargs):
+    @staticmethod
+    def _list_incident_root_causes_requests(detection_configuration_id: str, incident_id: str, **kwargs):
         initial_request = build_list_incident_root_causes_request(
             detection_configuration_id=detection_configuration_id,
             incident_id=incident_id,
         )
         return initial_request, initial_request, kwargs
 
-    def _list_hooks_requests(self, **kwargs):
+    @staticmethod
+    def _list_hooks_requests(**kwargs):
         hook_name = kwargs.pop("hook_name", None)
         skip = kwargs.pop("skip", None)
         initial_request = build_list_hooks_request(hook_name=hook_name, skip=skip)
         return initial_request, build_list_hooks_request(), kwargs
 
-    def _list_detection_configurations_requests(self, metric_id: str, **kwargs: Any):
+    @staticmethod
+    def _list_detection_configurations_requests(metric_id: str, **kwargs: Any):
         skip = kwargs.pop("skip", None)
         initial_request = build_list_detection_configurations_request(metric_id=metric_id, skip=skip)
         next_request = build_list_detection_configurations_request(metric_id=metric_id)
         return initial_request, next_request, kwargs
 
-    def _list_datasource_credentials_requests(self, **kwargs):
+    @staticmethod
+    def _list_datasource_credentials_requests(**kwargs):
         skip = kwargs.pop("skip", None)
         initial_request = build_list_datasource_credentials_request(skip=skip)
         next_request = build_list_datasource_credentials_request()
@@ -582,7 +593,7 @@ class OperationMixinHelpers:
             alert_configuration_id = alert_configuration
             if "metricAlertingConfigurations" in update:
                 update["metricAlertingConfigurations"] = (
-                    [config._to_generated() for config in update["metricAlertingConfigurations"]]
+                    [config._to_generated() for config in update["metricAlertingConfigurations"]]  # pylint: disable=protected-access
                     if update["metricAlertingConfigurations"]
                     else None
                 )
@@ -590,10 +601,10 @@ class OperationMixinHelpers:
 
         else:
             alert_configuration_id = alert_configuration.id
-            alert_configuration_patch = alert_configuration._to_generated(**update).serialize()
+            alert_configuration_patch = alert_configuration._to_generated(**update).serialize()  # pylint: disable=protected-access
         content_type = kwargs.pop("content_type", "application/merge-patch+json")  # type: Optional[str]
 
-        _json = self._serialize.body(alert_configuration_patch, "object")
+        _json = self._serialize.body(alert_configuration_patch, "object")  # pylint: disable=no-member
 
         request = build_update_alert_configuration_request(
             configuration_id=alert_configuration_id,
@@ -601,9 +612,9 @@ class OperationMixinHelpers:
             json=_json,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),  # pylint: disable=no-member
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # pylint: disable=no-member
         return request, kwargs
 
     def _update_alert_configuration_deserialize(self, pipeline_response, **kwargs: Any):
@@ -614,10 +625,10 @@ class OperationMixinHelpers:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorCode, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)  # pylint: disable=no-member
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize(generated_models.AnomalyAlertConfiguration, pipeline_response)
+        deserialized = self._deserialize(generated_models.AnomalyAlertConfiguration, pipeline_response)  # pylint: disable=no-member
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -629,9 +640,9 @@ class OperationMixinHelpers:
             feedback_id=feedback_id,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),  # pylint: disable=no-member
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # pylint: disable=no-member
         return request
 
     def _get_feedback_deserialize(self, pipeline_response, **kwargs) -> MetricFeedback:
@@ -640,11 +651,11 @@ class OperationMixinHelpers:
         response = pipeline_response.http_response
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)  # pylint: disable=no-member
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._convert_to_sub_feedback(
-            self._deserialize(generated_models.MetricFeedback, pipeline_response)
+            self._deserialize(generated_models.MetricFeedback, pipeline_response)  # pylint: disable=no-member
         )
 
         if cls:
@@ -652,8 +663,9 @@ class OperationMixinHelpers:
 
         return deserialized
 
+    @staticmethod
     def _update_hook_helper(
-        self, hook: Union[str, EmailNotificationHook, WebNotificationHook], **kwargs: Any
+        hook: Union[str, EmailNotificationHook, WebNotificationHook], **kwargs: Any
     ) -> Tuple[str, Union[JSONType, NotificationHook], Any]:
         hook_patch = {}
         hook_type = kwargs.pop("hook_type", None)
@@ -704,8 +716,8 @@ class OperationMixinHelpers:
                 kwargs.pop(k)
         return hook_id, hook_patch, kwargs
 
-    def _convert_datetime(self, date_time):
-        # type: (Union[str, datetime.datetime]) -> datetime.datetime
+    @staticmethod
+    def _convert_datetime(date_time: Union[str, datetime.datetime]) -> datetime.datetime:
         if isinstance(date_time, datetime.datetime):
             return date_time
         if isinstance(date_time, str):
@@ -719,18 +731,18 @@ class OperationMixinHelpers:
         raise TypeError("Bad datetime type")
 
     def _get_paging_prepare_request(
-        self, initial_request: HttpRequest, next_request: HttpRequest, next_link=None, **kwargs
+        self, initial_request: HttpRequest, next_request: HttpRequest
     ) -> Callable:
         def prepare_request(next_link=None):
             path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),  # pylint: disable=no-member
             }
             if not next_link:
                 request = initial_request
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # pylint: disable=no-member
             else:
                 request = next_request
-                request.url = self._client.format_url(next_link, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)  # pylint: disable=no-member
             return request
 
         return prepare_request
@@ -738,8 +750,10 @@ class OperationMixinHelpers:
     def _deserialize_data_feed(self, json_response) -> DataFeed:
         data_source_parameter = json_response["dataSourceParameter"]
         data_source_type = json_response["dataSourceType"]
-        return DataFeed._from_generated(
-            self._deserialize(generated_models.DataFeed, json_response), data_source_parameter, data_source_type
+        return DataFeed._from_generated(  # pylint: disable=protected-access
+            self._deserialize(generated_models.DataFeed, json_response),  # pylint: disable=no-member
+            data_source_parameter,
+            data_source_type
         )
 
 
@@ -749,7 +763,9 @@ def _extract_data_default(deserializer, pipeline_response):
     return response_json.get("@nextLink", None) or None, iter(list_of_elem)
 
 
-class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, OperationMixinHelpers):
+class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-methods,function-redefined
+    _MetricsAdvisorClientOperationsMixin, OperationMixinHelpers
+):
     def _paging_helper(
         self, *, extract_data=None, initial_request: HttpRequest, next_request: HttpRequest, deserializer=None, **kwargs
     ) -> ItemPaged:
@@ -758,7 +774,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         error_map.update(kwargs.pop("error_map", {}))
 
         prepare_request = self._get_paging_prepare_request(
-            initial_request=initial_request, next_request=next_request, **kwargs
+            initial_request=initial_request, next_request=next_request
         )
 
         def get_next(next_link=None):
@@ -779,18 +795,20 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def create_alert_configuration(
+    def create_alert_configuration(  # pylint: disable=arguments-differ
         self,
-        name,  # type: str
-        metric_alert_configurations,  # type: List[MetricAlertConfiguration]
-        hook_ids,  # type: List[str]
-        **kwargs  # type: Any
-    ):  # type: (...) -> AnomalyAlertConfiguration
+        name: str,
+        metric_alert_configurations: List[MetricAlertConfiguration],
+        hook_ids: List[str],
+        **kwargs: Any
+    ) -> AnomalyAlertConfiguration:
         cross_metrics_operator = kwargs.pop("cross_metrics_operator", None)
         response_headers = super().create_alert_configuration(  # type: ignore
             AnomalyAlertConfiguration(
                 name=name,
-                metric_alert_configurations=[m._to_generated() for m in metric_alert_configurations],
+                metric_alert_configurations=[
+                    m._to_generated() for m in metric_alert_configurations  # pylint: disable=protected-access
+                ],
                 hook_ids=hook_ids,
                 cross_metrics_operator=cross_metrics_operator,
                 description=kwargs.pop("description", None),
@@ -803,15 +821,15 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         return self.get_alert_configuration(config_id)
 
     @distributed_trace
-    def create_data_feed(
+    def create_data_feed(  # pylint: disable=arguments-differ
         self,
-        name,  # type: str
-        source,  # type: DataFeedSourceUnion
-        granularity,  # type: Union[str, DataFeedGranularityType, DataFeedGranularity]
-        schema,  # type: Union[List[str], DataFeedSchema]
-        ingestion_settings,  # type: Union[datetime.datetime, DataFeedIngestionSettings]
-        **kwargs  # type: Any
-    ):  # type: (...) -> DataFeed
+        name: str,
+        source: DataFeedSourceUnion,
+        granularity: Union[str, DataFeedGranularityType, DataFeedGranularity],
+        schema: Union[List[str], DataFeedSchema],
+        ingestion_settings: Union[datetime.datetime, DataFeedIngestionSettings],
+        **kwargs: Any
+    ) -> DataFeed:
         data_feed = self._construct_data_feed(
             name=name,
             source=source,
@@ -824,17 +842,19 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
             if attr in kwargs:
                 kwargs.pop(attr)
         response_headers = super().create_data_feed(  # type: ignore
-            data_feed._to_generated(), cls=lambda pipeline_response, _, response_headers: response_headers, **kwargs
+            data_feed._to_generated(),  # pylint: disable=protected-access
+            cls=lambda pipeline_response, _, response_headers: response_headers,
+            **kwargs
         )
         data_feed_id = response_headers["Location"].split("dataFeeds/")[1]
         return self.get_data_feed(data_feed_id)
 
     @distributed_trace
-    def create_hook(
+    def create_hook(  # pylint: disable=arguments-differ
         self,
-        hook,  # type: Union[EmailNotificationHook, WebNotificationHook]
-        **kwargs  # type: Any
-    ):  # type: (...) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]
+        hook: Union[EmailNotificationHook, WebNotificationHook],
+        **kwargs: Any
+    ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
         response_headers = super().create_hook(  # type: ignore
             hook, cls=lambda pipeline_response, _, response_headers: response_headers, **kwargs  # type: ignore
         )
@@ -842,13 +862,13 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         return self.get_hook(hook_id)
 
     @distributed_trace
-    def create_detection_configuration(
+    def create_detection_configuration(  # pylint: disable=arguments-differ
         self,
-        name,  # type: str
-        metric_id,  # type: str
-        whole_series_detection_condition,  # type: MetricDetectionCondition
-        **kwargs  # type: Any
-    ):  # type: (...) -> AnomalyDetectionConfiguration
+        name: str,
+        metric_id: str,
+        whole_series_detection_condition: MetricDetectionCondition,
+        **kwargs: Any
+    ) -> AnomalyDetectionConfiguration:
         config = AnomalyDetectionConfiguration(
             name=name,
             metric_id=metric_id,
@@ -895,8 +915,9 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         return self._deserialize_data_feed(response.json())
 
     @distributed_trace
-    def get_alert_configuration(self, alert_configuration_id, **kwargs):
-        # type: (str, Any) -> AnomalyAlertConfiguration
+    def get_alert_configuration(  # pylint: disable=arguments-differ
+        self, alert_configuration_id: str, **kwargs: Any
+    ) -> AnomalyAlertConfiguration:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
@@ -921,14 +942,13 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         return self._deserialize_anomaly_detection_configuration(pipeline_response, **kwargs)
 
     @distributed_trace
-    def refresh_data_feed_ingestion(
+    def refresh_data_feed_ingestion(  # pylint: disable=arguments-differ
         self,
-        data_feed_id,  # type: str
-        start_time,  # type: Union[str, datetime.datetime]
-        end_time,  # type: Union[str, datetime.datetime]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        data_feed_id: str,
+        start_time: Union[str, datetime.datetime],
+        end_time: Union[str, datetime.datetime],
+        **kwargs: Any
+    ) -> None:
         converted_start_time = self._convert_datetime(start_time)
         converted_end_time = self._convert_datetime(end_time)
         super().refresh_data_feed_ingestion(
@@ -970,13 +990,15 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         super().delete_hook(hook_id[0], **kwargs)
 
     @distributed_trace
-    def update_data_feed(self, data_feed: Union[str, DataFeed], **kwargs: Any) -> DataFeed:
+    def update_data_feed(  # pylint: disable=arguments-differ
+        self, data_feed: Union[str, DataFeed], **kwargs: Any
+    ) -> DataFeed:
         data_feed_id, data_feed_patch, kwargs = self._update_data_feed_helper(data_feed, **kwargs)
         response = super().update_data_feed(data_feed_id, data_feed_patch, **kwargs)
         return self._deserialize_data_feed(response)
 
     @distributed_trace
-    def update_alert_configuration(
+    def update_alert_configuration(  # pylint: disable=arguments-differ
         self, alert_configuration: Union[str, AnomalyAlertConfiguration], **kwargs: Any
     ) -> AnomalyAlertConfiguration:
         request, kwargs = self._update_alert_configuration_helper(alert_configuration, **kwargs)
@@ -986,7 +1008,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         return self._deserialize_anomaly_detection_configuration(pipeline_response, **kwargs)
 
     @distributed_trace
-    def update_detection_configuration(
+    def update_detection_configuration(  # pylint: disable=arguments-differ
         self, detection_configuration: Union[str, AnomalyDetectionConfiguration], **kwargs: Any
     ) -> AnomalyDetectionConfiguration:
         detection_configuration_id, detection_config_patch, kwargs = self._update_detection_configuration_helper(
@@ -998,7 +1020,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         )
 
     @distributed_trace
-    def update_hook(
+    def update_hook(  # pylint: disable=arguments-differ
         self, hook: Union[str, EmailNotificationHook, WebNotificationHook], **kwargs: Any
     ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
         hook_id, hook_patch, kwargs = self._update_hook_helper(hook, **kwargs)
@@ -1006,11 +1028,11 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         return super().update_hook(hook_id, hook_patch, **kwargs)
 
     @distributed_trace
-    def list_data_feeds(
+    def list_data_feeds(  # pylint: disable=arguments-differ
         self,
         *,
         data_feed_name: Optional[str] = None,
-        data_source_type: Optional[Union[str, "DataSourceType"]] = None,
+        data_source_type: Optional[Union[str, "DatasourceType"]] = None,
         granularity_type: Optional[Union[str, "DataFeedGranularityType"]] = None,
         status: Optional[Union[str, "DataFeedStatus"]] = None,
         creator: Optional[str] = None,
@@ -1034,7 +1056,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         )
 
     @distributed_trace
-    def list_alert_configurations(
+    def list_alert_configurations(  # pylint: disable=arguments-differ
         self, detection_configuration_id: str, **kwargs: Any
     ) -> ItemPaged[AnomalyAlertConfiguration]:
         def _deserialize(deserializer, line):
@@ -1042,7 +1064,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
             line["metricAlertingConfigurations"] = [
                 config_to_generated(config) for config in line.get("metricAlertingConfigurations", [])
             ]
-            return AnomalyAlertConfiguration._from_generated(
+            return AnomalyAlertConfiguration._from_generated(  # pylint: disable=protected-access
                 deserializer(generated_models.AnomalyAlertConfiguration, line)
             )
 
@@ -1058,14 +1080,13 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         )
 
     @distributed_trace
-    def list_data_feed_ingestion_status(
+    def list_data_feed_ingestion_status(  # pylint: disable=arguments-differ
         self,
-        data_feed_id,  # type: str
-        start_time,  # type: Union[str, datetime.datetime]
-        end_time,  # type: Union[str, datetime.datetime]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> ItemPaged[DataFeedIngestionStatus]
+        data_feed_id: str,
+        start_time: Union[str, datetime.datetime],
+        end_time: Union[str, datetime.datetime],
+        **kwargs: Any
+    ) -> ItemPaged[DataFeedIngestionStatus]:
         initial_request, next_request, kwargs = self._list_data_feed_ingestion_status_requests(
             data_feed_id, start_time, end_time, **kwargs
         )
@@ -1077,7 +1098,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         )
 
     @distributed_trace
-    def create_datasource_credential(
+    def create_datasource_credential(  # pylint: disable=arguments-differ
         self, datasource_credential: DatasourceCredentialUnion, **kwargs: Any
     ) -> DatasourceCredentialUnion:
         response_headers = super().create_datasource_credential(  # type: ignore
@@ -1094,11 +1115,11 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         return self._deserialize_datasource_credential(response)
 
     @distributed_trace
-    def update_datasource_credential(
+    def update_datasource_credential(  # pylint: disable=arguments-differ
         self,
-        datasource_credential,  # type: DatasourceCredentialUnion
-        **kwargs  # type: Any
-    ):
+        datasource_credential: DatasourceCredentialUnion,
+        **kwargs: Any
+    ) -> DatasourceCredentialUnion:
         response = super().update_datasource_credential(datasource_credential.id, datasource_credential, **kwargs)
         return self._deserialize_datasource_credential(response)
 
@@ -1124,7 +1145,9 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         return self._get_feedback_deserialize(pipeline_response, cls=cls, error_map=error_map, **kwargs)
 
     @distributed_trace
-    def list_feedback(self, metric_id: str, **kwargs: Any) -> ItemPaged[Union[MetricFeedback, FeedbackUnion]]:
+    def list_feedback(  # pylint: disable=arguments-differ
+        self, metric_id: str, **kwargs: Any
+    ) -> ItemPaged[Union[MetricFeedback, FeedbackUnion]]:
         deserializer = functools.partial(self._deserialize, generated_models.MetricFeedback)
         initial_request, next_request, kwargs = self._list_feedback_requests(metric_id, **kwargs)
         return self._paging_helper(
@@ -1132,15 +1155,14 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         )
 
     @distributed_trace
-    def list_metric_enriched_series_data(
+    def list_metric_enriched_series_data(  # pylint: disable=arguments-differ
         self,
-        detection_configuration_id,  # type: str
-        series,  # type: Union[List[SeriesIdentity], List[Dict[str, str]]]
-        start_time,  # type: Union[str, datetime.datetime]
-        end_time,  # type: Union[str, datetime.datetime]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> ItemPaged[MetricEnrichedSeriesData]
+        detection_configuration_id: str,
+        series: Union[List[SeriesIdentity], List[Dict[str, str]]],
+        start_time: Union[str, datetime.datetime],
+        end_time: Union[str, datetime.datetime],
+        **kwargs: Any
+    ) -> ItemPaged[MetricEnrichedSeriesData]:
         initial_request, next_request, kwargs = self._list_metric_enriched_series_data_requests(
             detection_configuration_id=detection_configuration_id,
             series=series,
@@ -1157,7 +1179,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         )
 
     @distributed_trace
-    def list_alerts(
+    def list_alerts(  # pylint: disable=arguments-differ
         self,
         alert_configuration_id: str,
         start_time: datetime.datetime,
@@ -1224,8 +1246,14 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         return self._list_anomalies_for_alert(**kwargs)  # type: ignore
 
     @distributed_trace
-    def list_anomaly_dimension_values(self, detection_configuration_id, dimension_name, start_time, end_time, **kwargs):
-        # type: (str, str, Union[str, datetime.datetime], Union[str, datetime.datetime], Any) -> ItemPaged[str]
+    def list_anomaly_dimension_values(  # pylint: disable=arguments-differ
+        self,
+        detection_configuration_id: str,
+        dimension_name: str,
+        start_time: Union[str, datetime.datetime],
+        end_time: Union[str, datetime.datetime],
+        **kwargs: Any
+    ) -> ItemPaged[str]:
         initial_request, next_request, kwargs = self._list_anomaly_dimension_values_requests(
             detection_configuration_id=detection_configuration_id,
             dimension_name=dimension_name,
@@ -1295,7 +1323,7 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         return self._list_incidents_for_alert(**kwargs)  # type: ignore
 
     @distributed_trace
-    def list_metric_dimension_values(self, metric_id, dimension_name, **kwargs):
+    def list_metric_dimension_values(self, metric_id, dimension_name, **kwargs):  # pylint: disable=arguments-differ
         # type: (str, str, Any) -> ItemPaged[str]
         initial_request, next_request, kwargs = self._list_metric_dimension_values_requests(
             metric_id=metric_id, dimension_name=dimension_name, **kwargs
@@ -1305,15 +1333,14 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         )
 
     @distributed_trace
-    def list_metric_series_data(
+    def list_metric_series_data(  # pylint: disable=arguments-differ
         self,
-        metric_id,  # type: str
-        series_keys,  # type: List[Dict[str, str]]
-        start_time,  # type: Union[str, datetime.datetime]
-        end_time,  # type: Union[str, datetime.datetime]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> ItemPaged[MetricSeriesData]
+        metric_id: str,
+        series_keys: List[Dict[str, str]],
+        start_time: Union[str, datetime.datetime],
+        end_time: Union[str, datetime.datetime],
+        **kwargs: Any
+    ) -> ItemPaged[MetricSeriesData]:
         initial_request, next_request, kwargs = self._list_metric_series_data_requests(
             metric_id=metric_id, series_keys=series_keys, start_time=start_time, end_time=end_time, **kwargs
         )
@@ -1326,10 +1353,9 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         )
 
     @distributed_trace
-    def list_metric_series_definitions(self, metric_id, active_since, **kwargs):
-        # type: (str, datetime.datetime, Any) -> ItemPaged[MetricSeriesDefinition]
-        cls = kwargs.pop("cls", None)
-
+    def list_metric_series_definitions(  # pylint: disable=arguments-differ
+        self, metric_id: str, active_since: datetime.datetime, **kwargs: Any
+    ) -> ItemPaged[MetricSeriesDefinition]:
         initial_request, next_request, kwargs = self._list_metric_series_definitions_requests(
             metric_id, active_since, **kwargs
         )
@@ -1343,8 +1369,13 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
         )
 
     @distributed_trace
-    def list_metric_enrichment_status(self, metric_id, start_time, end_time, **kwargs):
-        # type: (str, Union[str, datetime.datetime], Union[str, datetime.datetime], Any) -> ItemPaged[EnrichmentStatus]
+    def list_metric_enrichment_status(  # pylint: disable=arguments-differ
+        self,
+        metric_id: str,
+        start_time: Union[str, datetime.datetime],
+        end_time: Union[str, datetime.datetime],
+        **kwargs: Any
+    ) -> ItemPaged[EnrichmentStatus]:
         initial_request, next_request, kwargs = self._list_metric_enrichment_status_requests(
             metric_id=metric_id, start_time=start_time, end_time=end_time, **kwargs
         )
@@ -1403,5 +1434,5 @@ class MetricsAdvisorClientOperationsMixin(_MetricsAdvisorClientOperationsMixin, 
 __all__ = ["MetricsAdvisorClientOperationsMixin"]
 
 
-def patch_sdk():
+def patch_sdk():  # pylint: disable=function-redefined
     pass

@@ -1,4 +1,4 @@
-# coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 #
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -25,11 +25,12 @@
 #
 # --------------------------------------------------------------------------
 import datetime
-from typing import List, Dict, Any, Optional, Union, cast, overload, TYPE_CHECKING
-from ._metrics_advisor_client import MetricsAdvisorClient as _ClientAsync
+from typing import List, Dict, Any, Union, overload, TYPE_CHECKING
+
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
+
 from .._operations._patch import (
     DataFeedSourceUnion,
     DatasourceCredentialUnion,
@@ -40,7 +41,8 @@ from .._patch import (
     MetricsAdvisorKeyCredential,
     get_authentication_policy,
 )
-from ..models import *
+from ._metrics_advisor_client import MetricsAdvisorClient as _ClientAsync
+from ..models import *  # pylint: disable=unused-wildcard-import,wildcard-import
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -1474,7 +1476,7 @@ class MetricsAdvisorClient(object):
         )
 
 
-def patch_sdk():
+def patch_sdk():  # pylint: disable=function-redefined
     pass
 
 

@@ -1,22 +1,24 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, List, Union, cast, overload, Dict
-import six
+from typing import Any, List, Union, overload, Dict
+
 from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.paging import ItemPaged
+
 from ._metrics_advisor_client import MetricsAdvisorClient as _Client
 from ._version import SDK_MONIKER
-from azure.core.tracing.decorator import distributed_trace
 from ._operations._patch import (
     DataFeedSourceUnion,
     DatasourceCredentialUnion,
     FeedbackUnion,
 )
-from azure.core.paging import ItemPaged
-from .models import *
+from .models import *  # pylint: disable=unused-wildcard-import,wildcard-import
 
 _API_KEY_HEADER_NAME = "Ocp-Apim-Subscription-Key"
 _X_API_KEY_HEADER_NAME = "x-api-key"
@@ -32,7 +34,7 @@ class MetricsAdvisorKeyCredential(object):
 
     def __init__(self, subscription_key, api_key):
         # type: (str, str) -> None
-        if not (isinstance(subscription_key, six.string_types) and isinstance(api_key, six.string_types)):
+        if not (isinstance(subscription_key, str) and isinstance(api_key, str)):
             raise TypeError("key must be a string.")
         self._subscription_key = subscription_key  # type: str
         self._api_key = api_key  # type: str
@@ -71,11 +73,11 @@ class MetricsAdvisorKeyCredential(object):
         if len(kwargs) > 0:
             raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
         if subscription_key:
-            if not isinstance(subscription_key, six.string_types):
+            if not isinstance(subscription_key, str):
                 raise TypeError("The subscription_key used for updating must be a string.")
             self._subscription_key = subscription_key
         if api_key:
-            if not isinstance(api_key, six.string_types):
+            if not isinstance(api_key, str):
                 raise TypeError("The api_key used for updating must be a string.")
             self._api_key = api_key
 
@@ -123,7 +125,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         which requires both subscription key and API key. Or an object which can provide an access
         token for the Metrics Advisor service, such as a credential from :mod:`azure.identity`
     :type credential: ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential or ~azure.core.credentials.TokenCredential
+
     .. admonition:: Example:
+
         .. literalinclude:: ../samples/sample_authentication.py
             :start-after: [START administration_client_with_metrics_advisor_credential]
             :end-before: [END administration_client_with_metrics_advisor_credential]
@@ -1580,7 +1584,7 @@ class MetricsAdvisorClient(object):
         )
 
 
-def patch_sdk():
+def patch_sdk():  # pylint: disable=function-redefined
     pass
 
 
