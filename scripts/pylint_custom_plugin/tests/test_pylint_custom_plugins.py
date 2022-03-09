@@ -2570,13 +2570,13 @@ class TestCheckDocstringAdmonitionNewline(pylint.testutils.CheckerTestCase):
         ):
             self.checker.visit_classdef(class_node)
 
-class TestCheckEnumUpperCase(pylint.testutils.CheckerTestCase):
-    CHECKER_CLASS = checker.CheckEnumUpperCase
+class TestCheckEnum(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.CheckEnum
 
     def test_enum(self):
         function_node = astroid.extract_node(
             """
-            class MyBadEnum(str,Enum):
+            class MyBadEnum(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)): 
                 One = "one"
             """
         )
@@ -2599,3 +2599,19 @@ class TestCheckEnumUpperCase(pylint.testutils.CheckerTestCase):
 
         with self.assertNoMessages():
             self.checker.visit_classdef(function_node)
+
+    def test_not_inheriting_case_insensitive(self):
+        function_node = astroid.extract_node(
+            """
+            class MyGoodEnum(str, Enum): 
+                ONE = "one"
+            """
+        )
+
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="enum-must-inherit-case-insensitive-enum-meta", node=function_node
+                    )
+                ):
+                self.checker.visit_classdef(function_node)
+    
