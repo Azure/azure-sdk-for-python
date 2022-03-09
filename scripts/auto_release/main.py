@@ -241,7 +241,7 @@ class CodegenTestPR:
         # self.prepare_branch_with_base_branch()
 
     def check_sdk_readme(self):
-        sdk_readme = str(Path(f'sdk/{self.sdk_folder}/{self.package_name}/README.md'))
+        sdk_readme = str(Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}/README.md'))
 
         def edit_sdk_readme(content: List[str]):
             for i in range(0, len(content)):
