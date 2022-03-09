@@ -44,10 +44,6 @@ def print_exec_output(cmd: str) -> List[str]:
 def print_check(cmd):
     log(cmd)
     subprocess.check_call(cmd, shell=True)
-    
-def print_check_with_path(cmd, path):
-    log(cmd)
-    subprocess.check_call(cmd, shell=True, cwd=path)
 
 
 def preview_version_plus(preview_label: str, last_version: str) -> str:
@@ -262,9 +258,10 @@ class CodegenTestPR:
         modify_file(str(Path(self.sdk_code_path()) / 'setup.py'), edit_sdk_setup)
 
     # Use the template to update readme and setup by packaging_tools
+    @return_origin_path
     def check_sdk_readme_and_setup(self):
-        path = str(Path(f'sdk/{self.sdk_folder}'))
-        print_check_with_path(f'python -m packaging_tools --build-conf azure-mgmt-{self.package_name}',path)
+        os.chdir(Path(f'sdk/{self.sdk_folder}'))
+        print_check(f'python -m packaging_tools --build-conf azure-mgmt-{self.package_name}')
         log(f' packaging_tools --build-conf successfully ')
 
     def check_pprint_name(self):
@@ -414,6 +411,8 @@ class CodegenTestPR:
     def check_file(self):
         self.check_pprint_name()
         self.check_sdk_readme_and_setup()
+        self.check_sdk_readme()
+        self.check_sdk_setup()
         self.check_version()
         self.check_changelog_file()
         self.check_ci_file()
