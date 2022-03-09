@@ -345,7 +345,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             shutdown_after_timeout=False,
         )
         if self._prefetch_count == 1:
-            self._handler._message_received = self._enhanced_message_received
+            self._handler._message_received = self._enhanced_message_received  # pylint: disable=protected-access
 
     async def _open(self):
         # pylint: disable=protected-access
@@ -564,8 +564,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 _LOGGER.debug("Keep receiving alive")
             except asyncio.CancelledError:
                 pass
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-except
                 _LOGGER.info("Keep receiving failed %r", e)
+                break
 
     @property
     def session(self) -> ServiceBusSession:
@@ -588,7 +589,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
     async def close(self) -> None:
         await super(ServiceBusReceiver, self).close()
-        if self._prefetch == 1:
+        if self._prefetch_count == 1 and self._keep_receiving_coroutine:
             await self._keep_receiving_coroutine
         self._message_iter = None
 

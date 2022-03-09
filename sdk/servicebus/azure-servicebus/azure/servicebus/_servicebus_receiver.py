@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-
+# pylint:disable=too-many-lines
 import threading
 import time
 import logging
@@ -354,7 +354,7 @@ class ServiceBusReceiver(
             shutdown_after_timeout=False,
         )
         if self._prefetch_count == 1:
-            self._handler._message_received = self._enhanced_message_received
+            self._handler._message_received = self._enhanced_message_received  # pylint: disable=protected-access
 
     def _open(self):
         # pylint: disable=protected-access
@@ -574,8 +574,9 @@ class ServiceBusReceiver(
                 self._handler._connection.work()  # pylint: disable=protected-access
                 time.sleep(5)
                 _LOGGER.debug("Keep receiving alive")
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-except
                 _LOGGER.info("Keep receiving failed %r", e)
+                break
 
     @property
     def session(self):
@@ -600,7 +601,7 @@ class ServiceBusReceiver(
     def close(self):
         # type: () -> None
         super(ServiceBusReceiver, self).close()
-        if self._prefetch_count == 1:
+        if self._prefetch_count == 1 and self._keep_receiving_thread:
             self._keep_receiving_thread.join()
         self._message_iter = None  # pylint: disable=attribute-defined-outside-init
 
