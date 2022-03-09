@@ -854,26 +854,24 @@ def build_undelete_request(
 
 # fmt: on
 class PathOperations(object):
-    """PathOperations operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.storage.filedatalake.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.storage.filedatalake.AzureDataLakeStorageRESTAPI`'s
+        :attr:`path` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs):
+        args = list(args)
+        self._client = args.pop(0) if args else kwargs.pop("client")
+        self._config = args.pop(0) if args else kwargs.pop("config")
+        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
+        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
+
 
     @distributed_trace
     def create(  # pylint: disable=inconsistent-return-statements
@@ -905,34 +903,35 @@ class PathOperations(object):
         To fail if the destination already exists, use a conditional request with If-None-Match: "*".
 
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param resource: Required only for Create File and Create Directory. The value must be "file"
-         or "directory".
+         or "directory". Default value is None.
         :type resource: str or ~azure.storage.filedatalake.models.PathResourceType
         :param continuation: Optional.  When deleting a directory, the number of paths that are deleted
          with each invocation is limited.  If the number of paths to be deleted exceeds this limit, a
          continuation token is returned in this response header.  When a continuation token is returned
          in the response, it must be specified in a subsequent invocation of the delete operation to
-         continue deleting the directory.
+         continue deleting the directory. Default value is None.
         :type continuation: str
         :param mode: Optional. Valid only when namespace is enabled. This parameter determines the
          behavior of the rename operation. The value must be "legacy" or "posix", and the default value
-         will be "posix".
+         will be "posix". Default value is None.
         :type mode: str or ~azure.storage.filedatalake.models.PathRenameMode
         :param rename_source: An optional file or directory to be renamed.  The value must have the
          following format: "/{filesystem}/{path}".  If "x-ms-properties" is specified, the properties
          will overwrite the existing properties; otherwise, the existing properties will be preserved.
          This value must be a URL percent-encoded string. Note that the string may only contain ASCII
-         characters in the ISO-8859-1 character set.
+         characters in the ISO-8859-1 character set. Default value is None.
         :type rename_source: str
         :param source_lease_id: A lease ID for the source path. If specified, the source path must have
-         an active lease and the lease ID must match.
+         an active lease and the lease ID must match. Default value is None.
         :type source_lease_id: str
         :param properties: Optional. User-defined properties to be stored with the filesystem, in the
          format of a comma-separated list of name and value pairs "n1=v1, n2=v2, ...", where each value
@@ -940,12 +939,14 @@ class PathOperations(object):
          ISO-8859-1 character set.  If the filesystem exists, any properties not included in the list
          will be removed.  All properties are removed if the header is omitted.  To merge new and
          existing properties, first get all existing properties and the current E-Tag, then make a
-         conditional request with the E-Tag and include values for all properties.
+         conditional request with the E-Tag and include values for all properties. Default value is
+         None.
         :type properties: str
         :param permissions: Optional and only valid if Hierarchical Namespace is enabled for the
          account. Sets POSIX access permissions for the file owner, the file owning group, and others.
          Each class may be granted read, write, or execute permission.  The sticky bit is also
          supported.  Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are supported.
+         Default value is None.
         :type permissions: str
         :param umask: Optional and only valid if Hierarchical Namespace is enabled for the account.
          When creating a file or directory and the parent folder does not have a default ACL, the umask
@@ -953,15 +954,15 @@ class PathOperations(object):
          given by p bitwise and not u, where p is the permission and u is the umask.  For example, if p
          is 0777 and u is 0057, then the resulting permission is 0720.  The default permission is 0777
          for a directory and 0666 for a file.  The default umask is 0027.  The umask must be specified
-         in 4-digit octal notation (e.g. 0766).
+         in 4-digit octal notation (e.g. 0766). Default value is None.
         :type umask: str
-        :param path_http_headers: Parameter group.
+        :param path_http_headers: Parameter group. Default value is None.
         :type path_http_headers: ~azure.storage.filedatalake.models.PathHTTPHeaders
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.filedatalake.models.LeaseAccessConditions
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
-        :param source_modified_access_conditions: Parameter group.
+        :param source_modified_access_conditions: Parameter group. Default value is None.
         :type source_modified_access_conditions:
          ~azure.storage.filedatalake.models.SourceModifiedAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -1120,22 +1121,23 @@ class PathOperations(object):
         :param body: Initial data.
         :type body: IO
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param max_records: Optional. Valid for "SetAccessControlRecursive" operation. It specifies the
          maximum number of files or directories on which the acl change will be applied. If omitted or
-         greater than 2,000, the request will process up to 2,000 items.
+         greater than 2,000, the request will process up to 2,000 items. Default value is None.
         :type max_records: int
         :param continuation: Optional. The number of paths processed with each invocation is limited.
          If the number of paths to be processed exceeds this limit, a continuation token is returned in
          the response header x-ms-continuation. When a continuation token is  returned in the response,
          it must be percent-encoded and specified in a subsequent invocation of
-         setAccessControlRecursive operation.
+         setAccessControlRecursive operation. Default value is None.
         :type continuation: str
         :param force_flag: Optional. Valid for "SetAccessControlRecursive" operation. If set to false,
          the operation will terminate quickly on encountering user errors (4XX). If true, the operation
@@ -1149,7 +1151,8 @@ class PathOperations(object):
          position where the data is to be appended.  Uploaded data is not immediately flushed, or
          written, to the file.  To flush, the previously uploaded data must be contiguous, the position
          parameter must be specified and equal to the length of the file after all data has been
-         written, and there must not be a request entity body included with the request.
+         written, and there must not be a request entity body included with the request. Default value
+         is None.
         :type position: long
         :param retain_uncommitted_data: Valid only for flush operations.  If "true", uncommitted data
          is retained after the flush operation completes; otherwise, the uncommitted data is deleted
@@ -1169,7 +1172,8 @@ class PathOperations(object):
          indicate that the file stream has been closed.".
         :type close: bool
         :param content_length: Required for "Append Data" and "Flush Data".  Must be 0 for "Flush
-         Data".  Must be the length of the request content in bytes for "Append Data".
+         Data".  Must be the length of the request content in bytes for "Append Data". Default value is
+         None.
         :type content_length: long
         :param properties: Optional. User-defined properties to be stored with the filesystem, in the
          format of a comma-separated list of name and value pairs "n1=v1, n2=v2, ...", where each value
@@ -1177,27 +1181,29 @@ class PathOperations(object):
          ISO-8859-1 character set.  If the filesystem exists, any properties not included in the list
          will be removed.  All properties are removed if the header is omitted.  To merge new and
          existing properties, first get all existing properties and the current E-Tag, then make a
-         conditional request with the E-Tag and include values for all properties.
+         conditional request with the E-Tag and include values for all properties. Default value is
+         None.
         :type properties: str
-        :param owner: Optional. The owner of the blob or directory.
+        :param owner: Optional. The owner of the blob or directory. Default value is None.
         :type owner: str
-        :param group: Optional. The owning group of the blob or directory.
+        :param group: Optional. The owning group of the blob or directory. Default value is None.
         :type group: str
         :param permissions: Optional and only valid if Hierarchical Namespace is enabled for the
          account. Sets POSIX access permissions for the file owner, the file owning group, and others.
          Each class may be granted read, write, or execute permission.  The sticky bit is also
          supported.  Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are supported.
+         Default value is None.
         :type permissions: str
         :param acl: Sets POSIX access control rights on files and directories. The value is a
          comma-separated list of access control entries. Each access control entry (ACE) consists of a
          scope, a type, a user or group identifier, and permissions in the format
-         "[scope:][type]:[id]:[permissions]".
+         "[scope:][type]:[id]:[permissions]". Default value is None.
         :type acl: str
-        :param path_http_headers: Parameter group.
+        :param path_http_headers: Parameter group. Default value is None.
         :type path_http_headers: ~azure.storage.filedatalake.models.PathHTTPHeaders
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.filedatalake.models.LeaseAccessConditions
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SetAccessControlRecursiveResponse, or the result of cls(response)
@@ -1358,28 +1364,29 @@ class PathOperations(object):
          existing lease. Use "release" and specify the "x-ms-lease-id" to release a lease.
         :type x_ms_lease_action: str or ~azure.storage.filedatalake.models.PathLeaseAction
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param x_ms_lease_duration: The lease duration is required to acquire a lease, and specifies
          the duration of the lease in seconds.  The lease duration must be between 15 and 60 seconds or
-         -1 for infinite lease.
+         -1 for infinite lease. Default value is None.
         :type x_ms_lease_duration: int
         :param x_ms_lease_break_period: The lease break period duration is optional to break a lease,
          and  specifies the break period of the lease in seconds.  The lease break  duration must be
-         between 0 and 60 seconds.
+         between 0 and 60 seconds. Default value is None.
         :type x_ms_lease_break_period: int
         :param proposed_lease_id: Proposed lease ID, in a GUID string format. The Blob service returns
          400 (Invalid request) if the proposed lease ID is not in the correct format. See Guid
-         Constructor (String) for a list of valid GUID string formats.
+         Constructor (String) for a list of valid GUID string formats. Default value is None.
         :type proposed_lease_id: str
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.filedatalake.models.LeaseAccessConditions
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -1489,25 +1496,27 @@ class PathOperations(object):
         <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
 
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param range: The HTTP Range request header specifies one or more byte ranges of the resource
-         to be retrieved.
+         to be retrieved. Default value is None.
         :type range: str
         :param x_ms_range_get_content_md5: Optional. When this header is set to "true" and specified
          together with the Range header, the service returns the MD5 hash for the range, as long as the
          range is less than or equal to 4MB in size. If this header is specified without the Range
          header, the service returns status code 400 (Bad Request). If this header is set to true when
-         the range exceeds 4 MB in size, the service returns status code 400 (Bad Request).
+         the range exceeds 4 MB in size, the service returns status code 400 (Bad Request). Default
+         value is None.
         :type x_ms_range_get_content_md5: bool
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.filedatalake.models.LeaseAccessConditions
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IO, or the result of cls(response)
@@ -1639,17 +1648,18 @@ class PathOperations(object):
         <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
 
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param action: Optional. If the value is "getStatus" only the system defined properties for the
          path are returned. If the value is "getAccessControl" the access control list is returned in
          the response headers (Hierarchical Namespace must be enabled for the account), otherwise the
-         properties are returned.
+         properties are returned. Default value is None.
         :type action: str or ~azure.storage.filedatalake.models.PathGetPropertiesAction
         :param upn: Optional. Valid only when Hierarchical Namespace is enabled for the account. If
          "true", the user identity values returned in the x-ms-owner, x-ms-group, and x-ms-acl response
@@ -1658,9 +1668,9 @@ class PathOperations(object):
          false. Note that group and application Object IDs are not translated because they do not have
          unique friendly names.
         :type upn: bool
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.filedatalake.models.LeaseAccessConditions
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -1766,24 +1776,25 @@ class PathOperations(object):
         <https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations>`_.
 
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :param recursive: Required.
+        :param recursive: Required. Default value is None.
         :type recursive: bool
         :param continuation: Optional.  When deleting a directory, the number of paths that are deleted
          with each invocation is limited.  If the number of paths to be deleted exceeds this limit, a
          continuation token is returned in this response header.  When a continuation token is returned
          in the response, it must be specified in a subsequent invocation of the delete operation to
-         continue deleting the directory.
+         continue deleting the directory. Default value is None.
         :type continuation: str
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.filedatalake.models.LeaseAccessConditions
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -1871,31 +1882,33 @@ class PathOperations(object):
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :param owner: Optional. The owner of the blob or directory.
+        :param owner: Optional. The owner of the blob or directory. Default value is None.
         :type owner: str
-        :param group: Optional. The owning group of the blob or directory.
+        :param group: Optional. The owning group of the blob or directory. Default value is None.
         :type group: str
         :param permissions: Optional and only valid if Hierarchical Namespace is enabled for the
          account. Sets POSIX access permissions for the file owner, the file owning group, and others.
          Each class may be granted read, write, or execute permission.  The sticky bit is also
          supported.  Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are supported.
+         Default value is None.
         :type permissions: str
         :param acl: Sets POSIX access control rights on files and directories. The value is a
          comma-separated list of access control entries. Each access control entry (ACE) consists of a
          scope, a type, a user or group identifier, and permissions in the format
-         "[scope:][type]:[id]:[permissions]".
+         "[scope:][type]:[id]:[permissions]". Default value is None.
         :type acl: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.filedatalake.models.LeaseAccessConditions
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
-        :keyword action: action. The default value is "setAccessControl". Note that overriding this
-         default value may result in unsupported behavior.
+        :keyword action: action. Default value is "setAccessControl". Note that overriding this default
+         value may result in unsupported behavior.
         :paramtype action: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -1993,13 +2006,13 @@ class PathOperations(object):
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param continuation: Optional.  When deleting a directory, the number of paths that are deleted
          with each invocation is limited.  If the number of paths to be deleted exceeds this limit, a
          continuation token is returned in this response header.  When a continuation token is returned
          in the response, it must be specified in a subsequent invocation of the delete operation to
-         continue deleting the directory.
+         continue deleting the directory. Default value is None.
         :type continuation: str
         :param force_flag: Optional. Valid for "SetAccessControlRecursive" operation. If set to false,
          the operation will terminate quickly on encountering user errors (4XX). If true, the operation
@@ -2009,17 +2022,18 @@ class PathOperations(object):
         :type force_flag: bool
         :param max_records: Optional. It specifies the maximum number of files or directories on which
          the acl change will be applied. If omitted or greater than 2,000, the request will process up
-         to 2,000 items.
+         to 2,000 items. Default value is None.
         :type max_records: int
         :param acl: Sets POSIX access control rights on files and directories. The value is a
          comma-separated list of access control entries. Each access control entry (ACE) consists of a
          scope, a type, a user or group identifier, and permissions in the format
-         "[scope:][type]:[id]:[permissions]".
+         "[scope:][type]:[id]:[permissions]". Default value is None.
         :type acl: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :keyword action: action. The default value is "setAccessControlRecursive". Note that overriding
+        :keyword action: action. Default value is "setAccessControlRecursive". Note that overriding
          this default value may result in unsupported behavior.
         :paramtype action: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -2101,7 +2115,7 @@ class PathOperations(object):
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param position: This parameter allows the caller to upload data in parallel and control the
          order in which it is appended to the file.  It is required when uploading data to be appended
@@ -2109,7 +2123,8 @@ class PathOperations(object):
          position where the data is to be appended.  Uploaded data is not immediately flushed, or
          written, to the file.  To flush, the previously uploaded data must be contiguous, the position
          parameter must be specified and equal to the length of the file after all data has been
-         written, and there must not be a request entity body included with the request.
+         written, and there must not be a request entity body included with the request. Default value
+         is None.
         :type position: long
         :param retain_uncommitted_data: Valid only for flush operations.  If "true", uncommitted data
          is retained after the flush operation completes; otherwise, the uncommitted data is deleted
@@ -2129,19 +2144,21 @@ class PathOperations(object):
          indicate that the file stream has been closed.".
         :type close: bool
         :param content_length: Required for "Append Data" and "Flush Data".  Must be 0 for "Flush
-         Data".  Must be the length of the request content in bytes for "Append Data".
+         Data".  Must be the length of the request content in bytes for "Append Data". Default value is
+         None.
         :type content_length: long
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param path_http_headers: Parameter group.
+        :param path_http_headers: Parameter group. Default value is None.
         :type path_http_headers: ~azure.storage.filedatalake.models.PathHTTPHeaders
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.filedatalake.models.LeaseAccessConditions
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.filedatalake.models.ModifiedAccessConditions
-        :keyword action: action. The default value is "flush". Note that overriding this default value
-         may result in unsupported behavior.
+        :keyword action: action. Default value is "flush". Note that overriding this default value may
+         result in unsupported behavior.
         :paramtype action: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -2261,28 +2278,31 @@ class PathOperations(object):
          position where the data is to be appended.  Uploaded data is not immediately flushed, or
          written, to the file.  To flush, the previously uploaded data must be contiguous, the position
          parameter must be specified and equal to the length of the file after all data has been
-         written, and there must not be a request entity body included with the request.
+         written, and there must not be a request entity body included with the request. Default value
+         is None.
         :type position: long
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param content_length: Required for "Append Data" and "Flush Data".  Must be 0 for "Flush
-         Data".  Must be the length of the request content in bytes for "Append Data".
+         Data".  Must be the length of the request content in bytes for "Append Data". Default value is
+         None.
         :type content_length: long
         :param transactional_content_crc64: Specify the transactional crc64 for the body, to be
-         validated by the service.
+         validated by the service. Default value is None.
         :type transactional_content_crc64: bytearray
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param path_http_headers: Parameter group.
+        :param path_http_headers: Parameter group. Default value is None.
         :type path_http_headers: ~azure.storage.filedatalake.models.PathHTTPHeaders
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.filedatalake.models.LeaseAccessConditions
-        :keyword action: action. The default value is "append". Note that overriding this default value
-         may result in unsupported behavior.
+        :keyword action: action. Default value is "append". Note that overriding this default value may
+         result in unsupported behavior.
         :paramtype action: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -2370,14 +2390,15 @@ class PathOperations(object):
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param expires_on: The time to set the blob to expiry.
+        :param expires_on: The time to set the blob to expiry. Default value is None.
         :type expires_on: str
-        :keyword comp: comp. The default value is "expiry". Note that overriding this default value may
+        :keyword comp: comp. Default value is "expiry". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -2448,16 +2469,17 @@ class PathOperations(object):
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param undelete_source: Only for hierarchical namespace enabled accounts. Optional. The path of
-         the soft deleted blob to undelete.
+         the soft deleted blob to undelete. Default value is None.
         :type undelete_source: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. The default value is "undelete". Note that overriding this default value
-         may result in unsupported behavior.
+        :keyword comp: comp. Default value is "undelete". Note that overriding this default value may
+         result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)

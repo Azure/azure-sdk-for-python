@@ -21,26 +21,24 @@ T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 class ShareOperations:
-    """ShareOperations async operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.storage.fileshare.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.storage.fileshare.aio.AzureFileStorage`'s
+        :attr:`share` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs) -> None:
+        args = list(args)
+        self._client = args.pop(0) if args else kwargs.pop("client")
+        self._config = args.pop(0) if args else kwargs.pop("config")
+        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
+        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
+
 
     @distributed_trace_async
     async def create(  # pylint: disable=inconsistent-return-statements
@@ -59,20 +57,22 @@ class ShareOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :param metadata: A name-value pair to associate with a file storage object.
+        :param metadata: A name-value pair to associate with a file storage object. Default value is
+         None.
         :type metadata: dict[str, str]
-        :param quota: Specifies the maximum size of the share, in gigabytes.
+        :param quota: Specifies the maximum size of the share, in gigabytes. Default value is None.
         :type quota: int
-        :param access_tier: Specifies the access tier of the share.
+        :param access_tier: Specifies the access tier of the share. Default value is None.
         :type access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
-        :param enabled_protocols: Protocols to enable on the share.
+        :param enabled_protocols: Protocols to enable on the share. Default value is None.
         :type enabled_protocols: str
-        :param root_squash: Root squash to set on the share.  Only valid for NFS shares.
+        :param root_squash: Root squash to set on the share.  Only valid for NFS shares. Default value
+         is None.
         :type root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
-        :keyword restype: restype. The default value is "share". Note that overriding this default
-         value may result in unsupported behavior.
+        :keyword restype: restype. Default value is "share". Note that overriding this default value
+         may result in unsupported behavior.
         :paramtype restype: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -141,17 +141,17 @@ class ShareOperations:
         snapshot. The data returned does not include the share's list of files.
 
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the share snapshot to query.
+         specifies the share snapshot to query. Default value is None.
         :type sharesnapshot: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword restype: restype. The default value is "share". Note that overriding this default
-         value may result in unsupported behavior.
+        :keyword restype: restype. Default value is "share". Note that overriding this default value
+         may result in unsupported behavior.
         :paramtype restype: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -236,20 +236,20 @@ class ShareOperations:
         and any files contained within it are later deleted during garbage collection.
 
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the share snapshot to query.
+         specifies the share snapshot to query. Default value is None.
         :type sharesnapshot: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param delete_snapshots: Specifies the option include to delete the base share and all of its
-         snapshots.
+         snapshots. Default value is None.
         :type delete_snapshots: str or ~azure.storage.fileshare.models.DeleteSnapshotsOptionType
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword restype: restype. The default value is "share". Note that overriding this default
-         value may result in unsupported behavior.
+        :keyword restype: restype. Default value is "share". Note that overriding this default value
+         may result in unsupported behavior.
         :paramtype restype: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -321,30 +321,31 @@ class ShareOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param duration: Specifies the duration of the lease, in seconds, or negative one (-1) for a
          lease that never expires. A non-infinite lease can be between 15 and 60 seconds. A lease
-         duration cannot be changed using renew or change.
+         duration cannot be changed using renew or change. Default value is None.
         :type duration: int
         :param proposed_lease_id: Proposed lease ID, in a GUID string format. The File service returns
          400 (Invalid request) if the proposed lease ID is not in the correct format. See Guid
-         Constructor (String) for a list of valid GUID string formats.
+         Constructor (String) for a list of valid GUID string formats. Default value is None.
         :type proposed_lease_id: str
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the share snapshot to query.
+         specifies the share snapshot to query. Default value is None.
         :type sharesnapshot: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. The default value is "lease". Note that overriding this default value may
+        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
-        :keyword action: Describes what lease action to take. The default value is "acquire". Note that
+        :keyword action: Describes what lease action to take. Default value is "acquire". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
-        :keyword restype: restype. The default value is "share". Note that overriding this default
-         value may result in unsupported behavior.
+        :keyword restype: restype. Default value is "share". Note that overriding this default value
+         may result in unsupported behavior.
         :paramtype restype: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -423,22 +424,23 @@ class ShareOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the share snapshot to query.
+         specifies the share snapshot to query. Default value is None.
         :type sharesnapshot: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. The default value is "lease". Note that overriding this default value may
+        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
-        :keyword action: Describes what lease action to take. The default value is "release". Note that
+        :keyword action: Describes what lease action to take. Default value is "release". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
-        :keyword restype: restype. The default value is "share". Note that overriding this default
-         value may result in unsupported behavior.
+        :keyword restype: restype. Default value is "share". Note that overriding this default value
+         may result in unsupported behavior.
         :paramtype restype: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -516,26 +518,27 @@ class ShareOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param proposed_lease_id: Proposed lease ID, in a GUID string format. The File service returns
          400 (Invalid request) if the proposed lease ID is not in the correct format. See Guid
-         Constructor (String) for a list of valid GUID string formats.
+         Constructor (String) for a list of valid GUID string formats. Default value is None.
         :type proposed_lease_id: str
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the share snapshot to query.
+         specifies the share snapshot to query. Default value is None.
         :type sharesnapshot: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. The default value is "lease". Note that overriding this default value may
+        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
-        :keyword action: Describes what lease action to take. The default value is "change". Note that
+        :keyword action: Describes what lease action to take. Default value is "change". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
-        :keyword restype: restype. The default value is "share". Note that overriding this default
-         value may result in unsupported behavior.
+        :keyword restype: restype. Default value is "share". Note that overriding this default value
+         may result in unsupported behavior.
         :paramtype restype: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -614,22 +617,23 @@ class ShareOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the share snapshot to query.
+         specifies the share snapshot to query. Default value is None.
         :type sharesnapshot: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. The default value is "lease". Note that overriding this default value may
+        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
-        :keyword action: Describes what lease action to take. The default value is "renew". Note that
+        :keyword action: Describes what lease action to take. Default value is "renew". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
-        :keyword restype: restype. The default value is "share". Note that overriding this default
-         value may result in unsupported behavior.
+        :keyword restype: restype. Default value is "share". Note that overriding this default value
+         may result in unsupported behavior.
         :paramtype restype: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -706,7 +710,7 @@ class ShareOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param break_period: For a break operation, proposed duration the lease should continue before
          it is broken, in seconds, between 0 and 60. This break period is only used if it is shorter
@@ -714,24 +718,25 @@ class ShareOperations:
          lease will not be available before the break period has expired, but the lease may be held for
          longer than the break period. If this header does not appear with a break operation, a
          fixed-duration lease breaks after the remaining lease period elapses, and an infinite lease
-         breaks immediately.
+         breaks immediately. Default value is None.
         :type break_period: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the share snapshot to query.
+         specifies the share snapshot to query. Default value is None.
         :type sharesnapshot: str
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword comp: comp. The default value is "lease". Note that overriding this default value may
+        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
-        :keyword action: Describes what lease action to take. The default value is "break". Note that
+        :keyword action: Describes what lease action to take. Default value is "break". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
-        :keyword restype: restype. The default value is "share". Note that overriding this default
-         value may result in unsupported behavior.
+        :keyword restype: restype. Default value is "share". Note that overriding this default value
+         may result in unsupported behavior.
         :paramtype restype: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -809,15 +814,16 @@ class ShareOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :param metadata: A name-value pair to associate with a file storage object.
+        :param metadata: A name-value pair to associate with a file storage object. Default value is
+         None.
         :type metadata: dict[str, str]
-        :keyword restype: restype. The default value is "share". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. The default value is "snapshot". Note that overriding this default value
+        :keyword restype: restype. Default value is "share". Note that overriding this default value
          may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. Default value is "snapshot". Note that overriding this default value may
+         result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -887,13 +893,13 @@ class ShareOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :keyword restype: restype. The default value is "share". Note that overriding this default
-         value may result in unsupported behavior.
+        :keyword restype: restype. Default value is "share". Note that overriding this default value
+         may result in unsupported behavior.
         :paramtype restype: str
-        :keyword comp: comp. The default value is "filepermission". Note that overriding this default
-         value may result in unsupported behavior.
+        :keyword comp: comp. Default value is "filepermission". Note that overriding this default value
+         may result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -964,13 +970,13 @@ class ShareOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :keyword restype: restype. The default value is "share". Note that overriding this default
-         value may result in unsupported behavior.
+        :keyword restype: restype. Default value is "share". Note that overriding this default value
+         may result in unsupported behavior.
         :paramtype restype: str
-        :keyword comp: comp. The default value is "filepermission". Note that overriding this default
-         value may result in unsupported behavior.
+        :keyword comp: comp. Default value is "filepermission". Note that overriding this default value
+         may result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SharePermission, or the result of cls(response)
@@ -1041,21 +1047,22 @@ class ShareOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :param quota: Specifies the maximum size of the share, in gigabytes.
+        :param quota: Specifies the maximum size of the share, in gigabytes. Default value is None.
         :type quota: int
-        :param access_tier: Specifies the access tier of the share.
+        :param access_tier: Specifies the access tier of the share. Default value is None.
         :type access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
-        :param root_squash: Root squash to set on the share.  Only valid for NFS shares.
+        :param root_squash: Root squash to set on the share.  Only valid for NFS shares. Default value
+         is None.
         :type root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword restype: restype. The default value is "share". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. The default value is "properties". Note that overriding this default value
+        :keyword restype: restype. Default value is "share". Note that overriding this default value
          may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. Default value is "properties". Note that overriding this default value may
+         result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -1129,17 +1136,18 @@ class ShareOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :param metadata: A name-value pair to associate with a file storage object.
+        :param metadata: A name-value pair to associate with a file storage object. Default value is
+         None.
         :type metadata: dict[str, str]
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword restype: restype. The default value is "share". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. The default value is "metadata". Note that overriding this default value
+        :keyword restype: restype. Default value is "share". Note that overriding this default value
          may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. Default value is "metadata". Note that overriding this default value may
+         result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -1210,15 +1218,15 @@ class ShareOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword restype: restype. The default value is "share". Note that overriding this default
-         value may result in unsupported behavior.
+        :keyword restype: restype. Default value is "share". Note that overriding this default value
+         may result in unsupported behavior.
         :paramtype restype: str
-        :keyword comp: comp. The default value is "acl". Note that overriding this default value may
-         result in unsupported behavior.
+        :keyword comp: comp. Default value is "acl". Note that overriding this default value may result
+         in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of SignedIdentifier, or the result of cls(response)
@@ -1292,17 +1300,17 @@ class ShareOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :param share_acl: The ACL for the share.
+        :param share_acl: The ACL for the share. Default value is None.
         :type share_acl: list[~azure.storage.fileshare.models.SignedIdentifier]
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword restype: restype. The default value is "share". Note that overriding this default
-         value may result in unsupported behavior.
+        :keyword restype: restype. Default value is "share". Note that overriding this default value
+         may result in unsupported behavior.
         :paramtype restype: str
-        :keyword comp: comp. The default value is "acl". Note that overriding this default value may
-         result in unsupported behavior.
+        :keyword comp: comp. Default value is "acl". Note that overriding this default value may result
+         in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -1380,14 +1388,14 @@ class ShareOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword restype: restype. The default value is "share". Note that overriding this default
-         value may result in unsupported behavior.
+        :keyword restype: restype. Default value is "share". Note that overriding this default value
+         may result in unsupported behavior.
         :paramtype restype: str
-        :keyword comp: comp. The default value is "stats". Note that overriding this default value may
+        :keyword comp: comp. Default value is "stats". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -1463,20 +1471,23 @@ class ShareOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param deleted_share_name: Specifies the name of the previously-deleted share.
+        :param deleted_share_name: Specifies the name of the previously-deleted share. Default value is
+         None.
         :type deleted_share_name: str
-        :param deleted_share_version: Specifies the version of the previously-deleted share.
+        :param deleted_share_version: Specifies the version of the previously-deleted share. Default
+         value is None.
         :type deleted_share_version: str
-        :keyword restype: restype. The default value is "share". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. The default value is "undelete". Note that overriding this default value
+        :keyword restype: restype. Default value is "share". Note that overriding this default value
          may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. Default value is "undelete". Note that overriding this default value may
+         result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)

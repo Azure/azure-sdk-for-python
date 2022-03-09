@@ -26,13 +26,11 @@ class AzureDataLakeStorageRESTAPIConfiguration(Configuration):  # pylint: disabl
     :param url: The URL of the service account, container, or blob that is the target of the
      desired operation.
     :type url: str
-    :keyword resource: The value must be "filesystem" for all filesystem operations. The default
-     value is "filesystem". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword resource: The value must be "filesystem" for all filesystem operations. Default value
+     is "filesystem". Note that overriding this default value may result in unsupported behavior.
     :paramtype resource: str
-    :keyword version: Specifies the version of the operation to use for this request. The default
-     value is "2020-10-02". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword version: Specifies the version of the operation to use for this request. Default value
+     is "2020-10-02". Note that overriding this default value may result in unsupported behavior.
     :paramtype version: str
     """
 

@@ -163,26 +163,24 @@ def build_list_shares_segment_request(
 
 # fmt: on
 class ServiceOperations(object):
-    """ServiceOperations operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.storage.fileshare.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.storage.fileshare.AzureFileStorage`'s
+        :attr:`service` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs):
+        args = list(args)
+        self._client = args.pop(0) if args else kwargs.pop("client")
+        self._config = args.pop(0) if args else kwargs.pop("config")
+        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
+        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
+
 
     @distributed_trace
     def set_properties(  # pylint: disable=inconsistent-return-statements
@@ -200,13 +198,13 @@ class ServiceOperations(object):
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :keyword restype: restype. The default value is "service". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. The default value is "properties". Note that overriding this default value
+        :keyword restype: restype. Default value is "service". Note that overriding this default value
          may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. Default value is "properties". Note that overriding this default value may
+         result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -274,13 +272,13 @@ class ServiceOperations(object):
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :keyword restype: restype. The default value is "service". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. The default value is "properties". Note that overriding this default value
+        :keyword restype: restype. Default value is "service". Note that overriding this default value
          may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. Default value is "properties". Note that overriding this default value may
+         result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StorageServiceProperties, or the result of cls(response)
@@ -349,26 +347,26 @@ class ServiceOperations(object):
         specified account.
 
         :param prefix: Filters the results to return only entries whose name begins with the specified
-         prefix.
+         prefix. Default value is None.
         :type prefix: str
         :param marker: A string value that identifies the portion of the list to be returned with the
          next list operation. The operation returns a marker value within the response body if the list
          returned was not complete. The marker value may then be used in a subsequent call to request
-         the next set of list items. The marker value is opaque to the client.
+         the next set of list items. The marker value is opaque to the client. Default value is None.
         :type marker: str
         :param maxresults: Specifies the maximum number of entries to return. If the request does not
          specify maxresults, or specifies a value greater than 5,000, the server will return up to 5,000
-         items.
+         items. Default value is None.
         :type maxresults: int
         :param include: Include this parameter to specify one or more datasets to include in the
-         response.
+         response. Default value is None.
         :type include: list[str or ~azure.storage.fileshare.models.ListSharesIncludeType]
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :keyword comp: comp. The default value is "list". Note that overriding this default value may
+        :keyword comp: comp. Default value is "list". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response

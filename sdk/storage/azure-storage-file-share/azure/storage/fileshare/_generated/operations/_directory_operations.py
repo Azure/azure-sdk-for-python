@@ -486,26 +486,24 @@ def build_rename_request(
 
 # fmt: on
 class DirectoryOperations(object):
-    """DirectoryOperations operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.storage.fileshare.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.storage.fileshare.AzureFileStorage`'s
+        :attr:`directory` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs):
+        args = list(args)
+        self._client = args.pop(0) if args else kwargs.pop("client")
+        self._config = args.pop(0) if args else kwargs.pop("config")
+        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
+        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
+
 
     @distributed_trace
     def create(  # pylint: disable=inconsistent-return-statements
@@ -525,27 +523,32 @@ class DirectoryOperations(object):
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :param metadata: A name-value pair to associate with a file storage object.
+        :param metadata: A name-value pair to associate with a file storage object. Default value is
+         None.
         :type metadata: dict[str, str]
         :param file_permission: If specified the permission (security descriptor) shall be set for the
          directory/file. This header can be used if Permission size is <= 8KB, else
          x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
          input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
-         x-ms-file-permission-key should be specified.
+         x-ms-file-permission-key should be specified. Default value is "inherit".
         :type file_permission: str
         :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
-         one of the x-ms-file-permission or x-ms-file-permission-key should be specified.
+         one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default value
+         is None.
         :type file_permission_key: str
         :param file_attributes: If specified, the provided file attributes shall be set. Default value:
          ‘Archive’ for file and ‘Directory’ for directory. ‘None’ can also be specified as default.
+         Default value is "none".
         :type file_attributes: str
-        :param file_creation_time: Creation time for the file/directory. Default value: Now.
+        :param file_creation_time: Creation time for the file/directory. Default value: Now. Default
+         value is "now".
         :type file_creation_time: str
         :param file_last_write_time: Last write time for the file/directory. Default value: Now.
+         Default value is "now".
         :type file_last_write_time: str
-        :keyword restype: restype. The default value is "directory". Note that overriding this default
+        :keyword restype: restype. Default value is "directory". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -625,14 +628,14 @@ class DirectoryOperations(object):
         subdirectories.
 
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the share snapshot to query.
+         specifies the share snapshot to query. Default value is None.
         :type sharesnapshot: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :keyword restype: restype. The default value is "directory". Note that overriding this default
+        :keyword restype: restype. Default value is "directory". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -708,9 +711,9 @@ class DirectoryOperations(object):
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :keyword restype: restype. The default value is "directory". Note that overriding this default
+        :keyword restype: restype. Default value is "directory". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -778,29 +781,33 @@ class DirectoryOperations(object):
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param file_permission: If specified the permission (security descriptor) shall be set for the
          directory/file. This header can be used if Permission size is <= 8KB, else
          x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
          input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
-         x-ms-file-permission-key should be specified.
+         x-ms-file-permission-key should be specified. Default value is "inherit".
         :type file_permission: str
         :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
-         one of the x-ms-file-permission or x-ms-file-permission-key should be specified.
+         one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default value
+         is None.
         :type file_permission_key: str
         :param file_attributes: If specified, the provided file attributes shall be set. Default value:
          ‘Archive’ for file and ‘Directory’ for directory. ‘None’ can also be specified as default.
+         Default value is "none".
         :type file_attributes: str
-        :param file_creation_time: Creation time for the file/directory. Default value: Now.
+        :param file_creation_time: Creation time for the file/directory. Default value: Now. Default
+         value is "now".
         :type file_creation_time: str
         :param file_last_write_time: Last write time for the file/directory. Default value: Now.
+         Default value is "now".
         :type file_last_write_time: str
-        :keyword restype: restype. The default value is "directory". Note that overriding this default
+        :keyword restype: restype. Default value is "directory". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
-        :keyword comp: comp. The default value is "properties". Note that overriding this default value
-         may result in unsupported behavior.
+        :keyword comp: comp. Default value is "properties". Note that overriding this default value may
+         result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -880,15 +887,16 @@ class DirectoryOperations(object):
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :param metadata: A name-value pair to associate with a file storage object.
+        :param metadata: A name-value pair to associate with a file storage object. Default value is
+         None.
         :type metadata: dict[str, str]
-        :keyword restype: restype. The default value is "directory". Note that overriding this default
+        :keyword restype: restype. Default value is "directory". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
-        :keyword comp: comp. The default value is "metadata". Note that overriding this default value
-         may result in unsupported behavior.
+        :keyword comp: comp. Default value is "metadata". Note that overriding this default value may
+         result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -960,34 +968,34 @@ class DirectoryOperations(object):
         contents only for a single level of the directory hierarchy.
 
         :param prefix: Filters the results to return only entries whose name begins with the specified
-         prefix.
+         prefix. Default value is None.
         :type prefix: str
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the share snapshot to query.
+         specifies the share snapshot to query. Default value is None.
         :type sharesnapshot: str
         :param marker: A string value that identifies the portion of the list to be returned with the
          next list operation. The operation returns a marker value within the response body if the list
          returned was not complete. The marker value may then be used in a subsequent call to request
-         the next set of list items. The marker value is opaque to the client.
+         the next set of list items. The marker value is opaque to the client. Default value is None.
         :type marker: str
         :param maxresults: Specifies the maximum number of entries to return. If the request does not
          specify maxresults, or specifies a value greater than 5,000, the server will return up to 5,000
-         items.
+         items. Default value is None.
         :type maxresults: int
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param include: Include this parameter to specify one or more datasets to include in the
-         response.
+         response. Default value is None.
         :type include: list[str or ~azure.storage.fileshare.models.ListFilesIncludeType]
-        :param include_extended_info: Include extended information.
+        :param include_extended_info: Include extended information. Default value is None.
         :type include_extended_info: bool
-        :keyword restype: restype. The default value is "directory". Note that overriding this default
+        :keyword restype: restype. Default value is "directory". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
-        :keyword comp: comp. The default value is "list". Note that overriding this default value may
+        :keyword comp: comp. Default value is "list". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -1066,25 +1074,25 @@ class DirectoryOperations(object):
         :param marker: A string value that identifies the portion of the list to be returned with the
          next list operation. The operation returns a marker value within the response body if the list
          returned was not complete. The marker value may then be used in a subsequent call to request
-         the next set of list items. The marker value is opaque to the client.
+         the next set of list items. The marker value is opaque to the client. Default value is None.
         :type marker: str
         :param maxresults: Specifies the maximum number of entries to return. If the request does not
          specify maxresults, or specifies a value greater than 5,000, the server will return up to 5,000
-         items.
+         items. Default value is None.
         :type maxresults: int
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the share snapshot to query.
+         specifies the share snapshot to query. Default value is None.
         :type sharesnapshot: str
         :param recursive: Specifies operation should apply to the directory specified in the URI, its
-         files, its subdirectories and their files.
+         files, its subdirectories and their files. Default value is None.
         :type recursive: bool
-        :keyword comp: comp. The default value is "listhandles". Note that overriding this default
-         value may result in unsupported behavior.
+        :keyword comp: comp. Default value is "listhandles". Note that overriding this default value
+         may result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListHandlesResponse, or the result of cls(response)
@@ -1161,21 +1169,21 @@ class DirectoryOperations(object):
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param marker: A string value that identifies the portion of the list to be returned with the
          next list operation. The operation returns a marker value within the response body if the list
          returned was not complete. The marker value may then be used in a subsequent call to request
-         the next set of list items. The marker value is opaque to the client.
+         the next set of list items. The marker value is opaque to the client. Default value is None.
         :type marker: str
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the share snapshot to query.
+         specifies the share snapshot to query. Default value is None.
         :type sharesnapshot: str
         :param recursive: Specifies operation should apply to the directory specified in the URI, its
-         files, its subdirectories and their files.
+         files, its subdirectories and their files. Default value is None.
         :type recursive: bool
-        :keyword comp: comp. The default value is "forceclosehandles". Note that overriding this
-         default value may result in unsupported behavior.
+        :keyword comp: comp. Default value is "forceclosehandles". Note that overriding this default
+         value may result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -1256,43 +1264,45 @@ class DirectoryOperations(object):
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param replace_if_exists: Optional. A boolean value for if the destination file already exists,
          whether this request will overwrite the file or not. If true, the rename will succeed and will
          overwrite the destination file. If not provided or if false and the destination file does
          exist, the request will not overwrite the destination file. If provided and the destination
          file doesn’t exist, the rename will succeed. Note: This value does not override the
-         x-ms-file-copy-ignore-read-only header value.
+         x-ms-file-copy-ignore-read-only header value. Default value is None.
         :type replace_if_exists: bool
         :param ignore_read_only: Optional. A boolean value that specifies whether the ReadOnly
          attribute on a preexisting destination file should be respected. If true, the rename will
          succeed, otherwise, a previous file at the destination with the ReadOnly attribute set will
-         cause the rename to fail.
+         cause the rename to fail. Default value is None.
         :type ignore_read_only: bool
         :param file_permission: If specified the permission (security descriptor) shall be set for the
          directory/file. This header can be used if Permission size is <= 8KB, else
          x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
          input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
-         x-ms-file-permission-key should be specified.
+         x-ms-file-permission-key should be specified. Default value is "inherit".
         :type file_permission: str
         :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
-         one of the x-ms-file-permission or x-ms-file-permission-key should be specified.
+         one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default value
+         is None.
         :type file_permission_key: str
-        :param metadata: A name-value pair to associate with a file storage object.
+        :param metadata: A name-value pair to associate with a file storage object. Default value is
+         None.
         :type metadata: dict[str, str]
-        :param source_lease_access_conditions: Parameter group.
+        :param source_lease_access_conditions: Parameter group. Default value is None.
         :type source_lease_access_conditions:
          ~azure.storage.fileshare.models.SourceLeaseAccessConditions
-        :param destination_lease_access_conditions: Parameter group.
+        :param destination_lease_access_conditions: Parameter group. Default value is None.
         :type destination_lease_access_conditions:
          ~azure.storage.fileshare.models.DestinationLeaseAccessConditions
-        :param copy_file_smb_info: Parameter group.
+        :param copy_file_smb_info: Parameter group. Default value is None.
         :type copy_file_smb_info: ~azure.storage.fileshare.models.CopyFileSmbInfo
-        :keyword restype: restype. The default value is "directory". Note that overriding this default
+        :keyword restype: restype. Default value is "directory". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
-        :keyword comp: comp. The default value is "rename". Note that overriding this default value may
+        :keyword comp: comp. Default value is "rename". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response

@@ -21,26 +21,24 @@ T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 class QueueOperations:
-    """QueueOperations async operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.storage.queue.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.storage.queue.aio.AzureQueueStorage`'s
+        :attr:`queue` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs) -> None:
+        args = list(args)
+        self._client = args.pop(0) if args else kwargs.pop("client")
+        self._config = args.pop(0) if args else kwargs.pop("config")
+        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
+        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
+
 
     @distributed_trace_async
     async def create(  # pylint: disable=inconsistent-return-statements
@@ -54,16 +52,17 @@ class QueueOperations:
 
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
-         Timeouts for Queue Service Operations.</a>.
+         Timeouts for Queue Service Operations.</a>. Default value is None.
         :type timeout: int
         :param metadata: Optional. Include this parameter to specify that the queue's metadata be
          returned as part of the response body. Note that metadata requested with this parameter must be
          stored in accordance with the naming restrictions imposed by the 2009-09-19 version of the
          Queue service. Beginning with this version, all metadata names must adhere to the naming
-         conventions for C# identifiers.
+         conventions for C# identifiers. Default value is None.
         :type metadata: dict[str, str]
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -130,10 +129,11 @@ class QueueOperations:
 
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
-         Timeouts for Queue Service Operations.</a>.
+         Timeouts for Queue Service Operations.</a>. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -193,13 +193,14 @@ class QueueOperations:
 
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
-         Timeouts for Queue Service Operations.</a>.
+         Timeouts for Queue Service Operations.</a>. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. The default value is "metadata". Note that overriding this default value
-         may result in unsupported behavior.
+        :keyword comp: comp. Default value is "metadata". Note that overriding this default value may
+         result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -265,19 +266,20 @@ class QueueOperations:
 
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
-         Timeouts for Queue Service Operations.</a>.
+         Timeouts for Queue Service Operations.</a>. Default value is None.
         :type timeout: int
         :param metadata: Optional. Include this parameter to specify that the queue's metadata be
          returned as part of the response body. Note that metadata requested with this parameter must be
          stored in accordance with the naming restrictions imposed by the 2009-09-19 version of the
          Queue service. Beginning with this version, all metadata names must adhere to the naming
-         conventions for C# identifiers.
+         conventions for C# identifiers. Default value is None.
         :type metadata: dict[str, str]
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. The default value is "metadata". Note that overriding this default value
-         may result in unsupported behavior.
+        :keyword comp: comp. Default value is "metadata". Note that overriding this default value may
+         result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -341,13 +343,14 @@ class QueueOperations:
 
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
-         Timeouts for Queue Service Operations.</a>.
+         Timeouts for Queue Service Operations.</a>. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. The default value is "acl". Note that overriding this default value may
-         result in unsupported behavior.
+        :keyword comp: comp. Default value is "acl". Note that overriding this default value may result
+         in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of SignedIdentifier, or the result of cls(response)
@@ -413,15 +416,16 @@ class QueueOperations:
 
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
-         Timeouts for Queue Service Operations.</a>.
+         Timeouts for Queue Service Operations.</a>. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param queue_acl: the acls for the queue.
+        :param queue_acl: the acls for the queue. Default value is None.
         :type queue_acl: list[~azure.storage.queue.models.SignedIdentifier]
-        :keyword comp: comp. The default value is "acl". Note that overriding this default value may
-         result in unsupported behavior.
+        :keyword comp: comp. Default value is "acl". Note that overriding this default value may result
+         in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)

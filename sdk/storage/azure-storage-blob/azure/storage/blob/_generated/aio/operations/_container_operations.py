@@ -21,26 +21,24 @@ T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 class ContainerOperations:
-    """ContainerOperations async operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.storage.blob.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.storage.blob.aio.AzureBlobStorage`'s
+        :attr:`container` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs) -> None:
+        args = list(args)
+        self._client = args.pop(0) if args else kwargs.pop("client")
+        self._config = args.pop(0) if args else kwargs.pop("config")
+        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
+        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
+
 
     @distributed_trace_async
     async def create(  # pylint: disable=inconsistent-return-statements
@@ -58,7 +56,7 @@ class ContainerOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param metadata: Optional. Specifies a user-defined name-value pair associated with the blob.
          If no name-value pairs are specified, the operation will copy the metadata from the source blob
@@ -66,17 +64,18 @@ class ContainerOperations:
          blob is created with the specified metadata, and metadata is not copied from the source blob or
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
-         information.
+         information. Default value is None.
         :type metadata: dict[str, str]
         :param access: Specifies whether data in the container may be accessed publicly and the level
-         of access.
+         of access. Default value is None.
         :type access: str or ~azure.storage.blob.models.PublicAccessType
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param container_cpk_scope_info: Parameter group.
+        :param container_cpk_scope_info: Parameter group. Default value is None.
         :type container_cpk_scope_info: ~azure.storage.blob.models.ContainerCpkScopeInfo
-        :keyword restype: restype. The default value is "container". Note that overriding this default
+        :keyword restype: restype. Default value is "container". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -154,14 +153,15 @@ class ContainerOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
-        :keyword restype: restype. The default value is "container". Note that overriding this default
+        :keyword restype: restype. Default value is "container". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -245,16 +245,17 @@ class ContainerOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword restype: restype. The default value is "container". Note that overriding this default
+        :keyword restype: restype. Default value is "container". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -333,7 +334,7 @@ class ContainerOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param metadata: Optional. Specifies a user-defined name-value pair associated with the blob.
          If no name-value pairs are specified, the operation will copy the metadata from the source blob
@@ -341,20 +342,21 @@ class ContainerOperations:
          blob is created with the specified metadata, and metadata is not copied from the source blob or
          file. Note that beginning with version 2009-09-19, metadata names must adhere to the naming
          rules for C# identifiers. See Naming and Referencing Containers, Blobs, and Metadata for more
-         information.
+         information. Default value is None.
         :type metadata: dict[str, str]
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword restype: restype. The default value is "container". Note that overriding this default
+        :keyword restype: restype. Default value is "container". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
-        :keyword comp: comp. The default value is "metadata". Note that overriding this default value
-         may result in unsupported behavior.
+        :keyword comp: comp. Default value is "metadata". Note that overriding this default value may
+         result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -433,18 +435,19 @@ class ContainerOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
-        :keyword restype: restype. The default value is "container". Note that overriding this default
+        :keyword restype: restype. Default value is "container". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
-        :keyword comp: comp. The default value is "acl". Note that overriding this default value may
-         result in unsupported behavior.
+        :keyword comp: comp. Default value is "acl". Note that overriding this default value may result
+         in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of SignedIdentifier, or the result of cls(response)
@@ -525,25 +528,26 @@ class ContainerOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param access: Specifies whether data in the container may be accessed publicly and the level
-         of access.
+         of access. Default value is None.
         :type access: str or ~azure.storage.blob.models.PublicAccessType
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param container_acl: the acls for the container.
+        :param container_acl: the acls for the container. Default value is None.
         :type container_acl: list[~azure.storage.blob.models.SignedIdentifier]
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword restype: restype. The default value is "container". Note that overriding this default
+        :keyword restype: restype. Default value is "container". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
-        :keyword comp: comp. The default value is "acl". Note that overriding this default value may
-         result in unsupported behavior.
+        :keyword comp: comp. Default value is "acl". Note that overriding this default value may result
+         in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -633,22 +637,23 @@ class ContainerOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :param deleted_container_name: Optional.  Version 2019-12-12 and later.  Specifies the name of
-         the deleted container to restore.
+         the deleted container to restore. Default value is None.
         :type deleted_container_name: str
         :param deleted_container_version: Optional.  Version 2019-12-12 and later.  Specifies the
-         version of the deleted container to restore.
+         version of the deleted container to restore. Default value is None.
         :type deleted_container_version: str
-        :keyword restype: restype. The default value is "container". Note that overriding this default
+        :keyword restype: restype. Default value is "container". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
-        :keyword comp: comp. The default value is "undelete". Note that overriding this default value
-         may result in unsupported behavior.
+        :keyword comp: comp. Default value is "undelete". Note that overriding this default value may
+         result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -720,18 +725,19 @@ class ContainerOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :param source_lease_id: A lease ID for the source path. If specified, the source path must have
-         an active lease and the lease ID must match.
+         an active lease and the lease ID must match. Default value is None.
         :type source_lease_id: str
-        :keyword restype: restype. The default value is "container". Note that overriding this default
+        :keyword restype: restype. Default value is "container". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
-        :keyword comp: comp. The default value is "rename". Note that overriding this default value may
+        :keyword comp: comp. Default value is "rename". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -806,18 +812,19 @@ class ContainerOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :keyword multipart_content_type: Required. The value of this header must be multipart/mixed
          with a batch boundary. Example header value: multipart/mixed; boundary=batch_:code:`<GUID>`.
         :paramtype multipart_content_type: str
-        :keyword restype: restype. The default value is "container". Note that overriding this default
+        :keyword restype: restype. Default value is "container". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
-        :keyword comp: comp. The default value is "batch". Note that overriding this default value may
+        :keyword comp: comp. Default value is "batch". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -895,32 +902,33 @@ class ContainerOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :param where: Filters the results to return only to return only blobs whose tags match the
-         specified expression.
+         specified expression. Default value is None.
         :type where: str
         :param marker: A string value that identifies the portion of the list of containers to be
          returned with the next listing operation. The operation returns the NextMarker value within the
          response body if the listing operation did not return all containers remaining to be listed
          with the current page. The NextMarker value can be used as the value for the marker parameter
          in a subsequent call to request the next page of list items. The marker value is opaque to the
-         client.
+         client. Default value is None.
         :type marker: str
         :param maxresults: Specifies the maximum number of containers to return. If the request does
          not specify maxresults, or specifies a value greater than 5000, the server will return up to
          5000 items. Note that if the listing operation crosses a partition boundary, then the service
          will return a continuation token for retrieving the remainder of the results. For this reason,
          it is possible that the service will return fewer results than specified by maxresults, or than
-         the default of 5000.
+         the default of 5000. Default value is None.
         :type maxresults: int
-        :keyword restype: restype. The default value is "container". Note that overriding this default
+        :keyword restype: restype. Default value is "container". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
-        :keyword comp: comp. The default value is "blobs". Note that overriding this default value may
+        :keyword comp: comp. Default value is "blobs". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -997,28 +1005,29 @@ class ContainerOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param duration: Specifies the duration of the lease, in seconds, or negative one (-1) for a
          lease that never expires. A non-infinite lease can be between 15 and 60 seconds. A lease
-         duration cannot be changed using renew or change.
+         duration cannot be changed using renew or change. Default value is None.
         :type duration: int
         :param proposed_lease_id: Proposed lease ID, in a GUID string format. The Blob service returns
          400 (Invalid request) if the proposed lease ID is not in the correct format. See Guid
-         Constructor (String) for a list of valid GUID string formats.
+         Constructor (String) for a list of valid GUID string formats. Default value is None.
         :type proposed_lease_id: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. The default value is "lease". Note that overriding this default value may
+        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
-        :keyword restype: restype. The default value is "container". Note that overriding this default
+        :keyword restype: restype. Default value is "container". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
-        :keyword action: Describes what lease action to take. The default value is "acquire". Note that
+        :keyword action: Describes what lease action to take. Default value is "acquire". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -1104,20 +1113,21 @@ class ContainerOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. The default value is "lease". Note that overriding this default value may
+        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
-        :keyword restype: restype. The default value is "container". Note that overriding this default
+        :keyword restype: restype. Default value is "container". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
-        :keyword action: Describes what lease action to take. The default value is "release". Note that
+        :keyword action: Describes what lease action to take. Default value is "release". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -1201,20 +1211,21 @@ class ContainerOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. The default value is "lease". Note that overriding this default value may
+        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
-        :keyword restype: restype. The default value is "container". Note that overriding this default
+        :keyword restype: restype. Default value is "container". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
-        :keyword action: Describes what lease action to take. The default value is "renew". Note that
+        :keyword action: Describes what lease action to take. Default value is "renew". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -1297,7 +1308,7 @@ class ContainerOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param break_period: For a break operation, proposed duration the lease should continue before
          it is broken, in seconds, between 0 and 60. This break period is only used if it is shorter
@@ -1305,20 +1316,21 @@ class ContainerOperations:
          lease will not be available before the break period has expired, but the lease may be held for
          longer than the break period. If this header does not appear with a break operation, a
          fixed-duration lease breaks after the remaining lease period elapses, and an infinite lease
-         breaks immediately.
+         breaks immediately. Default value is None.
         :type break_period: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. The default value is "lease". Note that overriding this default value may
+        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
-        :keyword restype: restype. The default value is "container". Note that overriding this default
+        :keyword restype: restype. Default value is "container". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
-        :keyword action: Describes what lease action to take. The default value is "break". Note that
+        :keyword action: Describes what lease action to take. Default value is "break". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -1408,20 +1420,21 @@ class ContainerOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param modified_access_conditions: Parameter group.
+        :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. The default value is "lease". Note that overriding this default value may
+        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
-        :keyword restype: restype. The default value is "container". Note that overriding this default
+        :keyword restype: restype. Default value is "container". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
-        :keyword action: Describes what lease action to take. The default value is "change". Note that
+        :keyword action: Describes what lease action to take. Default value is "change". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -1504,37 +1517,38 @@ class ContainerOperations:
         """[Update] The List Blobs operation returns a list of the blobs under the specified container.
 
         :param prefix: Filters the results to return only containers whose name begins with the
-         specified prefix.
+         specified prefix. Default value is None.
         :type prefix: str
         :param marker: A string value that identifies the portion of the list of containers to be
          returned with the next listing operation. The operation returns the NextMarker value within the
          response body if the listing operation did not return all containers remaining to be listed
          with the current page. The NextMarker value can be used as the value for the marker parameter
          in a subsequent call to request the next page of list items. The marker value is opaque to the
-         client.
+         client. Default value is None.
         :type marker: str
         :param maxresults: Specifies the maximum number of containers to return. If the request does
          not specify maxresults, or specifies a value greater than 5000, the server will return up to
          5000 items. Note that if the listing operation crosses a partition boundary, then the service
          will return a continuation token for retrieving the remainder of the results. For this reason,
          it is possible that the service will return fewer results than specified by maxresults, or than
-         the default of 5000.
+         the default of 5000. Default value is None.
         :type maxresults: int
         :param include: Include this parameter to specify one or more datasets to include in the
-         response.
+         response. Default value is None.
         :type include: list[str or ~azure.storage.blob.models.ListBlobsIncludeItem]
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :keyword restype: restype. The default value is "container". Note that overriding this default
+        :keyword restype: restype. Default value is "container". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
-        :keyword comp: comp. The default value is "list". Note that overriding this default value may
+        :keyword comp: comp. Default value is "list". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -1617,37 +1631,38 @@ class ContainerOperations:
          single character or a string.
         :type delimiter: str
         :param prefix: Filters the results to return only containers whose name begins with the
-         specified prefix.
+         specified prefix. Default value is None.
         :type prefix: str
         :param marker: A string value that identifies the portion of the list of containers to be
          returned with the next listing operation. The operation returns the NextMarker value within the
          response body if the listing operation did not return all containers remaining to be listed
          with the current page. The NextMarker value can be used as the value for the marker parameter
          in a subsequent call to request the next page of list items. The marker value is opaque to the
-         client.
+         client. Default value is None.
         :type marker: str
         :param maxresults: Specifies the maximum number of containers to return. If the request does
          not specify maxresults, or specifies a value greater than 5000, the server will return up to
          5000 items. Note that if the listing operation crosses a partition boundary, then the service
          will return a continuation token for retrieving the remainder of the results. For this reason,
          it is possible that the service will return fewer results than specified by maxresults, or than
-         the default of 5000.
+         the default of 5000. Default value is None.
         :type maxresults: int
         :param include: Include this parameter to specify one or more datasets to include in the
-         response.
+         response. Default value is None.
         :type include: list[str or ~azure.storage.blob.models.ListBlobsIncludeItem]
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>`.
+         Timeouts for Blob Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :keyword restype: restype. The default value is "container". Note that overriding this default
+        :keyword restype: restype. Default value is "container". Note that overriding this default
          value may result in unsupported behavior.
         :paramtype restype: str
-        :keyword comp: comp. The default value is "list". Note that overriding this default value may
+        :keyword comp: comp. Default value is "list". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -1718,11 +1733,11 @@ class ContainerOperations:
     ) -> None:
         """Returns the sku name and account kind.
 
-        :keyword restype: restype. The default value is "account". Note that overriding this default
-         value may result in unsupported behavior.
-        :paramtype restype: str
-        :keyword comp: comp. The default value is "properties". Note that overriding this default value
+        :keyword restype: restype. Default value is "account". Note that overriding this default value
          may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. Default value is "properties". Note that overriding this default value may
+         result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)

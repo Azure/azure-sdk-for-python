@@ -21,26 +21,24 @@ T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 class FileOperations:
-    """FileOperations async operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.storage.fileshare.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.storage.fileshare.aio.AzureFileStorage`'s
+        :attr:`file` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs) -> None:
+        args = list(args)
+        self._client = args.pop(0) if args else kwargs.pop("client")
+        self._config = args.pop(0) if args else kwargs.pop("config")
+        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
+        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
+
 
     @distributed_trace_async
     async def create(  # pylint: disable=inconsistent-return-statements
@@ -64,31 +62,36 @@ class FileOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :param metadata: A name-value pair to associate with a file storage object.
+        :param metadata: A name-value pair to associate with a file storage object. Default value is
+         None.
         :type metadata: dict[str, str]
         :param file_permission: If specified the permission (security descriptor) shall be set for the
          directory/file. This header can be used if Permission size is <= 8KB, else
          x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
          input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
-         x-ms-file-permission-key should be specified.
+         x-ms-file-permission-key should be specified. Default value is "inherit".
         :type file_permission: str
         :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
-         one of the x-ms-file-permission or x-ms-file-permission-key should be specified.
+         one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default value
+         is None.
         :type file_permission_key: str
         :param file_attributes: If specified, the provided file attributes shall be set. Default value:
          ‘Archive’ for file and ‘Directory’ for directory. ‘None’ can also be specified as default.
+         Default value is "none".
         :type file_attributes: str
-        :param file_creation_time: Creation time for the file/directory. Default value: Now.
+        :param file_creation_time: Creation time for the file/directory. Default value: Now. Default
+         value is "now".
         :type file_creation_time: str
         :param file_last_write_time: Last write time for the file/directory. Default value: Now.
+         Default value is "now".
         :type file_last_write_time: str
-        :param file_http_headers: Parameter group.
+        :param file_http_headers: Parameter group. Default value is None.
         :type file_http_headers: ~azure.storage.fileshare.models.FileHTTPHeaders
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword file_type_constant: Dummy constant parameter, file type can only be file. The default
+        :keyword file_type_constant: Dummy constant parameter, file type can only be file. Default
          value is "file". Note that overriding this default value may result in unsupported behavior.
         :paramtype file_type_constant: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -193,15 +196,15 @@ class FileOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :param range: Return file data only from the specified byte range.
+        :param range: Return file data only from the specified byte range. Default value is None.
         :type range: str
         :param range_get_content_md5: When this header is set to true and specified together with the
          Range header, the service returns the MD5 hash for the range, as long as the range is less than
-         or equal to 4 MB in size.
+         or equal to 4 MB in size. Default value is None.
         :type range_get_content_md5: bool
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IO, or the result of cls(response)
@@ -337,14 +340,14 @@ class FileOperations:
         file. It does not return the content of the file.
 
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the share snapshot to query.
+         specifies the share snapshot to query. Default value is None.
         :type sharesnapshot: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -436,9 +439,9 @@ class FileOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -508,34 +511,38 @@ class FileOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param file_content_length: Resizes a file to the specified size. If the specified byte value
          is less than the current size of the file, then all ranges above the specified byte value are
-         cleared.
+         cleared. Default value is None.
         :type file_content_length: long
         :param file_permission: If specified the permission (security descriptor) shall be set for the
          directory/file. This header can be used if Permission size is <= 8KB, else
          x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
          input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
-         x-ms-file-permission-key should be specified.
+         x-ms-file-permission-key should be specified. Default value is "inherit".
         :type file_permission: str
         :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
-         one of the x-ms-file-permission or x-ms-file-permission-key should be specified.
+         one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default value
+         is None.
         :type file_permission_key: str
         :param file_attributes: If specified, the provided file attributes shall be set. Default value:
          ‘Archive’ for file and ‘Directory’ for directory. ‘None’ can also be specified as default.
+         Default value is "none".
         :type file_attributes: str
-        :param file_creation_time: Creation time for the file/directory. Default value: Now.
+        :param file_creation_time: Creation time for the file/directory. Default value: Now. Default
+         value is "now".
         :type file_creation_time: str
         :param file_last_write_time: Last write time for the file/directory. Default value: Now.
+         Default value is "now".
         :type file_last_write_time: str
-        :param file_http_headers: Parameter group.
+        :param file_http_headers: Parameter group. Default value is None.
         :type file_http_headers: ~azure.storage.fileshare.models.FileHTTPHeaders
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword comp: comp. The default value is "properties". Note that overriding this default value
-         may result in unsupported behavior.
+        :keyword comp: comp. Default value is "properties". Note that overriding this default value may
+         result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -637,14 +644,15 @@ class FileOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :param metadata: A name-value pair to associate with a file storage object.
+        :param metadata: A name-value pair to associate with a file storage object. Default value is
+         None.
         :type metadata: dict[str, str]
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword comp: comp. The default value is "metadata". Note that overriding this default value
-         may result in unsupported behavior.
+        :keyword comp: comp. Default value is "metadata". Note that overriding this default value may
+         result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -716,23 +724,24 @@ class FileOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param duration: Specifies the duration of the lease, in seconds, or negative one (-1) for a
          lease that never expires. A non-infinite lease can be between 15 and 60 seconds. A lease
-         duration cannot be changed using renew or change.
+         duration cannot be changed using renew or change. Default value is None.
         :type duration: int
         :param proposed_lease_id: Proposed lease ID, in a GUID string format. The File service returns
          400 (Invalid request) if the proposed lease ID is not in the correct format. See Guid
-         Constructor (String) for a list of valid GUID string formats.
+         Constructor (String) for a list of valid GUID string formats. Default value is None.
         :type proposed_lease_id: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. The default value is "lease". Note that overriding this default value may
+        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
-        :keyword action: Describes what lease action to take. The default value is "acquire". Note that
+        :keyword action: Describes what lease action to take. Default value is "acquire". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -808,15 +817,16 @@ class FileOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. The default value is "lease". Note that overriding this default value may
+        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
-        :keyword action: Describes what lease action to take. The default value is "release". Note that
+        :keyword action: Describes what lease action to take. Default value is "release". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -891,19 +901,20 @@ class FileOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param proposed_lease_id: Proposed lease ID, in a GUID string format. The File service returns
          400 (Invalid request) if the proposed lease ID is not in the correct format. See Guid
-         Constructor (String) for a list of valid GUID string formats.
+         Constructor (String) for a list of valid GUID string formats. Default value is None.
         :type proposed_lease_id: str
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :keyword comp: comp. The default value is "lease". Note that overriding this default value may
+        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
-        :keyword action: Describes what lease action to take. The default value is "change". Note that
+        :keyword action: Describes what lease action to take. Default value is "change". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -977,17 +988,18 @@ class FileOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword comp: comp. The default value is "lease". Note that overriding this default value may
+        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
-        :keyword action: Describes what lease action to take. The default value is "break". Note that
+        :keyword action: Describes what lease action to take. Default value is "break". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -1075,24 +1087,25 @@ class FileOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param file_range_write: Specify one of the following options: - Update: Writes the bytes
          specified by the request body into the specified range. The Range and Content-Length headers
          must match to perform the update. - Clear: Clears the specified range and releases the space
          used in storage for that range. To clear a range, set the Content-Length header to zero, and
          set the Range header to a value that indicates the range to clear, up to maximum file size.
+         Default value is "update".
         :type file_range_write: str or ~azure.storage.fileshare.models.FileRangeWriteType
         :param content_md5: An MD5 hash of the content. This hash is used to verify the integrity of
          the data during transport. When the Content-MD5 header is specified, the File service compares
          the hash of the content that has arrived with the header value that was sent. If the two hashes
-         do not match, the operation will fail with error code 400 (Bad Request).
+         do not match, the operation will fail with error code 400 (Bad Request). Default value is None.
         :type content_md5: bytearray
-        :param optionalbody: Initial data.
+        :param optionalbody: Initial data. Default value is None.
         :type optionalbody: IO
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword comp: comp. The default value is "range". Note that overriding this default value may
+        :keyword comp: comp. Default value is "range". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -1191,22 +1204,22 @@ class FileOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :param source_range: Bytes of source data in the specified range.
+        :param source_range: Bytes of source data in the specified range. Default value is None.
         :type source_range: str
         :param source_content_crc64: Specify the crc64 calculated for the range of bytes that must be
-         read from the copy source.
+         read from the copy source. Default value is None.
         :type source_content_crc64: bytearray
         :param copy_source_authorization: Only Bearer type is supported. Credentials should be a valid
-         OAuth access token to copy source.
+         OAuth access token to copy source. Default value is None.
         :type copy_source_authorization: str
-        :param source_modified_access_conditions: Parameter group.
+        :param source_modified_access_conditions: Parameter group. Default value is None.
         :type source_modified_access_conditions:
          ~azure.storage.fileshare.models.SourceModifiedAccessConditions
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword comp: comp. The default value is "range". Note that overriding this default value may
+        :keyword comp: comp. Default value is "range". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -1292,22 +1305,23 @@ class FileOperations:
         """Returns the list of valid ranges for a file.
 
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the share snapshot to query.
+         specifies the share snapshot to query. Default value is None.
         :type sharesnapshot: str
         :param prevsharesnapshot: The previous snapshot parameter is an opaque DateTime value that,
-         when present, specifies the previous snapshot.
+         when present, specifies the previous snapshot. Default value is None.
         :type prevsharesnapshot: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :param range: Specifies the range of bytes over which to list ranges, inclusively.
+        :param range: Specifies the range of bytes over which to list ranges, inclusively. Default
+         value is None.
         :type range: str
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword comp: comp. The default value is "rangelist". Note that overriding this default value
-         may result in unsupported behavior.
+        :keyword comp: comp. Default value is "rangelist". Note that overriding this default value may
+         result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ShareFileRangeList, or the result of cls(response)
@@ -1395,22 +1409,24 @@ class FileOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :param metadata: A name-value pair to associate with a file storage object.
+        :param metadata: A name-value pair to associate with a file storage object. Default value is
+         None.
         :type metadata: dict[str, str]
         :param file_permission: If specified the permission (security descriptor) shall be set for the
          directory/file. This header can be used if Permission size is <= 8KB, else
          x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
          input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
-         x-ms-file-permission-key should be specified.
+         x-ms-file-permission-key should be specified. Default value is "inherit".
         :type file_permission: str
         :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
-         one of the x-ms-file-permission or x-ms-file-permission-key should be specified.
+         one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default value
+         is None.
         :type file_permission_key: str
-        :param copy_file_smb_info: Parameter group.
+        :param copy_file_smb_info: Parameter group. Default value is None.
         :type copy_file_smb_info: ~azure.storage.fileshare.models.CopyFileSmbInfo
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -1505,15 +1521,15 @@ class FileOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
-        :param lease_access_conditions: Parameter group.
+        :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
-        :keyword comp: comp. The default value is "copy". Note that overriding this default value may
+        :keyword comp: comp. Default value is "copy". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
-        :keyword copy_action_abort_constant: Abort. The default value is "abort". Note that overriding
-         this default value may result in unsupported behavior.
+        :keyword copy_action_abort_constant: Abort. Default value is "abort". Note that overriding this
+         default value may result in unsupported behavior.
         :paramtype copy_action_abort_constant: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -1584,22 +1600,22 @@ class FileOperations:
         :param marker: A string value that identifies the portion of the list to be returned with the
          next list operation. The operation returns a marker value within the response body if the list
          returned was not complete. The marker value may then be used in a subsequent call to request
-         the next set of list items. The marker value is opaque to the client.
+         the next set of list items. The marker value is opaque to the client. Default value is None.
         :type marker: str
         :param maxresults: Specifies the maximum number of entries to return. If the request does not
          specify maxresults, or specifies a value greater than 5,000, the server will return up to 5,000
-         items.
+         items. Default value is None.
         :type maxresults: int
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the share snapshot to query.
+         specifies the share snapshot to query. Default value is None.
         :type sharesnapshot: str
-        :keyword comp: comp. The default value is "listhandles". Note that overriding this default
-         value may result in unsupported behavior.
+        :keyword comp: comp. Default value is "listhandles". Note that overriding this default value
+         may result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListHandlesResponse, or the result of cls(response)
@@ -1673,18 +1689,18 @@ class FileOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param marker: A string value that identifies the portion of the list to be returned with the
          next list operation. The operation returns a marker value within the response body if the list
          returned was not complete. The marker value may then be used in a subsequent call to request
-         the next set of list items. The marker value is opaque to the client.
+         the next set of list items. The marker value is opaque to the client. Default value is None.
         :type marker: str
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the share snapshot to query.
+         specifies the share snapshot to query. Default value is None.
         :type sharesnapshot: str
-        :keyword comp: comp. The default value is "forceclosehandles". Note that overriding this
-         default value may result in unsupported behavior.
+        :keyword comp: comp. Default value is "forceclosehandles". Note that overriding this default
+         value may result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -1763,40 +1779,42 @@ class FileOperations:
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
-         Timeouts for File Service Operations.</a>`.
+         Timeouts for File Service Operations.</a>`. Default value is None.
         :type timeout: int
         :param replace_if_exists: Optional. A boolean value for if the destination file already exists,
          whether this request will overwrite the file or not. If true, the rename will succeed and will
          overwrite the destination file. If not provided or if false and the destination file does
          exist, the request will not overwrite the destination file. If provided and the destination
          file doesn’t exist, the rename will succeed. Note: This value does not override the
-         x-ms-file-copy-ignore-read-only header value.
+         x-ms-file-copy-ignore-read-only header value. Default value is None.
         :type replace_if_exists: bool
         :param ignore_read_only: Optional. A boolean value that specifies whether the ReadOnly
          attribute on a preexisting destination file should be respected. If true, the rename will
          succeed, otherwise, a previous file at the destination with the ReadOnly attribute set will
-         cause the rename to fail.
+         cause the rename to fail. Default value is None.
         :type ignore_read_only: bool
         :param file_permission: If specified the permission (security descriptor) shall be set for the
          directory/file. This header can be used if Permission size is <= 8KB, else
          x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
          input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
-         x-ms-file-permission-key should be specified.
+         x-ms-file-permission-key should be specified. Default value is "inherit".
         :type file_permission: str
         :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
-         one of the x-ms-file-permission or x-ms-file-permission-key should be specified.
+         one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default value
+         is None.
         :type file_permission_key: str
-        :param metadata: A name-value pair to associate with a file storage object.
+        :param metadata: A name-value pair to associate with a file storage object. Default value is
+         None.
         :type metadata: dict[str, str]
-        :param source_lease_access_conditions: Parameter group.
+        :param source_lease_access_conditions: Parameter group. Default value is None.
         :type source_lease_access_conditions:
          ~azure.storage.fileshare.models.SourceLeaseAccessConditions
-        :param destination_lease_access_conditions: Parameter group.
+        :param destination_lease_access_conditions: Parameter group. Default value is None.
         :type destination_lease_access_conditions:
          ~azure.storage.fileshare.models.DestinationLeaseAccessConditions
-        :param copy_file_smb_info: Parameter group.
+        :param copy_file_smb_info: Parameter group. Default value is None.
         :type copy_file_smb_info: ~azure.storage.fileshare.models.CopyFileSmbInfo
-        :keyword comp: comp. The default value is "rename". Note that overriding this default value may
+        :keyword comp: comp. Default value is "rename". Note that overriding this default value may
          result in unsupported behavior.
         :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response

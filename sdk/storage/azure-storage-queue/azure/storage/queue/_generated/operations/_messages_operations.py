@@ -206,26 +206,24 @@ def build_peek_request(
 
 # fmt: on
 class MessagesOperations(object):
-    """MessagesOperations operations.
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
-
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.storage.queue.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.storage.queue.AzureQueueStorage`'s
+        :attr:`messages` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs):
+        args = list(args)
+        self._client = args.pop(0) if args else kwargs.pop("client")
+        self._config = args.pop(0) if args else kwargs.pop("config")
+        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
+        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
+
 
     @distributed_trace
     def dequeue(
@@ -242,7 +240,7 @@ class MessagesOperations(object):
         :param number_of_messages: Optional. A nonzero integer value that specifies the number of
          messages to retrieve from the queue, up to a maximum of 32. If fewer are visible, the visible
          messages are returned. By default, a single message is retrieved from the queue with this
-         operation.
+         operation. Default value is None.
         :type number_of_messages: int
         :param visibilitytimeout: Optional. Specifies the new visibility timeout value, in seconds,
          relative to server time. The default value is 30 seconds. A specified value must be larger than
@@ -252,10 +250,11 @@ class MessagesOperations(object):
         :type visibilitytimeout: int
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
-         Timeouts for Queue Service Operations.</a>.
+         Timeouts for Queue Service Operations.</a>. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of DequeuedMessageItem, or the result of cls(response)
@@ -320,10 +319,11 @@ class MessagesOperations(object):
 
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
-         Timeouts for Queue Service Operations.</a>.
+         Timeouts for Queue Service Operations.</a>. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
@@ -401,14 +401,15 @@ class MessagesOperations(object):
          seconds. Prior to version 2017-07-29, the maximum time-to-live allowed is 7 days. For version
          2017-07-29 or later, the maximum time-to-live can be any positive number, as well as -1
          indicating that the message does not expire. If this parameter is omitted, the default
-         time-to-live is 7 days.
+         time-to-live is 7 days. Default value is None.
         :type message_time_to_live: int
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
-         Timeouts for Queue Service Operations.</a>.
+         Timeouts for Queue Service Operations.</a>. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of EnqueuedMessage, or the result of cls(response)
@@ -481,17 +482,18 @@ class MessagesOperations(object):
         :param number_of_messages: Optional. A nonzero integer value that specifies the number of
          messages to retrieve from the queue, up to a maximum of 32. If fewer are visible, the visible
          messages are returned. By default, a single message is retrieved from the queue with this
-         operation.
+         operation. Default value is None.
         :type number_of_messages: int
         :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
-         Timeouts for Queue Service Operations.</a>.
+         Timeouts for Queue Service Operations.</a>. Default value is None.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
-         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
         :type request_id_parameter: str
-        :keyword peekonly: Peek message(s). The default value is "true". Note that overriding this
-         default value may result in unsupported behavior.
+        :keyword peekonly: Peek message(s). Default value is "true". Note that overriding this default
+         value may result in unsupported behavior.
         :paramtype peekonly: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of PeekedMessageItem, or the result of cls(response)
