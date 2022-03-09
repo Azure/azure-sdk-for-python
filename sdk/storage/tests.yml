@@ -15,10 +15,9 @@ stages:
     - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
       parameters:
         JobName: ${{ replace(service, '-', '_') }}
-        AllocateResourceGroup: 'false'
         BuildTargetingString: ${{ service }}
-        ${{ if eq(service, 'azure-storage-file-datalake') }}:
-          DeployArmTemplate: true
+        Location: 'canadacentral'
+
           # All 5 service stages run in parallel, and with no parallel limits the tests may get throttled.
         MaxParallel: 2
         ServiceDirectory: storage
@@ -26,6 +25,12 @@ stages:
         MatrixReplace:
           # Use dedicated storage pool in canadacentral with higher memory capacity
           - Pool=(.*)-general/$1-storage
+        ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly') }}:
+          MatrixConfigs:
+            - Name: Storage_all_versions_live_test
+              Path: sdk/storage/platform-matrix-all-versions.json
+              Selection: sparse
+              GenerateVMJobs: true
         EnvVars:
           STORAGE_ACCOUNT_NAME: $(python-storage-storage-account-name)
           STORAGE_ACCOUNT_KEY: $(python-storage-storage-account-key)

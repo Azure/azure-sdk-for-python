@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -48,7 +46,7 @@ def sample_authentication_api_key():
     # [END create_dt_client_with_key]
 
     # make calls with authenticated client
-    result = document_translation_client.get_document_formats()
+    result = document_translation_client.get_supported_document_formats()
 
 
 def sample_authentication_with_azure_active_directory():
@@ -66,7 +64,7 @@ def sample_authentication_with_azure_active_directory():
     # [END create_dt_client_with_aad]
 
     # make calls with authenticated client
-    result = document_translation_client.get_document_formats()
+    result = document_translation_client.get_supported_document_formats()
 
 
 if __name__ == '__main__':

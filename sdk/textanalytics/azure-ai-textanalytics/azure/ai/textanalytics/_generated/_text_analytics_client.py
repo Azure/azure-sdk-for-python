@@ -24,7 +24,6 @@ if TYPE_CHECKING:
     from typing import Any, Optional
 
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
@@ -34,7 +33,7 @@ class _SDKClient(object):
         pass
 
 class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixin, _SDKClient):
-    """The Text Analytics API is a suite of text analytics web services built with best-in-class Microsoft machine learning algorithms. The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction and language detection. No training data is needed to use this API; just bring your text data. This API uses advanced natural language processing techniques to deliver best in class predictions. Further documentation can be found in https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview.
+    """The Text Analytics API is a suite of natural language processing (NLP) services built with best-in-class Microsoft machine learning algorithms.  The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction and language detection. Functionality for analysis of text specific to the healthcare domain and personal information are also available in the API. Further documentation can be found in :code:`<a href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
 
     This ready contains multiple API versions, to help you deal with all of the Azure clouds
     (Azure Stack, Azure Government, Azure China, etc.).
@@ -55,7 +54,7 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = 'v3.0'
+    DEFAULT_API_VERSION = 'v3.2-preview.2'
     _PROFILE_TAG = "azure.ai.textanalytics.TextAnalyticsClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -74,8 +73,10 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
     ):
         if api_version == 'v3.0':
             base_url = '{Endpoint}/text/analytics/v3.0'
-        elif api_version == 'v3.1-preview.5':
-            base_url = '{Endpoint}/text/analytics/v3.1-preview.5'
+        elif api_version == 'v3.1':
+            base_url = '{Endpoint}/text/analytics/v3.1'
+        elif api_version == 'v3.2-preview.2':
+            base_url = '{Endpoint}/text/analytics/v3.2-preview.2'
         else:
             raise ValueError("API version {} is not available".format(api_version))
         self._config = TextAnalyticsClientConfiguration(credential, endpoint, **kwargs)
@@ -94,13 +95,17 @@ class TextAnalyticsClient(TextAnalyticsClientOperationsMixin, MultiApiClientMixi
         """Module depends on the API version:
 
            * v3.0: :mod:`v3_0.models<azure.ai.textanalytics.v3_0.models>`
-           * v3.1-preview.5: :mod:`v3_1_preview_5.models<azure.ai.textanalytics.v3_1_preview_5.models>`
+           * v3.1: :mod:`v3_1.models<azure.ai.textanalytics.v3_1.models>`
+           * v3.2-preview.2: :mod:`v3_2_preview_2.models<azure.ai.textanalytics.v3_2_preview_2.models>`
         """
         if api_version == 'v3.0':
             from .v3_0 import models
             return models
-        elif api_version == 'v3.1-preview.5':
-            from .v3_1_preview_5 import models
+        elif api_version == 'v3.1':
+            from .v3_1 import models
+            return models
+        elif api_version == 'v3.2-preview.2':
+            from .v3_2_preview_2 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 

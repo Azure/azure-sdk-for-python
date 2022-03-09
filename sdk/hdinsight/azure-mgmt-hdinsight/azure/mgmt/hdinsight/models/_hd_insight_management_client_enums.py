@@ -34,6 +34,15 @@ class AsyncOperationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
 
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
 class DaysOfWeek(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     MONDAY = "Monday"
@@ -44,6 +53,12 @@ class DaysOfWeek(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SATURDAY = "Saturday"
     SUNDAY = "Sunday"
 
+class DirectoryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The directory type.
+    """
+
+    ACTIVE_DIRECTORY = "ActiveDirectory"
+
 class FilterMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The filtering mode. Effectively this can enabling or disabling the VM sizes in a particular
     set.
@@ -51,6 +66,8 @@ class FilterMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     EXCLUDE = "Exclude"
     INCLUDE = "Include"
+    RECOMMEND = "Recommend"
+    DEFAULT = "Default"
 
 class HDInsightClusterProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The provisioning state, which only appears in the response.
@@ -77,12 +94,49 @@ class OSType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     WINDOWS = "Windows"
     LINUX = "Linux"
 
+class PrivateEndpointConnectionProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The provisioning state, which only appears in the response.
+    """
+
+    IN_PROGRESS = "InProgress"
+    UPDATING = "Updating"
+    FAILED = "Failed"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    DELETING = "Deleting"
+
+class PrivateIPAllocationMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The method that private IP address is allocated.
+    """
+
+    DYNAMIC = "dynamic"
+    STATIC = "static"
+
 class PrivateLink(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Indicates whether or not private link is enabled.
     """
 
     DISABLED = "Disabled"
     ENABLED = "Enabled"
+
+class PrivateLinkConfigurationProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The private link configuration provisioning state, which only appears in the response.
+    """
+
+    IN_PROGRESS = "InProgress"
+    FAILED = "Failed"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    DELETING = "Deleting"
+
+class PrivateLinkServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The concrete private link service connection.
+    """
+
+    APPROVED = "Approved"
+    REJECTED = "Rejected"
+    PENDING = "Pending"
+    REMOVED = "Removed"
 
 class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The type of identity used for the cluster. The type 'SystemAssigned, UserAssigned' includes

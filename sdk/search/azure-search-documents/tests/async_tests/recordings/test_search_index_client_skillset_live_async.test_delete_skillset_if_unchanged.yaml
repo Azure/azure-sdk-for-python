@@ -11,30 +11,30 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://searchf5e02005.search.windows.net/skillsets?api-version=2020-06-30
+    uri: https://searchf5e02005.search.windows.net/skillsets?api-version=2021-04-30-Preview
   response:
     body:
-      string: '{"@odata.context":"https://searchf5e02005.search.windows.net/$metadata#skillsets/$entity","@odata.etag":"\"0x8D91BB4E9C19F61\"","name":"test-ss","description":"desc","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":null,"description":null,"context":null,"categories":[],"defaultLanguageCode":null,"minimumPrecision":null,"includeTypelessEntities":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizations"}]}],"cognitiveServices":null,"knowledgeStore":null,"encryptionKey":null}'
+      string: '{"@odata.context":"https://searchf5e02005.search.windows.net/$metadata#skillsets/$entity","@odata.etag":"\"0x8D96E690C10CE45\"","name":"test-ss","description":"desc","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":null,"description":null,"context":null,"categories":[],"defaultLanguageCode":null,"minimumPrecision":null,"includeTypelessEntities":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizations"}]}],"cognitiveServices":null,"knowledgeStore":null,"encryptionKey":null}'
     headers:
       cache-control: no-cache
       content-length: '608'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 20 May 2021 17:30:07 GMT
-      elapsed-time: '46'
-      etag: W/"0x8D91BB4E9C19F61"
+      date: Thu, 02 Sep 2021 23:26:10 GMT
+      elapsed-time: '45'
+      etag: W/"0x8D96E690C10CE45"
       expires: '-1'
-      location: https://searchf5e02005.search.windows.net/skillsets('test-ss')?api-version=2020-06-30
+      location: https://searchf5e02005.search.windows.net/skillsets('test-ss')?api-version=2021-04-30-Preview
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 052a8dc8-b991-11eb-9ca2-a0481ca055a9
+      request-id: 290c4a34-0c45-11ec-b7b9-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 201
       message: Created
-    url: https://searchf5e02005.search.windows.net/skillsets?api-version=2020-06-30
+    url: https://searchf5e02005.search.windows.net/skillsets?api-version=2021-04-30-Preview
 - request:
     body: '{"name": "test-ss", "description": "updated", "skills": [{"@odata.type":
       "#Microsoft.Skills.Text.EntityRecognitionSkill", "inputs": [{"name": "text",
@@ -50,51 +50,41 @@ interactions:
       Prefer:
       - return=representation
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://searchf5e02005.search.windows.net/skillsets('test-ss')?api-version=2020-06-30
+    uri: https://searchf5e02005.search.windows.net/skillsets('test-ss')?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR79n
-        NcvabDytlm3+rv3o0Ufztl01j+7ebfKsns7P7+c7ezs798fy5/iqWM6qq2a8zNu7v9sibzO8/ePN
-        26Ism7xt7v5u+bIt2uuPRgYwNbkgqL/vRzvvDp4+3H3yZP/04dPdg50nD37fj6jVMlvk9HWbN+12
-        09AHs7yZ1sWqLaolfb5eEZB8Rp9LFx89+p5Fub1e4dUf/6KY1lVTnbfj19xm/IYGMj5lPF7l0+pi
-        WQAaf0mApMfluiw7nclHlhD6J3V/UdVFjq6/jzfOs3XZPs+WF+vsIj+pZhbYolgWi/XiZZ1Pi8aD
-        WCyn5XqWvyF0y7xpGDGGZ75erVv6iwYmqBExqH8acbWup/j77qyarhdE2LuM3NJ9eYK/qXEX1Pd/
-        CaFarVv900Ku6otsWfwgw4BB7DarL/L2RezLX8IwlHqX+eu8viymDuu3y+qqzGcX+eu2qult+TRf
-        TutrJufvlV/Lh7/k/wFuFkTgYwIAAA==
+      string: '{"@odata.context":"https://searchf5e02005.search.windows.net/$metadata#skillsets/$entity","@odata.etag":"\"0x8D96E690C22FB28\"","name":"test-ss","description":"updated","skills":[{"@odata.type":"#Microsoft.Skills.Text.EntityRecognitionSkill","name":null,"description":null,"context":null,"categories":[],"defaultLanguageCode":null,"minimumPrecision":null,"includeTypelessEntities":null,"inputs":[{"name":"text","source":"/document/content","sourceContext":null,"inputs":[]}],"outputs":[{"name":"organizations","targetName":"organizations"}]}],"cognitiveServices":null,"knowledgeStore":null,"encryptionKey":null}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '478'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 20 May 2021 17:30:07 GMT
-      elapsed-time: '45'
-      etag: W/"0x8D91BB4E9D180B7"
+      date: Thu, 02 Sep 2021 23:26:10 GMT
+      elapsed-time: '76'
+      etag: W/"0x8D96E690C22FB28"
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 0552a38a-b991-11eb-8435-a0481ca055a9
+      request-id: 2939484a-0c45-11ec-9a43-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://searchf5e02005.search.windows.net/skillsets('test-ss')?api-version=2020-06-30
+    url: https://searchf5e02005.search.windows.net/skillsets('test-ss')?api-version=2021-04-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=minimal
       If-Match:
-      - '"0x8D91BB4E9C19F61"'
+      - '"0x8D96E690C10CE45"'
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://searchf5e02005.search.windows.net/skillsets('test-ss')?api-version=2020-06-30
+    uri: https://searchf5e02005.search.windows.net/skillsets('test-ss')?api-version=2021-04-30-Preview
   response:
     body:
       string: '{"error":{"code":"","message":"The precondition given in one of the
@@ -105,16 +95,16 @@ interactions:
       content-language: en
       content-length: '160'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 20 May 2021 17:30:07 GMT
-      elapsed-time: '9'
+      date: Thu, 02 Sep 2021 23:26:10 GMT
+      elapsed-time: '6'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 0561dbe4-b991-11eb-8494-a0481ca055a9
+      request-id: 294b99fe-0c45-11ec-a82c-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 412
       message: Precondition Failed
-    url: https://searchf5e02005.search.windows.net/skillsets('test-ss')?api-version=2020-06-30
+    url: https://searchf5e02005.search.windows.net/skillsets('test-ss')?api-version=2021-04-30-Preview
 version: 1

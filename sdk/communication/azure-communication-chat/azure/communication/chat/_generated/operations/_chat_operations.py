@@ -80,7 +80,7 @@ class ChatOperations(object):
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-07"
+        api_version = "2021-09-07"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -152,7 +152,7 @@ class ChatOperations(object):
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-07"
+        api_version = "2021-09-07"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -237,7 +237,7 @@ class ChatOperations(object):
             503: lambda response: HttpResponseError(response=response, model=self._deserialize(_models.CommunicationErrorResponse, response)),
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2021-03-07"
+        api_version = "2021-09-07"
         accept = "application/json"
 
         # Construct URL

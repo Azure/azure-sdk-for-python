@@ -11,6 +11,10 @@ Use the client library for Azure Container Registry to:
 
 [Source code][source] | [Package (Pypi)][package] | [API reference documentation][docs] | [REST API documentation][rest_docs] | [Product documentation][product_docs]
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 ## Getting started
 
 ### Install the package
@@ -23,7 +27,8 @@ pip install --pre azure-containerregistry
 
 ### Prerequisites
 
-You need an [Azure subscription][azure_sub] and a [Container Registry account][container_registry_docs] to use this package.
+* Python 3.6 or later is required to use this package.
+* You need an [Azure subscription][azure_sub] and a [Container Registry account][container_registry_docs] to use this package.
 
 To create a new Container Registry, you can use the [Azure Portal][container_registry_create_portal],
 [Azure PowerShell][container_registry_create_ps], or the [Azure CLI][container_registry_create_cli].
@@ -35,15 +40,16 @@ az acr create --name MyContainerRegistry --resource-group MyResourceGroup --loca
 
 ### Authenticate the client
 
-The [Azure Identity library][identity] provides easy Azure Active Directory support for authentication. The `DefaultAzureCredential` assumes the `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, and `AZURE_CLIENT_SECRET` environment variables are set, for more information refer to the [Azure Identity environment variables section](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity#environment-variables)
+The [Azure Identity library][identity] provides easy Azure Active Directory support for authentication. The `DefaultAzureCredential` assumes the `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, and `AZURE_CLIENT_SECRET` environment variables are set, for more information refer to the [Azure Identity environment variables section](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#environment-variables)
 
 ```python
 # Create a ContainerRegistryClient that will authenticate through Active Directory
 from azure.containerregistry import ContainerRegistryClient
 from azure.identity import DefaultAzureCredential
 
-account_url = "https://MYCONTAINERREGISTRY.azurecr.io"
-client = ContainerRegistryClient(account_url, DefaultAzureCredential())
+endpoint = "https://mycontainerregistry.azurecr.io"
+audience = "https://management.azure.com"
+client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience=audience)
 ```
 
 ## Key concepts
@@ -55,12 +61,80 @@ For more information please see [Container Registry Concepts](https://docs.micro
 
 ## Examples
 
-<!-- Pending Sample Creation -->
+The following sections provide several code snippets covering some of the most common ACR Service tasks, including:
+
+- [List repositories](#list-repositories)
+- [List tags with anonymous access](#list-tags-with-anonymous-access)
+- [Set artifact properties](#set-artifact-properties)
+- [Delete images](#delete-images)
+
+Please note that each sample assumes there is a `CONTAINERREGISTRY_ENDPOINT` environment variable set to a string containing the `https://` prefix and the name of the login server, for example "https://myregistry.azurecr.io".
+
+### List repositories
+
+Iterate through the collection of repositories in the registry.
+
+```python
+endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+
+with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com") as client:
+    # Iterate through all the repositories
+    for repository_name in client.list_repository_names():
+        print(repository_name)
+```
+
+### List tags with anonymous access
+
+Iterate through the collection of tags in the repository with anonymous access.
+
+```python
+endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+
+with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com") as client:
+    manifest = client.get_manifest_properties("library/hello-world", "latest")
+    print(manifest.repository_name + ": ")
+    for tag in manifest.tags:
+        print(tag + "\n")
+```
+
+### Set artifact properties
+
+Set properties of an artifact.
+
+```python
+endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+
+with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com") as client:
+    # Set permissions on the v1 image's "latest" tag
+    client.update_manifest_properties(
+        "library/hello-world",
+        "latest",
+        can_write=False,
+        can_delete=False
+    )
+```
+
+### Delete images
+
+Delete images older than the first three in the repository.
+
+```python
+endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+
+with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https://management.azure.com") as client:
+    for repository in client.list_repository_names():
+        manifest_count = 0
+        for manifest in client.list_manifest_properties(repository, order_by=ArtifactManifestOrder.LAST_UPDATED_ON_DESCENDING):
+            manifest_count += 1
+            if manifest_count > 3:
+                print("Deleting {}:{}".format(repository, manifest.digest))
+                client.delete_manifest(repository, manifest.digest)
+```
 
 ## Troubleshooting
 
 ### General
-Form Recognizer client library will raise exceptions defined in [Azure Core][azure_core_exceptions].
+ACR client library will raise exceptions defined in [Azure Core][azure_core_exceptions].
 
 ### Logging
 This library uses the standard
@@ -81,7 +155,9 @@ describes available configurations for retries, logging, transport protocols, an
 
 ## Next steps
 
-<!-- Pending Sample Creation -->
+- Go further with azure.containerregistry and our [samples][samples].
+- Watch a [demo or deep dive video](https://azure.microsoft.com/resources/videos/index/?service=container-registry).
+- Read more about the [Azure Container Registry service](https://docs.microsoft.com/azure/container-registry/container-registry-intro).
 
 ## Contributing
 
@@ -98,7 +174,7 @@ additional questions or comments.
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fcontainerregistry%2Fazure-containerregistry%2FREADME.png)
 
 <!-- LINKS -->
-[source]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/containerregistry/azure-containerregistry
+[source]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/containerregistry/azure-containerregistry
 [package]: https://pypi.org/project/azure-containerregistry/
 [docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-containerregistry/1.0.0b1/index.html
 [rest_docs]: https://docs.microsoft.com/rest/api/containerregistry/
@@ -111,14 +187,12 @@ additional questions or comments.
 [container_registry_concepts]: https://docs.microsoft.com/azure/container-registry/container-registry-concepts
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_sub]: https://azure.microsoft.com/free/
-[identity]: https://github.com/Azure/azure-sdk-for-net/tree/master/sdk/identity/Azure.Identity/README.md
-
-[samples]: https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/containerregistry/Azure.Containers.ContainerRegistry/samples/
+[identity]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md
+[samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/containerregistry/azure-containerregistry/samples
 [cla]: https://cla.microsoft.com
 [coc]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
-
 [azure_core_ref_docs]: https://aka.ms/azsdk/python/core/docs
 [azure_core_exceptions]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions
 [python_logging]: https://docs.python.org/3/library/logging.html

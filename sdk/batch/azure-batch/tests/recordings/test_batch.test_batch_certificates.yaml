@@ -15,28 +15,28 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 01:06:57 GMT
+      - Thu, 13 Jan 2022 06:51:49 GMT
     method: POST
-    uri: https://batch.westcentralus.batch.azure.com/certificates?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/certificates?api-version=2022-01-01.15.0
   response:
     body:
       string: ''
     headers:
       dataserviceid:
-      - https://batchf0370dc6.westcentralus.batch.azure.com/certificates(ThumbprintAlgorithm=sha1,Thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)
+      - https://batchf0370dc6.southcentralus.batch.azure.com/certificates(ThumbprintAlgorithm=sha1,Thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 01:06:56 GMT
+      - Thu, 13 Jan 2022 06:51:50 GMT
       location:
-      - https://batch.westcentralus.batch.azure.com/certificates(ThumbprintAlgorithm=sha1,Thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)
+      - https://batch.southcentralus.batch.azure.com/certificates(ThumbprintAlgorithm=sha1,Thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)
       request-id:
-      - 2702ae58-6df5-49de-a4aa-f6ce08b25bc4
+      - f36115f2-fd09-45e2-a047-20d2b0d0ff7f
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -58,31 +58,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 01:06:57 GMT
+      - Thu, 13 Jan 2022 06:51:50 GMT
     method: GET
-    uri: https://batch.westcentralus.batch.azure.com/certificates?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/certificates?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#certificates\"\
-        ,\"value\":[\r\n    {\r\n      \"thumbprint\":\"cff2ab63c8c955aaf71989efa641b906558d9fb7\"\
-        ,\"thumbprintAlgorithm\":\"sha1\",\"url\":\"https://batch.westcentralus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)\"\
-        ,\"state\":\"active\",\"stateTransitionTime\":\"2020-11-24T01:06:57.8970464Z\"\
-        ,\"publicData\":\"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78\"\
-        \r\n    }\r\n  ]\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#certificates\",\"value\":[\r\n
+        \   {\r\n      \"thumbprint\":\"cff2ab63c8c955aaf71989efa641b906558d9fb7\",\"thumbprintAlgorithm\":\"sha1\",\"url\":\"https://batch.southcentralus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-13T06:51:50.4041209Z\",\"publicData\":\"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78\"\r\n
+        \   }\r\n  ]\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 01:06:58 GMT
+      - Thu, 13 Jan 2022 06:51:50 GMT
       request-id:
-      - 00cc47f9-798b-4d4d-b61c-c31d5bfbda8d
+      - 6ee6a2b0-1667-4b7f-8298-6969a9163e34
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -104,31 +101,26 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 01:06:58 GMT
+      - Thu, 13 Jan 2022 06:51:50 GMT
     method: GET
-    uri: https://batch.westcentralus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#certificates/@Element\"\
-        ,\"thumbprint\":\"cff2ab63c8c955aaf71989efa641b906558d9fb7\",\"thumbprintAlgorithm\"\
-        :\"sha1\",\"url\":\"https://batch.westcentralus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)\"\
-        ,\"state\":\"active\",\"stateTransitionTime\":\"2020-11-24T01:06:57.8970464Z\"\
-        ,\"publicData\":\"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78\"\
-        \r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#certificates/@Element\",\"thumbprint\":\"cff2ab63c8c955aaf71989efa641b906558d9fb7\",\"thumbprintAlgorithm\":\"sha1\",\"url\":\"https://batch.southcentralus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-13T06:51:50.4041209Z\",\"publicData\":\"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78\"\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 01:06:58 GMT
+      - Thu, 13 Jan 2022 06:51:50 GMT
       request-id:
-      - 6993e429-b4d2-4066-810b-441199277bed
+      - 8914b837-60b1-4df4-aa3c-f4092b861e9b
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -152,31 +144,31 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 01:06:58 GMT
+      - Thu, 13 Jan 2022 06:51:50 GMT
     method: POST
-    uri: https://batch.westcentralus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)/canceldelete?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)/canceldelete?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\"\
-        ,\"code\":\"CertificateStateActive\",\"message\":{\r\n    \"lang\":\"en-US\"\
-        ,\"value\":\"The specified certificate is in active state.\\nRequestId:66b521ef-d8ea-4e42-bf8b-2045c321b48c\\\
-        nTime:2020-11-24T01:06:58.2088242Z\"\r\n  }\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\",\"code\":\"CertificateStateActive\",\"message\":{\r\n
+        \   \"lang\":\"en-US\",\"value\":\"The specified certificate is in active
+        state.\\nRequestId:9df3e249-68d6-49c1-9dc6-14cfbf0457a1\\nTime:2022-01-13T06:51:50.6809075Z\"\r\n
+        \ }\r\n}"
     headers:
       content-length:
-      - '362'
+      - '363'
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 01:06:58 GMT
+      - Thu, 13 Jan 2022 06:51:50 GMT
       request-id:
-      - 66b521ef-d8ea-4e42-bf8b-2045c321b48c
+      - 9df3e249-68d6-49c1-9dc6-14cfbf0457a1
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -198,14 +190,14 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 01:06:58 GMT
+      - Thu, 13 Jan 2022 06:51:50 GMT
     method: DELETE
-    uri: https://batch.westcentralus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)?api-version=2022-01-01.15.0
   response:
     body:
       string: ''
@@ -213,9 +205,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 01:06:58 GMT
+      - Thu, 13 Jan 2022 06:51:50 GMT
       request-id:
-      - 88bbce85-ee12-44e9-bb9b-09251edb6d6d
+      - 30611644-90c8-433f-96fd-725dffa1d6c9
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

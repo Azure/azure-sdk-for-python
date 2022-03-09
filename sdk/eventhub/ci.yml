@@ -3,7 +3,6 @@
 trigger:
   branches:
     include:
-    - master
     - main
     - hotfix/*
     - release/*
@@ -16,7 +15,6 @@ trigger:
 pr:
   branches:
     include:
-    - master
     - main
     - feature/*
     - hotfix/*
@@ -46,5 +44,7 @@ extends:
       safeName: azureeventhubcheckpointstoreblobaio
     - name: azure-eventhub-checkpointstoreblob
       safeName: azureeventhubcheckpointstoreblob
+    - name: azure-eventhub-checkpointstoretable
+      safeName: azureeventhubcheckpointstoretable
     - name: azure-mgmt-eventhub
       safeName: azuremgmteventhub

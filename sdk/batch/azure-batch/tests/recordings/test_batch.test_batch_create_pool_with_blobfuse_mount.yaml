@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"id": "batch_iaas_449c15bb", "vmSize": "Standard_A1", "virtualMachineConfiguration":
+    body: '{"id": "batch_iaas_449c15bb", "vmSize": "standard_d1_v2", "virtualMachineConfiguration":
       {"imageReference": {"publisher": "MicrosoftWindowsServer", "offer": "WindowsServer",
       "sku": "2016-Datacenter-smalldisk"}, "nodeAgentSKUId": "batch.node.windows amd64",
       "windowsConfiguration": {"enableAutomaticUpdates": true}}, "taskSchedulingPolicy":
@@ -15,36 +15,36 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '585'
+      - '588'
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 01:29:27 GMT
+      - Thu, 13 Jan 2022 07:05:08 GMT
     method: POST
-    uri: https://batch.westcentralus.batch.azure.com/pools?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/pools?api-version=2022-01-01.15.0
   response:
     body:
       string: ''
     headers:
       dataserviceid:
-      - https://batch449c15bb.westcentralus.batch.azure.com/pools/batch_iaas_449c15bb
+      - https://batch449c15bb.southcentralus.batch.azure.com/pools/batch_iaas_449c15bb
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 01:29:28 GMT
+      - Thu, 13 Jan 2022 07:05:08 GMT
       etag:
-      - '0x8D8901862B0EF92'
+      - '0x8D9D66308BBCA09'
       last-modified:
-      - Tue, 24 Nov 2020 01:29:28 GMT
+      - Thu, 13 Jan 2022 07:05:08 GMT
       location:
-      - https://batch.westcentralus.batch.azure.com/pools/batch_iaas_449c15bb
+      - https://batch.southcentralus.batch.azure.com/pools/batch_iaas_449c15bb
       request-id:
-      - b528ce50-5dc8-4185-9303-c38c590d9700
+      - 9996c072-b4e7-4da2-a413-7aa74d79d349
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -66,46 +66,36 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 01:29:28 GMT
+      - Thu, 13 Jan 2022 07:05:08 GMT
     method: GET
-    uri: https://batch.westcentralus.batch.azure.com/pools/batch_iaas_449c15bb?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/pools/batch_iaas_449c15bb?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#pools/@Element\"\
-        ,\"id\":\"batch_iaas_449c15bb\",\"url\":\"https://batch.westcentralus.batch.azure.com/pools/batch_iaas_449c15bb\"\
-        ,\"eTag\":\"0x8D8901862B0EF92\",\"lastModified\":\"2020-11-24T01:29:28.2302866Z\"\
-        ,\"creationTime\":\"2020-11-24T01:29:28.2302866Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2020-11-24T01:29:28.2302866Z\",\"allocationState\"\
-        :\"resizing\",\"allocationStateTransitionTime\":\"2020-11-24T01:29:28.2302866Z\"\
-        ,\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\"\
-        :0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\"\
-        :0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"taskSlotsPerNode\"\
-        :1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Pack\"\r\n  },\"virtualMachineConfiguration\"\
-        :{\r\n    \"imageReference\":{\r\n      \"publisher\":\"MicrosoftWindowsServer\"\
-        ,\"offer\":\"WindowsServer\",\"sku\":\"2016-Datacenter-smalldisk\",\"version\"\
-        :\"latest\"\r\n    },\"nodeAgentSKUId\":\"batch.node.windows amd64\",\"windowsConfiguration\"\
-        :{\r\n      \"enableAutomaticUpdates\":true\r\n    }\r\n  },\"mountConfiguration\"\
-        :[\r\n    {\r\n      \"azureBlobFileSystemConfiguration\":{\r\n        \"\
-        accountName\":\"test\",\"containerName\":\"https://test.blob.core.windows.net:443/test-container\"\
-        ,\"relativeMountPath\":\"foo\"\r\n      }\r\n    }\r\n  ]\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_iaas_449c15bb\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/batch_iaas_449c15bb\",\"eTag\":\"0x8D9D66308BBCA09\",\"lastModified\":\"2022-01-13T07:05:08.6266889Z\",\"creationTime\":\"2022-01-13T07:05:08.6266889Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-13T07:05:08.6266889Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-13T07:05:08.6266889Z\",\"vmSize\":\"standard_d1_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \   \"nodeFillType\":\"Pack\"\r\n  },\"virtualMachineConfiguration\":{\r\n
+        \   \"imageReference\":{\r\n      \"publisher\":\"MicrosoftWindowsServer\",\"offer\":\"WindowsServer\",\"sku\":\"2016-Datacenter-smalldisk\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.windows amd64\",\"windowsConfiguration\":{\r\n
+        \     \"enableAutomaticUpdates\":true\r\n    }\r\n  },\"mountConfiguration\":[\r\n
+        \   {\r\n      \"azureBlobFileSystemConfiguration\":{\r\n        \"accountName\":\"test\",\"containerName\":\"https://test.blob.core.windows.net:443/test-container\",\"relativeMountPath\":\"foo\"\r\n
+        \     }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 01:29:28 GMT
+      - Thu, 13 Jan 2022 07:05:08 GMT
       etag:
-      - '0x8D8901862B0EF92'
+      - '0x8D9D66308BBCA09'
       last-modified:
-      - Tue, 24 Nov 2020 01:29:28 GMT
+      - Thu, 13 Jan 2022 07:05:08 GMT
       request-id:
-      - ce574268-3c5f-4955-82f1-8ff03209f509
+      - e2ddb328-8ea3-44b2-a2aa-3392fda84059
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

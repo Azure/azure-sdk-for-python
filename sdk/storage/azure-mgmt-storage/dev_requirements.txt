@@ -1,4 +1,5 @@
+-e ../../../tools/vcrpy
 -e ../../../tools/azure-sdk-tools
 aiohttp>=3.0; python_version >= '3.5'
-
 -e ../../../tools/azure-devtools
+azure-mgmt-network==19.0.0

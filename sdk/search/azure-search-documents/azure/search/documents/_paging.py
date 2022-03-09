@@ -15,6 +15,7 @@ from ._generated.models import SearchRequest
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Union
+    from ..documents.models import AnswerResult
 
 
 def convert_search_result(result):
@@ -62,14 +63,12 @@ class SearchItemPaged(ItemPaged[ReturnType]):
 
     def get_facets(self):
         # type: () -> Union[dict, None]
-        """Return any facet results if faceting was requested.
-
-        """
+        """Return any facet results if faceting was requested."""
         return self._first_iterator_instance().get_facets()
 
     def get_coverage(self):
         # type: () -> float
-        """Return the covereage percentage, if `minimum_coverage` was
+        """Return the coverage percentage, if `minimum_coverage` was
         specificied for the query.
 
         """
@@ -82,6 +81,12 @@ class SearchItemPaged(ItemPaged[ReturnType]):
 
         """
         return self._first_iterator_instance().get_count()
+
+    def get_answers(self):
+        # type: () -> Union[list[AnswerResult], None]
+        """Return answers."""
+        return self._first_iterator_instance().get_answers()
+
 
 # The pylint error silenced below seems spurious, as the inner wrapper does, in
 # fact, become a method of the class when it is applied.
@@ -119,10 +124,14 @@ class SearchPageIterator(PageIterator):
 
         _next_link, next_page_request = unpack_continuation_token(continuation_token)
 
-        return self._client.documents.search_post(search_request=next_page_request, **self._kwargs)
+        return self._client.documents.search_post(
+            search_request=next_page_request, **self._kwargs
+        )
 
     def _extract_data_cb(self, response):  # pylint:disable=no-self-use
-        continuation_token = pack_continuation_token(response, api_version=self._api_version)
+        continuation_token = pack_continuation_token(
+            response, api_version=self._api_version
+        )
         results = [convert_search_result(r) for r in response.results]
         return continuation_token, results
 
@@ -143,3 +152,8 @@ class SearchPageIterator(PageIterator):
     def get_count(self):
         self.continuation_token = None
         return self._response.count
+
+    @_ensure_response
+    def get_answers(self):
+        self.continuation_token = None
+        return self._response.answers

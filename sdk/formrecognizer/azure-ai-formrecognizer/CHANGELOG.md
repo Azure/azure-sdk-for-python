@@ -1,7 +1,81 @@
 # Release History
 
-## 3.1.1 (Unreleased)
+## 3.2.0b4 (Unreleased)
 
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 3.2.0b3 (2022-02-10)
+
+### Features Added
+- Added new `CurrencyValue` model to represent the amount and currency symbol values found in documents.
+- Added `DocumentBuildMode` enum with values `template` and `neural`. These enum values can be passed in for the `build_mode` parameter in `begin_build_model()`.
+- Added `api_version` and `tags` properties on `ModelOperation`, `ModelOperationInfo`, `DocumentModel`, `DocumentModelInfo`.
+- Added `build_mode` property on `DocTypeInfo`.
+- Added a `tags` keyword argument to `begin_build_model()`, `begin_create_composed_model()`, and `get_copy_authorization()`.
+- Added `languages` property on `AnalyzeResult`.
+- Added model `DocumentLanguage` that includes information about the detected languages found in a document.
+- Added `sample_analyze_read.py` and `sample_analyze_read_async.py` under the `v3.2-beta` samples directory. These samples use the new `prebuilt-read` model added by the service.
+- Added `sample_analyze_tax_us_w2.py` and `sample_analyze_tax_us_w2_async.py` under the `v3.2-beta` samples directory. These samples use the new `prebuilt-tax.us.w2` model added by the service.
+
+### Breaking Changes
+- Added new required parameter `build_mode` to `begin_build_model()`.
+- Some models that previously returned float for currency related fields may now return a `CurrencyValue`. TIP: Use `get_model()` to see updated prebuilt model schemas.
+
+### Bugs Fixed
+- Default the `percent_completed` property to 0 when not returned with model operation information.
+
+### Other Changes
+- Python 2.7 is no longer supported in this release. Please use Python 3.6 or later.
+- Bumped `azure-core` minimum dependency version from `1.13.0` to `1.20.1`.
+- Updated samples that call `begin_build_model()` to send the `build_mode` parameter.
+
+## 3.2.0b2 (2021-11-09)
+
+### Features Added
+- Added `get_words()` on `DocumentLine`.
+- Added samples showing how to use `get_words()` on a `DocumentLine` under `/samples/v3.2-beta`: `sample_get_words_on_document_line.py` and `sample_get_words_on_document_line_async.py`.
+
+### Breaking Changes
+- Renamed `DocumentElement` to `DocumentContentElement`.
+
+## 3.2.0b1 (2021-10-07)
+
+This version of the SDK defaults to the latest supported API version, which is currently 2021-09-30-preview.
+
+> Note: Starting with version 2021-09-30-preview, a new set of clients were introduced to leverage the newest features of the Form Recognizer service. Please see the [Migration Guide](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/MIGRATION_GUIDE.md) for detailed instructions on how to update application code from client library version 3.1.X or lower to the latest version. Also, please refer to the [README](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/README.md) for more information about the library. 
+
+### Features Added
+- Added new `DocumentAnalysisClient` with  `begin_analyze_document` and `begin_analyze_document_from_url` methods. Use these methods with the latest Form Recognizer 
+API version to analyze documents, with prebuilt and custom models.
+- Added new models to use with the new `DocumentAnalysisClient`: `AnalyzeResult`, `AnalyzedDocument`, `BoundingRegion`, `DocumentElement`, `DocumentEntity`, `DocumentField`, `DocumentKeyValuePair`, `DocumentKeyValueElement`, `DocumentLine`, `DocumentPage`, `DocumentSelectionMark`, `DocumentSpan`, `DocumentStyle`, `DocumentTable`, `DocumentTableCell`, `DocumentWord`.
+- Added new `DocumentModelAdministrationClient` with methods: `begin_build_model`, `begin_create_composed_model`, `begin_copy_model`, `get_copy_authorization`, `get_model`, `delete_model`, `list_models`, `get_operation`, `list_operations`, `get_account_info`, `get_document_analysis_client`.
+- Added new models to use with the new `DocumentModelAdministrationClient`: `DocumentModel`, `DocumentModelInfo`, `DocTypeInfo`, `ModelOperation`, `ModelOperationInfo`, `AccountInfo`, `DocumentAnalysisError`, `DocumentAnalysisInnerError`.
+- Added samples using the `DocumentAnalysisClient` and `DocumentModelAdministrationClient` under `/samples/v3.2-beta`.
+- Added `DocumentAnalysisApiVersion` to be used with `DocumentAnalysisClient` and `DocumentModelAdministrationClient`.
+
+### Other Changes
+- Python 3.5 is no longer supported in this release.
+
+## 3.1.2 (2021-08-10)
+
+### Bugs Fixed
+- A `HttpResponseError` will be immediately raised when the call quota volume is exceeded in a `F0` tier Form Recognizer
+resource.
+
+### Other Changes
+- Bumped `azure-core` minimum dependency version from `1.8.2` to `1.13.0`
+
+## 3.1.1 (2021-06-08)
+
+**Bug Fixes**
+
+- Handles invoices that do not have sub-line item fields detected.
 
 ## 3.1.0 (2021-05-26)
 
@@ -30,7 +104,7 @@ Note: this version will be the last to officially support Python 3.5, future ver
 - New methods `begin_recognize_id_documents` and `begin_recognize_id_documents_from_url` introduced to the SDK. Use these methods to recognize data from identity documents.
 - New field value types "gender" and "country" described in the `FieldValueType` enum.
 - Content-type `image/bmp` now supported by custom forms and training methods.
-- Added keyword argument `pages` for business cards, receipts, custom forms, and invoices 
+- Added keyword argument `pages` for business cards, receipts, custom forms, and invoices
 to specify which page to process of the document.
 - Added keyword argument `reading_order` to `begin_recognize_content` and `begin_recognize_content_from_url`.
 
@@ -175,15 +249,15 @@ CustomFormModel` and `CustomFormModelInfo`
 - `models` property of `CustomFormModel` is renamed to `submodels`
 - `CustomFormSubModel` is renamed to `CustomFormSubmodel`
 - `begin_recognize_receipts` APIs now return a list of `RecognizedReceipt` instead of `USReceipt`
-- Removed `USReceipt`. To see how to deal with the return value of `begin_recognize_receipts`, see the recognize receipt samples in the [samples directory](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/samples) for details.
-- Removed `USReceiptItem`. To see how to access the individual items on a receipt, see the recognize receipt samples in the [samples directory](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/samples) for details.
-- Removed `USReceiptType` and the `receipt_type` property from `RecognizedReceipt`. See the recognize receipt samples in the [samples directory](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/formrecognizer/azure-ai-formrecognizer/samples) for details.
+- Removed `USReceipt`. To see how to deal with the return value of `begin_recognize_receipts`, see the recognize receipt samples in the [samples directory](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples) for details.
+- Removed `USReceiptItem`. To see how to access the individual items on a receipt, see the recognize receipt samples in the [samples directory](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples) for details.
+- Removed `USReceiptType` and the `receipt_type` property from `RecognizedReceipt`. See the recognize receipt samples in the [samples directory](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples) for details.
 
 **New features**
 
 - Support to copy a custom model from one Form Recognizer resource to another
 - Authentication using `azure-identity` credentials now supported
-  - see the [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) for more information
+  - see the [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md) for more information
 - `page_number` attribute has been added to `FormTable`
 - All long running operation methods now accept the keyword argument `continuation_token` to restart the poller from a saved state
 

@@ -1,6 +1,0 @@
-include *.md
-include azure/__init__.py
-include azure/schemaregistry/__init__.py
-include azure/schemaregistry/serializer/__init__.py
-recursive-include tests *.py
-recursive-include samples *.py

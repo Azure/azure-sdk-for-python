@@ -11,6 +11,7 @@ from typing import (  # pylint: disable=unused-import
 
 import logging
 from os import fstat
+import stat
 from io import (SEEK_END, SEEK_SET, UnsupportedOperation)
 
 import isodate
@@ -70,7 +71,11 @@ def get_length(data):
             pass
         else:
             try:
-                return fstat(fileno).st_size
+                mode = fstat(fileno).st_mode
+                if stat.S_ISREG(mode) or stat.S_ISLNK(mode):
+                    #st_size only meaningful if regular file or symlink, other types
+                    # e.g. sockets may return misleading sizes like 0
+                    return fstat(fileno).st_size
             except OSError:
                 # Not a valid fileno, may be possible requests returned
                 # a socket number?
@@ -82,7 +87,7 @@ def get_length(data):
             data.seek(0, SEEK_END)
             length = data.tell() - current_position
             data.seek(current_position, SEEK_SET)
-        except (AttributeError, UnsupportedOperation):
+        except (AttributeError, OSError, UnsupportedOperation):
             pass
 
     return length

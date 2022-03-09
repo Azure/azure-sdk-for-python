@@ -12,7 +12,7 @@ from azure.core.paging import PageIterator
 from azure.core.exceptions import HttpResponseError
 from ._generated.models import ArrowField
 
-from ._shared import decode_base64_to_text
+from ._shared import decode_base64_to_bytes
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from ._shared.models import DictMixin, get_enum_value
 from ._generated.models import Logging as GeneratedLogging
@@ -67,6 +67,14 @@ class PremiumPageBlobTier(str, Enum):
     P60 = 'P60'  #: P60 Tier
 
 
+class QuickQueryDialect(str, Enum):
+    """Specifies the quick query input/output dialect."""
+
+    DelimitedText = 'DelimitedTextDialect'
+    DelimitedJson = 'DelimitedJsonDialect'
+    Parquet = 'ParquetDialect'
+
+
 class SequenceNumberAction(str, Enum):
     """Sequence number actions."""
 
@@ -110,6 +118,17 @@ class PublicAccess(str, Enum):
     blobs within the container via anonymous request, but cannot enumerate containers
     within the storage account.
     """
+
+
+class BlobImmutabilityPolicyMode(str, Enum):
+    """
+    Specifies the immutability policy mode to set on the blob.
+    "Mutable" can only be returned by service, don't set to "Mutable".
+    """
+
+    Unlocked = "Unlocked"
+    Locked = "Locked"
+    Mutable = "Mutable"
 
 
 class BlobAnalyticsLogging(GeneratedLogging):
@@ -300,6 +319,8 @@ class ContainerProperties(DictMixin):
     dictionary interface, for example: ``container_props["last_modified"]``.
     Additionally, the container name is available as ``container_props["name"]``.
 
+    :ivar str name:
+        Name of the container.
     :ivar ~datetime.datetime last_modified:
         A datetime object representing the last time the container was modified.
     :ivar str etag:
@@ -313,6 +334,12 @@ class ContainerProperties(DictMixin):
         Represents whether the container has an immutability policy.
     :ivar bool has_legal_hold:
         Represents whether the container has a legal hold.
+    :ivar bool immutable_storage_with_versioning_enabled:
+        Represents whether immutable storage with versioning enabled on the container.
+
+        .. versionadded:: 12.10.0
+            This was introduced in API version '2020-10-02'.
+
     :ivar dict metadata: A dict with name-value pairs to associate with the
         container as metadata.
     :ivar ~azure.storage.blob.ContainerEncryptionScope encryption_scope:
@@ -335,6 +362,7 @@ class ContainerProperties(DictMixin):
         self.has_legal_hold = kwargs.get('x-ms-has-legal-hold')
         self.metadata = kwargs.get('metadata')
         self.encryption_scope = None
+        self.immutable_storage_with_versioning_enabled = kwargs.get('x-ms-immutable-storage-with-versioning-enabled')
         default_encryption_scope = kwargs.get('x-ms-default-encryption-scope')
         if default_encryption_scope:
             self.encryption_scope = ContainerEncryptionScope(
@@ -351,6 +379,8 @@ class ContainerProperties(DictMixin):
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         props.public_access = generated.properties.public_access
         props.has_immutability_policy = generated.properties.has_immutability_policy
+        props.immutable_storage_with_versioning_enabled = \
+            generated.properties.is_immutable_storage_with_versioning_enabled
         props.deleted = generated.deleted
         props.version = generated.version
         props.has_legal_hold = generated.properties.has_legal_hold
@@ -416,6 +446,32 @@ class ContainerPropertiesPaged(PageIterator):
     @staticmethod
     def _build_item(item):
         return ContainerProperties._from_generated(item)  # pylint: disable=protected-access
+
+
+class ImmutabilityPolicy(DictMixin):
+    """Optional parameters for setting the immutability policy of a blob, blob snapshot or blob version.
+
+    .. versionadded:: 12.10.0
+        This was introduced in API version '2020-10-02'.
+
+    :keyword ~datetime.datetime expiry_time:
+        Specifies the date time when the blobs immutability policy is set to expire.
+    :keyword str or ~azure.storage.blob.BlobImmutabilityPolicyMode policy_mode:
+        Specifies the immutability policy mode to set on the blob.
+        Possible values to set include: "Locked", "Unlocked".
+        "Mutable" can only be returned by service, don't set to "Mutable".
+    """
+
+    def __init__(self, **kwargs):
+        self.expiry_time = kwargs.pop('expiry_time', None)
+        self.policy_mode = kwargs.pop('policy_mode', None)
+
+    @classmethod
+    def _from_generated(cls, generated):
+        immutability_policy = cls()
+        immutability_policy.expiry_time = generated.properties.immutability_policy_expires_on
+        immutability_policy.policy_mode = generated.properties.immutability_policy_mode
+        return immutability_policy
 
 
 class BlobProperties(DictMixin):
@@ -519,6 +575,23 @@ class BlobProperties(DictMixin):
         Key value pair of tags on this blob.
 
         .. versionadded:: 12.4.0
+    :ivar bool has_versions_only:
+        A true value indicates the root blob is deleted
+
+        .. versionadded:: 12.10.0
+
+    :ivar ~azure.storage.blob.ImmutabilityPolicy immutability_policy:
+        Specifies the immutability policy of a blob, blob snapshot or blob version.
+
+        .. versionadded:: 12.10.0
+            This was introduced in API version '2020-10-02'.
+
+    :ivar bool has_legal_hold:
+        Specified if a legal hold should be set on the blob.
+        Currently this parameter of upload_blob() API is for BlockBlob only.
+
+        .. versionadded:: 12.10.0
+            This was introduced in API version '2020-10-02'.
 
     """
 
@@ -559,6 +632,10 @@ class BlobProperties(DictMixin):
         self.last_accessed_on = kwargs.get('x-ms-last-access-time')
         self.tag_count = kwargs.get('x-ms-tag-count')
         self.tags = None
+        self.immutability_policy = ImmutabilityPolicy(expiry_time=kwargs.get('x-ms-immutability-policy-until-date'),
+                                                      policy_mode=kwargs.get('x-ms-immutability-policy-mode'))
+        self.has_legal_hold = kwargs.get('x-ms-legal-hold')
+        self.has_versions_only = None
 
 
 class FilteredBlob(DictMixin):
@@ -739,7 +816,15 @@ class BlobBlock(DictMixin):
 
     @classmethod
     def _from_generated(cls, generated):
-        block = cls(decode_base64_to_text(generated.name))
+        try:
+            decoded_bytes = decode_base64_to_bytes(generated.name)
+            block_id = decoded_bytes.decode('utf-8')
+        # this is to fix a bug. When large blocks are uploaded through upload_blob the block id isn't base64 encoded
+        # while service expected block id is base64 encoded, so when we get block_id if we cannot base64 decode, it
+        # means we didn't base64 encode it when stage the block, we want to use the returned block_id directly.
+        except UnicodeDecodeError:
+            block_id = generated.name
+        block = cls(block_id)
         block.size = generated.size
         return block
 
@@ -832,20 +917,51 @@ class ContainerSasPermissions(object):
         List blobs in the container.
     :param bool tag:
         Set or get tags on the blobs in the container.
+    :keyword bool add:
+        Add a block to an append blob.
+    :keyword bool create:
+        Write a new blob, snapshot a blob, or copy a blob to a new blob.
+    :keyword bool permanent_delete:
+        To enable permanent delete on the blob is permitted.
+    :keyword bool filter_by_tags:
+        To enable finding blobs by tags.
+    :keyword bool move:
+        Move a blob or a directory and its contents to a new location.
+    :keyword bool execute:
+        Get the system properties and, if the hierarchical namespace is enabled for the storage account,
+        get the POSIX ACL of a blob.
+    :keyword bool set_immutability_policy:
+        To enable operations related to set/delete immutability policy.
+        To get immutability policy, you just need read permission.
     """
-    def __init__(self, read=False, write=False, delete=False, list=False, delete_previous_version=False, tag=False):  # pylint: disable=redefined-builtin
+    def __init__(self, read=False, write=False, delete=False,
+                 list=False, delete_previous_version=False, tag=False, **kwargs):  # pylint: disable=redefined-builtin
         self.read = read
+        self.add = kwargs.pop('add', False)
+        self.create = kwargs.pop('create', False)
         self.write = write
         self.delete = delete
-        self.list = list
         self.delete_previous_version = delete_previous_version
+        self.permanent_delete = kwargs.pop('permanent_delete', False)
+        self.list = list
         self.tag = tag
+        self.filter_by_tags = kwargs.pop('filter_by_tags', False)
+        self.move = kwargs.pop('move', False)
+        self.execute = kwargs.pop('execute', False)
+        self.set_immutability_policy = kwargs.pop('set_immutability_policy', False)
         self._str = (('r' if self.read else '') +
+                     ('a' if self.add else '') +
+                     ('c' if self.create else '') +
                      ('w' if self.write else '') +
                      ('d' if self.delete else '') +
                      ('x' if self.delete_previous_version else '') +
+                     ('y' if self.permanent_delete else '') +
                      ('l' if self.list else '') +
-                     ('t' if self.tag else ''))
+                     ('t' if self.tag else '') +
+                     ('f' if self.filter_by_tags else '') +
+                     ('m' if self.move else '') +
+                     ('e' if self.execute else '') +
+                     ('i' if self.set_immutability_policy else ''))
 
     def __str__(self):
         return self._str
@@ -864,13 +980,22 @@ class ContainerSasPermissions(object):
         :rtype: ~azure.storage.blob.ContainerSasPermissions
         """
         p_read = 'r' in permission
+        p_add = 'a' in permission
+        p_create = 'c' in permission
         p_write = 'w' in permission
         p_delete = 'd' in permission
-        p_list = 'l' in permission
         p_delete_previous_version = 'x' in permission
+        p_permanent_delete = 'y' in permission
+        p_list = 'l' in permission
         p_tag = 't' in permission
+        p_filter_by_tags = 'f' in permission
+        p_move = 'm' in permission
+        p_execute = 'e' in permission
+        p_set_immutability_policy = 'i' in permission
         parsed = cls(read=p_read, write=p_write, delete=p_delete, list=p_list,
-                     delete_previous_version=p_delete_previous_version, tag=p_tag)
+                     delete_previous_version=p_delete_previous_version, tag=p_tag, add=p_add,
+                     create=p_create, permanent_delete=p_permanent_delete, filter_by_tags=p_filter_by_tags,
+                     move=p_move, execute=p_execute, set_immutability_policy=p_set_immutability_policy)
 
         return parsed
 
@@ -896,23 +1021,41 @@ class BlobSasPermissions(object):
         Delete the previous blob version for the versioning enabled storage account.
     :param bool tag:
         Set or get tags on the blob.
+    :keyword bool permanent_delete:
+        To enable permanent delete on the blob is permitted.
+    :keyword bool move:
+        Move a blob or a directory and its contents to a new location.
+    :keyword bool execute:
+        Get the system properties and, if the hierarchical namespace is enabled for the storage account,
+        get the POSIX ACL of a blob.
+    :keyword bool set_immutability_policy:
+        To enable operations related to set/delete immutability policy.
+        To get immutability policy, you just need read permission.
     """
     def __init__(self, read=False, add=False, create=False, write=False,
-                 delete=False, delete_previous_version=False, tag=True):
+                 delete=False, delete_previous_version=False, tag=True, **kwargs):
         self.read = read
         self.add = add
         self.create = create
         self.write = write
         self.delete = delete
         self.delete_previous_version = delete_previous_version
+        self.permanent_delete = kwargs.pop('permanent_delete', False)
         self.tag = tag
+        self.move = kwargs.pop('move', False)
+        self.execute = kwargs.pop('execute', False)
+        self.set_immutability_policy = kwargs.pop('set_immutability_policy', False)
         self._str = (('r' if self.read else '') +
                      ('a' if self.add else '') +
                      ('c' if self.create else '') +
                      ('w' if self.write else '') +
                      ('d' if self.delete else '') +
                      ('x' if self.delete_previous_version else '') +
-                     ('t' if self.tag else ''))
+                     ('y' if self.permanent_delete else '') +
+                     ('t' if self.tag else '') +
+                     ('m' if self.move else '') +
+                     ('e' if self.execute else '') +
+                     ('i' if self.set_immutability_policy else ''))
 
     def __str__(self):
         return self._str
@@ -936,10 +1079,15 @@ class BlobSasPermissions(object):
         p_write = 'w' in permission
         p_delete = 'd' in permission
         p_delete_previous_version = 'x' in permission
+        p_permanent_delete = 'y' in permission
         p_tag = 't' in permission
+        p_move = 'm' in permission
+        p_execute = 'e' in permission
+        p_set_immutability_policy = 'i' in permission
 
         parsed = cls(read=p_read, add=p_add, create=p_create, write=p_write, delete=p_delete,
-                     delete_previous_version=p_delete_previous_version, tag=p_tag)
+                     delete_previous_version=p_delete_previous_version, tag=p_tag, permanent_delete=p_permanent_delete,
+                     move=p_move, execute=p_execute, set_immutability_policy=p_set_immutability_policy)
 
         return parsed
 
@@ -1021,7 +1169,7 @@ class DelimitedTextDialect(DictMixin):
     :keyword str quotechar:
         Field quote, defaults to '"'.
     :keyword str lineterminator:
-        Record separator, defaults to '\n'.
+        Record separator, defaults to '\\\\n'.
     :keyword str escapechar:
         Escape char, defaults to empty.
     :keyword bool has_header:

@@ -7,9 +7,9 @@ import unittest
 import pytest
 
 from azure.storage.blob import BlobServiceClient
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from devtools_testutils.storage import StorageTestCase
 
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer, GlobalResourceGroupPreparer
+from settings.testcase import BlobPreparer
 
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
                                 '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \
@@ -45,11 +45,10 @@ class ServiceStatsTest(StorageTestCase):
         response.http_response.text = lambda encoding=None: SERVICE_UNAVAILABLE_RESP_BODY
 
     # --Test cases per service ---------------------------------------
-    @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage', sku='Standard_RAGRS')
-    def test_blob_service_stats(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_blob_service_stats(self, storage_account_name, storage_account_key):
         # Arrange
-        url = self.account_url(storage_account, "blob")
+        url = self.account_url(storage_account_name, "blob")
         bs = BlobServiceClient(url, credential=storage_account_key)
         # Act
         stats = bs.get_service_stats(raw_response_hook=self.override_response_body_with_live_status)
@@ -57,11 +56,10 @@ class ServiceStatsTest(StorageTestCase):
         # Assert
         self._assert_stats_default(stats)
 
-    @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(random_name_enabled=True, name_prefix='pyacrstorage', sku='Standard_RAGRS')
-    def test_blob_service_stats_when_unavailable(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_blob_service_stats_when_unavailable(self, storage_account_name, storage_account_key):
         # Arrange
-        url = self.account_url(storage_account, "blob")
+        url = self.account_url(storage_account_name, "blob")
         bs = BlobServiceClient(url, credential=storage_account_key)
 
         # Act

@@ -85,13 +85,6 @@ class ClearRange(msrest.serialization.Model):
 class CopyFileSmbInfo(msrest.serialization.Model):
     """Parameter group.
 
-    :param file_permission_copy_mode: Specifies the option to copy file security descriptor from
-     source file or to set it using the value which is defined by the header value of x-ms-file-
-     permission or x-ms-file-permission-key. Possible values include: "source", "override".
-    :type file_permission_copy_mode: str or ~azure.storage.fileshare.models.PermissionCopyModeType
-    :param ignore_read_only: Specifies the option to overwrite the target file if it already exists
-     and has read-only attribute set.
-    :type ignore_read_only: bool
     :param file_attributes: Specifies either the option to copy file attributes from a source
      file(source) to a target file or a list of attributes to set on a target file.
     :type file_attributes: str
@@ -103,6 +96,14 @@ class CopyFileSmbInfo(msrest.serialization.Model):
      source file(source) to a target file or a time value in ISO 8601 format to set as last write
      time on a target file.
     :type file_last_write_time: str
+    :param file_permission_copy_mode: Specifies the option to copy file security descriptor from
+     source file or to set it using the value which is defined by the header value of
+     x-ms-file-permission or x-ms-file-permission-key. Possible values include: "source",
+     "override".
+    :type file_permission_copy_mode: str or ~azure.storage.fileshare.models.PermissionCopyModeType
+    :param ignore_read_only: Specifies the option to overwrite the target file if it already exists
+     and has read-only attribute set.
+    :type ignore_read_only: bool
     :param set_archive_attribute: Specifies the option to set archive attribute on a target file.
      True means archive attribute will be set on a target file despite attribute overrides or a
      source file state.
@@ -110,31 +111,31 @@ class CopyFileSmbInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'file_permission_copy_mode': {'key': 'filePermissionCopyMode', 'type': 'str'},
-        'ignore_read_only': {'key': 'ignoreReadOnly', 'type': 'bool'},
         'file_attributes': {'key': 'fileAttributes', 'type': 'str'},
         'file_creation_time': {'key': 'fileCreationTime', 'type': 'str'},
         'file_last_write_time': {'key': 'fileLastWriteTime', 'type': 'str'},
+        'file_permission_copy_mode': {'key': 'filePermissionCopyMode', 'type': 'str'},
+        'ignore_read_only': {'key': 'ignoreReadOnly', 'type': 'bool'},
         'set_archive_attribute': {'key': 'setArchiveAttribute', 'type': 'bool'},
     }
 
     def __init__(
         self,
         *,
-        file_permission_copy_mode: Optional[Union[str, "PermissionCopyModeType"]] = None,
-        ignore_read_only: Optional[bool] = None,
         file_attributes: Optional[str] = None,
         file_creation_time: Optional[str] = None,
         file_last_write_time: Optional[str] = None,
+        file_permission_copy_mode: Optional[Union[str, "PermissionCopyModeType"]] = None,
+        ignore_read_only: Optional[bool] = None,
         set_archive_attribute: Optional[bool] = None,
         **kwargs
     ):
         super(CopyFileSmbInfo, self).__init__(**kwargs)
-        self.file_permission_copy_mode = file_permission_copy_mode
-        self.ignore_read_only = ignore_read_only
         self.file_attributes = file_attributes
         self.file_creation_time = file_creation_time
         self.file_last_write_time = file_last_write_time
+        self.file_permission_copy_mode = file_permission_copy_mode
+        self.ignore_read_only = ignore_read_only
         self.set_archive_attribute = set_archive_attribute
 
 
@@ -197,6 +198,32 @@ class CorsRule(msrest.serialization.Model):
         self.max_age_in_seconds = max_age_in_seconds
 
 
+class DestinationLeaseAccessConditions(msrest.serialization.Model):
+    """Parameter group.
+
+    :param destination_lease_id: Required if the destination file has an active infinite lease. The
+     lease ID specified for this header must match the lease ID of the destination file. If the
+     request does not include the lease ID or it is not valid, the operation fails with status code
+     412 (Precondition Failed). If this header is specified and the destination file does not
+     currently have an active lease, the operation will also fail with status code 412 (Precondition
+     Failed).
+    :type destination_lease_id: str
+    """
+
+    _attribute_map = {
+        'destination_lease_id': {'key': 'destinationLeaseId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        destination_lease_id: Optional[str] = None,
+        **kwargs
+    ):
+        super(DestinationLeaseAccessConditions, self).__init__(**kwargs)
+        self.destination_lease_id = destination_lease_id
+
+
 class DirectoryItem(msrest.serialization.Model):
     """A listed directory item.
 
@@ -204,6 +231,14 @@ class DirectoryItem(msrest.serialization.Model):
 
     :param name: Required.
     :type name: str
+    :param file_id:
+    :type file_id: str
+    :param properties: File properties.
+    :type properties: ~azure.storage.fileshare.models.FileProperty
+    :param attributes:
+    :type attributes: str
+    :param permission_key:
+    :type permission_key: str
     """
 
     _validation = {
@@ -212,6 +247,10 @@ class DirectoryItem(msrest.serialization.Model):
 
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str'},
+        'file_id': {'key': 'FileId', 'type': 'str'},
+        'properties': {'key': 'Properties', 'type': 'FileProperty'},
+        'attributes': {'key': 'Attributes', 'type': 'str'},
+        'permission_key': {'key': 'PermissionKey', 'type': 'str'},
     }
     _xml_map = {
         'name': 'Directory'
@@ -221,10 +260,18 @@ class DirectoryItem(msrest.serialization.Model):
         self,
         *,
         name: str,
+        file_id: Optional[str] = None,
+        properties: Optional["FileProperty"] = None,
+        attributes: Optional[str] = None,
+        permission_key: Optional[str] = None,
         **kwargs
     ):
         super(DirectoryItem, self).__init__(**kwargs)
         self.name = name
+        self.file_id = file_id
+        self.properties = properties
+        self.attributes = attributes
+        self.permission_key = permission_key
 
 
 class FileHTTPHeaders(msrest.serialization.Model):
@@ -282,8 +329,14 @@ class FileItem(msrest.serialization.Model):
 
     :param name: Required.
     :type name: str
+    :param file_id:
+    :type file_id: str
     :param properties: Required. File properties.
     :type properties: ~azure.storage.fileshare.models.FileProperty
+    :param attributes:
+    :type attributes: str
+    :param permission_key:
+    :type permission_key: str
     """
 
     _validation = {
@@ -293,7 +346,10 @@ class FileItem(msrest.serialization.Model):
 
     _attribute_map = {
         'name': {'key': 'Name', 'type': 'str'},
+        'file_id': {'key': 'FileId', 'type': 'str'},
         'properties': {'key': 'Properties', 'type': 'FileProperty'},
+        'attributes': {'key': 'Attributes', 'type': 'str'},
+        'permission_key': {'key': 'PermissionKey', 'type': 'str'},
     }
     _xml_map = {
         'name': 'File'
@@ -304,11 +360,17 @@ class FileItem(msrest.serialization.Model):
         *,
         name: str,
         properties: "FileProperty",
+        file_id: Optional[str] = None,
+        attributes: Optional[str] = None,
+        permission_key: Optional[str] = None,
         **kwargs
     ):
         super(FileItem, self).__init__(**kwargs)
         self.name = name
+        self.file_id = file_id
         self.properties = properties
+        self.attributes = attributes
+        self.permission_key = permission_key
 
 
 class FileProperty(msrest.serialization.Model):
@@ -321,6 +383,18 @@ class FileProperty(msrest.serialization.Model):
      reflect that fact until the handle is closed or the op-lock is broken. To retrieve current
      property values, call Get File Properties.
     :type content_length: long
+    :param creation_time:
+    :type creation_time: ~datetime.datetime
+    :param last_access_time:
+    :type last_access_time: ~datetime.datetime
+    :param last_write_time:
+    :type last_write_time: ~datetime.datetime
+    :param change_time:
+    :type change_time: ~datetime.datetime
+    :param last_modified:
+    :type last_modified: ~datetime.datetime
+    :param etag:
+    :type etag: str
     """
 
     _validation = {
@@ -329,16 +403,34 @@ class FileProperty(msrest.serialization.Model):
 
     _attribute_map = {
         'content_length': {'key': 'Content-Length', 'type': 'long'},
+        'creation_time': {'key': 'CreationTime', 'type': 'iso-8601'},
+        'last_access_time': {'key': 'LastAccessTime', 'type': 'iso-8601'},
+        'last_write_time': {'key': 'LastWriteTime', 'type': 'iso-8601'},
+        'change_time': {'key': 'ChangeTime', 'type': 'iso-8601'},
+        'last_modified': {'key': 'Last-Modified', 'type': 'rfc-1123'},
+        'etag': {'key': 'Etag', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
         content_length: int,
+        creation_time: Optional[datetime.datetime] = None,
+        last_access_time: Optional[datetime.datetime] = None,
+        last_write_time: Optional[datetime.datetime] = None,
+        change_time: Optional[datetime.datetime] = None,
+        last_modified: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
         **kwargs
     ):
         super(FileProperty, self).__init__(**kwargs)
         self.content_length = content_length
+        self.creation_time = creation_time
+        self.last_access_time = last_access_time
+        self.last_write_time = last_write_time
+        self.change_time = change_time
+        self.last_modified = last_modified
+        self.etag = etag
 
 
 class FileRange(msrest.serialization.Model):
@@ -529,6 +621,8 @@ class ListFilesAndDirectoriesSegmentResponse(msrest.serialization.Model):
     :type segment: ~azure.storage.fileshare.models.FilesAndDirectoriesListSegment
     :param next_marker: Required.
     :type next_marker: str
+    :param directory_id:
+    :type directory_id: str
     """
 
     _validation = {
@@ -550,6 +644,7 @@ class ListFilesAndDirectoriesSegmentResponse(msrest.serialization.Model):
         'max_results': {'key': 'MaxResults', 'type': 'int'},
         'segment': {'key': 'Segment', 'type': 'FilesAndDirectoriesListSegment'},
         'next_marker': {'key': 'NextMarker', 'type': 'str'},
+        'directory_id': {'key': 'DirectoryId', 'type': 'str'},
     }
     _xml_map = {
         'name': 'EnumerationResults'
@@ -567,6 +662,7 @@ class ListFilesAndDirectoriesSegmentResponse(msrest.serialization.Model):
         share_snapshot: Optional[str] = None,
         marker: Optional[str] = None,
         max_results: Optional[int] = None,
+        directory_id: Optional[str] = None,
         **kwargs
     ):
         super(ListFilesAndDirectoriesSegmentResponse, self).__init__(**kwargs)
@@ -579,6 +675,7 @@ class ListFilesAndDirectoriesSegmentResponse(msrest.serialization.Model):
         self.max_results = max_results
         self.segment = segment
         self.next_marker = next_marker
+        self.directory_id = directory_id
 
 
 class ListHandlesResponse(msrest.serialization.Model):
@@ -879,6 +976,8 @@ class SharePropertiesInternal(msrest.serialization.Model):
     :type provisioned_ingress_m_bps: int
     :param provisioned_egress_m_bps:
     :type provisioned_egress_m_bps: int
+    :param provisioned_bandwidth_mi_bps:
+    :type provisioned_bandwidth_mi_bps: int
     :param next_allowed_quota_downgrade_time:
     :type next_allowed_quota_downgrade_time: ~datetime.datetime
     :param deleted_time:
@@ -919,6 +1018,7 @@ class SharePropertiesInternal(msrest.serialization.Model):
         'provisioned_iops': {'key': 'ProvisionedIops', 'type': 'int'},
         'provisioned_ingress_m_bps': {'key': 'ProvisionedIngressMBps', 'type': 'int'},
         'provisioned_egress_m_bps': {'key': 'ProvisionedEgressMBps', 'type': 'int'},
+        'provisioned_bandwidth_mi_bps': {'key': 'ProvisionedBandwidthMiBps', 'type': 'int'},
         'next_allowed_quota_downgrade_time': {'key': 'NextAllowedQuotaDowngradeTime', 'type': 'rfc-1123'},
         'deleted_time': {'key': 'DeletedTime', 'type': 'rfc-1123'},
         'remaining_retention_days': {'key': 'RemainingRetentionDays', 'type': 'int'},
@@ -941,6 +1041,7 @@ class SharePropertiesInternal(msrest.serialization.Model):
         provisioned_iops: Optional[int] = None,
         provisioned_ingress_m_bps: Optional[int] = None,
         provisioned_egress_m_bps: Optional[int] = None,
+        provisioned_bandwidth_mi_bps: Optional[int] = None,
         next_allowed_quota_downgrade_time: Optional[datetime.datetime] = None,
         deleted_time: Optional[datetime.datetime] = None,
         remaining_retention_days: Optional[int] = None,
@@ -961,6 +1062,7 @@ class SharePropertiesInternal(msrest.serialization.Model):
         self.provisioned_iops = provisioned_iops
         self.provisioned_ingress_m_bps = provisioned_ingress_m_bps
         self.provisioned_egress_m_bps = provisioned_egress_m_bps
+        self.provisioned_bandwidth_mi_bps = provisioned_bandwidth_mi_bps
         self.next_allowed_quota_downgrade_time = next_allowed_quota_downgrade_time
         self.deleted_time = deleted_time
         self.remaining_retention_days = remaining_retention_days
@@ -982,7 +1084,10 @@ class ShareProtocolSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'smb': {'key': 'Smb', 'type': 'ShareSmbSettings', 'xml': {'name': 'SMB'}},
+        'smb': {'key': 'Smb', 'type': 'ShareSmbSettings'},
+    }
+    _xml_map = {
+        'name': 'ProtocolSettings'
     }
 
     def __init__(
@@ -1004,6 +1109,9 @@ class ShareSmbSettings(msrest.serialization.Model):
 
     _attribute_map = {
         'multichannel': {'key': 'Multichannel', 'type': 'SmbMultichannel'},
+    }
+    _xml_map = {
+        'name': 'SMB'
     }
 
     def __init__(
@@ -1100,6 +1208,27 @@ class SmbMultichannel(msrest.serialization.Model):
         self.enabled = enabled
 
 
+class SourceLeaseAccessConditions(msrest.serialization.Model):
+    """Parameter group.
+
+    :param source_lease_id: Required if the source file has an active infinite lease.
+    :type source_lease_id: str
+    """
+
+    _attribute_map = {
+        'source_lease_id': {'key': 'sourceLeaseId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        source_lease_id: Optional[str] = None,
+        **kwargs
+    ):
+        super(SourceLeaseAccessConditions, self).__init__(**kwargs)
+        self.source_lease_id = source_lease_id
+
+
 class SourceModifiedAccessConditions(msrest.serialization.Model):
     """Parameter group.
 
@@ -1168,7 +1297,7 @@ class StorageServiceProperties(msrest.serialization.Model):
         'hour_metrics': {'key': 'HourMetrics', 'type': 'Metrics'},
         'minute_metrics': {'key': 'MinuteMetrics', 'type': 'Metrics'},
         'cors': {'key': 'Cors', 'type': '[CorsRule]', 'xml': {'wrapped': True}},
-        'protocol': {'key': 'Protocol', 'type': 'ShareProtocolSettings', 'xml': {'name': 'ProtocolSettings'}},
+        'protocol': {'key': 'Protocol', 'type': 'ShareProtocolSettings'},
     }
 
     def __init__(

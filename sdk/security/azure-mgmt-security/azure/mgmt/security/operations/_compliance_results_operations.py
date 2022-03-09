@@ -53,8 +53,8 @@ class ComplianceResultsOperations(object):
         # type: (...) -> Iterable["_models.ComplianceResultList"]
         """Security compliance results in the subscription.
 
-        :param scope: Scope of the query, can be subscription (/subscriptions/0b06d9ea-
-         afe6-4779-bd59-30e5c2d9d13f) or management group
+        :param scope: Scope of the query, can be subscription
+         (/subscriptions/0b06d9ea-afe6-4779-bd59-30e5c2d9d13f) or management group
          (/providers/Microsoft.Management/managementGroups/mgName).
         :type scope: str
         :keyword callable cls: A custom type or function that will be passed the direct response

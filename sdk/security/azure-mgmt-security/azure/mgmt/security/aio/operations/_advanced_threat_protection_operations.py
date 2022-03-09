@@ -43,7 +43,7 @@ class AdvancedThreatProtectionOperations:
     async def get(
         self,
         resource_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AdvancedThreatProtectionSetting":
         """Gets the Advanced Threat Protection settings for the specified resource.
 
@@ -99,7 +99,7 @@ class AdvancedThreatProtectionOperations:
         self,
         resource_id: str,
         advanced_threat_protection_setting: "_models.AdvancedThreatProtectionSetting",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.AdvancedThreatProtectionSetting":
         """Creates or updates the Advanced Threat Protection settings on a specified resource.
 

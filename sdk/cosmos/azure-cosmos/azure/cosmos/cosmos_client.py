@@ -24,7 +24,6 @@
 
 from typing import Any, Dict, Optional, Union, cast, Iterable, List  # pylint: disable=unused-import
 
-import six
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
@@ -53,7 +52,7 @@ def _parse_connection_str(conn_str, credential):
 def _build_auth(credential):
     # type: (Any) -> Dict[str, Any]
     auth = {}
-    if isinstance(credential, six.string_types):
+    if isinstance(credential, str):
         auth['masterKey'] = credential
     elif isinstance(credential, dict):
         if any(k for k in credential.keys() if k in ['masterKey', 'resourceTokens', 'permissionFeed']):
@@ -79,7 +78,8 @@ def _build_connection_policy(kwargs):
         policy.RequestTimeout
     policy.ConnectionMode = kwargs.pop('connection_mode', None) or policy.ConnectionMode
     policy.ProxyConfiguration = kwargs.pop('proxy_config', None) or policy.ProxyConfiguration
-    policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery', None) or policy.EnableEndpointDiscovery
+    policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery') \
+        if 'enable_endpoint_discovery' in kwargs.keys() else policy.EnableEndpointDiscovery
     policy.PreferredLocations = kwargs.pop('preferred_locations', None) or policy.PreferredLocations
     policy.UseMultipleWriteLocations = kwargs.pop('multiple_write_locations', None) or \
         policy.UseMultipleWriteLocations
@@ -126,7 +126,7 @@ class CosmosClient(object):
     :param str url: The URL of the Cosmos DB account.
     :param credential: Can be the account key, or a dictionary of resource tokens.
     :type credential: str or dict[str, str]
-    :param str consistency_level: Consistency level to use for the session. The default value is "Session".
+    :param str consistency_level: Consistency level to use for the session. The default value is None (Account level).
     :keyword int timeout: An absolute timeout in seconds, for the combined HTTP request and response processing.
     :keyword int request_timeout: The HTTP request timeout in milliseconds.
     :keyword str connection_mode: The connection mode for the client - currently only supports 'Gateway'.
@@ -159,8 +159,8 @@ class CosmosClient(object):
             :name: create_client
     """
 
-    def __init__(self, url, credential, consistency_level="Session", **kwargs):
-        # type: (str, Any, str, Any) -> None
+    def __init__(self, url, credential, consistency_level=None, **kwargs):
+        # type: (str, Any, Optional[str], Any) -> None
         """Instantiate a new CosmosClient."""
         auth = _build_auth(credential)
         connection_policy = _build_connection_policy(kwargs)
@@ -180,8 +180,8 @@ class CosmosClient(object):
         return self.client_connection.pipeline_client.__exit__(*args)
 
     @classmethod
-    def from_connection_string(cls, conn_str, credential=None, consistency_level="Session", **kwargs):
-        # type: (str, Optional[Any], str, Any) -> CosmosClient
+    def from_connection_string(cls, conn_str, credential=None, consistency_level=None, **kwargs):
+        # type: (str, Optional[Any], Optional[str], Any) -> CosmosClient
         """Create a CosmosClient instance from a connection string.
 
         This can be retrieved from the Azure portal.For full list of optional
@@ -191,8 +191,8 @@ class CosmosClient(object):
         :param credential: Alternative credentials to use instead of the key
             provided in the connection string.
         :type credential: str or dict(str, str)
-        :param str consistency_level:
-            Consistency level to use for the session. The default value is "Session".
+        :param Optional[str] consistency_level:
+            Consistency level to use for the session. The default value is None (Account level).
         """
         settings = _parse_connection_str(conn_str, credential)
         return cls(
@@ -205,7 +205,7 @@ class CosmosClient(object):
     @staticmethod
     def _get_database_link(database_or_id):
         # type: (Union[DatabaseProxy, str, Dict[str, str]]) -> str
-        if isinstance(database_or_id, six.string_types):
+        if isinstance(database_or_id, str):
             return "dbs/{}".format(database_or_id)
         try:
             return cast("DatabaseProxy", database_or_id).database_link

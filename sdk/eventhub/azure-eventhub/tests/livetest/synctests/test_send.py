@@ -6,13 +6,20 @@
 #--------------------------------------------------------------------------
 
 import pytest
+import threading
 import time
 import json
 import sys
 
 from azure.eventhub import EventData, TransportType, EventDataBatch
-from azure.eventhub import EventHubProducerClient
+from azure.eventhub import EventHubProducerClient, EventHubConsumerClient
 from azure.eventhub.exceptions import EventDataSendError
+from azure.eventhub.amqp import (
+    AmqpMessageHeader,
+    AmqpMessageBodyType,
+    AmqpAnnotatedMessage,
+    AmqpMessageProperties,
+)
 
 @pytest.mark.liveTest
 def test_send_with_partition_key(connstr_receivers):
@@ -62,6 +69,121 @@ def test_send_and_receive_large_body_size(connstr_receivers):
     assert len(list(received[0].body)[0]) == payload
 
 
+@pytest.mark.liveTest
+def test_send_amqp_annotated_message(connstr_receivers):
+    connection_str, receivers = connstr_receivers
+    client = EventHubProducerClient.from_connection_string(connection_str)
+    with client:
+        sequence_body = [b'message', 123.456, True]
+        footer = {'footer_key': 'footer_value'}
+        prop = {"subject": "sequence"}
+        seq_app_prop = {"body_type": "sequence"}
+
+        sequence_message = AmqpAnnotatedMessage(
+            sequence_body=sequence_body,
+            footer=footer,
+            properties=prop,
+            application_properties=seq_app_prop
+        )
+
+        value_body = {b"key": [-123, b'data', False]}
+        header = {"priority": 10}
+        anno = {"ann_key": "ann_value"}
+        value_app_prop = {"body_type": "value"}
+        value_message = AmqpAnnotatedMessage(
+            value_body=value_body,
+            header=header,
+            annotations=anno,
+            application_properties=value_app_prop
+        )
+
+        data_body = [b'aa', b'bb', b'cc']
+        data_app_prop = {"body_type": "data"}
+        del_anno = {"delann_key": "delann_value"}
+        data_message = AmqpAnnotatedMessage(
+            data_body=data_body,
+            header=header,
+            delivery_annotations=del_anno,
+            application_properties=data_app_prop
+        )
+
+        body_ed = """{"json_key": "json_val"}"""
+        prop_ed = {"raw_prop": "raw_value"}
+        cont_type_ed = "text/plain"
+        corr_id_ed = "corr_id"
+        mess_id_ed = "mess_id"
+        event_data = EventData(body_ed)
+        event_data.content_type = cont_type_ed
+        event_data.correlation_id = corr_id_ed
+        event_data.message_id = mess_id_ed
+
+        batch = client.create_batch()
+        batch.add(data_message)
+        batch.add(value_message)
+        batch.add(sequence_message)
+        batch.add(event_data)
+        client.send_batch(batch)
+        client.send_batch([data_message, value_message, sequence_message, event_data])
+
+    received_count = {}
+    received_count["data_msg"] = 0
+    received_count["seq_msg"] = 0
+    received_count["value_msg"] = 0
+    received_count["normal_msg"] = 0
+
+    def check_values(event):
+        raw_amqp_message = event.raw_amqp_message
+        if raw_amqp_message.body_type == AmqpMessageBodyType.DATA:
+            if raw_amqp_message.application_properties and raw_amqp_message.application_properties.get(b'body_type') == b'data':
+                body = [data for data in raw_amqp_message.body]
+                assert data_body == body
+                assert event.body_as_str() == "aabbcc"
+                assert raw_amqp_message.delivery_annotations[b'delann_key'] == b'delann_value'
+                assert raw_amqp_message.application_properties[b'body_type'] == b'data'
+                received_count["data_msg"] += 1
+            else:
+                assert event.body_as_json() == {'json_key': 'json_val'}
+                assert event.correlation_id == corr_id_ed
+                assert event.message_id == mess_id_ed
+                assert event.content_type == cont_type_ed
+                assert event.body_type == AmqpMessageBodyType.DATA
+                received_count["normal_msg"] += 1
+        elif raw_amqp_message.body_type == AmqpMessageBodyType.SEQUENCE:
+            body = [sequence for sequence in raw_amqp_message.body]
+            assert [sequence_body] == body
+            assert event.body_as_str() == "['message', 123.456, True]"
+            assert raw_amqp_message.footer[b'footer_key'] == b'footer_value'
+            assert raw_amqp_message.properties.subject == b'sequence'
+            assert raw_amqp_message.application_properties[b'body_type'] == b'sequence'
+            received_count["seq_msg"] += 1
+        elif raw_amqp_message.body_type == AmqpMessageBodyType.VALUE:
+            assert raw_amqp_message.body == value_body
+            assert event.body_as_str() == "{'key': [-123, 'data', False]}"
+            assert raw_amqp_message.annotations[b'ann_key'] == b'ann_value'
+            assert raw_amqp_message.application_properties[b'body_type'] == b'value'
+            received_count["value_msg"] += 1
+
+    def on_event(partition_context, event):
+        on_event.received.append(event)
+
+    on_event.received = []
+    client = EventHubConsumerClient.from_connection_string(connection_str,
+                                                           consumer_group='$default')
+    with client:
+        thread = threading.Thread(target=client.receive, args=(on_event,),
+                                  kwargs={"starting_position": "-1"})
+        thread.start()
+        time.sleep(15)
+        for event in on_event.received:
+            check_values(event)
+
+    assert len(on_event.received) == 8
+    assert received_count["data_msg"] == 2
+    assert received_count["seq_msg"] == 2
+    assert received_count["value_msg"] == 2
+    assert received_count["normal_msg"] == 2
+
+
 @pytest.mark.parametrize("payload",
                          [b"", b"A single event"])
 @pytest.mark.liveTest
@@ -84,15 +206,34 @@ def test_send_and_receive_small_body(connstr_receivers, payload):
 def test_send_partition(connstr_receivers):
     connection_str, receivers = connstr_receivers
     client = EventHubProducerClient.from_connection_string(connection_str)
+
+    with client:
+        batch = client.create_batch()
+        batch.add(EventData(b"Data"))
+        client.send_batch(batch)
+
     with client:
         batch = client.create_batch(partition_id="1")
         batch.add(EventData(b"Data"))
         client.send_batch(batch)
 
     partition_0 = receivers[0].receive_message_batch(timeout=5000)
-    assert len(partition_0) == 0
     partition_1 = receivers[1].receive_message_batch(timeout=5000)
-    assert len(partition_1) == 1
+    assert len(partition_0) + len(partition_1) == 2
+
+    with client:
+        batch = client.create_batch()
+        batch.add(EventData(b"Data"))
+        client.send_batch(batch)
+
+    with client:
+        batch = client.create_batch(partition_id="1")
+        batch.add(EventData(b"Data"))
+        client.send_batch(batch)
+
+    partition_0 = receivers[0].receive_message_batch(timeout=5000)
+    partition_1 = receivers[1].receive_message_batch(timeout=5000)
+    assert len(partition_0) + len(partition_1) == 2
 
 
 @pytest.mark.liveTest

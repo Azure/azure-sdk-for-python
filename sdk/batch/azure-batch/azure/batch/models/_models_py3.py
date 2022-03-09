@@ -109,12 +109,11 @@ class AffinityInformation(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param affinity_id: Required. An opaque string representing the location
-     of a Compute Node or a Task that has run previously. You can pass the
-     affinityId of a Node to indicate that this Task needs to run on that
-     Compute Node. Note that this is just a soft affinity. If the target
-     Compute Node is busy or unavailable at the time the Task is scheduled,
-     then the Task will be scheduled elsewhere.
+    :param affinity_id: Required. You can pass the affinityId of a Node to
+     indicate that this Task needs to run on that Compute Node. Note that this
+     is just a soft affinity. If the target Compute Node is busy or unavailable
+     at the time the Task is scheduled, then the Task will be scheduled
+     elsewhere.
     :type affinity_id: str
     """
 
@@ -209,13 +208,12 @@ class ApplicationPackageReference(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param application_id: Required. The ID of the application to deploy.
+    :param application_id: Required.
     :type application_id: str
-    :param version: The version of the application to deploy. If omitted, the
-     default version is deployed. If this is omitted on a Pool, and no default
-     version is specified for this application, the request fails with the
-     error code InvalidApplicationPackageReferences and HTTP status code 409.
-     If this is omitted on a Task, and no default version is specified for this
+    :param version: If this is omitted on a Pool, and no default version is
+     specified for this application, the request fails with the error code
+     InvalidApplicationPackageReferences and HTTP status code 409. If this is
+     omitted on a Task, and no default version is specified for this
      application, the Task fails with a pre-processing error.
     :type version: str
     """
@@ -240,13 +238,11 @@ class ApplicationSummary(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. A string that uniquely identifies the application
-     within the Account.
+    :param id: Required.
     :type id: str
-    :param display_name: Required. The display name for the application.
+    :param display_name: Required.
     :type display_name: str
-    :param versions: Required. The list of available versions of the
-     application.
+    :param versions: Required.
     :type versions: list[str]
     """
 
@@ -273,11 +269,10 @@ class AuthenticationTokenSettings(Model):
     """The settings for an authentication token that the Task can use to perform
     Batch service operations.
 
-    :param access: The Batch resources to which the token grants access. The
-     authentication token grants access to a limited set of Batch service
-     operations. Currently the only supported value for the access property is
-     'job', which grants access to all operations related to the Job which
-     contains the Task.
+    :param access: The authentication token grants access to a limited set of
+     Batch service operations. Currently the only supported value for the
+     access property is 'job', which grants access to all operations related to
+     the Job which contains the Task.
     :type access: list[str or ~azure.batch.models.AccessScope]
     """
 
@@ -296,15 +291,13 @@ class AutoPoolSpecification(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param auto_pool_id_prefix: A prefix to be added to the unique identifier
-     when a Pool is automatically created. The Batch service assigns each auto
-     Pool a unique identifier on creation. To distinguish between Pools created
-     for different purposes, you can specify this element to add a prefix to
-     the ID that is assigned. The prefix can be up to 20 characters long.
+    :param auto_pool_id_prefix: The Batch service assigns each auto Pool a
+     unique identifier on creation. To distinguish between Pools created for
+     different purposes, you can specify this element to add a prefix to the ID
+     that is assigned. The prefix can be up to 20 characters long.
     :type auto_pool_id_prefix: str
-    :param pool_lifetime_option: Required. The minimum lifetime of created
-     auto Pools, and how multiple Jobs on a schedule are assigned to Pools.
-     Possible values include: 'jobSchedule', 'job'
+    :param pool_lifetime_option: Required. Possible values include:
+     'jobSchedule', 'job'
     :type pool_lifetime_option: str or ~azure.batch.models.PoolLifetimeOption
     :param keep_alive: Whether to keep an auto Pool alive after its lifetime
      expires. If false, the Batch service deletes the Pool once its lifetime
@@ -341,11 +334,9 @@ class AutoScaleRun(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param timestamp: Required. The time at which the autoscale formula was
-     last evaluated.
+    :param timestamp: Required.
     :type timestamp: datetime
-    :param results: The final values of all variables used in the evaluation
-     of the autoscale formula. Each variable value is returned in the form
+    :param results: Each variable value is returned in the form
      $variable=value, and variables are separated by semicolons.
     :type results: str
     :param error: Details of the error encountered evaluating the autoscale
@@ -374,14 +365,11 @@ class AutoScaleRunError(Model):
     """An error that occurred when executing or evaluating a Pool autoscale
     formula.
 
-    :param code: An identifier for the autoscale error. Codes are invariant
-     and are intended to be consumed programmatically.
+    :param code:
     :type code: str
-    :param message: A message describing the autoscale error, intended to be
-     suitable for display in a user interface.
+    :param message:
     :type message: str
-    :param values: A list of additional error details related to the autoscale
-     error.
+    :param values:
     :type values: list[~azure.batch.models.NameValuePair]
     """
 
@@ -402,13 +390,12 @@ class AutoUserSpecification(Model):
     """Specifies the parameters for the auto user that runs a Task on the Batch
     service.
 
-    :param scope: The scope for the auto user. The default value is pool. If
-     the pool is running Windows a value of Task should be specified if
-     stricter isolation between tasks is required. For example, if the task
-     mutates the registry in a way which could impact other tasks, or if
-     certificates have been specified on the pool which should not be
-     accessible by normal tasks but should be accessible by StartTasks.
-     Possible values include: 'task', 'pool'
+    :param scope: The default value is pool. If the pool is running Windows a
+     value of Task should be specified if stricter isolation between tasks is
+     required. For example, if the task mutates the registry in a way which
+     could impact other tasks, or if certificates have been specified on the
+     pool which should not be accessible by normal tasks but should be
+     accessible by StartTasks. Possible values include: 'task', 'pool'
     :type scope: str or ~azure.batch.models.AutoUserScope
     :param elevation_level: The elevation level of the auto user. The default
      value is nonAdmin. Possible values include: 'nonAdmin', 'admin'
@@ -431,25 +418,27 @@ class AzureBlobFileSystemConfiguration(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param account_name: Required. The Azure Storage Account name.
+    :param account_name: Required.
     :type account_name: str
-    :param container_name: Required. The Azure Blob Storage Container name.
+    :param container_name: Required.
     :type container_name: str
-    :param account_key: The Azure Storage Account key. This property is
-     mutually exclusive with sasKey and one must be specified.
+    :param account_key: This property is mutually exclusive with both sasKey
+     and identity; exactly one must be specified.
     :type account_key: str
-    :param sas_key: The Azure Storage SAS token. This property is mutually
-     exclusive with accountKey and one must be specified.
+    :param sas_key: This property is mutually exclusive with both accountKey
+     and identity; exactly one must be specified.
     :type sas_key: str
-    :param blobfuse_options: Additional command line options to pass to the
-     mount command. These are 'net use' options in Windows and 'mount' options
-     in Linux.
+    :param blobfuse_options: These are 'net use' options in Windows and
+     'mount' options in Linux.
     :type blobfuse_options: str
-    :param relative_mount_path: Required. The relative path on the compute
-     node where the file system will be mounted. All file systems are mounted
+    :param relative_mount_path: Required. All file systems are mounted
      relative to the Batch mounts directory, accessible via the
      AZ_BATCH_NODE_MOUNTS_DIR environment variable.
     :type relative_mount_path: str
+    :param identity_reference: The reference to the user assigned identity to
+     use to access containerName. This property is mutually exclusive with both
+     accountKey and sasKey; exactly one must be specified.
+    :type identity_reference: ~azure.batch.models.ComputeNodeIdentityReference
     """
 
     _validation = {
@@ -465,9 +454,10 @@ class AzureBlobFileSystemConfiguration(Model):
         'sas_key': {'key': 'sasKey', 'type': 'str'},
         'blobfuse_options': {'key': 'blobfuseOptions', 'type': 'str'},
         'relative_mount_path': {'key': 'relativeMountPath', 'type': 'str'},
+        'identity_reference': {'key': 'identityReference', 'type': 'ComputeNodeIdentityReference'},
     }
 
-    def __init__(self, *, account_name: str, container_name: str, relative_mount_path: str, account_key: str=None, sas_key: str=None, blobfuse_options: str=None, **kwargs) -> None:
+    def __init__(self, *, account_name: str, container_name: str, relative_mount_path: str, account_key: str=None, sas_key: str=None, blobfuse_options: str=None, identity_reference=None, **kwargs) -> None:
         super(AzureBlobFileSystemConfiguration, self).__init__(**kwargs)
         self.account_name = account_name
         self.container_name = container_name
@@ -475,6 +465,7 @@ class AzureBlobFileSystemConfiguration(Model):
         self.sas_key = sas_key
         self.blobfuse_options = blobfuse_options
         self.relative_mount_path = relative_mount_path
+        self.identity_reference = identity_reference
 
 
 class AzureFileShareConfiguration(Model):
@@ -482,21 +473,19 @@ class AzureFileShareConfiguration(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param account_name: Required. The Azure Storage account name.
+    :param account_name: Required.
     :type account_name: str
-    :param azure_file_url: Required. The Azure Files URL. This is of the form
+    :param azure_file_url: Required. This is of the form
      'https://{account}.file.core.windows.net/'.
     :type azure_file_url: str
-    :param account_key: Required. The Azure Storage account key.
+    :param account_key: Required.
     :type account_key: str
-    :param relative_mount_path: Required. The relative path on the compute
-     node where the file system will be mounted. All file systems are mounted
+    :param relative_mount_path: Required. All file systems are mounted
      relative to the Batch mounts directory, accessible via the
      AZ_BATCH_NODE_MOUNTS_DIR environment variable.
     :type relative_mount_path: str
-    :param mount_options: Additional command line options to pass to the mount
-     command. These are 'net use' options in Windows and 'mount' options in
-     Linux.
+    :param mount_options: These are 'net use' options in Windows and 'mount'
+     options in Linux.
     :type mount_options: str
     """
 
@@ -527,14 +516,12 @@ class AzureFileShareConfiguration(Model):
 class BatchError(Model):
     """An error response received from the Azure Batch service.
 
-    :param code: An identifier for the error. Codes are invariant and are
-     intended to be consumed programmatically.
+    :param code:
     :type code: str
     :param message: A message describing the error, intended to be suitable
      for display in a user interface.
     :type message: ~azure.batch.models.ErrorMessage
-    :param values: A collection of key-value pairs containing additional
-     details about the error.
+    :param values:
     :type values: list[~azure.batch.models.BatchErrorDetail]
     """
 
@@ -567,9 +554,9 @@ class BatchErrorDetail(Model):
     """An item of additional information included in an Azure Batch error
     response.
 
-    :param key: An identifier specifying the meaning of the Value property.
+    :param key:
     :type key: str
-    :param value: The additional information included with the error response.
+    :param value:
     :type value: str
     """
 
@@ -584,33 +571,64 @@ class BatchErrorDetail(Model):
         self.value = value
 
 
+class BatchPoolIdentity(Model):
+    """The identity of the Batch pool, if configured.
+
+    The identity of the Batch pool, if configured.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. The list of user identities associated with the
+     Batch pool. The user identity dictionary key references will be ARM
+     resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+     Possible values include: 'UserAssigned', 'None'
+    :type type: str or ~azure.batch.models.PoolIdentityType
+    :param user_assigned_identities: The user identity dictionary key
+     references will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+    :type user_assigned_identities:
+     list[~azure.batch.models.UserAssignedIdentity]
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'PoolIdentityType'},
+        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '[UserAssignedIdentity]'},
+    }
+
+    def __init__(self, *, type, user_assigned_identities=None, **kwargs) -> None:
+        super(BatchPoolIdentity, self).__init__(**kwargs)
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
+
+
 class Certificate(Model):
     """A Certificate that can be installed on Compute Nodes and can be used to
     authenticate operations on the machine.
 
-    :param thumbprint: The X.509 thumbprint of the Certificate. This is a
-     sequence of up to 40 hex digits.
+    :param thumbprint:
     :type thumbprint: str
-    :param thumbprint_algorithm: The algorithm used to derive the thumbprint.
+    :param thumbprint_algorithm:
     :type thumbprint_algorithm: str
-    :param url: The URL of the Certificate.
+    :param url:
     :type url: str
     :param state: The current state of the Certificate. Possible values
      include: 'active', 'deleting', 'deleteFailed'
     :type state: str or ~azure.batch.models.CertificateState
-    :param state_transition_time: The time at which the Certificate entered
-     its current state.
+    :param state_transition_time:
     :type state_transition_time: datetime
     :param previous_state: The previous state of the Certificate. This
      property is not set if the Certificate is in its initial active state.
      Possible values include: 'active', 'deleting', 'deleteFailed'
     :type previous_state: str or ~azure.batch.models.CertificateState
-    :param previous_state_transition_time: The time at which the Certificate
-     entered its previous state. This property is not set if the Certificate is
-     in its initial Active state.
+    :param previous_state_transition_time: This property is not set if the
+     Certificate is in its initial Active state.
     :type previous_state_transition_time: datetime
-    :param public_data: The public part of the Certificate as a base-64
-     encoded .cer file.
+    :param public_data:
     :type public_data: str
     :param delete_certificate_error: The error that occurred on the last
      attempt to delete this Certificate. This property is set only if the
@@ -683,21 +701,15 @@ class CertificateAddParameter(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param thumbprint: Required. The X.509 thumbprint of the Certificate. This
-     is a sequence of up to 40 hex digits (it may include spaces but these are
-     removed).
+    :param thumbprint: Required.
     :type thumbprint: str
-    :param thumbprint_algorithm: Required. The algorithm used to derive the
-     thumbprint. This must be sha1.
+    :param thumbprint_algorithm: Required.
     :type thumbprint_algorithm: str
-    :param data: Required. The base64-encoded contents of the Certificate. The
-     maximum size is 10KB.
+    :param data: Required.
     :type data: str
-    :param certificate_format: The format of the Certificate data. Possible
-     values include: 'pfx', 'cer'
+    :param certificate_format: Possible values include: 'pfx', 'cer'
     :type certificate_format: str or ~azure.batch.models.CertificateFormat
-    :param password: The password to access the Certificate's private key.
-     This must be omitted if the Certificate format is cer.
+    :param password: This must be omitted if the Certificate format is cer.
     :type password: str
     """
 
@@ -884,35 +896,30 @@ class CertificateReference(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param thumbprint: Required. The thumbprint of the Certificate.
+    :param thumbprint: Required.
     :type thumbprint: str
-    :param thumbprint_algorithm: Required. The algorithm with which the
-     thumbprint is associated. This must be sha1.
+    :param thumbprint_algorithm: Required.
     :type thumbprint_algorithm: str
-    :param store_location: The location of the Certificate store on the
-     Compute Node into which to install the Certificate. The default value is
-     currentuser. This property is applicable only for Pools configured with
-     Windows Compute Nodes (that is, created with cloudServiceConfiguration, or
-     with virtualMachineConfiguration using a Windows Image reference). For
-     Linux Compute Nodes, the Certificates are stored in a directory inside the
-     Task working directory and an environment variable
-     AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this
-     location. For Certificates with visibility of 'remoteUser', a 'certs'
-     directory is created in the user's home directory (e.g.,
-     /home/{user-name}/certs) and Certificates are placed in that directory.
-     Possible values include: 'currentUser', 'localMachine'
+    :param store_location: The default value is currentuser. This property is
+     applicable only for Pools configured with Windows Compute Nodes (that is,
+     created with cloudServiceConfiguration, or with
+     virtualMachineConfiguration using a Windows Image reference). For Linux
+     Compute Nodes, the Certificates are stored in a directory inside the Task
+     working directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is
+     supplied to the Task to query for this location. For Certificates with
+     visibility of 'remoteUser', a 'certs' directory is created in the user's
+     home directory (e.g., /home/{user-name}/certs) and Certificates are placed
+     in that directory. Possible values include: 'currentUser', 'localMachine'
     :type store_location: str or ~azure.batch.models.CertificateStoreLocation
-    :param store_name: The name of the Certificate store on the Compute Node
-     into which to install the Certificate. This property is applicable only
-     for Pools configured with Windows Compute Nodes (that is, created with
+    :param store_name: This property is applicable only for Pools configured
+     with Windows Compute Nodes (that is, created with
      cloudServiceConfiguration, or with virtualMachineConfiguration using a
      Windows Image reference). Common store names include: My, Root, CA, Trust,
      Disallowed, TrustedPeople, TrustedPublisher, AuthRoot, AddressBook, but
      any custom store name can also be used. The default value is My.
     :type store_name: str
-    :param visibility: Which user Accounts on the Compute Node should have
-     access to the private data of the Certificate. You can specify more than
-     one visibility in this collection. The default is all Accounts.
+    :param visibility: You can specify more than one visibility in this
+     collection. The default is all Accounts.
     :type visibility: list[str or ~azure.batch.models.CertificateVisibility]
     """
 
@@ -943,22 +950,18 @@ class CIFSMountConfiguration(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param username: Required. The user to use for authentication against the
-     CIFS file system.
+    :param username: Required.
     :type username: str
-    :param source: Required. The URI of the file system to mount.
+    :param source: Required.
     :type source: str
-    :param relative_mount_path: Required. The relative path on the compute
-     node where the file system will be mounted. All file systems are mounted
+    :param relative_mount_path: Required. All file systems are mounted
      relative to the Batch mounts directory, accessible via the
      AZ_BATCH_NODE_MOUNTS_DIR environment variable.
     :type relative_mount_path: str
-    :param mount_options: Additional command line options to pass to the mount
-     command. These are 'net use' options in Windows and 'mount' options in
-     Linux.
+    :param mount_options: These are 'net use' options in Windows and 'mount'
+     options in Linux.
     :type mount_options: str
-    :param password: Required. The password to use for authentication against
-     the CIFS file system.
+    :param password: Required.
     :type password: str
     """
 
@@ -997,50 +1000,58 @@ class CloudError(Model):
 class CloudJob(Model):
     """An Azure Batch Job.
 
-    :param id: A string that uniquely identifies the Job within the Account.
-     The ID is case-preserving and case-insensitive (that is, you may not have
-     two IDs within an Account that differ only by case).
+    :param id: The ID is case-preserving and case-insensitive (that is, you
+     may not have two IDs within an Account that differ only by case).
     :type id: str
-    :param display_name: The display name for the Job.
+    :param display_name:
     :type display_name: str
     :param uses_task_dependencies: Whether Tasks in the Job can define
      dependencies on each other. The default is false.
     :type uses_task_dependencies: bool
-    :param url: The URL of the Job.
+    :param url:
     :type url: str
-    :param e_tag: The ETag of the Job. This is an opaque string. You can use
-     it to detect whether the Job has changed between requests. In particular,
-     you can be pass the ETag when updating a Job to specify that your changes
-     should take effect only if nobody else has modified the Job in the
-     meantime.
+    :param e_tag: This is an opaque string. You can use it to detect whether
+     the Job has changed between requests. In particular, you can be pass the
+     ETag when updating a Job to specify that your changes should take effect
+     only if nobody else has modified the Job in the meantime.
     :type e_tag: str
-    :param last_modified: The last modified time of the Job. This is the last
-     time at which the Job level data, such as the Job state or priority,
-     changed. It does not factor in task-level changes such as adding new Tasks
-     or Tasks changing state.
+    :param last_modified: This is the last time at which the Job level data,
+     such as the Job state or priority, changed. It does not factor in
+     task-level changes such as adding new Tasks or Tasks changing state.
     :type last_modified: datetime
-    :param creation_time: The creation time of the Job.
+    :param creation_time:
     :type creation_time: datetime
     :param state: The current state of the Job. Possible values include:
      'active', 'disabling', 'disabled', 'enabling', 'terminating', 'completed',
      'deleting'
     :type state: str or ~azure.batch.models.JobState
-    :param state_transition_time: The time at which the Job entered its
-     current state.
+    :param state_transition_time:
     :type state_transition_time: datetime
     :param previous_state: The previous state of the Job. This property is not
      set if the Job is in its initial Active state. Possible values include:
      'active', 'disabling', 'disabled', 'enabling', 'terminating', 'completed',
      'deleting'
     :type previous_state: str or ~azure.batch.models.JobState
-    :param previous_state_transition_time: The time at which the Job entered
-     its previous state. This property is not set if the Job is in its initial
-     Active state.
+    :param previous_state_transition_time: This property is not set if the Job
+     is in its initial Active state.
     :type previous_state_transition_time: datetime
     :param priority: The priority of the Job. Priority values can range from
      -1000 to 1000, with -1000 being the lowest priority and 1000 being the
      highest priority. The default value is 0.
     :type priority: int
+    :param allow_task_preemption: Whether Tasks in this job can be preempted
+     by other high priority jobs. If the value is set to True, other high
+     priority jobs submitted to the system will take precedence and will be
+     able requeue tasks from this job. You can update a job's
+     allowTaskPreemption after it has been created using the update job API.
+    :type allow_task_preemption: bool
+    :param max_parallel_tasks: The maximum number of tasks that can be
+     executed in parallel for the job. The value of maxParallelTasks must be -1
+     or greater than 0 if specified. If not specified, the default value is -1,
+     which means there's no limit to the number of tasks that can be run at
+     once. You can update a job's maxParallelTasks after it has been created
+     using the update job API. Default value: -1 .
+    :type max_parallel_tasks: int
     :param constraints: The execution constraints for the Job.
     :type constraints: ~azure.batch.models.JobConstraints
     :param job_manager_task: Details of a Job Manager Task to be launched when
@@ -1054,11 +1065,9 @@ class CloudJob(Model):
      special Task run at the end of the Job on each Compute Node that has run
      any other Task of the Job.
     :type job_release_task: ~azure.batch.models.JobReleaseTask
-    :param common_environment_settings: The list of common environment
-     variable settings. These environment variables are set for all Tasks in
-     the Job (including the Job Manager, Job Preparation and Job Release
-     Tasks). Individual Tasks can override an environment setting specified
-     here by specifying the same setting name with a different value.
+    :param common_environment_settings: Individual Tasks can override an
+     environment setting specified here by specifying the same setting name
+     with a different value.
     :type common_environment_settings:
      list[~azure.batch.models.EnvironmentSetting]
     :param pool_info: The Pool settings associated with the Job.
@@ -1077,9 +1086,8 @@ class CloudJob(Model):
     :type on_task_failure: str or ~azure.batch.models.OnTaskFailure
     :param network_configuration: The network configuration for the Job.
     :type network_configuration: ~azure.batch.models.JobNetworkConfiguration
-    :param metadata: A list of name-value pairs associated with the Job as
-     metadata. The Batch service does not assign any meaning to metadata; it is
-     solely for the use of user code.
+    :param metadata: The Batch service does not assign any meaning to
+     metadata; it is solely for the use of user code.
     :type metadata: list[~azure.batch.models.MetadataItem]
     :param execution_info: The execution information for the Job.
     :type execution_info: ~azure.batch.models.JobExecutionInformation
@@ -1104,6 +1112,8 @@ class CloudJob(Model):
         'previous_state': {'key': 'previousState', 'type': 'JobState'},
         'previous_state_transition_time': {'key': 'previousStateTransitionTime', 'type': 'iso-8601'},
         'priority': {'key': 'priority', 'type': 'int'},
+        'allow_task_preemption': {'key': 'allowTaskPreemption', 'type': 'bool'},
+        'max_parallel_tasks': {'key': 'maxParallelTasks', 'type': 'int'},
         'constraints': {'key': 'constraints', 'type': 'JobConstraints'},
         'job_manager_task': {'key': 'jobManagerTask', 'type': 'JobManagerTask'},
         'job_preparation_task': {'key': 'jobPreparationTask', 'type': 'JobPreparationTask'},
@@ -1118,7 +1128,7 @@ class CloudJob(Model):
         'stats': {'key': 'stats', 'type': 'JobStatistics'},
     }
 
-    def __init__(self, *, id: str=None, display_name: str=None, uses_task_dependencies: bool=None, url: str=None, e_tag: str=None, last_modified=None, creation_time=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, priority: int=None, constraints=None, job_manager_task=None, job_preparation_task=None, job_release_task=None, common_environment_settings=None, pool_info=None, on_all_tasks_complete=None, on_task_failure=None, network_configuration=None, metadata=None, execution_info=None, stats=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, display_name: str=None, uses_task_dependencies: bool=None, url: str=None, e_tag: str=None, last_modified=None, creation_time=None, state=None, state_transition_time=None, previous_state=None, previous_state_transition_time=None, priority: int=None, allow_task_preemption: bool=None, max_parallel_tasks: int=-1, constraints=None, job_manager_task=None, job_preparation_task=None, job_release_task=None, common_environment_settings=None, pool_info=None, on_all_tasks_complete=None, on_task_failure=None, network_configuration=None, metadata=None, execution_info=None, stats=None, **kwargs) -> None:
         super(CloudJob, self).__init__(**kwargs)
         self.id = id
         self.display_name = display_name
@@ -1132,6 +1142,8 @@ class CloudJob(Model):
         self.previous_state = previous_state
         self.previous_state_transition_time = previous_state_transition_time
         self.priority = priority
+        self.allow_task_preemption = allow_task_preemption
+        self.max_parallel_tasks = max_parallel_tasks
         self.constraints = constraints
         self.job_manager_task = job_manager_task
         self.job_preparation_task = job_preparation_task
@@ -1150,42 +1162,41 @@ class CloudJobSchedule(Model):
     """A Job Schedule that allows recurring Jobs by specifying when to run Jobs
     and a specification used to create each Job.
 
-    :param id: A string that uniquely identifies the schedule within the
-     Account.
+    :param id:
     :type id: str
-    :param display_name: The display name for the schedule.
+    :param display_name:
     :type display_name: str
-    :param url: The URL of the Job Schedule.
+    :param url:
     :type url: str
-    :param e_tag: The ETag of the Job Schedule. This is an opaque string. You
-     can use it to detect whether the Job Schedule has changed between
-     requests. In particular, you can be pass the ETag with an Update Job
-     Schedule request to specify that your changes should take effect only if
-     nobody else has modified the schedule in the meantime.
+    :param e_tag: This is an opaque string. You can use it to detect whether
+     the Job Schedule has changed between requests. In particular, you can be
+     pass the ETag with an Update Job Schedule request to specify that your
+     changes should take effect only if nobody else has modified the schedule
+     in the meantime.
     :type e_tag: str
-    :param last_modified: The last modified time of the Job Schedule. This is
-     the last time at which the schedule level data, such as the Job
-     specification or recurrence information, changed. It does not factor in
-     job-level changes such as new Jobs being created or Jobs changing state.
+    :param last_modified: This is the last time at which the schedule level
+     data, such as the Job specification or recurrence information, changed. It
+     does not factor in job-level changes such as new Jobs being created or
+     Jobs changing state.
     :type last_modified: datetime
-    :param creation_time: The creation time of the Job Schedule.
+    :param creation_time:
     :type creation_time: datetime
     :param state: The current state of the Job Schedule. Possible values
      include: 'active', 'completed', 'disabled', 'terminating', 'deleting'
     :type state: str or ~azure.batch.models.JobScheduleState
-    :param state_transition_time: The time at which the Job Schedule entered
-     the current state.
+    :param state_transition_time:
     :type state_transition_time: datetime
     :param previous_state: The previous state of the Job Schedule. This
      property is not present if the Job Schedule is in its initial active
      state. Possible values include: 'active', 'completed', 'disabled',
      'terminating', 'deleting'
     :type previous_state: str or ~azure.batch.models.JobScheduleState
-    :param previous_state_transition_time: The time at which the Job Schedule
-     entered its previous state. This property is not present if the Job
-     Schedule is in its initial active state.
+    :param previous_state_transition_time: This property is not present if the
+     Job Schedule is in its initial active state.
     :type previous_state_transition_time: datetime
-    :param schedule: The schedule according to which Jobs will be created.
+    :param schedule: The schedule according to which Jobs will be created. All
+     times are fixed respective to UTC and are not impacted by daylight saving
+     time.
     :type schedule: ~azure.batch.models.Schedule
     :param job_specification: The details of the Jobs to be created on this
      schedule.
@@ -1193,9 +1204,8 @@ class CloudJobSchedule(Model):
     :param execution_info: Information about Jobs that have been and will be
      run under this schedule.
     :type execution_info: ~azure.batch.models.JobScheduleExecutionInformation
-    :param metadata: A list of name-value pairs associated with the schedule
-     as metadata. The Batch service does not assign any meaning to metadata; it
-     is solely for the use of user code.
+    :param metadata: The Batch service does not assign any meaning to
+     metadata; it is solely for the use of user code.
     :type metadata: list[~azure.batch.models.MetadataItem]
     :param stats: The lifetime resource usage statistics for the Job Schedule.
      The statistics may not be immediately available. The Batch service
@@ -1244,47 +1254,39 @@ class CloudJobSchedule(Model):
 class CloudPool(Model):
     """A Pool in the Azure Batch service.
 
-    :param id: A string that uniquely identifies the Pool within the Account.
-     The ID can contain any combination of alphanumeric characters including
-     hyphens and underscores, and cannot contain more than 64 characters. The
-     ID is case-preserving and case-insensitive (that is, you may not have two
-     IDs within an Account that differ only by case).
+    :param id: The ID can contain any combination of alphanumeric characters
+     including hyphens and underscores, and cannot contain more than 64
+     characters. The ID is case-preserving and case-insensitive (that is, you
+     may not have two IDs within an Account that differ only by case).
     :type id: str
-    :param display_name: The display name for the Pool. The display name need
-     not be unique and can contain any Unicode characters up to a maximum
-     length of 1024.
+    :param display_name: The display name need not be unique and can contain
+     any Unicode characters up to a maximum length of 1024.
     :type display_name: str
-    :param url: The URL of the Pool.
+    :param url:
     :type url: str
-    :param e_tag: The ETag of the Pool. This is an opaque string. You can use
-     it to detect whether the Pool has changed between requests. In particular,
-     you can be pass the ETag when updating a Pool to specify that your changes
-     should take effect only if nobody else has modified the Pool in the
-     meantime.
+    :param e_tag: This is an opaque string. You can use it to detect whether
+     the Pool has changed between requests. In particular, you can be pass the
+     ETag when updating a Pool to specify that your changes should take effect
+     only if nobody else has modified the Pool in the meantime.
     :type e_tag: str
-    :param last_modified: The last modified time of the Pool. This is the last
-     time at which the Pool level data, such as the targetDedicatedNodes or
-     enableAutoscale settings, changed. It does not factor in node-level
-     changes such as a Compute Node changing state.
+    :param last_modified: This is the last time at which the Pool level data,
+     such as the targetDedicatedNodes or enableAutoscale settings, changed. It
+     does not factor in node-level changes such as a Compute Node changing
+     state.
     :type last_modified: datetime
-    :param creation_time: The creation time of the Pool.
+    :param creation_time:
     :type creation_time: datetime
-    :param state: The current state of the Pool. Possible values include:
-     'active', 'deleting'
+    :param state: Possible values include: 'active', 'deleting'
     :type state: str or ~azure.batch.models.PoolState
-    :param state_transition_time: The time at which the Pool entered its
-     current state.
+    :param state_transition_time:
     :type state_transition_time: datetime
-    :param allocation_state: Whether the Pool is resizing. Possible values
-     include: 'steady', 'resizing', 'stopping'
+    :param allocation_state: Possible values include: 'steady', 'resizing',
+     'stopping'
     :type allocation_state: str or ~azure.batch.models.AllocationState
-    :param allocation_state_transition_time: The time at which the Pool
-     entered its current allocation state.
+    :param allocation_state_transition_time:
     :type allocation_state_transition_time: datetime
-    :param vm_size: The size of virtual machines in the Pool. All virtual
-     machines in a Pool are the same size. For information about available
-     sizes of virtual machines in Pools, see Choose a VM size for Compute Nodes
-     in an Azure Batch Pool
+    :param vm_size: For information about available sizes of virtual machines
+     in Pools, see Choose a VM size for Compute Nodes in an Azure Batch Pool
      (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes).
     :type vm_size: str
     :param cloud_service_configuration: The cloud service configuration for
@@ -1299,43 +1301,38 @@ class CloudPool(Model):
      exclusive and one of the properties must be specified.
     :type virtual_machine_configuration:
      ~azure.batch.models.VirtualMachineConfiguration
-    :param resize_timeout: The timeout for allocation of Compute Nodes to the
-     Pool. This is the timeout for the most recent resize operation. (The
-     initial sizing when the Pool is created counts as a resize.) The default
-     value is 15 minutes.
+    :param resize_timeout: This is the timeout for the most recent resize
+     operation. (The initial sizing when the Pool is created counts as a
+     resize.) The default value is 15 minutes.
     :type resize_timeout: timedelta
-    :param resize_errors: A list of errors encountered while performing the
-     last resize on the Pool. This property is set only if one or more errors
+    :param resize_errors: This property is set only if one or more errors
      occurred during the last Pool resize, and only when the Pool
      allocationState is Steady.
     :type resize_errors: list[~azure.batch.models.ResizeError]
     :param current_dedicated_nodes: The number of dedicated Compute Nodes
      currently in the Pool.
     :type current_dedicated_nodes: int
-    :param current_low_priority_nodes: The number of low-priority Compute
-     Nodes currently in the Pool. Low-priority Compute Nodes which have been
-     preempted are included in this count.
+    :param current_low_priority_nodes: The number of Spot/Low-priority Compute
+     Nodes currently in the Pool. Spot/Low-priority Compute Nodes which have
+     been preempted are included in this count.
     :type current_low_priority_nodes: int
     :param target_dedicated_nodes: The desired number of dedicated Compute
      Nodes in the Pool.
     :type target_dedicated_nodes: int
-    :param target_low_priority_nodes: The desired number of low-priority
+    :param target_low_priority_nodes: The desired number of Spot/Low-priority
      Compute Nodes in the Pool.
     :type target_low_priority_nodes: int
     :param enable_auto_scale: Whether the Pool size should automatically
-     adjust over time. If false, at least one of targetDedicateNodes and
+     adjust over time. If false, at least one of targetDedicatedNodes and
      targetLowPriorityNodes must be specified. If true, the autoScaleFormula
      property is required and the Pool automatically resizes according to the
      formula. The default value is false.
     :type enable_auto_scale: bool
-    :param auto_scale_formula: A formula for the desired number of Compute
-     Nodes in the Pool. This property is set only if the Pool automatically
-     scales, i.e. enableAutoScale is true.
+    :param auto_scale_formula: This property is set only if the Pool
+     automatically scales, i.e. enableAutoScale is true.
     :type auto_scale_formula: str
-    :param auto_scale_evaluation_interval: The time interval at which to
-     automatically adjust the Pool size according to the autoscale formula.
-     This property is set only if the Pool automatically scales, i.e.
-     enableAutoScale is true.
+    :param auto_scale_evaluation_interval: This property is set only if the
+     Pool automatically scales, i.e. enableAutoScale is true.
     :type auto_scale_evaluation_interval: timedelta
     :param auto_scale_run: The results and errors from the last execution of
      the autoscale formula. This property is set only if the Pool automatically
@@ -1352,8 +1349,7 @@ class CloudPool(Model):
     :param start_task: A Task specified to run on each Compute Node as it
      joins the Pool.
     :type start_task: ~azure.batch.models.StartTask
-    :param certificate_references: The list of Certificates to be installed on
-     each Compute Node in the Pool. For Windows Nodes, the Batch service
+    :param certificate_references: For Windows Nodes, the Batch service
      installs the Certificates to the specified Certificate store and location.
      For Linux Compute Nodes, the Certificates are stored in a directory inside
      the Task working directory and an environment variable
@@ -1363,18 +1359,15 @@ class CloudPool(Model):
      /home/{user-name}/certs) and Certificates are placed in that directory.
     :type certificate_references:
      list[~azure.batch.models.CertificateReference]
-    :param application_package_references: The list of Packages to be
-     installed on each Compute Node in the Pool. Changes to Package references
+    :param application_package_references: Changes to Package references
      affect all new Nodes joining the Pool, but do not affect Compute Nodes
      that are already in the Pool until they are rebooted or reimaged. There is
      a maximum of 10 Package references on any given Pool.
     :type application_package_references:
      list[~azure.batch.models.ApplicationPackageReference]
-    :param application_licenses: The list of application licenses the Batch
-     service will make available on each Compute Node in the Pool. The list of
-     application licenses must be a subset of available Batch service
-     application licenses. If a license is requested which is not supported,
-     Pool creation will fail.
+    :param application_licenses: The list of application licenses must be a
+     subset of available Batch service application licenses. If a license is
+     requested which is not supported, Pool creation will fail.
     :type application_licenses: list[str]
     :param task_slots_per_node: The number of task slots that can be used to
      run concurrent tasks on a single compute node in the pool. The default
@@ -1384,11 +1377,9 @@ class CloudPool(Model):
     :param task_scheduling_policy: How Tasks are distributed across Compute
      Nodes in a Pool. If not specified, the default is spread.
     :type task_scheduling_policy: ~azure.batch.models.TaskSchedulingPolicy
-    :param user_accounts: The list of user Accounts to be created on each
-     Compute Node in the Pool.
+    :param user_accounts:
     :type user_accounts: list[~azure.batch.models.UserAccount]
-    :param metadata: A list of name-value pairs associated with the Pool as
-     metadata.
+    :param metadata:
     :type metadata: list[~azure.batch.models.MetadataItem]
     :param stats: Utilization and resource usage statistics for the entire
      lifetime of the Pool. This property is populated only if the CloudPool was
@@ -1397,9 +1388,14 @@ class CloudPool(Model):
      service performs periodic roll-up of statistics. The typical delay is
      about 30 minutes.
     :type stats: ~azure.batch.models.PoolStatistics
-    :param mount_configuration: A list of file systems to mount on each node
-     in the pool. This supports Azure Files, NFS, CIFS/SMB, and Blobfuse.
+    :param mount_configuration: This supports Azure Files, NFS, CIFS/SMB, and
+     Blobfuse.
     :type mount_configuration: list[~azure.batch.models.MountConfiguration]
+    :param identity: The identity of the Batch pool, if configured. The list
+     of user identities associated with the Batch pool. The user identity
+     dictionary key references will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+    :type identity: ~azure.batch.models.BatchPoolIdentity
     """
 
     _attribute_map = {
@@ -1438,9 +1434,10 @@ class CloudPool(Model):
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
         'stats': {'key': 'stats', 'type': 'PoolStatistics'},
         'mount_configuration': {'key': 'mountConfiguration', 'type': '[MountConfiguration]'},
+        'identity': {'key': 'identity', 'type': 'BatchPoolIdentity'},
     }
 
-    def __init__(self, *, id: str=None, display_name: str=None, url: str=None, e_tag: str=None, last_modified=None, creation_time=None, state=None, state_transition_time=None, allocation_state=None, allocation_state_transition_time=None, vm_size: str=None, cloud_service_configuration=None, virtual_machine_configuration=None, resize_timeout=None, resize_errors=None, current_dedicated_nodes: int=None, current_low_priority_nodes: int=None, target_dedicated_nodes: int=None, target_low_priority_nodes: int=None, enable_auto_scale: bool=None, auto_scale_formula: str=None, auto_scale_evaluation_interval=None, auto_scale_run=None, enable_inter_node_communication: bool=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, application_licenses=None, task_slots_per_node: int=None, task_scheduling_policy=None, user_accounts=None, metadata=None, stats=None, mount_configuration=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, display_name: str=None, url: str=None, e_tag: str=None, last_modified=None, creation_time=None, state=None, state_transition_time=None, allocation_state=None, allocation_state_transition_time=None, vm_size: str=None, cloud_service_configuration=None, virtual_machine_configuration=None, resize_timeout=None, resize_errors=None, current_dedicated_nodes: int=None, current_low_priority_nodes: int=None, target_dedicated_nodes: int=None, target_low_priority_nodes: int=None, enable_auto_scale: bool=None, auto_scale_formula: str=None, auto_scale_evaluation_interval=None, auto_scale_run=None, enable_inter_node_communication: bool=None, network_configuration=None, start_task=None, certificate_references=None, application_package_references=None, application_licenses=None, task_slots_per_node: int=None, task_scheduling_policy=None, user_accounts=None, metadata=None, stats=None, mount_configuration=None, identity=None, **kwargs) -> None:
         super(CloudPool, self).__init__(**kwargs)
         self.id = id
         self.display_name = display_name
@@ -1477,6 +1474,7 @@ class CloudPool(Model):
         self.metadata = metadata
         self.stats = stats
         self.mount_configuration = mount_configuration
+        self.identity = identity
 
 
 class CloudServiceConfiguration(Model):
@@ -1485,8 +1483,7 @@ class CloudServiceConfiguration(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param os_family: Required. The Azure Guest OS family to be installed on
-     the virtual machines in the Pool. Possible values are:
+    :param os_family: Required. Possible values are:
      2 - OS Family 2, equivalent to Windows Server 2008 R2 SP1.
      3 - OS Family 3, equivalent to Windows Server 2012.
      4 - OS Family 4, equivalent to Windows Server 2012 R2.
@@ -1495,9 +1492,8 @@ class CloudServiceConfiguration(Model):
      see Azure Guest OS Releases
      (https://azure.microsoft.com/documentation/articles/cloud-services-guestos-update-matrix/#releases).
     :type os_family: str
-    :param os_version: The Azure Guest OS version to be installed on the
-     virtual machines in the Pool. The default value is * which specifies the
-     latest operating system version for the specified OS family.
+    :param os_version: The default value is * which specifies the latest
+     operating system version for the specified OS family.
     :type os_version: str
     """
 
@@ -1530,25 +1526,23 @@ class CloudTask(Model):
     The best practice for long running Tasks is to use some form of
     checkpointing.
 
-    :param id: A string that uniquely identifies the Task within the Job. The
-     ID can contain any combination of alphanumeric characters including
-     hyphens and underscores, and cannot contain more than 64 characters.
+    :param id: The ID can contain any combination of alphanumeric characters
+     including hyphens and underscores, and cannot contain more than 64
+     characters.
     :type id: str
-    :param display_name: A display name for the Task. The display name need
-     not be unique and can contain any Unicode characters up to a maximum
-     length of 1024.
+    :param display_name: The display name need not be unique and can contain
+     any Unicode characters up to a maximum length of 1024.
     :type display_name: str
-    :param url: The URL of the Task.
+    :param url:
     :type url: str
-    :param e_tag: The ETag of the Task. This is an opaque string. You can use
-     it to detect whether the Task has changed between requests. In particular,
-     you can be pass the ETag when updating a Task to specify that your changes
-     should take effect only if nobody else has modified the Task in the
-     meantime.
+    :param e_tag: This is an opaque string. You can use it to detect whether
+     the Task has changed between requests. In particular, you can be pass the
+     ETag when updating a Task to specify that your changes should take effect
+     only if nobody else has modified the Task in the meantime.
     :type e_tag: str
-    :param last_modified: The last modified time of the Task.
+    :param last_modified:
     :type last_modified: datetime
-    :param creation_time: The creation time of the Task.
+    :param creation_time:
     :type creation_time: datetime
     :param exit_conditions: How the Batch service should respond when the Task
      completes.
@@ -1556,27 +1550,25 @@ class CloudTask(Model):
     :param state: The current state of the Task. Possible values include:
      'active', 'preparing', 'running', 'completed'
     :type state: str or ~azure.batch.models.TaskState
-    :param state_transition_time: The time at which the Task entered its
-     current state.
+    :param state_transition_time:
     :type state_transition_time: datetime
     :param previous_state: The previous state of the Task. This property is
      not set if the Task is in its initial Active state. Possible values
      include: 'active', 'preparing', 'running', 'completed'
     :type previous_state: str or ~azure.batch.models.TaskState
-    :param previous_state_transition_time: The time at which the Task entered
-     its previous state. This property is not set if the Task is in its initial
-     Active state.
+    :param previous_state_transition_time: This property is not set if the
+     Task is in its initial Active state.
     :type previous_state_transition_time: datetime
-    :param command_line: The command line of the Task. For multi-instance
-     Tasks, the command line is executed as the primary Task, after the primary
-     Task and all subtasks have finished executing the coordination command
-     line. The command line does not run under a shell, and therefore cannot
-     take advantage of shell features such as environment variable expansion.
-     If you want to take advantage of such features, you should invoke the
-     shell in the command line, for example using "cmd /c MyCommand" in Windows
-     or "/bin/sh -c MyCommand" in Linux. If the command line refers to file
-     paths, it should use a relative path (relative to the Task working
-     directory), or use the Batch provided environment variable
+    :param command_line: For multi-instance Tasks, the command line is
+     executed as the primary Task, after the primary Task and all subtasks have
+     finished executing the coordination command line. The command line does
+     not run under a shell, and therefore cannot take advantage of shell
+     features such as environment variable expansion. If you want to take
+     advantage of such features, you should invoke the shell in the command
+     line, for example using "cmd /c MyCommand" in Windows or "/bin/sh -c
+     MyCommand" in Linux. If the command line refers to file paths, it should
+     use a relative path (relative to the Task working directory), or use the
+     Batch provided environment variable
      (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
     :type command_line: str
     :param container_settings: The settings for the container under which the
@@ -1591,23 +1583,18 @@ class CloudTask(Model):
      the host disk, meaning that Batch file APIs will not be able to access
      those files.
     :type container_settings: ~azure.batch.models.TaskContainerSettings
-    :param resource_files: A list of files that the Batch service will
-     download to the Compute Node before running the command line. For
-     multi-instance Tasks, the resource files will only be downloaded to the
-     Compute Node on which the primary Task is executed. There is a maximum
-     size for the list of resource files.  When the max size is exceeded, the
-     request will fail and the response error code will be
-     RequestEntityTooLarge. If this occurs, the collection of ResourceFiles
-     must be reduced in size. This can be achieved using .zip files,
-     Application Packages, or Docker Containers.
+    :param resource_files: For multi-instance Tasks, the resource files will
+     only be downloaded to the Compute Node on which the primary Task is
+     executed. There is a maximum size for the list of resource files.  When
+     the max size is exceeded, the request will fail and the response error
+     code will be RequestEntityTooLarge. If this occurs, the collection of
+     ResourceFiles must be reduced in size. This can be achieved using .zip
+     files, Application Packages, or Docker Containers.
     :type resource_files: list[~azure.batch.models.ResourceFile]
-    :param output_files: A list of files that the Batch service will upload
-     from the Compute Node after running the command line. For multi-instance
-     Tasks, the files will only be uploaded from the Compute Node on which the
-     primary Task is executed.
+    :param output_files: For multi-instance Tasks, the files will only be
+     uploaded from the Compute Node on which the primary Task is executed.
     :type output_files: list[~azure.batch.models.OutputFile]
-    :param environment_settings: A list of environment variable settings for
-     the Task.
+    :param environment_settings:
     :type environment_settings: list[~azure.batch.models.EnvironmentSetting]
     :param affinity_info: A locality hint that can be used by the Batch
      service to select a Compute Node on which to start the new Task.
@@ -1638,14 +1625,12 @@ class CloudTask(Model):
      successfully. If any of those Tasks fail and exhaust their retry counts,
      this Task will never be scheduled.
     :type depends_on: ~azure.batch.models.TaskDependencies
-    :param application_package_references: A list of Packages that the Batch
-     service will deploy to the Compute Node before running the command line.
-     Application packages are downloaded and deployed to a shared directory,
-     not the Task working directory. Therefore, if a referenced package is
-     already on the Node, and is up to date, then it is not re-downloaded; the
-     existing copy on the Compute Node is used. If a referenced Package cannot
-     be installed, for example because the package has been deleted or because
-     download failed, the Task fails.
+    :param application_package_references: Application packages are downloaded
+     and deployed to a shared directory, not the Task working directory.
+     Therefore, if a referenced package is already on the Node, and is up to
+     date, then it is not re-downloaded; the existing copy on the Compute Node
+     is used. If a referenced Package cannot be installed, for example because
+     the package has been deleted or because download failed, the Task fails.
     :type application_package_references:
      list[~azure.batch.models.ApplicationPackageReference]
     :param authentication_token_settings: The settings for an authentication
@@ -1725,7 +1710,7 @@ class CloudTask(Model):
 class CloudTaskListSubtasksResult(Model):
     """The result of listing the subtasks of a Task.
 
-    :param value: The list of subtasks.
+    :param value:
     :type value: list[~azure.batch.models.SubtaskInformation]
     """
 
@@ -1741,51 +1726,42 @@ class CloudTaskListSubtasksResult(Model):
 class ComputeNode(Model):
     """A Compute Node in the Batch service.
 
-    :param id: The ID of the Compute Node. Every Compute Node that is added to
-     a Pool is assigned a unique ID. Whenever a Compute Node is removed from a
-     Pool, all of its local files are deleted, and the ID is reclaimed and
-     could be reused for new Compute Nodes.
+    :param id: Every Compute Node that is added to a Pool is assigned a unique
+     ID. Whenever a Compute Node is removed from a Pool, all of its local files
+     are deleted, and the ID is reclaimed and could be reused for new Compute
+     Nodes.
     :type id: str
-    :param url: The URL of the Compute Node.
+    :param url:
     :type url: str
-    :param state: The current state of the Compute Node. The low-priority
-     Compute Node has been preempted. Tasks which were running on the Compute
-     Node when it was preempted will be rescheduled when another Compute Node
-     becomes available. Possible values include: 'idle', 'rebooting',
-     'reimaging', 'running', 'unusable', 'creating', 'starting',
-     'waitingForStartTask', 'startTaskFailed', 'unknown', 'leavingPool',
-     'offline', 'preempted'
+    :param state: The Spot/Low-priority Compute Node has been preempted. Tasks
+     which were running on the Compute Node when it was preempted will be
+     rescheduled when another Compute Node becomes available. Possible values
+     include: 'idle', 'rebooting', 'reimaging', 'running', 'unusable',
+     'creating', 'starting', 'waitingForStartTask', 'startTaskFailed',
+     'unknown', 'leavingPool', 'offline', 'preempted'
     :type state: str or ~azure.batch.models.ComputeNodeState
-    :param scheduling_state: Whether the Compute Node is available for Task
-     scheduling. Possible values include: 'enabled', 'disabled'
+    :param scheduling_state: Possible values include: 'enabled', 'disabled'
     :type scheduling_state: str or ~azure.batch.models.SchedulingState
-    :param state_transition_time: The time at which the Compute Node entered
-     its current state.
+    :param state_transition_time:
     :type state_transition_time: datetime
-    :param last_boot_time: The last time at which the Compute Node was
-     started. This property may not be present if the Compute Node state is
-     unusable.
+    :param last_boot_time: This property may not be present if the Compute
+     Node state is unusable.
     :type last_boot_time: datetime
-    :param allocation_time: The time at which this Compute Node was allocated
-     to the Pool. This is the time when the Compute Node was initially
-     allocated and doesn't change once set. It is not updated when the Compute
-     Node is service healed or preempted.
+    :param allocation_time: This is the time when the Compute Node was
+     initially allocated and doesn't change once set. It is not updated when
+     the Compute Node is service healed or preempted.
     :type allocation_time: datetime
-    :param ip_address: The IP address that other Nodes can use to communicate
-     with this Compute Node. Every Compute Node that is added to a Pool is
-     assigned a unique IP address. Whenever a Compute Node is removed from a
-     Pool, all of its local files are deleted, and the IP address is reclaimed
-     and could be reused for new Compute Nodes.
+    :param ip_address: Every Compute Node that is added to a Pool is assigned
+     a unique IP address. Whenever a Compute Node is removed from a Pool, all
+     of its local files are deleted, and the IP address is reclaimed and could
+     be reused for new Compute Nodes.
     :type ip_address: str
-    :param affinity_id: An identifier which can be passed when adding a Task
-     to request that the Task be scheduled on this Compute Node. Note that this
-     is just a soft affinity. If the target Compute Node is busy or unavailable
-     at the time the Task is scheduled, then the Task will be scheduled
-     elsewhere.
+    :param affinity_id: Note that this is just a soft affinity. If the target
+     Compute Node is busy or unavailable at the time the Task is scheduled,
+     then the Task will be scheduled elsewhere.
     :type affinity_id: str
-    :param vm_size: The size of the virtual machine hosting the Compute Node.
-     For information about available sizes of virtual machines in Pools, see
-     Choose a VM size for Compute Nodes in an Azure Batch Pool
+    :param vm_size: For information about available sizes of virtual machines
+     in Pools, see Choose a VM size for Compute Nodes in an Azure Batch Pool
      (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes).
     :type vm_size: str
     :param total_tasks_run: The total number of Job Tasks completed on the
@@ -1806,9 +1782,8 @@ class ComputeNode(Model):
      includes Job Manager Tasks and normal Tasks, but not Job Preparation, Job
      Release or Start Tasks.
     :type total_tasks_succeeded: int
-    :param recent_tasks: A list of Tasks whose state has recently changed.
-     This property is present only if at least one Task has run on this Compute
-     Node since it was assigned to the Pool.
+    :param recent_tasks: This property is present only if at least one Task
+     has run on this Compute Node since it was assigned to the Pool.
     :type recent_tasks: list[~azure.batch.models.TaskInformation]
     :param start_task: The Task specified to run on the Compute Node as it
      joins the Pool.
@@ -1816,22 +1791,20 @@ class ComputeNode(Model):
     :param start_task_info: Runtime information about the execution of the
      StartTask on the Compute Node.
     :type start_task_info: ~azure.batch.models.StartTaskInformation
-    :param certificate_references: The list of Certificates installed on the
-     Compute Node. For Windows Nodes, the Batch service installs the
-     Certificates to the specified Certificate store and location. For Linux
-     Compute Nodes, the Certificates are stored in a directory inside the Task
-     working directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is
-     supplied to the Task to query for this location. For Certificates with
-     visibility of 'remoteUser', a 'certs' directory is created in the user's
-     home directory (e.g., /home/{user-name}/certs) and Certificates are placed
-     in that directory.
+    :param certificate_references: For Windows Nodes, the Batch service
+     installs the Certificates to the specified Certificate store and location.
+     For Linux Compute Nodes, the Certificates are stored in a directory inside
+     the Task working directory and an environment variable
+     AZ_BATCH_CERTIFICATES_DIR is supplied to the Task to query for this
+     location. For Certificates with visibility of 'remoteUser', a 'certs'
+     directory is created in the user's home directory (e.g.,
+     /home/{user-name}/certs) and Certificates are placed in that directory.
     :type certificate_references:
      list[~azure.batch.models.CertificateReference]
-    :param errors: The list of errors that are currently being encountered by
-     the Compute Node.
+    :param errors:
     :type errors: list[~azure.batch.models.ComputeNodeError]
     :param is_dedicated: Whether this Compute Node is a dedicated Compute
-     Node. If false, the Compute Node is a low-priority Compute Node.
+     Node. If false, the Compute Node is a Spot/Low-priority Compute Node.
     :type is_dedicated: bool
     :param endpoint_configuration: The endpoint configuration for the Compute
      Node.
@@ -1840,6 +1813,9 @@ class ComputeNode(Model):
     :param node_agent_info: Information about the Compute Node agent version
      and the time the Compute Node upgraded to a new version.
     :type node_agent_info: ~azure.batch.models.NodeAgentInformation
+    :param virtual_machine_info: Info about the current state of the virtual
+     machine.
+    :type virtual_machine_info: ~azure.batch.models.VirtualMachineInfo
     """
 
     _attribute_map = {
@@ -1865,9 +1841,10 @@ class ComputeNode(Model):
         'is_dedicated': {'key': 'isDedicated', 'type': 'bool'},
         'endpoint_configuration': {'key': 'endpointConfiguration', 'type': 'ComputeNodeEndpointConfiguration'},
         'node_agent_info': {'key': 'nodeAgentInfo', 'type': 'NodeAgentInformation'},
+        'virtual_machine_info': {'key': 'virtualMachineInfo', 'type': 'VirtualMachineInfo'},
     }
 
-    def __init__(self, *, id: str=None, url: str=None, state=None, scheduling_state=None, state_transition_time=None, last_boot_time=None, allocation_time=None, ip_address: str=None, affinity_id: str=None, vm_size: str=None, total_tasks_run: int=None, running_tasks_count: int=None, running_task_slots_count: int=None, total_tasks_succeeded: int=None, recent_tasks=None, start_task=None, start_task_info=None, certificate_references=None, errors=None, is_dedicated: bool=None, endpoint_configuration=None, node_agent_info=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, url: str=None, state=None, scheduling_state=None, state_transition_time=None, last_boot_time=None, allocation_time=None, ip_address: str=None, affinity_id: str=None, vm_size: str=None, total_tasks_run: int=None, running_tasks_count: int=None, running_task_slots_count: int=None, total_tasks_succeeded: int=None, recent_tasks=None, start_task=None, start_task_info=None, certificate_references=None, errors=None, is_dedicated: bool=None, endpoint_configuration=None, node_agent_info=None, virtual_machine_info=None, **kwargs) -> None:
         super(ComputeNode, self).__init__(**kwargs)
         self.id = id
         self.url = url
@@ -1891,6 +1868,7 @@ class ComputeNode(Model):
         self.is_dedicated = is_dedicated
         self.endpoint_configuration = endpoint_configuration
         self.node_agent_info = node_agent_info
+        self.virtual_machine_info = virtual_machine_info
 
 
 class ComputeNodeAddUserOptions(Model):
@@ -2034,8 +2012,7 @@ class ComputeNodeEndpointConfiguration(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param inbound_endpoints: Required. The list of inbound endpoints that are
-     accessible on the Compute Node.
+    :param inbound_endpoints: Required.
     :type inbound_endpoints: list[~azure.batch.models.InboundEndpoint]
     """
 
@@ -2055,14 +2032,11 @@ class ComputeNodeEndpointConfiguration(Model):
 class ComputeNodeError(Model):
     """An error encountered by a Compute Node.
 
-    :param code: An identifier for the Compute Node error. Codes are invariant
-     and are intended to be consumed programmatically.
+    :param code:
     :type code: str
-    :param message: A message describing the Compute Node error, intended to
-     be suitable for display in a user interface.
+    :param message:
     :type message: str
-    :param error_details: The list of additional error details related to the
-     Compute Node error.
+    :param error_details:
     :type error_details: list[~azure.batch.models.NameValuePair]
     """
 
@@ -2077,6 +2051,87 @@ class ComputeNodeError(Model):
         self.code = code
         self.message = message
         self.error_details = error_details
+
+
+class ComputeNodeExtensionGetOptions(Model):
+    """Additional parameters for get operation.
+
+    :param select: An OData $select clause.
+    :type select: str
+    :param timeout: The maximum time that the server can spend processing the
+     request, in seconds. The default is 30 seconds. Default value: 30 .
+    :type timeout: int
+    :param client_request_id: The caller-generated request identity, in the
+     form of a GUID with no decoration such as curly braces, e.g.
+     9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
+    :type client_request_id: str
+    :param return_client_request_id: Whether the server should return the
+     client-request-id in the response. Default value: False .
+    :type return_client_request_id: bool
+    :param ocp_date: The time the request was issued. Client libraries
+     typically set this to the current system clock time; set it explicitly if
+     you are calling the REST API directly.
+    :type ocp_date: datetime
+    """
+
+    _attribute_map = {
+        'select': {'key': '', 'type': 'str'},
+        'timeout': {'key': '', 'type': 'int'},
+        'client_request_id': {'key': '', 'type': 'str'},
+        'return_client_request_id': {'key': '', 'type': 'bool'},
+        'ocp_date': {'key': '', 'type': 'rfc-1123'},
+    }
+
+    def __init__(self, *, select: str=None, timeout: int=30, client_request_id: str=None, return_client_request_id: bool=False, ocp_date=None, **kwargs) -> None:
+        super(ComputeNodeExtensionGetOptions, self).__init__(**kwargs)
+        self.select = select
+        self.timeout = timeout
+        self.client_request_id = client_request_id
+        self.return_client_request_id = return_client_request_id
+        self.ocp_date = ocp_date
+
+
+class ComputeNodeExtensionListOptions(Model):
+    """Additional parameters for list operation.
+
+    :param select: An OData $select clause.
+    :type select: str
+    :param max_results: The maximum number of items to return in the response.
+     A maximum of 1000 Compute Nodes can be returned. Default value: 1000 .
+    :type max_results: int
+    :param timeout: The maximum time that the server can spend processing the
+     request, in seconds. The default is 30 seconds. Default value: 30 .
+    :type timeout: int
+    :param client_request_id: The caller-generated request identity, in the
+     form of a GUID with no decoration such as curly braces, e.g.
+     9C4D50EE-2D56-4CD3-8152-34347DC9F2B0.
+    :type client_request_id: str
+    :param return_client_request_id: Whether the server should return the
+     client-request-id in the response. Default value: False .
+    :type return_client_request_id: bool
+    :param ocp_date: The time the request was issued. Client libraries
+     typically set this to the current system clock time; set it explicitly if
+     you are calling the REST API directly.
+    :type ocp_date: datetime
+    """
+
+    _attribute_map = {
+        'select': {'key': '', 'type': 'str'},
+        'max_results': {'key': '', 'type': 'int'},
+        'timeout': {'key': '', 'type': 'int'},
+        'client_request_id': {'key': '', 'type': 'str'},
+        'return_client_request_id': {'key': '', 'type': 'bool'},
+        'ocp_date': {'key': '', 'type': 'rfc-1123'},
+    }
+
+    def __init__(self, *, select: str=None, max_results: int=1000, timeout: int=30, client_request_id: str=None, return_client_request_id: bool=False, ocp_date=None, **kwargs) -> None:
+        super(ComputeNodeExtensionListOptions, self).__init__(**kwargs)
+        self.select = select
+        self.max_results = max_results
+        self.timeout = timeout
+        self.client_request_id = client_request_id
+        self.return_client_request_id = return_client_request_id
+        self.ocp_date = ocp_date
 
 
 class ComputeNodeGetOptions(Model):
@@ -2190,8 +2245,7 @@ class ComputeNodeGetRemoteLoginSettingsResult(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param remote_login_ip_address: Required. The IP address used for remote
-     login to the Compute Node.
+    :param remote_login_ip_address: Required.
     :type remote_login_ip_address: str
     :param remote_login_port: Required. The port used for remote login to the
      Compute Node.
@@ -2214,24 +2268,37 @@ class ComputeNodeGetRemoteLoginSettingsResult(Model):
         self.remote_login_port = remote_login_port
 
 
+class ComputeNodeIdentityReference(Model):
+    """The reference to a user assigned identity associated with the Batch pool
+    which a compute node will use.
+
+    :param resource_id: The ARM resource id of the user assigned identity.
+    :type resource_id: str
+    """
+
+    _attribute_map = {
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+    }
+
+    def __init__(self, *, resource_id: str=None, **kwargs) -> None:
+        super(ComputeNodeIdentityReference, self).__init__(**kwargs)
+        self.resource_id = resource_id
+
+
 class ComputeNodeInformation(Model):
     """Information about the Compute Node on which a Task ran.
 
-    :param affinity_id: An identifier for the Node on which the Task ran,
-     which can be passed when adding a Task to request that the Task be
-     scheduled on this Compute Node.
+    :param affinity_id:
     :type affinity_id: str
-    :param node_url: The URL of the Compute Node on which the Task ran. .
+    :param node_url:
     :type node_url: str
-    :param pool_id: The ID of the Pool on which the Task ran.
+    :param pool_id:
     :type pool_id: str
-    :param node_id: The ID of the Compute Node on which the Task ran.
+    :param node_id:
     :type node_id: str
-    :param task_root_directory: The root directory of the Task on the Compute
-     Node.
+    :param task_root_directory:
     :type task_root_directory: str
-    :param task_root_directory_url: The URL to the root directory of the Task
-     on the Compute Node.
+    :param task_root_directory_url:
     :type task_root_directory_url: str
     """
 
@@ -2444,27 +2511,25 @@ class ComputeNodeUser(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The user name of the Account.
+    :param name: Required.
     :type name: str
     :param is_admin: Whether the Account should be an administrator on the
      Compute Node. The default value is false.
     :type is_admin: bool
-    :param expiry_time: The time at which the Account should expire. If
-     omitted, the default is 1 day from the current time. For Linux Compute
-     Nodes, the expiryTime has a precision up to a day.
+    :param expiry_time: If omitted, the default is 1 day from the current
+     time. For Linux Compute Nodes, the expiryTime has a precision up to a day.
     :type expiry_time: datetime
-    :param password: The password of the Account. The password is required for
-     Windows Compute Nodes (those created with 'cloudServiceConfiguration', or
-     created with 'virtualMachineConfiguration' using a Windows Image
-     reference). For Linux Compute Nodes, the password can optionally be
-     specified along with the sshPublicKey property.
+    :param password: The password is required for Windows Compute Nodes (those
+     created with 'cloudServiceConfiguration', or created with
+     'virtualMachineConfiguration' using a Windows Image reference). For Linux
+     Compute Nodes, the password can optionally be specified along with the
+     sshPublicKey property.
     :type password: str
-    :param ssh_public_key: The SSH public key that can be used for remote
-     login to the Compute Node. The public key should be compatible with
-     OpenSSH encoding and should be base 64 encoded. This property can be
-     specified only for Linux Compute Nodes. If this is specified for a Windows
-     Compute Node, then the Batch service rejects the request; if you are
-     calling the REST API directly, the HTTP status code is 400 (Bad Request).
+    :param ssh_public_key: The public key should be compatible with OpenSSH
+     encoding and should be base 64 encoded. This property can be specified
+     only for Linux Compute Nodes. If this is specified for a Windows Compute
+     Node, then the Batch service rejects the request; if you are calling the
+     REST API directly, the HTTP status code is 400 (Bad Request).
     :type ssh_public_key: str
     """
 
@@ -2497,18 +2562,16 @@ class ContainerConfiguration(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The container technology to be used.  Default value:
-     "dockerCompatible" .
+    :ivar type: Required.  Default value: "dockerCompatible" .
     :vartype type: str
-    :param container_image_names: The collection of container Image names.
-     This is the full Image reference, as would be specified to "docker pull".
-     An Image will be sourced from the default Docker registry unless the Image
-     is fully qualified with an alternative registry.
+    :param container_image_names: This is the full Image reference, as would
+     be specified to "docker pull". An Image will be sourced from the default
+     Docker registry unless the Image is fully qualified with an alternative
+     registry.
     :type container_image_names: list[str]
-    :param container_registries: Additional private registries from which
-     containers can be pulled. If any Images must be downloaded from a private
-     registry which requires credentials, then those credentials must be
-     provided here.
+    :param container_registries: If any Images must be downloaded from a
+     private registry which requires credentials, then those credentials must
+     be provided here.
     :type container_registries: list[~azure.batch.models.ContainerRegistry]
     """
 
@@ -2533,33 +2596,31 @@ class ContainerConfiguration(Model):
 class ContainerRegistry(Model):
     """A private container registry.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param registry_server: The registry URL. If omitted, the default is
-     "docker.io".
-    :type registry_server: str
-    :param user_name: Required. The user name to log into the registry server.
+    :param user_name:
     :type user_name: str
-    :param password: Required. The password to log into the registry server.
+    :param password:
     :type password: str
+    :param registry_server: If omitted, the default is "docker.io".
+    :type registry_server: str
+    :param identity_reference: The reference to the user assigned identity to
+     use to access an Azure Container Registry instead of username and
+     password.
+    :type identity_reference: ~azure.batch.models.ComputeNodeIdentityReference
     """
 
-    _validation = {
-        'user_name': {'required': True},
-        'password': {'required': True},
-    }
-
     _attribute_map = {
-        'registry_server': {'key': 'registryServer', 'type': 'str'},
         'user_name': {'key': 'username', 'type': 'str'},
         'password': {'key': 'password', 'type': 'str'},
+        'registry_server': {'key': 'registryServer', 'type': 'str'},
+        'identity_reference': {'key': 'identityReference', 'type': 'ComputeNodeIdentityReference'},
     }
 
-    def __init__(self, *, user_name: str, password: str, registry_server: str=None, **kwargs) -> None:
+    def __init__(self, *, user_name: str=None, password: str=None, registry_server: str=None, identity_reference=None, **kwargs) -> None:
         super(ContainerRegistry, self).__init__(**kwargs)
-        self.registry_server = registry_server
         self.user_name = user_name
         self.password = password
+        self.registry_server = registry_server
+        self.identity_reference = identity_reference
 
 
 class DataDisk(Model):
@@ -2610,17 +2671,14 @@ class DataDisk(Model):
 class DeleteCertificateError(Model):
     """An error encountered by the Batch service when deleting a Certificate.
 
-    :param code: An identifier for the Certificate deletion error. Codes are
-     invariant and are intended to be consumed programmatically.
+    :param code:
     :type code: str
-    :param message: A message describing the Certificate deletion error,
-     intended to be suitable for display in a user interface.
+    :param message:
     :type message: str
-    :param values: A list of additional error details related to the
-     Certificate deletion error. This list includes details such as the active
-     Pools and Compute Nodes referencing this Certificate. However, if a large
-     number of resources reference the Certificate, the list contains only
-     about the first hundred.
+    :param values: This list includes details such as the active Pools and
+     Compute Nodes referencing this Certificate. However, if a large number of
+     resources reference the Certificate, the list contains only about the
+     first hundred.
     :type values: list[~azure.batch.models.NameValuePair]
     """
 
@@ -2637,13 +2695,38 @@ class DeleteCertificateError(Model):
         self.values = values
 
 
+class DiffDiskSettings(Model):
+    """Specifies the ephemeral Disk Settings for the operating system disk used by
+    the compute node (VM).
+
+    :param placement: Specifies the ephemeral disk placement for operating
+     system disk for all VMs in the pool. This property can be used by user in
+     the request to choose the location e.g., cache disk space for Ephemeral OS
+     disk provisioning. For more information on Ephemeral OS disk size
+     requirements, please refer to Ephemeral OS disk size requirements for
+     Windows VMs at
+     https://docs.microsoft.com/en-us/azure/virtual-machines/windows/ephemeral-os-disks#size-requirements
+     and Linux VMs at
+     https://docs.microsoft.com/en-us/azure/virtual-machines/linux/ephemeral-os-disks#size-requirements.
+     Possible values include: 'CacheDisk'
+    :type placement: str or ~azure.batch.models.DiffDiskPlacement
+    """
+
+    _attribute_map = {
+        'placement': {'key': 'placement', 'type': 'DiffDiskPlacement'},
+    }
+
+    def __init__(self, *, placement=None, **kwargs) -> None:
+        super(DiffDiskSettings, self).__init__(**kwargs)
+        self.placement = placement
+
+
 class DiskEncryptionConfiguration(Model):
     """The disk encryption configuration applied on compute nodes in the pool.
     Disk encryption configuration is not supported on Linux pool created with
     Shared Image Gallery Image.
 
-    :param targets: The list of disk targets Batch Service will encrypt on the
-     compute node. If omitted, no disks on the compute nodes in the pool will
+    :param targets: If omitted, no disks on the compute nodes in the pool will
      be encrypted. On Linux pool, only "TemporaryDisk" is supported; on Windows
      pool, "OsDisk" and "TemporaryDisk" must be specified.
     :type targets: list[str or ~azure.batch.models.DiskEncryptionTarget]
@@ -2663,9 +2746,9 @@ class EnvironmentSetting(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the environment variable.
+    :param name: Required.
     :type name: str
-    :param value: The value of the environment variable.
+    :param value:
     :type value: str
     """
 
@@ -2687,9 +2770,9 @@ class EnvironmentSetting(Model):
 class ErrorMessage(Model):
     """An error message received in an Azure Batch error response.
 
-    :param lang: The language code of the error message.
+    :param lang:
     :type lang: str
-    :param value: The text of the message.
+    :param value:
     :type value: str
     """
 
@@ -2770,11 +2853,9 @@ class ExitCodeRangeMapping(Model):
 class ExitConditions(Model):
     """Specifies how the Batch service should respond when the Task completes.
 
-    :param exit_codes: A list of individual Task exit codes and how the Batch
-     service should respond to them.
+    :param exit_codes:
     :type exit_codes: list[~azure.batch.models.ExitCodeMapping]
-    :param exit_code_ranges: A list of Task exit code ranges and how the Batch
-     service should respond to them.
+    :param exit_code_ranges:
     :type exit_code_ranges: list[~azure.batch.models.ExitCodeRangeMapping]
     :param pre_processing_error: How the Batch service should respond if the
      Task fails to start due to an error.
@@ -2815,18 +2896,14 @@ class ExitConditions(Model):
 class ExitOptions(Model):
     """Specifies how the Batch service responds to a particular exit condition.
 
-    :param job_action: An action to take on the Job containing the Task, if
-     the Task completes with the given exit condition and the Job's
-     onTaskFailed property is 'performExitOptionsJobAction'. The default is
-     none for exit code 0 and terminate for all other exit conditions. If the
-     Job's onTaskFailed property is noaction, then specifying this property
-     returns an error and the add Task request fails with an invalid property
-     value error; if you are calling the REST API directly, the HTTP status
-     code is 400 (Bad Request). Possible values include: 'none', 'disable',
-     'terminate'
+    :param job_action: The default is none for exit code 0 and terminate for
+     all other exit conditions. If the Job's onTaskFailed property is noaction,
+     then specifying this property returns an error and the add Task request
+     fails with an invalid property value error; if you are calling the REST
+     API directly, the HTTP status code is 400 (Bad Request). Possible values
+     include: 'none', 'disable', 'terminate'
     :type job_action: str or ~azure.batch.models.JobAction
-    :param dependency_action: An action that the Batch service performs on
-     Tasks that depend on this Task. Possible values are 'satisfy' (allowing
+    :param dependency_action: Possible values are 'satisfy' (allowing
      dependent tasks to progress) and 'block' (dependent tasks continue to
      wait). Batch does not yet support cancellation of dependent tasks.
      Possible values include: 'satisfy', 'block'
@@ -3205,18 +3282,17 @@ class FileProperties(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param creation_time: The file creation time. The creation time is not
-     returned for files on Linux Compute Nodes.
+    :param creation_time: The creation time is not returned for files on Linux
+     Compute Nodes.
     :type creation_time: datetime
-    :param last_modified: Required. The time at which the file was last
-     modified.
+    :param last_modified: Required.
     :type last_modified: datetime
     :param content_length: Required. The length of the file.
     :type content_length: long
-    :param content_type: The content type of the file.
+    :param content_type:
     :type content_type: str
-    :param file_mode: The file mode attribute in octal format. The file mode
-     is returned only for files on Linux Compute Nodes.
+    :param file_mode: The file mode is returned only for files on Linux
+     Compute Nodes.
     :type file_mode: str
     """
 
@@ -3242,32 +3318,54 @@ class FileProperties(Model):
         self.file_mode = file_mode
 
 
+class HttpHeader(Model):
+    """An HTTP header name-value pair.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required.
+    :type name: str
+    :param value:
+    :type value: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str, value: str=None, **kwargs) -> None:
+        super(HttpHeader, self).__init__(**kwargs)
+        self.name = name
+        self.value = value
+
+
 class ImageInformation(Model):
     """A reference to the Azure Virtual Machines Marketplace Image and additional
     information about the Image.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param node_agent_sku_id: Required. The ID of the Compute Node agent SKU
-     which the Image supports.
+    :param node_agent_sku_id: Required.
     :type node_agent_sku_id: str
     :param image_reference: Required. The reference to the Azure Virtual
      Machine's Marketplace Image.
     :type image_reference: ~azure.batch.models.ImageReference
-    :param os_type: Required. The type of operating system (e.g. Windows or
-     Linux) of the Image. Possible values include: 'linux', 'windows'
+    :param os_type: Required. Possible values include: 'linux', 'windows'
     :type os_type: str or ~azure.batch.models.OSType
-    :param capabilities: The capabilities or features which the Image
-     supports. Not every capability of the Image is listed. Capabilities in
-     this list are considered of special interest and are generally related to
-     integration with other features in the Azure Batch service.
+    :param capabilities: Not every capability of the Image is listed.
+     Capabilities in this list are considered of special interest and are
+     generally related to integration with other features in the Azure Batch
+     service.
     :type capabilities: list[str]
-    :param batch_support_end_of_life: The time when the Azure Batch service
-     will stop accepting create Pool requests for the Image.
+    :param batch_support_end_of_life:
     :type batch_support_end_of_life: datetime
-    :param verification_type: Required. Whether the Azure Batch service
-     actively verifies that the Image is compatible with the associated Compute
-     Node agent SKU. Possible values include: 'verified', 'unverified'
+    :param verification_type: Required. Possible values include: 'verified',
+     'unverified'
     :type verification_type: str or ~azure.batch.models.VerificationType
     """
 
@@ -3303,35 +3401,37 @@ class ImageReference(Model):
     references verified by Azure Batch, see the 'List Supported Images'
     operation.
 
-    :param publisher: The publisher of the Azure Virtual Machines Marketplace
-     Image. For example, Canonical or MicrosoftWindowsServer.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param publisher: For example, Canonical or MicrosoftWindowsServer.
     :type publisher: str
-    :param offer: The offer type of the Azure Virtual Machines Marketplace
-     Image. For example, UbuntuServer or WindowsServer.
+    :param offer: For example, UbuntuServer or WindowsServer.
     :type offer: str
-    :param sku: The SKU of the Azure Virtual Machines Marketplace Image. For
-     example, 18.04-LTS or 2019-Datacenter.
+    :param sku: For example, 18.04-LTS or 2019-Datacenter.
     :type sku: str
-    :param version: The version of the Azure Virtual Machines Marketplace
-     Image. A value of 'latest' can be specified to select the latest version
-     of an Image. If omitted, the default is 'latest'.
+    :param version: A value of 'latest' can be specified to select the latest
+     version of an Image. If omitted, the default is 'latest'.
     :type version: str
-    :param virtual_machine_image_id: The ARM resource identifier of the Shared
-     Image Gallery Image. Compute Nodes in the Pool will be created using this
-     Image Id. This is of the form
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageDefinitionName}/versions/{VersionId}
-     or
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageDefinitionName}
-     for always defaulting to the latest image version. This property is
-     mutually exclusive with other ImageReference properties. The Shared Image
-     Gallery Image must have replicas in the same region and must be in the
-     same subscription as the Azure Batch account. If the image version is not
-     specified in the imageId, the latest version will be used. For information
-     about the firewall settings for the Batch Compute Node agent to
-     communicate with the Batch service see
+    :param virtual_machine_image_id: This property is mutually exclusive with
+     other ImageReference properties. The Shared Image Gallery Image must have
+     replicas in the same region and must be in the same subscription as the
+     Azure Batch account. If the image version is not specified in the imageId,
+     the latest version will be used. For information about the firewall
+     settings for the Batch Compute Node agent to communicate with the Batch
+     service see
      https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
     :type virtual_machine_image_id: str
+    :ivar exact_version: The specific version of the platform image or
+     marketplace image used to create the node. This read-only field differs
+     from 'version' only if the value specified for 'version' when the pool was
+     created was 'latest'.
+    :vartype exact_version: str
     """
+
+    _validation = {
+        'exact_version': {'readonly': True},
+    }
 
     _attribute_map = {
         'publisher': {'key': 'publisher', 'type': 'str'},
@@ -3339,6 +3439,7 @@ class ImageReference(Model):
         'sku': {'key': 'sku', 'type': 'str'},
         'version': {'key': 'version', 'type': 'str'},
         'virtual_machine_image_id': {'key': 'virtualMachineImageId', 'type': 'str'},
+        'exact_version': {'key': 'exactVersion', 'type': 'str'},
     }
 
     def __init__(self, *, publisher: str=None, offer: str=None, sku: str=None, version: str=None, virtual_machine_image_id: str=None, **kwargs) -> None:
@@ -3348,6 +3449,7 @@ class ImageReference(Model):
         self.sku = sku
         self.version = version
         self.virtual_machine_image_id = virtual_machine_image_id
+        self.exact_version = None
 
 
 class InboundEndpoint(Model):
@@ -3355,16 +3457,14 @@ class InboundEndpoint(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the endpoint.
+    :param name: Required.
     :type name: str
     :param protocol: Required. The protocol of the endpoint. Possible values
      include: 'tcp', 'udp'
     :type protocol: str or ~azure.batch.models.InboundEndpointProtocol
-    :param public_ip_address: Required. The public IP address of the Compute
-     Node.
+    :param public_ip_address: Required.
     :type public_ip_address: str
-    :param public_fqdn: Required. The public fully qualified domain name for
-     the Compute Node.
+    :param public_fqdn: Required.
     :type public_fqdn: str
     :param frontend_port: Required. The public port number of the endpoint.
     :type frontend_port: int
@@ -3406,11 +3506,11 @@ class InboundNATPool(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the endpoint. The name must be unique
-     within a Batch Pool, can contain letters, numbers, underscores, periods,
-     and hyphens. Names must start with a letter or number, must end with a
-     letter, number, or underscore, and cannot exceed 77 characters.  If any
-     invalid values are provided the request fails with HTTP status code 400.
+    :param name: Required. The name must be unique within a Batch Pool, can
+     contain letters, numbers, underscores, periods, and hyphens. Names must
+     start with a letter or number, must end with a letter, number, or
+     underscore, and cannot exceed 77 characters.  If any invalid values are
+     provided the request fails with HTTP status code 400.
     :type name: str
     :param protocol: Required. The protocol of the endpoint. Possible values
      include: 'tcp', 'udp'
@@ -3436,13 +3536,12 @@ class InboundNATPool(Model):
      Each range must contain at least 40 ports. If any reserved or overlapping
      values are provided the request fails with HTTP status code 400.
     :type frontend_port_range_end: int
-    :param network_security_group_rules: A list of network security group
-     rules that will be applied to the endpoint. The maximum number of rules
-     that can be specified across all the endpoints on a Batch Pool is 25. If
-     no network security group rules are specified, a default rule will be
-     created to allow inbound access to the specified backendPort. If the
-     maximum number of network security group rules is exceeded the request
-     fails with HTTP status code 400.
+    :param network_security_group_rules: The maximum number of rules that can
+     be specified across all the endpoints on a Batch Pool is 25. If no network
+     security group rules are specified, a default rule will be created to
+     allow inbound access to the specified backendPort. If the maximum number
+     of network security group rules is exceeded the request fails with HTTP
+     status code 400.
     :type network_security_group_rules:
      list[~azure.batch.models.NetworkSecurityGroupRule]
     """
@@ -3472,6 +3571,38 @@ class InboundNATPool(Model):
         self.frontend_port_range_start = frontend_port_range_start
         self.frontend_port_range_end = frontend_port_range_end
         self.network_security_group_rules = network_security_group_rules
+
+
+class InstanceViewStatus(Model):
+    """The instance view status.
+
+    :param code:
+    :type code: str
+    :param display_status:
+    :type display_status: str
+    :param level: Possible values include: 'Error', 'Info', 'Warning'
+    :type level: str or ~azure.batch.models.StatusLevelTypes
+    :param message:
+    :type message: str
+    :param time: The time of the status.
+    :type time: str
+    """
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'display_status': {'key': 'displayStatus', 'type': 'str'},
+        'level': {'key': 'level', 'type': 'StatusLevelTypes'},
+        'message': {'key': 'message', 'type': 'str'},
+        'time': {'key': 'time', 'type': 'str'},
+    }
+
+    def __init__(self, *, code: str=None, display_status: str=None, level=None, message: str=None, time: str=None, **kwargs) -> None:
+        super(InstanceViewStatus, self).__init__(**kwargs)
+        self.code = code
+        self.display_status = display_status
+        self.level = level
+        self.message = message
+        self.time = time
 
 
 class JobAddOptions(Model):
@@ -3513,20 +3644,31 @@ class JobAddParameter(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. A string that uniquely identifies the Job within the
-     Account. The ID can contain any combination of alphanumeric characters
-     including hyphens and underscores, and cannot contain more than 64
-     characters. The ID is case-preserving and case-insensitive (that is, you
-     may not have two IDs within an Account that differ only by case).
+    :param id: Required. The ID can contain any combination of alphanumeric
+     characters including hyphens and underscores, and cannot contain more than
+     64 characters. The ID is case-preserving and case-insensitive (that is,
+     you may not have two IDs within an Account that differ only by case).
     :type id: str
-    :param display_name: The display name for the Job. The display name need
-     not be unique and can contain any Unicode characters up to a maximum
-     length of 1024.
+    :param display_name: The display name need not be unique and can contain
+     any Unicode characters up to a maximum length of 1024.
     :type display_name: str
     :param priority: The priority of the Job. Priority values can range from
      -1000 to 1000, with -1000 being the lowest priority and 1000 being the
      highest priority. The default value is 0.
     :type priority: int
+    :param max_parallel_tasks: The maximum number of tasks that can be
+     executed in parallel for the job. The value of maxParallelTasks must be -1
+     or greater than 0 if specified. If not specified, the default value is -1,
+     which means there's no limit to the number of tasks that can be run at
+     once. You can update a job's maxParallelTasks after it has been created
+     using the update job API. Default value: -1 .
+    :type max_parallel_tasks: int
+    :param allow_task_preemption: Whether Tasks in this job can be preempted
+     by other high priority jobs. If the value is set to True, other high
+     priority jobs submitted to the system will take precedence and will be
+     able requeue tasks from this job. You can update a job's
+     allowTaskPreemption after it has been created using the update job API.
+    :type allow_task_preemption: bool
     :param constraints: The execution constraints for the Job.
     :type constraints: ~azure.batch.models.JobConstraints
     :param job_manager_task: Details of a Job Manager Task to be launched when
@@ -3555,11 +3697,9 @@ class JobAddParameter(Model):
      activities include deleting local files, or shutting down services that
      were started as part of Job preparation.
     :type job_release_task: ~azure.batch.models.JobReleaseTask
-    :param common_environment_settings: The list of common environment
-     variable settings. These environment variables are set for all Tasks in
-     the Job (including the Job Manager, Job Preparation and Job Release
-     Tasks). Individual Tasks can override an environment setting specified
-     here by specifying the same setting name with a different value.
+    :param common_environment_settings: Individual Tasks can override an
+     environment setting specified here by specifying the same setting name
+     with a different value.
     :type common_environment_settings:
      list[~azure.batch.models.EnvironmentSetting]
     :param pool_info: Required. The Pool on which the Batch service runs the
@@ -3583,9 +3723,8 @@ class JobAddParameter(Model):
      default is noaction. Possible values include: 'noAction',
      'performExitOptionsJobAction'
     :type on_task_failure: str or ~azure.batch.models.OnTaskFailure
-    :param metadata: A list of name-value pairs associated with the Job as
-     metadata. The Batch service does not assign any meaning to metadata; it is
-     solely for the use of user code.
+    :param metadata: The Batch service does not assign any meaning to
+     metadata; it is solely for the use of user code.
     :type metadata: list[~azure.batch.models.MetadataItem]
     :param uses_task_dependencies: Whether Tasks in the Job can define
      dependencies on each other. The default is false.
@@ -3603,6 +3742,8 @@ class JobAddParameter(Model):
         'id': {'key': 'id', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'priority': {'key': 'priority', 'type': 'int'},
+        'max_parallel_tasks': {'key': 'maxParallelTasks', 'type': 'int'},
+        'allow_task_preemption': {'key': 'allowTaskPreemption', 'type': 'bool'},
         'constraints': {'key': 'constraints', 'type': 'JobConstraints'},
         'job_manager_task': {'key': 'jobManagerTask', 'type': 'JobManagerTask'},
         'job_preparation_task': {'key': 'jobPreparationTask', 'type': 'JobPreparationTask'},
@@ -3616,11 +3757,13 @@ class JobAddParameter(Model):
         'network_configuration': {'key': 'networkConfiguration', 'type': 'JobNetworkConfiguration'},
     }
 
-    def __init__(self, *, id: str, pool_info, display_name: str=None, priority: int=None, constraints=None, job_manager_task=None, job_preparation_task=None, job_release_task=None, common_environment_settings=None, on_all_tasks_complete=None, on_task_failure=None, metadata=None, uses_task_dependencies: bool=None, network_configuration=None, **kwargs) -> None:
+    def __init__(self, *, id: str, pool_info, display_name: str=None, priority: int=None, max_parallel_tasks: int=-1, allow_task_preemption: bool=None, constraints=None, job_manager_task=None, job_preparation_task=None, job_release_task=None, common_environment_settings=None, on_all_tasks_complete=None, on_task_failure=None, metadata=None, uses_task_dependencies: bool=None, network_configuration=None, **kwargs) -> None:
         super(JobAddParameter, self).__init__(**kwargs)
         self.id = id
         self.display_name = display_name
         self.priority = priority
+        self.max_parallel_tasks = max_parallel_tasks
+        self.allow_task_preemption = allow_task_preemption
         self.constraints = constraints
         self.job_manager_task = job_manager_task
         self.job_preparation_task = job_preparation_task
@@ -3637,10 +3780,9 @@ class JobAddParameter(Model):
 class JobConstraints(Model):
     """The execution constraints for a Job.
 
-    :param max_wall_clock_time: The maximum elapsed time that the Job may run,
-     measured from the time the Job is created. If the Job does not complete
-     within the time limit, the Batch service terminates it and any Tasks that
-     are still running. In this case, the termination reason will be
+    :param max_wall_clock_time: If the Job does not complete within the time
+     limit, the Batch service terminates it and any Tasks that are still
+     running. In this case, the termination reason will be
      MaxWallClockTimeExpiry. If this property is not specified, there is no
      time limit on how long the Job may run.
     :type max_wall_clock_time: timedelta
@@ -3794,8 +3936,8 @@ class JobDisableParameter(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param disable_tasks: Required. What to do with active Tasks associated
-     with the Job. Possible values include: 'requeue', 'terminate', 'wait'
+    :param disable_tasks: Required. Possible values include: 'requeue',
+     'terminate', 'wait'
     :type disable_tasks: str or ~azure.batch.models.DisableJobOption
     """
 
@@ -3879,37 +4021,36 @@ class JobExecutionInformation(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param start_time: Required. The start time of the Job. This is the time
-     at which the Job was created.
+    :param start_time: Required. This is the time at which the Job was
+     created.
     :type start_time: datetime
-    :param end_time: The completion time of the Job. This property is set only
-     if the Job is in the completed state.
+    :param end_time: This property is set only if the Job is in the completed
+     state.
     :type end_time: datetime
-    :param pool_id: The ID of the Pool to which this Job is assigned. This
-     element contains the actual Pool where the Job is assigned. When you get
-     Job details from the service, they also contain a poolInfo element, which
-     contains the Pool configuration data from when the Job was added or
-     updated. That poolInfo element may also contain a poolId element. If it
-     does, the two IDs are the same. If it does not, it means the Job ran on an
-     auto Pool, and this property contains the ID of that auto Pool.
+    :param pool_id: This element contains the actual Pool where the Job is
+     assigned. When you get Job details from the service, they also contain a
+     poolInfo element, which contains the Pool configuration data from when the
+     Job was added or updated. That poolInfo element may also contain a poolId
+     element. If it does, the two IDs are the same. If it does not, it means
+     the Job ran on an auto Pool, and this property contains the ID of that
+     auto Pool.
     :type pool_id: str
     :param scheduling_error: Details of any error encountered by the service
      in starting the Job. This property is not set if there was no error
      starting the Job.
     :type scheduling_error: ~azure.batch.models.JobSchedulingError
-    :param terminate_reason: A string describing the reason the Job ended.
-     This property is set only if the Job is in the completed state. If the
-     Batch service terminates the Job, it sets the reason as follows:
-     JMComplete - the Job Manager Task completed, and killJobOnCompletion was
-     set to true. MaxWallClockTimeExpiry - the Job reached its maxWallClockTime
-     constraint. TerminateJobSchedule - the Job ran as part of a schedule, and
-     the schedule terminated. AllTasksComplete - the Job's onAllTasksComplete
-     attribute is set to terminatejob, and all Tasks in the Job are complete.
-     TaskFailed - the Job's onTaskFailure attribute is set to
-     performExitOptionsJobAction, and a Task in the Job failed with an exit
-     condition that specified a jobAction of terminatejob. Any other string is
-     a user-defined reason specified in a call to the 'Terminate a Job'
-     operation.
+    :param terminate_reason: This property is set only if the Job is in the
+     completed state. If the Batch service terminates the Job, it sets the
+     reason as follows: JMComplete - the Job Manager Task completed, and
+     killJobOnCompletion was set to true. MaxWallClockTimeExpiry - the Job
+     reached its maxWallClockTime constraint. TerminateJobSchedule - the Job
+     ran as part of a schedule, and the schedule terminated. AllTasksComplete -
+     the Job's onAllTasksComplete attribute is set to terminatejob, and all
+     Tasks in the Job are complete. TaskFailed - the Job's onTaskFailure
+     attribute is set to performExitOptionsJobAction, and a Task in the Job
+     failed with an exit condition that specified a jobAction of terminatejob.
+     Any other string is a user-defined reason specified in a call to the
+     'Terminate a Job' operation.
     :type terminate_reason: str
     """
 
@@ -4256,23 +4397,21 @@ class JobManagerTask(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. A string that uniquely identifies the Job Manager
-     Task within the Job. The ID can contain any combination of alphanumeric
+    :param id: Required. The ID can contain any combination of alphanumeric
      characters including hyphens and underscores and cannot contain more than
      64 characters.
     :type id: str
-    :param display_name: The display name of the Job Manager Task. It need not
-     be unique and can contain any Unicode characters up to a maximum length of
-     1024.
+    :param display_name: It need not be unique and can contain any Unicode
+     characters up to a maximum length of 1024.
     :type display_name: str
-    :param command_line: Required. The command line of the Job Manager Task.
-     The command line does not run under a shell, and therefore cannot take
-     advantage of shell features such as environment variable expansion. If you
-     want to take advantage of such features, you should invoke the shell in
-     the command line, for example using "cmd /c MyCommand" in Windows or
-     "/bin/sh -c MyCommand" in Linux. If the command line refers to file paths,
-     it should use a relative path (relative to the Task working directory), or
-     use the Batch provided environment variable
+    :param command_line: Required. The command line does not run under a
+     shell, and therefore cannot take advantage of shell features such as
+     environment variable expansion. If you want to take advantage of such
+     features, you should invoke the shell in the command line, for example
+     using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If
+     the command line refers to file paths, it should use a relative path
+     (relative to the Task working directory), or use the Batch provided
+     environment variable
      (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
     :type command_line: str
     :param container_settings: The settings for the container under which the
@@ -4287,29 +4426,25 @@ class JobManagerTask(Model):
      AZ_BATCH_NODE_ROOT_DIR might not be reflected to the host disk, meaning
      that Batch file APIs will not be able to access those files.
     :type container_settings: ~azure.batch.models.TaskContainerSettings
-    :param resource_files: A list of files that the Batch service will
-     download to the Compute Node before running the command line. Files listed
-     under this element are located in the Task's working directory. There is a
-     maximum size for the list of resource files.  When the max size is
-     exceeded, the request will fail and the response error code will be
-     RequestEntityTooLarge. If this occurs, the collection of ResourceFiles
-     must be reduced in size. This can be achieved using .zip files,
-     Application Packages, or Docker Containers.
+    :param resource_files: Files listed under this element are located in the
+     Task's working directory. There is a maximum size for the list of resource
+     files.  When the max size is exceeded, the request will fail and the
+     response error code will be RequestEntityTooLarge. If this occurs, the
+     collection of ResourceFiles must be reduced in size. This can be achieved
+     using .zip files, Application Packages, or Docker Containers.
     :type resource_files: list[~azure.batch.models.ResourceFile]
-    :param output_files: A list of files that the Batch service will upload
-     from the Compute Node after running the command line. For multi-instance
-     Tasks, the files will only be uploaded from the Compute Node on which the
-     primary Task is executed.
+    :param output_files: For multi-instance Tasks, the files will only be
+     uploaded from the Compute Node on which the primary Task is executed.
     :type output_files: list[~azure.batch.models.OutputFile]
-    :param environment_settings: A list of environment variable settings for
-     the Job Manager Task.
+    :param environment_settings:
     :type environment_settings: list[~azure.batch.models.EnvironmentSetting]
     :param constraints: Constraints that apply to the Job Manager Task.
     :type constraints: ~azure.batch.models.TaskConstraints
     :param required_slots: The number of scheduling slots that the Task
      requires to run. The default is 1. A Task can only be scheduled to run on
      a compute node if the node has enough free scheduling slots available. For
-     multi-instance Tasks, this must be 1.
+     multi-instance Tasks, this property is not supported and must not be
+     specified.
     :type required_slots: int
     :param kill_job_on_completion: Whether completion of the Job Manager Task
      signifies completion of the entire Job. If true, when the Job Manager Task
@@ -4338,15 +4473,13 @@ class JobManagerTask(Model):
      limit, so this is only relevant if the Compute Node allows multiple
      concurrent Tasks. The default value is true.
     :type run_exclusive: bool
-    :param application_package_references: A list of Application Packages that
-     the Batch service will deploy to the Compute Node before running the
-     command line. Application Packages are downloaded and deployed to a shared
-     directory, not the Task working directory. Therefore, if a referenced
-     Application Package is already on the Compute Node, and is up to date,
-     then it is not re-downloaded; the existing copy on the Compute Node is
-     used. If a referenced Application Package cannot be installed, for example
-     because the package has been deleted or because download failed, the Task
-     fails.
+    :param application_package_references: Application Packages are downloaded
+     and deployed to a shared directory, not the Task working directory.
+     Therefore, if a referenced Application Package is already on the Compute
+     Node, and is up to date, then it is not re-downloaded; the existing copy
+     on the Compute Node is used. If a referenced Application Package cannot be
+     installed, for example because the package has been deleted or because
+     download failed, the Task fails.
     :type application_package_references:
      list[~azure.batch.models.ApplicationPackageReference]
     :param authentication_token_settings: The settings for an authentication
@@ -4361,7 +4494,7 @@ class JobManagerTask(Model):
     :type authentication_token_settings:
      ~azure.batch.models.AuthenticationTokenSettings
     :param allow_low_priority_node: Whether the Job Manager Task may run on a
-     low-priority Compute Node. The default value is true.
+     Spot/Low-priority Compute Node. The default value is true.
     :type allow_low_priority_node: bool
     """
 
@@ -4412,21 +4545,17 @@ class JobNetworkConfiguration(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param subnet_id: Required. The ARM resource identifier of the virtual
-     network subnet which Compute Nodes running Tasks from the Job will join
-     for the duration of the Task. This will only work with a
-     VirtualMachineConfiguration Pool. The virtual network must be in the same
-     region and subscription as the Azure Batch Account. The specified subnet
-     should have enough free IP addresses to accommodate the number of Compute
-     Nodes which will run Tasks from the Job. This can be up to the number of
-     Compute Nodes in the Pool. The 'MicrosoftAzureBatch' service principal
-     must have the 'Classic Virtual Machine Contributor' Role-Based Access
-     Control (RBAC) role for the specified VNet so that Azure Batch service can
-     schedule Tasks on the Nodes. This can be verified by checking if the
-     specified VNet has any associated Network Security Groups (NSG). If
-     communication to the Nodes in the specified subnet is denied by an NSG,
-     then the Batch service will set the state of the Compute Nodes to
-     unusable. This is of the form
+    :param subnet_id: Required. The virtual network must be in the same region
+     and subscription as the Azure Batch Account. The specified subnet should
+     have enough free IP addresses to accommodate the number of Compute Nodes
+     which will run Tasks from the Job. This can be up to the number of Compute
+     Nodes in the Pool. The 'MicrosoftAzureBatch' service principal must have
+     the 'Classic Virtual Machine Contributor' Role-Based Access Control (RBAC)
+     role for the specified VNet so that Azure Batch service can schedule Tasks
+     on the Nodes. This can be verified by checking if the specified VNet has
+     any associated Network Security Groups (NSG). If communication to the
+     Nodes in the specified subnet is denied by an NSG, then the Batch service
+     will set the state of the Compute Nodes to unusable. This is of the form
      /subscriptions/{subscription}/resourceGroups/{group}/providers/{provider}/virtualNetworks/{network}/subnets/{subnet}.
      If the specified VNet has any associated Network Security Groups (NSG),
      then a few reserved system ports must be enabled for inbound communication
@@ -4520,6 +4649,19 @@ class JobPatchParameter(Model):
      -1000 to 1000, with -1000 being the lowest priority and 1000 being the
      highest priority. If omitted, the priority of the Job is left unchanged.
     :type priority: int
+    :param max_parallel_tasks: The maximum number of tasks that can be
+     executed in parallel for the job. The value of maxParallelTasks must be -1
+     or greater than 0 if specified. If not specified, the default value is -1,
+     which means there's no limit to the number of tasks that can be run at
+     once. You can update a job's maxParallelTasks after it has been created
+     using the update job API.
+    :type max_parallel_tasks: int
+    :param allow_task_preemption: Whether Tasks in this job can be preempted
+     by other high priority jobs. If the value is set to True, other high
+     priority jobs submitted to the system will take precedence and will be
+     able requeue tasks from this job. You can update a job's
+     allowTaskPreemption after it has been created using the update job API.
+    :type allow_task_preemption: bool
     :param on_all_tasks_complete: The action the Batch service should take
      when all Tasks in the Job are in the completed state. If omitted, the
      completion behavior is left unchanged. You may not change the value from
@@ -4541,22 +4683,25 @@ class JobPatchParameter(Model):
      poolLifetimeOption of Job (other job properties can be updated as normal).
      If omitted, the Job continues to run on its current Pool.
     :type pool_info: ~azure.batch.models.PoolInformation
-    :param metadata: A list of name-value pairs associated with the Job as
-     metadata. If omitted, the existing Job metadata is left unchanged.
+    :param metadata: If omitted, the existing Job metadata is left unchanged.
     :type metadata: list[~azure.batch.models.MetadataItem]
     """
 
     _attribute_map = {
         'priority': {'key': 'priority', 'type': 'int'},
+        'max_parallel_tasks': {'key': 'maxParallelTasks', 'type': 'int'},
+        'allow_task_preemption': {'key': 'allowTaskPreemption', 'type': 'bool'},
         'on_all_tasks_complete': {'key': 'onAllTasksComplete', 'type': 'OnAllTasksComplete'},
         'constraints': {'key': 'constraints', 'type': 'JobConstraints'},
         'pool_info': {'key': 'poolInfo', 'type': 'PoolInformation'},
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
     }
 
-    def __init__(self, *, priority: int=None, on_all_tasks_complete=None, constraints=None, pool_info=None, metadata=None, **kwargs) -> None:
+    def __init__(self, *, priority: int=None, max_parallel_tasks: int=None, allow_task_preemption: bool=None, on_all_tasks_complete=None, constraints=None, pool_info=None, metadata=None, **kwargs) -> None:
         super(JobPatchParameter, self).__init__(**kwargs)
         self.priority = priority
+        self.max_parallel_tasks = max_parallel_tasks
+        self.allow_task_preemption = allow_task_preemption
         self.on_all_tasks_complete = on_all_tasks_complete
         self.constraints = constraints
         self.pool_info = pool_info
@@ -4566,12 +4711,11 @@ class JobPatchParameter(Model):
 class JobPreparationAndReleaseTaskExecutionInformation(Model):
     """The status of the Job Preparation and Job Release Tasks on a Compute Node.
 
-    :param pool_id: The ID of the Pool containing the Compute Node to which
-     this entry refers.
+    :param pool_id:
     :type pool_id: str
-    :param node_id: The ID of the Compute Node to which this entry refers.
+    :param node_id:
     :type node_id: str
-    :param node_url: The URL of the Compute Node to which this entry refers.
+    :param node_url:
     :type node_url: str
     :param job_preparation_task_execution_info: Information about the
      execution status of the Job Preparation Task on this Compute Node.
@@ -4634,24 +4778,23 @@ class JobPreparationTask(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: A string that uniquely identifies the Job Preparation Task
-     within the Job. The ID can contain any combination of alphanumeric
-     characters including hyphens and underscores and cannot contain more than
-     64 characters. If you do not specify this property, the Batch service
-     assigns a default value of 'jobpreparation'. No other Task in the Job can
-     have the same ID as the Job Preparation Task. If you try to submit a Task
-     with the same id, the Batch service rejects the request with error code
+    :param id: The ID can contain any combination of alphanumeric characters
+     including hyphens and underscores and cannot contain more than 64
+     characters. If you do not specify this property, the Batch service assigns
+     a default value of 'jobpreparation'. No other Task in the Job can have the
+     same ID as the Job Preparation Task. If you try to submit a Task with the
+     same id, the Batch service rejects the request with error code
      TaskIdSameAsJobPreparationTask; if you are calling the REST API directly,
      the HTTP status code is 409 (Conflict).
     :type id: str
-    :param command_line: Required. The command line of the Job Preparation
-     Task. The command line does not run under a shell, and therefore cannot
-     take advantage of shell features such as environment variable expansion.
-     If you want to take advantage of such features, you should invoke the
-     shell in the command line, for example using "cmd /c MyCommand" in Windows
-     or "/bin/sh -c MyCommand" in Linux. If the command line refers to file
-     paths, it should use a relative path (relative to the Task working
-     directory), or use the Batch provided environment variable
+    :param command_line: Required. The command line does not run under a
+     shell, and therefore cannot take advantage of shell features such as
+     environment variable expansion. If you want to take advantage of such
+     features, you should invoke the shell in the command line, for example
+     using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If
+     the command line refers to file paths, it should use a relative path
+     (relative to the Task working directory), or use the Batch provided
+     environment variable
      (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
     :type command_line: str
     :param container_settings: The settings for the container under which the
@@ -4663,17 +4806,14 @@ class JobPreparationTask(Model):
      of AZ_BATCH_NODE_ROOT_DIR might not be reflected to the host disk, meaning
      that Batch file APIs will not be able to access those files.
     :type container_settings: ~azure.batch.models.TaskContainerSettings
-    :param resource_files: A list of files that the Batch service will
-     download to the Compute Node before running the command line. Files listed
-     under this element are located in the Task's working directory.  There is
-     a maximum size for the list of resource files.  When the max size is
-     exceeded, the request will fail and the response error code will be
-     RequestEntityTooLarge. If this occurs, the collection of ResourceFiles
-     must be reduced in size. This can be achieved using .zip files,
-     Application Packages, or Docker Containers.
+    :param resource_files: Files listed under this element are located in the
+     Task's working directory.  There is a maximum size for the list of
+     resource files.  When the max size is exceeded, the request will fail and
+     the response error code will be RequestEntityTooLarge. If this occurs, the
+     collection of ResourceFiles must be reduced in size. This can be achieved
+     using .zip files, Application Packages, or Docker Containers.
     :type resource_files: list[~azure.batch.models.ResourceFile]
-    :param environment_settings: A list of environment variable settings for
-     the Job Preparation Task.
+    :param environment_settings:
     :type environment_settings: list[~azure.batch.models.EnvironmentSetting]
     :param constraints: Constraints that apply to the Job Preparation Task.
     :type constraints: ~azure.batch.models.TaskConstraints
@@ -4742,22 +4882,17 @@ class JobPreparationTaskExecutionInformation(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param start_time: Required. The time at which the Task started running.
-     If the Task has been restarted or retried, this is the most recent time at
-     which the Task started running.
+    :param start_time: Required. If the Task has been restarted or retried,
+     this is the most recent time at which the Task started running.
     :type start_time: datetime
-    :param end_time: The time at which the Job Preparation Task completed.
-     This property is set only if the Task is in the Completed state.
+    :param end_time: This property is set only if the Task is in the Completed
+     state.
     :type end_time: datetime
-    :param state: Required. The current state of the Job Preparation Task on
-     the Compute Node. Possible values include: 'running', 'completed'
+    :param state: Required. Possible values include: 'running', 'completed'
     :type state: str or ~azure.batch.models.JobPreparationTaskState
-    :param task_root_directory: The root directory of the Job Preparation Task
-     on the Compute Node. You can use this path to retrieve files created by
-     the Task, such as log files.
+    :param task_root_directory:
     :type task_root_directory: str
-    :param task_root_directory_url: The URL to the root directory of the Job
-     Preparation Task on the Compute Node.
+    :param task_root_directory_url:
     :type task_root_directory_url: str
     :param exit_code: The exit code of the program specified on the Task
      command line. This parameter is returned only if the Task is in the
@@ -4786,13 +4921,11 @@ class JobPreparationTaskExecutionInformation(Model):
      not be run) and file upload errors are not retried. The Batch service will
      retry the Task up to the limit specified by the constraints.
     :type retry_count: int
-    :param last_retry_time: The most recent time at which a retry of the Job
-     Preparation Task started running. This property is set only if the Task
-     was retried (i.e. retryCount is nonzero). If present, this is typically
-     the same as startTime, but may be different if the Task has been restarted
-     for reasons other than retry; for example, if the Compute Node was
-     rebooted during a retry, then the startTime is updated but the
-     lastRetryTime is not.
+    :param last_retry_time: This property is set only if the Task was retried
+     (i.e. retryCount is nonzero). If present, this is typically the same as
+     startTime, but may be different if the Task has been restarted for reasons
+     other than retry; for example, if the Compute Node was rebooted during a
+     retry, then the startTime is updated but the lastRetryTime is not.
     :type last_retry_time: datetime
     :param result: The result of the Task execution. If the value is 'failed',
      then the details of the failure can be found in the failureInfo property.
@@ -4858,8 +4991,7 @@ class JobReleaseTask(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: A string that uniquely identifies the Job Release Task within
-     the Job. The ID can contain any combination of alphanumeric characters
+    :param id: The ID can contain any combination of alphanumeric characters
      including hyphens and underscores and cannot contain more than 64
      characters. If you do not specify this property, the Batch service assigns
      a default value of 'jobrelease'. No other Task in the Job can have the
@@ -4868,14 +5000,14 @@ class JobReleaseTask(Model):
      TaskIdSameAsJobReleaseTask; if you are calling the REST API directly, the
      HTTP status code is 409 (Conflict).
     :type id: str
-    :param command_line: Required. The command line of the Job Release Task.
-     The command line does not run under a shell, and therefore cannot take
-     advantage of shell features such as environment variable expansion. If you
-     want to take advantage of such features, you should invoke the shell in
-     the command line, for example using "cmd /c MyCommand" in Windows or
-     "/bin/sh -c MyCommand" in Linux. If the command line refers to file paths,
-     it should use a relative path (relative to the Task working directory), or
-     use the Batch provided environment variable
+    :param command_line: Required. The command line does not run under a
+     shell, and therefore cannot take advantage of shell features such as
+     environment variable expansion. If you want to take advantage of such
+     features, you should invoke the shell in the command line, for example
+     using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If
+     the command line refers to file paths, it should use a relative path
+     (relative to the Task working directory), or use the Batch provided
+     environment variable
      (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
     :type command_line: str
     :param container_settings: The settings for the container under which the
@@ -4887,31 +5019,16 @@ class JobReleaseTask(Model):
      AZ_BATCH_NODE_ROOT_DIR might not be reflected to the host disk, meaning
      that Batch file APIs will not be able to access those files.
     :type container_settings: ~azure.batch.models.TaskContainerSettings
-    :param resource_files: A list of files that the Batch service will
-     download to the Compute Node before running the command line.  There is a
-     maximum size for the list of resource files.  When the max size is
-     exceeded, the request will fail and the response error code will be
-     RequestEntityTooLarge. If this occurs, the collection of ResourceFiles
-     must be reduced in size. This can be achieved using .zip files,
-     Application Packages, or Docker Containers. Files listed under this
-     element are located in the Task's working directory.
+    :param resource_files: Files listed under this element are located in the
+     Task's working directory.
     :type resource_files: list[~azure.batch.models.ResourceFile]
-    :param environment_settings: A list of environment variable settings for
-     the Job Release Task.
+    :param environment_settings:
     :type environment_settings: list[~azure.batch.models.EnvironmentSetting]
-    :param max_wall_clock_time: The maximum elapsed time that the Job Release
-     Task may run on a given Compute Node, measured from the time the Task
-     starts. If the Task does not complete within the time limit, the Batch
-     service terminates it. The default value is 15 minutes. You may not
-     specify a timeout longer than 15 minutes. If you do, the Batch service
-     rejects it with an error; if you are calling the REST API directly, the
-     HTTP status code is 400 (Bad Request).
+    :param max_wall_clock_time:
     :type max_wall_clock_time: timedelta
-    :param retention_time: The minimum time to retain the Task directory for
-     the Job Release Task on the Compute Node. After this time, the Batch
-     service may delete the Task directory and all its contents. The default is
-     7 days, i.e. the Task directory will be retained for 7 days unless the
-     Compute Node is removed or the Job is deleted.
+    :param retention_time: The default is 7 days, i.e. the Task directory will
+     be retained for 7 days unless the Compute Node is removed or the Job is
+     deleted.
     :type retention_time: timedelta
     :param user_identity: The user identity under which the Job Release Task
      runs. If omitted, the Task runs as a non-administrative user unique to the
@@ -4952,22 +5069,17 @@ class JobReleaseTaskExecutionInformation(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param start_time: Required. The time at which the Task started running.
-     If the Task has been restarted or retried, this is the most recent time at
-     which the Task started running.
+    :param start_time: Required. If the Task has been restarted or retried,
+     this is the most recent time at which the Task started running.
     :type start_time: datetime
-    :param end_time: The time at which the Job Release Task completed. This
-     property is set only if the Task is in the Completed state.
+    :param end_time: This property is set only if the Task is in the Completed
+     state.
     :type end_time: datetime
-    :param state: Required. The current state of the Job Release Task on the
-     Compute Node. Possible values include: 'running', 'completed'
+    :param state: Required. Possible values include: 'running', 'completed'
     :type state: str or ~azure.batch.models.JobReleaseTaskState
-    :param task_root_directory: The root directory of the Job Release Task on
-     the Compute Node. You can use this path to retrieve files created by the
-     Task, such as log files.
+    :param task_root_directory:
     :type task_root_directory: str
-    :param task_root_directory_url: The URL to the root directory of the Job
-     Release Task on the Compute Node.
+    :param task_root_directory_url:
     :type task_root_directory_url: str
     :param exit_code: The exit code of the program specified on the Task
      command line. This parameter is returned only if the Task is in the
@@ -5063,25 +5175,23 @@ class JobScheduleAddParameter(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. A string that uniquely identifies the schedule within
-     the Account. The ID can contain any combination of alphanumeric characters
-     including hyphens and underscores, and cannot contain more than 64
-     characters. The ID is case-preserving and case-insensitive (that is, you
-     may not have two IDs within an Account that differ only by case).
+    :param id: Required. The ID can contain any combination of alphanumeric
+     characters including hyphens and underscores, and cannot contain more than
+     64 characters. The ID is case-preserving and case-insensitive (that is,
+     you may not have two IDs within an Account that differ only by case).
     :type id: str
-    :param display_name: The display name for the schedule. The display name
-     need not be unique and can contain any Unicode characters up to a maximum
-     length of 1024.
+    :param display_name: The display name need not be unique and can contain
+     any Unicode characters up to a maximum length of 1024.
     :type display_name: str
     :param schedule: Required. The schedule according to which Jobs will be
-     created.
+     created. All times are fixed respective to UTC and are not impacted by
+     daylight saving time.
     :type schedule: ~azure.batch.models.Schedule
     :param job_specification: Required. The details of the Jobs to be created
      on this schedule.
     :type job_specification: ~azure.batch.models.JobSpecification
-    :param metadata: A list of name-value pairs associated with the schedule
-     as metadata. The Batch service does not assign any meaning to metadata; it
-     is solely for the use of user code.
+    :param metadata: The Batch service does not assign any meaning to
+     metadata; it is solely for the use of user code.
     :type metadata: list[~azure.batch.models.MetadataItem]
     """
 
@@ -5295,18 +5405,17 @@ class JobScheduleExecutionInformation(Model):
     """Contains information about Jobs that have been and will be run under a Job
     Schedule.
 
-    :param next_run_time: The next time at which a Job will be created under
-     this schedule. This property is meaningful only if the schedule is in the
-     active state when the time comes around. For example, if the schedule is
-     disabled, no Job will be created at nextRunTime unless the Job is enabled
-     before then.
+    :param next_run_time: This property is meaningful only if the schedule is
+     in the active state when the time comes around. For example, if the
+     schedule is disabled, no Job will be created at nextRunTime unless the Job
+     is enabled before then.
     :type next_run_time: datetime
     :param recent_job: Information about the most recent Job under the Job
      Schedule. This property is present only if the at least one Job has run
      under the schedule.
     :type recent_job: ~azure.batch.models.RecentJob
-    :param end_time: The time at which the schedule ended. This property is
-     set only if the Job Schedule is in the completed state.
+    :param end_time: This property is set only if the Job Schedule is in the
+     completed state.
     :type end_time: datetime
     """
 
@@ -5570,17 +5679,18 @@ class JobSchedulePatchOptions(Model):
 class JobSchedulePatchParameter(Model):
     """The set of changes to be made to a Job Schedule.
 
-    :param schedule: The schedule according to which Jobs will be created. If
-     you do not specify this element, the existing schedule is left unchanged.
+    :param schedule: The schedule according to which Jobs will be created. All
+     times are fixed respective to UTC and are not impacted by daylight saving
+     time. If you do not specify this element, the existing schedule is left
+     unchanged.
     :type schedule: ~azure.batch.models.Schedule
     :param job_specification: The details of the Jobs to be created on this
      schedule. Updates affect only Jobs that are started after the update has
      taken place. Any currently active Job continues with the older
      specification.
     :type job_specification: ~azure.batch.models.JobSpecification
-    :param metadata: A list of name-value pairs associated with the Job
-     Schedule as metadata. If you do not specify this element, existing
-     metadata is left unchanged.
+    :param metadata: If you do not specify this element, existing metadata is
+     left unchanged.
     :type metadata: list[~azure.batch.models.MetadataItem]
     """
 
@@ -5602,29 +5712,21 @@ class JobScheduleStatistics(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param url: Required. The URL of the statistics.
+    :param url: Required.
     :type url: str
-    :param start_time: Required. The start time of the time range covered by
-     the statistics.
+    :param start_time: Required.
     :type start_time: datetime
-    :param last_update_time: Required. The time at which the statistics were
-     last updated. All statistics are limited to the range between startTime
-     and lastUpdateTime.
+    :param last_update_time: Required.
     :type last_update_time: datetime
-    :param user_cpu_time: Required. The total user mode CPU time (summed
-     across all cores and all Compute Nodes) consumed by all Tasks in all Jobs
-     created under the schedule.
+    :param user_cpu_time: Required.
     :type user_cpu_time: timedelta
-    :param kernel_cpu_time: Required. The total kernel mode CPU time (summed
-     across all cores and all Compute Nodes) consumed by all Tasks in all Jobs
-     created under the schedule.
+    :param kernel_cpu_time: Required.
     :type kernel_cpu_time: timedelta
-    :param wall_clock_time: Required. The total wall clock time of all the
-     Tasks in all the Jobs created under the schedule. The wall clock time is
-     the elapsed time from when the Task started running on a Compute Node to
-     when it finished (or to the last time the statistics were updated, if the
-     Task had not finished by then). If a Task was retried, this includes the
-     wall clock time of all the Task retries.
+    :param wall_clock_time: Required. The wall clock time is the elapsed time
+     from when the Task started running on a Compute Node to when it finished
+     (or to the last time the statistics were updated, if the Task had not
+     finished by then). If a Task was retried, this includes the wall clock
+     time of all the Task retries.
     :type wall_clock_time: timedelta
     :param read_iops: Required. The total number of disk read operations made
      by all Tasks in all Jobs created under the schedule.
@@ -5650,12 +5752,8 @@ class JobScheduleStatistics(Model):
     :param num_task_retries: Required. The total number of retries during the
      given time range on all Tasks in all Jobs created under the schedule.
     :type num_task_retries: long
-    :param wait_time: Required. The total wait time of all Tasks in all Jobs
-     created under the schedule. The wait time for a Task is defined as the
-     elapsed time between the creation of the Task and the start of Task
-     execution. (If the Task is retried due to failures, the wait time is the
-     time to the most recent Task execution.). This value is only reported in
-     the Account lifetime statistics; it is not included in the Job statistics.
+    :param wait_time: Required. This value is only reported in the Account
+     lifetime statistics; it is not included in the Job statistics.
     :type wait_time: timedelta
     """
 
@@ -5839,18 +5937,18 @@ class JobScheduleUpdateParameter(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param schedule: Required. The schedule according to which Jobs will be
-     created. If you do not specify this element, it is equivalent to passing
-     the default schedule: that is, a single Job scheduled to run immediately.
+     created. All times are fixed respective to UTC and are not impacted by
+     daylight saving time. If you do not specify this element, it is equivalent
+     to passing the default schedule: that is, a single Job scheduled to run
+     immediately.
     :type schedule: ~azure.batch.models.Schedule
     :param job_specification: Required. Details of the Jobs to be created on
      this schedule. Updates affect only Jobs that are started after the update
      has taken place. Any currently active Job continues with the older
      specification.
     :type job_specification: ~azure.batch.models.JobSpecification
-    :param metadata: A list of name-value pairs associated with the Job
-     Schedule as metadata. If you do not specify this element, it takes the
-     default value of an empty list; in effect, any existing metadata is
-     deleted.
+    :param metadata: If you do not specify this element, it takes the default
+     value of an empty list; in effect, any existing metadata is deleted.
     :type metadata: list[~azure.batch.models.MetadataItem]
     """
 
@@ -5880,14 +5978,11 @@ class JobSchedulingError(Model):
     :param category: Required. The category of the Job scheduling error.
      Possible values include: 'userError', 'serverError'
     :type category: str or ~azure.batch.models.ErrorCategory
-    :param code: An identifier for the Job scheduling error. Codes are
-     invariant and are intended to be consumed programmatically.
+    :param code:
     :type code: str
-    :param message: A message describing the Job scheduling error, intended to
-     be suitable for display in a user interface.
+    :param message:
     :type message: str
-    :param details: A list of additional error details related to the
-     scheduling error.
+    :param details:
     :type details: list[~azure.batch.models.NameValuePair]
     """
 
@@ -5922,9 +6017,21 @@ class JobSpecification(Model):
      can update a Job's priority after it has been created using by using the
      update Job API.
     :type priority: int
-    :param display_name: The display name for Jobs created under this
-     schedule. The name need not be unique and can contain any Unicode
-     characters up to a maximum length of 1024.
+    :param allow_task_preemption: Whether Tasks in this job can be preempted
+     by other high priority jobs. If the value is set to True, other high
+     priority jobs submitted to the system will take precedence and will be
+     able requeue tasks from this job. You can update a job's
+     allowTaskPreemption after it has been created using the update job API.
+    :type allow_task_preemption: bool
+    :param max_parallel_tasks: The maximum number of tasks that can be
+     executed in parallel for the job. The value of maxParallelTasks must be -1
+     or greater than 0 if specified. If not specified, the default value is -1,
+     which means there's no limit to the number of tasks that can be run at
+     once. You can update a job's maxParallelTasks after it has been created
+     using the update job API. Default value: -1 .
+    :type max_parallel_tasks: int
+    :param display_name: The name need not be unique and can contain any
+     Unicode characters up to a maximum length of 1024.
     :type display_name: str
     :param uses_task_dependencies: Whether Tasks in the Job can define
      dependencies on each other. The default is false.
@@ -5973,20 +6080,16 @@ class JobSpecification(Model):
      Job Release Task on the Compute Nodes that have run the Job Preparation
      Task.
     :type job_release_task: ~azure.batch.models.JobReleaseTask
-    :param common_environment_settings: A list of common environment variable
-     settings. These environment variables are set for all Tasks in Jobs
-     created under this schedule (including the Job Manager, Job Preparation
-     and Job Release Tasks). Individual Tasks can override an environment
-     setting specified here by specifying the same setting name with a
-     different value.
+    :param common_environment_settings: Individual Tasks can override an
+     environment setting specified here by specifying the same setting name
+     with a different value.
     :type common_environment_settings:
      list[~azure.batch.models.EnvironmentSetting]
     :param pool_info: Required. The Pool on which the Batch service runs the
      Tasks of Jobs created under this schedule.
     :type pool_info: ~azure.batch.models.PoolInformation
-    :param metadata: A list of name-value pairs associated with each Job
-     created under this schedule as metadata. The Batch service does not assign
-     any meaning to metadata; it is solely for the use of user code.
+    :param metadata: The Batch service does not assign any meaning to
+     metadata; it is solely for the use of user code.
     :type metadata: list[~azure.batch.models.MetadataItem]
     """
 
@@ -5996,6 +6099,8 @@ class JobSpecification(Model):
 
     _attribute_map = {
         'priority': {'key': 'priority', 'type': 'int'},
+        'allow_task_preemption': {'key': 'allowTaskPreemption', 'type': 'bool'},
+        'max_parallel_tasks': {'key': 'maxParallelTasks', 'type': 'int'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'uses_task_dependencies': {'key': 'usesTaskDependencies', 'type': 'bool'},
         'on_all_tasks_complete': {'key': 'onAllTasksComplete', 'type': 'OnAllTasksComplete'},
@@ -6010,9 +6115,11 @@ class JobSpecification(Model):
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
     }
 
-    def __init__(self, *, pool_info, priority: int=None, display_name: str=None, uses_task_dependencies: bool=None, on_all_tasks_complete=None, on_task_failure=None, network_configuration=None, constraints=None, job_manager_task=None, job_preparation_task=None, job_release_task=None, common_environment_settings=None, metadata=None, **kwargs) -> None:
+    def __init__(self, *, pool_info, priority: int=None, allow_task_preemption: bool=None, max_parallel_tasks: int=-1, display_name: str=None, uses_task_dependencies: bool=None, on_all_tasks_complete=None, on_task_failure=None, network_configuration=None, constraints=None, job_manager_task=None, job_preparation_task=None, job_release_task=None, common_environment_settings=None, metadata=None, **kwargs) -> None:
         super(JobSpecification, self).__init__(**kwargs)
         self.priority = priority
+        self.allow_task_preemption = allow_task_preemption
+        self.max_parallel_tasks = max_parallel_tasks
         self.display_name = display_name
         self.uses_task_dependencies = uses_task_dependencies
         self.on_all_tasks_complete = on_all_tasks_complete
@@ -6032,27 +6139,21 @@ class JobStatistics(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param url: Required. The URL of the statistics.
+    :param url: Required.
     :type url: str
-    :param start_time: Required. The start time of the time range covered by
-     the statistics.
+    :param start_time: Required.
     :type start_time: datetime
-    :param last_update_time: Required. The time at which the statistics were
-     last updated. All statistics are limited to the range between startTime
-     and lastUpdateTime.
+    :param last_update_time: Required.
     :type last_update_time: datetime
-    :param user_cpu_time: Required. The total user mode CPU time (summed
-     across all cores and all Compute Nodes) consumed by all Tasks in the Job.
+    :param user_cpu_time: Required.
     :type user_cpu_time: timedelta
-    :param kernel_cpu_time: Required. The total kernel mode CPU time (summed
-     across all cores and all Compute Nodes) consumed by all Tasks in the Job.
+    :param kernel_cpu_time: Required.
     :type kernel_cpu_time: timedelta
-    :param wall_clock_time: Required. The total wall clock time of all Tasks
-     in the Job.  The wall clock time is the elapsed time from when the Task
-     started running on a Compute Node to when it finished (or to the last time
-     the statistics were updated, if the Task had not finished by then). If a
-     Task was retried, this includes the wall clock time of all the Task
-     retries.
+    :param wall_clock_time: Required.  The wall clock time is the elapsed time
+     from when the Task started running on a Compute Node to when it finished
+     (or to the last time the statistics were updated, if the Task had not
+     finished by then). If a Task was retried, this includes the wall clock
+     time of all the Task retries.
     :type wall_clock_time: timedelta
     :param read_iops: Required. The total number of disk read operations made
      by all Tasks in the Job.
@@ -6077,12 +6178,11 @@ class JobStatistics(Model):
     :param num_task_retries: Required. The total number of retries on all the
      Tasks in the Job during the given time range.
     :type num_task_retries: long
-    :param wait_time: Required. The total wait time of all Tasks in the Job.
-     The wait time for a Task is defined as the elapsed time between the
-     creation of the Task and the start of Task execution. (If the Task is
-     retried due to failures, the wait time is the time to the most recent Task
-     execution.) This value is only reported in the Account lifetime
-     statistics; it is not included in the Job statistics.
+    :param wait_time: Required. The wait time for a Task is defined as the
+     elapsed time between the creation of the Task and the start of Task
+     execution. (If the Task is retried due to failures, the wait time is the
+     time to the most recent Task execution.) This value is only reported in
+     the Account lifetime statistics; it is not included in the Job statistics.
     :type wait_time: timedelta
     """
 
@@ -6202,8 +6302,7 @@ class JobTerminateOptions(Model):
 class JobTerminateParameter(Model):
     """Options when terminating a Job.
 
-    :param terminate_reason: The text you want to appear as the Job's
-     TerminateReason. The default is 'UserTerminate'.
+    :param terminate_reason:
     :type terminate_reason: str
     """
 
@@ -6286,6 +6385,19 @@ class JobUpdateParameter(Model):
      -1000 to 1000, with -1000 being the lowest priority and 1000 being the
      highest priority. If omitted, it is set to the default value 0.
     :type priority: int
+    :param max_parallel_tasks: The maximum number of tasks that can be
+     executed in parallel for the job. The value of maxParallelTasks must be -1
+     or greater than 0 if specified. If not specified, the default value is -1,
+     which means there's no limit to the number of tasks that can be run at
+     once. You can update a job's maxParallelTasks after it has been created
+     using the update job API. Default value: -1 .
+    :type max_parallel_tasks: int
+    :param allow_task_preemption: Whether Tasks in this job can be preempted
+     by other high priority jobs. If the value is set to True, other high
+     priority jobs submitted to the system will take precedence and will be
+     able requeue tasks from this job. You can update a job's
+     allowTaskPreemption after it has been created using the update job API.
+    :type allow_task_preemption: bool
     :param constraints: The execution constraints for the Job. If omitted, the
      constraints are cleared.
     :type constraints: ~azure.batch.models.JobConstraints
@@ -6298,9 +6410,8 @@ class JobUpdateParameter(Model):
      autoPoolSpecification has a poolLifetimeOption of Job (other job
      properties can be updated as normal).
     :type pool_info: ~azure.batch.models.PoolInformation
-    :param metadata: A list of name-value pairs associated with the Job as
-     metadata. If omitted, it takes the default value of an empty list; in
-     effect, any existing metadata is deleted.
+    :param metadata: If omitted, it takes the default value of an empty list;
+     in effect, any existing metadata is deleted.
     :type metadata: list[~azure.batch.models.MetadataItem]
     :param on_all_tasks_complete: The action the Batch service should take
      when all Tasks in the Job are in the completed state. If omitted, the
@@ -6323,15 +6434,19 @@ class JobUpdateParameter(Model):
 
     _attribute_map = {
         'priority': {'key': 'priority', 'type': 'int'},
+        'max_parallel_tasks': {'key': 'maxParallelTasks', 'type': 'int'},
+        'allow_task_preemption': {'key': 'allowTaskPreemption', 'type': 'bool'},
         'constraints': {'key': 'constraints', 'type': 'JobConstraints'},
         'pool_info': {'key': 'poolInfo', 'type': 'PoolInformation'},
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
         'on_all_tasks_complete': {'key': 'onAllTasksComplete', 'type': 'OnAllTasksComplete'},
     }
 
-    def __init__(self, *, pool_info, priority: int=None, constraints=None, metadata=None, on_all_tasks_complete=None, **kwargs) -> None:
+    def __init__(self, *, pool_info, priority: int=None, max_parallel_tasks: int=-1, allow_task_preemption: bool=None, constraints=None, metadata=None, on_all_tasks_complete=None, **kwargs) -> None:
         super(JobUpdateParameter, self).__init__(**kwargs)
         self.priority = priority
+        self.max_parallel_tasks = max_parallel_tasks
+        self.allow_task_preemption = allow_task_preemption
         self.constraints = constraints
         self.pool_info = pool_info
         self.metadata = metadata
@@ -6349,11 +6464,10 @@ class LinuxUserConfiguration(Model):
      must be specified together or not at all. If not specified the underlying
      operating system picks the gid.
     :type gid: int
-    :param ssh_private_key: The SSH private key for the user Account. The
-     private key must not be password protected. The private key is used to
-     automatically configure asymmetric-key based authentication for SSH
-     between Compute Nodes in a Linux Pool when the Pool's
-     enableInterNodeCommunication property is true (it is ignored if
+    :param ssh_private_key: The private key must not be password protected.
+     The private key is used to automatically configure asymmetric-key based
+     authentication for SSH between Compute Nodes in a Linux Pool when the
+     Pool's enableInterNodeCommunication property is true (it is ignored if
      enableInterNodeCommunication is false). It does this by placing the key
      pair into the user's .ssh directory. If not specified, password-less SSH
      is not configured between Compute Nodes (no modification of the user's
@@ -6382,9 +6496,9 @@ class MetadataItem(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the metadata item.
+    :param name: Required.
     :type name: str
-    :param value: Required. The value of the metadata item.
+    :param value: Required.
     :type value: str
     """
 
@@ -6452,24 +6566,21 @@ class MultiInstanceSettings(Model):
     :param number_of_instances: The number of Compute Nodes required by the
      Task. If omitted, the default is 1.
     :type number_of_instances: int
-    :param coordination_command_line: Required. The command line to run on all
-     the Compute Nodes to enable them to coordinate when the primary runs the
-     main Task command. A typical coordination command line launches a
-     background service and verifies that the service is ready to process
-     inter-node messages.
+    :param coordination_command_line: Required. A typical coordination command
+     line launches a background service and verifies that the service is ready
+     to process inter-node messages.
     :type coordination_command_line: str
-    :param common_resource_files: A list of files that the Batch service will
-     download before running the coordination command line. The difference
-     between common resource files and Task resource files is that common
-     resource files are downloaded for all subtasks including the primary,
-     whereas Task resource files are downloaded only for the primary. Also note
-     that these resource files are not downloaded to the Task working
-     directory, but instead are downloaded to the Task root directory (one
-     directory above the working directory).  There is a maximum size for the
-     list of resource files.  When the max size is exceeded, the request will
-     fail and the response error code will be RequestEntityTooLarge. If this
-     occurs, the collection of ResourceFiles must be reduced in size. This can
-     be achieved using .zip files, Application Packages, or Docker Containers.
+    :param common_resource_files: The difference between common resource files
+     and Task resource files is that common resource files are downloaded for
+     all subtasks including the primary, whereas Task resource files are
+     downloaded only for the primary. Also note that these resource files are
+     not downloaded to the Task working directory, but instead are downloaded
+     to the Task root directory (one directory above the working directory).
+     There is a maximum size for the list of resource files.  When the max size
+     is exceeded, the request will fail and the response error code will be
+     RequestEntityTooLarge. If this occurs, the collection of ResourceFiles
+     must be reduced in size. This can be achieved using .zip files,
+     Application Packages, or Docker Containers.
     :type common_resource_files: list[~azure.batch.models.ResourceFile]
     """
 
@@ -6493,9 +6604,9 @@ class MultiInstanceSettings(Model):
 class NameValuePair(Model):
     """Represents a name-value pair.
 
-    :param name: The name in the name-value pair.
+    :param name:
     :type name: str
-    :param value: The value in the name-value pair.
+    :param value:
     :type value: str
     """
 
@@ -6513,35 +6624,33 @@ class NameValuePair(Model):
 class NetworkConfiguration(Model):
     """The network configuration for a Pool.
 
-    :param subnet_id: The ARM resource identifier of the virtual network
-     subnet which the Compute Nodes of the Pool will join. This is of the form
-     /subscriptions/{subscription}/resourceGroups/{group}/providers/{provider}/virtualNetworks/{network}/subnets/{subnet}.
-     The virtual network must be in the same region and subscription as the
-     Azure Batch Account. The specified subnet should have enough free IP
-     addresses to accommodate the number of Compute Nodes in the Pool. If the
-     subnet doesn't have enough free IP addresses, the Pool will partially
-     allocate Nodes and a resize error will occur. The 'MicrosoftAzureBatch'
-     service principal must have the 'Classic Virtual Machine Contributor'
-     Role-Based Access Control (RBAC) role for the specified VNet. The
-     specified subnet must allow communication from the Azure Batch service to
-     be able to schedule Tasks on the Nodes. This can be verified by checking
-     if the specified VNet has any associated Network Security Groups (NSG). If
-     communication to the Nodes in the specified subnet is denied by an NSG,
-     then the Batch service will set the state of the Compute Nodes to
-     unusable. For Pools created with virtualMachineConfiguration only ARM
-     virtual networks ('Microsoft.Network/virtualNetworks') are supported, but
-     for Pools created with cloudServiceConfiguration both ARM and classic
-     virtual networks are supported. If the specified VNet has any associated
-     Network Security Groups (NSG), then a few reserved system ports must be
-     enabled for inbound communication. For Pools created with a virtual
-     machine configuration, enable ports 29876 and 29877, as well as port 22
-     for Linux and port 3389 for Windows. For Pools created with a cloud
-     service configuration, enable ports 10100, 20100, and 30100. Also enable
-     outbound connections to Azure Storage on port 443. For more details see:
+    :param subnet_id: The virtual network must be in the same region and
+     subscription as the Azure Batch Account. The specified subnet should have
+     enough free IP addresses to accommodate the number of Compute Nodes in the
+     Pool. If the subnet doesn't have enough free IP addresses, the Pool will
+     partially allocate Nodes and a resize error will occur. The
+     'MicrosoftAzureBatch' service principal must have the 'Classic Virtual
+     Machine Contributor' Role-Based Access Control (RBAC) role for the
+     specified VNet. The specified subnet must allow communication from the
+     Azure Batch service to be able to schedule Tasks on the Nodes. This can be
+     verified by checking if the specified VNet has any associated Network
+     Security Groups (NSG). If communication to the Nodes in the specified
+     subnet is denied by an NSG, then the Batch service will set the state of
+     the Compute Nodes to unusable. For Pools created with
+     virtualMachineConfiguration only ARM virtual networks
+     ('Microsoft.Network/virtualNetworks') are supported, but for Pools created
+     with cloudServiceConfiguration both ARM and classic virtual networks are
+     supported. If the specified VNet has any associated Network Security
+     Groups (NSG), then a few reserved system ports must be enabled for inbound
+     communication. For Pools created with a virtual machine configuration,
+     enable ports 29876 and 29877, as well as port 22 for Linux and port 3389
+     for Windows. For Pools created with a cloud service configuration, enable
+     ports 10100, 20100, and 30100. Also enable outbound connections to Azure
+     Storage on port 443. For more details see:
      https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration
     :type subnet_id: str
-    :param dynamic_vnet_assignment_scope: The scope of dynamic vnet
-     assignment. Possible values include: 'none', 'job'
+    :param dynamic_vnet_assignment_scope: Possible values include: 'none',
+     'job'
     :type dynamic_vnet_assignment_scope: str or
      ~azure.batch.models.DynamicVNetAssignmentScope
     :param endpoint_configuration: The configuration for endpoints on Compute
@@ -6584,21 +6693,19 @@ class NetworkSecurityGroupRule(Model):
      priorities are 150 to 4096. If any reserved or duplicate values are
      provided the request fails with HTTP status code 400.
     :type priority: int
-    :param access: Required. The action that should be taken for a specified
-     IP address, subnet range or tag. Possible values include: 'allow', 'deny'
+    :param access: Required. Possible values include: 'allow', 'deny'
     :type access: str or ~azure.batch.models.NetworkSecurityGroupRuleAccess
-    :param source_address_prefix: Required. The source address prefix or tag
-     to match for the rule. Valid values are a single IP address (i.e.
-     10.10.10.10), IP subnet (i.e. 192.168.1.0/24), default tag, or * (for all
-     addresses).  If any other values are provided the request fails with HTTP
-     status code 400.
+    :param source_address_prefix: Required. Valid values are a single IP
+     address (i.e. 10.10.10.10), IP subnet (i.e. 192.168.1.0/24), default tag,
+     or * (for all addresses).  If any other values are provided the request
+     fails with HTTP status code 400.
     :type source_address_prefix: str
-    :param source_port_ranges: The source port ranges to match for the rule.
-     Valid values are '*' (for all ports 0 - 65535), a specific port (i.e. 22),
-     or a port range (i.e. 100-200). The ports must be in the range of 0 to
-     65535. Each entry in this collection must not overlap any other entry
-     (either a range or an individual port). If any other values are provided
-     the request fails with HTTP status code 400. The default value is '*'.
+    :param source_port_ranges: Valid values are '*' (for all ports 0 - 65535),
+     a specific port (i.e. 22), or a port range (i.e. 100-200). The ports must
+     be in the range of 0 to 65535. Each entry in this collection must not
+     overlap any other entry (either a range or an individual port). If any
+     other values are provided the request fails with HTTP status code 400. The
+     default value is '*'.
     :type source_port_ranges: list[str]
     """
 
@@ -6628,16 +6735,14 @@ class NFSMountConfiguration(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param source: Required. The URI of the file system to mount.
+    :param source: Required.
     :type source: str
-    :param relative_mount_path: Required. The relative path on the compute
-     node where the file system will be mounted. All file systems are mounted
+    :param relative_mount_path: Required. All file systems are mounted
      relative to the Batch mounts directory, accessible via the
      AZ_BATCH_NODE_MOUNTS_DIR environment variable.
     :type relative_mount_path: str
-    :param mount_options: Additional command line options to pass to the mount
-     command. These are 'net use' options in Windows and 'mount' options in
-     Linux.
+    :param mount_options: These are 'net use' options in Windows and 'mount'
+     options in Linux.
     :type mount_options: str
     """
 
@@ -6667,13 +6772,11 @@ class NodeAgentInformation(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: Required. The version of the Batch Compute Node agent
-     running on the Compute Node. This version number can be checked against
-     the Compute Node agent release notes located at
+    :param version: Required. This version number can be checked against the
+     Compute Node agent release notes located at
      https://github.com/Azure/Batch/blob/master/changelogs/nodeagent/CHANGELOG.md.
     :type version: str
-    :param last_update_time: Required. The time when the Compute Node agent
-     was updated on the Compute Node. This is the most recent time that the
+    :param last_update_time: Required. This is the most recent time that the
      Compute Node agent was updated to a new version.
     :type last_update_time: datetime
     """
@@ -6796,10 +6899,8 @@ class NodeCounts(Model):
 class NodeDisableSchedulingParameter(Model):
     """Options for disabling scheduling on a Compute Node.
 
-    :param node_disable_scheduling_option: What to do with currently running
-     Tasks when disabling Task scheduling on the Compute Node. The default
-     value is requeue. Possible values include: 'requeue', 'terminate',
-     'taskCompletion'
+    :param node_disable_scheduling_option: The default value is requeue.
+     Possible values include: 'requeue', 'terminate', 'taskCompletion'
     :type node_disable_scheduling_option: str or
      ~azure.batch.models.DisableComputeNodeSchedulingOption
     """
@@ -6816,9 +6917,9 @@ class NodeDisableSchedulingParameter(Model):
 class NodeFile(Model):
     """Information about a file or directory on a Compute Node.
 
-    :param name: The file path.
+    :param name:
     :type name: str
-    :param url: The URL of the file.
+    :param url:
     :type url: str
     :param is_directory: Whether the object represents a directory.
     :type is_directory: bool
@@ -6841,12 +6942,34 @@ class NodeFile(Model):
         self.properties = properties
 
 
+class NodePlacementConfiguration(Model):
+    """Node placement configuration for a pool.
+
+    For regional placement, nodes in the pool will be allocated in the same
+    region. For zonal placement, nodes in the pool will be spread across
+    different zones with best effort balancing.
+
+    :param policy: Node placement Policy type on Batch Pools. Allocation
+     policy used by Batch Service to provision the nodes. If not specified,
+     Batch will use the regional policy. Possible values include: 'regional',
+     'zonal'
+    :type policy: str or ~azure.batch.models.NodePlacementPolicyType
+    """
+
+    _attribute_map = {
+        'policy': {'key': 'policy', 'type': 'NodePlacementPolicyType'},
+    }
+
+    def __init__(self, *, policy=None, **kwargs) -> None:
+        super(NodePlacementConfiguration, self).__init__(**kwargs)
+        self.policy = policy
+
+
 class NodeRebootParameter(Model):
     """Options for rebooting a Compute Node.
 
-    :param node_reboot_option: When to reboot the Compute Node and what to do
-     with currently running Tasks. The default value is requeue. Possible
-     values include: 'requeue', 'terminate', 'taskCompletion', 'retainedData'
+    :param node_reboot_option: The default value is requeue. Possible values
+     include: 'requeue', 'terminate', 'taskCompletion', 'retainedData'
     :type node_reboot_option: str or
      ~azure.batch.models.ComputeNodeRebootOption
     """
@@ -6863,9 +6986,8 @@ class NodeRebootParameter(Model):
 class NodeReimageParameter(Model):
     """Options for reimaging a Compute Node.
 
-    :param node_reimage_option: When to reimage the Compute Node and what to
-     do with currently running Tasks. The default value is requeue. Possible
-     values include: 'requeue', 'terminate', 'taskCompletion', 'retainedData'
+    :param node_reimage_option: The default value is requeue. Possible values
+     include: 'requeue', 'terminate', 'taskCompletion', 'retainedData'
     :type node_reimage_option: str or
      ~azure.batch.models.ComputeNodeReimageOption
     """
@@ -6884,14 +7006,13 @@ class NodeRemoveParameter(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param node_list: Required. A list containing the IDs of the Compute Nodes
-     to be removed from the specified Pool.
+    :param node_list: Required. A maximum of 100 nodes may be removed per
+     request.
     :type node_list: list[str]
-    :param resize_timeout: The timeout for removal of Compute Nodes to the
-     Pool. The default value is 15 minutes. The minimum value is 5 minutes. If
-     you specify a value less than 5 minutes, the Batch service returns an
-     error; if you are calling the REST API directly, the HTTP status code is
-     400 (Bad Request).
+    :param resize_timeout: The default value is 15 minutes. The minimum value
+     is 5 minutes. If you specify a value less than 5 minutes, the Batch
+     service returns an error; if you are calling the REST API directly, the
+     HTTP status code is 400 (Bad Request).
     :type resize_timeout: timedelta
     :param node_deallocation_option: Determines what to do with a Compute Node
      and its running task(s) after it has been selected for deallocation. The
@@ -6902,7 +7023,7 @@ class NodeRemoveParameter(Model):
     """
 
     _validation = {
-        'node_list': {'required': True, 'max_items': 100},
+        'node_list': {'required': True},
     }
 
     _attribute_map = {
@@ -6921,24 +7042,21 @@ class NodeRemoveParameter(Model):
 class NodeUpdateUserParameter(Model):
     """The set of changes to be made to a user Account on a Compute Node.
 
-    :param password: The password of the Account. The password is required for
-     Windows Compute Nodes (those created with 'cloudServiceConfiguration', or
-     created with 'virtualMachineConfiguration' using a Windows Image
-     reference). For Linux Compute Nodes, the password can optionally be
-     specified along with the sshPublicKey property. If omitted, any existing
-     password is removed.
+    :param password: The password is required for Windows Compute Nodes (those
+     created with 'cloudServiceConfiguration', or created with
+     'virtualMachineConfiguration' using a Windows Image reference). For Linux
+     Compute Nodes, the password can optionally be specified along with the
+     sshPublicKey property. If omitted, any existing password is removed.
     :type password: str
-    :param expiry_time: The time at which the Account should expire. If
-     omitted, the default is 1 day from the current time. For Linux Compute
-     Nodes, the expiryTime has a precision up to a day.
+    :param expiry_time: If omitted, the default is 1 day from the current
+     time. For Linux Compute Nodes, the expiryTime has a precision up to a day.
     :type expiry_time: datetime
-    :param ssh_public_key: The SSH public key that can be used for remote
-     login to the Compute Node. The public key should be compatible with
-     OpenSSH encoding and should be base 64 encoded. This property can be
-     specified only for Linux Compute Nodes. If this is specified for a Windows
-     Compute Node, then the Batch service rejects the request; if you are
-     calling the REST API directly, the HTTP status code is 400 (Bad Request).
-     If omitted, any existing SSH public key is removed.
+    :param ssh_public_key: The public key should be compatible with OpenSSH
+     encoding and should be base 64 encoded. This property can be specified
+     only for Linux Compute Nodes. If this is specified for a Windows Compute
+     Node, then the Batch service rejects the request; if you are calling the
+     REST API directly, the HTTP status code is 400 (Bad Request). If omitted,
+     any existing SSH public key is removed.
     :type ssh_public_key: str
     """
 
@@ -6955,6 +7073,47 @@ class NodeUpdateUserParameter(Model):
         self.ssh_public_key = ssh_public_key
 
 
+class NodeVMExtension(Model):
+    """The configuration for virtual machine extension instance view.
+
+    :param provisioning_state:
+    :type provisioning_state: str
+    :param vm_extension: The virtual machine extension.
+    :type vm_extension: ~azure.batch.models.VMExtension
+    :param instance_view: The vm extension instance view.
+    :type instance_view: ~azure.batch.models.VMExtensionInstanceView
+    """
+
+    _attribute_map = {
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'vm_extension': {'key': 'vmExtension', 'type': 'VMExtension'},
+        'instance_view': {'key': 'instanceView', 'type': 'VMExtensionInstanceView'},
+    }
+
+    def __init__(self, *, provisioning_state: str=None, vm_extension=None, instance_view=None, **kwargs) -> None:
+        super(NodeVMExtension, self).__init__(**kwargs)
+        self.provisioning_state = provisioning_state
+        self.vm_extension = vm_extension
+        self.instance_view = instance_view
+
+
+class OSDisk(Model):
+    """Settings for the operating system disk of the compute node (VM).
+
+    :param ephemeral_os_disk_settings: Specifies the ephemeral Disk Settings
+     for the operating system disk used by the compute node (VM).
+    :type ephemeral_os_disk_settings: ~azure.batch.models.DiffDiskSettings
+    """
+
+    _attribute_map = {
+        'ephemeral_os_disk_settings': {'key': 'ephemeralOSDiskSettings', 'type': 'DiffDiskSettings'},
+    }
+
+    def __init__(self, *, ephemeral_os_disk_settings=None, **kwargs) -> None:
+        super(OSDisk, self).__init__(**kwargs)
+        self.ephemeral_os_disk_settings = ephemeral_os_disk_settings
+
+
 class OutputFile(Model):
     """A specification for uploading files from an Azure Batch Compute Node to
     another location after the Batch service has finished executing the Task
@@ -6966,24 +7125,23 @@ class OutputFile(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param file_pattern: Required. A pattern indicating which file(s) to
-     upload. Both relative and absolute paths are supported. Relative paths are
-     relative to the Task working directory. The following wildcards are
-     supported: * matches 0 or more characters (for example pattern abc* would
-     match abc or abcdef), ** matches any directory, ? matches any single
-     character, [abc] matches one character in the brackets, and [a-c] matches
-     one character in the range. Brackets can include a negation to match any
-     character not specified (for example [!abc] matches any character but a,
-     b, or c). If a file name starts with "." it is ignored by default but may
-     be matched by specifying it explicitly (for example *.gif will not match
-     .a.gif, but .*.gif will). A simple example: **\\*.txt matches any file
-     that does not start in '.' and ends with .txt in the Task working
-     directory or any subdirectory. If the filename contains a wildcard
-     character it can be escaped using brackets (for example abc[*] would match
-     a file named abc*). Note that both \\ and / are treated as directory
-     separators on Windows, but only / is on Linux. Environment variables
-     (%var% on Windows or $var on Linux) are expanded prior to the pattern
-     being applied.
+    :param file_pattern: Required. Both relative and absolute paths are
+     supported. Relative paths are relative to the Task working directory. The
+     following wildcards are supported: * matches 0 or more characters (for
+     example pattern abc* would match abc or abcdef), ** matches any directory,
+     ? matches any single character, [abc] matches one character in the
+     brackets, and [a-c] matches one character in the range. Brackets can
+     include a negation to match any character not specified (for example
+     [!abc] matches any character but a, b, or c). If a file name starts with
+     "." it is ignored by default but may be matched by specifying it
+     explicitly (for example *.gif will not match .a.gif, but .*.gif will). A
+     simple example: **\\*.txt matches any file that does not start in '.' and
+     ends with .txt in the Task working directory or any subdirectory. If the
+     filename contains a wildcard character it can be escaped using brackets
+     (for example abc[*] would match a file named abc*). Note that both \\ and
+     / are treated as directory separators on Windows, but only / is on Linux.
+     Environment variables (%var% on Windows or $var on Linux) are expanded
+     prior to the pattern being applied.
     :type file_pattern: str
     :param destination: Required. The destination for the output file(s).
     :type destination: ~azure.batch.models.OutputFileDestination
@@ -7016,19 +7174,27 @@ class OutputFileBlobContainerDestination(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param path: The destination blob or virtual directory within the Azure
-     Storage container. If filePattern refers to a specific file (i.e. contains
-     no wildcards), then path is the name of the blob to which to upload that
+    :param path: If filePattern refers to a specific file (i.e. contains no
+     wildcards), then path is the name of the blob to which to upload that
      file. If filePattern contains one or more wildcards (and therefore may
      match multiple files), then path is the name of the blob virtual directory
      (which is prepended to each blob name) to which to upload the file(s). If
      omitted, file(s) are uploaded to the root of the container with a blob
      name matching their file name.
     :type path: str
-    :param container_url: Required. The URL of the container within Azure Blob
-     Storage to which to upload the file(s). The URL must include a Shared
-     Access Signature (SAS) granting write permissions to the container.
+    :param container_url: Required. If not using a managed identity, the URL
+     must include a Shared Access Signature (SAS) granting write permissions to
+     the container.
     :type container_url: str
+    :param identity_reference: The reference to the user assigned identity to
+     use to access Azure Blob Storage specified by containerUrl. The identity
+     must have write access to the Azure Blob Storage container
+    :type identity_reference: ~azure.batch.models.ComputeNodeIdentityReference
+    :param upload_headers: These headers will be specified when uploading
+     files to Azure Storage. For more information, see [Request Headers (All
+     Blob
+     Types)](https://docs.microsoft.com/rest/api/storageservices/put-blob#request-headers-all-blob-types).
+    :type upload_headers: list[~azure.batch.models.HttpHeader]
     """
 
     _validation = {
@@ -7038,12 +7204,16 @@ class OutputFileBlobContainerDestination(Model):
     _attribute_map = {
         'path': {'key': 'path', 'type': 'str'},
         'container_url': {'key': 'containerUrl', 'type': 'str'},
+        'identity_reference': {'key': 'identityReference', 'type': 'ComputeNodeIdentityReference'},
+        'upload_headers': {'key': 'uploadHeaders', 'type': '[HttpHeader]'},
     }
 
-    def __init__(self, *, container_url: str, path: str=None, **kwargs) -> None:
+    def __init__(self, *, container_url: str, path: str=None, identity_reference=None, upload_headers=None, **kwargs) -> None:
         super(OutputFileBlobContainerDestination, self).__init__(**kwargs)
         self.path = path
         self.container_url = container_url
+        self.identity_reference = identity_reference
+        self.upload_headers = upload_headers
 
 
 class OutputFileDestination(Model):
@@ -7129,20 +7299,17 @@ class PoolAddParameter(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. A string that uniquely identifies the Pool within the
-     Account. The ID can contain any combination of alphanumeric characters
-     including hyphens and underscores, and cannot contain more than 64
-     characters. The ID is case-preserving and case-insensitive (that is, you
-     may not have two Pool IDs within an Account that differ only by case).
+    :param id: Required. The ID can contain any combination of alphanumeric
+     characters including hyphens and underscores, and cannot contain more than
+     64 characters. The ID is case-preserving and case-insensitive (that is,
+     you may not have two Pool IDs within an Account that differ only by case).
     :type id: str
-    :param display_name: The display name for the Pool. The display name need
-     not be unique and can contain any Unicode characters up to a maximum
-     length of 1024.
+    :param display_name: The display name need not be unique and can contain
+     any Unicode characters up to a maximum length of 1024.
     :type display_name: str
-    :param vm_size: Required. The size of virtual machines in the Pool. All
-     virtual machines in a Pool are the same size. For information about
-     available sizes of virtual machines for Cloud Services Pools (pools
-     created with cloudServiceConfiguration), see Sizes for Cloud Services
+    :param vm_size: Required. For information about available sizes of virtual
+     machines for Cloud Services Pools (pools created with
+     cloudServiceConfiguration), see Sizes for Cloud Services
      (https://azure.microsoft.com/documentation/articles/cloud-services-sizes-specs/).
      Batch supports all Cloud Services VM sizes except ExtraSmall, A1V2 and
      A2V2. For information about available VM sizes for Pools using Images from
@@ -7166,44 +7333,41 @@ class PoolAddParameter(Model):
      exclusive and one of the properties must be specified.
     :type virtual_machine_configuration:
      ~azure.batch.models.VirtualMachineConfiguration
-    :param resize_timeout: The timeout for allocation of Compute Nodes to the
-     Pool. This timeout applies only to manual scaling; it has no effect when
-     enableAutoScale is set to true. The default value is 15 minutes. The
-     minimum value is 5 minutes. If you specify a value less than 5 minutes,
-     the Batch service returns an error; if you are calling the REST API
-     directly, the HTTP status code is 400 (Bad Request).
+    :param resize_timeout: This timeout applies only to manual scaling; it has
+     no effect when enableAutoScale is set to true. The default value is 15
+     minutes. The minimum value is 5 minutes. If you specify a value less than
+     5 minutes, the Batch service returns an error; if you are calling the REST
+     API directly, the HTTP status code is 400 (Bad Request).
     :type resize_timeout: timedelta
     :param target_dedicated_nodes: The desired number of dedicated Compute
      Nodes in the Pool. This property must not be specified if enableAutoScale
      is set to true. If enableAutoScale is set to false, then you must set
      either targetDedicatedNodes, targetLowPriorityNodes, or both.
     :type target_dedicated_nodes: int
-    :param target_low_priority_nodes: The desired number of low-priority
+    :param target_low_priority_nodes: The desired number of Spot/Low-priority
      Compute Nodes in the Pool. This property must not be specified if
      enableAutoScale is set to true. If enableAutoScale is set to false, then
      you must set either targetDedicatedNodes, targetLowPriorityNodes, or both.
     :type target_low_priority_nodes: int
     :param enable_auto_scale: Whether the Pool size should automatically
-     adjust over time. If false, at least one of targetDedicateNodes and
+     adjust over time. If false, at least one of targetDedicatedNodes and
      targetLowPriorityNodes must be specified. If true, the autoScaleFormula
      property is required and the Pool automatically resizes according to the
      formula. The default value is false.
     :type enable_auto_scale: bool
-    :param auto_scale_formula: A formula for the desired number of Compute
-     Nodes in the Pool. This property must not be specified if enableAutoScale
-     is set to false. It is required if enableAutoScale is set to true. The
-     formula is checked for validity before the Pool is created. If the formula
-     is not valid, the Batch service rejects the request with detailed error
-     information. For more information about specifying this formula, see
-     'Automatically scale Compute Nodes in an Azure Batch Pool'
+    :param auto_scale_formula: This property must not be specified if
+     enableAutoScale is set to false. It is required if enableAutoScale is set
+     to true. The formula is checked for validity before the Pool is created.
+     If the formula is not valid, the Batch service rejects the request with
+     detailed error information. For more information about specifying this
+     formula, see 'Automatically scale Compute Nodes in an Azure Batch Pool'
      (https://azure.microsoft.com/documentation/articles/batch-automatic-scaling/).
     :type auto_scale_formula: str
-    :param auto_scale_evaluation_interval: The time interval at which to
-     automatically adjust the Pool size according to the autoscale formula. The
-     default value is 15 minutes. The minimum and maximum value are 5 minutes
-     and 168 hours respectively. If you specify a value less than 5 minutes or
-     greater than 168 hours, the Batch service returns an error; if you are
-     calling the REST API directly, the HTTP status code is 400 (Bad Request).
+    :param auto_scale_evaluation_interval: The default value is 15 minutes.
+     The minimum and maximum value are 5 minutes and 168 hours respectively. If
+     you specify a value less than 5 minutes or greater than 168 hours, the
+     Batch service returns an error; if you are calling the REST API directly,
+     the HTTP status code is 400 (Bad Request).
     :type auto_scale_evaluation_interval: timedelta
     :param enable_inter_node_communication: Whether the Pool permits direct
      communication between Compute Nodes. Enabling inter-node communication
@@ -7217,8 +7381,7 @@ class PoolAddParameter(Model):
      joins the Pool. The Task runs when the Compute Node is added to the Pool
      or when the Compute Node is restarted.
     :type start_task: ~azure.batch.models.StartTask
-    :param certificate_references: The list of Certificates to be installed on
-     each Compute Node in the Pool. For Windows Nodes, the Batch service
+    :param certificate_references: For Windows Nodes, the Batch service
      installs the Certificates to the specified Certificate store and location.
      For Linux Compute Nodes, the Certificates are stored in a directory inside
      the Task working directory and an environment variable
@@ -7228,18 +7391,15 @@ class PoolAddParameter(Model):
      /home/{user-name}/certs) and Certificates are placed in that directory.
     :type certificate_references:
      list[~azure.batch.models.CertificateReference]
-    :param application_package_references: The list of Packages to be
-     installed on each Compute Node in the Pool. Changes to Package references
+    :param application_package_references: Changes to Package references
      affect all new Nodes joining the Pool, but do not affect Compute Nodes
      that are already in the Pool until they are rebooted or reimaged. There is
      a maximum of 10 Package references on any given Pool.
     :type application_package_references:
      list[~azure.batch.models.ApplicationPackageReference]
-    :param application_licenses: The list of application licenses the Batch
-     service will make available on each Compute Node in the Pool. The list of
-     application licenses must be a subset of available Batch service
-     application licenses. If a license is requested which is not supported,
-     Pool creation will fail.
+    :param application_licenses: The list of application licenses must be a
+     subset of available Batch service application licenses. If a license is
+     requested which is not supported, Pool creation will fail.
     :type application_licenses: list[str]
     :param task_slots_per_node: The number of task slots that can be used to
      run concurrent tasks on a single compute node in the pool. The default
@@ -7249,16 +7409,13 @@ class PoolAddParameter(Model):
     :param task_scheduling_policy: How Tasks are distributed across Compute
      Nodes in a Pool. If not specified, the default is spread.
     :type task_scheduling_policy: ~azure.batch.models.TaskSchedulingPolicy
-    :param user_accounts: The list of user Accounts to be created on each
-     Compute Node in the Pool.
+    :param user_accounts:
     :type user_accounts: list[~azure.batch.models.UserAccount]
-    :param metadata: A list of name-value pairs associated with the Pool as
-     metadata. The Batch service does not assign any meaning to metadata; it is
-     solely for the use of user code.
+    :param metadata: The Batch service does not assign any meaning to
+     metadata; it is solely for the use of user code.
     :type metadata: list[~azure.batch.models.MetadataItem]
-    :param mount_configuration: Mount storage using specified file system for
-     the entire lifetime of the pool. Mount the storage using Azure fileshare,
-     NFS, CIFS or Blobfuse based file system.
+    :param mount_configuration: Mount the storage using Azure fileshare, NFS,
+     CIFS or Blobfuse based file system.
     :type mount_configuration: list[~azure.batch.models.MountConfiguration]
     """
 
@@ -7477,24 +7634,22 @@ class PoolEnableAutoScaleOptions(Model):
 class PoolEnableAutoScaleParameter(Model):
     """Options for enabling automatic scaling on a Pool.
 
-    :param auto_scale_formula: The formula for the desired number of Compute
-     Nodes in the Pool. The formula is checked for validity before it is
-     applied to the Pool. If the formula is not valid, the Batch service
+    :param auto_scale_formula: The formula is checked for validity before it
+     is applied to the Pool. If the formula is not valid, the Batch service
      rejects the request with detailed error information. For more information
      about specifying this formula, see Automatically scale Compute Nodes in an
      Azure Batch Pool
      (https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling).
     :type auto_scale_formula: str
-    :param auto_scale_evaluation_interval: The time interval at which to
-     automatically adjust the Pool size according to the autoscale formula. The
-     default value is 15 minutes. The minimum and maximum value are 5 minutes
-     and 168 hours respectively. If you specify a value less than 5 minutes or
-     greater than 168 hours, the Batch service rejects the request with an
-     invalid property value error; if you are calling the REST API directly,
-     the HTTP status code is 400 (Bad Request). If you specify a new interval,
-     then the existing autoscale evaluation schedule will be stopped and a new
-     autoscale evaluation schedule will be started, with its starting time
-     being the time when this request was issued.
+    :param auto_scale_evaluation_interval: The default value is 15 minutes.
+     The minimum and maximum value are 5 minutes and 168 hours respectively. If
+     you specify a value less than 5 minutes or greater than 168 hours, the
+     Batch service rejects the request with an invalid property value error; if
+     you are calling the REST API directly, the HTTP status code is 400 (Bad
+     Request). If you specify a new interval, then the existing autoscale
+     evaluation schedule will be stopped and a new autoscale evaluation
+     schedule will be started, with its starting time being the time when this
+     request was issued.
     :type auto_scale_evaluation_interval: timedelta
     """
 
@@ -7514,12 +7669,10 @@ class PoolEndpointConfiguration(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param inbound_nat_pools: Required. A list of inbound NAT Pools that can
-     be used to address specific ports on an individual Compute Node
-     externally. The maximum number of inbound NAT Pools per Batch Pool is 5.
-     If the maximum number of inbound NAT Pools is exceeded the request fails
-     with HTTP status code 400. This cannot be specified if the
-     IPAddressProvisioningType is NoPublicIPAddresses.
+    :param inbound_nat_pools: Required. The maximum number of inbound NAT
+     Pools per Batch Pool is 5. If the maximum number of inbound NAT Pools is
+     exceeded the request fails with HTTP status code 400. This cannot be
+     specified if the IPAddressProvisioningType is NoPublicIPAddresses.
     :type inbound_nat_pools: list[~azure.batch.models.InboundNATPool]
     """
 
@@ -7575,12 +7728,11 @@ class PoolEvaluateAutoScaleParameter(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param auto_scale_formula: Required. The formula for the desired number of
-     Compute Nodes in the Pool. The formula is validated and its results
-     calculated, but it is not applied to the Pool. To apply the formula to the
-     Pool, 'Enable automatic scaling on a Pool'. For more information about
-     specifying this formula, see Automatically scale Compute Nodes in an Azure
-     Batch Pool
+    :param auto_scale_formula: Required. The formula is validated and its
+     results calculated, but it is not applied to the Pool. To apply the
+     formula to the Pool, 'Enable automatic scaling on a Pool'. For more
+     information about specifying this formula, see Automatically scale Compute
+     Nodes in an Azure Batch Pool
      (https://azure.microsoft.com/en-us/documentation/articles/batch-automatic-scaling).
     :type auto_scale_formula: str
     """
@@ -7765,14 +7917,12 @@ class PoolGetOptions(Model):
 class PoolInformation(Model):
     """Specifies how a Job should be assigned to a Pool.
 
-    :param pool_id: The ID of an existing Pool. All the Tasks of the Job will
-     run on the specified Pool. You must ensure that the Pool referenced by
-     this property exists. If the Pool does not exist at the time the Batch
-     service tries to schedule a Job, no Tasks for the Job will run until you
-     create a Pool with that id. Note that the Batch service will not reject
-     the Job request; it will simply not run Tasks until the Pool exists. You
-     must specify either the Pool ID or the auto Pool specification, but not
-     both.
+    :param pool_id: You must ensure that the Pool referenced by this property
+     exists. If the Pool does not exist at the time the Batch service tries to
+     schedule a Job, no Tasks for the Job will run until you create a Pool with
+     that id. Note that the Batch service will not reject the Job request; it
+     will simply not run Tasks until the Pool exists. You must specify either
+     the Pool ID or the auto Pool specification, but not both.
     :type pool_id: str
     :param auto_pool_specification: Characteristics for a temporary 'auto
      pool'. The Batch service will create this auto Pool when the Job is
@@ -7914,11 +8064,11 @@ class PoolNodeCounts(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param pool_id: Required. The ID of the Pool.
+    :param pool_id: Required.
     :type pool_id: str
     :param dedicated: The number of dedicated Compute Nodes in each state.
     :type dedicated: ~azure.batch.models.NodeCounts
-    :param low_priority: The number of low priority Compute Nodes in each
+    :param low_priority: The number of Spot/Low-priority Compute Nodes in each
      state.
     :type low_priority: ~azure.batch.models.NodeCounts
     """
@@ -8009,8 +8159,7 @@ class PoolPatchParameter(Model):
      Compute Node is restarted. If this element is present, it overwrites any
      existing StartTask. If omitted, any existing StartTask is left unchanged.
     :type start_task: ~azure.batch.models.StartTask
-    :param certificate_references: A list of Certificates to be installed on
-     each Compute Node in the Pool. If this element is present, it replaces any
+    :param certificate_references: If this element is present, it replaces any
      existing Certificate references configured on the Pool. If omitted, any
      existing Certificate references are left unchanged. For Windows Nodes, the
      Batch service installs the Certificates to the specified Certificate store
@@ -8022,20 +8171,18 @@ class PoolPatchParameter(Model):
      /home/{user-name}/certs) and Certificates are placed in that directory.
     :type certificate_references:
      list[~azure.batch.models.CertificateReference]
-    :param application_package_references: A list of Packages to be installed
-     on each Compute Node in the Pool. Changes to Package references affect all
-     new Nodes joining the Pool, but do not affect Compute Nodes that are
-     already in the Pool until they are rebooted or reimaged. If this element
-     is present, it replaces any existing Package references. If you specify an
-     empty collection, then all Package references are removed from the Pool.
-     If omitted, any existing Package references are left unchanged.
+    :param application_package_references: Changes to Package references
+     affect all new Nodes joining the Pool, but do not affect Compute Nodes
+     that are already in the Pool until they are rebooted or reimaged. If this
+     element is present, it replaces any existing Package references. If you
+     specify an empty collection, then all Package references are removed from
+     the Pool. If omitted, any existing Package references are left unchanged.
     :type application_package_references:
      list[~azure.batch.models.ApplicationPackageReference]
-    :param metadata: A list of name-value pairs associated with the Pool as
-     metadata. If this element is present, it replaces any existing metadata
-     configured on the Pool. If you specify an empty collection, any metadata
-     is removed from the Pool. If omitted, any existing metadata is left
-     unchanged.
+    :param metadata: If this element is present, it replaces any existing
+     metadata configured on the Pool. If you specify an empty collection, any
+     metadata is removed from the Pool. If omitted, any existing metadata is
+     left unchanged.
     :type metadata: list[~azure.batch.models.MetadataItem]
     """
 
@@ -8182,14 +8329,13 @@ class PoolResizeParameter(Model):
     :param target_dedicated_nodes: The desired number of dedicated Compute
      Nodes in the Pool.
     :type target_dedicated_nodes: int
-    :param target_low_priority_nodes: The desired number of low-priority
+    :param target_low_priority_nodes: The desired number of Spot/Low-priority
      Compute Nodes in the Pool.
     :type target_low_priority_nodes: int
-    :param resize_timeout: The timeout for allocation of Nodes to the Pool or
-     removal of Compute Nodes from the Pool. The default value is 15 minutes.
-     The minimum value is 5 minutes. If you specify a value less than 5
-     minutes, the Batch service returns an error; if you are calling the REST
-     API directly, the HTTP status code is 400 (Bad Request).
+    :param resize_timeout: The default value is 15 minutes. The minimum value
+     is 5 minutes. If you specify a value less than 5 minutes, the Batch
+     service returns an error; if you are calling the REST API directly, the
+     HTTP status code is 400 (Bad Request).
     :type resize_timeout: timedelta
     :param node_deallocation_option: Determines what to do with a Compute Node
      and its running task(s) if the Pool size is decreasing. The default value
@@ -8219,15 +8365,12 @@ class PoolSpecification(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param display_name: The display name for the Pool. The display name need
-     not be unique and can contain any Unicode characters up to a maximum
-     length of 1024.
+    :param display_name: The display name need not be unique and can contain
+     any Unicode characters up to a maximum length of 1024.
     :type display_name: str
-    :param vm_size: Required. The size of the virtual machines in the Pool.
-     All virtual machines in a Pool are the same size. For information about
-     available sizes of virtual machines in Pools, see Choose a VM size for
-     Compute Nodes in an Azure Batch Pool
-     (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes).
+    :param vm_size: Required. For information about available sizes of virtual
+     machines in Pools, see Choose a VM size for Compute Nodes in an Azure
+     Batch Pool (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes).
     :type vm_size: str
     :param cloud_service_configuration: The cloud service configuration for
      the Pool. This property must be specified if the Pool needs to be created
@@ -8255,43 +8398,40 @@ class PoolSpecification(Model):
     :param task_scheduling_policy: How Tasks are distributed across Compute
      Nodes in a Pool. If not specified, the default is spread.
     :type task_scheduling_policy: ~azure.batch.models.TaskSchedulingPolicy
-    :param resize_timeout: The timeout for allocation of Compute Nodes to the
-     Pool. This timeout applies only to manual scaling; it has no effect when
-     enableAutoScale is set to true. The default value is 15 minutes. The
-     minimum value is 5 minutes. If you specify a value less than 5 minutes,
-     the Batch service rejects the request with an error; if you are calling
-     the REST API directly, the HTTP status code is 400 (Bad Request).
+    :param resize_timeout: This timeout applies only to manual scaling; it has
+     no effect when enableAutoScale is set to true. The default value is 15
+     minutes. The minimum value is 5 minutes. If you specify a value less than
+     5 minutes, the Batch service rejects the request with an error; if you are
+     calling the REST API directly, the HTTP status code is 400 (Bad Request).
     :type resize_timeout: timedelta
     :param target_dedicated_nodes: The desired number of dedicated Compute
      Nodes in the Pool. This property must not be specified if enableAutoScale
      is set to true. If enableAutoScale is set to false, then you must set
      either targetDedicatedNodes, targetLowPriorityNodes, or both.
     :type target_dedicated_nodes: int
-    :param target_low_priority_nodes: The desired number of low-priority
+    :param target_low_priority_nodes: The desired number of Spot/Low-priority
      Compute Nodes in the Pool. This property must not be specified if
      enableAutoScale is set to true. If enableAutoScale is set to false, then
      you must set either targetDedicatedNodes, targetLowPriorityNodes, or both.
     :type target_low_priority_nodes: int
     :param enable_auto_scale: Whether the Pool size should automatically
-     adjust over time. If false, at least one of targetDedicateNodes and
+     adjust over time. If false, at least one of targetDedicatedNodes and
      targetLowPriorityNodes must be specified. If true, the autoScaleFormula
      element is required. The Pool automatically resizes according to the
      formula. The default value is false.
     :type enable_auto_scale: bool
-    :param auto_scale_formula: The formula for the desired number of Compute
-     Nodes in the Pool. This property must not be specified if enableAutoScale
-     is set to false. It is required if enableAutoScale is set to true. The
-     formula is checked for validity before the Pool is created. If the formula
-     is not valid, the Batch service rejects the request with detailed error
-     information.
+    :param auto_scale_formula: This property must not be specified if
+     enableAutoScale is set to false. It is required if enableAutoScale is set
+     to true. The formula is checked for validity before the Pool is created.
+     If the formula is not valid, the Batch service rejects the request with
+     detailed error information.
     :type auto_scale_formula: str
-    :param auto_scale_evaluation_interval: The time interval at which to
-     automatically adjust the Pool size according to the autoscale formula. The
-     default value is 15 minutes. The minimum and maximum value are 5 minutes
-     and 168 hours respectively. If you specify a value less than 5 minutes or
-     greater than 168 hours, the Batch service rejects the request with an
-     invalid property value error; if you are calling the REST API directly,
-     the HTTP status code is 400 (Bad Request).
+    :param auto_scale_evaluation_interval: The default value is 15 minutes.
+     The minimum and maximum value are 5 minutes and 168 hours respectively. If
+     you specify a value less than 5 minutes or greater than 168 hours, the
+     Batch service rejects the request with an invalid property value error; if
+     you are calling the REST API directly, the HTTP status code is 400 (Bad
+     Request).
     :type auto_scale_evaluation_interval: timedelta
     :param enable_inter_node_communication: Whether the Pool permits direct
      communication between Compute Nodes. Enabling inter-node communication
@@ -8305,8 +8445,7 @@ class PoolSpecification(Model):
      Pool. The Task runs when the Compute Node is added to the Pool or when the
      Compute Node is restarted.
     :type start_task: ~azure.batch.models.StartTask
-    :param certificate_references: A list of Certificates to be installed on
-     each Compute Node in the Pool. For Windows Nodes, the Batch service
+    :param certificate_references: For Windows Nodes, the Batch service
      installs the Certificates to the specified Certificate store and location.
      For Linux Compute Nodes, the Certificates are stored in a directory inside
      the Task working directory and an environment variable
@@ -8316,30 +8455,25 @@ class PoolSpecification(Model):
      /home/{user-name}/certs) and Certificates are placed in that directory.
     :type certificate_references:
      list[~azure.batch.models.CertificateReference]
-    :param application_package_references: The list of Packages to be
-     installed on each Compute Node in the Pool. Changes to Package references
+    :param application_package_references: Changes to Package references
      affect all new Nodes joining the Pool, but do not affect Compute Nodes
      that are already in the Pool until they are rebooted or reimaged. There is
      a maximum of 10 Package references on any given Pool.
     :type application_package_references:
      list[~azure.batch.models.ApplicationPackageReference]
-    :param application_licenses: The list of application licenses the Batch
-     service will make available on each Compute Node in the Pool. The list of
-     application licenses must be a subset of available Batch service
-     application licenses. If a license is requested which is not supported,
-     Pool creation will fail. The permitted licenses available on the Pool are
-     'maya', 'vray', '3dsmax', 'arnold'. An additional charge applies for each
-     application license added to the Pool.
+    :param application_licenses: The list of application licenses must be a
+     subset of available Batch service application licenses. If a license is
+     requested which is not supported, Pool creation will fail. The permitted
+     licenses available on the Pool are 'maya', 'vray', '3dsmax', 'arnold'. An
+     additional charge applies for each application license added to the Pool.
     :type application_licenses: list[str]
-    :param user_accounts: The list of user Accounts to be created on each
-     Compute Node in the Pool.
+    :param user_accounts:
     :type user_accounts: list[~azure.batch.models.UserAccount]
-    :param metadata: A list of name-value pairs associated with the Pool as
-     metadata. The Batch service does not assign any meaning to metadata; it is
-     solely for the use of user code.
+    :param metadata: The Batch service does not assign any meaning to
+     metadata; it is solely for the use of user code.
     :type metadata: list[~azure.batch.models.MetadataItem]
-    :param mount_configuration: A list of file systems to mount on each node
-     in the pool. This supports Azure Files, NFS, CIFS/SMB, and Blobfuse.
+    :param mount_configuration: This supports Azure Files, NFS, CIFS/SMB, and
+     Blobfuse.
     :type mount_configuration: list[~azure.batch.models.MountConfiguration]
     """
 
@@ -8402,14 +8536,11 @@ class PoolStatistics(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param url: Required. The URL for the statistics.
+    :param url: Required.
     :type url: str
-    :param start_time: Required. The start time of the time range covered by
-     the statistics.
+    :param start_time: Required.
     :type start_time: datetime
-    :param last_update_time: Required. The time at which the statistics were
-     last updated. All statistics are limited to the range between startTime
-     and lastUpdateTime.
+    :param last_update_time: Required.
     :type last_update_time: datetime
     :param usage_stats: Statistics related to Pool usage, such as the amount
      of core-time used.
@@ -8548,12 +8679,11 @@ class PoolUpdatePropertiesParameter(Model):
      existing StartTask. If omitted, any existing StartTask is removed from the
      Pool.
     :type start_task: ~azure.batch.models.StartTask
-    :param certificate_references: Required. A list of Certificates to be
-     installed on each Compute Node in the Pool. This list replaces any
-     existing Certificate references configured on the Pool. If you specify an
-     empty collection, any existing Certificate references are removed from the
-     Pool. For Windows Nodes, the Batch service installs the Certificates to
-     the specified Certificate store and location. For Linux Compute Nodes, the
+    :param certificate_references: Required. This list replaces any existing
+     Certificate references configured on the Pool. If you specify an empty
+     collection, any existing Certificate references are removed from the Pool.
+     For Windows Nodes, the Batch service installs the Certificates to the
+     specified Certificate store and location. For Linux Compute Nodes, the
      Certificates are stored in a directory inside the Task working directory
      and an environment variable AZ_BATCH_CERTIFICATES_DIR is supplied to the
      Task to query for this location. For Certificates with visibility of
@@ -8562,10 +8692,9 @@ class PoolUpdatePropertiesParameter(Model):
      directory.
     :type certificate_references:
      list[~azure.batch.models.CertificateReference]
-    :param application_package_references: Required. The list of Application
-     Packages to be installed on each Compute Node in the Pool. The list
-     replaces any existing Application Package references on the Pool. Changes
-     to Application Package references affect all new Compute Nodes joining the
+    :param application_package_references: Required. The list replaces any
+     existing Application Package references on the Pool. Changes to
+     Application Package references affect all new Compute Nodes joining the
      Pool, but do not affect Compute Nodes that are already in the Pool until
      they are rebooted or reimaged. There is a maximum of 10 Application
      Package references on any given Pool. If omitted, or if you specify an
@@ -8574,10 +8703,9 @@ class PoolUpdatePropertiesParameter(Model):
      Pool.
     :type application_package_references:
      list[~azure.batch.models.ApplicationPackageReference]
-    :param metadata: Required. A list of name-value pairs associated with the
-     Pool as metadata. This list replaces any existing metadata configured on
-     the Pool. If omitted, or if you specify an empty collection, any existing
-     metadata is removed from the Pool.
+    :param metadata: Required. This list replaces any existing metadata
+     configured on the Pool. If omitted, or if you specify an empty collection,
+     any existing metadata is removed from the Pool.
     :type metadata: list[~azure.batch.models.MetadataItem]
     """
 
@@ -8607,20 +8735,15 @@ class PoolUsageMetrics(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param pool_id: Required. The ID of the Pool whose metrics are aggregated
-     in this entry.
+    :param pool_id: Required.
     :type pool_id: str
-    :param start_time: Required. The start time of the aggregation interval
-     covered by this entry.
+    :param start_time: Required.
     :type start_time: datetime
-    :param end_time: Required. The end time of the aggregation interval
-     covered by this entry.
+    :param end_time: Required.
     :type end_time: datetime
-    :param vm_size: Required. The size of virtual machines in the Pool. All
-     VMs in a Pool are the same size. For information about available sizes of
-     virtual machines in Pools, see Choose a VM size for Compute Nodes in an
-     Azure Batch Pool
-     (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes).
+    :param vm_size: Required. For information about available sizes of virtual
+     machines in Pools, see Choose a VM size for Compute Nodes in an Azure
+     Batch Pool (https://docs.microsoft.com/azure/batch/batch-pool-vm-sizes).
     :type vm_size: str
     :param total_core_hours: Required. The total core hours used in the Pool
      during this aggregation interval.
@@ -8660,12 +8783,11 @@ class PublicIPAddressConfiguration(Model):
      Pool. The default value is BatchManaged. Possible values include:
      'batchManaged', 'userManaged', 'noPublicIPAddresses'
     :type provision: str or ~azure.batch.models.IPAddressProvisioningType
-    :param ip_address_ids: The list of public IPs which the Batch service will
-     use when provisioning Compute Nodes. The number of IPs specified here
-     limits the maximum size of the Pool - 100 dedicated nodes or 100
-     low-priority nodes can be allocated for each public IP. For example, a
-     pool needing 250 dedicated VMs would need at least 3 public IPs specified.
-     Each element of this collection is of the form:
+    :param ip_address_ids: The number of IPs specified here limits the maximum
+     size of the Pool - 100 dedicated nodes or 100 Spot/Low-priority nodes can
+     be allocated for each public IP. For example, a pool needing 250 dedicated
+     VMs would need at least 3 public IPs specified. Each element of this
+     collection is of the form:
      /subscriptions/{subscription}/resourceGroups/{group}/providers/Microsoft.Network/publicIPAddresses/{ip}.
     :type ip_address_ids: list[str]
     """
@@ -8684,9 +8806,9 @@ class PublicIPAddressConfiguration(Model):
 class RecentJob(Model):
     """Information about the most recent Job to run under the Job Schedule.
 
-    :param id: The ID of the Job.
+    :param id:
     :type id: str
-    :param url: The URL of the Job.
+    :param url:
     :type url: str
     """
 
@@ -8704,14 +8826,11 @@ class RecentJob(Model):
 class ResizeError(Model):
     """An error that occurred when resizing a Pool.
 
-    :param code: An identifier for the Pool resize error. Codes are invariant
-     and are intended to be consumed programmatically.
+    :param code:
     :type code: str
-    :param message: A message describing the Pool resize error, intended to be
-     suitable for display in a user interface.
+    :param message:
     :type message: str
-    :param values: A list of additional error details related to the Pool
-     resize error.
+    :param values:
     :type values: list[~azure.batch.models.NameValuePair]
     """
 
@@ -8731,56 +8850,51 @@ class ResizeError(Model):
 class ResourceFile(Model):
     """A single file or multiple files to be downloaded to a Compute Node.
 
-    :param auto_storage_container_name: The storage container name in the auto
-     storage Account. The autoStorageContainerName, storageContainerUrl and
-     httpUrl properties are mutually exclusive and one of them must be
-     specified.
+    :param auto_storage_container_name: The autoStorageContainerName,
+     storageContainerUrl and httpUrl properties are mutually exclusive and one
+     of them must be specified.
     :type auto_storage_container_name: str
-    :param storage_container_url: The URL of the blob container within Azure
-     Blob Storage. The autoStorageContainerName, storageContainerUrl and
-     httpUrl properties are mutually exclusive and one of them must be
-     specified. This URL must be readable and listable using anonymous access;
-     that is, the Batch service does not present any credentials when
-     downloading blobs from the container. There are two ways to get such a URL
-     for a container in Azure storage: include a Shared Access Signature (SAS)
-     granting read and list permissions on the container, or set the ACL for
-     the container to allow public access.
+    :param storage_container_url: The autoStorageContainerName,
+     storageContainerUrl and httpUrl properties are mutually exclusive and one
+     of them must be specified. This URL must be readable and listable from
+     compute nodes. There are three ways to get such a URL for a container in
+     Azure storage: include a Shared Access Signature (SAS) granting read and
+     list permissions on the container, use a managed identity with read and
+     list permissions, or set the ACL for the container to allow public access.
     :type storage_container_url: str
-    :param http_url: The URL of the file to download. The
-     autoStorageContainerName, storageContainerUrl and httpUrl properties are
-     mutually exclusive and one of them must be specified. If the URL points to
-     Azure Blob Storage, it must be readable using anonymous access; that is,
-     the Batch service does not present any credentials when downloading the
-     blob. There are two ways to get such a URL for a blob in Azure storage:
-     include a Shared Access Signature (SAS) granting read permissions on the
-     blob, or set the ACL for the blob or its container to allow public access.
+    :param http_url: The autoStorageContainerName, storageContainerUrl and
+     httpUrl properties are mutually exclusive and one of them must be
+     specified. If the URL points to Azure Blob Storage, it must be readable
+     from compute nodes. There are three ways to get such a URL for a blob in
+     Azure storage: include a Shared Access Signature (SAS) granting read
+     permissions on the blob, use a managed identity with read permission, or
+     set the ACL for the blob or its container to allow public access.
     :type http_url: str
-    :param blob_prefix: The blob prefix to use when downloading blobs from an
-     Azure Storage container. Only the blobs whose names begin with the
-     specified prefix will be downloaded. The property is valid only when
+    :param blob_prefix: The property is valid only when
      autoStorageContainerName or storageContainerUrl is used. This prefix can
      be a partial filename or a subdirectory. If a prefix is not specified, all
      the files in the container will be downloaded.
     :type blob_prefix: str
-    :param file_path: The location on the Compute Node to which to download
-     the file(s), relative to the Task's working directory. If the httpUrl
-     property is specified, the filePath is required and describes the path
-     which the file will be downloaded to, including the filename. Otherwise,
-     if the autoStorageContainerName or storageContainerUrl property is
-     specified, filePath is optional and is the directory to download the files
-     to. In the case where filePath is used as a directory, any directory
-     structure already associated with the input data will be retained in full
-     and appended to the specified filePath directory. The specified relative
-     path cannot break out of the Task's working directory (for example by
-     using '..').
+    :param file_path: If the httpUrl property is specified, the filePath is
+     required and describes the path which the file will be downloaded to,
+     including the filename. Otherwise, if the autoStorageContainerName or
+     storageContainerUrl property is specified, filePath is optional and is the
+     directory to download the files to. In the case where filePath is used as
+     a directory, any directory structure already associated with the input
+     data will be retained in full and appended to the specified filePath
+     directory. The specified relative path cannot break out of the Task's
+     working directory (for example by using '..').
     :type file_path: str
-    :param file_mode: The file permission mode attribute in octal format. This
-     property applies only to files being downloaded to Linux Compute Nodes. It
-     will be ignored if it is specified for a resourceFile which will be
-     downloaded to a Windows Compute Node. If this property is not specified
-     for a Linux Compute Node, then a default value of 0770 is applied to the
-     file.
+    :param file_mode: This property applies only to files being downloaded to
+     Linux Compute Nodes. It will be ignored if it is specified for a
+     resourceFile which will be downloaded to a Windows Compute Node. If this
+     property is not specified for a Linux Compute Node, then a default value
+     of 0770 is applied to the file.
     :type file_mode: str
+    :param identity_reference: The reference to the user assigned identity to
+     use to access Azure Blob Storage specified by storageContainerUrl or
+     httpUrl.
+    :type identity_reference: ~azure.batch.models.ComputeNodeIdentityReference
     """
 
     _attribute_map = {
@@ -8790,9 +8904,10 @@ class ResourceFile(Model):
         'blob_prefix': {'key': 'blobPrefix', 'type': 'str'},
         'file_path': {'key': 'filePath', 'type': 'str'},
         'file_mode': {'key': 'fileMode', 'type': 'str'},
+        'identity_reference': {'key': 'identityReference', 'type': 'ComputeNodeIdentityReference'},
     }
 
-    def __init__(self, *, auto_storage_container_name: str=None, storage_container_url: str=None, http_url: str=None, blob_prefix: str=None, file_path: str=None, file_mode: str=None, **kwargs) -> None:
+    def __init__(self, *, auto_storage_container_name: str=None, storage_container_url: str=None, http_url: str=None, blob_prefix: str=None, file_path: str=None, file_mode: str=None, identity_reference=None, **kwargs) -> None:
         super(ResourceFile, self).__init__(**kwargs)
         self.auto_storage_container_name = auto_storage_container_name
         self.storage_container_url = storage_container_url
@@ -8800,6 +8915,7 @@ class ResourceFile(Model):
         self.blob_prefix = blob_prefix
         self.file_path = file_path
         self.file_mode = file_mode
+        self.identity_reference = identity_reference
 
 
 class ResourceStatistics(Model):
@@ -8807,12 +8923,9 @@ class ResourceStatistics(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param start_time: Required. The start time of the time range covered by
-     the statistics.
+    :param start_time: Required.
     :type start_time: datetime
-    :param last_update_time: Required. The time at which the statistics were
-     last updated. All statistics are limited to the range between startTime
-     and lastUpdateTime.
+    :param last_update_time: Required.
     :type last_update_time: datetime
     :param avg_cpu_percentage: Required. The average CPU usage across all
      Compute Nodes in the Pool (percentage per node).
@@ -8899,49 +9012,42 @@ class ResourceStatistics(Model):
 
 
 class Schedule(Model):
-    """The schedule according to which Jobs will be created.
+    """The schedule according to which Jobs will be created. All times are fixed
+    respective to UTC and are not impacted by daylight saving time.
 
-    :param do_not_run_until: The earliest time at which any Job may be created
-     under this Job Schedule. If you do not specify a doNotRunUntil time, the
+    :param do_not_run_until: If you do not specify a doNotRunUntil time, the
      schedule becomes ready to create Jobs immediately.
     :type do_not_run_until: datetime
-    :param do_not_run_after: A time after which no Job will be created under
-     this Job Schedule. The schedule will move to the completed state as soon
-     as this deadline is past and there is no active Job under this Job
-     Schedule. If you do not specify a doNotRunAfter time, and you are creating
-     a recurring Job Schedule, the Job Schedule will remain active until you
-     explicitly terminate it.
+    :param do_not_run_after: If you do not specify a doNotRunAfter time, and
+     you are creating a recurring Job Schedule, the Job Schedule will remain
+     active until you explicitly terminate it.
     :type do_not_run_after: datetime
-    :param start_window: The time interval, starting from the time at which
-     the schedule indicates a Job should be created, within which a Job must be
-     created. If a Job is not created within the startWindow interval, then the
-     'opportunity' is lost; no Job will be created until the next recurrence of
-     the schedule. If the schedule is recurring, and the startWindow is longer
-     than the recurrence interval, then this is equivalent to an infinite
-     startWindow, because the Job that is 'due' in one recurrenceInterval is
-     not carried forward into the next recurrence interval. The default is
-     infinite. The minimum value is 1 minute. If you specify a lower value, the
-     Batch service rejects the schedule with an error; if you are calling the
-     REST API directly, the HTTP status code is 400 (Bad Request).
-    :type start_window: timedelta
-    :param recurrence_interval: The time interval between the start times of
-     two successive Jobs under the Job Schedule. A Job Schedule can have at
-     most one active Job under it at any given time. Because a Job Schedule can
-     have at most one active Job under it at any given time, if it is time to
-     create a new Job under a Job Schedule, but the previous Job is still
-     running, the Batch service will not create the new Job until the previous
-     Job finishes. If the previous Job does not finish within the startWindow
-     period of the new recurrenceInterval, then no new Job will be scheduled
-     for that interval. For recurring Jobs, you should normally specify a
-     jobManagerTask in the jobSpecification. If you do not use jobManagerTask,
-     you will need an external process to monitor when Jobs are created, add
-     Tasks to the Jobs and terminate the Jobs ready for the next recurrence.
-     The default is that the schedule does not recur: one Job is created,
-     within the startWindow after the doNotRunUntil time, and the schedule is
-     complete as soon as that Job finishes. The minimum value is 1 minute. If
-     you specify a lower value, the Batch service rejects the schedule with an
+    :param start_window: If a Job is not created within the startWindow
+     interval, then the 'opportunity' is lost; no Job will be created until the
+     next recurrence of the schedule. If the schedule is recurring, and the
+     startWindow is longer than the recurrence interval, then this is
+     equivalent to an infinite startWindow, because the Job that is 'due' in
+     one recurrenceInterval is not carried forward into the next recurrence
+     interval. The default is infinite. The minimum value is 1 minute. If you
+     specify a lower value, the Batch service rejects the schedule with an
      error; if you are calling the REST API directly, the HTTP status code is
      400 (Bad Request).
+    :type start_window: timedelta
+    :param recurrence_interval: Because a Job Schedule can have at most one
+     active Job under it at any given time, if it is time to create a new Job
+     under a Job Schedule, but the previous Job is still running, the Batch
+     service will not create the new Job until the previous Job finishes. If
+     the previous Job does not finish within the startWindow period of the new
+     recurrenceInterval, then no new Job will be scheduled for that interval.
+     For recurring Jobs, you should normally specify a jobManagerTask in the
+     jobSpecification. If you do not use jobManagerTask, you will need an
+     external process to monitor when Jobs are created, add Tasks to the Jobs
+     and terminate the Jobs ready for the next recurrence. The default is that
+     the schedule does not recur: one Job is created, within the startWindow
+     after the doNotRunUntil time, and the schedule is complete as soon as that
+     Job finishes. The minimum value is 1 minute. If you specify a lower value,
+     the Batch service rejects the schedule with an error; if you are calling
+     the REST API directly, the HTTP status code is 400 (Bad Request).
     :type recurrence_interval: timedelta
     """
 
@@ -8981,14 +9087,14 @@ class StartTask(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param command_line: Required. The command line of the StartTask. The
-     command line does not run under a shell, and therefore cannot take
-     advantage of shell features such as environment variable expansion. If you
-     want to take advantage of such features, you should invoke the shell in
-     the command line, for example using "cmd /c MyCommand" in Windows or
-     "/bin/sh -c MyCommand" in Linux. If the command line refers to file paths,
-     it should use a relative path (relative to the Task working directory), or
-     use the Batch provided environment variable
+    :param command_line: Required. The command line does not run under a
+     shell, and therefore cannot take advantage of shell features such as
+     environment variable expansion. If you want to take advantage of such
+     features, you should invoke the shell in the command line, for example
+     using "cmd /c MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If
+     the command line refers to file paths, it should use a relative path
+     (relative to the Task working directory), or use the Batch provided
+     environment variable
      (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
     :type command_line: str
     :param container_settings: The settings for the container under which the
@@ -9000,17 +9106,10 @@ class StartTask(Model):
      AZ_BATCH_NODE_ROOT_DIR might not be reflected to the host disk, meaning
      that Batch file APIs will not be able to access those files.
     :type container_settings: ~azure.batch.models.TaskContainerSettings
-    :param resource_files: A list of files that the Batch service will
-     download to the Compute Node before running the command line.  There is a
-     maximum size for the list of resource files. When the max size is
-     exceeded, the request will fail and the response error code will be
-     RequestEntityTooLarge. If this occurs, the collection of ResourceFiles
-     must be reduced in size. This can be achieved using .zip files,
-     Application Packages, or Docker Containers. Files listed under this
-     element are located in the Task's working directory.
+    :param resource_files: Files listed under this element are located in the
+     Task's working directory.
     :type resource_files: list[~azure.batch.models.ResourceFile]
-    :param environment_settings: A list of environment variable settings for
-     the StartTask.
+    :param environment_settings:
     :type environment_settings: list[~azure.batch.models.EnvironmentSetting]
     :param user_identity: The user identity under which the StartTask runs. If
      omitted, the Task runs as a non-administrative user unique to the Task.
@@ -9069,18 +9168,16 @@ class StartTaskInformation(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param state: Required. The state of the StartTask on the Compute Node.
-     Possible values include: 'running', 'completed'
+    :param state: Required. Possible values include: 'running', 'completed'
     :type state: str or ~azure.batch.models.StartTaskState
-    :param start_time: Required. The time at which the StartTask started
-     running. This value is reset every time the Task is restarted or retried
-     (that is, this is the most recent time at which the StartTask started
-     running).
+    :param start_time: Required. This value is reset every time the Task is
+     restarted or retried (that is, this is the most recent time at which the
+     StartTask started running).
     :type start_time: datetime
-    :param end_time: The time at which the StartTask stopped running. This is
-     the end time of the most recent run of the StartTask, if that run has
-     completed (even if that run failed and a retry is pending). This element
-     is not present if the StartTask is currently running.
+    :param end_time: This is the end time of the most recent run of the
+     StartTask, if that run has completed (even if that run failed and a retry
+     is pending). This element is not present if the StartTask is currently
+     running.
     :type end_time: datetime
     :param exit_code: The exit code of the program specified on the StartTask
      command line. This property is set only if the StartTask is in the
@@ -9107,12 +9204,12 @@ class StartTaskInformation(Model):
      file upload errors are not retried. The Batch service will retry the Task
      up to the limit specified by the constraints.
     :type retry_count: int
-    :param last_retry_time: The most recent time at which a retry of the Task
-     started running. This element is present only if the Task was retried
-     (i.e. retryCount is nonzero). If present, this is typically the same as
-     startTime, but may be different if the Task has been restarted for reasons
-     other than retry; for example, if the Compute Node was rebooted during a
-     retry, then the startTime is updated but the lastRetryTime is not.
+    :param last_retry_time: This element is present only if the Task was
+     retried (i.e. retryCount is nonzero). If present, this is typically the
+     same as startTime, but may be different if the Task has been restarted for
+     reasons other than retry; for example, if the Compute Node was rebooted
+     during a retry, then the startTime is updated but the lastRetryTime is
+     not.
     :type last_retry_time: datetime
     :param result: The result of the Task execution. If the value is 'failed',
      then the details of the failure can be found in the failureInfo property.
@@ -9159,12 +9256,10 @@ class SubtaskInformation(Model):
     :param node_info: Information about the Compute Node on which the subtask
      ran.
     :type node_info: ~azure.batch.models.ComputeNodeInformation
-    :param start_time: The time at which the subtask started running. If the
-     subtask has been restarted or retried, this is the most recent time at
-     which the subtask started running.
+    :param start_time:
     :type start_time: datetime
-    :param end_time: The time at which the subtask completed. This property is
-     set only if the subtask is in the Completed state.
+    :param end_time: This property is set only if the subtask is in the
+     Completed state.
     :type end_time: datetime
     :param exit_code: The exit code of the program specified on the subtask
      command line. This property is set only if the subtask is in the completed
@@ -9188,16 +9283,14 @@ class SubtaskInformation(Model):
     :param state: The current state of the subtask. Possible values include:
      'preparing', 'running', 'completed'
     :type state: str or ~azure.batch.models.SubtaskState
-    :param state_transition_time: The time at which the subtask entered its
-     current state.
+    :param state_transition_time:
     :type state_transition_time: datetime
     :param previous_state: The previous state of the subtask. This property is
      not set if the subtask is in its initial running state. Possible values
      include: 'preparing', 'running', 'completed'
     :type previous_state: str or ~azure.batch.models.SubtaskState
-    :param previous_state_transition_time: The time at which the subtask
-     entered its previous state. This property is not set if the subtask is in
-     its initial running state.
+    :param previous_state_transition_time: This property is not set if the
+     subtask is in its initial running state.
     :type previous_state_transition_time: datetime
     :param result: The result of the Task execution. If the value is 'failed',
      then the details of the failure can be found in the failureInfo property.
@@ -9275,16 +9368,16 @@ class TaskAddCollectionParameter(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. The collection of Tasks to add. The maximum count
-     of Tasks is 100. The total serialized size of this collection must be less
-     than 1MB. If it is greater than 1MB (for example if each Task has 100's of
-     resource files or environment variables), the request will fail with code
-     'RequestBodyTooLarge' and should be retried again with fewer Tasks.
+    :param value: Required. The total serialized size of this collection must
+     be less than 1MB. If it is greater than 1MB (for example if each Task has
+     100's of resource files or environment variables), the request will fail
+     with code 'RequestBodyTooLarge' and should be retried again with fewer
+     Tasks.
     :type value: list[~azure.batch.models.TaskAddParameter]
     """
 
     _validation = {
-        'value': {'required': True, 'max_items': 100},
+        'value': {'required': True},
     }
 
     _attribute_map = {
@@ -9299,7 +9392,7 @@ class TaskAddCollectionParameter(Model):
 class TaskAddCollectionResult(Model):
     """The result of adding a collection of Tasks to a Job.
 
-    :param value: The results of the add Task collection operation.
+    :param value:
     :type value: list[~azure.batch.models.TaskAddResult]
     """
 
@@ -9362,26 +9455,24 @@ class TaskAddParameter(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. A string that uniquely identifies the Task within the
-     Job. The ID can contain any combination of alphanumeric characters
-     including hyphens and underscores, and cannot contain more than 64
-     characters. The ID is case-preserving and case-insensitive (that is, you
-     may not have two IDs within a Job that differ only by case).
+    :param id: Required. The ID can contain any combination of alphanumeric
+     characters including hyphens and underscores, and cannot contain more than
+     64 characters. The ID is case-preserving and case-insensitive (that is,
+     you may not have two IDs within a Job that differ only by case).
     :type id: str
-    :param display_name: A display name for the Task. The display name need
-     not be unique and can contain any Unicode characters up to a maximum
-     length of 1024.
+    :param display_name: The display name need not be unique and can contain
+     any Unicode characters up to a maximum length of 1024.
     :type display_name: str
-    :param command_line: Required. The command line of the Task. For
-     multi-instance Tasks, the command line is executed as the primary Task,
-     after the primary Task and all subtasks have finished executing the
-     coordination command line. The command line does not run under a shell,
-     and therefore cannot take advantage of shell features such as environment
-     variable expansion. If you want to take advantage of such features, you
-     should invoke the shell in the command line, for example using "cmd /c
-     MyCommand" in Windows or "/bin/sh -c MyCommand" in Linux. If the command
-     line refers to file paths, it should use a relative path (relative to the
-     Task working directory), or use the Batch provided environment variable
+    :param command_line: Required. For multi-instance Tasks, the command line
+     is executed as the primary Task, after the primary Task and all subtasks
+     have finished executing the coordination command line. The command line
+     does not run under a shell, and therefore cannot take advantage of shell
+     features such as environment variable expansion. If you want to take
+     advantage of such features, you should invoke the shell in the command
+     line, for example using "cmd /c MyCommand" in Windows or "/bin/sh -c
+     MyCommand" in Linux. If the command line refers to file paths, it should
+     use a relative path (relative to the Task working directory), or use the
+     Batch provided environment variable
      (https://docs.microsoft.com/en-us/azure/batch/batch-compute-node-environment-variables).
     :type command_line: str
     :param container_settings: The settings for the container under which the
@@ -9399,23 +9490,18 @@ class TaskAddParameter(Model):
     :param exit_conditions: How the Batch service should respond when the Task
      completes.
     :type exit_conditions: ~azure.batch.models.ExitConditions
-    :param resource_files: A list of files that the Batch service will
-     download to the Compute Node before running the command line. For
-     multi-instance Tasks, the resource files will only be downloaded to the
-     Compute Node on which the primary Task is executed. There is a maximum
-     size for the list of resource files.  When the max size is exceeded, the
-     request will fail and the response error code will be
-     RequestEntityTooLarge. If this occurs, the collection of ResourceFiles
-     must be reduced in size. This can be achieved using .zip files,
-     Application Packages, or Docker Containers.
+    :param resource_files: For multi-instance Tasks, the resource files will
+     only be downloaded to the Compute Node on which the primary Task is
+     executed. There is a maximum size for the list of resource files.  When
+     the max size is exceeded, the request will fail and the response error
+     code will be RequestEntityTooLarge. If this occurs, the collection of
+     ResourceFiles must be reduced in size. This can be achieved using .zip
+     files, Application Packages, or Docker Containers.
     :type resource_files: list[~azure.batch.models.ResourceFile]
-    :param output_files: A list of files that the Batch service will upload
-     from the Compute Node after running the command line. For multi-instance
-     Tasks, the files will only be uploaded from the Compute Node on which the
-     primary Task is executed.
+    :param output_files: For multi-instance Tasks, the files will only be
+     uploaded from the Compute Node on which the primary Task is executed.
     :type output_files: list[~azure.batch.models.OutputFile]
-    :param environment_settings: A list of environment variable settings for
-     the Task.
+    :param environment_settings:
     :type environment_settings: list[~azure.batch.models.EnvironmentSetting]
     :param affinity_info: A locality hint that can be used by the Batch
      service to select a Compute Node on which to start the new Task.
@@ -9444,14 +9530,12 @@ class TaskAddParameter(Model):
      usesTaskDependencies set to true, and this element is present, the request
      fails with error code TaskDependenciesNotSpecifiedOnJob.
     :type depends_on: ~azure.batch.models.TaskDependencies
-    :param application_package_references: A list of Packages that the Batch
-     service will deploy to the Compute Node before running the command line.
-     Application packages are downloaded and deployed to a shared directory,
-     not the Task working directory. Therefore, if a referenced package is
-     already on the Node, and is up to date, then it is not re-downloaded; the
-     existing copy on the Compute Node is used. If a referenced Package cannot
-     be installed, for example because the package has been deleted or because
-     download failed, the Task fails.
+    :param application_package_references: Application packages are downloaded
+     and deployed to a shared directory, not the Task working directory.
+     Therefore, if a referenced package is already on the Node, and is up to
+     date, then it is not re-downloaded; the existing copy on the Compute Node
+     is used. If a referenced Package cannot be installed, for example because
+     the package has been deleted or because download failed, the Task fails.
     :type application_package_references:
      list[~azure.batch.models.ApplicationPackageReference]
     :param authentication_token_settings: The settings for an authentication
@@ -9516,20 +9600,19 @@ class TaskAddResult(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param status: Required. The status of the add Task request. Possible
-     values include: 'success', 'clientError', 'serverError'
+    :param status: Required. Possible values include: 'success',
+     'clientError', 'serverError'
     :type status: str or ~azure.batch.models.TaskAddStatus
-    :param task_id: Required. The ID of the Task for which this is the result.
+    :param task_id: Required.
     :type task_id: str
-    :param e_tag: The ETag of the Task, if the Task was successfully added.
-     You can use this to detect whether the Task has changed between requests.
-     In particular, you can be pass the ETag with an Update Task request to
-     specify that your changes should take effect only if nobody else has
-     modified the Job in the meantime.
+    :param e_tag: You can use this to detect whether the Task has changed
+     between requests. In particular, you can be pass the ETag with an Update
+     Task request to specify that your changes should take effect only if
+     nobody else has modified the Job in the meantime.
     :type e_tag: str
-    :param last_modified: The last modified time of the Task.
+    :param last_modified:
     :type last_modified: datetime
-    :param location: The URL of the Task, if the Task was successfully added.
+    :param location:
     :type location: str
     :param error: The error encountered while attempting to add the Task.
     :type error: ~azure.batch.models.BatchError
@@ -9562,16 +9645,12 @@ class TaskAddResult(Model):
 class TaskConstraints(Model):
     """Execution constraints to apply to a Task.
 
-    :param max_wall_clock_time: The maximum elapsed time that the Task may
-     run, measured from the time the Task starts. If the Task does not complete
-     within the time limit, the Batch service terminates it. If this is not
-     specified, there is no time limit on how long the Task may run.
+    :param max_wall_clock_time: If this is not specified, there is no time
+     limit on how long the Task may run.
     :type max_wall_clock_time: timedelta
-    :param retention_time: The minimum time to retain the Task directory on
-     the Compute Node where it ran, from the time it completes execution. After
-     this time, the Batch service may delete the Task directory and all its
-     contents. The default is 7 days, i.e. the Task directory will be retained
-     for 7 days unless the Compute Node is removed or the Job is deleted.
+    :param retention_time: The default is 7 days, i.e. the Task directory will
+     be retained for 7 days unless the Compute Node is removed or the Job is
+     deleted.
     :type retention_time: timedelta
     :param max_task_retry_count: The maximum number of times the Task may be
      retried. The Batch service retries a Task if its exit code is nonzero.
@@ -9601,15 +9680,15 @@ class TaskConstraints(Model):
 class TaskContainerExecutionInformation(Model):
     """Contains information about the container which a Task is executing.
 
-    :param container_id: The ID of the container.
+    :param container_id:
     :type container_id: str
-    :param state: The state of the container. This is the state of the
-     container according to the Docker service. It is equivalent to the status
-     field returned by "docker inspect".
+    :param state: This is the state of the container according to the Docker
+     service. It is equivalent to the status field returned by "docker
+     inspect".
     :type state: str
-    :param error: Detailed error information about the container. This is the
-     detailed error string from the Docker service, if available. It is
-     equivalent to the error field returned by "docker inspect".
+    :param error: This is the detailed error string from the Docker service,
+     if available. It is equivalent to the error field returned by "docker
+     inspect".
     :type error: str
     """
 
@@ -9631,21 +9710,19 @@ class TaskContainerSettings(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param container_run_options: Additional options to the container create
-     command. These additional options are supplied as arguments to the "docker
-     create" command, in addition to those controlled by the Batch Service.
+    :param container_run_options: These additional options are supplied as
+     arguments to the "docker create" command, in addition to those controlled
+     by the Batch Service.
     :type container_run_options: str
-    :param image_name: Required. The Image to use to create the container in
-     which the Task will run. This is the full Image reference, as would be
+    :param image_name: Required. This is the full Image reference, as would be
      specified to "docker pull". If no tag is provided as part of the Image
      name, the tag ":latest" is used as a default.
     :type image_name: str
     :param registry: The private registry which contains the container Image.
      This setting can be omitted if was already provided at Pool creation.
     :type registry: ~azure.batch.models.ContainerRegistry
-    :param working_directory: The location of the container Task working
-     directory. The default is 'taskWorkingDirectory'. Possible values include:
-     'taskWorkingDirectory', 'containerImageDefault'
+    :param working_directory: The default is 'taskWorkingDirectory'. Possible
+     values include: 'taskWorkingDirectory', 'containerImageDefault'
     :type working_directory: str or
      ~azure.batch.models.ContainerWorkingDirectory
     """
@@ -9808,17 +9885,13 @@ class TaskDependencies(Model):
     or within a dependency range must complete before the dependant Task will
     be scheduled.
 
-    :param task_ids: The list of Task IDs that this Task depends on. All Tasks
-     in this list must complete successfully before the dependent Task can be
-     scheduled. The taskIds collection is limited to 64000 characters total
-     (i.e. the combined length of all Task IDs). If the taskIds collection
-     exceeds the maximum length, the Add Task request fails with error code
-     TaskDependencyListTooLong. In this case consider using Task ID ranges
-     instead.
+    :param task_ids: The taskIds collection is limited to 64000 characters
+     total (i.e. the combined length of all Task IDs). If the taskIds
+     collection exceeds the maximum length, the Add Task request fails with
+     error code TaskDependencyListTooLong. In this case consider using Task ID
+     ranges instead.
     :type task_ids: list[str]
-    :param task_id_ranges: The list of Task ID ranges that this Task depends
-     on. All Tasks in all ranges must complete successfully before the
-     dependent Task can be scheduled.
+    :param task_id_ranges:
     :type task_id_ranges: list[~azure.batch.models.TaskIdRange]
     """
 
@@ -9838,16 +9911,15 @@ class TaskExecutionInformation(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param start_time: The time at which the Task started running. 'Running'
-     corresponds to the running state, so if the Task specifies resource files
-     or Packages, then the start time reflects the time at which the Task
-     started downloading or deploying these. If the Task has been restarted or
-     retried, this is the most recent time at which the Task started running.
-     This property is present only for Tasks that are in the running or
-     completed state.
+    :param start_time: 'Running' corresponds to the running state, so if the
+     Task specifies resource files or Packages, then the start time reflects
+     the time at which the Task started downloading or deploying these. If the
+     Task has been restarted or retried, this is the most recent time at which
+     the Task started running. This property is present only for Tasks that are
+     in the running or completed state.
     :type start_time: datetime
-    :param end_time: The time at which the Task completed. This property is
-     set only if the Task is in the Completed state.
+    :param end_time: This property is set only if the Task is in the Completed
+     state.
     :type end_time: datetime
     :param exit_code: The exit code of the program specified on the Task
      command line. This property is set only if the Task is in the completed
@@ -9874,12 +9946,12 @@ class TaskExecutionInformation(Model):
      file upload errors are not retried. The Batch service will retry the Task
      up to the limit specified by the constraints.
     :type retry_count: int
-    :param last_retry_time: The most recent time at which a retry of the Task
-     started running. This element is present only if the Task was retried
-     (i.e. retryCount is nonzero). If present, this is typically the same as
-     startTime, but may be different if the Task has been restarted for reasons
-     other than retry; for example, if the Compute Node was rebooted during a
-     retry, then the startTime is updated but the lastRetryTime is not.
+    :param last_retry_time: This element is present only if the Task was
+     retried (i.e. retryCount is nonzero). If present, this is typically the
+     same as startTime, but may be different if the Task has been restarted for
+     reasons other than retry; for example, if the Compute Node was rebooted
+     during a retry, then the startTime is updated but the lastRetryTime is
+     not.
     :type last_retry_time: datetime
     :param requeue_count: Required. The number of times the Task has been
      requeued by the Batch service as the result of a user request. When the
@@ -9888,9 +9960,8 @@ class TaskExecutionInformation(Model):
      the Compute Nodes be requeued for execution. This count tracks how many
      times the Task has been requeued for these reasons.
     :type requeue_count: int
-    :param last_requeue_time: The most recent time at which the Task has been
-     requeued by the Batch service as the result of a user request. This
-     property is set only if the requeueCount is nonzero.
+    :param last_requeue_time: This property is set only if the requeueCount is
+     nonzero.
     :type last_requeue_time: datetime
     :param result: The result of the Task execution. If the value is 'failed',
      then the details of the failure can be found in the failureInfo property.
@@ -9938,13 +10009,11 @@ class TaskFailureInformation(Model):
     :param category: Required. The category of the Task error. Possible values
      include: 'userError', 'serverError'
     :type category: str or ~azure.batch.models.ErrorCategory
-    :param code: An identifier for the Task error. Codes are invariant and are
-     intended to be consumed programmatically.
+    :param code:
     :type code: str
-    :param message: A message describing the Task error, intended to be
-     suitable for display in a user interface.
+    :param message:
     :type message: str
-    :param details: A list of additional details related to the error.
+    :param details:
     :type details: list[~azure.batch.models.NameValuePair]
     """
 
@@ -10073,11 +10142,11 @@ class TaskInformation(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param task_url: The URL of the Task.
+    :param task_url:
     :type task_url: str
-    :param job_id: The ID of the Job to which the Task belongs.
+    :param job_id:
     :type job_id: str
-    :param task_id: The ID of the Task.
+    :param task_id:
     :type task_id: str
     :param subtask_id: The ID of the subtask if the Task is a multi-instance
      Task.
@@ -10269,9 +10338,8 @@ class TaskSchedulingPolicy(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param node_fill_type: Required. How Tasks are distributed across Compute
-     Nodes in a Pool. If not specified, the default is spread. Possible values
-     include: 'spread', 'pack'
+    :param node_fill_type: Required. If not specified, the default is spread.
+     Possible values include: 'spread', 'pack'
     :type node_fill_type: str or ~azure.batch.models.ComputeNodeFillType
     """
 
@@ -10335,26 +10403,21 @@ class TaskStatistics(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param url: Required. The URL of the statistics.
+    :param url: Required.
     :type url: str
-    :param start_time: Required. The start time of the time range covered by
-     the statistics.
+    :param start_time: Required.
     :type start_time: datetime
-    :param last_update_time: Required. The time at which the statistics were
-     last updated. All statistics are limited to the range between startTime
-     and lastUpdateTime.
+    :param last_update_time: Required.
     :type last_update_time: datetime
-    :param user_cpu_time: Required. The total user mode CPU time (summed
-     across all cores and all Compute Nodes) consumed by the Task.
+    :param user_cpu_time: Required.
     :type user_cpu_time: timedelta
-    :param kernel_cpu_time: Required. The total kernel mode CPU time (summed
-     across all cores and all Compute Nodes) consumed by the Task.
+    :param kernel_cpu_time: Required.
     :type kernel_cpu_time: timedelta
-    :param wall_clock_time: Required. The total wall clock time of the Task.
-     The wall clock time is the elapsed time from when the Task started running
-     on a Compute Node to when it finished (or to the last time the statistics
-     were updated, if the Task had not finished by then). If the Task was
-     retried, this includes the wall clock time of all the Task retries.
+    :param wall_clock_time: Required. The wall clock time is the elapsed time
+     from when the Task started running on a Compute Node to when it finished
+     (or to the last time the statistics were updated, if the Task had not
+     finished by then). If the Task was retried, this includes the wall clock
+     time of all the Task retries.
     :type wall_clock_time: timedelta
     :param read_iops: Required. The total number of disk read operations made
      by the Task.
@@ -10368,10 +10431,7 @@ class TaskStatistics(Model):
     :param write_io_gi_b: Required. The total gibibytes written to disk by the
      Task.
     :type write_io_gi_b: float
-    :param wait_time: Required. The total wait time of the Task. The wait time
-     for a Task is defined as the elapsed time between the creation of the Task
-     and the start of Task execution. (If the Task is retried due to failures,
-     the wait time is the time to the most recent Task execution.).
+    :param wait_time: Required.
     :type wait_time: timedelta
     """
 
@@ -10563,28 +10623,28 @@ class UploadBatchServiceLogsConfiguration(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param container_url: Required. The URL of the container within Azure Blob
-     Storage to which to upload the Batch Service log file(s). The URL must
-     include a Shared Access Signature (SAS) granting write permissions to the
-     container. The SAS duration must allow enough time for the upload to
-     finish. The start time for SAS is optional and recommended to not be
-     specified.
+    :param container_url: Required. If a user assigned managed identity is not
+     being used, the URL must include a Shared Access Signature (SAS) granting
+     write permissions to the container. The SAS duration must allow enough
+     time for the upload to finish. The start time for SAS is optional and
+     recommended to not be specified.
     :type container_url: str
-    :param start_time: Required. The start of the time range from which to
-     upload Batch Service log file(s). Any log file containing a log message in
-     the time range will be uploaded. This means that the operation might
-     retrieve more logs than have been requested since the entire log file is
-     always uploaded, but the operation should not retrieve fewer logs than
-     have been requested.
-    :type start_time: datetime
-    :param end_time: The end of the time range from which to upload Batch
-     Service log file(s). Any log file containing a log message in the time
-     range will be uploaded. This means that the operation might retrieve more
-     logs than have been requested since the entire log file is always
+    :param start_time: Required. Any log file containing a log message in the
+     time range will be uploaded. This means that the operation might retrieve
+     more logs than have been requested since the entire log file is always
      uploaded, but the operation should not retrieve fewer logs than have been
-     requested. If omitted, the default is to upload all logs available after
-     the startTime.
+     requested.
+    :type start_time: datetime
+    :param end_time: Any log file containing a log message in the time range
+     will be uploaded. This means that the operation might retrieve more logs
+     than have been requested since the entire log file is always uploaded, but
+     the operation should not retrieve fewer logs than have been requested. If
+     omitted, the default is to upload all logs available after the startTime.
     :type end_time: datetime
+    :param identity_reference: The reference to the user assigned identity to
+     use to access Azure Blob Storage specified by containerUrl. The identity
+     must have write access to the Azure Blob Storage container.
+    :type identity_reference: ~azure.batch.models.ComputeNodeIdentityReference
     """
 
     _validation = {
@@ -10596,13 +10656,15 @@ class UploadBatchServiceLogsConfiguration(Model):
         'container_url': {'key': 'containerUrl', 'type': 'str'},
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        'identity_reference': {'key': 'identityReference', 'type': 'ComputeNodeIdentityReference'},
     }
 
-    def __init__(self, *, container_url: str, start_time, end_time=None, **kwargs) -> None:
+    def __init__(self, *, container_url: str, start_time, end_time=None, identity_reference=None, **kwargs) -> None:
         super(UploadBatchServiceLogsConfiguration, self).__init__(**kwargs)
         self.container_url = container_url
         self.start_time = start_time
         self.end_time = end_time
+        self.identity_reference = identity_reference
 
 
 class UploadBatchServiceLogsResult(Model):
@@ -10611,11 +10673,9 @@ class UploadBatchServiceLogsResult(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param virtual_directory_name: Required. The virtual directory within
-     Azure Blob Storage container to which the Batch Service log file(s) will
-     be uploaded. The virtual directory name is part of the blob name for each
-     log file uploaded, and it is built based poolId, nodeId and a unique
-     identifier.
+    :param virtual_directory_name: Required. The virtual directory name is
+     part of the blob name for each log file uploaded, and it is built based
+     poolId, nodeId and a unique identifier.
     :type virtual_directory_name: str
     :param number_of_files_uploaded: Required. The number of log files which
      will be uploaded.
@@ -10643,15 +10703,11 @@ class UsageStatistics(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param start_time: Required. The start time of the time range covered by
-     the statistics.
+    :param start_time: Required.
     :type start_time: datetime
-    :param last_update_time: Required. The time at which the statistics were
-     last updated. All statistics are limited to the range between startTime
-     and lastUpdateTime.
+    :param last_update_time: Required.
     :type last_update_time: datetime
-    :param dedicated_core_time: Required. The aggregated wall-clock time of
-     the dedicated Compute Node cores being part of the Pool.
+    :param dedicated_core_time: Required.
     :type dedicated_core_time: timedelta
     """
 
@@ -10680,9 +10736,9 @@ class UserAccount(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the user Account.
+    :param name: Required.
     :type name: str
-    :param password: Required. The password for the user Account.
+    :param password: Required.
     :type password: str
     :param elevation_level: The elevation level of the user Account. The
      default value is nonAdmin. Possible values include: 'nonAdmin', 'admin'
@@ -10721,14 +10777,49 @@ class UserAccount(Model):
         self.windows_user_configuration = windows_user_configuration
 
 
+class UserAssignedIdentity(Model):
+    """The user assigned Identity.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param resource_id: Required. The ARM resource id of the user assigned
+     identity
+    :type resource_id: str
+    :ivar client_id: The client id of the user assigned identity.
+    :vartype client_id: str
+    :ivar principal_id: The principal id of the user assigned identity.
+    :vartype principal_id: str
+    """
+
+    _validation = {
+        'resource_id': {'required': True},
+        'client_id': {'readonly': True},
+        'principal_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+    }
+
+    def __init__(self, *, resource_id: str, **kwargs) -> None:
+        super(UserAssignedIdentity, self).__init__(**kwargs)
+        self.resource_id = resource_id
+        self.client_id = None
+        self.principal_id = None
+
+
 class UserIdentity(Model):
     """The definition of the user identity under which the Task is run.
 
     Specify either the userName or autoUser property, but not both.
 
-    :param user_name: The name of the user identity under which the Task is
-     run. The userName and autoUser properties are mutually exclusive; you must
-     specify one but not both.
+    :param user_name: The userName and autoUser properties are mutually
+     exclusive; you must specify one but not both.
     :type user_name: str
     :param auto_user: The auto user under which the Task is run. The userName
      and autoUser properties are mutually exclusive; you must specify one but
@@ -10756,38 +10847,35 @@ class VirtualMachineConfiguration(Model):
     :param image_reference: Required. A reference to the Azure Virtual
      Machines Marketplace Image or the custom Virtual Machine Image to use.
     :type image_reference: ~azure.batch.models.ImageReference
-    :param node_agent_sku_id: Required. The SKU of the Batch Compute Node
-     agent to be provisioned on Compute Nodes in the Pool. The Batch Compute
-     Node agent is a program that runs on each Compute Node in the Pool, and
-     provides the command-and-control interface between the Compute Node and
-     the Batch service. There are different implementations of the Compute Node
-     agent, known as SKUs, for different operating systems. You must specify a
-     Compute Node agent SKU which matches the selected Image reference. To get
-     the list of supported Compute Node agent SKUs along with their list of
-     verified Image references, see the 'List supported Compute Node agent
-     SKUs' operation.
+    :param node_agent_sku_id: Required. The Batch Compute Node agent is a
+     program that runs on each Compute Node in the Pool, and provides the
+     command-and-control interface between the Compute Node and the Batch
+     service. There are different implementations of the Compute Node agent,
+     known as SKUs, for different operating systems. You must specify a Compute
+     Node agent SKU which matches the selected Image reference. To get the list
+     of supported Compute Node agent SKUs along with their list of verified
+     Image references, see the 'List supported Compute Node agent SKUs'
+     operation.
     :type node_agent_sku_id: str
     :param windows_configuration: Windows operating system settings on the
      virtual machine. This property must not be specified if the imageReference
      property specifies a Linux OS Image.
     :type windows_configuration: ~azure.batch.models.WindowsConfiguration
-    :param data_disks: The configuration for data disks attached to the
-     Compute Nodes in the Pool. This property must be specified if the Compute
-     Nodes in the Pool need to have empty data disks attached to them. This
-     cannot be updated. Each Compute Node gets its own disk (the disk is not a
-     file share). Existing disks cannot be attached, each attached disk is
-     empty. When the Compute Node is removed from the Pool, the disk and all
-     data associated with it is also deleted. The disk is not formatted after
-     being attached, it must be formatted before use - for more information see
+    :param data_disks: This property must be specified if the Compute Nodes in
+     the Pool need to have empty data disks attached to them. This cannot be
+     updated. Each Compute Node gets its own disk (the disk is not a file
+     share). Existing disks cannot be attached, each attached disk is empty.
+     When the Compute Node is removed from the Pool, the disk and all data
+     associated with it is also deleted. The disk is not formatted after being
+     attached, it must be formatted before use - for more information see
      https://docs.microsoft.com/en-us/azure/virtual-machines/linux/classic/attach-disk#initialize-a-new-data-disk-in-linux
      and
      https://docs.microsoft.com/en-us/azure/virtual-machines/windows/attach-disk-ps#add-an-empty-data-disk-to-a-virtual-machine.
     :type data_disks: list[~azure.batch.models.DataDisk]
-    :param license_type: The type of on-premises license to be used when
-     deploying the operating system. This only applies to Images that contain
-     the Windows operating system, and should only be used when you hold valid
-     on-premises licenses for the Compute Nodes which will be deployed. If
-     omitted, no on-premises licensing discount is applied. Values are:
+    :param license_type: This only applies to Images that contain the Windows
+     operating system, and should only be used when you hold valid on-premises
+     licenses for the Compute Nodes which will be deployed. If omitted, no
+     on-premises licensing discount is applied. Values are:
      Windows_Server - The on-premises license is for Windows Server.
      Windows_Client - The on-premises license is for Windows Client.
     :type license_type: str
@@ -10802,6 +10890,17 @@ class VirtualMachineConfiguration(Model):
      pool during node provisioning.
     :type disk_encryption_configuration:
      ~azure.batch.models.DiskEncryptionConfiguration
+    :param node_placement_configuration: The node placement configuration for
+     the pool. This configuration will specify rules on how nodes in the pool
+     will be physically allocated.
+    :type node_placement_configuration:
+     ~azure.batch.models.NodePlacementConfiguration
+    :param extensions: If specified, the extensions mentioned in this
+     configuration will be installed on each node.
+    :type extensions: list[~azure.batch.models.VMExtension]
+    :param os_disk: Settings for the operating system disk of the Virtual
+     Machine.
+    :type os_disk: ~azure.batch.models.OSDisk
     """
 
     _validation = {
@@ -10817,9 +10916,12 @@ class VirtualMachineConfiguration(Model):
         'license_type': {'key': 'licenseType', 'type': 'str'},
         'container_configuration': {'key': 'containerConfiguration', 'type': 'ContainerConfiguration'},
         'disk_encryption_configuration': {'key': 'diskEncryptionConfiguration', 'type': 'DiskEncryptionConfiguration'},
+        'node_placement_configuration': {'key': 'nodePlacementConfiguration', 'type': 'NodePlacementConfiguration'},
+        'extensions': {'key': 'extensions', 'type': '[VMExtension]'},
+        'os_disk': {'key': 'osDisk', 'type': 'OSDisk'},
     }
 
-    def __init__(self, *, image_reference, node_agent_sku_id: str, windows_configuration=None, data_disks=None, license_type: str=None, container_configuration=None, disk_encryption_configuration=None, **kwargs) -> None:
+    def __init__(self, *, image_reference, node_agent_sku_id: str, windows_configuration=None, data_disks=None, license_type: str=None, container_configuration=None, disk_encryption_configuration=None, node_placement_configuration=None, extensions=None, os_disk=None, **kwargs) -> None:
         super(VirtualMachineConfiguration, self).__init__(**kwargs)
         self.image_reference = image_reference
         self.node_agent_sku_id = node_agent_sku_id
@@ -10828,6 +10930,108 @@ class VirtualMachineConfiguration(Model):
         self.license_type = license_type
         self.container_configuration = container_configuration
         self.disk_encryption_configuration = disk_encryption_configuration
+        self.node_placement_configuration = node_placement_configuration
+        self.extensions = extensions
+        self.os_disk = os_disk
+
+
+class VirtualMachineInfo(Model):
+    """Info about the current state of the virtual machine.
+
+    :param image_reference: The reference to the Azure Virtual Machine's
+     Marketplace Image.
+    :type image_reference: ~azure.batch.models.ImageReference
+    """
+
+    _attribute_map = {
+        'image_reference': {'key': 'imageReference', 'type': 'ImageReference'},
+    }
+
+    def __init__(self, *, image_reference=None, **kwargs) -> None:
+        super(VirtualMachineInfo, self).__init__(**kwargs)
+        self.image_reference = image_reference
+
+
+class VMExtension(Model):
+    """The configuration for virtual machine extensions.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required.
+    :type name: str
+    :param publisher: Required.
+    :type publisher: str
+    :param type: Required.
+    :type type: str
+    :param type_handler_version:
+    :type type_handler_version: str
+    :param auto_upgrade_minor_version: Indicates whether the extension should
+     use a newer minor version if one is available at deployment time. Once
+     deployed, however, the extension will not upgrade minor versions unless
+     redeployed, even with this property set to true.
+    :type auto_upgrade_minor_version: bool
+    :param settings:
+    :type settings: object
+    :param protected_settings: The extension can contain either
+     protectedSettings or protectedSettingsFromKeyVault or no protected
+     settings at all.
+    :type protected_settings: object
+    :param provision_after_extensions: Collection of extension names after
+     which this extension needs to be provisioned.
+    :type provision_after_extensions: list[str]
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'publisher': {'required': True},
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'publisher': {'key': 'publisher', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'type_handler_version': {'key': 'typeHandlerVersion', 'type': 'str'},
+        'auto_upgrade_minor_version': {'key': 'autoUpgradeMinorVersion', 'type': 'bool'},
+        'settings': {'key': 'settings', 'type': 'object'},
+        'protected_settings': {'key': 'protectedSettings', 'type': 'object'},
+        'provision_after_extensions': {'key': 'provisionAfterExtensions', 'type': '[str]'},
+    }
+
+    def __init__(self, *, name: str, publisher: str, type: str, type_handler_version: str=None, auto_upgrade_minor_version: bool=None, settings=None, protected_settings=None, provision_after_extensions=None, **kwargs) -> None:
+        super(VMExtension, self).__init__(**kwargs)
+        self.name = name
+        self.publisher = publisher
+        self.type = type
+        self.type_handler_version = type_handler_version
+        self.auto_upgrade_minor_version = auto_upgrade_minor_version
+        self.settings = settings
+        self.protected_settings = protected_settings
+        self.provision_after_extensions = provision_after_extensions
+
+
+class VMExtensionInstanceView(Model):
+    """The vm extension instance view.
+
+    :param name:
+    :type name: str
+    :param statuses: The resource status information.
+    :type statuses: list[~azure.batch.models.InstanceViewStatus]
+    :param sub_statuses: The resource status information.
+    :type sub_statuses: list[~azure.batch.models.InstanceViewStatus]
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
+        'sub_statuses': {'key': 'subStatuses', 'type': '[InstanceViewStatus]'},
+    }
+
+    def __init__(self, *, name: str=None, statuses=None, sub_statuses=None, **kwargs) -> None:
+        super(VMExtensionInstanceView, self).__init__(**kwargs)
+        self.name = name
+        self.statuses = statuses
+        self.sub_statuses = sub_statuses
 
 
 class WindowsConfiguration(Model):
@@ -10850,10 +11054,9 @@ class WindowsConfiguration(Model):
 class WindowsUserConfiguration(Model):
     """Properties used to create a user Account on a Windows Compute Node.
 
-    :param login_mode: The login mode for the user. The default value for
-     VirtualMachineConfiguration Pools is 'batch' and for
-     CloudServiceConfiguration Pools is 'interactive'. Possible values include:
-     'batch', 'interactive'
+    :param login_mode: The default value for VirtualMachineConfiguration Pools
+     is 'batch' and for CloudServiceConfiguration Pools is 'interactive'.
+     Possible values include: 'batch', 'interactive'
     :type login_mode: str or ~azure.batch.models.LoginMode
     """
 

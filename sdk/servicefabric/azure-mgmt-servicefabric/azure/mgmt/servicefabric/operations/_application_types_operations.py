@@ -75,7 +75,7 @@ class ApplicationTypesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -102,7 +102,7 @@ class ApplicationTypesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorModel, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorModel, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ApplicationTypeResource', pipeline_response)
@@ -118,8 +118,7 @@ class ApplicationTypesOperations(object):
         resource_group_name,  # type: str
         cluster_name,  # type: str
         application_type_name,  # type: str
-        location=None,  # type: Optional[str]
-        tags=None,  # type: Optional[Dict[str, str]]
+        parameters,  # type: "_models.ApplicationTypeResource"
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.ApplicationTypeResource"
@@ -133,11 +132,8 @@ class ApplicationTypesOperations(object):
         :type cluster_name: str
         :param application_type_name: The name of the application type name resource.
         :type application_type_name: str
-        :param location: It will be deprecated in New API, resource location depends on the parent
-         resource.
-        :type location: str
-        :param tags: Azure resource tags.
-        :type tags: dict[str, str]
+        :param parameters: The application type name resource.
+        :type parameters: ~azure.mgmt.servicefabric.models.ApplicationTypeResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApplicationTypeResource, or the result of cls(response)
         :rtype: ~azure.mgmt.servicefabric.models.ApplicationTypeResource
@@ -148,9 +144,7 @@ class ApplicationTypesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-
-        _parameters = _models.ApplicationTypeResource(location=location, tags=tags)
-        api_version = "2020-03-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -174,7 +168,7 @@ class ApplicationTypesOperations(object):
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(_parameters, 'ApplicationTypeResource')
+        body_content = self._serialize.body(parameters, 'ApplicationTypeResource')
         body_content_kwargs['content'] = body_content
         request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -182,7 +176,7 @@ class ApplicationTypesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorModel, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorModel, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ApplicationTypeResource', pipeline_response)
@@ -206,7 +200,7 @@ class ApplicationTypesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -233,7 +227,7 @@ class ApplicationTypesOperations(object):
 
         if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorModel, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorModel, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -261,8 +255,8 @@ class ApplicationTypesOperations(object):
         :type application_type_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be ARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
@@ -339,7 +333,7 @@ class ApplicationTypesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -365,7 +359,7 @@ class ApplicationTypesOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorModel, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorModel, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ApplicationTypeResourceList', pipeline_response)

@@ -36,15 +36,14 @@ class ArtifactsClientConfiguration(Configuration):
         endpoint: str,
         **kwargs: Any
     ) -> None:
+        super(ArtifactsClientConfiguration, self).__init__(**kwargs)
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        super(ArtifactsClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.endpoint = endpoint
-        self.api_version = "2019-06-01-preview"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://dev.azuresynapse.net/.default'])
         kwargs.setdefault('sdk_moniker', 'synapse-artifacts/{}'.format(VERSION))
         self._configure(**kwargs)

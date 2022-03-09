@@ -2,143 +2,141 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import time
-from unittest import mock
-from urllib.parse import urlparse
+import asyncio
 
-from azure.core.credentials import AccessToken
 from azure.core.exceptions import ResourceExistsError
-from azure.identity.aio import DefaultAzureCredential
-from azure.keyvault.keys.aio import KeyClient
-from azure.keyvault.administration.aio import KeyVaultBackupClient
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 import pytest
 
-from _shared.helpers_async import get_completed_future
 from _shared.test_case_async import KeyVaultTestCase
-from blob_container_preparer import BlobContainerPreparer
-from test_backup_client import assert_in_progress_operation
-from test_backup_client import assert_successful_operation
+from _test_case import AdministrationTestCase, backup_client_setup, get_decorator
 
 
-@pytest.mark.usefixtures("managed_hsm")
-class BackupClientTests(KeyVaultTestCase):
+all_api_versions = get_decorator(is_async=True)
+
+
+class BackupClientTests(AdministrationTestCase, KeyVaultTestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, match_body=False, **kwargs)
 
-    def setUp(self, *args, **kwargs):
+    @all_api_versions()
+    @backup_client_setup
+    async def test_full_backup_and_restore(self, client):
         if self.is_live:
-            real = urlparse(self.managed_hsm["url"])
-            playback = urlparse(self.managed_hsm["playback_url"])
-            self.scrubber.register_name_pair(real.netloc, playback.netloc)
-        super().setUp(*args, **kwargs)
+            pytest.skip("SAS token failures are causing sev2 alerts for service team")
 
-    @property
-    def credential(self):
-        if self.is_live:
-            return DefaultAzureCredential()
-
-        async def get_token(*_, **__):
-            return AccessToken("secret", time.time() + 3600)
-
-        return mock.Mock(get_token=get_token)
-
-    @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
-    @StorageAccountPreparer(random_name_enabled=True)
-    @BlobContainerPreparer()
-    async def test_full_backup_and_restore(self, container_uri, sas_token):
         # backup the vault
-        backup_client = KeyVaultBackupClient(self.managed_hsm["url"], self.credential)
-        backup_poller = await backup_client.begin_backup(container_uri, sas_token)
-
-        # check backup status and result
-        job_id = backup_poller.polling_method().resource().job_id
-        backup_status = await backup_client.get_backup_status(job_id)
-        assert_in_progress_operation(backup_status)
+        backup_poller = await client.begin_backup(self.container_uri, self.sas_token)
         backup_operation = await backup_poller.result()
-        assert_successful_operation(backup_operation)
-        backup_status = await backup_client.get_backup_status(job_id)
-        assert_successful_operation(backup_status)
+        assert backup_operation.folder_url
 
         # restore the backup
-        restore_poller = await backup_client.begin_restore(backup_status.folder_url, sas_token)
+        restore_poller = await client.begin_restore(backup_operation.folder_url, self.sas_token)
+        await restore_poller.wait()
+        if self.is_live:
+            await asyncio.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
 
-        # check restore status and result
-        job_id = restore_poller.polling_method().resource().job_id
-        restore_status = await backup_client.get_restore_status(job_id)
-        assert_in_progress_operation(restore_status)
-        restore_operation = await restore_poller.result()
-        assert_successful_operation(restore_operation)
-        restore_status = await backup_client.get_restore_status(job_id)
-        assert_successful_operation(restore_status)
+    @all_api_versions()
+    @backup_client_setup
+    async def test_full_backup_and_restore_rehydration(self, client):
+        if not self.is_live:
+            pytest.skip("Poller requests are incompatible with vcrpy in playback")
 
-    @ResourceGroupPreparer(random_name_enabled=True, use_cache=True)
-    @StorageAccountPreparer(random_name_enabled=True)
-    @BlobContainerPreparer()
-    async def test_selective_key_restore(self, container_uri, sas_token):
+        # backup the vault
+        backup_poller = await client.begin_backup(self.container_uri, self.sas_token)
+
+        # create a new poller from a continuation token
+        token = backup_poller.continuation_token()
+        rehydrated = await client.begin_backup(self.container_uri, self.sas_token, continuation_token=token)
+
+        rehydrated_operation = await rehydrated.result()
+        assert rehydrated_operation.folder_url
+        backup_operation = await backup_poller.result()
+        assert backup_operation.folder_url == rehydrated_operation.folder_url
+
+        # restore the backup
+        restore_poller = await client.begin_restore(backup_operation.folder_url, self.sas_token)
+
+        # create a new poller from a continuation token
+        token = restore_poller.continuation_token()
+        rehydrated = await client.begin_restore(backup_operation.folder_url, self.sas_token, continuation_token=token)
+
+        await rehydrated.wait()
+        await restore_poller.wait()
+        if self.is_live:
+            await asyncio.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
+
+    @all_api_versions()
+    @backup_client_setup
+    async def test_selective_key_restore(self, client):
+        if self.is_live:
+            pytest.skip("SAS token failures are causing sev2 alerts for service team")
+
         # create a key to selectively restore
-        key_client = KeyClient(self.managed_hsm["url"], self.credential)
+        key_client = self.create_key_client(self.managed_hsm_url, is_async=True)
         key_name = self.get_resource_name("selective-restore-test-key")
         await key_client.create_rsa_key(key_name)
 
         # backup the vault
-        backup_client = KeyVaultBackupClient(self.managed_hsm["url"], self.credential)
-        backup_poller = await backup_client.begin_backup(container_uri, sas_token)
-
-        # check backup status and result
-        job_id = backup_poller.polling_method().resource().job_id
-        backup_status = await backup_client.get_backup_status(job_id)
-        assert_in_progress_operation(backup_status)
+        backup_poller = await client.begin_backup(self.container_uri, self.sas_token)
         backup_operation = await backup_poller.result()
-        assert_successful_operation(backup_operation)
-        backup_status = await backup_client.get_backup_status(job_id)
-        assert_successful_operation(backup_status)
 
         # restore the key
-        restore_poller = await backup_client.begin_selective_key_restore(
-            key_name, backup_status.folder_url, sas_token
-        )
-
-        # check restore status and result
-        job_id = restore_poller.polling_method().resource().job_id
-        restore_status = await backup_client.get_restore_status(job_id)
-        assert_in_progress_operation(restore_status)
-        restore_operation = await restore_poller.result()
-        assert_successful_operation(restore_operation)
-        restore_status = await backup_client.get_restore_status(job_id)
-        assert_successful_operation(restore_status)
+        restore_poller = await client.begin_restore(backup_operation.folder_url, self.sas_token, key_name=key_name)
+        await restore_poller.wait()
 
         # delete the key
         await self._poll_until_no_exception(key_client.delete_key, key_name, expected_exception=ResourceExistsError)
         await key_client.purge_deleted_key(key_name)
+        if self.is_live:
+            await asyncio.sleep(60)  # additional waiting to avoid conflicts with resources in other tests
 
+    @all_api_versions()
+    @backup_client_setup
+    async def test_backup_client_polling(self, client):
+        if not self.is_live:
+            pytest.skip("Poller requests are incompatible with vcrpy in playback")
 
-@pytest.mark.asyncio
-async def test_continuation_token():
-    """Methods returning pollers should accept continuation tokens"""
+        # backup the vault
+        backup_poller = await client.begin_backup(self.container_uri, self.sas_token)
+        
+        # create a new poller from a continuation token
+        token = backup_poller.continuation_token()
+        rehydrated = await client.begin_backup(self.container_uri, self.sas_token, continuation_token=token)
 
-    expected_token = "token"
+        # check that pollers and polling methods behave as expected
+        assert backup_poller.status() == "InProgress"
+        assert not backup_poller.done() or backup_poller.polling_method().finished()
+        assert rehydrated.status() == "InProgress"
+        assert not rehydrated.done() or rehydrated.polling_method().finished()
 
-    mock_generated_client = mock.Mock()
-    mock_methods = [
-        getattr(mock_generated_client, method_name)
-        for method_name in (
-            "begin_full_backup",
-            "begin_full_restore_operation",
-            "begin_selective_key_restore_operation",
-        )
-    ]
-    for method in mock_methods:
-        # the mock client's methods must return awaitables, and we don't have AsyncMock before 3.8
-        method.return_value = get_completed_future()
+        backup_operation = await backup_poller.result()
+        assert backup_poller.status() == "Succeeded" and backup_poller.polling_method().status() == "Succeeded"
+        rehydrated_operation = await rehydrated.result()
+        assert rehydrated.status() == "Succeeded" and rehydrated.polling_method().status() == "Succeeded"
+        assert backup_operation.folder_url == rehydrated_operation.folder_url
 
-    backup_client = KeyVaultBackupClient("vault-url", object())
-    backup_client._client = mock_generated_client
-    await backup_client.begin_restore("storage uri", "sas", continuation_token=expected_token)
-    await backup_client.begin_backup("storage uri", "sas", continuation_token=expected_token)
-    await backup_client.begin_selective_key_restore("storage uri", "sas", "key", continuation_token=expected_token)
+        # rehydrate a poller with a continuation token of a completed operation
+        late_rehydrated = await client.begin_backup(self.container_uri, self.sas_token, continuation_token=token)
+        assert late_rehydrated.status() == "Succeeded"
+        await late_rehydrated.wait()
 
-    for method in mock_methods:
-        assert method.call_count == 1
-        _, kwargs = method.call_args
-        assert kwargs["continuation_token"] == expected_token
+        # restore the backup
+        restore_poller = await client.begin_restore(backup_operation.folder_url, self.sas_token)
+
+        # create a new poller from a continuation token
+        token = restore_poller.continuation_token()
+        rehydrated = await client.begin_restore(backup_operation.folder_url, self.sas_token, continuation_token=token)
+
+        # check that pollers and polling methods behave as expected
+        assert restore_poller.status() == "InProgress"
+        assert not restore_poller.done() or restore_poller.polling_method().finished()
+        assert rehydrated.status() == "InProgress"
+        assert not rehydrated.done() or rehydrated.polling_method().finished()
+
+        await rehydrated.wait()
+        assert rehydrated.status() == "Succeeded" and rehydrated.polling_method().status() == "Succeeded"
+        await restore_poller.wait()
+        assert restore_poller.status() == "Succeeded" and restore_poller.polling_method().status() == "Succeeded"
+
+        if self.is_live:
+            await asyncio.sleep(60)  # additional waiting to avoid conflicts with resources in other tests

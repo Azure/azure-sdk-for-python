@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from typing import Any, Optional
 
     from azure.core.credentials import TokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from ._configuration import ServiceFabricManagementClientConfiguration
 from .operations import ClustersOperations
@@ -25,9 +26,6 @@ from .operations import ApplicationTypesOperations
 from .operations import ApplicationTypeVersionsOperations
 from .operations import ApplicationsOperations
 from .operations import ServicesOperations
-from .operations import ManagedClustersOperations
-from .operations import ManagedClusterVersionsOperations
-from .operations import NodeTypesOperations
 from . import models
 
 
@@ -48,12 +46,6 @@ class ServiceFabricManagementClient(object):
     :vartype applications: azure.mgmt.servicefabric.operations.ApplicationsOperations
     :ivar services: ServicesOperations operations
     :vartype services: azure.mgmt.servicefabric.operations.ServicesOperations
-    :ivar managed_clusters: ManagedClustersOperations operations
-    :vartype managed_clusters: azure.mgmt.servicefabric.operations.ManagedClustersOperations
-    :ivar managed_cluster_versions: ManagedClusterVersionsOperations operations
-    :vartype managed_cluster_versions: azure.mgmt.servicefabric.operations.ManagedClusterVersionsOperations
-    :ivar node_types: NodeTypesOperations operations
-    :vartype node_types: azure.mgmt.servicefabric.operations.NodeTypesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The customer subscription identifier.
@@ -94,12 +86,24 @@ class ServiceFabricManagementClient(object):
             self._client, self._config, self._serialize, self._deserialize)
         self.services = ServicesOperations(
             self._client, self._config, self._serialize, self._deserialize)
-        self.managed_clusters = ManagedClustersOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.managed_cluster_versions = ManagedClusterVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.node_types = NodeTypesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+
+    def _send_request(self, http_request, **kwargs):
+        # type: (HttpRequest, Any) -> HttpResponse
+        """Runs the network request through the client's chained policies.
+
+        :param http_request: The network request you want to make. Required.
+        :type http_request: ~azure.core.pipeline.transport.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        """
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        stream = kwargs.pop("stream", True)
+        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        return pipeline_response.http_response
 
     def close(self):
         # type: () -> None

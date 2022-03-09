@@ -47,14 +47,15 @@ class ContainerOperations:
         access: Optional[Union[str, "_models.PublicAccessType"]] = None,
         request_id_parameter: Optional[str] = None,
         container_cpk_scope_info: Optional["_models.ContainerCpkScopeInfo"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """creates a new container under the specified account. If the container with the same name
         already exists, the operation fails.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param metadata: Optional. Specifies a user-defined name-value pair associated with the blob.
          If no name-value pairs are specified, the operation will copy the metadata from the source blob
@@ -146,14 +147,15 @@ class ContainerOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """returns all user-defined metadata and system properties for the specified container. The data
         returned does not include the container's list of blobs.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -224,7 +226,7 @@ class ContainerOperations:
         response_headers['x-ms-has-legal-hold']=self._deserialize('bool', response.headers.get('x-ms-has-legal-hold'))
         response_headers['x-ms-default-encryption-scope']=self._deserialize('str', response.headers.get('x-ms-default-encryption-scope'))
         response_headers['x-ms-deny-encryption-scope-override']=self._deserialize('bool', response.headers.get('x-ms-deny-encryption-scope-override'))
-        response_headers['x-ms-version-level-worm-enabled']=self._deserialize('bool', response.headers.get('x-ms-version-level-worm-enabled'))
+        response_headers['x-ms-immutable-storage-with-versioning-enabled']=self._deserialize('bool', response.headers.get('x-ms-immutable-storage-with-versioning-enabled'))
 
         if cls:
             return cls(pipeline_response, None, response_headers)
@@ -237,14 +239,15 @@ class ContainerOperations:
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """operation marks the specified container for deletion. The container and any blobs contained
         within it are later deleted during garbage collection.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -328,13 +331,14 @@ class ContainerOperations:
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """operation sets one or more user-defined name-value pairs for the specified container.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param metadata: Optional. Specifies a user-defined name-value pair associated with the blob.
          If no name-value pairs are specified, the operation will copy the metadata from the source blob
@@ -426,14 +430,15 @@ class ContainerOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> List["_models.SignedIdentifier"]:
         """gets the permissions for the specified container. The permissions indicate whether container
         data may be accessed publicly.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -514,14 +519,15 @@ class ContainerOperations:
         container_acl: Optional[List["_models.SignedIdentifier"]] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """sets the permissions for the specified container. The permissions indicate whether blobs in a
         container may be accessed publicly.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param access: Specifies whether data in the container may be accessed publicly and the level
          of access.
@@ -624,13 +630,14 @@ class ContainerOperations:
         request_id_parameter: Optional[str] = None,
         deleted_container_name: Optional[str] = None,
         deleted_container_version: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Restores a previously-deleted container.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -706,15 +713,16 @@ class ContainerOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         source_lease_id: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Renames an existing container.
 
         :param source_container_name: Required.  Specifies the name of the container to rename.
         :type source_container_name: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -787,7 +795,7 @@ class ContainerOperations:
         body: IO,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> IO:
         """The Batch operation allows multiple API calls to be embedded into a single HTTP request.
 
@@ -799,8 +807,9 @@ class ContainerOperations:
         :param body: Initial data.
         :type body: IO
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -868,6 +877,106 @@ class ContainerOperations:
         return deserialized
     submit_batch.metadata = {'url': '/{containerName}'}  # type: ignore
 
+    async def filter_blobs(
+        self,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        where: Optional[str] = None,
+        marker: Optional[str] = None,
+        maxresults: Optional[int] = None,
+        **kwargs: Any
+    ) -> "_models.FilterBlobSegment":
+        """The Filter Blobs operation enables callers to list blobs in a container whose tags match a
+        given search expression.  Filter blobs searches within the given container.
+
+        :param timeout: The timeout parameter is expressed in seconds. For more information, see
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
+        :type timeout: int
+        :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
+         limit that is recorded in the analytics logs when storage analytics logging is enabled.
+        :type request_id_parameter: str
+        :param where: Filters the results to return only to return only blobs whose tags match the
+         specified expression.
+        :type where: str
+        :param marker: A string value that identifies the portion of the list of containers to be
+         returned with the next listing operation. The operation returns the NextMarker value within the
+         response body if the listing operation did not return all containers remaining to be listed
+         with the current page. The NextMarker value can be used as the value for the marker parameter
+         in a subsequent call to request the next page of list items. The marker value is opaque to the
+         client.
+        :type marker: str
+        :param maxresults: Specifies the maximum number of containers to return. If the request does
+         not specify maxresults, or specifies a value greater than 5000, the server will return up to
+         5000 items. Note that if the listing operation crosses a partition boundary, then the service
+         will return a continuation token for retrieving the remainder of the results. For this reason,
+         it is possible that the service will return fewer results than specified by maxresults, or than
+         the default of 5000.
+        :type maxresults: int
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: FilterBlobSegment, or the result of cls(response)
+        :rtype: ~azure.storage.blob.models.FilterBlobSegment
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FilterBlobSegment"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        restype = "container"
+        comp = "blobs"
+        accept = "application/xml"
+
+        # Construct URL
+        url = self.filter_blobs.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['restype'] = self._serialize.query("restype", restype, 'str')
+        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        if where is not None:
+            query_parameters['where'] = self._serialize.query("where", where, 'str')
+        if marker is not None:
+            query_parameters['marker'] = self._serialize.query("marker", marker, 'str')
+        if maxresults is not None:
+            query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', minimum=1)
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if request_id_parameter is not None:
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id_parameter", request_id_parameter, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers['x-ms-client-request-id']=self._deserialize('str', response.headers.get('x-ms-client-request-id'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        deserialized = self._deserialize('FilterBlobSegment', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
+    filter_blobs.metadata = {'url': '/{containerName}'}  # type: ignore
+
     async def acquire_lease(
         self,
         timeout: Optional[int] = None,
@@ -875,14 +984,15 @@ class ContainerOperations:
         proposed_lease_id: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
         can be 15 to 60 seconds, or can be infinite.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param duration: Specifies the duration of the lease, in seconds, or negative one (-1) for a
          lease that never expires. A non-infinite lease can be between 15 and 60 seconds. A lease
@@ -977,7 +1087,7 @@ class ContainerOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
         can be 15 to 60 seconds, or can be infinite.
@@ -985,8 +1095,9 @@ class ContainerOperations:
         :param lease_id: Specifies the current lease ID on the resource.
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -1069,7 +1180,7 @@ class ContainerOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
         can be 15 to 60 seconds, or can be infinite.
@@ -1077,8 +1188,9 @@ class ContainerOperations:
         :param lease_id: Specifies the current lease ID on the resource.
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -1162,22 +1274,23 @@ class ContainerOperations:
         break_period: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
         can be 15 to 60 seconds, or can be infinite.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param break_period: For a break operation, proposed duration the lease should continue before
          it is broken, in seconds, between 0 and 60. This break period is only used if it is shorter
          than the time remaining on the lease. If longer, the time remaining on the lease is used. A new
          lease will not be available before the break period has expired, but the lease may be held for
-         longer than the break period. If this header does not appear with a break operation, a fixed-
-         duration lease breaks after the remaining lease period elapses, and an infinite lease breaks
-         immediately.
+         longer than the break period. If this header does not appear with a break operation, a
+         fixed-duration lease breaks after the remaining lease period elapses, and an infinite lease
+         breaks immediately.
         :type break_period: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -1263,7 +1376,7 @@ class ContainerOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         modified_access_conditions: Optional["_models.ModifiedAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
         can be 15 to 60 seconds, or can be infinite.
@@ -1275,8 +1388,9 @@ class ContainerOperations:
          Constructor (String) for a list of valid GUID string formats.
         :type proposed_lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -1363,7 +1477,7 @@ class ContainerOperations:
         include: Optional[List[Union[str, "_models.ListBlobsIncludeItem"]]] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ListBlobsFlatSegmentResponse":
         """[Update] The List Blobs operation returns a list of the blobs under the specified container.
 
@@ -1388,8 +1502,9 @@ class ContainerOperations:
          response.
         :type include: list[str or ~azure.storage.blob.models.ListBlobsIncludeItem]
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -1469,7 +1584,7 @@ class ContainerOperations:
         include: Optional[List[Union[str, "_models.ListBlobsIncludeItem"]]] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ListBlobsHierarchySegmentResponse":
         """[Update] The List Blobs operation returns a list of the blobs under the specified container.
 
@@ -1499,8 +1614,9 @@ class ContainerOperations:
          response.
         :type include: list[str or ~azure.storage.blob.models.ListBlobsIncludeItem]
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-
-         timeouts-for-blob-service-operations">Setting Timeouts for Blob Service Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -1574,7 +1690,7 @@ class ContainerOperations:
 
     async def get_account_info(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Returns the sku name and account kind.
 

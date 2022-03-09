@@ -2,9 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
+from urllib.parse import urlparse
 
+from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 from azure.identity.aio import AuthorizationCodeCredential
 import msal
@@ -75,6 +78,17 @@ async def test_user_agent():
 
     await credential.get_token("scope")
 
+async def test_tenant_id():
+    transport = async_validating_transport(
+        requests=[Request(required_headers={"User-Agent": USER_AGENT})],
+        responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
+    )
+
+    credential = AuthorizationCodeCredential(
+        "tenant-id", "client-id", "auth-code", "http://localhost", transport=transport
+    )
+
+    await credential.get_token("scope", tenant_id="tenant_id")
 
 async def test_auth_code_credential():
     client_id = "client id"
@@ -137,3 +151,64 @@ async def test_auth_code_credential():
     token = await credential.get_token(expected_scope)
     assert token.token == expected_access_token
     assert transport.send.call_count == 2
+
+
+async def test_multitenant_authentication():
+    first_tenant = "first-tenant"
+    first_token = "***"
+    second_tenant = "second-tenant"
+    second_token = first_token * 2
+
+    async def send(request, **_):
+        parsed = urlparse(request.url)
+        tenant = parsed.path.split("/")[1]
+        assert tenant in (first_tenant, second_tenant), 'unexpected tenant "{}"'.format(tenant)
+        token = first_token if tenant == first_tenant else second_token
+        return mock_response(json_payload=build_aad_response(access_token=token, refresh_token="**"))
+
+    credential = AuthorizationCodeCredential(
+        first_tenant,
+        "client-id",
+        "authcode",
+        "https://localhost",
+        transport=Mock(send=send),
+    )
+    token = await credential.get_token("scope")
+    assert token.token == first_token
+
+    token = await credential.get_token("scope", tenant_id=first_tenant)
+    assert token.token == first_token
+
+    token = await credential.get_token("scope", tenant_id=second_tenant)
+    assert token.token == second_token
+
+    # should still default to the first tenant
+    token = await credential.get_token("scope")
+    assert token.token == first_token
+
+async def test_multitenant_authentication_not_allowed():
+    expected_tenant = "expected-tenant"
+    expected_token = "***"
+
+    async def send(request, **_):
+        parsed = urlparse(request.url)
+        tenant = parsed.path.split("/")[1]
+        token = expected_token if tenant == expected_tenant else expected_token * 2
+        return mock_response(json_payload=build_aad_response(access_token=token, refresh_token="**"))
+
+    credential = AuthorizationCodeCredential(
+        expected_tenant, "client-id", "authcode", "https://localhost", transport=Mock(send=send)
+    )
+
+    token = await credential.get_token("scope")
+    assert token.token == expected_token
+
+    token = await credential.get_token("scope", tenant_id=expected_tenant)
+    assert token.token == expected_token
+
+    token = await credential.get_token("scope", tenant_id="un" + expected_tenant)
+    assert token.token == expected_token * 2
+
+    with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
+        token = await credential.get_token("scope", tenant_id="un" + expected_tenant)
+        assert token.token == expected_token

@@ -4,26 +4,27 @@ interactions:
     headers:
       Accept:
       - application/json
-      Date:
-      - Mon, 19 Apr 2021 21:51:00 GMT
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.2 Python/3.9.9 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Wed, 12 Jan 2022 16:27:45 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.communication.azure.com/phoneNumbers/sanitized?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/phoneNumbers/sanitized?api-version=2022-01-11-preview2
   response:
     body:
-      string: '{"error": {"code": "PhoneNumberNotFound", "message": "The specified
-        phone number +14255550123 cannot be found.", "target": "phonenumber"}}'
+      string: '{"error": {"code": "NotFound", "message": "Input phoneNumber +14255550123
+        cannot be found.", "target": "phonenumber"}}'
     headers:
-      api-supported-versions: '2021-03-07'
+      api-supported-versions: 2021-03-07, 2022-01-11-preview2
       content-type: application/json
-      date: Mon, 19 Apr 2021 21:51:00 GMT
-      ms-cv: mIQqzEwXO0ix/6wyl5JeaA.0
+      date: Wed, 12 Jan 2022 16:27:42 GMT
+      ms-cv: UnFd7B6EzEKUG7l992jUlg.0
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 370ms
+      x-cache: CONFIG_NOCACHE
+      x-processing-time: 1558ms
     status:
       code: 404
       message: Not Found

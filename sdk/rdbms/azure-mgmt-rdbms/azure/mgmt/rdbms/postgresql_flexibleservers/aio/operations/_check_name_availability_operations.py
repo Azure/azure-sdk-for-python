@@ -43,7 +43,7 @@ class CheckNameAvailabilityOperations:
     async def execute(
         self,
         name_availability_request: "_models.NameAvailabilityRequest",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NameAvailability":
         """Check the availability of name for resource.
 
@@ -60,7 +60,7 @@ class CheckNameAvailabilityOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-02-14-preview"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -97,4 +97,4 @@ class CheckNameAvailabilityOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBForPostgreSql/checkNameAvailability'}  # type: ignore
+    execute.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DBforPostgreSQL/checkNameAvailability'}  # type: ignore

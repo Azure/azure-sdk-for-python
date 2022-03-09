@@ -12,7 +12,9 @@ from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.mgmt.core.exceptions import ARMErrorFormat
+from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 
@@ -41,13 +43,74 @@ class AccountsOperations:
         self._deserialize = deserializer
         self._config = config
 
-    async def create(
+    async def _create_initial(
         self,
         resource_group_name: str,
         account_name: str,
-        account: "_models.CognitiveServicesAccount",
-        **kwargs
-    ) -> "_models.CognitiveServicesAccount":
+        account: "_models.Account",
+        **kwargs: Any
+    ) -> "_models.Account":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Account"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        api_version = "2021-10-01"
+        content_type = kwargs.pop("content_type", "application/json")
+        accept = "application/json"
+
+        # Construct URL
+        url = self._create_initial.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content = self._serialize.body(account, 'Account')
+        body_content_kwargs['content'] = body_content
+        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Account', pipeline_response)
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('Account', pipeline_response)
+
+        if response.status_code == 202:
+            deserialized = self._deserialize('Account', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+    _create_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}'}  # type: ignore
+
+    async def begin_create(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        account: "_models.Account",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.Account"]:
         """Create Cognitive Services Account. Accounts is a resource group wide resource type. It holds
         the keys for developer to access intelligent APIs. It's also the resource type for billing.
 
@@ -56,99 +119,83 @@ class AccountsOperations:
         :param account_name: The name of Cognitive Services account.
         :type account_name: str
         :param account: The parameters to provide for the created account.
-        :type account: ~azure.mgmt.cognitiveservices.models.CognitiveServicesAccount
+        :type account: ~azure.mgmt.cognitiveservices.models.Account
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CognitiveServicesAccount, or the result of cls(response)
-        :rtype: ~azure.mgmt.cognitiveservices.models.CognitiveServicesAccount
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either Account or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cognitiveservices.models.Account]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CognitiveServicesAccount"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-18"
-        content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Account"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._create_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                account=account,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
 
-        # Construct URL
-        url = self.create.metadata['url']  # type: ignore
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('Account', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
-        url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}'}  # type: ignore
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(account, 'CognitiveServicesAccount')
-        body_content_kwargs['content'] = body_content
-        request = self._client.put(url, query_parameters, header_parameters, **body_content_kwargs)
-        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('CognitiveServicesAccount', pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize('CognitiveServicesAccount', pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize('CognitiveServicesAccount', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}'}  # type: ignore
-
-    async def update(
+    async def _update_initial(
         self,
         resource_group_name: str,
         account_name: str,
-        account: "_models.CognitiveServicesAccount",
-        **kwargs
-    ) -> "_models.CognitiveServicesAccount":
-        """Updates a Cognitive Services account.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param account_name: The name of Cognitive Services account.
-        :type account_name: str
-        :param account: The parameters to provide for the created account.
-        :type account: ~azure.mgmt.cognitiveservices.models.CognitiveServicesAccount
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CognitiveServicesAccount, or the result of cls(response)
-        :rtype: ~azure.mgmt.cognitiveservices.models.CognitiveServicesAccount
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CognitiveServicesAccount"]
+        account: "_models.Account",
+        **kwargs: Any
+    ) -> "_models.Account":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Account"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-18"
+        api_version = "2021-10-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
-        url = self.update.metadata['url']  # type: ignore
+        url = self._update_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
@@ -164,7 +211,7 @@ class AccountsOperations:
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
-        body_content = self._serialize.body(account, 'CognitiveServicesAccount')
+        body_content = self._serialize.body(account, 'Account')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
@@ -172,50 +219,110 @@ class AccountsOperations:
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('CognitiveServicesAccount', pipeline_response)
+            deserialized = self._deserialize('Account', pipeline_response)
 
         if response.status_code == 202:
-            deserialized = self._deserialize('CognitiveServicesAccount', pipeline_response)
+            deserialized = self._deserialize('Account', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}'}  # type: ignore
+    _update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}'}  # type: ignore
 
-    async def delete(
+    async def begin_update(
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
-    ) -> None:
-        """Deletes a Cognitive Services account from the resource group.
+        account: "_models.Account",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.Account"]:
+        """Updates a Cognitive Services account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account.
         :type account_name: str
+        :param account: The parameters to provide for the created account.
+        :type account: ~azure.mgmt.cognitiveservices.models.Account
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either Account or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cognitiveservices.models.Account]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Account"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                account=account,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize('Account', pipeline_response)
+
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}'}  # type: ignore
+
+    async def _delete_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        **kwargs: Any
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-18"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
-        url = self.delete.metadata['url']  # type: ignore
+        url = self._delete_initial.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
@@ -235,20 +342,84 @@ class AccountsOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}'}  # type: ignore
+    _delete_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}'}  # type: ignore
 
-    async def get_properties(
+    async def begin_delete(
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
-    ) -> "_models.CognitiveServicesAccount":
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Deletes a Cognitive Services account from the resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account.
+        :type account_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+
+        kwargs.pop('error_map', None)
+        kwargs.pop('content_type', None)
+
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
+            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
+        }
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}'}  # type: ignore
+
+    async def get(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        **kwargs: Any
+    ) -> "_models.Account":
         """Returns a Cognitive Services account specified by the parameters.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -256,22 +427,22 @@ class AccountsOperations:
         :param account_name: The name of Cognitive Services account.
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CognitiveServicesAccount, or the result of cls(response)
-        :rtype: ~azure.mgmt.cognitiveservices.models.CognitiveServicesAccount
+        :return: Account, or the result of cls(response)
+        :rtype: ~azure.mgmt.cognitiveservices.models.Account
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CognitiveServicesAccount"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Account"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-18"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
-        url = self.get_properties.metadata['url']  # type: ignore
+        url = self.get.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
@@ -291,37 +462,37 @@ class AccountsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('CognitiveServicesAccount', pipeline_response)
+        deserialized = self._deserialize('Account', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_properties.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}'}  # type: ignore
 
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        **kwargs
-    ) -> AsyncIterable["_models.CognitiveServicesAccountListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.AccountListResult"]:
         """Returns all the resources of a particular type belonging to a resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either CognitiveServicesAccountListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cognitiveservices.models.CognitiveServicesAccountListResult]
+        :return: An iterator like instance of either AccountListResult or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cognitiveservices.models.AccountListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CognitiveServicesAccountListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AccountListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-18"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -333,7 +504,7 @@ class AccountsOperations:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']  # type: ignore
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
                     'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -349,7 +520,7 @@ class AccountsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('CognitiveServicesAccountListResult', pipeline_response)
+            deserialized = self._deserialize('AccountListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -362,7 +533,7 @@ class AccountsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.Error, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -375,21 +546,21 @@ class AccountsOperations:
 
     def list(
         self,
-        **kwargs
-    ) -> AsyncIterable["_models.CognitiveServicesAccountListResult"]:
+        **kwargs: Any
+    ) -> AsyncIterable["_models.AccountListResult"]:
         """Returns all the resources of a particular type belonging to a subscription.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either CognitiveServicesAccountListResult or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cognitiveservices.models.CognitiveServicesAccountListResult]
+        :return: An iterator like instance of either AccountListResult or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cognitiveservices.models.AccountListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CognitiveServicesAccountListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AccountListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-18"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         def prepare_request(next_link=None):
@@ -416,7 +587,7 @@ class AccountsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize('CognitiveServicesAccountListResult', pipeline_response)
+            deserialized = self._deserialize('AccountListResult', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -429,7 +600,7 @@ class AccountsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.Error, response)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
@@ -444,8 +615,8 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
-    ) -> "_models.CognitiveServicesAccountKeys":
+        **kwargs: Any
+    ) -> "_models.ApiKeys":
         """Lists the account keys for the specified Cognitive Services account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -453,22 +624,22 @@ class AccountsOperations:
         :param account_name: The name of Cognitive Services account.
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CognitiveServicesAccountKeys, or the result of cls(response)
-        :rtype: ~azure.mgmt.cognitiveservices.models.CognitiveServicesAccountKeys
+        :return: ApiKeys, or the result of cls(response)
+        :rtype: ~azure.mgmt.cognitiveservices.models.ApiKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CognitiveServicesAccountKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApiKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-18"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
         url = self.list_keys.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
@@ -488,10 +659,10 @@ class AccountsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('CognitiveServicesAccountKeys', pipeline_response)
+        deserialized = self._deserialize('ApiKeys', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -504,8 +675,8 @@ class AccountsOperations:
         resource_group_name: str,
         account_name: str,
         key_name: Union[str, "_models.KeyName"],
-        **kwargs
-    ) -> "_models.CognitiveServicesAccountKeys":
+        **kwargs: Any
+    ) -> "_models.ApiKeys":
         """Regenerates the specified account key for the specified Cognitive Services account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -515,25 +686,25 @@ class AccountsOperations:
         :param key_name: key name to generate (Key1|Key2).
         :type key_name: str or ~azure.mgmt.cognitiveservices.models.KeyName
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CognitiveServicesAccountKeys, or the result of cls(response)
-        :rtype: ~azure.mgmt.cognitiveservices.models.CognitiveServicesAccountKeys
+        :return: ApiKeys, or the result of cls(response)
+        :rtype: ~azure.mgmt.cognitiveservices.models.ApiKeys
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CognitiveServicesAccountKeys"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApiKeys"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
         _parameters = _models.RegenerateKeyParameters(key_name=key_name)
-        api_version = "2017-04-18"
+        api_version = "2021-10-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
         # Construct URL
         url = self.regenerate_key.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
@@ -557,10 +728,10 @@ class AccountsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('CognitiveServicesAccountKeys', pipeline_response)
+        deserialized = self._deserialize('ApiKeys', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -572,8 +743,8 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        **kwargs
-    ) -> "_models.CognitiveServicesAccountEnumerateSkusResult":
+        **kwargs: Any
+    ) -> "_models.AccountSkuListResult":
         """List available SKUs for the requested Cognitive Services account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -581,22 +752,22 @@ class AccountsOperations:
         :param account_name: The name of Cognitive Services account.
         :type account_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CognitiveServicesAccountEnumerateSkusResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.cognitiveservices.models.CognitiveServicesAccountEnumerateSkusResult
+        :return: AccountSkuListResult, or the result of cls(response)
+        :rtype: ~azure.mgmt.cognitiveservices.models.AccountSkuListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CognitiveServicesAccountEnumerateSkusResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AccountSkuListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-18"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
         url = self.list_skus.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
@@ -616,10 +787,10 @@ class AccountsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('CognitiveServicesAccountEnumerateSkusResult', pipeline_response)
+        deserialized = self._deserialize('AccountSkuListResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -627,13 +798,13 @@ class AccountsOperations:
         return deserialized
     list_skus.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/skus'}  # type: ignore
 
-    async def get_usages(
+    async def list_usages(
         self,
         resource_group_name: str,
         account_name: str,
         filter: Optional[str] = None,
-        **kwargs
-    ) -> "_models.UsagesResult":
+        **kwargs: Any
+    ) -> "_models.UsageListResult":
         """Get usages for the requested Cognitive Services account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -644,22 +815,22 @@ class AccountsOperations:
          supported parameter is name.value (name of the metric, can have an or of multiple names).
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: UsagesResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.cognitiveservices.models.UsagesResult
+        :return: UsageListResult, or the result of cls(response)
+        :rtype: ~azure.mgmt.cognitiveservices.models.UsageListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.UsagesResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.UsageListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2017-04-18"
+        api_version = "2021-10-01"
         accept = "application/json"
 
         # Construct URL
-        url = self.get_usages.metadata['url']  # type: ignore
+        url = self.list_usages.metadata['url']  # type: ignore
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=64, min_length=2, pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_.-]*$'),
             'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str', min_length=1),
         }
@@ -681,13 +852,13 @@ class AccountsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.Error, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('UsagesResult', pipeline_response)
+        deserialized = self._deserialize('UsageListResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_usages.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/usages'}  # type: ignore
+    list_usages.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/usages'}  # type: ignore

@@ -43,20 +43,20 @@ class Operations:
     async def list(
         self,
         **kwargs: Any
-    ) -> "_models.AvailableOperations":
+    ) -> "_models.OperationListResult":
         """List all available Microsoft.AzureStackHCI provider operations.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: AvailableOperations, or the result of cls(response)
-        :rtype: ~azure_stack_hci_client.models.AvailableOperations
+        :return: OperationListResult, or the result of cls(response)
+        :rtype: ~azure_stack_hci_client.models.OperationListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AvailableOperations"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-10-01"
+        api_version = "2021-01-01-preview"
         accept = "application/json"
 
         # Construct URL
@@ -79,7 +79,7 @@ class Operations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('AvailableOperations', pipeline_response)
+        deserialized = self._deserialize('OperationListResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

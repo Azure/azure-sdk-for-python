@@ -79,7 +79,7 @@ If a python version below 3.5 is being used, it is still possible to run the sam
 ## Key concepts
 
 ## Examples
-All the classes in this sample has a `Run()` method as entry point, and do not depend on each other. 
+All the classes in this sample has a `Run()` method as entry point, and do not depend on each other.
 
 It is possible to run them individually:
 ```python
@@ -124,7 +124,7 @@ Be sure to set the environment variables and credentials required before running
 The libraries in the `requiriments_async.txt` are not installed and the python version used has async capabilities. Install the libraries using pip.
 
 ## Next steps
-Check the [Azure SDK for Python Repository](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk) for more samples inside the sdk folder.
+Check the [Azure SDK for Python Repository](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk) for more samples inside the sdk folder.
 
 ## Contributing
 This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.

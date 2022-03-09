@@ -2,7 +2,7 @@
 
 This guide is intended to assist in the migration to `azure-keyvault-keys` from `azure-keyvault`. It will focus on side-by-side comparisons for similar operations between the two packages.
 
-Familiarity with the `azure-keyvault` package is assumed. For those new to the Key Vault client library for Python, please refer to the [README for `azure-keyvault-keys`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-keys/README.md) rather than this guide.
+Familiarity with the `azure-keyvault` package is assumed. For those new to the Key Vault client library for Python, please refer to the [README for `azure-keyvault-keys`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-keys/README.md) rather than this guide.
 
 ## Table of contents
 
@@ -29,7 +29,7 @@ To try and improve the development experience across Azure services, a set of un
 ### Cross Service SDK improvements
 
 The modern Key Vault client library also provides the ability to share in some of the cross-service improvements made to the Azure development experience, such as
-- using the new [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) library to share a single authentication approach between clients
+- using the new [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md) library to share a single authentication approach between clients
 - a unified logging and diagnostics pipeline offering a common view of the activities across each of the client libraries
 
 ## Important changes
@@ -38,9 +38,9 @@ The modern Key Vault client library also provides the ability to share in some o
 
 In the interest of simplifying the API `azure-keyvault` and `KeyVaultClient` were split into separate packages and clients:
 
-- [`azure-keyvault-certificates`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-certificates/README.md) contains `CertificateClient` for working with certificates.
+- [`azure-keyvault-certificates`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-certificates/README.md) contains `CertificateClient` for working with certificates.
 - `azure-keyvault-keys` contains `KeyClient` for working with keys and `CryptographyClient` for performing cryptographic operations.
-- [`azure-keyvault-secrets`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-secrets/README.md) contains `SecretClient` for working with secrets.
+- [`azure-keyvault-secrets`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-secrets/README.md) contains `SecretClient` for working with secrets.
 
 ### Client constructors
 
@@ -63,7 +63,7 @@ credentials = ServicePrincipalCredentials(
 client = KeyVaultClient(credentials)
 ```
 
-Now in `azure-keyvault-keys` you can create a `KeyClient` using any credential from [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md). Below is an example using [`DefaultAzureCredential`](https://docs.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python):
+Now in `azure-keyvault-keys` you can create a `KeyClient` using any credential from [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md). Below is an example using [`DefaultAzureCredential`](https://docs.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python):
 
 ```python
 from azure.identity import DefaultAzureCredential
@@ -85,7 +85,7 @@ crypto_client = CryptographyClient(key=key, credential=credential)
 
 ### Async operations
 
-The modern `azure-keyvault-keys` library includes a complete async API supported on Python 3.5+. To use it, you must first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/). See [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport) for more information.
+The modern `azure-keyvault-keys` library includes a complete async API supported on Python 3.5+. To use it, you must first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/). See [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport) for more information.
 
 Async operations are available on async clients, which should be closed when they're no longer needed. Each async client is an async context manager and defines an async `close` method. For example:
 
@@ -269,5 +269,5 @@ ciphertext = result.ciphertext
 
 ## Additional samples
 
-* [Key Vault keys samples for Python](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys/samples)
+* [Key Vault keys samples for Python](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys/samples)
 * [General Key Vault samples for Python](https://docs.microsoft.com/samples/browse/?products=azure-key-vault&languages=python)

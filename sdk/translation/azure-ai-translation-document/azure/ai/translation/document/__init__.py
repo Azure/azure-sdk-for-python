@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -10,14 +9,15 @@ from ._generated.models import (
     StorageInputType,
 )
 from ._api_version import DocumentTranslationApiVersion
+from ._polling import DocumentTranslationLROPoller
 from ._models import (
     TranslationTarget,
-    JobStatusResult,
-    DocumentStatusResult,
+    TranslationStatus,
+    DocumentStatus,
     DocumentTranslationError,
     TranslationGlossary,
     DocumentTranslationInput,
-    FileFormat
+    DocumentTranslationFileFormat,
 )
 
 __VERSION__ = VERSION
@@ -29,9 +29,10 @@ __all__ = [
     "DocumentTranslationInput",
     "TranslationGlossary",
     "StorageInputType",
-    "FileFormat",
+    "DocumentTranslationFileFormat",
     "TranslationTarget",
-    "JobStatusResult",
-    "DocumentStatusResult",
+    "TranslationStatus",
+    "DocumentStatus",
     "DocumentTranslationError",
+    "DocumentTranslationLROPoller",
 ]

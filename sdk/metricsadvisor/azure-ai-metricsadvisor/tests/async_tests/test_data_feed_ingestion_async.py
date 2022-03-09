@@ -5,50 +5,63 @@
 # --------------------------------------------------------------------------
 
 import datetime
+import functools
 from dateutil.tz import tzutc
 import pytest
-from devtools_testutils import AzureTestCase
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import AzureRecordedTestCase
+from azure.ai.metricsadvisor.aio import MetricsAdvisorAdministrationClient
 
-from base_testcase_async import TestMetricsAdvisorAdministrationClientBaseAsync
+from base_testcase_async import MetricsAdvisorClientPreparer, TestMetricsAdvisorClientBase, CREDENTIALS, ids
+MetricsAdvisorPreparer = functools.partial(MetricsAdvisorClientPreparer, MetricsAdvisorAdministrationClient)
 
 
-class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrationClientBaseAsync):
+class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorClientBase):
 
-    @AzureTestCase.await_prepared_test
-    async def test_get_data_feed_ingestion_progress(self):
-        async with self.admin_client:
-            ingestion = await self.admin_client.get_data_feed_ingestion_progress(
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_get_data_feed_ingestion_progress(self, client):
+        async with client:
+            ingestion = await client.get_data_feed_ingestion_progress(
                 data_feed_id=self.data_feed_id
             )
-            self.assertIsNotNone(ingestion.latest_success_timestamp)
-            self.assertIsNotNone(ingestion.latest_active_timestamp)
+            assert ingestion.latest_success_timestamp is not None
+            assert ingestion.latest_active_timestamp is not None
 
-    @AzureTestCase.await_prepared_test
-    async def test_list_data_feed_ingestion_status(self):
-        async with self.admin_client:
-            ingestions = self.admin_client.list_data_feed_ingestion_status(
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_list_data_feed_ingestion_status(self, client):
+        async with client:
+            ingestions = client.list_data_feed_ingestion_status(
                 data_feed_id=self.data_feed_id,
-                start_time=datetime.datetime(2020, 8, 9, tzinfo=tzutc()),
-                end_time=datetime.datetime(2020, 9, 16, tzinfo=tzutc()),
+                start_time=datetime.datetime(2021, 8, 9, tzinfo=tzutc()),
+                end_time=datetime.datetime(2021, 9, 16, tzinfo=tzutc()),
             )
             ingestions_list = []
             async for status in ingestions:
                 ingestions_list.append(status)
             assert len(list(ingestions_list)) > 0
 
-    @AzureTestCase.await_prepared_test
-    async def test_list_data_feed_ingestion_status_with_skip(self):
-        async with self.admin_client:
-            ingestions = self.admin_client.list_data_feed_ingestion_status(
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_list_data_feed_ingest_status_skip(self, client):
+        async with client:
+            ingestions = client.list_data_feed_ingestion_status(
                 data_feed_id=self.data_feed_id,
-                start_time=datetime.datetime(2020, 8, 9, tzinfo=tzutc()),
-                end_time=datetime.datetime(2020, 9, 16, tzinfo=tzutc()),
+                start_time=datetime.datetime(2021, 8, 9, tzinfo=tzutc()),
+                end_time=datetime.datetime(2021, 9, 16, tzinfo=tzutc()),
             )
 
-            ingestions_with_skips = self.admin_client.list_data_feed_ingestion_status(
+            ingestions_with_skips = client.list_data_feed_ingestion_status(
                 data_feed_id=self.data_feed_id,
-                start_time=datetime.datetime(2020, 8, 9, tzinfo=tzutc()),
-                end_time=datetime.datetime(2020, 9, 16, tzinfo=tzutc()),
+                start_time=datetime.datetime(2021, 8, 9, tzinfo=tzutc()),
+                end_time=datetime.datetime(2021, 9, 16, tzinfo=tzutc()),
                 skip=5
             )
             ingestions_list = []
@@ -61,11 +74,14 @@ class TestMetricsAdvisorAdministrationClientAsync(TestMetricsAdvisorAdministrati
 
             assert len(ingestions_list) == len(ingestions_with_skips_list) + 5
 
-    @AzureTestCase.await_prepared_test
-    async def test_refresh_data_feed_ingestion(self):
-        async with self.admin_client:
-            await self.admin_client.refresh_data_feed_ingestion(
+    @AzureRecordedTestCase.await_prepared_test
+    @pytest.mark.parametrize("credential", CREDENTIALS, ids=ids)
+    @MetricsAdvisorPreparer()
+    @recorded_by_proxy_async
+    async def test_refresh_data_feed_ingestion(self, client):
+        async with client:
+            await client.refresh_data_feed_ingestion(
                 self.data_feed_id,
-                start_time=datetime.datetime(2020, 10, 1, tzinfo=tzutc()),
-                end_time=datetime.datetime(2020, 10, 2, tzinfo=tzutc()),
+                start_time=datetime.datetime(2021, 10, 1, tzinfo=tzutc()),
+                end_time=datetime.datetime(2021, 10, 2, tzinfo=tzutc()),
             )

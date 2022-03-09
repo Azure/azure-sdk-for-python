@@ -11,32 +11,27 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://search96dd1f02.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2020-06-30
+    uri: https://search96dd1f02.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR5dZ
-        uc4/evS9X/zR2/z6o0cf7e7s7Hw0+qhps3bdfPSordf56KO8rqv6i7xpsgtqu1yXpWlxUs3ok72d
-        3V8yMhDufY3Xd37J93/J/wMqNjicjAAAAA==
+      string: '{"value":[{"key":"1000","status":true,"errorMessage":null,"statusCode":201},{"key":"3","status":true,"errorMessage":null,"statusCode":200}]}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '196'
       content-type: application/json; odata.metadata=none
-      date: Thu, 20 May 2021 17:19:47 GMT
-      elapsed-time: '151'
+      date: Tue, 31 Aug 2021 17:28:25 GMT
+      elapsed-time: '123'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 933cb9cf-b98f-11eb-aae6-a0481ca055a9
+      request-id: dab3d0ff-0a80-11ec-9330-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search96dd1f02.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2020-06-30
+    url: https://search96dd1f02.search.windows.net/indexes('drgqefsg')/docs/search.index?api-version=2021-04-30-Preview
 version: 1

@@ -6,7 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+import datetime
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -172,6 +173,8 @@ class Device(TrackedResource):
     :type tags: dict[str, str]
     :param location: Required. The geo-location where the resource lives.
     :type location: str
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~hybrid_network_management_client.models.SystemData
     :ivar status: The current device status. Possible values include: "Unknown", "NotRegistered",
      "Registered", "Deleted".
     :vartype status: str or ~hybrid_network_management_client.models.Status
@@ -181,7 +184,8 @@ class Device(TrackedResource):
     :param device_type: The type of the device.Constant filled by server.  Possible values include:
      "Unknown", "AzureStackEdge".
     :type device_type: str or ~hybrid_network_management_client.models.DeviceType
-    :param azure_stack_edge: The reference to the Azure stack edge device.
+    :param azure_stack_edge: The reference to the Azure stack edge device. Once set, it cannot be
+     updated.
     :type azure_stack_edge: ~hybrid_network_management_client.models.SubResource
     :ivar network_functions: The list of network functions deployed on the device.
     :vartype network_functions: list[~hybrid_network_management_client.models.SubResource]
@@ -192,6 +196,7 @@ class Device(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'system_data': {'readonly': True},
         'status': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'network_functions': {'readonly': True},
@@ -203,6 +208,7 @@ class Device(TrackedResource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'device_type': {'key': 'properties.deviceType', 'type': 'str'},
@@ -219,6 +225,7 @@ class Device(TrackedResource):
         **kwargs
     ):
         super(Device, self).__init__(tags=tags, location=location, **kwargs)
+        self.system_data = None
         self.status = None
         self.provisioning_state = None
         self.device_type = None  # type: Optional[str]
@@ -276,7 +283,8 @@ class DevicePropertiesFormat(msrest.serialization.Model):
     :param device_type: Required. The type of the device.Constant filled by server.  Possible
      values include: "Unknown", "AzureStackEdge".
     :type device_type: str or ~hybrid_network_management_client.models.DeviceType
-    :param azure_stack_edge: The reference to the Azure stack edge device.
+    :param azure_stack_edge: The reference to the Azure stack edge device. Once set, it cannot be
+     updated.
     :type azure_stack_edge: ~hybrid_network_management_client.models.SubResource
     :ivar network_functions: The list of network functions deployed on the device.
     :vartype network_functions: list[~hybrid_network_management_client.models.SubResource]
@@ -348,7 +356,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {
@@ -524,18 +532,20 @@ class NetworkFunction(TrackedResource):
     :type location: str
     :param etag: A unique read-only string that changes whenever the resource is updated.
     :type etag: str
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~hybrid_network_management_client.models.SystemData
     :ivar provisioning_state: The provisioning state of the network function resource. Possible
      values include: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled",
      "Deleted".
     :vartype provisioning_state: str or ~hybrid_network_management_client.models.ProvisioningState
-    :param device: The reference to the device resource.
+    :param device: The reference to the device resource. Once set, it cannot be updated.
     :type device: ~hybrid_network_management_client.models.SubResource
-    :param sku_name: The sku name for the network function.
+    :param sku_name: The sku name for the network function. Once set, it cannot be updated.
     :type sku_name: str
     :ivar sku_type: The sku type for the network function. Possible values include: "Unknown",
      "EvolvedPacketCore", "SDWAN", "Firewall".
     :vartype sku_type: str or ~hybrid_network_management_client.models.SkuType
-    :param vendor_name: The vendor name for the network function.
+    :param vendor_name: The vendor name for the network function. Once set, it cannot be updated.
     :type vendor_name: str
     :ivar service_key: The service key for the network function resource.
     :vartype service_key: str
@@ -547,7 +557,10 @@ class NetworkFunction(TrackedResource):
     :ivar managed_application: The resource URI of the managed application.
     :vartype managed_application: ~hybrid_network_management_client.models.SubResource
     :param managed_application_parameters: The parameters for the managed application.
-    :type managed_application_parameters: object
+    :type managed_application_parameters: any
+    :param network_function_container_configurations: The network function container configurations
+     from the user.
+    :type network_function_container_configurations: any
     :param network_function_user_configurations: The network function configurations from the user.
     :type network_function_user_configurations:
      list[~hybrid_network_management_client.models.NetworkFunctionUserConfiguration]
@@ -558,6 +571,7 @@ class NetworkFunction(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'sku_type': {'readonly': True},
         'service_key': {'readonly': True},
@@ -572,6 +586,7 @@ class NetworkFunction(TrackedResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'device': {'key': 'properties.device', 'type': 'SubResource'},
         'sku_name': {'key': 'properties.skuName', 'type': 'str'},
@@ -581,6 +596,7 @@ class NetworkFunction(TrackedResource):
         'vendor_provisioning_state': {'key': 'properties.vendorProvisioningState', 'type': 'str'},
         'managed_application': {'key': 'properties.managedApplication', 'type': 'SubResource'},
         'managed_application_parameters': {'key': 'properties.managedApplicationParameters', 'type': 'object'},
+        'network_function_container_configurations': {'key': 'properties.networkFunctionContainerConfigurations', 'type': 'object'},
         'network_function_user_configurations': {'key': 'properties.networkFunctionUserConfigurations', 'type': '[NetworkFunctionUserConfiguration]'},
     }
 
@@ -593,12 +609,14 @@ class NetworkFunction(TrackedResource):
         device: Optional["SubResource"] = None,
         sku_name: Optional[str] = None,
         vendor_name: Optional[str] = None,
-        managed_application_parameters: Optional[object] = None,
+        managed_application_parameters: Optional[Any] = None,
+        network_function_container_configurations: Optional[Any] = None,
         network_function_user_configurations: Optional[List["NetworkFunctionUserConfiguration"]] = None,
         **kwargs
     ):
         super(NetworkFunction, self).__init__(tags=tags, location=location, **kwargs)
         self.etag = etag
+        self.system_data = None
         self.provisioning_state = None
         self.device = device
         self.sku_name = sku_name
@@ -608,6 +626,7 @@ class NetworkFunction(TrackedResource):
         self.vendor_provisioning_state = None
         self.managed_application = None
         self.managed_application_parameters = managed_application_parameters
+        self.network_function_container_configurations = network_function_container_configurations
         self.network_function_user_configurations = network_function_user_configurations
 
 
@@ -664,10 +683,10 @@ class NetworkFunctionRoleConfiguration(msrest.serialization.Model):
     :type os_profile: ~hybrid_network_management_client.models.OsProfile
     :param user_data_template: The user data template for customers. This is a json schema template
      describing the format and data type of user data parameters.
-    :type user_data_template: object
+    :type user_data_template: any
     :param user_data_parameters: The user parameters for customers. The format of user data
      parameters has to be matched with the provided user data template.
-    :type user_data_parameters: object
+    :type user_data_parameters: any
     :param network_interfaces: The network interface configurations.
     :type network_interfaces: list[~hybrid_network_management_client.models.NetworkInterface]
     :param storage_profile: Specifies the storage settings for the virtual machine disks.
@@ -695,8 +714,8 @@ class NetworkFunctionRoleConfiguration(msrest.serialization.Model):
         role_type: Optional[Union[str, "NetworkFunctionRoleConfigurationType"]] = None,
         virtual_machine_size: Optional[Union[str, "VirtualMachineSizeTypes"]] = None,
         os_profile: Optional["OsProfile"] = None,
-        user_data_template: Optional[object] = None,
-        user_data_parameters: Optional[object] = None,
+        user_data_template: Optional[Any] = None,
+        user_data_parameters: Optional[Any] = None,
         network_interfaces: Optional[List["NetworkInterface"]] = None,
         storage_profile: Optional["StorageProfile"] = None,
         custom_profile: Optional["CustomProfile"] = None,
@@ -818,9 +837,9 @@ class NetworkFunctionSkuRoleDetails(msrest.serialization.Model):
     :param role_name: The name of the network function role.
     :type role_name: str
     :param user_data_template: The user data template for customers.
-    :type user_data_template: object
+    :type user_data_template: any
     :param user_data_parameters: The user parameters for customers.
-    :type user_data_parameters: object
+    :type user_data_parameters: any
     :param network_interfaces: The network interface configuration.
     :type network_interfaces: list[~hybrid_network_management_client.models.NetworkInterface]
     """
@@ -836,8 +855,8 @@ class NetworkFunctionSkuRoleDetails(msrest.serialization.Model):
         self,
         *,
         role_name: Optional[str] = None,
-        user_data_template: Optional[object] = None,
-        user_data_parameters: Optional[object] = None,
+        user_data_template: Optional[Any] = None,
+        user_data_parameters: Optional[Any] = None,
         network_interfaces: Optional[List["NetworkInterface"]] = None,
         **kwargs
     ):
@@ -876,7 +895,7 @@ class NetworkFunctionUserConfiguration(msrest.serialization.Model):
     :param role_name: The name of the network function role.
     :type role_name: str
     :param user_data_parameters: The user data parameters from the customer.
-    :type user_data_parameters: object
+    :type user_data_parameters: any
     :param network_interfaces: The network interface configuration.
     :type network_interfaces: list[~hybrid_network_management_client.models.NetworkInterface]
     :param os_profile: Specifies the operating system settings for the role instance.
@@ -895,7 +914,7 @@ class NetworkFunctionUserConfiguration(msrest.serialization.Model):
         self,
         *,
         role_name: Optional[str] = None,
-        user_data_parameters: Optional[object] = None,
+        user_data_parameters: Optional[Any] = None,
         network_interfaces: Optional[List["NetworkInterface"]] = None,
         os_profile: Optional["NetworkFunctionUserConfigurationOsProfile"] = None,
         **kwargs
@@ -918,9 +937,8 @@ class NetworkFunctionUserConfigurationOsProfile(msrest.serialization.Model):
      saved as a file. For more information see `Custom Data on Azure VMs
      <https://azure.microsoft.com/en-us/blog/custom-data-and-cloud-init-on-windows-azure/>`_
      :code:`<br>`:code:`<br>` For using cloud-init for your Linux VM, see `Using cloud-init to
-     customize a Linux VM during creation <https://docs.microsoft.com/azure/virtual-
-     machines/virtual-machines-linux-using-cloud-init?toc=%2fazure%2fvirtual-
-     machines%2flinux%2ftoc.json>`_.
+     customize a Linux VM during creation
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-cloud-init?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
     :type custom_data: str
     """
 
@@ -974,7 +992,7 @@ class NetworkFunctionVendorConfiguration(msrest.serialization.Model):
     :param os_profile: Specifies the operating system settings for the role instance.
     :type os_profile: ~hybrid_network_management_client.models.OsProfile
     :ivar user_data_parameters: The user parameters from the customer.
-    :vartype user_data_parameters: object
+    :vartype user_data_parameters: any
     :param network_interfaces: The network interface configurations.
     :type network_interfaces: list[~hybrid_network_management_client.models.NetworkInterface]
     """
@@ -1268,20 +1286,19 @@ class OsProfile(msrest.serialization.Model):
      :code:`<br>`:code:`<br>` **Minimum-length (Linux):** 1  character :code:`<br>`:code:`<br>`
      **Max-length (Linux):** 64 characters :code:`<br>`:code:`<br>` **Max-length (Windows):** 20
      characters  :code:`<br>`:code:`<br>`:code:`<li>` For root access to the Linux VM, see `Using
-     root privileges on Linux virtual machines in Azure <https://docs.microsoft.com/azure/virtual-
-     machines/virtual-machines-linux-use-root-privileges?toc=%2fazure%2fvirtual-
-     machines%2flinux%2ftoc.json>`_\ :code:`<br>`:code:`<li>` For a list of built-in system users on
-     Linux that should not be used in this field, see `Selecting User Names for Linux on Azure
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-
-     usernames?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
+     root privileges on Linux virtual machines in Azure
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-use-root-privileges?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_\
+     :code:`<br>`:code:`<li>` For a list of built-in system users on Linux that should not be used
+     in this field, see `Selecting User Names for Linux on Azure
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-usernames?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
     :type admin_username: str
     :param linux_configuration: Specifies the Linux operating system settings on the virtual
      machine. :code:`<br>`:code:`<br>`For a list of supported Linux distributions, see `Linux on
-     Azure-Endorsed Distributions <https://docs.microsoft.com/azure/virtual-machines/virtual-
-     machines-linux-endorsed-distros?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_
-     :code:`<br>`:code:`<br>` For running non-endorsed distributions, see `Information for Non-
-     Endorsed Distributions <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-
-     linux-create-upload-generic?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
+     Azure-Endorsed Distributions
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-endorsed-distros?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_
+     :code:`<br>`:code:`<br>` For running non-endorsed distributions, see `Information for
+     Non-Endorsed Distributions
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-create-upload-generic?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
     :type linux_configuration: ~hybrid_network_management_client.models.LinuxConfiguration
     :param custom_data: Specifies a base-64 encoded string of custom data. The base-64 encoded
      string is decoded to a binary array that is saved as a file on the virtual machine. The maximum
@@ -1291,9 +1308,8 @@ class OsProfile(msrest.serialization.Model):
      saved as a file. For more information see `Custom Data on Azure VMs
      <https://azure.microsoft.com/en-us/blog/custom-data-and-cloud-init-on-windows-azure/>`_
      :code:`<br>`:code:`<br>` For using cloud-init for your Linux VM, see `Using cloud-init to
-     customize a Linux VM during creation <https://docs.microsoft.com/azure/virtual-
-     machines/virtual-machines-linux-using-cloud-init?toc=%2fazure%2fvirtual-
-     machines%2flinux%2ftoc.json>`_.
+     customize a Linux VM during creation
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-using-cloud-init?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
     :type custom_data: str
     :param custom_data_required: Indicates if custom data is required to deploy this role.
     :type custom_data_required: bool
@@ -1333,18 +1349,28 @@ class PreviewSubscription(msrest.serialization.Model):
     :vartype id: str
     :ivar type: The type of the resource.
     :vartype type: str
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~hybrid_network_management_client.models.SystemData
+    :ivar provisioning_state: The provisioning state of the PreviewSubscription resource. Possible
+     values include: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled",
+     "Deleted".
+    :vartype provisioning_state: str or ~hybrid_network_management_client.models.ProvisioningState
     """
 
     _validation = {
         'name': {'readonly': True},
         'id': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(
@@ -1355,6 +1381,8 @@ class PreviewSubscription(msrest.serialization.Model):
         self.name = None
         self.id = None
         self.type = None
+        self.system_data = None
+        self.provisioning_state = None
 
 
 class PreviewSubscriptionsList(msrest.serialization.Model):
@@ -1425,21 +1453,35 @@ class ProxyResource(Resource):
 class RoleInstance(msrest.serialization.Model):
     """The role instance sub resource.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :param name: The role instance name.
     :type name: str
     :param id: The ARM ID of the resource.
     :type id: str
     :param type: The type of the resource.
     :type type: str
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~hybrid_network_management_client.models.SystemData
+    :ivar provisioning_state: The provisioning state of the RoleInstance resource. Possible values
+     include: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled", "Deleted".
+    :vartype provisioning_state: str or ~hybrid_network_management_client.models.ProvisioningState
     :param operational_state: The operational state of the role instance. Possible values include:
      "Unknown", "Stopped", "Running", "Stopping", "Starting".
     :type operational_state: str or ~hybrid_network_management_client.models.OperationalState
     """
 
+    _validation = {
+        'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'operational_state': {'key': 'properties.operationalState', 'type': 'str'},
     }
 
@@ -1456,6 +1498,8 @@ class RoleInstance(msrest.serialization.Model):
         self.name = name
         self.id = id
         self.type = type
+        self.system_data = None
+        self.provisioning_state = None
         self.operational_state = operational_state
 
 
@@ -1517,8 +1561,7 @@ class SshPublicKey(msrest.serialization.Model):
     :param key_data: SSH public key certificate used to authenticate with the VM through ssh. The
      key needs to be at least 2048-bit and in ssh-rsa format. :code:`<br>`:code:`<br>` For creating
      ssh keys, see `Create SSH keys on Linux and Mac for Linux VMs in Azure
-     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-mac-create-ssh-
-     keys?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
+     <https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-mac-create-ssh-keys?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json>`_.
     :type key_data: str
     """
 
@@ -1593,6 +1636,54 @@ class SubResource(msrest.serialization.Model):
         self.id = id
 
 
+class SystemData(msrest.serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :param created_by: The identity that created the resource.
+    :type created_by: str
+    :param created_by_type: The type of identity that created the resource. Possible values
+     include: "User", "Application", "ManagedIdentity", "Key".
+    :type created_by_type: str or ~hybrid_network_management_client.models.CreatedByType
+    :param created_at: The timestamp of resource creation (UTC).
+    :type created_at: ~datetime.datetime
+    :param last_modified_by: The identity that last modified the resource.
+    :type last_modified_by: str
+    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+     values include: "User", "Application", "ManagedIdentity", "Key".
+    :type last_modified_by_type: str or ~hybrid_network_management_client.models.CreatedByType
+    :param last_modified_at: The timestamp of resource last modification (UTC).
+    :type last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'created_by': {'key': 'createdBy', 'type': 'str'},
+        'created_by_type': {'key': 'createdByType', 'type': 'str'},
+        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
+        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
+        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+        **kwargs
+    ):
+        super(SystemData, self).__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
+
+
 class TagsObject(msrest.serialization.Model):
     """Tags object for patch operations.
 
@@ -1627,6 +1718,8 @@ class Vendor(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~hybrid_network_management_client.models.SystemData
     :ivar provisioning_state: The provisioning state of the vendor resource. Possible values
      include: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled", "Deleted".
     :vartype provisioning_state: str or ~hybrid_network_management_client.models.ProvisioningState
@@ -1638,6 +1731,7 @@ class Vendor(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'skus': {'readonly': True},
     }
@@ -1646,6 +1740,7 @@ class Vendor(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'skus': {'key': 'properties.skus', 'type': '[SubResource]'},
     }
@@ -1655,6 +1750,7 @@ class Vendor(ProxyResource):
         **kwargs
     ):
         super(Vendor, self).__init__(**kwargs)
+        self.system_data = None
         self.provisioning_state = None
         self.skus = None
 
@@ -1703,6 +1799,8 @@ class VendorNetworkFunction(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~hybrid_network_management_client.models.SystemData
     :ivar provisioning_state: The provisioning state of the vendor network function sub resource.
      Possible values include: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled",
      "Deleted".
@@ -1712,7 +1810,7 @@ class VendorNetworkFunction(ProxyResource):
      "Provisioned", "Deprovisioned", "UserDataValidationFailed".
     :type vendor_provisioning_state: str or
      ~hybrid_network_management_client.models.VendorProvisioningState
-    :ivar sku_name: The name of the sku.
+    :ivar sku_name: The name of the sku. Once set, it cannot be updated.
     :vartype sku_name: str
     :ivar sku_type: The sku type. Possible values include: "Unknown", "EvolvedPacketCore", "SDWAN",
      "Firewall".
@@ -1727,6 +1825,7 @@ class VendorNetworkFunction(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'sku_name': {'readonly': True},
         'sku_type': {'readonly': True},
@@ -1736,6 +1835,7 @@ class VendorNetworkFunction(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'vendor_provisioning_state': {'key': 'properties.vendorProvisioningState', 'type': 'str'},
         'sku_name': {'key': 'properties.skuName', 'type': 'str'},
@@ -1751,6 +1851,7 @@ class VendorNetworkFunction(ProxyResource):
         **kwargs
     ):
         super(VendorNetworkFunction, self).__init__(**kwargs)
+        self.system_data = None
         self.provisioning_state = None
         self.vendor_provisioning_state = vendor_provisioning_state
         self.sku_name = None
@@ -1802,6 +1903,8 @@ class VendorSku(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~hybrid_network_management_client.models.SystemData
     :ivar provisioning_state: The provisioning state of the vendor sku sub resource. Possible
      values include: "Unknown", "Succeeded", "Accepted", "Deleting", "Failed", "Canceled",
      "Deleted".
@@ -1812,13 +1915,17 @@ class VendorSku(ProxyResource):
     :param deployment_mode: The sku deployment mode. Possible values include: "Unknown", "Azure",
      "PrivateEdgeZone".
     :type deployment_mode: str or ~hybrid_network_management_client.models.SkuDeploymentMode
+    :param network_function_type: The network function type. Possible values include: "Unknown",
+     "VirtualNetworkFunction", "ContainerizedNetworkFunction".
+    :type network_function_type: str or
+     ~hybrid_network_management_client.models.NetworkFunctionType
     :param preview: Indicates if the vendor sku is in preview mode.
     :type preview: bool
     :param managed_application_parameters: The parameters for the managed application to be
      supplied by the vendor.
-    :type managed_application_parameters: object
+    :type managed_application_parameters: any
     :param managed_application_template: The template for the managed application deployment.
-    :type managed_application_template: object
+    :type managed_application_template: any
     :param network_function_template: The template definition of the network function.
     :type network_function_template:
      ~hybrid_network_management_client.models.NetworkFunctionTemplate
@@ -1828,6 +1935,7 @@ class VendorSku(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -1835,9 +1943,11 @@ class VendorSku(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'sku_type': {'key': 'properties.skuType', 'type': 'str'},
         'deployment_mode': {'key': 'properties.deploymentMode', 'type': 'str'},
+        'network_function_type': {'key': 'properties.networkFunctionType', 'type': 'str'},
         'preview': {'key': 'properties.preview', 'type': 'bool'},
         'managed_application_parameters': {'key': 'properties.managedApplicationParameters', 'type': 'object'},
         'managed_application_template': {'key': 'properties.managedApplicationTemplate', 'type': 'object'},
@@ -1849,16 +1959,19 @@ class VendorSku(ProxyResource):
         *,
         sku_type: Optional[Union[str, "SkuType"]] = None,
         deployment_mode: Optional[Union[str, "SkuDeploymentMode"]] = None,
+        network_function_type: Optional[Union[str, "NetworkFunctionType"]] = None,
         preview: Optional[bool] = None,
-        managed_application_parameters: Optional[object] = None,
-        managed_application_template: Optional[object] = None,
+        managed_application_parameters: Optional[Any] = None,
+        managed_application_template: Optional[Any] = None,
         network_function_template: Optional["NetworkFunctionTemplate"] = None,
         **kwargs
     ):
         super(VendorSku, self).__init__(**kwargs)
+        self.system_data = None
         self.provisioning_state = None
         self.sku_type = sku_type
         self.deployment_mode = deployment_mode
+        self.network_function_type = network_function_type
         self.preview = preview
         self.managed_application_parameters = managed_application_parameters
         self.managed_application_template = managed_application_template

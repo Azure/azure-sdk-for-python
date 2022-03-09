@@ -9,26 +9,27 @@ interactions:
       - '131'
       Content-Type:
       - application/json
-      Date:
-      - Fri, 30 Apr 2021 21:35:58 GMT
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.1 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.2 Python/3.9.9 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Wed, 12 Jan 2022 16:28:30 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/availablePhoneNumbers/countries/XX/:search?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/availablePhoneNumbers/countries/XX/:search?api-version=2022-01-11-preview2
   response:
     body:
       string: '{"error": {"code": "InvalidInput", "message": "Unable to parse country
         code.", "target": "countrycode"}}'
     headers:
-      api-supported-versions: '2021-03-07'
+      api-supported-versions: 2021-03-07, 2022-01-11-preview2
       content-type: application/json
-      date: Fri, 30 Apr 2021 21:35:58 GMT
-      ms-cv: vS+4qpNfgUqjc0RGNA/ZgQ.0
+      date: Wed, 12 Jan 2022 16:28:25 GMT
+      ms-cv: f3yG1KE9DkKrgvVICL38Vg.0
       request-context: appId=
       transfer-encoding: chunked
-      x-processing-time: 33ms
+      x-cache: CONFIG_NOCACHE
+      x-processing-time: 53ms
     status:
       code: 400
       message: Bad Request

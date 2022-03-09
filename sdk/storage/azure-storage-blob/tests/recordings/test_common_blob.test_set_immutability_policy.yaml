@@ -1,0 +1,131 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.9.0b1 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Tue, 01 Jun 2021 23:07:38 GMT
+      x-ms-version:
+      - '2020-10-02'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontaineraac312a8?restype=container&timeout=5
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
+        specified container already exists.\nRequestId:1e10f50d-001e-0018-1b3a-579d5a000000\nTime:2021-06-01T23:07:38.8357199Z</Message></Error>"
+    headers:
+      content-length:
+      - '230'
+      content-type:
+      - application/xml
+      date:
+      - Tue, 01 Jun 2021 23:07:38 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ContainerAlreadyExists
+      x-ms-version:
+      - '2020-10-02'
+    status:
+      code: 409
+      message: The specified container already exists.
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      If-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-azure-mgmt-storage/18.0.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/XClient/providers/Microsoft.Storage/storageAccounts/storagename/blobServices/default/containers/utcontaineraac312a8/immutabilityPolicies/default?api-version=2021-04-01
+  response:
+    body:
+      string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/XClient/providers/Microsoft.Storage/storageAccounts/storagename/blobServices/default/containers/utcontaineraac312a8/immutabilityPolicies/default","name":"default","type":"Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies","etag":"\"8d9254ab66c2c6c\"","properties":{"immutabilityPeriodSinceCreationInDays":1,"state":"Unlocked"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '433'
+      content-type:
+      - application/json
+      date:
+      - Tue, 01 Jun 2021 23:07:42 GMT
+      etag:
+      - '"8d9254ab66c2c6c"'
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-azure-mgmt-storage/18.0.0 Python/3.7.3 (Windows-10-10.0.19041-SP0)
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/XClient/providers/Microsoft.Storage/storageAccounts/storagename/blobServices/default/containers/utcontaineraac312a8?api-version=2021-04-01
+  response:
+    body:
+      string: '{"error":{"code":"ContainerProtectedFromDeletion","message":"The storage
+        account storagename container utcontaineraac312a8 is protected from deletion
+        due to ImmutabilityPolicy."}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '182'
+      content-type:
+      - application/json
+      date:
+      - Tue, 01 Jun 2021 23:07:43 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-Azure-Storage-Resource-Provider/1.0,Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14999'
+    status:
+      code: 409
+      message: Conflict
+version: 1

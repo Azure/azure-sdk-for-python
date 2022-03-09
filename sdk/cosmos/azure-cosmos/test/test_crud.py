@@ -26,19 +26,11 @@
 import json
 import logging
 import os.path
-import sys
 import unittest
-from six.moves import xrange
-from struct import unpack, pack
-# from six.moves.builtins import *
 import time
 from typing import Mapping
-import six
 
-if six.PY2:
-    import urllib as urllib
-else:
-    import urllib.parse as urllib
+import urllib.parse as urllib
 import uuid
 import pytest
 from azure.core import MatchConditions
@@ -46,7 +38,7 @@ from azure.core.exceptions import AzureError, ServiceResponseError
 from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
-from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
+from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 import test_config
 import azure.cosmos._base as base
 import azure.cosmos.cosmos_client as cosmos_client

@@ -12,6 +12,7 @@ from ._usage_models_operations import UsageModelsOperations
 from ._asc_operations_operations import AscOperationsOperations
 from ._caches_operations import CachesOperations
 from ._storage_targets_operations import StorageTargetsOperations
+from ._storage_target_operations import StorageTargetOperations
 
 __all__ = [
     'Operations',
@@ -20,4 +21,5 @@ __all__ = [
     'AscOperationsOperations',
     'CachesOperations',
     'StorageTargetsOperations',
+    'StorageTargetOperations',
 ]

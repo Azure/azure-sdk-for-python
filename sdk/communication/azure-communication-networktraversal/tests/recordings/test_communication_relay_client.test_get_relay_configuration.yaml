@@ -1,0 +1,99 @@
+interactions:
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-identity/1.1.0b2 Python/3.7.4 (Windows-10-10.0.22523-SP0)
+      x-ms-date:
+      - Thu, 03 Feb 2022 18:48:52 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.communication.azure.com/identities?api-version=2021-10-31-preview
+  response:
+    body:
+      string: '{"identity": {"id": "sanitized"}}'
+    headers:
+      api-supported-versions:
+      - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-03-31-preview1,
+        2021-10-31-preview, 2021-11-01, 2022-06-01
+      content-length:
+      - '101'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 03 Feb 2022 18:48:52 GMT
+      ms-cv:
+      - nZ1wAMUsk0maOixeQ5OvfQ.0
+      request-context:
+      - appId=
+      strict-transport-security:
+      - max-age=2592000
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 28ms
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{"id": "sanitized"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '89'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-communication-networktraversal/1.0.0 Python/3.7.4 (Windows-10-10.0.22523-SP0)
+      x-ms-date:
+      - Thu, 03 Feb 2022 18:48:52 GMT
+      x-ms-return-client-request-id:
+      - 'true'
+    method: POST
+    uri: https://sanitized.communication.azure.com/networkTraversal/:issueRelayConfiguration?api-version=2022-02-01
+  response:
+    body:
+      string: '{"iceServers": [{"routeType": "any", "urls": ["turn.skype.com", "turn:turn.azure.com:3478"],
+        "username": "sanitized", "credential": "sanitized"}, {"routeType": "nearest",
+        "urls": ["stun:13.107.17.41:3478", "turn:13.107.17.41:3478"], "username":
+        "BQAANgVYJpIB2BrBaQ8lmsXSGsGthOpOhovqhRI9mvAAAAAMARCsgNlqhd5IsZldo6P6NifIJV8Yt5etru9T5zQA60qeMYXPS6s=",
+        "credential": "8lxSv2+q2DxWICYZokM+B+AJjy0="}], "expiresOn": "2022-02-05T18:48:52.8209864+00:00"}'
+    headers:
+      api-supported-versions:
+      - 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview, 2022-02-01
+      content-length:
+      - '546'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 03 Feb 2022 18:48:52 GMT
+      ms-cv:
+      - HinTxtP1tkam3oSfx7MddA.0
+      request-context:
+      - appId=
+      strict-transport-security:
+      - max-age=2592000
+      x-cache:
+      - CONFIG_NOCACHE
+      x-processing-time:
+      - 53ms
+    status:
+      code: 200
+      message: OK
+version: 1

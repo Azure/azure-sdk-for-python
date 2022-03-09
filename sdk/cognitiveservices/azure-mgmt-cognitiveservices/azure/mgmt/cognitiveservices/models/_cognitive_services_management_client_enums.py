@@ -26,13 +26,45 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
-class IdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of managed service identity.
+class ActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs.
     """
 
-    NONE = "None"
-    SYSTEM_ASSIGNED = "SystemAssigned"
-    USER_ASSIGNED = "UserAssigned"
+    INTERNAL = "Internal"
+
+class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of identity that created the resource.
+    """
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+class DeploymentProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Gets the status of the resource at the time the operation was called.
+    """
+
+    ACCEPTED = "Accepted"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    MOVING = "Moving"
+    FAILED = "Failed"
+    SUCCEEDED = "Succeeded"
+
+class DeploymentScaleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Deployment scale type.
+    """
+
+    MANUAL = "Manual"
+
+class HostingModel(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Account hosting model.
+    """
+
+    WEB = "Web"
+    CONNECTED_CONTAINER = "ConnectedContainer"
+    DISCONNECTED_CONTAINER = "DisconnectedContainer"
 
 class KeyName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """key name to generate (Key1|Key2)
@@ -56,6 +88,24 @@ class NetworkRuleAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ALLOW = "Allow"
     DENY = "Deny"
 
+class Origin(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
+    logs UX. Default value is "user,system"
+    """
+
+    USER = "user"
+    SYSTEM = "system"
+    USER_SYSTEM = "user,system"
+
+class PrivateEndpointConnectionProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The current provisioning state.
+    """
+
+    SUCCEEDED = "Succeeded"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    FAILED = "Failed"
+
 class PrivateEndpointServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The private endpoint connection status.
     """
@@ -63,18 +113,18 @@ class PrivateEndpointServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnum
     PENDING = "Pending"
     APPROVED = "Approved"
     REJECTED = "Rejected"
-    DISCONNECTED = "Disconnected"
 
 class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Gets the status of the cognitive services account at the time the operation was called.
     """
 
+    ACCEPTED = "Accepted"
     CREATING = "Creating"
-    RESOLVING_DNS = "ResolvingDNS"
-    MOVING = "Moving"
     DELETING = "Deleting"
-    SUCCEEDED = "Succeeded"
+    MOVING = "Moving"
     FAILED = "Failed"
+    SUCCEEDED = "Succeeded"
+    RESOLVING_DNS = "ResolvingDNS"
 
 class PublicNetworkAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """Whether or not public endpoint access is allowed for this account. Value is optional but if
@@ -93,6 +143,15 @@ class QuotaUsageStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     IN_OVERAGE = "InOverage"
     UNKNOWN = "Unknown"
 
+class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The identity type.
+    """
+
+    NONE = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
+
 class ResourceSkuRestrictionsReasonCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The reason for restriction.
     """
@@ -108,10 +167,12 @@ class ResourceSkuRestrictionsType(with_metaclass(_CaseInsensitiveEnumMeta, str, 
     ZONE = "Zone"
 
 class SkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Gets the sku tier. This is based on the SKU name.
+    """This field is required to be implemented by the Resource Provider if the service has more than
+    one tier, but is not required on a PUT.
     """
 
     FREE = "Free"
+    BASIC = "Basic"
     STANDARD = "Standard"
     PREMIUM = "Premium"
     ENTERPRISE = "Enterprise"

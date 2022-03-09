@@ -11,7 +11,6 @@ urlFragment: tables-samples
 # Samples for Azure Tables client library for Python
 
 These code samples show common scenario operations with the Azure Data Tables client library.
-The async versions of the samples require Python 3.5 or later.
 
 You can authenticate your client with a Tables API key:
 * See [sample_authentication.py][sample_authentication] and [sample_authentication_async.py][sample_authentication_async] for how to authenticate in the above cases.
@@ -29,7 +28,7 @@ These sample programs show common scenarios for the Tables client's offerings.
 
 
 ### Prerequisites
-* Python 2.7, or 3.5 or later is required to use this package.
+* Python 3.6 or later is required to use this package.
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and either an
 [Azure storage account](https://docs.microsoft.com/azure/storage/common/storage-account-overview) or an [Azure Cosmos Account](https://docs.microsoft.com/azure/cosmos-db/account-overview) to use this package.
 
@@ -63,6 +62,27 @@ pip install --pre azure-data-tables
 |`Not`|`not`|
 |`Or`|`or`|
 
+### Formatting and quote characters
+
+Query strings must wrap literal values in single quotes. Literal values containing single quote characters must be escaped with a double single quote.
+```python
+query_filter = "LastName eq 'O''Connor' and CustomerSince eq datetime'2008-07-10T00:00:00Z'"
+table_client.query_entities(query_filter)
+```
+Query strings can also be parameterized using a dictionary of values, which will be automatically formatted with single quotes according to data type.
+When using the parameter dictionary to format filters, any single quote characters in the values will be automatically escaped.
+```python
+parameters = {
+    "last_name": "O'Connor",
+    "customer_since": datetime(year=2008, month=7, day=10)
+}
+query_filter = "LastName eq @last_name and CustomerSince eq @customer_since"
+table_client.query_entities(query_filter, parameters=parameters)
+```
+
+For more information on formatting and supported characters, please see the [query reference documentation][query_reference_documentation].
+
+
 ### Example Filters
 
 #### Filter on `PartitionKey` and `RowKey`:
@@ -72,7 +92,7 @@ parameters = {
     "rk": RowKey
 }
 query_filter = "PartitionKey eq @pk and RowKey eq @rk"
-table_client.query_entities(query_filter, parameter=pk)
+table_client.query_entities(query_filter, parameters=parameters)
 ```
 
 #### Filter on Properties
@@ -82,7 +102,7 @@ parameters = {
     "last": last_name
 }
 query_filter = "FirstName eq @first or LastName eq @last"
-table_client.query_entities(query_filter, parameter=pk)
+table_client.query_entities(query_filter, parameters=parameters)
 ```
 
 #### Filter with string comparison operators
@@ -129,28 +149,29 @@ what you can do with the Azure Data Tables client library.
 
 <!-- LINKS -->
 [api_reference_documentation]: https://docs.microsoft.com/rest/api/storageservices/table-service-rest-api
+[query_reference_documentation]: https://docs.microsoft.com/rest/api/storageservices/querying-tables-and-entities
 
-[sample_authentication]:https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_authentication.py
-[sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_authentication_async.py
+[sample_authentication]:https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_authentication.py
+[sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_authentication_async.py
 
-[create_client]:https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_create_client.py
-[create_client_async]:https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_create_client_async.py
+[create_client]:https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_create_client.py
+[create_client_async]:https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_create_client_async.py
 
-[create_delete_table]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_create_delete_table.py
-[create_delete_table_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_create_delete_table_async.py
+[create_delete_table]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_create_delete_table.py
+[create_delete_table_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_create_delete_table_async.py
 
-[insert_delete_entities]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_insert_delete_entities.py
-[insert_delete_entities_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_insert_delete_entities_async.py
+[insert_delete_entities]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_insert_delete_entities.py
+[insert_delete_entities_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_insert_delete_entities_async.py
 
-[query_entities]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_query_table.py
-[query_table_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_query_table_async.py
+[query_entities]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_query_table.py
+[query_table_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_query_table_async.py
 
-[query_tables]:https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_query_tables.py
-[query_tables_async]:https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_query_tables_async.py
+[query_tables]:https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_query_tables.py
+[query_tables_async]:https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_query_tables_async.py
 
-[update_upsert_merge]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py
-[update_upsert_merge_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_update_upsert_merge_entities_async.py
+[update_upsert_merge]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py
+[update_upsert_merge_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_update_upsert_merge_entities_async.py
 
-[sample_batch]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/sample_batching.py
-[sample_batch_async]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/tables/azure-data-tables/samples/async_samples/sample_batching_async.py
+[sample_batch]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_batching.py
+[sample_batch_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_batching_async.py
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/tables/azure-data-tables/README.png)

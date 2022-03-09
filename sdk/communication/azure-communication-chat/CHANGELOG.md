@@ -1,7 +1,24 @@
 # Release History
 
-## 1.0.1 (Unreleased)
+## 1.2.0 (Unreleased)
 
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+
+## 1.1.0 (2021-09-15)
+- Updated `azure-communication-chat` version.
+
+## 1.1.0b1 (2021-08-16)
+
+### Added
+- Added support to add `metadata` for `message`
+- Added support to add `sender_display_name` for `ChatThreadClient.send_typing_notification`
 
 ## 1.0.0 (2021-03-29)
 ### Breaking Changes

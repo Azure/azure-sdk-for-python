@@ -45,7 +45,7 @@ class LocationBasedRecommendedActionSessionsResultOperations:
         self,
         location_name: str,
         operation_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.RecommendationActionsResultList"]:
         """Recommendation action session operation result.
 

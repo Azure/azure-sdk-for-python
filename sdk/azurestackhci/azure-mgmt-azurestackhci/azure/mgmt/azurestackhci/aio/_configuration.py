@@ -45,7 +45,7 @@ class AzureStackHCIClientConfiguration(Configuration):
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2020-10-01"
+        self.api_version = "2021-01-01-preview"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-azurestackhci/{}'.format(VERSION))
         self._configure(**kwargs)

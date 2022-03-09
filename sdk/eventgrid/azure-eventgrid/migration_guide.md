@@ -2,7 +2,7 @@
 
 This guide is intended to assist in the migration to azure-eventgrid v4.0 from azure-eventgrid v1.3. It will focus on side-by-side comparisons for similar operations between the two packages.
 
-Familiarity with the azure-eventgrid v1.3 package is assumed. For those new to the eventgrid client library for Python, please refer to the [README for azure-eventgrid v4.0](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/README.md) rather than this guide.
+Familiarity with the azure-eventgrid v1.3 package is assumed. For those new to the eventgrid client library for Python, please refer to the [README for azure-eventgrid v4.0](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/README.md) rather than this guide.
 
 ## Table of contents
 
@@ -27,7 +27,7 @@ To try and improve the development experience across Azure services, a set of un
 
 The modern Event Grid client library also provides the ability to share in some of the cross-service improvements made to the Azure development experience, such as
 - a unified logging and diagnostics pipeline offering a common view of the activities across each of the client libraries
-- using the new [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md) library to share a single authentication approach between clients
+- using the new [`azure-identity`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md) library to share a single authentication approach between clients
 
 ## Important changes
 
@@ -64,7 +64,7 @@ cloud_event = {
 
 | In v1.3 | Equivalent in v4.0 | Sample |
 |---|---|---|
-|`EventGridClient(credentials)`|`EventGridPublisherClient(endpoint, credential)`|[Sample for client construction](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_events_using_cloud_events_1.0_schema.py)|
+|`EventGridClient(credentials)`|`EventGridPublisherClient(endpoint, credential)`|[Sample for client construction](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_events_using_cloud_events_1.0_schema.py)|
 
 ### Publishing Events
 
@@ -72,7 +72,7 @@ The `publish_events` API is replaced with `send` in v4.0. Additionally, `send` A
 
 | In v1.3 | Equivalent in v4.0 | Sample |
 |---|---|---|
-|`EventGridClient(credentials).publish_events(topic_hostname, events)`|`EventGridPublisherClient(endpoint, credential).send(events)`|[Sample for client construction](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_events_using_cloud_events_1.0_schema.py)|
+|`EventGridClient(credentials).publish_events(topic_hostname, events)`|`EventGridPublisherClient(endpoint, credential).send(events)`|[Sample for client construction](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventgrid/azure-eventgrid/samples/sync_samples/sample_publish_events_using_cloud_events_1.0_schema.py)|
 
 ### Consuming Events
 
@@ -99,4 +99,4 @@ with ServiceBusClient.from_connection_string(connection_str) as sb_client:
 
 ## Additional samples
 
-More examples can be found at [here](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventgrid/azure-eventgrid/samples)
+More examples can be found at [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventgrid/azure-eventgrid/samples)

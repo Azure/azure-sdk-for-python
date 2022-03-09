@@ -39,7 +39,6 @@ async def sample_create_data_feed_async():
         DataFeedSchema,
         DataFeedMetric,
         DataFeedDimension,
-        DataFeedOptions,
         DataFeedRollupSettings,
         DataFeedMissingDataPointFillSettings,
     )
@@ -67,23 +66,21 @@ async def sample_create_data_feed_async():
                 ],
                 dimensions=[
                     DataFeedDimension(name="category", display_name="Category"),
-                    DataFeedDimension(name="city", display_name="City")
+                    DataFeedDimension(name="region", display_name="region")
                 ],
                 timestamp_column="Timestamp"
             ),
             ingestion_settings=datetime.datetime(2019, 10, 1),
-            options=DataFeedOptions(
-                data_feed_description="cost/revenue data feed",
-                rollup_settings=DataFeedRollupSettings(
-                    rollup_type="AutoRollup",
-                    rollup_method="Sum",
-                    rollup_identification_value="__CUSTOM_SUM__"
-                ),
-                missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
-                    fill_type="SmartFilling"
-                ),
-                access_mode="Private"
-            )
+            data_feed_description="cost/revenue data feed",
+            rollup_settings=DataFeedRollupSettings(
+                rollup_type="AutoRollup",
+                rollup_method="Sum",
+                rollup_identification_value="__CUSTOM_SUM__"
+            ),
+            missing_data_point_fill_settings=DataFeedMissingDataPointFillSettings(
+                fill_type="SmartFilling"
+            ),
+            access_mode="Private"
         )
 
         return data_feed
@@ -116,11 +113,11 @@ async def sample_get_data_feed_async(data_feed_id):
         print("Data feed dimensions: {}".format([dimension.name for dimension in data_feed.schema.dimensions]))
         print("Data feed timestamp column: {}".format(data_feed.schema.timestamp_column))
         print("Ingestion data starting on: {}".format(data_feed.ingestion_settings.ingestion_begin_time))
-        print("Data feed description: {}".format(data_feed.options.data_feed_description))
-        print("Data feed rollup type: {}".format(data_feed.options.rollup_settings.rollup_type))
-        print("Data feed rollup method: {}".format(data_feed.options.rollup_settings.rollup_method))
-        print("Data feed fill setting: {}".format(data_feed.options.missing_data_point_fill_settings.fill_type))
-        print("Data feed access mode: {}".format(data_feed.options.access_mode))
+        print("Data feed description: {}".format(data_feed.data_feed_description))
+        print("Data feed rollup type: {}".format(data_feed.rollup_settings.rollup_type))
+        print("Data feed rollup method: {}".format(data_feed.rollup_settings.rollup_method))
+        print("Data feed fill setting: {}".format(data_feed.missing_data_point_fill_settings.fill_type))
+        print("Data feed access mode: {}".format(data_feed.access_mode))
     # [END get_data_feed_async]
 
 
@@ -172,22 +169,21 @@ async def sample_update_data_feed_async(data_feed):
 
     # update data feed on the data feed itself or by using available keyword arguments
     data_feed.name = "updated name"
-    data_feed.options.data_feed_description = "updated description for data feed"
+    data_feed.data_feed_description = "updated description for data feed"
 
     async with client:
-        await client.update_data_feed(
+        updated = await client.update_data_feed(
             data_feed,
             access_mode="Public",
             fill_type="CustomValue",
             custom_fill_value=1
         )
-        updated_data_feed = await client.get_data_feed(data_feed.id)
-        print("Updated name: {}".format(updated_data_feed.name))
-        print("Updated description: {}".format(updated_data_feed.options.data_feed_description))
-        print("Updated access mode: {}".format(updated_data_feed.options.access_mode))
+        print("Updated name: {}".format(updated.name))
+        print("Updated description: {}".format(updated.data_feed_description))
+        print("Updated access mode: {}".format(updated.access_mode))
         print("Updated fill setting, value: {}, {}".format(
-            updated_data_feed.options.missing_data_point_fill_settings.fill_type,
-            updated_data_feed.options.missing_data_point_fill_settings.custom_fill_value,
+            updated.missing_data_point_fill_settings.fill_type,
+            updated.missing_data_point_fill_settings.custom_fill_value,
         ))
     # [END update_data_feed_async]
 
@@ -231,5 +227,4 @@ async def main():
 
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

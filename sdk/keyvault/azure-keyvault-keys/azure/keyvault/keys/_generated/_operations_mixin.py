@@ -10,16 +10,12 @@
 # --------------------------------------------------------------------------
 from msrest import Serializer, Deserializer
 from typing import TYPE_CHECKING
-import warnings
-
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
-from azure.core.paging import ItemPaged
-from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
+    from typing import Any, Iterable, Optional
+
+    from azure.core.paging import ItemPaged
 
 
 class KeyVaultClientOperationsMixin(object):
@@ -30,6 +26,7 @@ class KeyVaultClientOperationsMixin(object):
         certificate_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.BackupCertificateResult"
         """Backs up the specified certificate.
 
         Requests that a backup of the specified certificate be downloaded to the client. All versions
@@ -54,6 +51,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.backup_certificate(vault_base_url, certificate_name, **kwargs)
 
@@ -63,6 +61,7 @@ class KeyVaultClientOperationsMixin(object):
         key_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.BackupKeyResult"
         """Requests that a backup of the specified key be downloaded to the client.
 
         The Key Backup operation exports a key from Azure Key Vault in a protected form. Note that this
@@ -83,7 +82,7 @@ class KeyVaultClientOperationsMixin(object):
         :type key_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BackupKeyResult, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.BackupKeyResult
+        :rtype: ~azure.keyvault.v7_2.models.BackupKeyResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('backup_key')
@@ -93,14 +92,17 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_0.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1':
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from .v7_2_preview.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.2':
+            from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'backup_key'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.backup_key(vault_base_url, key_name, **kwargs)
 
@@ -110,6 +112,7 @@ class KeyVaultClientOperationsMixin(object):
         secret_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.BackupSecretResult"
         """Backs up the specified secret.
 
         Requests that a backup of the specified secret be downloaded to the client. All versions of the
@@ -135,6 +138,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.backup_secret(vault_base_url, secret_name, **kwargs)
 
@@ -144,6 +148,7 @@ class KeyVaultClientOperationsMixin(object):
         storage_account_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.BackupStorageResult"
         """Backs up the specified storage account.
 
         Requests that a backup of the specified storage account be downloaded to the client. This
@@ -167,6 +172,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.backup_storage_account(vault_base_url, storage_account_name, **kwargs)
 
@@ -177,6 +183,7 @@ class KeyVaultClientOperationsMixin(object):
         parameters,  # type: "_models.CertificateCreateParameters"
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.CertificateOperation"
         """Creates a new certificate.
 
         If this is the first version, the certificate resource is created. This operation requires the
@@ -204,6 +211,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.create_certificate(vault_base_url, certificate_name, parameters, **kwargs)
 
@@ -214,6 +222,7 @@ class KeyVaultClientOperationsMixin(object):
         parameters,  # type: "_models.KeyCreateParameters"
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.KeyBundle"
         """Creates a new key, stores it, then returns key parameters and attributes to the client.
 
         The create key operation can be used to create any key type in Azure Key Vault. If the named
@@ -226,10 +235,10 @@ class KeyVaultClientOperationsMixin(object):
          new key.
         :type key_name: str
         :param parameters: The parameters to create a key.
-        :type parameters: ~azure.keyvault.v7_1.models.KeyCreateParameters
+        :type parameters: ~azure.keyvault.v7_2.models.KeyCreateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.KeyBundle
+        :rtype: ~azure.keyvault.v7_2.models.KeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('create_key')
@@ -239,14 +248,17 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_0.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1':
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from .v7_2_preview.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.2':
+            from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'create_key'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.create_key(vault_base_url, key_name, parameters, **kwargs)
 
@@ -258,6 +270,7 @@ class KeyVaultClientOperationsMixin(object):
         parameters,  # type: "_models.KeyOperationsParameters"
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.KeyOperationResult"
         """Decrypts a single block of encrypted data.
 
         The DECRYPT operation decrypts a well-formed block of ciphertext using the target encryption
@@ -274,10 +287,10 @@ class KeyVaultClientOperationsMixin(object):
         :param key_version: The version of the key.
         :type key_version: str
         :param parameters: The parameters for the decryption operation.
-        :type parameters: ~azure.keyvault.v7_1.models.KeyOperationsParameters
+        :type parameters: ~azure.keyvault.v7_2.models.KeyOperationsParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyOperationResult, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v7_2.models.KeyOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('decrypt')
@@ -287,14 +300,17 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_0.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1':
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from .v7_2_preview.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.2':
+            from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'decrypt'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.decrypt(vault_base_url, key_name, key_version, parameters, **kwargs)
 
@@ -304,6 +320,7 @@ class KeyVaultClientOperationsMixin(object):
         certificate_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.DeletedCertificateBundle"
         """Deletes a certificate from a specified key vault.
 
         Deletes all versions of a certificate object along with its associated policy. Delete
@@ -330,6 +347,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.delete_certificate(vault_base_url, certificate_name, **kwargs)
 
@@ -338,6 +356,7 @@ class KeyVaultClientOperationsMixin(object):
         vault_base_url,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.Contacts"
         """Deletes the certificate contacts for a specified key vault.
 
         Deletes the certificate contacts for a specified key vault certificate. This operation requires
@@ -361,6 +380,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.delete_certificate_contacts(vault_base_url, **kwargs)
 
@@ -370,6 +390,7 @@ class KeyVaultClientOperationsMixin(object):
         issuer_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.IssuerBundle"
         """Deletes the specified certificate issuer.
 
         The DeleteCertificateIssuer operation permanently removes the specified certificate issuer from
@@ -395,6 +416,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.delete_certificate_issuer(vault_base_url, issuer_name, **kwargs)
 
@@ -404,6 +426,7 @@ class KeyVaultClientOperationsMixin(object):
         certificate_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.CertificateOperation"
         """Deletes the creation operation for a specific certificate.
 
         Deletes the creation operation for a specified certificate that is in the process of being
@@ -430,6 +453,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.delete_certificate_operation(vault_base_url, certificate_name, **kwargs)
 
@@ -439,6 +463,7 @@ class KeyVaultClientOperationsMixin(object):
         key_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.DeletedKeyBundle"
         """Deletes a key of any type from storage in Azure Key Vault.
 
         The delete key operation cannot be used to remove individual versions of a key. This operation
@@ -452,7 +477,7 @@ class KeyVaultClientOperationsMixin(object):
         :type key_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeletedKeyBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.DeletedKeyBundle
+        :rtype: ~azure.keyvault.v7_2.models.DeletedKeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('delete_key')
@@ -462,14 +487,17 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_0.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1':
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from .v7_2_preview.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.2':
+            from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'delete_key'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.delete_key(vault_base_url, key_name, **kwargs)
 
@@ -480,6 +508,7 @@ class KeyVaultClientOperationsMixin(object):
         sas_definition_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.SasDefinitionBundle"
         """Deletes a SAS definition from a specified storage account. This operation requires the
         storage/deletesas permission.
 
@@ -505,6 +534,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.delete_sas_definition(vault_base_url, storage_account_name, sas_definition_name, **kwargs)
 
@@ -514,6 +544,7 @@ class KeyVaultClientOperationsMixin(object):
         secret_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.DeletedSecretBundle"
         """Deletes a secret from a specified key vault.
 
         The DELETE operation applies to any secret stored in Azure Key Vault. DELETE cannot be applied
@@ -539,6 +570,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.delete_secret(vault_base_url, secret_name, **kwargs)
 
@@ -548,6 +580,7 @@ class KeyVaultClientOperationsMixin(object):
         storage_account_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.StorageBundle"
         """Deletes a storage account. This operation requires the storage/delete permission.
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
@@ -570,6 +603,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.delete_storage_account(vault_base_url, storage_account_name, **kwargs)
 
@@ -581,6 +615,7 @@ class KeyVaultClientOperationsMixin(object):
         parameters,  # type: "_models.KeyOperationsParameters"
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.KeyOperationResult"
         """Encrypts an arbitrary sequence of bytes using an encryption key that is stored in a key vault.
 
         The ENCRYPT operation encrypts an arbitrary sequence of bytes using an encryption key that is
@@ -588,8 +623,8 @@ class KeyVaultClientOperationsMixin(object):
         data, the size of which is dependent on the target key and the encryption algorithm to be used.
         The ENCRYPT operation is only strictly necessary for symmetric keys stored in Azure Key Vault
         since protection with an asymmetric key can be performed using public portion of the key. This
-        operation is supported for asymmetric keys as a convenience for callers that have a key-
-        reference but do not have access to the public key material. This operation requires the
+        operation is supported for asymmetric keys as a convenience for callers that have a
+        key-reference but do not have access to the public key material. This operation requires the
         keys/encrypt permission.
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
@@ -599,10 +634,10 @@ class KeyVaultClientOperationsMixin(object):
         :param key_version: The version of the key.
         :type key_version: str
         :param parameters: The parameters for the encryption operation.
-        :type parameters: ~azure.keyvault.v7_1.models.KeyOperationsParameters
+        :type parameters: ~azure.keyvault.v7_2.models.KeyOperationsParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyOperationResult, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v7_2.models.KeyOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('encrypt')
@@ -612,14 +647,17 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_0.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1':
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from .v7_2_preview.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.2':
+            from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'encrypt'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.encrypt(vault_base_url, key_name, key_version, parameters, **kwargs)
 
@@ -630,6 +668,7 @@ class KeyVaultClientOperationsMixin(object):
         certificate_version,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.CertificateBundle"
         """Gets information about a certificate.
 
         Gets information about a specific certificate. This operation requires the certificates/get
@@ -657,6 +696,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_certificate(vault_base_url, certificate_name, certificate_version, **kwargs)
 
@@ -665,6 +705,7 @@ class KeyVaultClientOperationsMixin(object):
         vault_base_url,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.Contacts"
         """Lists the certificate contacts for a specified key vault.
 
         The GetCertificateContacts operation returns the set of certificate contact resources in the
@@ -688,6 +729,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_certificate_contacts(vault_base_url, **kwargs)
 
@@ -697,6 +739,7 @@ class KeyVaultClientOperationsMixin(object):
         issuer_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.IssuerBundle"
         """Lists the specified certificate issuer.
 
         The GetCertificateIssuer operation returns the specified certificate issuer resources in the
@@ -723,6 +766,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_certificate_issuer(vault_base_url, issuer_name, **kwargs)
 
@@ -732,6 +776,7 @@ class KeyVaultClientOperationsMixin(object):
         maxresults=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
+        # type: (...) -> Iterable["_models.CertificateIssuerListResult"]
         """List certificate issuers for a specified key vault.
 
         The GetCertificateIssuers operation returns the set of certificate issuer resources in the
@@ -744,8 +789,10 @@ class KeyVaultClientOperationsMixin(object):
          will return up to 25 results.
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either CertificateIssuerListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v2016_10_01.models.CertificateIssuerListResult]
+        :return: An iterator like instance of either CertificateIssuerListResult or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.keyvault.v2016_10_01.models.CertificateIssuerListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_certificate_issuers')
@@ -759,6 +806,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_certificate_issuers(vault_base_url, maxresults, **kwargs)
 
@@ -768,6 +816,7 @@ class KeyVaultClientOperationsMixin(object):
         certificate_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.CertificateOperation"
         """Gets the creation operation of a certificate.
 
         Gets the creation operation associated with a specified certificate. This operation requires
@@ -793,6 +842,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_certificate_operation(vault_base_url, certificate_name, **kwargs)
 
@@ -802,6 +852,7 @@ class KeyVaultClientOperationsMixin(object):
         certificate_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.CertificatePolicy"
         """Lists the policy for a certificate.
 
         The GetCertificatePolicy operation returns the specified certificate policy resources in the
@@ -827,6 +878,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_certificate_policy(vault_base_url, certificate_name, **kwargs)
 
@@ -837,6 +889,7 @@ class KeyVaultClientOperationsMixin(object):
         maxresults=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
+        # type: (...) -> Iterable["_models.CertificateListResult"]
         """List the versions of a certificate.
 
         The GetCertificateVersions operation returns the versions of a certificate in the specified key
@@ -850,7 +903,8 @@ class KeyVaultClientOperationsMixin(object):
          will return up to 25 results.
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either CertificateListResult or the result of cls(response)
+        :return: An iterator like instance of either CertificateListResult or the result of
+         cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v2016_10_01.models.CertificateListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -865,6 +919,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_certificate_versions(vault_base_url, certificate_name, maxresults, **kwargs)
 
@@ -874,6 +929,7 @@ class KeyVaultClientOperationsMixin(object):
         maxresults=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
+        # type: (...) -> Iterable["_models.CertificateListResult"]
         """List certificates in a specified key vault.
 
         The GetCertificates operation returns the set of certificates resources in the specified key
@@ -885,7 +941,8 @@ class KeyVaultClientOperationsMixin(object):
          will return up to 25 results.
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either CertificateListResult or the result of cls(response)
+        :return: An iterator like instance of either CertificateListResult or the result of
+         cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v2016_10_01.models.CertificateListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -900,6 +957,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_certificates(vault_base_url, maxresults, **kwargs)
 
@@ -909,6 +967,7 @@ class KeyVaultClientOperationsMixin(object):
         certificate_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.DeletedCertificateBundle"
         """Retrieves information about the specified deleted certificate.
 
         The GetDeletedCertificate operation retrieves the deleted certificate information plus its
@@ -935,6 +994,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_deleted_certificate(vault_base_url, certificate_name, **kwargs)
 
@@ -944,6 +1004,7 @@ class KeyVaultClientOperationsMixin(object):
         maxresults=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
+        # type: (...) -> Iterable["_models.DeletedCertificateListResult"]
         """Lists the deleted certificates in the specified vault currently available for recovery.
 
         The GetDeletedCertificates operation retrieves the certificates in the current vault which are
@@ -957,8 +1018,10 @@ class KeyVaultClientOperationsMixin(object):
          will return up to 25 results.
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DeletedCertificateListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v2016_10_01.models.DeletedCertificateListResult]
+        :return: An iterator like instance of either DeletedCertificateListResult or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.keyvault.v2016_10_01.models.DeletedCertificateListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_deleted_certificates')
@@ -972,6 +1035,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_deleted_certificates(vault_base_url, maxresults, **kwargs)
 
@@ -981,6 +1045,7 @@ class KeyVaultClientOperationsMixin(object):
         key_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.DeletedKeyBundle"
         """Gets the public part of a deleted key.
 
         The Get Deleted Key operation is applicable for soft-delete enabled vaults. While the operation
@@ -993,7 +1058,7 @@ class KeyVaultClientOperationsMixin(object):
         :type key_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DeletedKeyBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.DeletedKeyBundle
+        :rtype: ~azure.keyvault.v7_2.models.DeletedKeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_deleted_key')
@@ -1003,14 +1068,17 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_0.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1':
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from .v7_2_preview.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.2':
+            from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_deleted_key'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_deleted_key(vault_base_url, key_name, **kwargs)
 
@@ -1020,6 +1088,7 @@ class KeyVaultClientOperationsMixin(object):
         maxresults=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
+        # type: (...) -> Iterable["_models.DeletedKeyListResult"]
         """Lists the deleted keys in the specified vault.
 
         Retrieves a list of the keys in the Key Vault as JSON Web Key structures that contain the
@@ -1034,8 +1103,9 @@ class KeyVaultClientOperationsMixin(object):
          will return up to 25 results.
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DeletedKeyListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_1.models.DeletedKeyListResult]
+        :return: An iterator like instance of either DeletedKeyListResult or the result of
+         cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_2.models.DeletedKeyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_deleted_keys')
@@ -1045,14 +1115,17 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_0.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1':
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from .v7_2_preview.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.2':
+            from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_deleted_keys'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_deleted_keys(vault_base_url, maxresults, **kwargs)
 
@@ -1063,6 +1136,7 @@ class KeyVaultClientOperationsMixin(object):
         sas_definition_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.DeletedSasDefinitionBundle"
         """Gets the specified deleted sas definition.
 
         The Get Deleted SAS Definition operation returns the specified deleted SAS definition along
@@ -1088,6 +1162,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_deleted_sas_definition(vault_base_url, storage_account_name, sas_definition_name, **kwargs)
 
@@ -1098,6 +1173,7 @@ class KeyVaultClientOperationsMixin(object):
         maxresults=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
+        # type: (...) -> Iterable["_models.DeletedSasDefinitionListResult"]
         """Lists deleted SAS definitions for the specified vault and storage account.
 
         The Get Deleted Sas Definitions operation returns the SAS definitions that have been deleted
@@ -1111,8 +1187,10 @@ class KeyVaultClientOperationsMixin(object):
          will return up to 25 results.
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DeletedSasDefinitionListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_0.models.DeletedSasDefinitionListResult]
+        :return: An iterator like instance of either DeletedSasDefinitionListResult or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.keyvault.v7_0.models.DeletedSasDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_deleted_sas_definitions')
@@ -1124,6 +1202,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_deleted_sas_definitions(vault_base_url, storage_account_name, maxresults, **kwargs)
 
@@ -1133,6 +1212,7 @@ class KeyVaultClientOperationsMixin(object):
         secret_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.DeletedSecretBundle"
         """Gets the specified deleted secret.
 
         The Get Deleted Secret operation returns the specified deleted secret along with its
@@ -1158,6 +1238,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_deleted_secret(vault_base_url, secret_name, **kwargs)
 
@@ -1167,6 +1248,7 @@ class KeyVaultClientOperationsMixin(object):
         maxresults=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
+        # type: (...) -> Iterable["_models.DeletedSecretListResult"]
         """Lists deleted secrets for the specified vault.
 
         The Get Deleted Secrets operation returns the secrets that have been deleted for a vault
@@ -1178,8 +1260,10 @@ class KeyVaultClientOperationsMixin(object):
          will return up to 25 results.
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DeletedSecretListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v2016_10_01.models.DeletedSecretListResult]
+        :return: An iterator like instance of either DeletedSecretListResult or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.keyvault.v2016_10_01.models.DeletedSecretListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_deleted_secrets')
@@ -1193,6 +1277,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_deleted_secrets(vault_base_url, maxresults, **kwargs)
 
@@ -1202,6 +1287,7 @@ class KeyVaultClientOperationsMixin(object):
         storage_account_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.DeletedStorageBundle"
         """Gets the specified deleted storage account.
 
         The Get Deleted Storage Account operation returns the specified deleted storage account along
@@ -1225,6 +1311,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_deleted_storage_account(vault_base_url, storage_account_name, **kwargs)
 
@@ -1234,6 +1321,7 @@ class KeyVaultClientOperationsMixin(object):
         maxresults=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
+        # type: (...) -> Iterable["_models.DeletedStorageListResult"]
         """Lists deleted storage accounts for the specified vault.
 
         The Get Deleted Storage Accounts operation returns the storage accounts that have been deleted
@@ -1245,7 +1333,8 @@ class KeyVaultClientOperationsMixin(object):
          will return up to 25 results.
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DeletedStorageListResult or the result of cls(response)
+        :return: An iterator like instance of either DeletedStorageListResult or the result of
+         cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_0.models.DeletedStorageListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -1258,6 +1347,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_deleted_storage_accounts(vault_base_url, maxresults, **kwargs)
 
@@ -1268,6 +1358,7 @@ class KeyVaultClientOperationsMixin(object):
         key_version,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.KeyBundle"
         """Gets the public part of a stored key.
 
         The get key operation is applicable to all key types. If the requested key is symmetric, then
@@ -1282,7 +1373,7 @@ class KeyVaultClientOperationsMixin(object):
         :type key_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.KeyBundle
+        :rtype: ~azure.keyvault.v7_2.models.KeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_key')
@@ -1292,16 +1383,53 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_0.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1':
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from .v7_2_preview.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.2':
+            from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_key'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_key(vault_base_url, key_name, key_version, **kwargs)
+
+    def get_key_rotation_policy(
+        self,
+        vault_base_url,  # type: str
+        key_name,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.KeyRotationPolicy"
+        """Lists the policy for a key.
+
+        The GetKeyRotationPolicy operation returns the specified key policy resources in the specified
+        key vault. This operation requires the keys/get permission.
+
+        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param key_name: The name of the key in a given key vault.
+        :type key_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: KeyRotationPolicy, or the result of cls(response)
+        :rtype: ~azure.keyvault.v7_3_preview.models.KeyRotationPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('get_key_rotation_policy')
+        if api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'get_key_rotation_policy'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return mixin_instance.get_key_rotation_policy(vault_base_url, key_name, **kwargs)
 
     def get_key_versions(
         self,
@@ -1310,6 +1438,7 @@ class KeyVaultClientOperationsMixin(object):
         maxresults=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
+        # type: (...) -> Iterable["_models.KeyListResult"]
         """Retrieves a list of individual key versions with the same key name.
 
         The full key identifier, attributes, and tags are provided in the response. This operation
@@ -1324,7 +1453,7 @@ class KeyVaultClientOperationsMixin(object):
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KeyListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_1.models.KeyListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_2.models.KeyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_key_versions')
@@ -1334,14 +1463,17 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_0.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1':
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from .v7_2_preview.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.2':
+            from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_key_versions'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_key_versions(vault_base_url, key_name, maxresults, **kwargs)
 
@@ -1351,6 +1483,7 @@ class KeyVaultClientOperationsMixin(object):
         maxresults=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
+        # type: (...) -> Iterable["_models.KeyListResult"]
         """List keys in the specified vault.
 
         Retrieves a list of the keys in the Key Vault as JSON Web Key structures that contain the
@@ -1365,7 +1498,7 @@ class KeyVaultClientOperationsMixin(object):
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KeyListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_1.models.KeyListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_2.models.KeyListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_keys')
@@ -1375,16 +1508,52 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_0.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1':
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from .v7_2_preview.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.2':
+            from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_keys'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_keys(vault_base_url, maxresults, **kwargs)
+
+    def get_random_bytes(
+        self,
+        vault_base_url,  # type: str
+        parameters,  # type: "_models.GetRandomBytesRequest"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.RandomBytes"
+        """Get the requested number of bytes containing random values.
+
+        Get the requested number of bytes containing random values from a managed HSM.
+
+        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param parameters: The request object to get random bytes.
+        :type parameters: ~azure.keyvault.v7_3_preview.models.GetRandomBytesRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: RandomBytes, or the result of cls(response)
+        :rtype: ~azure.keyvault.v7_3_preview.models.RandomBytes
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('get_random_bytes')
+        if api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'get_random_bytes'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return mixin_instance.get_random_bytes(vault_base_url, parameters, **kwargs)
 
     def get_sas_definition(
         self,
@@ -1393,6 +1562,7 @@ class KeyVaultClientOperationsMixin(object):
         sas_definition_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.SasDefinitionBundle"
         """Gets information about a SAS definition for the specified storage account. This operation
         requires the storage/getsas permission.
 
@@ -1418,6 +1588,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_sas_definition(vault_base_url, storage_account_name, sas_definition_name, **kwargs)
 
@@ -1428,6 +1599,7 @@ class KeyVaultClientOperationsMixin(object):
         maxresults=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
+        # type: (...) -> Iterable["_models.SasDefinitionListResult"]
         """List storage SAS definitions for the given storage account. This operation requires the
         storage/listsas permission.
 
@@ -1439,8 +1611,10 @@ class KeyVaultClientOperationsMixin(object):
          will return up to 25 results.
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either SasDefinitionListResult or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v2016_10_01.models.SasDefinitionListResult]
+        :return: An iterator like instance of either SasDefinitionListResult or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.keyvault.v2016_10_01.models.SasDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_sas_definitions')
@@ -1454,6 +1628,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_sas_definitions(vault_base_url, storage_account_name, maxresults, **kwargs)
 
@@ -1464,6 +1639,7 @@ class KeyVaultClientOperationsMixin(object):
         secret_version,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.SecretBundle"
         """Get a specified secret from a given key vault.
 
         The GET operation is applicable to any secret stored in Azure Key Vault. This operation
@@ -1491,6 +1667,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_secret(vault_base_url, secret_name, secret_version, **kwargs)
 
@@ -1501,6 +1678,7 @@ class KeyVaultClientOperationsMixin(object):
         maxresults=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
+        # type: (...) -> Iterable["_models.SecretListResult"]
         """List all versions of the specified secret.
 
         The full secret identifier and attributes are provided in the response. No values are returned
@@ -1529,6 +1707,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_secret_versions(vault_base_url, secret_name, maxresults, **kwargs)
 
@@ -1538,6 +1717,7 @@ class KeyVaultClientOperationsMixin(object):
         maxresults=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
+        # type: (...) -> Iterable["_models.SecretListResult"]
         """List secrets in a specified key vault.
 
         The Get Secrets operation is applicable to the entire vault. However, only the base secret
@@ -1565,6 +1745,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_secrets(vault_base_url, maxresults, **kwargs)
 
@@ -1574,6 +1755,7 @@ class KeyVaultClientOperationsMixin(object):
         storage_account_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.StorageBundle"
         """Gets information about a specified storage account. This operation requires the storage/get
         permission.
 
@@ -1597,6 +1779,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_storage_account(vault_base_url, storage_account_name, **kwargs)
 
@@ -1606,6 +1789,7 @@ class KeyVaultClientOperationsMixin(object):
         maxresults=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
+        # type: (...) -> Iterable["_models.StorageListResult"]
         """List storage accounts managed by the specified key vault. This operation requires the
         storage/list permission.
 
@@ -1630,6 +1814,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_storage_accounts(vault_base_url, maxresults, **kwargs)
 
@@ -1640,6 +1825,7 @@ class KeyVaultClientOperationsMixin(object):
         parameters,  # type: "_models.CertificateImportParameters"
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.CertificateBundle"
         """Imports a certificate into a specified key vault.
 
         Imports an existing valid certificate, containing a private key, into Azure Key Vault. The
@@ -1669,6 +1855,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.import_certificate(vault_base_url, certificate_name, parameters, **kwargs)
 
@@ -1679,7 +1866,9 @@ class KeyVaultClientOperationsMixin(object):
         parameters,  # type: "_models.KeyImportParameters"
         **kwargs  # type: Any
     ):
-        """Imports an externally created key, stores it, and returns key parameters and attributes to the client.
+        # type: (...) -> "_models.KeyBundle"
+        """Imports an externally created key, stores it, and returns key parameters and attributes to the
+        client.
 
         The import key operation may be used to import any key type into an Azure Key Vault. If the
         named key already exists, Azure Key Vault creates a new version of the key. This operation
@@ -1690,10 +1879,10 @@ class KeyVaultClientOperationsMixin(object):
         :param key_name: Name for the imported key.
         :type key_name: str
         :param parameters: The parameters to import a key.
-        :type parameters: ~azure.keyvault.v7_1.models.KeyImportParameters
+        :type parameters: ~azure.keyvault.v7_2.models.KeyImportParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.KeyBundle
+        :rtype: ~azure.keyvault.v7_2.models.KeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('import_key')
@@ -1703,14 +1892,17 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_0.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1':
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from .v7_2_preview.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.2':
+            from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'import_key'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.import_key(vault_base_url, key_name, parameters, **kwargs)
 
@@ -1721,6 +1913,7 @@ class KeyVaultClientOperationsMixin(object):
         parameters,  # type: "_models.CertificateMergeParameters"
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.CertificateBundle"
         """Merges a certificate or a certificate chain with a key pair existing on the server.
 
         The MergeCertificate operation performs the merging of a certificate or certificate chain with
@@ -1749,6 +1942,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.merge_certificate(vault_base_url, certificate_name, parameters, **kwargs)
 
@@ -1758,6 +1952,7 @@ class KeyVaultClientOperationsMixin(object):
         certificate_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> None
         """Permanently deletes the specified deleted certificate.
 
         The PurgeDeletedCertificate operation performs an irreversible deletion of the specified
@@ -1784,6 +1979,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.purge_deleted_certificate(vault_base_url, certificate_name, **kwargs)
 
@@ -1793,6 +1989,7 @@ class KeyVaultClientOperationsMixin(object):
         key_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> None
         """Permanently deletes the specified key.
 
         The Purge Deleted Key operation is applicable for soft-delete enabled vaults. While the
@@ -1815,14 +2012,17 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_0.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1':
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from .v7_2_preview.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.2':
+            from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'purge_deleted_key'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.purge_deleted_key(vault_base_url, key_name, **kwargs)
 
@@ -1832,6 +2032,7 @@ class KeyVaultClientOperationsMixin(object):
         secret_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> None
         """Permanently deletes the specified secret.
 
         The purge deleted secret operation removes the secret permanently, without the possibility of
@@ -1858,6 +2059,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.purge_deleted_secret(vault_base_url, secret_name, **kwargs)
 
@@ -1867,6 +2069,7 @@ class KeyVaultClientOperationsMixin(object):
         storage_account_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> None
         """Permanently deletes the specified storage account.
 
         The purge deleted storage account operation removes the secret permanently, without the
@@ -1891,6 +2094,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.purge_deleted_storage_account(vault_base_url, storage_account_name, **kwargs)
 
@@ -1900,6 +2104,7 @@ class KeyVaultClientOperationsMixin(object):
         certificate_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.CertificateBundle"
         """Recovers the deleted certificate back to its current version under /certificates.
 
         The RecoverDeletedCertificate operation performs the reversal of the Delete operation. The
@@ -1927,6 +2132,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.recover_deleted_certificate(vault_base_url, certificate_name, **kwargs)
 
@@ -1936,6 +2142,7 @@ class KeyVaultClientOperationsMixin(object):
         key_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.KeyBundle"
         """Recovers the deleted key to its latest version.
 
         The Recover Deleted Key operation is applicable for deleted keys in soft-delete enabled vaults.
@@ -1949,7 +2156,7 @@ class KeyVaultClientOperationsMixin(object):
         :type key_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.KeyBundle
+        :rtype: ~azure.keyvault.v7_2.models.KeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('recover_deleted_key')
@@ -1959,14 +2166,17 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_0.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1':
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from .v7_2_preview.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.2':
+            from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'recover_deleted_key'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.recover_deleted_key(vault_base_url, key_name, **kwargs)
 
@@ -1977,6 +2187,7 @@ class KeyVaultClientOperationsMixin(object):
         sas_definition_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.SasDefinitionBundle"
         """Recovers the deleted SAS definition.
 
         Recovers the deleted SAS definition for the specified storage account. This operation can only
@@ -2003,6 +2214,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.recover_deleted_sas_definition(vault_base_url, storage_account_name, sas_definition_name, **kwargs)
 
@@ -2012,6 +2224,7 @@ class KeyVaultClientOperationsMixin(object):
         secret_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.SecretBundle"
         """Recovers the deleted secret to the latest version.
 
         Recovers the deleted secret in the specified vault. This operation can only be performed on a
@@ -2037,6 +2250,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.recover_deleted_secret(vault_base_url, secret_name, **kwargs)
 
@@ -2046,6 +2260,7 @@ class KeyVaultClientOperationsMixin(object):
         storage_account_name,  # type: str
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.StorageBundle"
         """Recovers the deleted storage account.
 
         Recovers the deleted storage account in the specified vault. This operation can only be
@@ -2070,6 +2285,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.recover_deleted_storage_account(vault_base_url, storage_account_name, **kwargs)
 
@@ -2080,6 +2296,7 @@ class KeyVaultClientOperationsMixin(object):
         parameters,  # type: "_models.StorageAccountRegenerteKeyParameters"
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.StorageBundle"
         """Regenerates the specified key value for the given storage account. This operation requires the
         storage/regeneratekey permission.
 
@@ -2105,8 +2322,49 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.regenerate_storage_account_key(vault_base_url, storage_account_name, parameters, **kwargs)
+
+    def release(
+        self,
+        vault_base_url,  # type: str
+        key_name,  # type: str
+        key_version,  # type: str
+        parameters,  # type: "_models.KeyReleaseParameters"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.KeyReleaseResult"
+        """Releases a key.
+
+        The release key operation is applicable to all key types. The target key must be marked
+        exportable. This operation requires the keys/release permission.
+
+        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param key_name: The name of the key to get.
+        :type key_name: str
+        :param key_version: Adding the version parameter retrieves a specific version of a key.
+        :type key_version: str
+        :param parameters: The parameters for the key release operation.
+        :type parameters: ~azure.keyvault.v7_3_preview.models.KeyReleaseParameters
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: KeyReleaseResult, or the result of cls(response)
+        :rtype: ~azure.keyvault.v7_3_preview.models.KeyReleaseResult
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('release')
+        if api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'release'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return mixin_instance.release(vault_base_url, key_name, key_version, parameters, **kwargs)
 
     def restore_certificate(
         self,
@@ -2114,6 +2372,7 @@ class KeyVaultClientOperationsMixin(object):
         parameters,  # type: "_models.CertificateRestoreParameters"
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.CertificateBundle"
         """Restores a backed up certificate to a vault.
 
         Restores a backed up certificate, and all its versions, to a vault. This operation requires the
@@ -2137,6 +2396,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.restore_certificate(vault_base_url, parameters, **kwargs)
 
@@ -2146,6 +2406,7 @@ class KeyVaultClientOperationsMixin(object):
         parameters,  # type: "_models.KeyRestoreParameters"
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.KeyBundle"
         """Restores a backed up key to a vault.
 
         Imports a previously backed up key into Azure Key Vault, restoring the key, its key identifier,
@@ -2162,10 +2423,10 @@ class KeyVaultClientOperationsMixin(object):
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
         :type vault_base_url: str
         :param parameters: The parameters to restore the key.
-        :type parameters: ~azure.keyvault.v7_1.models.KeyRestoreParameters
+        :type parameters: ~azure.keyvault.v7_2.models.KeyRestoreParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.KeyBundle
+        :rtype: ~azure.keyvault.v7_2.models.KeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('restore_key')
@@ -2175,14 +2436,17 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_0.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1':
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from .v7_2_preview.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.2':
+            from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'restore_key'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.restore_key(vault_base_url, parameters, **kwargs)
 
@@ -2192,6 +2456,7 @@ class KeyVaultClientOperationsMixin(object):
         parameters,  # type: "_models.SecretRestoreParameters"
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.SecretBundle"
         """Restores a backed up secret to a vault.
 
         Restores a backed up secret, and all its versions, to a vault. This operation requires the
@@ -2217,6 +2482,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.restore_secret(vault_base_url, parameters, **kwargs)
 
@@ -2226,6 +2492,7 @@ class KeyVaultClientOperationsMixin(object):
         parameters,  # type: "_models.StorageRestoreParameters"
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.StorageBundle"
         """Restores a backed up storage account to a vault.
 
         Restores a backed up storage account to a vault. This operation requires the storage/restore
@@ -2249,8 +2516,45 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.restore_storage_account(vault_base_url, parameters, **kwargs)
+
+    def rotate_key(
+        self,
+        vault_base_url,  # type: str
+        key_name,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.KeyBundle"
+        """Creates a new key version, stores it, then returns key parameters, attributes and policy to the
+        client.
+
+        The operation will rotate the key based on the key policy. It requires the keys/rotate
+        permission.
+
+        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param key_name: The name of key to be rotated. The system will generate a new version in the
+         specified key.
+        :type key_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: KeyBundle, or the result of cls(response)
+        :rtype: ~azure.keyvault.v7_3_preview.models.KeyBundle
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('rotate_key')
+        if api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'rotate_key'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return mixin_instance.rotate_key(vault_base_url, key_name, **kwargs)
 
     def set_certificate_contacts(
         self,
@@ -2258,6 +2562,7 @@ class KeyVaultClientOperationsMixin(object):
         contacts,  # type: "_models.Contacts"
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.Contacts"
         """Sets the certificate contacts for the specified key vault.
 
         Sets the certificate contacts for the specified key vault. This operation requires the
@@ -2283,6 +2588,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.set_certificate_contacts(vault_base_url, contacts, **kwargs)
 
@@ -2293,6 +2599,7 @@ class KeyVaultClientOperationsMixin(object):
         parameter,  # type: "_models.CertificateIssuerSetParameters"
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.IssuerBundle"
         """Sets the specified certificate issuer.
 
         The SetCertificateIssuer operation adds or updates the specified certificate issuer. This
@@ -2320,6 +2627,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.set_certificate_issuer(vault_base_url, issuer_name, parameter, **kwargs)
 
@@ -2331,6 +2639,7 @@ class KeyVaultClientOperationsMixin(object):
         parameters,  # type: "_models.SasDefinitionCreateParameters"
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.SasDefinitionBundle"
         """Creates or updates a new SAS definition for the specified storage account. This operation
         requires the storage/setsas permission.
 
@@ -2358,6 +2667,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.set_sas_definition(vault_base_url, storage_account_name, sas_definition_name, parameters, **kwargs)
 
@@ -2368,6 +2678,7 @@ class KeyVaultClientOperationsMixin(object):
         parameters,  # type: "_models.SecretSetParameters"
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.SecretBundle"
         """Sets a secret in a specified key vault.
 
         The SET operation adds a secret to the Azure Key Vault. If the named secret already exists,
@@ -2396,6 +2707,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.set_secret(vault_base_url, secret_name, parameters, **kwargs)
 
@@ -2406,6 +2718,7 @@ class KeyVaultClientOperationsMixin(object):
         parameters,  # type: "_models.StorageAccountCreateParameters"
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.StorageBundle"
         """Creates or updates a new storage account. This operation requires the storage/set permission.
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
@@ -2430,6 +2743,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.set_storage_account(vault_base_url, storage_account_name, parameters, **kwargs)
 
@@ -2441,6 +2755,7 @@ class KeyVaultClientOperationsMixin(object):
         parameters,  # type: "_models.KeySignParameters"
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.KeyOperationResult"
         """Creates a signature from a digest using the specified key.
 
         The SIGN operation is applicable to asymmetric and symmetric keys stored in Azure Key Vault
@@ -2454,10 +2769,10 @@ class KeyVaultClientOperationsMixin(object):
         :param key_version: The version of the key.
         :type key_version: str
         :param parameters: The parameters for the signing operation.
-        :type parameters: ~azure.keyvault.v7_1.models.KeySignParameters
+        :type parameters: ~azure.keyvault.v7_2.models.KeySignParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyOperationResult, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v7_2.models.KeyOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('sign')
@@ -2467,14 +2782,17 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_0.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1':
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from .v7_2_preview.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.2':
+            from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'sign'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.sign(vault_base_url, key_name, key_version, parameters, **kwargs)
 
@@ -2486,6 +2804,7 @@ class KeyVaultClientOperationsMixin(object):
         parameters,  # type: "_models.KeyOperationsParameters"
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.KeyOperationResult"
         """Unwraps a symmetric key using the specified key that was initially used for wrapping that key.
 
         The UNWRAP operation supports decryption of a symmetric key using the target key encryption
@@ -2500,10 +2819,10 @@ class KeyVaultClientOperationsMixin(object):
         :param key_version: The version of the key.
         :type key_version: str
         :param parameters: The parameters for the key operation.
-        :type parameters: ~azure.keyvault.v7_1.models.KeyOperationsParameters
+        :type parameters: ~azure.keyvault.v7_2.models.KeyOperationsParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyOperationResult, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v7_2.models.KeyOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('unwrap_key')
@@ -2513,14 +2832,17 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_0.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1':
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from .v7_2_preview.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.2':
+            from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'unwrap_key'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.unwrap_key(vault_base_url, key_name, key_version, parameters, **kwargs)
 
@@ -2532,6 +2854,7 @@ class KeyVaultClientOperationsMixin(object):
         parameters,  # type: "_models.CertificateUpdateParameters"
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.CertificateBundle"
         """Updates the specified attributes associated with the given certificate.
 
         The UpdateCertificate operation applies the specified update on the given certificate; the only
@@ -2562,6 +2885,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.update_certificate(vault_base_url, certificate_name, certificate_version, parameters, **kwargs)
 
@@ -2572,6 +2896,7 @@ class KeyVaultClientOperationsMixin(object):
         parameter,  # type: "_models.CertificateIssuerUpdateParameters"
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.IssuerBundle"
         """Updates the specified certificate issuer.
 
         The UpdateCertificateIssuer operation performs an update on the specified certificate issuer
@@ -2599,6 +2924,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.update_certificate_issuer(vault_base_url, issuer_name, parameter, **kwargs)
 
@@ -2609,6 +2935,7 @@ class KeyVaultClientOperationsMixin(object):
         certificate_operation,  # type: "_models.CertificateOperationUpdateParameter"
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.CertificateOperation"
         """Updates a certificate operation.
 
         Updates a certificate creation operation that is already in progress. This operation requires
@@ -2619,7 +2946,8 @@ class KeyVaultClientOperationsMixin(object):
         :param certificate_name: The name of the certificate.
         :type certificate_name: str
         :param certificate_operation: The certificate operation response.
-        :type certificate_operation: ~azure.keyvault.v2016_10_01.models.CertificateOperationUpdateParameter
+        :type certificate_operation:
+         ~azure.keyvault.v2016_10_01.models.CertificateOperationUpdateParameter
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CertificateOperation, or the result of cls(response)
         :rtype: ~azure.keyvault.v2016_10_01.models.CertificateOperation
@@ -2636,6 +2964,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.update_certificate_operation(vault_base_url, certificate_name, certificate_operation, **kwargs)
 
@@ -2646,6 +2975,7 @@ class KeyVaultClientOperationsMixin(object):
         certificate_policy,  # type: "_models.CertificatePolicy"
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.CertificatePolicy"
         """Updates the policy for a certificate.
 
         Set specified members in the certificate policy. Leave others as null. This operation requires
@@ -2673,6 +3003,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.update_certificate_policy(vault_base_url, certificate_name, certificate_policy, **kwargs)
 
@@ -2684,7 +3015,9 @@ class KeyVaultClientOperationsMixin(object):
         parameters,  # type: "_models.KeyUpdateParameters"
         **kwargs  # type: Any
     ):
-        """The update key operation changes specified attributes of a stored key and can be applied to any key type and key version stored in Azure Key Vault.
+        # type: (...) -> "_models.KeyBundle"
+        """The update key operation changes specified attributes of a stored key and can be applied to any
+        key type and key version stored in Azure Key Vault.
 
         In order to perform this operation, the key must already exist in the Key Vault. Note: The
         cryptographic material of a key itself cannot be changed. This operation requires the
@@ -2697,10 +3030,10 @@ class KeyVaultClientOperationsMixin(object):
         :param key_version: The version of the key to update.
         :type key_version: str
         :param parameters: The parameters of the key to update.
-        :type parameters: ~azure.keyvault.v7_1.models.KeyUpdateParameters
+        :type parameters: ~azure.keyvault.v7_2.models.KeyUpdateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyBundle, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.KeyBundle
+        :rtype: ~azure.keyvault.v7_2.models.KeyBundle
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('update_key')
@@ -2710,16 +3043,56 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_0.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1':
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from .v7_2_preview.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.2':
+            from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'update_key'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.update_key(vault_base_url, key_name, key_version, parameters, **kwargs)
+
+    def update_key_rotation_policy(
+        self,
+        vault_base_url,  # type: str
+        key_name,  # type: str
+        key_rotation_policy,  # type: "_models.KeyRotationPolicy"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.KeyRotationPolicy"
+        """Updates the rotation policy for a key.
+
+        Set specified members in the key policy. Leave others as undefined. This operation requires the
+        keys/update permission.
+
+        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
+        :type vault_base_url: str
+        :param key_name: The name of the key in the given vault.
+        :type key_name: str
+        :param key_rotation_policy: The policy for the key.
+        :type key_rotation_policy: ~azure.keyvault.v7_3_preview.models.KeyRotationPolicy
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: KeyRotationPolicy, or the result of cls(response)
+        :rtype: ~azure.keyvault.v7_3_preview.models.KeyRotationPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('update_key_rotation_policy')
+        if api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'update_key_rotation_policy'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return mixin_instance.update_key_rotation_policy(vault_base_url, key_name, key_rotation_policy, **kwargs)
 
     def update_sas_definition(
         self,
@@ -2729,6 +3102,7 @@ class KeyVaultClientOperationsMixin(object):
         parameters,  # type: "_models.SasDefinitionUpdateParameters"
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.SasDefinitionBundle"
         """Updates the specified attributes associated with the given SAS definition. This operation
         requires the storage/setsas permission.
 
@@ -2756,6 +3130,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.update_sas_definition(vault_base_url, storage_account_name, sas_definition_name, parameters, **kwargs)
 
@@ -2767,6 +3142,7 @@ class KeyVaultClientOperationsMixin(object):
         parameters,  # type: "_models.SecretUpdateParameters"
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.SecretBundle"
         """Updates the attributes associated with a specified secret in a given key vault.
 
         The UPDATE operation changes specified attributes of an existing stored secret. Attributes that
@@ -2797,6 +3173,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.update_secret(vault_base_url, secret_name, secret_version, parameters, **kwargs)
 
@@ -2807,6 +3184,7 @@ class KeyVaultClientOperationsMixin(object):
         parameters,  # type: "_models.StorageAccountUpdateParameters"
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.StorageBundle"
         """Updates the specified attributes associated with the given storage account. This operation
         requires the storage/set/update permission.
 
@@ -2832,6 +3210,7 @@ class KeyVaultClientOperationsMixin(object):
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.update_storage_account(vault_base_url, storage_account_name, parameters, **kwargs)
 
@@ -2843,6 +3222,7 @@ class KeyVaultClientOperationsMixin(object):
         parameters,  # type: "_models.KeyVerifyParameters"
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.KeyVerifyResult"
         """Verifies a signature using a specified key.
 
         The VERIFY operation is applicable to symmetric keys stored in Azure Key Vault. VERIFY is not
@@ -2858,10 +3238,10 @@ class KeyVaultClientOperationsMixin(object):
         :param key_version: The version of the key.
         :type key_version: str
         :param parameters: The parameters for verify operations.
-        :type parameters: ~azure.keyvault.v7_1.models.KeyVerifyParameters
+        :type parameters: ~azure.keyvault.v7_2.models.KeyVerifyParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyVerifyResult, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.KeyVerifyResult
+        :rtype: ~azure.keyvault.v7_2.models.KeyVerifyResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('verify')
@@ -2871,14 +3251,17 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_0.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1':
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from .v7_2_preview.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.2':
+            from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'verify'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.verify(vault_base_url, key_name, key_version, parameters, **kwargs)
 
@@ -2890,6 +3273,7 @@ class KeyVaultClientOperationsMixin(object):
         parameters,  # type: "_models.KeyOperationsParameters"
         **kwargs  # type: Any
     ):
+        # type: (...) -> "_models.KeyOperationResult"
         """Wraps a symmetric key using a specified key.
 
         The WRAP operation supports encryption of a symmetric key using a key encryption key that has
@@ -2906,10 +3290,10 @@ class KeyVaultClientOperationsMixin(object):
         :param key_version: The version of the key.
         :type key_version: str
         :param parameters: The parameters for wrap operation.
-        :type parameters: ~azure.keyvault.v7_1.models.KeyOperationsParameters
+        :type parameters: ~azure.keyvault.v7_2.models.KeyOperationsParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: KeyOperationResult, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_1.models.KeyOperationResult
+        :rtype: ~azure.keyvault.v7_2.models.KeyOperationResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('wrap_key')
@@ -2919,13 +3303,16 @@ class KeyVaultClientOperationsMixin(object):
             from .v7_0.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.1':
             from .v7_1.operations import KeyVaultClientOperationsMixin as OperationClass
-        elif api_version == '7.2-preview':
-            from .v7_2_preview.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.2':
+            from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.3-preview':
+            from .v7_3_preview.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'wrap_key'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.wrap_key(vault_base_url, key_name, key_version, parameters, **kwargs)

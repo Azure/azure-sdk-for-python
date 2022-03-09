@@ -24,7 +24,7 @@ class TaskOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2020-09-01.12.0".
+    :ivar api_version: The API version to use for the request. Constant value: "2022-01-01.15.0".
     """
 
     models = models
@@ -34,7 +34,7 @@ class TaskOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2020-09-01.12.0"
+        self.api_version = "2022-01-01.15.0"
 
         self.config = config
 
@@ -267,8 +267,7 @@ class TaskOperations(object):
         :param job_id: The ID of the Job to which the Task collection is to be
          added.
         :type job_id: str
-        :param value: The collection of Tasks to add. The maximum count of
-         Tasks is 100. The total serialized size of this collection must be
+        :param value: The total serialized size of this collection must be
          less than 1MB. If it is greater than 1MB (for example if each Task has
          100's of resource files or environment variables), the request will
          fail with code 'RequestBodyTooLarge' and should be retried again with

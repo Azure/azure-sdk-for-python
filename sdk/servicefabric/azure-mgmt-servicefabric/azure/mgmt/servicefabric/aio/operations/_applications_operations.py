@@ -47,7 +47,7 @@ class ApplicationsOperations:
         resource_group_name: str,
         cluster_name: str,
         application_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationResource":
         """Gets a Service Fabric application resource.
 
@@ -70,7 +70,7 @@ class ApplicationsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -97,7 +97,7 @@ class ApplicationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorModel, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorModel, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ApplicationResource', pipeline_response)
@@ -114,14 +114,14 @@ class ApplicationsOperations:
         cluster_name: str,
         application_name: str,
         parameters: "_models.ApplicationResource",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -153,7 +153,7 @@ class ApplicationsOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorModel, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorModel, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ApplicationResource', pipeline_response)
@@ -170,7 +170,7 @@ class ApplicationsOperations:
         cluster_name: str,
         application_name: str,
         parameters: "_models.ApplicationResource",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ApplicationResource"]:
         """Creates or updates a Service Fabric application resource.
 
@@ -186,8 +186,8 @@ class ApplicationsOperations:
         :type parameters: ~azure.mgmt.servicefabric.models.ApplicationResource
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ApplicationResource or the result of cls(response)
@@ -248,14 +248,14 @@ class ApplicationsOperations:
         cluster_name: str,
         application_name: str,
         parameters: "_models.ApplicationResourceUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationResource":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ApplicationResource"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -287,7 +287,7 @@ class ApplicationsOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorModel, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorModel, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ApplicationResource', pipeline_response)
@@ -304,7 +304,7 @@ class ApplicationsOperations:
         cluster_name: str,
         application_name: str,
         parameters: "_models.ApplicationResourceUpdate",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.ApplicationResource"]:
         """Updates a Service Fabric application resource.
 
@@ -320,8 +320,8 @@ class ApplicationsOperations:
         :type parameters: ~azure.mgmt.servicefabric.models.ApplicationResourceUpdate
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ApplicationResource or the result of cls(response)
@@ -381,14 +381,14 @@ class ApplicationsOperations:
         resource_group_name: str,
         cluster_name: str,
         application_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -415,7 +415,7 @@ class ApplicationsOperations:
 
         if response.status_code not in [202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorModel, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorModel, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -428,7 +428,7 @@ class ApplicationsOperations:
         resource_group_name: str,
         cluster_name: str,
         application_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a Service Fabric application resource.
 
@@ -442,8 +442,8 @@ class ApplicationsOperations:
         :type application_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -498,7 +498,7 @@ class ApplicationsOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ApplicationResourceList":
         """Gets the list of application resources created in the specified Service Fabric cluster resource.
 
@@ -519,7 +519,7 @@ class ApplicationsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-03-01"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -545,7 +545,7 @@ class ApplicationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorModel, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorModel, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ApplicationResourceList', pipeline_response)

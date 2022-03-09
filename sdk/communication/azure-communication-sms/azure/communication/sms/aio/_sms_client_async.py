@@ -44,7 +44,7 @@ class SmsClient(object):
                 "invalid credential from connection string.")
 
         self._endpoint = endpoint
-        self._authentication_policy = get_authentication_policy(endpoint, credential, is_async=True)
+        self._authentication_policy = get_authentication_policy(endpoint, credential, decode_url=True, is_async=True)
 
         self._sms_service_client = AzureCommunicationSMSService(
             self._endpoint,

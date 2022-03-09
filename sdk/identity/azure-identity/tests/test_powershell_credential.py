@@ -5,8 +5,10 @@
 import base64
 import logging
 from platform import python_version
+import re
 import subprocess
 import sys
+import time
 
 try:
     from unittest.mock import Mock, patch
@@ -15,6 +17,7 @@ except ImportError:  # python < 3.3
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import AzurePowerShellCredential, CredentialUnavailableError
+from azure.identity._constants import EnvironmentVariables
 from azure.identity._credentials.azure_powershell import (
     AZ_ACCOUNT_NOT_INSTALLED,
     BLOCKED_BY_EXECUTION_POLICY,
@@ -23,6 +26,8 @@ from azure.identity._credentials.azure_powershell import (
     RUN_CONNECT_AZ_ACCOUNT,
 )
 import pytest
+
+from credscan_ignore import POWERSHELL_INVALID_OPERATION_EXCEPTION, POWERSHELL_NOT_LOGGED_IN_ERROR
 
 
 POPEN = AzurePowerShellCredential.__module__ + ".subprocess.Popen"
@@ -87,12 +92,28 @@ def test_get_token(stderr):
 
     encoded_script = command.split()[-1]
     decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
+    assert "TenantId" not in decoded_script
     assert "Get-AzAccessToken -ResourceUrl '{}'".format(scope) in decoded_script
 
     assert Popen().communicate.call_count == 1
     args, kwargs = Popen().communicate.call_args
     if python_version() >= "3.3":
         assert "timeout" in kwargs
+
+
+@pytest.mark.parametrize("stderr", ("", PREPARING_MODULES))
+def test_get_token_tenant_id(stderr):
+    expected_access_token = "access"
+    expected_expires_on = 1617923581
+    scope = "scope"
+    stdout = "azsdk%{}%{}".format(expected_access_token, expected_expires_on)
+
+    Popen = get_mock_Popen(stdout=stdout, stderr=stderr)
+    with patch(POPEN, Popen):
+        token = AzurePowerShellCredential().get_token(scope, tenant_id="tenant_id")
+
+    assert token.token == expected_access_token
+    assert token.expires_on == expected_expires_on
 
 
 def test_ignores_extraneous_stdout_content():
@@ -141,15 +162,7 @@ def test_powershell_not_installed_sh():
             AzurePowerShellCredential().get_token("scope")
 
 
-@pytest.mark.parametrize(
-    "stderr",
-    (
-        """#< CLIXML
-<Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04"><Obj S="progress" RefId="0"><TN RefId="0"><T>System.Management.Automation.PSCustomObject</T><T>System.Object</T></TN><MS><I64 N="SourceId">1</I64><PR N="Record"><AV>Preparing modules for first use.</AV><AI>0</AI><Nil /><PI>-1</PI><PC>-1</PC><T>Completed</T><SR>-1</SR><SD> </SD></PR></MS></Obj><Obj S="progress" RefId="1"><TNRef RefId="0" /><MS><I64 N="SourceId">2</I64><PR N="Record"><AV>Preparing modules for first use.</AV><AI>0</AI><Nil /><PI>-1</PI><PC>-1</PC><T>Completed</T><SR>-1</SR><SD> </SD></PR></MS></Obj><S S="Error">Get-AzAccessToken : Run Connect-AzAccount to login._x000D__x000A_</S><S S="Error">At line:11 char:10_x000D__x000A_</S><S S="Error">+ $token = Get-AzAccessToken -ResourceUrl 'scope'_x000D__x000A_</S><S S="Error">+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~_x000D__x000A_</S><S S="Error">    + CategoryInfo          : CloseError: (:) [Get-AzAccessToken], PSInvalidOperationException_x000D__x000A_</S><S S="Error">    + FullyQualifiedErrorId : Microsoft.Azure.Commands.Profile.GetAzureRmAccessTokenCommand_x000D__x000A_</S><S S="Error"> _x000D__x000A_</S></Objs>""",
-        """#< CLIXML
-<Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04"><S S="Error">_x001B_[91mGet-AzAccessToken: _x000D__x000A_</S><S S="Error">_x001B_[96mLine |_x000D__x000A_</S><S S="Error">_x001B_[96m  11 | _x001B_[0m $token = _x001B_[96mGet-AzAccessToken -ResourceUrl 'scope'_x001B_[0m_x000D__x000A_</S><S S="Error">_x001B_[96m     | _x001B_[91m          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~_x000D__x000A_</S><S S="Error">_x001B_[91m_x001B_[96m     | _x001B_[91mRun Connect-AzAccount to login._x001B_[0m_x000D__x000A_</S></Objs>""",
-    ),
-)
+@pytest.mark.parametrize("stderr", (POWERSHELL_INVALID_OPERATION_EXCEPTION, POWERSHELL_NOT_LOGGED_IN_ERROR))
 def test_not_logged_in(stderr):
     """The credential should raise CredentialUnavailableError when a user isn't logged in to Azure PowerShell"""
 
@@ -243,3 +256,60 @@ def test_windows_powershell_fallback():
                     AzurePowerShellCredential().get_token("scope")
 
     assert Fake.calls == 2
+
+
+def test_multitenant_authentication():
+    first_token = "***"
+    second_tenant = "second-tenant"
+    second_token = first_token * 2
+
+    def fake_Popen(command, **_):
+        assert command[-1].startswith("pwsh -NonInteractive -EncodedCommand ")
+        encoded_script = command[-1].split()[-1]
+        decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
+        match = re.search(r"Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)
+        tenant = match.groups()[1]
+
+        assert tenant is None or tenant == second_tenant, 'unexpected tenant "{}"'.format(tenant)
+        token = first_token if tenant is None else second_token
+        stdout = "azsdk%{}%{}".format(token, int(time.time()) + 3600)
+
+        communicate = Mock(return_value=(stdout, ""))
+        return Mock(communicate=communicate, returncode=0)
+
+    credential = AzurePowerShellCredential()
+    with patch(POPEN, fake_Popen):
+        token = credential.get_token("scope")
+        assert token.token == first_token
+
+        token = credential.get_token("scope", tenant_id=second_tenant)
+        assert token.token == second_token
+
+        # should still default to the first tenant
+        token = credential.get_token("scope")
+        assert token.token == first_token
+
+def test_multitenant_authentication_not_allowed():
+    expected_token = "***"
+
+    def fake_Popen(command, **_):
+        assert command[-1].startswith("pwsh -NonInteractive -EncodedCommand ")
+        encoded_script = command[-1].split()[-1]
+        decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
+        match = re.search(r"Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)
+        tenant = match.groups()[1]
+
+        assert tenant is None, "credential shouldn't accept an explicit tenant ID"
+        stdout = "azsdk%{}%{}".format(expected_token, int(time.time()) + 3600)
+
+        communicate = Mock(return_value=(stdout, ""))
+        return Mock(communicate=communicate, returncode=0)
+
+    credential = AzurePowerShellCredential()
+    with patch(POPEN, fake_Popen):
+        token = credential.get_token("scope")
+        assert token.token == expected_token
+
+        with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
+            token = credential.get_token("scope", tenant_id="some tenant")
+            assert token.token == expected_token

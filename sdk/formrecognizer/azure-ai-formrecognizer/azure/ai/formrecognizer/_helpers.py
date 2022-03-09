@@ -7,8 +7,10 @@
 import re
 import six
 from azure.core.credentials import AzureKeyCredential
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
+from azure.core.pipeline.policies import AzureKeyCredentialPolicy, SansIOHTTPPolicy
 from azure.core.pipeline.transport import HttpTransport
+from azure.core.exceptions import HttpResponseError
+
 
 POLLING_INTERVAL = 5
 COGNITIVE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
@@ -17,8 +19,10 @@ COGNITIVE_KEY_HEADER = "Ocp-Apim-Subscription-Key"
 def _get_deserialize(api_version):
     if api_version == "2.0":
         from ._generated.v2_0 import FormRecognizerClient
-    else:
+    elif api_version == "2.1":
         from ._generated.v2_1 import FormRecognizerClient
+    elif api_version == "2022-01-30-preview":
+        from ._generated.v2022_01_30_preview import FormRecognizerClient
     return FormRecognizerClient(  # pylint: disable=protected-access
         "dummy", "dummy"
     )._deserialize
@@ -164,3 +168,26 @@ class TransportWrapper(HttpTransport):
 
     def __exit__(self, *args):  # pylint: disable=arguments-differ
         pass
+
+
+class QuotaExceededPolicy(SansIOHTTPPolicy):
+    """Raises an exception immediately when the call quota volume has been exceeded in a F0
+    tier form recognizer resource. This is to avoid waiting the Retry-After time returned in
+    the response.
+    """
+
+    def on_response(self, request, response):
+        """Is executed after the request comes back from the policy.
+
+        :param request: Request to be modified after returning from the policy.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :param response: Pipeline response object
+        :type response: ~azure.core.pipeline.PipelineResponse
+        """
+        http_response = response.http_response
+        if (
+            http_response.status_code in [403, 429]
+            and "Out of call volume quota for FormRecognizer F0 pricing tier"
+            in http_response.text()
+        ):
+            raise HttpResponseError(http_response.text(), response=http_response)

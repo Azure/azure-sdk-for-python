@@ -35,5 +35,4 @@ async def get_purchased_phone_number_information():
     print('Country code: ' + purchased_phone_number_information.country_code)
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(get_purchased_phone_number_information())
+    asyncio.run(get_purchased_phone_number_information())

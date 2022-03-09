@@ -8,33 +8,35 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
-      Date:
-      - Mon, 19 Apr 2021 21:48:51 GMT
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.0b5 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-communication-phonenumbers/1.0.2 Python/3.9.9 (Windows-10-10.0.22000-SP0)
+      x-ms-date:
+      - Wed, 12 Jan 2022 16:24:27 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.communication.azure.com/phoneNumbers/sanitized?api-version=2021-03-07
+    uri: https://sanitized.communication.azure.com/phoneNumbers/sanitized?api-version=2022-01-11-preview2
   response:
     body:
-      string: '{"error": {"code": "PhoneNumberNotFound", "message": "The specified
-        phone number +14255550123 cannot be found.", "target": "phonenumber"}}'
+      string: '{"error": {"code": "NotFound", "message": "Input phoneNumber +14255550123
+        cannot be found.", "target": "phonenumber"}}'
     headers:
       api-supported-versions:
-      - '2021-03-07'
+      - 2021-03-07, 2022-01-11-preview2
       content-type:
       - application/json
       date:
-      - Mon, 19 Apr 2021 21:48:51 GMT
+      - Wed, 12 Jan 2022 16:24:25 GMT
       ms-cv:
-      - 5h1NjStvd0SrcZTNKmwgtw.0
+      - eRnvsvQ0s0ymZOrVnZ56wQ.0
       request-context:
       - appId=
       transfer-encoding:
       - chunked
+      x-cache:
+      - CONFIG_NOCACHE
       x-processing-time:
-      - 775ms
+      - 1712ms
     status:
       code: 404
       message: Not Found

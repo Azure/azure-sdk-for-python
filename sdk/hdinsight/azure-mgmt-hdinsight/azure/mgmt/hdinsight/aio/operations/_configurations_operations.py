@@ -46,7 +46,7 @@ class ConfigurationsOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ClusterConfigurations":
         """Gets all configuration information for an HDI cluster.
 
@@ -64,7 +64,7 @@ class ConfigurationsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-06-01-preview"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -90,7 +90,7 @@ class ConfigurationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('ClusterConfigurations', pipeline_response)
@@ -107,14 +107,14 @@ class ConfigurationsOperations:
         cluster_name: str,
         configuration_name: str,
         parameters: Dict[str, str],
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-06-01-preview"
+        api_version = "2021-06-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -146,7 +146,7 @@ class ConfigurationsOperations:
 
         if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -160,7 +160,7 @@ class ConfigurationsOperations:
         cluster_name: str,
         configuration_name: str,
         parameters: Dict[str, str],
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Configures the HTTP settings on the specified cluster. This API is deprecated, please use
         UpdateGatewaySettings in cluster endpoint instead.
@@ -175,8 +175,8 @@ class ConfigurationsOperations:
         :type parameters: dict[str, str]
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -214,7 +214,7 @@ class ConfigurationsOperations:
             'configurationName': self._serialize.url("configuration_name", configuration_name, 'str'),
         }
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments,  **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, path_format_arguments=path_format_arguments,  **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -233,7 +233,7 @@ class ConfigurationsOperations:
         resource_group_name: str,
         cluster_name: str,
         configuration_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> Dict[str, str]:
         """The configuration object for the specified cluster. This API is not recommended and might be
         removed in the future. Please consider using List configurations API instead.
@@ -254,7 +254,7 @@ class ConfigurationsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-06-01-preview"
+        api_version = "2021-06-01"
         accept = "application/json"
 
         # Construct URL
@@ -281,7 +281,7 @@ class ConfigurationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('{str}', pipeline_response)

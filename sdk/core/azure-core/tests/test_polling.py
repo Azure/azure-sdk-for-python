@@ -39,8 +39,6 @@ from azure.core.polling.base_polling import (
     LROBasePolling, LocationPolling
 )
 from msrest.serialization import Model
-from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
 
 
 @pytest.fixture

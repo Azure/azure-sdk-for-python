@@ -47,7 +47,7 @@ class NatGatewaysOperations:
         self,
         resource_group_name: str,
         nat_gateway_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
@@ -91,7 +91,7 @@ class NatGatewaysOperations:
         self,
         resource_group_name: str,
         nat_gateway_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified nat gateway.
 
@@ -101,8 +101,8 @@ class NatGatewaysOperations:
         :type nat_gateway_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
@@ -156,7 +156,7 @@ class NatGatewaysOperations:
         resource_group_name: str,
         nat_gateway_name: str,
         expand: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NatGateway":
         """Gets the specified nat gateway in a specified resource group.
 
@@ -219,7 +219,7 @@ class NatGatewaysOperations:
         resource_group_name: str,
         nat_gateway_name: str,
         parameters: "_models.NatGateway",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NatGateway":
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.NatGateway"]
         error_map = {
@@ -279,7 +279,7 @@ class NatGatewaysOperations:
         resource_group_name: str,
         nat_gateway_name: str,
         parameters: "_models.NatGateway",
-        **kwargs
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.NatGateway"]:
         """Creates or updates a nat gateway.
 
@@ -291,8 +291,8 @@ class NatGatewaysOperations:
         :type parameters: ~azure.mgmt.network.v2020_03_01.models.NatGateway
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: Pass in True if you'd like the AsyncARMPolling polling method,
-         False for no polling, or your own initialized polling object for a personal polling strategy.
+        :keyword polling: By default, your polling method will be AsyncARMPolling.
+         Pass in False for this operation to not poll, or pass in your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either NatGateway or the result of cls(response)
@@ -350,7 +350,7 @@ class NatGatewaysOperations:
         resource_group_name: str,
         nat_gateway_name: str,
         parameters: "_models.TagsObject",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.NatGateway":
         """Updates nat gateway tags.
 
@@ -413,7 +413,7 @@ class NatGatewaysOperations:
 
     def list_all(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NatGatewayListResult"]:
         """Gets all the Nat Gateways in a subscription.
 
@@ -480,7 +480,7 @@ class NatGatewaysOperations:
     def list(
         self,
         resource_group_name: str,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.NatGatewayListResult"]:
         """Gets all nat gateways in a resource group.
 

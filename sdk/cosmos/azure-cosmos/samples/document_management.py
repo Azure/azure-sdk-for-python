@@ -160,19 +160,9 @@ def run_sample():
     client = cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY} )
     try:
         # setup database for this sample
-        try:
-            db = client.create_database(id=DATABASE_ID)
-
-        except exceptions.CosmosResourceExistsError:
-            pass
-
+        db = client.create_database_if_not_exists(id=DATABASE_ID)
         # setup container for this sample
-        try:
-            container = db.create_container(id=CONTAINER_ID, partition_key=PartitionKey(path='/id', kind='Hash'))
-            print('Container with id \'{0}\' created'.format(CONTAINER_ID))
-
-        except exceptions.CosmosResourceExistsError:
-            print('Container with id \'{0}\' was found'.format(CONTAINER_ID))
+        container = db.create_container_if_not_exists(id=CONTAINER_ID, partition_key=PartitionKey(path='/id', kind='Hash'))
 
         create_items(container)
         read_item(container, 'SalesOrder1')

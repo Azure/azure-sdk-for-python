@@ -22,17 +22,17 @@ class AnonymousACRExchangeClient(object):
     :type endpoint: str
     """
 
-    def __init__(self, endpoint: str, **kwargs: Dict[str, Any]) -> None:  # pylint: disable=missing-client-constructor-parameter-credential
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
+        self, endpoint: str, **kwargs: Dict[str, Any]
+    ) -> None:
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
-        self._credential_scope = "https://management.core.windows.net/.default"
         self._client = ContainerRegistry(
             credential=None,
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=ExchangeClientAuthenticationPolicy(),
-            credential_scopes=kwargs.pop("credential_scopes", self._credential_scope),
             **kwargs
         )
 
@@ -61,11 +61,11 @@ class AnonymousACRExchangeClient(object):
         return access_token.access_token
 
     async def __aenter__(self):
-        self._client.__aenter__()
+        await self._client.__aenter__()
         return self
 
     async def __aexit__(self, *args):
-        self._client.__aexit__(*args)
+        await self._client.__aexit__(*args)
 
     async def close(self) -> None:
         """Close sockets opened by the client.

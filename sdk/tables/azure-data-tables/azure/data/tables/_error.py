@@ -67,7 +67,7 @@ def _validate_table_name(table_name):
         )
 
 
-def _decode_error(response, error_message=None, error_type=None, **kwargs):
+def _decode_error(response, error_message=None, error_type=None, **kwargs):  # pylint: disable=too-many-branches
     error_code = response.headers.get("x-ms-error-code")
     additional_data = {}
     try:
@@ -80,6 +80,14 @@ def _decode_error(response, error_message=None, error_type=None, **kwargs):
                     error_message = error_body["odata.error"][info]["value"]
                 else:
                     additional_data[info.tag] = info.text
+
+            # Special case: there was a playback error during test execution (test proxy only)
+            message = error_body.get("Message")
+            if message and message.startswith("Unable to find a record for the request"):
+                error = ResourceNotFoundError(message=error_message, response=response)
+                error.error_code = 404
+                error.additional_info = additional_data
+                return error
         else:
             if error_body:
                 for info in error_body.iter():
@@ -95,7 +103,10 @@ def _decode_error(response, error_message=None, error_type=None, **kwargs):
     try:
         if not error_type:
             error_code = TableErrorCode(error_code)
-            if error_code in [TableErrorCode.condition_not_met]:
+            if error_code in [
+                TableErrorCode.condition_not_met,
+                TableErrorCode.update_condition_not_satisfied
+            ]:
                 error_type = ResourceModifiedError
             elif error_code in [
                 TableErrorCode.invalid_authentication_info,

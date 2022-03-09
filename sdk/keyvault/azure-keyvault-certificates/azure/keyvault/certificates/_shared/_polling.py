@@ -33,11 +33,11 @@ class KeyVaultOperationPoller(LROPoller):
     # pylint: disable=arguments-differ
     def __init__(self, polling_method):
         # type: (PollingMethod) -> None
-        super(KeyVaultOperationPoller, self).__init__(None, None, None, NoPolling())
+        super(KeyVaultOperationPoller, self).__init__(None, None, lambda *_: None, NoPolling())
         self._polling_method = polling_method
 
     # pylint: disable=arguments-differ
-    def result(self):
+    def result(self):  # type: ignore
         # type: () -> Any
         """Returns a representation of the final resource without waiting for the operation to complete.
 
@@ -48,12 +48,12 @@ class KeyVaultOperationPoller(LROPoller):
 
     @distributed_trace
     def wait(self, timeout=None):
-        # type: (Optional[int]) -> None
+        # type: (Optional[float]) -> None
         """Wait on the long running operation for a number of seconds.
 
         You can check if this call has ended with timeout with the "done()" method.
 
-        :param int timeout: Period of time to wait for the long running
+        :param float timeout: Period of time to wait for the long running
          operation to complete (in seconds).
         :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
         """

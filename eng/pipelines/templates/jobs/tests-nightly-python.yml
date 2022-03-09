@@ -1,17 +1,92 @@
 trigger:
-  - master
   - main
 
 jobs:
 
+  - job: Validate_RC_Python_Build_Windows
+    displayName: Validate Release Candidate Python - Windows
+    variables:
+      skipComponentGovernanceDetection: true
+      PythonVersion: '3.10.0-rc.2'
+
+    timeoutInMinutes: 90
+
+    pool:
+      vmImage: 'windows-2019'
+
+    steps:
+      - template: /eng/pipelines/templates/steps/use-python-version.yml
+        parameters:
+          versionSpec: $(PythonVersion)
+        
+      - script: |
+          python -m pip freeze
+          python -m pip --version
+          pip install setuptools==56.0.0 wheel==0.37.0 tox==3.24.3 tox-monorepo==0.1.2 packaging==21.0
+        displayName: Install Dependencies
+
+      - script: |
+          python ./scripts/devops_tasks/setup_execute_tests.py "$(BuildTargetingString)" --junitxml="junit/test_results.xml" --toxenv="whl"
+        displayName: 'Setup - Run Filtered Tests For Python $(PythonVersion)'
+        env:
+          YARL_NO_EXTENSIONS: 1
+        continueOnError: true
+
+      - task: PublishTestResults@2
+        condition: always()
+        inputs:
+          testResultsFiles: '**/*test*.xml'
+          testRunTitle: 'Python $(PythonVersion)'
+          failTaskOnFailedTests: true
+
+  - job: Validate_RC_Python_Build_Linux
+    displayName: Validate Release Candidate Python - Linux
+    variables:
+      skipComponentGovernanceDetection: true
+      PythonVersion: '3.10.0-rc.2'
+
+    timeoutInMinutes: 90
+
+    pool:
+      vmImage: 'ubuntu-18.04'
+
+    steps:
+      - template: /eng/pipelines/templates/steps/use-python-version.yml
+        parameters:
+          versionSpec: $(PythonVersion)
+
+      - script: |
+          python -m pip freeze
+          python -m pip --version
+          pip install setuptools==56.0.0 wheel==0.37.0 tox==3.24.3 tox-monorepo==0.1.2 packaging==21.0
+        displayName: Install Dependencies
+
+      - script: |
+          find /usr/lib -name "libffi.so*"
+          ln -s /usr/lib/x86_64-linux-gnu/libffi.so.7 /usr/lib/x86_64-linux-gnu/libffi.so.6
+
+          python ./scripts/devops_tasks/setup_execute_tests.py "$(BuildTargetingString)" --junitxml="junit/test_results.xml" --toxenv="whl"
+        displayName: 'Setup - Run Filtered Tests For Python $(PythonVersion)'
+        env:
+          YARL_NO_EXTENSIONS: 1
+        continueOnError: true
+
+      - task: PublishTestResults@2
+        condition: always()
+        inputs:
+          testResultsFiles: '**/*test*.xml'
+          testRunTitle: 'Python $(PythonVersion)'
+          failTaskOnFailedTests: true
+
   - job: Validate_Nightly_Python_Build
+    displayName: Validate Nightly Dev Python Build
     variables:
       skipComponentGovernanceDetection: true
 
     timeoutInMinutes: 90
 
     pool:
-      vmImage: 'ubuntu-18.04'
+      vmImage: 'ubuntu-20.04'
 
     steps:
       - task: UsePythonVersion@0
@@ -35,17 +110,19 @@ jobs:
           export PATH=~/.local/bin:$PATH
           curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
           python3 get-pip.py
-          python3 -m pip install setuptools wheel 
+          python3 -m pip install setuptools wheel
           python3 -m pip install tox tox-monorepo packaging twine codecov beautifulsoup4
           python3 --version
           cd $(Build.SourcesDirectory)
-          python3 ./scripts/devops_tasks/setup_execute_tests.py "$(BuildTargetingString)" --junitxml="junit/test_results_38.xml" --toxenv="whl,sdist"
+          python3 ./scripts/devops_tasks/setup_execute_tests.py "$(BuildTargetingString)" --junitxml="junit/test_results_38.xml" --toxenv="whl"
         displayName: 'Setup - Run Filtered Tests "Nightly" using Python Edge'
+        env:
+          YARL_NO_EXTENSIONS: 1
         continueOnError: true
 
       - task: PublishTestResults@2
         condition: always()
         inputs:
           testResultsFiles: '**/junit/test-results.xml'
-          testRunTitle: '$(OSName) Python $(PythonVersion)'
+          testRunTitle: 'Python Nightly'
           failTaskOnFailedTests: true

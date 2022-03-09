@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_cognitive_service_metrics_advisor_restapi_open_ap_iv2 import AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2
-__all__ = ['AzureCognitiveServiceMetricsAdvisorRESTAPIOpenAPIV2']
+from ._metrics_advisor import MetricsAdvisor
+__all__ = ['MetricsAdvisor']

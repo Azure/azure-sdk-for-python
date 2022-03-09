@@ -4,7 +4,6 @@
 trigger:
   branches:
     include:
-    - master
     - main
     - hotfix/*
     - release/*
@@ -16,7 +15,6 @@ trigger:
 pr:
   branches:
     include:
-    - master
     - main
     - feature/*
     - hotfix/*
@@ -37,3 +35,5 @@ extends:
       safeName: azurepurviewscanning
     - name: azure-purview-catalog
       safeName: azurepurviewcatalog
+    - name: azure-purview-administration
+      safeName: azurepurviewadministration

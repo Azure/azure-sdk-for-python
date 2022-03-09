@@ -51,24 +51,24 @@ class FileOperations:
         file_last_write_time: str = "now",
         file_http_headers: Optional["_models.FileHTTPHeaders"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Creates a new file or replaces a file. Note it only initializes the file with no content.
 
         :param file_content_length: Specifies the maximum size for the file, up to 4 TB.
         :type file_content_length: long
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object.
         :type metadata: str
         :param file_permission: If specified the permission (security descriptor) shall be set for the
-         directory/file. This header can be used if Permission size is <= 8KB, else x-ms-file-
-         permission-key header shall be used. Default value: Inherit. If SDDL is specified as input, it
-         must have owner, group and dacl. Note: Only one of the x-ms-file-permission or x-ms-file-
-         permission-key should be specified.
+         directory/file. This header can be used if Permission size is <= 8KB, else
+         x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
+         input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
+         x-ms-file-permission-key should be specified.
         :type file_permission: str
         :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
          one of the x-ms-file-permission or x-ms-file-permission-key should be specified.
@@ -162,7 +162,7 @@ class FileOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -191,14 +191,14 @@ class FileOperations:
         range: Optional[str] = None,
         range_get_content_md5: Optional[bool] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> IO:
         """Reads or downloads a file from the system, including its metadata and properties.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param range: Return file data only from the specified byte range.
         :type range: str
@@ -253,7 +253,7 @@ class FileOperations:
 
         if response.status_code not in [200, 206]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -340,7 +340,7 @@ class FileOperations:
         sharesnapshot: Optional[str] = None,
         timeout: Optional[int] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Returns all user-defined metadata, standard HTTP properties, and system properties for the
         file. It does not return the content of the file.
@@ -349,9 +349,9 @@ class FileOperations:
          specifies the share snapshot to query.
         :type sharesnapshot: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param lease_access_conditions: Parameter group.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
@@ -398,7 +398,7 @@ class FileOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -443,14 +443,14 @@ class FileOperations:
         self,
         timeout: Optional[int] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """removes the file from the storage account.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param lease_access_conditions: Parameter group.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
@@ -495,7 +495,7 @@ class FileOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -519,24 +519,24 @@ class FileOperations:
         file_last_write_time: str = "now",
         file_http_headers: Optional["_models.FileHTTPHeaders"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Sets HTTP headers on the file.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param file_content_length: Resizes a file to the specified size. If the specified byte value
          is less than the current size of the file, then all ranges above the specified byte value are
          cleared.
         :type file_content_length: long
         :param file_permission: If specified the permission (security descriptor) shall be set for the
-         directory/file. This header can be used if Permission size is <= 8KB, else x-ms-file-
-         permission-key header shall be used. Default value: Inherit. If SDDL is specified as input, it
-         must have owner, group and dacl. Note: Only one of the x-ms-file-permission or x-ms-file-
-         permission-key should be specified.
+         directory/file. This header can be used if Permission size is <= 8KB, else
+         x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
+         input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
+         x-ms-file-permission-key should be specified.
         :type file_permission: str
         :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
          one of the x-ms-file-permission or x-ms-file-permission-key should be specified.
@@ -629,7 +629,7 @@ class FileOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -657,14 +657,14 @@ class FileOperations:
         timeout: Optional[int] = None,
         metadata: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Updates user-defined metadata for the specified file.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object.
         :type metadata: str
@@ -715,7 +715,7 @@ class FileOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -736,15 +736,15 @@ class FileOperations:
         duration: Optional[int] = None,
         proposed_lease_id: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """[Update] The Lease File operation establishes and manages a lock on a file for write and delete
         operations.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param duration: Specifies the duration of the lease, in seconds, or negative one (-1) for a
          lease that never expires. A non-infinite lease can be between 15 and 60 seconds. A lease
@@ -802,7 +802,7 @@ class FileOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -824,7 +824,7 @@ class FileOperations:
         lease_id: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """[Update] The Lease File operation establishes and manages a lock on a file for write and delete
         operations.
@@ -832,9 +832,9 @@ class FileOperations:
         :param lease_id: Specifies the current lease ID on the resource.
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -881,7 +881,7 @@ class FileOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -903,7 +903,7 @@ class FileOperations:
         timeout: Optional[int] = None,
         proposed_lease_id: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """[Update] The Lease File operation establishes and manages a lock on a file for write and delete
         operations.
@@ -911,9 +911,9 @@ class FileOperations:
         :param lease_id: Specifies the current lease ID on the resource.
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param proposed_lease_id: Proposed lease ID, in a GUID string format. The File service returns
          400 (Invalid request) if the proposed lease ID is not in the correct format. See Guid
@@ -966,7 +966,7 @@ class FileOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -988,15 +988,15 @@ class FileOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """[Update] The Lease File operation establishes and manages a lock on a file for write and delete
         operations.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled.
@@ -1050,7 +1050,7 @@ class FileOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1071,12 +1071,12 @@ class FileOperations:
         self,
         range: str,
         content_length: int,
-        optionalbody: IO,
         timeout: Optional[int] = None,
         file_range_write: Union[str, "_models.FileRangeWriteType"] = "update",
         content_md5: Optional[bytearray] = None,
+        optionalbody: Optional[IO] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Upload a range of bytes to a file.
 
@@ -1089,12 +1089,10 @@ class FileOperations:
         :param content_length: Specifies the number of bytes being transmitted in the request body.
          When the x-ms-write header is set to clear, the value of this header must be set to zero.
         :type content_length: long
-        :param optionalbody: Initial data.
-        :type optionalbody: IO
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param file_range_write: Specify one of the following options: - Update: Writes the bytes
          specified by the request body into the specified range. The Range and Content-Length headers
@@ -1107,6 +1105,8 @@ class FileOperations:
          the hash of the content that has arrived with the header value that was sent. If the two hashes
          do not match, the operation will fail with error code 400 (Bad Request).
         :type content_md5: bytearray
+        :param optionalbody: Initial data.
+        :type optionalbody: IO
         :param lease_access_conditions: Parameter group.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -1161,7 +1161,7 @@ class FileOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1186,9 +1186,10 @@ class FileOperations:
         timeout: Optional[int] = None,
         source_range: Optional[str] = None,
         source_content_crc64: Optional[bytearray] = None,
+        copy_source_authorization: Optional[str] = None,
         source_modified_access_conditions: Optional["_models.SourceModifiedAccessConditions"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Upload a range of bytes to a file where the contents are read from a URL.
 
@@ -1206,15 +1207,18 @@ class FileOperations:
          When the x-ms-write header is set to clear, the value of this header must be set to zero.
         :type content_length: long
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param source_range: Bytes of source data in the specified range.
         :type source_range: str
         :param source_content_crc64: Specify the crc64 calculated for the range of bytes that must be
          read from the copy source.
         :type source_content_crc64: bytearray
+        :param copy_source_authorization: Only Bearer type is supported. Credentials should be a valid
+         OAuth access token to copy source.
+        :type copy_source_authorization: str
         :param source_modified_access_conditions: Parameter group.
         :type source_modified_access_conditions: ~azure.storage.fileshare.models.SourceModifiedAccessConditions
         :param lease_access_conditions: Parameter group.
@@ -1271,6 +1275,8 @@ class FileOperations:
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if _lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", _lease_id, 'str')
+        if copy_source_authorization is not None:
+            header_parameters['x-ms-copy-source-authorization'] = self._serialize.header("copy_source_authorization", copy_source_authorization, 'str')
         header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.put(url, query_parameters, header_parameters)
@@ -1279,7 +1285,7 @@ class FileOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1303,7 +1309,7 @@ class FileOperations:
         timeout: Optional[int] = None,
         range: Optional[str] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ShareFileRangeList":
         """Returns the list of valid ranges for a file.
 
@@ -1314,9 +1320,9 @@ class FileOperations:
          when present, specifies the previous snapshot.
         :type prevsharesnapshot: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param range: Specifies the range of bytes over which to list ranges, inclusively.
         :type range: str
@@ -1371,7 +1377,7 @@ class FileOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1398,7 +1404,7 @@ class FileOperations:
         file_permission_key: Optional[str] = None,
         copy_file_smb_info: Optional["_models.CopyFileSmbInfo"] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Copies a blob or file to a destination file within the storage account.
 
@@ -1411,17 +1417,17 @@ class FileOperations:
          be specified as a copy source.
         :type copy_source: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param metadata: A name-value pair to associate with a file storage object.
         :type metadata: str
         :param file_permission: If specified the permission (security descriptor) shall be set for the
-         directory/file. This header can be used if Permission size is <= 8KB, else x-ms-file-
-         permission-key header shall be used. Default value: Inherit. If SDDL is specified as input, it
-         must have owner, group and dacl. Note: Only one of the x-ms-file-permission or x-ms-file-
-         permission-key should be specified.
+         directory/file. This header can be used if Permission size is <= 8KB, else
+         x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
+         input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
+         x-ms-file-permission-key should be specified.
         :type file_permission: str
         :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
          one of the x-ms-file-permission or x-ms-file-permission-key should be specified.
@@ -1484,7 +1490,7 @@ class FileOperations:
         if _file_permission_copy_mode is not None:
             header_parameters['x-ms-file-permission-copy-mode'] = self._serialize.header("file_permission_copy_mode", _file_permission_copy_mode, 'str')
         if _ignore_read_only is not None:
-            header_parameters['x-ms-file-copy-ignore-read-only'] = self._serialize.header("ignore_read_only", _ignore_read_only, 'bool')
+            header_parameters['x-ms-file-copy-ignore-readonly'] = self._serialize.header("ignore_read_only", _ignore_read_only, 'bool')
         if _file_attributes is not None:
             header_parameters['x-ms-file-attributes'] = self._serialize.header("file_attributes", _file_attributes, 'str')
         if _file_creation_time is not None:
@@ -1503,7 +1509,7 @@ class FileOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1525,7 +1531,7 @@ class FileOperations:
         copy_id: str,
         timeout: Optional[int] = None,
         lease_access_conditions: Optional["_models.LeaseAccessConditions"] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Aborts a pending Copy File operation, and leaves a destination file with zero length and full
         metadata.
@@ -1534,9 +1540,9 @@ class FileOperations:
          File operation.
         :type copy_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param lease_access_conditions: Parameter group.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
@@ -1586,7 +1592,7 @@ class FileOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1605,7 +1611,7 @@ class FileOperations:
         maxresults: Optional[int] = None,
         timeout: Optional[int] = None,
         sharesnapshot: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.ListHandlesResponse":
         """Lists handles for file.
 
@@ -1619,9 +1625,9 @@ class FileOperations:
          items.
         :type maxresults: int
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the share snapshot to query.
@@ -1669,7 +1675,7 @@ class FileOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1691,7 +1697,7 @@ class FileOperations:
         timeout: Optional[int] = None,
         marker: Optional[str] = None,
         sharesnapshot: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Closes all handles open for given file.
 
@@ -1699,9 +1705,9 @@ class FileOperations:
          (‘*’) is a wildcard that specifies all handles.
         :type handle_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
-         :code:`<a href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-
-         File-Service-Operations?redirectedfrom=MSDN">Setting Timeouts for File Service
-         Operations.</a>`.
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
         :type timeout: int
         :param marker: A string value that identifies the portion of the list to be returned with the
          next list operation. The operation returns a marker value within the response body if the list
@@ -1753,7 +1759,7 @@ class FileOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.StorageError, response)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1768,3 +1774,151 @@ class FileOperations:
             return cls(pipeline_response, None, response_headers)
 
     force_close_handles.metadata = {'url': '/{shareName}/{directory}/{fileName}'}  # type: ignore
+
+    async def rename(
+        self,
+        rename_source: str,
+        timeout: Optional[int] = None,
+        replace_if_exists: Optional[bool] = None,
+        ignore_read_only: Optional[bool] = None,
+        file_permission: Optional[str] = "inherit",
+        file_permission_key: Optional[str] = None,
+        metadata: Optional[str] = None,
+        source_lease_access_conditions: Optional["_models.SourceLeaseAccessConditions"] = None,
+        destination_lease_access_conditions: Optional["_models.DestinationLeaseAccessConditions"] = None,
+        copy_file_smb_info: Optional["_models.CopyFileSmbInfo"] = None,
+        **kwargs: Any
+    ) -> None:
+        """Renames a file.
+
+        :param rename_source: Required. Specifies the URI-style path of the source file, up to 2 KB in
+         length.
+        :type rename_source: str
+        :param timeout: The timeout parameter is expressed in seconds. For more information, see
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
+        :type timeout: int
+        :param replace_if_exists: Optional. A boolean value for if the destination file already exists,
+         whether this request will overwrite the file or not. If true, the rename will succeed and will
+         overwrite the destination file. If not provided or if false and the destination file does
+         exist, the request will not overwrite the destination file. If provided and the destination
+         file doesn’t exist, the rename will succeed. Note: This value does not override the
+         x-ms-file-copy-ignore-read-only header value.
+        :type replace_if_exists: bool
+        :param ignore_read_only: Optional. A boolean value that specifies whether the ReadOnly
+         attribute on a preexisting destination file should be respected. If true, the rename will
+         succeed, otherwise, a previous file at the destination with the ReadOnly attribute set will
+         cause the rename to fail.
+        :type ignore_read_only: bool
+        :param file_permission: If specified the permission (security descriptor) shall be set for the
+         directory/file. This header can be used if Permission size is <= 8KB, else
+         x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
+         input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
+         x-ms-file-permission-key should be specified.
+        :type file_permission: str
+        :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
+         one of the x-ms-file-permission or x-ms-file-permission-key should be specified.
+        :type file_permission_key: str
+        :param metadata: A name-value pair to associate with a file storage object.
+        :type metadata: str
+        :param source_lease_access_conditions: Parameter group.
+        :type source_lease_access_conditions: ~azure.storage.fileshare.models.SourceLeaseAccessConditions
+        :param destination_lease_access_conditions: Parameter group.
+        :type destination_lease_access_conditions: ~azure.storage.fileshare.models.DestinationLeaseAccessConditions
+        :param copy_file_smb_info: Parameter group.
+        :type copy_file_smb_info: ~azure.storage.fileshare.models.CopyFileSmbInfo
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        
+        _source_lease_id = None
+        _destination_lease_id = None
+        _file_attributes = None
+        _file_creation_time = None
+        _file_last_write_time = None
+        if copy_file_smb_info is not None:
+            _file_attributes = copy_file_smb_info.file_attributes
+            _file_creation_time = copy_file_smb_info.file_creation_time
+            _file_last_write_time = copy_file_smb_info.file_last_write_time
+        if destination_lease_access_conditions is not None:
+            _destination_lease_id = destination_lease_access_conditions.destination_lease_id
+        if source_lease_access_conditions is not None:
+            _source_lease_id = source_lease_access_conditions.source_lease_id
+        comp = "rename"
+        accept = "application/xml"
+
+        # Construct URL
+        url = self.rename.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        header_parameters['x-ms-file-rename-source'] = self._serialize.header("rename_source", rename_source, 'str')
+        if replace_if_exists is not None:
+            header_parameters['x-ms-file-rename-replace-if-exists'] = self._serialize.header("replace_if_exists", replace_if_exists, 'bool')
+        if ignore_read_only is not None:
+            header_parameters['x-ms-file-rename-ignore-readonly'] = self._serialize.header("ignore_read_only", ignore_read_only, 'bool')
+        if _source_lease_id is not None:
+            header_parameters['x-ms-source-lease-id'] = self._serialize.header("source_lease_id", _source_lease_id, 'str')
+        if _destination_lease_id is not None:
+            header_parameters['x-ms-destination-lease-id'] = self._serialize.header("destination_lease_id", _destination_lease_id, 'str')
+        if _file_attributes is not None:
+            header_parameters['x-ms-file-attributes'] = self._serialize.header("file_attributes", _file_attributes, 'str')
+        if _file_creation_time is not None:
+            header_parameters['x-ms-file-creation-time'] = self._serialize.header("file_creation_time", _file_creation_time, 'str')
+        if _file_last_write_time is not None:
+            header_parameters['x-ms-file-last-write-time'] = self._serialize.header("file_last_write_time", _file_last_write_time, 'str')
+        if file_permission is not None:
+            header_parameters['x-ms-file-permission'] = self._serialize.header("file_permission", file_permission, 'str')
+        if file_permission_key is not None:
+            header_parameters['x-ms-file-permission-key'] = self._serialize.header("file_permission_key", file_permission_key, 'str')
+        if metadata is not None:
+            header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.put(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers['x-ms-request-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted'))
+        response_headers['x-ms-file-permission-key']=self._deserialize('str', response.headers.get('x-ms-file-permission-key'))
+        response_headers['x-ms-file-attributes']=self._deserialize('str', response.headers.get('x-ms-file-attributes'))
+        response_headers['x-ms-file-creation-time']=self._deserialize('str', response.headers.get('x-ms-file-creation-time'))
+        response_headers['x-ms-file-last-write-time']=self._deserialize('str', response.headers.get('x-ms-file-last-write-time'))
+        response_headers['x-ms-file-change-time']=self._deserialize('str', response.headers.get('x-ms-file-change-time'))
+        response_headers['x-ms-file-id']=self._deserialize('str', response.headers.get('x-ms-file-id'))
+        response_headers['x-ms-file-parent-id']=self._deserialize('str', response.headers.get('x-ms-file-parent-id'))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    rename.metadata = {'url': '/{shareName}/{directory}/{fileName}'}  # type: ignore

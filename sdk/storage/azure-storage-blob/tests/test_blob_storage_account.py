@@ -17,7 +17,8 @@ from azure.storage.blob import (
 )
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.blob._generated.models import RehydratePriority
-from _shared.testcase import StorageTestCase, GlobalStorageAccountPreparer
+from settings.testcase import BlobPreparer
+from devtools_testutils.storage import StorageTestCase
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -51,9 +52,9 @@ class BlobStorageAccountTest(StorageTestCase):
 
     # --Tests specific to Blob Storage Accounts (not general purpose)------------
 
-    @GlobalStorageAccountPreparer()
-    def test_standard_blob_tier_set_tier_api(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)
+    @BlobPreparer()
+    def test_standard_blob_tier_set_tier_api(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
         self._setup(bsc)
         container = bsc.get_container_client(self.container_name)
         tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot]
@@ -99,10 +100,10 @@ class BlobStorageAccountTest(StorageTestCase):
 
             blob.delete_blob()
 
-    @GlobalStorageAccountPreparer()
-    def test_set_standard_blob_tier_with_rehydrate_priority(self, resource_group, location, storage_account, storage_account_key):
+    @BlobPreparer()
+    def test_set_standard_blob_tier_with_rehydrate_priority(self, storage_account_name, storage_account_key):
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
         self._setup(bsc)
         blob_client = self._create_blob(bsc)
         blob_tier = StandardBlobTier.Archive
@@ -118,9 +119,9 @@ class BlobStorageAccountTest(StorageTestCase):
         # Assert
         self.assertEqual('rehydrate-pending-to-cool', blob_props.archive_status)
 
-    @GlobalStorageAccountPreparer()
-    def test_rehydration_status(self, resource_group, location, storage_account, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account, "blob"), credential=storage_account_key)
+    @BlobPreparer()
+    def test_rehydration_status(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
         self._setup(bsc)
         blob_name = 'rehydration_test_blob_1'
         blob_name2 = 'rehydration_test_blob_2'

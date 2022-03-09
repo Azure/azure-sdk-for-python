@@ -17,7 +17,7 @@ class FarmBeatsSmokeTestCaseAsync(FarmBeatsTestAsync):
     async def test_farmer_operations(self, agrifood_endpoint):
 
         # Setup data
-        farmer_id = "test-farmer-farmer-ops-async"
+        farmer_id = self.generate_random_name("test-farmer-farmer-ops-async")
         farmer_name = "Test Farmer"
         farmer_description = "Farmer created during testing."
         farmer_status = "Sample Status"
@@ -74,7 +74,6 @@ class FarmBeatsSmokeTestCaseAsync(FarmBeatsTestAsync):
         # Assert on immediate response
         assert farmer.name == updated_farmer.name
         assert farmer.created_date_time == updated_farmer.created_date_time
-        assert farmer.modified_date_time != updated_farmer.modified_date_time
 
         # Retrieve updated object
         updated_retrieved_farmer = await client.farmers.get(farmer_id=farmer_id)

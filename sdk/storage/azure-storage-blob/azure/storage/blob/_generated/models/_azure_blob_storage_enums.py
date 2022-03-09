@@ -99,9 +99,9 @@ class BlobExpiryOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
 class BlobImmutabilityPolicyMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
+    MUTABLE = "Mutable"
     UNLOCKED = "Unlocked"
     LOCKED = "Locked"
-    MUTABLE = "Mutable"
 
 class BlobType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -169,16 +169,13 @@ class ListBlobsIncludeItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     TAGS = "tags"
     IMMUTABILITYPOLICY = "immutabilitypolicy"
     LEGALHOLD = "legalhold"
+    DELETEDWITHVERSIONS = "deletedwithversions"
 
 class ListContainersIncludeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     METADATA = "metadata"
     DELETED = "deleted"
-
-class PathRenameMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-
-    LEGACY = "legacy"
-    POSIX = "posix"
+    SYSTEM = "system"
 
 class PremiumPageBlobAccessTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -282,6 +279,7 @@ class StorageErrorCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     BLOB_NOT_FOUND = "BlobNotFound"
     BLOB_OVERWRITTEN = "BlobOverwritten"
     BLOB_TIER_INADEQUATE_FOR_CONTENT_LENGTH = "BlobTierInadequateForContentLength"
+    BLOB_USES_CUSTOMER_SPECIFIED_ENCRYPTION = "BlobUsesCustomerSpecifiedEncryption"
     BLOCK_COUNT_EXCEEDS_LIMIT = "BlockCountExceedsLimit"
     BLOCK_LIST_TOO_LONG = "BlockListTooLong"
     CANNOT_CHANGE_TO_LOWER_TIER = "CannotChangeToLowerTier"
@@ -332,7 +330,7 @@ class StorageErrorCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SEQUENCE_NUMBER_CONDITION_NOT_MET = "SequenceNumberConditionNotMet"
     SEQUENCE_NUMBER_INCREMENT_TOO_LARGE = "SequenceNumberIncrementTooLarge"
     SNAPSHOT_COUNT_EXCEEDED = "SnapshotCountExceeded"
-    SNAPHOT_OPERATION_RATE_EXCEEDED = "SnaphotOperationRateExceeded"
+    SNAPSHOT_OPERATION_RATE_EXCEEDED = "SnapshotOperationRateExceeded"
     SNAPSHOTS_PRESENT = "SnapshotsPresent"
     SOURCE_CONDITION_NOT_MET = "SourceConditionNotMet"
     SYSTEM_IN_USE = "SystemInUse"

@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 from typing import Iterable, Dict, Any, Optional
 import logging
+import copy
 from collections import defaultdict
 import asyncio
 from azure.eventhub.exceptions import OwnershipLostError  # type: ignore
@@ -101,7 +102,7 @@ class BlobCheckpointStore(CheckpointStore):
         return result
 
     async def _upload_ownership(
-        self, ownership: Dict[str, Any], metadata: Dict[str, str], **kwargs: Any
+        self, ownership: Dict[str, Any], **kwargs: Any
     ) -> None:
         etag = ownership.get("etag")
         if etag:
@@ -116,6 +117,7 @@ class BlobCheckpointStore(CheckpointStore):
         )
         blob_name = blob_name.lower()
         blob_client = self._get_blob_client(blob_name)
+        metadata = {'ownerid': ownership['owner_id']}
         try:
             uploaded_blob_properties = await blob_client.set_blob_metadata(metadata, **kwargs)
         except ResourceNotFoundError:
@@ -127,27 +129,21 @@ class BlobCheckpointStore(CheckpointStore):
         ownership["last_modified_time"] = uploaded_blob_properties[
             "last_modified"
         ].timestamp()
-        ownership.update(metadata)
 
     async def _claim_one_partition(self, ownership: Dict[str, Any], **kwargs: Any) -> Dict[str, Any]:
-        partition_id = ownership["partition_id"]
-        namespace = ownership["fully_qualified_namespace"]
-        eventhub_name = ownership["eventhub_name"]
-        consumer_group = ownership["consumer_group"]
-        owner_id = ownership["owner_id"]
-        metadata = {"ownerid": owner_id}
+        updated_ownership = copy.deepcopy(ownership)
         try:
-            await self._upload_ownership(ownership, metadata, **kwargs)
-            return ownership
+            await self._upload_ownership(updated_ownership, **kwargs)
+            return updated_ownership
         except (ResourceModifiedError, ResourceExistsError):
             logger.info(
                 "EventProcessor instance %r of namespace %r eventhub %r consumer group %r "
                 "lost ownership to partition %r",
-                owner_id,
-                namespace,
-                eventhub_name,
-                consumer_group,
-                partition_id,
+                updated_ownership["owner_id"],
+                updated_ownership["fully_qualified_namespace"],
+                updated_ownership["eventhub_name"],
+                updated_ownership["consumer_group"],
+                updated_ownership["partition_id"],
             )
             raise OwnershipLostError()
         except Exception as error:  # pylint:disable=broad-except
@@ -156,14 +152,14 @@ class BlobCheckpointStore(CheckpointStore):
                 "namespace %r eventhub %r consumer group %r partition %r. "
                 "The ownership is now lost. Exception "
                 "is %r",
-                owner_id,
-                namespace,
-                eventhub_name,
-                consumer_group,
-                partition_id,
+                updated_ownership["owner_id"],
+                updated_ownership["fully_qualified_namespace"],
+                updated_ownership["eventhub_name"],
+                updated_ownership["consumer_group"],
+                updated_ownership["partition_id"],
                 error,
             )
-            return ownership  # Keep the ownership if an unexpected error happens
+            return updated_ownership  # Keep the ownership if an unexpected error happens
 
     async def list_ownership(
         self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str, **kwargs: Any
@@ -184,7 +180,7 @@ class BlobCheckpointStore(CheckpointStore):
                 - `consumer_group` (str): The name of the consumer group the ownership are associated with.
                 - `partition_id` (str): The partition ID which the checkpoint is created for.
                 - `owner_id` (str): A UUID representing the current owner of this partition.
-                - `last_modified_time` (UTC datetime.datetime): The last time this ownership was claimed.
+                - `last_modified_time` (float): The last time this ownership was claimed as a timestamp.
                 - `etag` (str): The Etag value for the last time this ownership was modified. Optional depending
                   on storage implementation.
         """
@@ -237,7 +233,7 @@ class BlobCheckpointStore(CheckpointStore):
                 - `consumer_group` (str): The name of the consumer group the ownership are associated with.
                 - `partition_id` (str): The partition ID which the checkpoint is created for.
                 - `owner_id` (str): A UUID representing the owner attempting to claim this partition.
-                - `last_modified_time` (UTC datetime.datetime): The last time this ownership was claimed.
+                - `last_modified_time` (float): The last time this ownership was claimed as a timestamp.
                 - `etag` (str): The Etag value for the last time this ownership was modified. Optional depending
                   on storage implementation.
         """

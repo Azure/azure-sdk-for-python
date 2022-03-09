@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -34,64 +32,61 @@ import os
 import asyncio
 
 
-class AuthenticationSampleAsync(object):
+async def sample_authentication_with_api_key_credential_async():
+    print("\n.. authentication_with_api_key_credential_async")
+    # [START create_ta_client_with_key_async]
+    from azure.core.credentials import AzureKeyCredential
+    from azure.ai.textanalytics.aio import TextAnalyticsClient
+    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
+    key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
 
-    async def authentication_with_api_key_credential_async(self):
-        print("\n.. authentication_with_api_key_credential_async")
-        # [START create_ta_client_with_key_async]
-        from azure.core.credentials import AzureKeyCredential
-        from azure.ai.textanalytics.aio import TextAnalyticsClient
-        endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
-        key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
+    text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
+    # [END create_ta_client_with_key_async]
 
-        text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
-        # [END create_ta_client_with_key_async]
-
-        doc = [
-            """
-            I need to take my cat to the veterinarian. She's been coughing for a while and I thought it was just a hairball,
-            but now I'm now worried it might be something else. She's still very healthy so I'm not too worried though.
-            """
-        ]
-        async with text_analytics_client:
-            result = await text_analytics_client.detect_language(doc)
-
-        print("Language detected: {}".format(result[0].primary_language.name))
-        print("Confidence score: {}".format(result[0].primary_language.confidence_score))
-
-    async def authentication_with_azure_active_directory_async(self):
-        """DefaultAzureCredential will use the values from these environment
-        variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
+    doc = [
         """
-        print("\n.. authentication_with_azure_active_directory_async")
-        # [START create_ta_client_with_aad_async]
-        from azure.ai.textanalytics.aio import TextAnalyticsClient
-        from azure.identity.aio import DefaultAzureCredential
+        I need to take my cat to the veterinarian. She's been coughing for a while and I thought it was just a hairball,
+        but now I'm now worried it might be something else. She's still very healthy so I'm not too worried though.
+        """
+    ]
+    async with text_analytics_client:
+        result = await text_analytics_client.detect_language(doc)
 
-        endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
-        credential = DefaultAzureCredential()
+    print(f"Language detected: {result[0].primary_language.name}")
+    print(f"Confidence score: {result[0].primary_language.confidence_score}")
 
-        text_analytics_client = TextAnalyticsClient(endpoint, credential=credential)
-        # [END create_ta_client_with_aad_async]
 
-        doc = [
-            """
-            I need to take my cat to the veterinarian. She's been coughing for a while and I thought it was just a hairball,
-            but now I'm now worried it might be something else. She's still very healthy so I'm not too worried though.
-            """
-        ]
-        async with text_analytics_client:
-            result = await text_analytics_client.detect_language(doc)
+async def sample_authentication_with_azure_active_directory_async():
+    """DefaultAzureCredential will use the values from these environment
+    variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
+    """
+    print("\n.. authentication_with_azure_active_directory_async")
+    # [START create_ta_client_with_aad_async]
+    from azure.ai.textanalytics.aio import TextAnalyticsClient
+    from azure.identity.aio import DefaultAzureCredential
 
-        print("Language detected: {}".format(result[0].primary_language.name))
-        print("Confidence score: {}".format(result[0].primary_language.confidence_score))
+    endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
+    credential = DefaultAzureCredential()
+
+    text_analytics_client = TextAnalyticsClient(endpoint, credential=credential)
+    # [END create_ta_client_with_aad_async]
+
+    doc = [
+        """
+        I need to take my cat to the veterinarian. She's been coughing for a while and I thought it was just a hairball,
+        but now I'm now worried it might be something else. She's still very healthy so I'm not too worried though.
+        """
+    ]
+    async with text_analytics_client:
+        result = await text_analytics_client.detect_language(doc)
+
+    print(f"Language detected: {result[0].primary_language.name}")
+    print(f"Confidence score: {result[0].primary_language.confidence_score}")
 
 
 async def main():
-    sample = AuthenticationSampleAsync()
-    await sample.authentication_with_api_key_credential_async()
-    await sample.authentication_with_azure_active_directory_async()
+    await sample_authentication_with_api_key_credential_async()
+    await sample_authentication_with_azure_active_directory_async()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

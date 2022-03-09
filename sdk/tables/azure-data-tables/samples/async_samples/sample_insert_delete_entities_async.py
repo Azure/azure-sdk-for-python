@@ -22,6 +22,8 @@ USAGE:
 
 import os
 import asyncio
+from datetime import datetime
+from uuid import uuid4
 from dotenv import find_dotenv, load_dotenv
 
 
@@ -37,7 +39,17 @@ class InsertDeleteEntity(object):
         )
         self.table_name = "InsertDeleteAsync"
 
-        self.entity = {"PartitionKey": "color", "RowKey": "brand", "text": "Marker", "color": "Purple", "price": "5"}
+        self.entity = {
+            "PartitionKey": "color",
+            "RowKey": "brand",
+            "text": "Marker",
+            "color": "Purple",
+            "price": 4.99,
+            "last_updated": datetime.today(),
+            "product_id": uuid4(),
+            "inventory_count": 42,
+            "barcode": b"135aefg8oj0ld58"
+        }
 
     async def create_entity(self):
         from azure.data.tables.aio import TableClient
@@ -65,7 +77,7 @@ class InsertDeleteEntity(object):
         from azure.core.credentials import AzureNamedKeyCredential
 
         credential = AzureNamedKeyCredential(self.account_name, self.access_key)
-        table_client = TableClient(endpoint=self.endpoint, credential=credential, table_name=self.table_name)
+        table_client = TableClient(endpoint=self.endpoint, table_name=self.table_name, credential=credential)
 
         # [START delete_entity]
         async with table_client:

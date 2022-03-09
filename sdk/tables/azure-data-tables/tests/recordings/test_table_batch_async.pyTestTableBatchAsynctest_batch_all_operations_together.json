@@ -1,0 +1,436 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.table.core.windows.net/Tables",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "32",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Thu, 09 Dec 2021 00:29:32 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "140e3459-5887-11ec-bcc5-c8348e51ab51",
+        "x-ms-date": "Thu, 09 Dec 2021 00:29:32 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": "{\u0022TableName\u0022: \u0022uttableb0b02fd9\u0022}",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
+        "Date": "Thu, 09 Dec 2021 00:29:31 GMT",
+        "Location": "https://fakeendpoint.table.core.windows.net/Tables(\u0027uttableb0b02fd9\u0027)",
+        "Server": [
+          "Windows-Azure-Table/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "140e3459-5887-11ec-bcc5-c8348e51ab51",
+        "x-ms-request-id": "b53fca66-6002-002e-0993-ec40ef000000",
+        "x-ms-version": "2019-02-02"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://fakeendpoint.table.core.windows.net/$metadata#Tables/@Element",
+        "TableName": "uttableb0b02fd9"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.core.windows.net/uttableb0b02fd9",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "319",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Thu, 09 Dec 2021 00:29:32 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "1414c56a-5887-11ec-804c-c8348e51ab51",
+        "x-ms-date": "Thu, 09 Dec 2021 00:29:32 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": "{\u0022PartitionKey\u0022: \u0022003\u0022, \u0022PartitionKey@odata.type\u0022: \u0022Edm.String\u0022, \u0022RowKey\u0022: \u0022batch_all_operations_together-1\u0022, \u0022RowKey@odata.type\u0022: \u0022Edm.String\u0022, \u0022test\u0022: true, \u0022test2\u0022: \u0022value\u0022, \u0022test2@odata.type\u0022: \u0022Edm.String\u0022, \u0022test3\u0022: 3, \u0022test4\u0022: 1234567890, \u0022test5\u0022: \u00222021-12-09T08:29:32.237191Z\u0022, \u0022test5@odata.type\u0022: \u0022Edm.DateTime\u0022}",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
+        "Date": "Thu, 09 Dec 2021 00:29:31 GMT",
+        "ETag": "W/\u0022datetime\u00272021-12-09T00%3A29%3A31.6148983Z\u0027\u0022",
+        "Location": "https://fakeendpoint.table.core.windows.net/uttableb0b02fd9(PartitionKey=\u0027003\u0027,RowKey=\u0027batch_all_operations_together-1\u0027)",
+        "Server": [
+          "Windows-Azure-Table/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "1414c56a-5887-11ec-804c-c8348e51ab51",
+        "x-ms-request-id": "b53fca68-6002-002e-0a93-ec40ef000000",
+        "x-ms-version": "2019-02-02"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://fakeendpoint.table.core.windows.net/$metadata#uttableb0b02fd9/@Element",
+        "odata.etag": "W/\u0022datetime\u00272021-12-09T00%3A29%3A31.6148983Z\u0027\u0022",
+        "PartitionKey": "003",
+        "RowKey": "batch_all_operations_together-1",
+        "Timestamp": "2021-12-09T00:29:31.6148983Z",
+        "test": true,
+        "test2": "value",
+        "test3": 3,
+        "test4": 1234567890,
+        "test5@odata.type": "Edm.DateTime",
+        "test5": "2021-12-09T08:29:32.237191Z"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.core.windows.net/uttableb0b02fd9",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "319",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Thu, 09 Dec 2021 00:29:32 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "141a7488-5887-11ec-a732-c8348e51ab51",
+        "x-ms-date": "Thu, 09 Dec 2021 00:29:32 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": "{\u0022PartitionKey\u0022: \u0022003\u0022, \u0022PartitionKey@odata.type\u0022: \u0022Edm.String\u0022, \u0022RowKey\u0022: \u0022batch_all_operations_together-2\u0022, \u0022RowKey@odata.type\u0022: \u0022Edm.String\u0022, \u0022test\u0022: true, \u0022test2\u0022: \u0022value\u0022, \u0022test2@odata.type\u0022: \u0022Edm.String\u0022, \u0022test3\u0022: 3, \u0022test4\u0022: 1234567890, \u0022test5\u0022: \u00222021-12-09T08:29:32.237191Z\u0022, \u0022test5@odata.type\u0022: \u0022Edm.DateTime\u0022}",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
+        "Date": "Thu, 09 Dec 2021 00:29:31 GMT",
+        "ETag": "W/\u0022datetime\u00272021-12-09T00%3A29%3A31.6508781Z\u0027\u0022",
+        "Location": "https://fakeendpoint.table.core.windows.net/uttableb0b02fd9(PartitionKey=\u0027003\u0027,RowKey=\u0027batch_all_operations_together-2\u0027)",
+        "Server": [
+          "Windows-Azure-Table/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "141a7488-5887-11ec-a732-c8348e51ab51",
+        "x-ms-request-id": "b53fca69-6002-002e-0b93-ec40ef000000",
+        "x-ms-version": "2019-02-02"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://fakeendpoint.table.core.windows.net/$metadata#uttableb0b02fd9/@Element",
+        "odata.etag": "W/\u0022datetime\u00272021-12-09T00%3A29%3A31.6508781Z\u0027\u0022",
+        "PartitionKey": "003",
+        "RowKey": "batch_all_operations_together-2",
+        "Timestamp": "2021-12-09T00:29:31.6508781Z",
+        "test": true,
+        "test2": "value",
+        "test3": 3,
+        "test4": 1234567890,
+        "test5@odata.type": "Edm.DateTime",
+        "test5": "2021-12-09T08:29:32.237191Z"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.core.windows.net/uttableb0b02fd9",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "319",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Thu, 09 Dec 2021 00:29:32 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "1420039c-5887-11ec-a928-c8348e51ab51",
+        "x-ms-date": "Thu, 09 Dec 2021 00:29:32 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": "{\u0022PartitionKey\u0022: \u0022003\u0022, \u0022PartitionKey@odata.type\u0022: \u0022Edm.String\u0022, \u0022RowKey\u0022: \u0022batch_all_operations_together-3\u0022, \u0022RowKey@odata.type\u0022: \u0022Edm.String\u0022, \u0022test\u0022: true, \u0022test2\u0022: \u0022value\u0022, \u0022test2@odata.type\u0022: \u0022Edm.String\u0022, \u0022test3\u0022: 3, \u0022test4\u0022: 1234567890, \u0022test5\u0022: \u00222021-12-09T08:29:32.237191Z\u0022, \u0022test5@odata.type\u0022: \u0022Edm.DateTime\u0022}",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
+        "Date": "Thu, 09 Dec 2021 00:29:31 GMT",
+        "ETag": "W/\u0022datetime\u00272021-12-09T00%3A29%3A31.6908543Z\u0027\u0022",
+        "Location": "https://fakeendpoint.table.core.windows.net/uttableb0b02fd9(PartitionKey=\u0027003\u0027,RowKey=\u0027batch_all_operations_together-3\u0027)",
+        "Server": [
+          "Windows-Azure-Table/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "1420039c-5887-11ec-a928-c8348e51ab51",
+        "x-ms-request-id": "b53fca6c-6002-002e-0d93-ec40ef000000",
+        "x-ms-version": "2019-02-02"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://fakeendpoint.table.core.windows.net/$metadata#uttableb0b02fd9/@Element",
+        "odata.etag": "W/\u0022datetime\u00272021-12-09T00%3A29%3A31.6908543Z\u0027\u0022",
+        "PartitionKey": "003",
+        "RowKey": "batch_all_operations_together-3",
+        "Timestamp": "2021-12-09T00:29:31.6908543Z",
+        "test": true,
+        "test2": "value",
+        "test3": 3,
+        "test4": 1234567890,
+        "test5@odata.type": "Edm.DateTime",
+        "test5": "2021-12-09T08:29:32.237191Z"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.core.windows.net/uttableb0b02fd9",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "319",
+        "Content-Type": "application/json;odata=nometadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Thu, 09 Dec 2021 00:29:32 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "1425e601-5887-11ec-ae70-c8348e51ab51",
+        "x-ms-date": "Thu, 09 Dec 2021 00:29:32 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": "{\u0022PartitionKey\u0022: \u0022003\u0022, \u0022PartitionKey@odata.type\u0022: \u0022Edm.String\u0022, \u0022RowKey\u0022: \u0022batch_all_operations_together-4\u0022, \u0022RowKey@odata.type\u0022: \u0022Edm.String\u0022, \u0022test\u0022: true, \u0022test2\u0022: \u0022value\u0022, \u0022test2@odata.type\u0022: \u0022Edm.String\u0022, \u0022test3\u0022: 3, \u0022test4\u0022: 1234567890, \u0022test5\u0022: \u00222021-12-09T08:29:32.237191Z\u0022, \u0022test5@odata.type\u0022: \u0022Edm.DateTime\u0022}",
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
+        "Date": "Thu, 09 Dec 2021 00:29:31 GMT",
+        "ETag": "W/\u0022datetime\u00272021-12-09T00%3A29%3A31.7818015Z\u0027\u0022",
+        "Location": "https://fakeendpoint.table.core.windows.net/uttableb0b02fd9(PartitionKey=\u0027003\u0027,RowKey=\u0027batch_all_operations_together-4\u0027)",
+        "Server": [
+          "Windows-Azure-Table/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "1425e601-5887-11ec-ae70-c8348e51ab51",
+        "x-ms-request-id": "b53fca6d-6002-002e-0e93-ec40ef000000",
+        "x-ms-version": "2019-02-02"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://fakeendpoint.table.core.windows.net/$metadata#uttableb0b02fd9/@Element",
+        "odata.etag": "W/\u0022datetime\u00272021-12-09T00%3A29%3A31.7818015Z\u0027\u0022",
+        "PartitionKey": "003",
+        "RowKey": "batch_all_operations_together-4",
+        "Timestamp": "2021-12-09T00:29:31.7818015Z",
+        "test": true,
+        "test2": "value",
+        "test3": 3,
+        "test4": 1234567890,
+        "test5@odata.type": "Edm.DateTime",
+        "test5": "2021-12-09T08:29:32.237191Z"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.core.windows.net/$batch",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "4749",
+        "Content-Type": "multipart/mixed; boundary=batch_00000000-0000-0000-0000-000000000000",
+        "DataServiceVersion": "3.0",
+        "Date": "Thu, 09 Dec 2021 00:29:32 GMT",
+        "MaxDataServiceVersion": "3.0;NetFx",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "14354fd8-5887-11ec-b15e-c8348e51ab51",
+        "x-ms-date": "Thu, 09 Dec 2021 00:29:32 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": "LS1iYXRjaF8wMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDANCkNvbnRlbnQtVHlwZTogbXVsdGlwYXJ0L21peGVkOyBib3VuZGFyeT1jaGFuZ2VzZXRfMTkwNGU4MzktMTUyYS00NDQ0LWJkNjYtMTU1YWFhYTc1NTU4DQoNCi0tY2hhbmdlc2V0XzE5MDRlODM5LTE1MmEtNDQ0NC1iZDY2LTE1NWFhYWE3NTU1OA0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9odHRwDQpDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiBiaW5hcnkNCkNvbnRlbnQtSUQ6IDANCg0KUE9TVCBodHRwczovL2Zha2VlbmRwb2ludC50YWJsZS5jb3JlLndpbmRvd3MubmV0L3V0dGFibGViMGIwMmZkOSBIVFRQLzEuMQ0KeC1tcy12ZXJzaW9uOiAyMDE5LTAyLTAyDQpEYXRhU2VydmljZVZlcnNpb246IDMuMA0KUHJlZmVyOiByZXR1cm4tbm8tY29udGVudA0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9qc29uO29kYXRhPW5vbWV0YWRhdGENCkFjY2VwdDogYXBwbGljYXRpb24vanNvbjtvZGF0YT1taW5pbWFsbWV0YWRhdGENCkNvbnRlbnQtTGVuZ3RoOiAzMTcNCngtbXMtZGF0ZTogVGh1LCAwOSBEZWMgMjAyMSAwMDoyOTozMiBHTVQNCkRhdGU6IFRodSwgMDkgRGVjIDIwMjEgMDA6Mjk6MzIgR01UDQoNCnsiUGFydGl0aW9uS2V5IjogIjAwMyIsICJQYXJ0aXRpb25LZXlAb2RhdGEudHlwZSI6ICJFZG0uU3RyaW5nIiwgIlJvd0tleSI6ICJiYXRjaF9hbGxfb3BlcmF0aW9uc190b2dldGhlciIsICJSb3dLZXlAb2RhdGEudHlwZSI6ICJFZG0uU3RyaW5nIiwgInRlc3QiOiB0cnVlLCAidGVzdDIiOiAidmFsdWUiLCAidGVzdDJAb2RhdGEudHlwZSI6ICJFZG0uU3RyaW5nIiwgInRlc3QzIjogMywgInRlc3Q0IjogMTIzNDU2Nzg5MCwgInRlc3Q1IjogIjIwMjEtMTItMDlUMDg6Mjk6MzIuMjM3MTkxWiIsICJ0ZXN0NUBvZGF0YS50eXBlIjogIkVkbS5EYXRlVGltZSJ9DQotLWNoYW5nZXNldF8xOTA0ZTgzOS0xNTJhLTQ0NDQtYmQ2Ni0xNTVhYWFhNzU1NTgNCkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vaHR0cA0KQ29udGVudC1UcmFuc2Zlci1FbmNvZGluZzogYmluYXJ5DQpDb250ZW50LUlEOiAxDQoNCkRFTEVURSBodHRwczovL2Zha2VlbmRwb2ludC50YWJsZS5jb3JlLndpbmRvd3MubmV0L3V0dGFibGViMGIwMmZkOShQYXJ0aXRpb25LZXk9JzAwMycsUm93S2V5PSdiYXRjaF9hbGxfb3BlcmF0aW9uc190b2dldGhlci0xJykgSFRUUC8xLjENCngtbXMtdmVyc2lvbjogMjAxOS0wMi0wMg0KRGF0YVNlcnZpY2VWZXJzaW9uOiAzLjANCklmLU1hdGNoOiAqDQpBY2NlcHQ6IGFwcGxpY2F0aW9uL2pzb247b2RhdGE9bWluaW1hbG1ldGFkYXRhDQp4LW1zLWRhdGU6IFRodSwgMDkgRGVjIDIwMjEgMDA6Mjk6MzIgR01UDQpEYXRlOiBUaHUsIDA5IERlYyAyMDIxIDAwOjI5OjMyIEdNVA0KDQoNCi0tY2hhbmdlc2V0XzE5MDRlODM5LTE1MmEtNDQ0NC1iZDY2LTE1NWFhYWE3NTU1OA0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9odHRwDQpDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiBiaW5hcnkNCkNvbnRlbnQtSUQ6IDINCg0KUEFUQ0ggaHR0cHM6Ly9mYWtlZW5kcG9pbnQudGFibGUuY29yZS53aW5kb3dzLm5ldC91dHRhYmxlYjBiMDJmZDkoUGFydGl0aW9uS2V5PScwMDMnLFJvd0tleT0nYmF0Y2hfYWxsX29wZXJhdGlvbnNfdG9nZXRoZXItMicpIEhUVFAvMS4xDQp4LW1zLXZlcnNpb246IDIwMTktMDItMDINCkRhdGFTZXJ2aWNlVmVyc2lvbjogMy4wDQpJZi1NYXRjaDogKg0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9qc29uDQpBY2NlcHQ6IGFwcGxpY2F0aW9uL2pzb24NCkNvbnRlbnQtTGVuZ3RoOiAzMjANCngtbXMtZGF0ZTogVGh1LCAwOSBEZWMgMjAyMSAwMDoyOTozMiBHTVQNCkRhdGU6IFRodSwgMDkgRGVjIDIwMjEgMDA6Mjk6MzIgR01UDQoNCnsiUGFydGl0aW9uS2V5IjogIjAwMyIsICJQYXJ0aXRpb25LZXlAb2RhdGEudHlwZSI6ICJFZG0uU3RyaW5nIiwgIlJvd0tleSI6ICJiYXRjaF9hbGxfb3BlcmF0aW9uc190b2dldGhlci0yIiwgIlJvd0tleUBvZGF0YS50eXBlIjogIkVkbS5TdHJpbmciLCAidGVzdCI6IHRydWUsICJ0ZXN0MiI6ICJ2YWx1ZSIsICJ0ZXN0MkBvZGF0YS50eXBlIjogIkVkbS5TdHJpbmciLCAidGVzdDMiOiAxMCwgInRlc3Q0IjogMTIzNDU2Nzg5MCwgInRlc3Q1IjogIjIwMjEtMTItMDlUMDg6Mjk6MzIuMjM3MTkxWiIsICJ0ZXN0NUBvZGF0YS50eXBlIjogIkVkbS5EYXRlVGltZSJ9DQotLWNoYW5nZXNldF8xOTA0ZTgzOS0xNTJhLTQ0NDQtYmQ2Ni0xNTVhYWFhNzU1NTgNCkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vaHR0cA0KQ29udGVudC1UcmFuc2Zlci1FbmNvZGluZzogYmluYXJ5DQpDb250ZW50LUlEOiAzDQoNClBVVCBodHRwczovL2Zha2VlbmRwb2ludC50YWJsZS5jb3JlLndpbmRvd3MubmV0L3V0dGFibGViMGIwMmZkOShQYXJ0aXRpb25LZXk9JzAwMycsUm93S2V5PSdiYXRjaF9hbGxfb3BlcmF0aW9uc190b2dldGhlci0zJykgSFRUUC8xLjENCngtbXMtdmVyc2lvbjogMjAxOS0wMi0wMg0KRGF0YVNlcnZpY2VWZXJzaW9uOiAzLjANCklmLU1hdGNoOiAqDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24NCkFjY2VwdDogYXBwbGljYXRpb24vanNvbg0KQ29udGVudC1MZW5ndGg6IDMyMQ0KeC1tcy1kYXRlOiBUaHUsIDA5IERlYyAyMDIxIDAwOjI5OjMyIEdNVA0KRGF0ZTogVGh1LCAwOSBEZWMgMjAyMSAwMDoyOTozMiBHTVQNCg0KeyJQYXJ0aXRpb25LZXkiOiAiMDAzIiwgIlBhcnRpdGlvbktleUBvZGF0YS50eXBlIjogIkVkbS5TdHJpbmciLCAiUm93S2V5IjogImJhdGNoX2FsbF9vcGVyYXRpb25zX3RvZ2V0aGVyLTMiLCAiUm93S2V5QG9kYXRhLnR5cGUiOiAiRWRtLlN0cmluZyIsICJ0ZXN0IjogdHJ1ZSwgInRlc3QyIjogInZhbHVlIiwgInRlc3QyQG9kYXRhLnR5cGUiOiAiRWRtLlN0cmluZyIsICJ0ZXN0MyI6IDEwMCwgInRlc3Q0IjogMTIzNDU2Nzg5MCwgInRlc3Q1IjogIjIwMjEtMTItMDlUMDg6Mjk6MzIuMjM3MTkxWiIsICJ0ZXN0NUBvZGF0YS50eXBlIjogIkVkbS5EYXRlVGltZSJ9DQotLWNoYW5nZXNldF8xOTA0ZTgzOS0xNTJhLTQ0NDQtYmQ2Ni0xNTVhYWFhNzU1NTgNCkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vaHR0cA0KQ29udGVudC1UcmFuc2Zlci1FbmNvZGluZzogYmluYXJ5DQpDb250ZW50LUlEOiA0DQoNClBBVENIIGh0dHBzOi8vZmFrZWVuZHBvaW50LnRhYmxlLmNvcmUud2luZG93cy5uZXQvdXR0YWJsZWIwYjAyZmQ5KFBhcnRpdGlvbktleT0nMDAzJyxSb3dLZXk9J2JhdGNoX2FsbF9vcGVyYXRpb25zX3RvZ2V0aGVyLTQnKSBIVFRQLzEuMQ0KeC1tcy12ZXJzaW9uOiAyMDE5LTAyLTAyDQpEYXRhU2VydmljZVZlcnNpb246IDMuMA0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9qc29uDQpBY2NlcHQ6IGFwcGxpY2F0aW9uL2pzb24NCkNvbnRlbnQtTGVuZ3RoOiAzMjANCngtbXMtZGF0ZTogVGh1LCAwOSBEZWMgMjAyMSAwMDoyOTozMiBHTVQNCkRhdGU6IFRodSwgMDkgRGVjIDIwMjEgMDA6Mjk6MzIgR01UDQoNCnsiUGFydGl0aW9uS2V5IjogIjAwMyIsICJQYXJ0aXRpb25LZXlAb2RhdGEudHlwZSI6ICJFZG0uU3RyaW5nIiwgIlJvd0tleSI6ICJiYXRjaF9hbGxfb3BlcmF0aW9uc190b2dldGhlci00IiwgIlJvd0tleUBvZGF0YS50eXBlIjogIkVkbS5TdHJpbmciLCAidGVzdCI6IHRydWUsICJ0ZXN0MiI6ICJ2YWx1ZSIsICJ0ZXN0MkBvZGF0YS50eXBlIjogIkVkbS5TdHJpbmciLCAidGVzdDMiOiAxMCwgInRlc3Q0IjogMTIzNDU2Nzg5MCwgInRlc3Q1IjogIjIwMjEtMTItMDlUMDg6Mjk6MzIuMjM3MTkxWiIsICJ0ZXN0NUBvZGF0YS50eXBlIjogIkVkbS5EYXRlVGltZSJ9DQotLWNoYW5nZXNldF8xOTA0ZTgzOS0xNTJhLTQ0NDQtYmQ2Ni0xNTVhYWFhNzU1NTgNCkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vaHR0cA0KQ29udGVudC1UcmFuc2Zlci1FbmNvZGluZzogYmluYXJ5DQpDb250ZW50LUlEOiA1DQoNClBVVCBodHRwczovL2Zha2VlbmRwb2ludC50YWJsZS5jb3JlLndpbmRvd3MubmV0L3V0dGFibGViMGIwMmZkOShQYXJ0aXRpb25LZXk9JzAwMycsUm93S2V5PSdiYXRjaF9hbGxfb3BlcmF0aW9uc190b2dldGhlci01JykgSFRUUC8xLjENCngtbXMtdmVyc2lvbjogMjAxOS0wMi0wMg0KRGF0YVNlcnZpY2VWZXJzaW9uOiAzLjANCkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vanNvbg0KQWNjZXB0OiBhcHBsaWNhdGlvbi9qc29uDQpDb250ZW50LUxlbmd0aDogMzIwDQp4LW1zLWRhdGU6IFRodSwgMDkgRGVjIDIwMjEgMDA6Mjk6MzIgR01UDQpEYXRlOiBUaHUsIDA5IERlYyAyMDIxIDAwOjI5OjMyIEdNVA0KDQp7IlBhcnRpdGlvbktleSI6ICIwMDMiLCAiUGFydGl0aW9uS2V5QG9kYXRhLnR5cGUiOiAiRWRtLlN0cmluZyIsICJSb3dLZXkiOiAiYmF0Y2hfYWxsX29wZXJhdGlvbnNfdG9nZXRoZXItNSIsICJSb3dLZXlAb2RhdGEudHlwZSI6ICJFZG0uU3RyaW5nIiwgInRlc3QiOiB0cnVlLCAidGVzdDIiOiAidmFsdWUiLCAidGVzdDJAb2RhdGEudHlwZSI6ICJFZG0uU3RyaW5nIiwgInRlc3QzIjogMTAsICJ0ZXN0NCI6IDEyMzQ1Njc4OTAsICJ0ZXN0NSI6ICIyMDIxLTEyLTA5VDA4OjI5OjMyLjIzNzE5MVoiLCAidGVzdDVAb2RhdGEudHlwZSI6ICJFZG0uRGF0ZVRpbWUifQ0KLS1jaGFuZ2VzZXRfMTkwNGU4MzktMTUyYS00NDQ0LWJkNjYtMTU1YWFhYTc1NTU4LS0NCg0KLS1iYXRjaF8wMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0wMDAwMDAwMDAwMDAtLQ0K",
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Type": "multipart/mixed; boundary=batchresponse_00000000-0000-0000-0000-000000000000",
+        "Date": "Thu, 09 Dec 2021 00:29:31 GMT",
+        "Server": [
+          "Windows-Azure-Table/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "14354fd8-5887-11ec-b15e-c8348e51ab51",
+        "x-ms-request-id": "b53fca6e-6002-002e-0f93-ec40ef000000",
+        "x-ms-version": "2019-02-02"
+      },
+      "ResponseBody": "LS1iYXRjaHJlc3BvbnNlXzAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMA0KQ29udGVudC1UeXBlOiBtdWx0aXBhcnQvbWl4ZWQ7IGJvdW5kYXJ5PWNoYW5nZXNldHJlc3BvbnNlXzljY2IyMGM4LWZjNWUtNDA1Ni04YTZjLTVkYmUwYTcwMmY5OQ0KDQotLWNoYW5nZXNldHJlc3BvbnNlXzljY2IyMGM4LWZjNWUtNDA1Ni04YTZjLTVkYmUwYTcwMmY5OQ0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9odHRwDQpDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiBiaW5hcnkNCg0KSFRUUC8xLjEgMjA0IE5vIENvbnRlbnQNClgtQ29udGVudC1UeXBlLU9wdGlvbnM6IG5vc25pZmYNCkNhY2hlLUNvbnRyb2w6IG5vLWNhY2hlDQpQcmVmZXJlbmNlLUFwcGxpZWQ6IHJldHVybi1uby1jb250ZW50DQpEYXRhU2VydmljZVZlcnNpb246IDMuMDsNCkxvY2F0aW9uOiBodHRwczovL2Zha2VlbmRwb2ludC50YWJsZS5jb3JlLndpbmRvd3MubmV0L3V0dGFibGViMGIwMmZkOShQYXJ0aXRpb25LZXk9JzAwMycsUm93S2V5PSdiYXRjaF9hbGxfb3BlcmF0aW9uc190b2dldGhlcicpDQpEYXRhU2VydmljZUlkOiBodHRwczovL2Zha2VlbmRwb2ludC50YWJsZS5jb3JlLndpbmRvd3MubmV0L3V0dGFibGViMGIwMmZkOShQYXJ0aXRpb25LZXk9JzAwMycsUm93S2V5PSdiYXRjaF9hbGxfb3BlcmF0aW9uc190b2dldGhlcicpDQpFVGFnOiBXLyJkYXRldGltZScyMDIxLTEyLTA5VDAwJTNBMjklM0EzMS44Nzk3NDQ4WiciDQoNCg0KLS1jaGFuZ2VzZXRyZXNwb25zZV85Y2NiMjBjOC1mYzVlLTQwNTYtOGE2Yy01ZGJlMGE3MDJmOTkNCkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vaHR0cA0KQ29udGVudC1UcmFuc2Zlci1FbmNvZGluZzogYmluYXJ5DQoNCkhUVFAvMS4xIDIwNCBObyBDb250ZW50DQpYLUNvbnRlbnQtVHlwZS1PcHRpb25zOiBub3NuaWZmDQpDYWNoZS1Db250cm9sOiBuby1jYWNoZQ0KRGF0YVNlcnZpY2VWZXJzaW9uOiAxLjA7DQoNCg0KLS1jaGFuZ2VzZXRyZXNwb25zZV85Y2NiMjBjOC1mYzVlLTQwNTYtOGE2Yy01ZGJlMGE3MDJmOTkNCkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vaHR0cA0KQ29udGVudC1UcmFuc2Zlci1FbmNvZGluZzogYmluYXJ5DQoNCkhUVFAvMS4xIDIwNCBObyBDb250ZW50DQpYLUNvbnRlbnQtVHlwZS1PcHRpb25zOiBub3NuaWZmDQpDYWNoZS1Db250cm9sOiBuby1jYWNoZQ0KRGF0YVNlcnZpY2VWZXJzaW9uOiAxLjA7DQpFVGFnOiBXLyJkYXRldGltZScyMDIxLTEyLTA5VDAwJTNBMjklM0EzMS44Nzk2MjE5WiciDQoNCg0KLS1jaGFuZ2VzZXRyZXNwb25zZV85Y2NiMjBjOC1mYzVlLTQwNTYtOGE2Yy01ZGJlMGE3MDJmOTkNCkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vaHR0cA0KQ29udGVudC1UcmFuc2Zlci1FbmNvZGluZzogYmluYXJ5DQoNCkhUVFAvMS4xIDIwNCBObyBDb250ZW50DQpYLUNvbnRlbnQtVHlwZS1PcHRpb25zOiBub3NuaWZmDQpDYWNoZS1Db250cm9sOiBuby1jYWNoZQ0KRGF0YVNlcnZpY2VWZXJzaW9uOiAxLjA7DQpFVGFnOiBXLyJkYXRldGltZScyMDIxLTEyLTA5VDAwJTNBMjklM0EzMS44Nzk2MjE5WiciDQoNCg0KLS1jaGFuZ2VzZXRyZXNwb25zZV85Y2NiMjBjOC1mYzVlLTQwNTYtOGE2Yy01ZGJlMGE3MDJmOTkNCkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vaHR0cA0KQ29udGVudC1UcmFuc2Zlci1FbmNvZGluZzogYmluYXJ5DQoNCkhUVFAvMS4xIDIwNCBObyBDb250ZW50DQpYLUNvbnRlbnQtVHlwZS1PcHRpb25zOiBub3NuaWZmDQpDYWNoZS1Db250cm9sOiBuby1jYWNoZQ0KRGF0YVNlcnZpY2VWZXJzaW9uOiAxLjA7DQpFVGFnOiBXLyJkYXRldGltZScyMDIxLTEyLTA5VDAwJTNBMjklM0EzMS44ODA2MjEzWiciDQoNCg0KLS1jaGFuZ2VzZXRyZXNwb25zZV85Y2NiMjBjOC1mYzVlLTQwNTYtOGE2Yy01ZGJlMGE3MDJmOTkNCkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vaHR0cA0KQ29udGVudC1UcmFuc2Zlci1FbmNvZGluZzogYmluYXJ5DQoNCkhUVFAvMS4xIDIwNCBObyBDb250ZW50DQpYLUNvbnRlbnQtVHlwZS1PcHRpb25zOiBub3NuaWZmDQpDYWNoZS1Db250cm9sOiBuby1jYWNoZQ0KRGF0YVNlcnZpY2VWZXJzaW9uOiAxLjA7DQpFVGFnOiBXLyJkYXRldGltZScyMDIxLTEyLTA5VDAwJTNBMjklM0EzMS44ODA2MjEzWiciDQoNCg0KLS1jaGFuZ2VzZXRyZXNwb25zZV85Y2NiMjBjOC1mYzVlLTQwNTYtOGE2Yy01ZGJlMGE3MDJmOTktLQ0KLS1iYXRjaHJlc3BvbnNlXzAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMC0tDQo="
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.core.windows.net/uttableb0b02fd9()?$filter=PartitionKey eq \u0027003\u0027",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "DataServiceVersion": "3.0",
+        "Date": "Thu, 09 Dec 2021 00:29:32 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "1446d55e-5887-11ec-a428-c8348e51ab51",
+        "x-ms-date": "Thu, 09 Dec 2021 00:29:32 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
+        "Date": "Thu, 09 Dec 2021 00:29:31 GMT",
+        "Server": [
+          "Windows-Azure-Table/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "1446d55e-5887-11ec-a428-c8348e51ab51",
+        "x-ms-request-id": "b53fca6f-6002-002e-1093-ec40ef000000",
+        "x-ms-version": "2019-02-02"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://fakeendpoint.table.core.windows.net/$metadata#uttableb0b02fd9",
+        "value": [
+          {
+            "odata.etag": "W/\u0022datetime\u00272021-12-09T00%3A29%3A31.8797448Z\u0027\u0022",
+            "PartitionKey": "003",
+            "RowKey": "batch_all_operations_together",
+            "Timestamp": "2021-12-09T00:29:31.8797448Z",
+            "test": true,
+            "test2": "value",
+            "test3": 3,
+            "test4": 1234567890,
+            "test5@odata.type": "Edm.DateTime",
+            "test5": "2021-12-09T08:29:32.237191Z"
+          },
+          {
+            "odata.etag": "W/\u0022datetime\u00272021-12-09T00%3A29%3A31.8796219Z\u0027\u0022",
+            "PartitionKey": "003",
+            "RowKey": "batch_all_operations_together-2",
+            "Timestamp": "2021-12-09T00:29:31.8796219Z",
+            "test": true,
+            "test2": "value",
+            "test3": 10,
+            "test4": 1234567890,
+            "test5@odata.type": "Edm.DateTime",
+            "test5": "2021-12-09T08:29:32.237191Z"
+          },
+          {
+            "odata.etag": "W/\u0022datetime\u00272021-12-09T00%3A29%3A31.8796219Z\u0027\u0022",
+            "PartitionKey": "003",
+            "RowKey": "batch_all_operations_together-3",
+            "Timestamp": "2021-12-09T00:29:31.8796219Z",
+            "test": true,
+            "test2": "value",
+            "test3": 100,
+            "test4": 1234567890,
+            "test5@odata.type": "Edm.DateTime",
+            "test5": "2021-12-09T08:29:32.237191Z"
+          },
+          {
+            "odata.etag": "W/\u0022datetime\u00272021-12-09T00%3A29%3A31.8806213Z\u0027\u0022",
+            "PartitionKey": "003",
+            "RowKey": "batch_all_operations_together-4",
+            "Timestamp": "2021-12-09T00:29:31.8806213Z",
+            "test": true,
+            "test2": "value",
+            "test3": 10,
+            "test4": 1234567890,
+            "test5@odata.type": "Edm.DateTime",
+            "test5": "2021-12-09T08:29:32.237191Z"
+          },
+          {
+            "odata.etag": "W/\u0022datetime\u00272021-12-09T00%3A29%3A31.8806213Z\u0027\u0022",
+            "PartitionKey": "003",
+            "RowKey": "batch_all_operations_together-5",
+            "Timestamp": "2021-12-09T00:29:31.8806213Z",
+            "test": true,
+            "test2": "value",
+            "test3": 10,
+            "test4": 1234567890,
+            "test5@odata.type": "Edm.DateTime",
+            "test5": "2021-12-09T08:29:32.237191Z"
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.core.windows.net/Tables",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json;odata=minimalmetadata",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "DataServiceVersion": "3.0",
+        "Date": "Thu, 09 Dec 2021 00:29:32 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "144cdf1c-5887-11ec-a813-c8348e51ab51",
+        "x-ms-date": "Thu, 09 Dec 2021 00:29:32 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
+        "Date": "Thu, 09 Dec 2021 00:29:31 GMT",
+        "Server": [
+          "Windows-Azure-Table/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "144cdf1c-5887-11ec-a813-c8348e51ab51",
+        "x-ms-request-id": "b53fca70-6002-002e-1193-ec40ef000000",
+        "x-ms-version": "2019-02-02"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://fakeendpoint.table.core.windows.net/$metadata#Tables",
+        "value": [
+          {
+            "TableName": "uttableb0b02fd9"
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.table.core.windows.net/Tables(\u0027uttableb0b02fd9\u0027)",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "Date": "Thu, 09 Dec 2021 00:29:32 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "14523f14-5887-11ec-8aba-c8348e51ab51",
+        "x-ms-date": "Thu, 09 Dec 2021 00:29:32 GMT",
+        "x-ms-version": "2019-02-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Thu, 09 Dec 2021 00:29:31 GMT",
+        "Server": [
+          "Windows-Azure-Table/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-client-request-id": "14523f14-5887-11ec-8aba-c8348e51ab51",
+        "x-ms-request-id": "b53fca71-6002-002e-1293-ec40ef000000",
+        "x-ms-version": "2019-02-02"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

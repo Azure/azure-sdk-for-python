@@ -4,11 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-import pytest
 
 from azure.storage.queue import QueueServiceClient
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from _shared.testcase import GlobalResourceGroupPreparer, StorageTestCase
+from settings.testcase import QueuePreparer
+from devtools_testutils.storage import StorageTestCase
 
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
                                 '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \
@@ -45,26 +44,23 @@ class QueueServiceStatsTest(StorageTestCase):
 
     # --Test cases per service ---------------------------------------
 
-    @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS', random_name_enabled=True)
-    def test_queue_service_stats_f(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_queue_service_stats_f(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = self.create_storage_client(QueueServiceClient, self.account_url(storage_account_name, "queue"), storage_account_key)
 
         # Act
         stats = qsc.get_service_stats(raw_response_hook=self.override_response_body_with_live_status)
         # Assert
         self._assert_stats_default(stats)
 
-    @GlobalResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS', random_name_enabled=True)
-    def test_queue_service_stats_when_unavailable(self, resource_group, location, storage_account, storage_account_key):
+    @QueuePreparer()
+    def test_queue_service_stats_when_unavailable(self, storage_account_name, storage_account_key):
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account, "queue"), storage_account_key)
+        qsc = self.create_storage_client(QueueServiceClient, self.account_url(storage_account_name, "queue"), storage_account_key)
 
         # Act
-        stats = qsc.get_service_stats(
-            raw_response_hook=self.override_response_body_with_unavailable_status)
+        stats = qsc.get_service_stats(raw_response_hook=self.override_response_body_with_unavailable_status)
 
         # Assert
         self._assert_stats_unavailable(stats)

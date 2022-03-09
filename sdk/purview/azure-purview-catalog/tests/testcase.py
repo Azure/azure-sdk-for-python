@@ -8,6 +8,7 @@ import functools
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 from azure.purview.catalog import PurviewCatalogClient
 
+
 class PurviewCatalogTest(AzureTestCase):
 
     def create_client(self, endpoint):
@@ -18,8 +19,9 @@ class PurviewCatalogTest(AzureTestCase):
             endpoint=endpoint,
         )
 
+
 PurviewCatalogPowerShellPreparer = functools.partial(
     PowerShellPreparer,
     "purviewcatalog",
-    purviewcatalog_endpoint="https://fake_account.catalog.purview.azure.com"
+    purviewcatalog_endpoint="https://fake_account.purview.azure.com"
 )

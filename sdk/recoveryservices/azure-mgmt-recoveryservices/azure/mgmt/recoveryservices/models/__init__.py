@@ -16,10 +16,15 @@ try:
     from ._models_py3 import ClientDiscoveryForServiceSpecification
     from ._models_py3 import ClientDiscoveryResponse
     from ._models_py3 import ClientDiscoveryValueForSingleApi
+    from ._models_py3 import CmkKekIdentity
+    from ._models_py3 import CmkKeyVaultProperties
+    from ._models_py3 import Error
+    from ._models_py3 import ErrorAdditionalInfo
     from ._models_py3 import IdentityData
     from ._models_py3 import JobsSummary
     from ._models_py3 import MonitoringSummary
     from ._models_py3 import NameInfo
+    from ._models_py3 import OperationResource
     from ._models_py3 import PatchTrackedResource
     from ._models_py3 import PatchVault
     from ._models_py3 import PrivateEndpoint
@@ -36,13 +41,16 @@ try:
     from ._models_py3 import ResourceCertificateAndAcsDetails
     from ._models_py3 import ResourceCertificateDetails
     from ._models_py3 import Sku
+    from ._models_py3 import SystemData
     from ._models_py3 import TrackedResource
     from ._models_py3 import UpgradeDetails
+    from ._models_py3 import UserIdentity
     from ._models_py3 import Vault
     from ._models_py3 import VaultCertificateResponse
     from ._models_py3 import VaultExtendedInfoResource
     from ._models_py3 import VaultList
     from ._models_py3 import VaultProperties
+    from ._models_py3 import VaultPropertiesEncryption
     from ._models_py3 import VaultUsage
     from ._models_py3 import VaultUsageList
 except (SyntaxError, ImportError):
@@ -55,10 +63,15 @@ except (SyntaxError, ImportError):
     from ._models import ClientDiscoveryForServiceSpecification  # type: ignore
     from ._models import ClientDiscoveryResponse  # type: ignore
     from ._models import ClientDiscoveryValueForSingleApi  # type: ignore
+    from ._models import CmkKekIdentity  # type: ignore
+    from ._models import CmkKeyVaultProperties  # type: ignore
+    from ._models import Error  # type: ignore
+    from ._models import ErrorAdditionalInfo  # type: ignore
     from ._models import IdentityData  # type: ignore
     from ._models import JobsSummary  # type: ignore
     from ._models import MonitoringSummary  # type: ignore
     from ._models import NameInfo  # type: ignore
+    from ._models import OperationResource  # type: ignore
     from ._models import PatchTrackedResource  # type: ignore
     from ._models import PatchVault  # type: ignore
     from ._models import PrivateEndpoint  # type: ignore
@@ -75,18 +88,23 @@ except (SyntaxError, ImportError):
     from ._models import ResourceCertificateAndAcsDetails  # type: ignore
     from ._models import ResourceCertificateDetails  # type: ignore
     from ._models import Sku  # type: ignore
+    from ._models import SystemData  # type: ignore
     from ._models import TrackedResource  # type: ignore
     from ._models import UpgradeDetails  # type: ignore
+    from ._models import UserIdentity  # type: ignore
     from ._models import Vault  # type: ignore
     from ._models import VaultCertificateResponse  # type: ignore
     from ._models import VaultExtendedInfoResource  # type: ignore
     from ._models import VaultList  # type: ignore
     from ._models import VaultProperties  # type: ignore
+    from ._models import VaultPropertiesEncryption  # type: ignore
     from ._models import VaultUsage  # type: ignore
     from ._models import VaultUsageList  # type: ignore
 
 from ._recovery_services_client_enums import (
     AuthType,
+    CreatedByType,
+    InfrastructureEncryptionState,
     PrivateEndpointConnectionStatus,
     ProvisioningState,
     ResourceIdentityType,
@@ -107,10 +125,15 @@ __all__ = [
     'ClientDiscoveryForServiceSpecification',
     'ClientDiscoveryResponse',
     'ClientDiscoveryValueForSingleApi',
+    'CmkKekIdentity',
+    'CmkKeyVaultProperties',
+    'Error',
+    'ErrorAdditionalInfo',
     'IdentityData',
     'JobsSummary',
     'MonitoringSummary',
     'NameInfo',
+    'OperationResource',
     'PatchTrackedResource',
     'PatchVault',
     'PrivateEndpoint',
@@ -127,16 +150,21 @@ __all__ = [
     'ResourceCertificateAndAcsDetails',
     'ResourceCertificateDetails',
     'Sku',
+    'SystemData',
     'TrackedResource',
     'UpgradeDetails',
+    'UserIdentity',
     'Vault',
     'VaultCertificateResponse',
     'VaultExtendedInfoResource',
     'VaultList',
     'VaultProperties',
+    'VaultPropertiesEncryption',
     'VaultUsage',
     'VaultUsageList',
     'AuthType',
+    'CreatedByType',
+    'InfrastructureEncryptionState',
     'PrivateEndpointConnectionStatus',
     'ProvisioningState',
     'ResourceIdentityType',

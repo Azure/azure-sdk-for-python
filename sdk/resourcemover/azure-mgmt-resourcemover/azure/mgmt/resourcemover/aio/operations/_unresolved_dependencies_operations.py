@@ -48,7 +48,7 @@ class UnresolvedDependenciesOperations:
         dependency_level: Optional[Union[str, "_models.DependencyLevel"]] = None,
         orderby: Optional[str] = None,
         filter: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.UnresolvedDependencyCollection"]:
         """Gets a list of unresolved dependencies.
 

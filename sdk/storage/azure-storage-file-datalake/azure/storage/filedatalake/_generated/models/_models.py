@@ -470,6 +470,8 @@ class Path(msrest.serialization.Model):
     :type group: str
     :param permissions:
     :type permissions: str
+    :param encryption_scope: The name of the encryption scope under which the blob is encrypted.
+    :type encryption_scope: str
     """
 
     _attribute_map = {
@@ -481,6 +483,7 @@ class Path(msrest.serialization.Model):
         'owner': {'key': 'owner', 'type': 'str'},
         'group': {'key': 'group', 'type': 'str'},
         'permissions': {'key': 'permissions', 'type': 'str'},
+        'encryption_scope': {'key': 'EncryptionScope', 'type': 'str'},
     }
 
     def __init__(
@@ -496,6 +499,7 @@ class Path(msrest.serialization.Model):
         self.owner = kwargs.get('owner', None)
         self.group = kwargs.get('group', None)
         self.permissions = kwargs.get('permissions', None)
+        self.encryption_scope = kwargs.get('encryption_scope', None)
 
 
 class PathHTTPHeaders(msrest.serialization.Model):

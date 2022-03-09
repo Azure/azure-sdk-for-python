@@ -26,7 +26,7 @@ and future playthroughs of the test will come from the cassette
 rather than using actual network communication.
 
 If the tests are run on TravisCI,
-any tests which cannot be replayed will automatically fail. 
+any tests which cannot be replayed will automatically fail.
 
 `ReplayableTest` itself derives from `IntegrationTestBase`,
 which provides some helpful methods for use in more general unit tests
@@ -63,7 +63,7 @@ and [azure-sdk-for-python](https://github.com/Azure/azure-sdk-for-python).
 Each uses a subclass of `ReplayableTest` to add context-specific functionality
 and preserve backward compatibility with test code
 prior to the existence of `azure-devtools`.
-For example, azure-cli's [compatibility layer](https://github.com/Azure/azure-cli/tree/master/src/azure-cli-testsdk) 
+For example, azure-cli's [compatibility layer](https://github.com/Azure/azure-cli/tree/master/src/azure-cli-testsdk)
 adds methods for running CLI commands and evaluating their output.
 
 Subclasses of `ReplayableTest` can configure its behavior
@@ -84,12 +84,12 @@ its `__init__` method (probably using `super`):
 * `recording_processors` and `replay_processors`:
   Lists of `RecordingProcessor` instances for making changes to requests and responses
   during test recording and test playback, respectively.
-  See [recording_processors.py](https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-devtools/src/azure_devtools/scenario_tests/recording_processors.py)
+  See [recording_processors.py](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-devtools/src/azure_devtools/scenario_tests/recording_processors.py)
   for some examples and how to implement them.
 * `recording_patches` and `replay_patches`:
   Lists of patches to apply to functions, methods, etc.
   during test recording and playback, respectively.
-  See [patches.py](https://github.com/Azure/azure-sdk-for-python/blob/master/tools/azure-devtools/src/azure_devtools/scenario_tests/patches.py)
+  See [patches.py](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-devtools/src/azure_devtools/scenario_tests/patches.py)
   for some examples. Note the `mock_in_unit_test` function
   which abstracts out some boilerplate for applying a patch.
 

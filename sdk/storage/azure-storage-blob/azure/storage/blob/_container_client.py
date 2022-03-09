@@ -8,8 +8,8 @@
 import functools
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, AnyStr, Dict, List, Tuple, IO, Iterator,
-    TYPE_CHECKING
-)
+    TYPE_CHECKING,
+    TypeVar)
 
 
 try:
@@ -40,8 +40,9 @@ from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get
 from ._models import ( # pylint: disable=unused-import
     ContainerProperties,
     BlobProperties,
-    BlobType)
-from ._list_blobs_helper import BlobPrefix, BlobPropertiesPaged
+    BlobType,
+    FilteredBlob)
+from ._list_blobs_helper import BlobPrefix, BlobPropertiesPaged, FilteredBlobPaged
 from ._lease import BlobLeaseClient
 from ._blob_client import BlobClient
 
@@ -69,6 +70,9 @@ def _get_blob_name(blob):
         return blob
 
 
+ClassType = TypeVar("ClassType")
+
+
 class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-public-methods
     """A client to interact with a specific container, although that container
     may not yet exist.
@@ -77,7 +81,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
     retrieved using the :func:`~get_blob_client` function.
 
     For more optional configuration, please click
-    `here <https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob
+    `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
     #optional-configuration>`_.
 
     :param str account_url:
@@ -94,8 +98,8 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
     :keyword str api_version:
-        The Storage API version to use for requests. Default value is '2019-07-07'.
-        Setting to an older version may result in reduced feature compatibility.
+        The Storage API version to use for requests. Default value is the most recent service version that is
+        compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
 
         .. versionadded:: 12.2.0
 
@@ -156,8 +160,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
-        default_api_version = self._client._config.version  # pylint: disable=protected-access
-        self._client._config.version = get_api_version(kwargs, default_api_version) # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
 
     def _format_url(self, hostname):
         container_name = self.container_name
@@ -171,7 +174,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
 
     @classmethod
     def from_container_url(cls, container_url, credential=None, **kwargs):
-        # type: (str, Optional[Any], Any) -> ContainerClient
+        # type: (Type[ClassType], str, Optional[Any], Any) -> ClassType
         """Create ContainerClient from a container url.
 
         :param str container_url:
@@ -214,11 +217,12 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
+            cls,  # type: Type[ClassType]
+            conn_str,  # type: str
             container_name,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):  # type: (...) -> ContainerClient
+        ):  # type: (...) -> ClassType
         """Create ContainerClient from a Connection String.
 
         :param str conn_str:
@@ -743,7 +747,8 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             begin with the specified prefix.
         :param list[str] or str include:
             Specifies one or more additional datasets to include in the response.
-            Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted', 'tags'.
+            Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted', 'deletedwithversions',
+            'tags', 'versions', 'immutabilitypolicy', 'legalhold'.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) response of BlobProperties.
@@ -817,6 +822,38 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             prefix=name_starts_with,
             results_per_page=results_per_page,
             delimiter=delimiter)
+
+    @distributed_trace
+    def find_blobs_by_tags(
+            self, filter_expression, # type: str
+            **kwargs # type: Optional[Any]
+        ):
+        # type: (...) -> ItemPaged[FilteredBlob]
+        """Returns a generator to list the blobs under the specified container whose tags
+        match the given search expression.
+        The generator will lazily follow the continuation tokens returned by
+        the service.
+
+        :param str filter_expression:
+            The expression to find blobs whose tags matches the specified condition.
+            eg. "\"yourtagname\"='firsttag' and \"yourtagname2\"='secondtag'"
+        :keyword int results_per_page:
+            The max result per page when paginating.
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: An iterable (auto-paging) response of FilteredBlob.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.BlobProperties]
+        """
+        results_per_page = kwargs.pop('results_per_page', None)
+        timeout = kwargs.pop('timeout', None)
+        command = functools.partial(
+            self._client.container.filter_blobs,
+            timeout=timeout,
+            where=filter_expression,
+            **kwargs)
+        return ItemPaged(
+            command, results_per_page=results_per_page,
+            page_iterator_class=FilteredBlobPaged)
 
     @distributed_trace
     def upload_blob(
@@ -1038,6 +1075,13 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         :param int length:
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
+        :keyword str version_id:
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to download.
+
+            .. versionadded:: 12.4.0
+            This keyword argument was introduced in API version '2019-12-12'.
+
         :keyword bool validate_content:
             If true, calculates an MD5 hash for each chunk of the blob. The storage
             service checks the hash of the content that has arrived with the hash
@@ -1228,6 +1272,8 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         Soft deleted blobs or snapshots are accessible through :func:`list_blobs()` specifying `include=["deleted"]`
         Soft-deleted blobs or snapshots can be restored using :func:`~BlobClient.undelete()`
 
+        The maximum number of blobs that can be deleted in a single request is 256.
+
         :param blobs:
             The blobs to delete. This can be a single blob, or multiple values can
             be supplied, where each value is either the name of the blob (str) or BlobProperties.
@@ -1402,6 +1448,8 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         A block blob's tier determines Hot/Cool/Archive storage type.
         This operation does not update the blob's ETag.
 
+        The maximum number of blobs that can be updated in a single request is 256.
+
         :param standard_blob_tier:
             Indicates the tier to be set on all blobs. Options include 'Hot', 'Cool',
             'Archive'. The hot tier is optimized for storing data that is accessed
@@ -1469,6 +1517,8 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
     ):
         # type: (...) -> Iterator[HttpResponse]
         """Sets the page blob tiers on all blobs. This API is only supported for page blobs on premium accounts.
+
+        The maximum number of blobs that can be updated in a single request is 256.
 
         :param premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the

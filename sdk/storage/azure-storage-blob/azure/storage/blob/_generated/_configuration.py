@@ -23,7 +23,7 @@ class AzureBlobStorageConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param url: The URL of the service account, container, or blob that is the targe of the desired operation.
+    :param url: The URL of the service account, container, or blob that is the target of the desired operation.
     :type url: str
     """
 
@@ -38,7 +38,7 @@ class AzureBlobStorageConfiguration(Configuration):
         super(AzureBlobStorageConfiguration, self).__init__(**kwargs)
 
         self.url = url
-        self.version = "2020-08-04"
+        self.version = "2021-04-10"
         kwargs.setdefault('sdk_moniker', 'azureblobstorage/{}'.format(VERSION))
         self._configure(**kwargs)
 

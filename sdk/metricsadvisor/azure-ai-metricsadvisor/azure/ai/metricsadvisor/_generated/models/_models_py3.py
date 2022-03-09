@@ -12,7 +12,7 @@ from typing import Dict, List, Optional, Union
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
 
-from ._azure_cognitive_service_metrics_advisor_restapi_open_ap_iv2_enums import *
+from ._metrics_advisor_enums import *
 
 
 class AlertingResultQuery(msrest.serialization.Model):
@@ -891,7 +891,7 @@ class DataFeedDetail(msrest.serialization.Model):
     :param data_feed_description: data feed description.
     :type data_feed_description: str
     :param granularity_name: Required. granularity of the time series. Possible values include:
-     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Secondly", "Custom".
+     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Custom".
     :type granularity_name: str or ~azure.ai.metricsadvisor.models.Granularity
     :param granularity_amount: if granularity is custom,it is required.
     :type granularity_amount: int
@@ -1090,7 +1090,7 @@ class AzureApplicationInsightsDataFeed(DataFeedDetail):
     :param data_feed_description: data feed description.
     :type data_feed_description: str
     :param granularity_name: Required. granularity of the time series. Possible values include:
-     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Secondly", "Custom".
+     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Custom".
     :type granularity_name: str or ~azure.ai.metricsadvisor.models.Granularity
     :param granularity_amount: if granularity is custom,it is required.
     :type granularity_amount: int
@@ -1626,7 +1626,7 @@ class AzureBlobDataFeed(DataFeedDetail):
     :param data_feed_description: data feed description.
     :type data_feed_description: str
     :param granularity_name: Required. granularity of the time series. Possible values include:
-     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Secondly", "Custom".
+     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Custom".
     :type granularity_name: str or ~azure.ai.metricsadvisor.models.Granularity
     :param granularity_amount: if granularity is custom,it is required.
     :type granularity_amount: int
@@ -1998,7 +1998,7 @@ class AzureCosmosDBDataFeed(DataFeedDetail):
     :param data_feed_description: data feed description.
     :type data_feed_description: str
     :param granularity_name: Required. granularity of the time series. Possible values include:
-     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Secondly", "Custom".
+     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Custom".
     :type granularity_name: str or ~azure.ai.metricsadvisor.models.Granularity
     :param granularity_amount: if granularity is custom,it is required.
     :type granularity_amount: int
@@ -2381,7 +2381,7 @@ class AzureDataExplorerDataFeed(DataFeedDetail):
     :param data_feed_description: data feed description.
     :type data_feed_description: str
     :param granularity_name: Required. granularity of the time series. Possible values include:
-     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Secondly", "Custom".
+     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Custom".
     :type granularity_name: str or ~azure.ai.metricsadvisor.models.Granularity
     :param granularity_amount: if granularity is custom,it is required.
     :type granularity_amount: int
@@ -2684,7 +2684,7 @@ class AzureDataLakeStorageGen2DataFeed(DataFeedDetail):
     :param data_feed_description: data feed description.
     :type data_feed_description: str
     :param granularity_name: Required. granularity of the time series. Possible values include:
-     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Secondly", "Custom".
+     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Custom".
     :type granularity_name: str or ~azure.ai.metricsadvisor.models.Granularity
     :param granularity_amount: if granularity is custom,it is required.
     :type granularity_amount: int
@@ -3078,7 +3078,7 @@ class AzureEventHubsDataFeed(DataFeedDetail):
     :param data_feed_description: data feed description.
     :type data_feed_description: str
     :param granularity_name: Required. granularity of the time series. Possible values include:
-     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Secondly", "Custom".
+     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Custom".
     :type granularity_name: str or ~azure.ai.metricsadvisor.models.Granularity
     :param granularity_amount: if granularity is custom,it is required.
     :type granularity_amount: int
@@ -3439,7 +3439,7 @@ class AzureLogAnalyticsDataFeed(DataFeedDetail):
     :param data_feed_description: data feed description.
     :type data_feed_description: str
     :param granularity_name: Required. granularity of the time series. Possible values include:
-     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Secondly", "Custom".
+     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Custom".
     :type granularity_name: str or ~azure.ai.metricsadvisor.models.Granularity
     :param granularity_amount: if granularity is custom,it is required.
     :type granularity_amount: int
@@ -4010,15 +4010,9 @@ class AzureSQLConnectionStringCredentialPatch(DataSourceCredentialPatch):
 class AzureSQLConnectionStringParam(msrest.serialization.Model):
     """AzureSQLConnectionStringParam.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param connection_string: Required. The connection string to access the Azure SQL.
+    :param connection_string: The connection string to access the Azure SQL.
     :type connection_string: str
     """
-
-    _validation = {
-        'connection_string': {'required': True},
-    }
 
     _attribute_map = {
         'connection_string': {'key': 'connectionString', 'type': 'str'},
@@ -4027,7 +4021,7 @@ class AzureSQLConnectionStringParam(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        connection_string: str,
+        connection_string: Optional[str] = None,
         **kwargs
     ):
         super(AzureSQLConnectionStringParam, self).__init__(**kwargs)
@@ -4074,7 +4068,7 @@ class AzureTableDataFeed(DataFeedDetail):
     :param data_feed_description: data feed description.
     :type data_feed_description: str
     :param granularity_name: Required. granularity of the time series. Possible values include:
-     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Secondly", "Custom".
+     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Custom".
     :type granularity_name: str or ~azure.ai.metricsadvisor.models.Granularity
     :param granularity_amount: if granularity is custom,it is required.
     :type granularity_amount: int
@@ -4879,15 +4873,9 @@ class DataLakeGen2SharedKeyCredentialPatch(DataSourceCredentialPatch):
 class DataLakeGen2SharedKeyParam(msrest.serialization.Model):
     """DataLakeGen2SharedKeyParam.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param account_key: Required. The account key to access the Azure Data Lake Storage Gen2.
+    :param account_key: The account key to access the Azure Data Lake Storage Gen2.
     :type account_key: str
     """
-
-    _validation = {
-        'account_key': {'required': True},
-    }
 
     _attribute_map = {
         'account_key': {'key': 'accountKey', 'type': 'str'},
@@ -4896,7 +4884,7 @@ class DataLakeGen2SharedKeyParam(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        account_key: str,
+        account_key: Optional[str] = None,
         **kwargs
     ):
         super(DataLakeGen2SharedKeyParam, self).__init__(**kwargs)
@@ -5259,15 +5247,15 @@ class HookInfo(msrest.serialization.Model):
     :type description: str
     :param external_link: hook external link.
     :type external_link: str
-    :ivar admins: hook administrators.
-    :vartype admins: list[str]
+    :param admins: hook administrators.
+    :type admins: list[str]
     """
 
     _validation = {
         'hook_type': {'required': True},
         'hook_id': {'readonly': True},
         'hook_name': {'required': True},
-        'admins': {'readonly': True, 'unique': True},
+        'admins': {'unique': True},
     }
 
     _attribute_map = {
@@ -5289,6 +5277,7 @@ class HookInfo(msrest.serialization.Model):
         hook_name: str,
         description: Optional[str] = "",
         external_link: Optional[str] = "",
+        admins: Optional[List[str]] = None,
         **kwargs
     ):
         super(HookInfo, self).__init__(**kwargs)
@@ -5297,7 +5286,7 @@ class HookInfo(msrest.serialization.Model):
         self.hook_name = hook_name
         self.description = description
         self.external_link = external_link
-        self.admins = None
+        self.admins = admins
 
 
 class EmailHookInfo(HookInfo):
@@ -5318,8 +5307,8 @@ class EmailHookInfo(HookInfo):
     :type description: str
     :param external_link: hook external link.
     :type external_link: str
-    :ivar admins: hook administrators.
-    :vartype admins: list[str]
+    :param admins: hook administrators.
+    :type admins: list[str]
     :param hook_parameter: Required.
     :type hook_parameter: ~azure.ai.metricsadvisor.models.EmailHookParameter
     """
@@ -5328,7 +5317,7 @@ class EmailHookInfo(HookInfo):
         'hook_type': {'required': True},
         'hook_id': {'readonly': True},
         'hook_name': {'required': True},
-        'admins': {'readonly': True, 'unique': True},
+        'admins': {'unique': True},
         'hook_parameter': {'required': True},
     }
 
@@ -5349,9 +5338,10 @@ class EmailHookInfo(HookInfo):
         hook_parameter: "EmailHookParameter",
         description: Optional[str] = "",
         external_link: Optional[str] = "",
+        admins: Optional[List[str]] = None,
         **kwargs
     ):
-        super(EmailHookInfo, self).__init__(hook_name=hook_name, description=description, external_link=external_link, **kwargs)
+        super(EmailHookInfo, self).__init__(hook_name=hook_name, description=description, external_link=external_link, admins=admins, **kwargs)
         self.hook_type = 'Email'  # type: str
         self.hook_parameter = hook_parameter
 
@@ -5361,8 +5351,6 @@ class HookInfoPatch(msrest.serialization.Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: EmailHookInfoPatch, WebhookHookInfoPatch.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -5375,13 +5363,13 @@ class HookInfoPatch(msrest.serialization.Model):
     :type description: str
     :param external_link: hook external link.
     :type external_link: str
-    :ivar admins: hook administrators.
-    :vartype admins: list[str]
+    :param admins: hook administrators.
+    :type admins: list[str]
     """
 
     _validation = {
         'hook_type': {'required': True},
-        'admins': {'readonly': True, 'unique': True},
+        'admins': {'unique': True},
     }
 
     _attribute_map = {
@@ -5402,6 +5390,7 @@ class HookInfoPatch(msrest.serialization.Model):
         hook_name: Optional[str] = None,
         description: Optional[str] = None,
         external_link: Optional[str] = None,
+        admins: Optional[List[str]] = None,
         **kwargs
     ):
         super(HookInfoPatch, self).__init__(**kwargs)
@@ -5409,13 +5398,11 @@ class HookInfoPatch(msrest.serialization.Model):
         self.hook_name = hook_name
         self.description = description
         self.external_link = external_link
-        self.admins = None
+        self.admins = admins
 
 
 class EmailHookInfoPatch(HookInfoPatch):
     """EmailHookInfoPatch.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -5428,15 +5415,15 @@ class EmailHookInfoPatch(HookInfoPatch):
     :type description: str
     :param external_link: hook external link.
     :type external_link: str
-    :ivar admins: hook administrators.
-    :vartype admins: list[str]
+    :param admins: hook administrators.
+    :type admins: list[str]
     :param hook_parameter:
     :type hook_parameter: ~azure.ai.metricsadvisor.models.EmailHookParameterPatch
     """
 
     _validation = {
         'hook_type': {'required': True},
-        'admins': {'readonly': True, 'unique': True},
+        'admins': {'unique': True},
     }
 
     _attribute_map = {
@@ -5454,10 +5441,11 @@ class EmailHookInfoPatch(HookInfoPatch):
         hook_name: Optional[str] = None,
         description: Optional[str] = None,
         external_link: Optional[str] = None,
+        admins: Optional[List[str]] = None,
         hook_parameter: Optional["EmailHookParameterPatch"] = None,
         **kwargs
     ):
-        super(EmailHookInfoPatch, self).__init__(hook_name=hook_name, description=description, external_link=external_link, **kwargs)
+        super(EmailHookInfoPatch, self).__init__(hook_name=hook_name, description=description, external_link=external_link, admins=admins, **kwargs)
         self.hook_type = 'Email'  # type: str
         self.hook_parameter = hook_parameter
 
@@ -5960,7 +5948,7 @@ class InfluxDBDataFeed(DataFeedDetail):
     :param data_feed_description: data feed description.
     :type data_feed_description: str
     :param granularity_name: Required. granularity of the time series. Possible values include:
-     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Secondly", "Custom".
+     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Custom".
     :type granularity_name: str or ~azure.ai.metricsadvisor.models.Granularity
     :param granularity_amount: if granularity is custom,it is required.
     :type granularity_amount: int
@@ -6933,7 +6921,7 @@ class MongoDBDataFeed(DataFeedDetail):
     :param data_feed_description: data feed description.
     :type data_feed_description: str
     :param granularity_name: Required. granularity of the time series. Possible values include:
-     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Secondly", "Custom".
+     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Custom".
     :type granularity_name: str or ~azure.ai.metricsadvisor.models.Granularity
     :param granularity_amount: if granularity is custom,it is required.
     :type granularity_amount: int
@@ -7304,7 +7292,7 @@ class MySqlDataFeed(DataFeedDetail):
     :param data_feed_description: data feed description.
     :type data_feed_description: str
     :param granularity_name: Required. granularity of the time series. Possible values include:
-     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Secondly", "Custom".
+     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Custom".
     :type granularity_name: str or ~azure.ai.metricsadvisor.models.Granularity
     :param granularity_amount: if granularity is custom,it is required.
     :type granularity_amount: int
@@ -7699,7 +7687,7 @@ class PostgreSqlDataFeed(DataFeedDetail):
     :param data_feed_description: data feed description.
     :type data_feed_description: str
     :param granularity_name: Required. granularity of the time series. Possible values include:
-     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Secondly", "Custom".
+     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Custom".
     :type granularity_name: str or ~azure.ai.metricsadvisor.models.Granularity
     :param granularity_amount: if granularity is custom,it is required.
     :type granularity_amount: int
@@ -8424,7 +8412,7 @@ class ServicePrincipalInKVParam(msrest.serialization.Model):
     :type key_vault_endpoint: str
     :param key_vault_client_id: Required. The Client Id to access the Key Vault.
     :type key_vault_client_id: str
-    :param key_vault_client_secret: Required. The Client Secret to access the Key Vault.
+    :param key_vault_client_secret: The Client Secret to access the Key Vault.
     :type key_vault_client_secret: str
     :param service_principal_id_name_in_kv: Required. The secret name of the service principal's
      client Id in the Key Vault.
@@ -8439,7 +8427,6 @@ class ServicePrincipalInKVParam(msrest.serialization.Model):
     _validation = {
         'key_vault_endpoint': {'required': True},
         'key_vault_client_id': {'required': True},
-        'key_vault_client_secret': {'required': True},
         'service_principal_id_name_in_kv': {'required': True},
         'service_principal_secret_name_in_kv': {'required': True},
         'tenant_id': {'required': True},
@@ -8459,10 +8446,10 @@ class ServicePrincipalInKVParam(msrest.serialization.Model):
         *,
         key_vault_endpoint: str,
         key_vault_client_id: str,
-        key_vault_client_secret: str,
         service_principal_id_name_in_kv: str,
         service_principal_secret_name_in_kv: str,
         tenant_id: str,
+        key_vault_client_secret: Optional[str] = None,
         **kwargs
     ):
         super(ServicePrincipalInKVParam, self).__init__(**kwargs)
@@ -8529,7 +8516,7 @@ class ServicePrincipalParam(msrest.serialization.Model):
 
     :param client_id: Required. The client id of the service principal.
     :type client_id: str
-    :param client_secret: Required. The client secret of the service principal.
+    :param client_secret: The client secret of the service principal.
     :type client_secret: str
     :param tenant_id: Required. The tenant id of the service principal.
     :type tenant_id: str
@@ -8537,7 +8524,6 @@ class ServicePrincipalParam(msrest.serialization.Model):
 
     _validation = {
         'client_id': {'required': True},
-        'client_secret': {'required': True},
         'tenant_id': {'required': True},
     }
 
@@ -8551,8 +8537,8 @@ class ServicePrincipalParam(msrest.serialization.Model):
         self,
         *,
         client_id: str,
-        client_secret: str,
         tenant_id: str,
+        client_secret: Optional[str] = None,
         **kwargs
     ):
         super(ServicePrincipalParam, self).__init__(**kwargs)
@@ -8753,7 +8739,7 @@ class SQLServerDataFeed(DataFeedDetail):
     :param data_feed_description: data feed description.
     :type data_feed_description: str
     :param granularity_name: Required. granularity of the time series. Possible values include:
-     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Secondly", "Custom".
+     "Yearly", "Monthly", "Weekly", "Daily", "Hourly", "Minutely", "Custom".
     :type granularity_name: str or ~azure.ai.metricsadvisor.models.Granularity
     :param granularity_amount: if granularity is custom,it is required.
     :type granularity_amount: int
@@ -9319,8 +9305,8 @@ class WebhookHookInfo(HookInfo):
     :type description: str
     :param external_link: hook external link.
     :type external_link: str
-    :ivar admins: hook administrators.
-    :vartype admins: list[str]
+    :param admins: hook administrators.
+    :type admins: list[str]
     :param hook_parameter: Required.
     :type hook_parameter: ~azure.ai.metricsadvisor.models.WebhookHookParameter
     """
@@ -9329,7 +9315,7 @@ class WebhookHookInfo(HookInfo):
         'hook_type': {'required': True},
         'hook_id': {'readonly': True},
         'hook_name': {'required': True},
-        'admins': {'readonly': True, 'unique': True},
+        'admins': {'unique': True},
         'hook_parameter': {'required': True},
     }
 
@@ -9350,17 +9336,16 @@ class WebhookHookInfo(HookInfo):
         hook_parameter: "WebhookHookParameter",
         description: Optional[str] = "",
         external_link: Optional[str] = "",
+        admins: Optional[List[str]] = None,
         **kwargs
     ):
-        super(WebhookHookInfo, self).__init__(hook_name=hook_name, description=description, external_link=external_link, **kwargs)
+        super(WebhookHookInfo, self).__init__(hook_name=hook_name, description=description, external_link=external_link, admins=admins, **kwargs)
         self.hook_type = 'Webhook'  # type: str
         self.hook_parameter = hook_parameter
 
 
 class WebhookHookInfoPatch(HookInfoPatch):
     """WebhookHookInfoPatch.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -9373,15 +9358,15 @@ class WebhookHookInfoPatch(HookInfoPatch):
     :type description: str
     :param external_link: hook external link.
     :type external_link: str
-    :ivar admins: hook administrators.
-    :vartype admins: list[str]
+    :param admins: hook administrators.
+    :type admins: list[str]
     :param hook_parameter:
     :type hook_parameter: ~azure.ai.metricsadvisor.models.WebhookHookParameterPatch
     """
 
     _validation = {
         'hook_type': {'required': True},
-        'admins': {'readonly': True, 'unique': True},
+        'admins': {'unique': True},
     }
 
     _attribute_map = {
@@ -9399,65 +9384,17 @@ class WebhookHookInfoPatch(HookInfoPatch):
         hook_name: Optional[str] = None,
         description: Optional[str] = None,
         external_link: Optional[str] = None,
+        admins: Optional[List[str]] = None,
         hook_parameter: Optional["WebhookHookParameterPatch"] = None,
         **kwargs
     ):
-        super(WebhookHookInfoPatch, self).__init__(hook_name=hook_name, description=description, external_link=external_link, **kwargs)
+        super(WebhookHookInfoPatch, self).__init__(hook_name=hook_name, description=description, external_link=external_link, admins=admins, **kwargs)
         self.hook_type = 'Webhook'  # type: str
         self.hook_parameter = hook_parameter
 
 
 class WebhookHookParameter(msrest.serialization.Model):
     """WebhookHookParameter.
-
-    :param endpoint: API address, will be called when alert is triggered, only support POST method
-     via SSL.
-    :type endpoint: str
-    :param username: (Deprecated) The username, if using basic authentication.
-    :type username: str
-    :param password: (Deprecated) The password, if using basic authentication.
-    :type password: str
-    :param headers: custom headers in api call.
-    :type headers: dict[str, str]
-    :param certificate_key: The certificate key/URL, if using client certificate, please read
-     documents for more informations.
-    :type certificate_key: str
-    :param certificate_password: The certificate password, if using client certificate, please read
-     documents for more informations.
-    :type certificate_password: str
-    """
-
-    _attribute_map = {
-        'endpoint': {'key': 'endpoint', 'type': 'str'},
-        'username': {'key': 'username', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
-        'headers': {'key': 'headers', 'type': '{str}'},
-        'certificate_key': {'key': 'certificateKey', 'type': 'str'},
-        'certificate_password': {'key': 'certificatePassword', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        endpoint: Optional[str] = None,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
-        headers: Optional[Dict[str, str]] = None,
-        certificate_key: Optional[str] = None,
-        certificate_password: Optional[str] = None,
-        **kwargs
-    ):
-        super(WebhookHookParameter, self).__init__(**kwargs)
-        self.endpoint = endpoint
-        self.username = username
-        self.password = password
-        self.headers = headers
-        self.certificate_key = certificate_key
-        self.certificate_password = certificate_password
-
-
-class WebhookHookParameterPatch(msrest.serialization.Model):
-    """WebhookHookParameterPatch.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -9470,9 +9407,11 @@ class WebhookHookParameterPatch(msrest.serialization.Model):
     :type password: str
     :param headers: custom headers in api call.
     :type headers: dict[str, str]
-    :param certificate_key: The certificate key, if using client certificate.
+    :param certificate_key: The certificate key/URL, if using client certificate, please read
+     documents for more informations.
     :type certificate_key: str
-    :param certificate_password: The certificate password, if using client certificate.
+    :param certificate_password: The certificate password, if using client certificate, please read
+     documents for more informations.
     :type certificate_password: str
     """
 
@@ -9493,6 +9432,53 @@ class WebhookHookParameterPatch(msrest.serialization.Model):
         self,
         *,
         endpoint: str,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
+        headers: Optional[Dict[str, str]] = None,
+        certificate_key: Optional[str] = None,
+        certificate_password: Optional[str] = None,
+        **kwargs
+    ):
+        super(WebhookHookParameter, self).__init__(**kwargs)
+        self.endpoint = endpoint
+        self.username = username
+        self.password = password
+        self.headers = headers
+        self.certificate_key = certificate_key
+        self.certificate_password = certificate_password
+
+
+class WebhookHookParameterPatch(msrest.serialization.Model):
+    """WebhookHookParameterPatch.
+
+    :param endpoint: API address, will be called when alert is triggered, only support POST method
+     via SSL.
+    :type endpoint: str
+    :param username: (Deprecated) The username, if using basic authentication.
+    :type username: str
+    :param password: (Deprecated) The password, if using basic authentication.
+    :type password: str
+    :param headers: custom headers in api call.
+    :type headers: dict[str, str]
+    :param certificate_key: The certificate key, if using client certificate.
+    :type certificate_key: str
+    :param certificate_password: The certificate password, if using client certificate.
+    :type certificate_password: str
+    """
+
+    _attribute_map = {
+        'endpoint': {'key': 'endpoint', 'type': 'str'},
+        'username': {'key': 'username', 'type': 'str'},
+        'password': {'key': 'password', 'type': 'str'},
+        'headers': {'key': 'headers', 'type': '{str}'},
+        'certificate_key': {'key': 'certificateKey', 'type': 'str'},
+        'certificate_password': {'key': 'certificatePassword', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        endpoint: Optional[str] = None,
         username: Optional[str] = None,
         password: Optional[str] = None,
         headers: Optional[Dict[str, str]] = None,

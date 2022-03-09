@@ -10,12 +10,13 @@ products:
 
 These code samples show common champion scenario operations with the AzureMonitorTraceExporter.
 
-* Azure Service Bus Send: [sample_servicebus_send.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_servicebus_send.py)
-* Azure Service Bus Receive: [sample_servicebus_receive.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_servicebus_receive.py)
-* Azure Storage Blob Create Container: [sample_storage.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_storage.py)
-* Client: [sample_client.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_client.py)
-* Trace: [sample_trace.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_trace.py)
-* Server: [sample_server.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_server.py)
+* Azure Service Bus Send: [sample_servicebus_send.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_servicebus_send.py)
+* Azure Service Bus Receive: [sample_servicebus_receive.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_servicebus_receive.py)
+* Azure Storage Blob Create Container: [sample_storage.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_storage.py)
+* Client: [sample_client.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_client.py)
+* Jaeger: [sample_jaeger.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_jaeger.py)
+* Trace: [sample_trace.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_trace.py)
+* Server: [sample_server.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples/traces/sample_server.py)
 
 ## Installation
 
@@ -61,7 +62,61 @@ $ # from this directory
 $ python sample_server.py
 ```
 
-* Open http://localhost:8080/ 
+* Open http://localhost:8080/
+
+### Jaeger
+
+* The Jaeger project provides an all-in-one Docker container with a UI, database, and consumer. Run the following command to start Jaeger:
+
+```sh
+$ docker run -p 16686:16686 -p 6831:6831/udp jaegertracing/all-in-one
+```
+
+* This command starts Jaeger locally on port 16686 and exposes the Jaeger thrift agent on port 6831. You can visit Jaeger at http://localhost:16686.
+
+* Install the OpenTelemetry Jaeger Exporter
+
+```sh
+$ pip install opentelemetry-exporter-jaeger
+```
+
+* Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
+
+* Run the sample
+
+```sh
+$ # from this directory
+$ python sample_jaeger.py
+```
+
+* You should be able to see your traces in the Jaeger backend as well as Azure Monitor application insights backend.
+
+### Collector
+
+* Start the Collector locally to see how the Collector works in practice.
+
+* From the same folder as collector/otel-collector-config.yaml and collector/docker-compose.yml, start the Docker container.
+
+```sh
+$ docker-compose up
+```
+
+* Install the OpenTelemetry OTLP Exporter
+
+```sh
+$ pip install opentelemetry-exporter-otlp
+```
+
+* Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
+
+* Run the sample
+
+```sh
+# from collector directory
+$ python sample_collector.py
+```
+
+* You should be able to see your traces in the Zipkin backend as well as Azure Monitor application insights backend.
 
 ### Azure Service Bus Send
 

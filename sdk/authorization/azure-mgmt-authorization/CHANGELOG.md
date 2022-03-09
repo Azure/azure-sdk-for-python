@@ -1,5 +1,63 @@
 # Release History
 
+## 2.0.0 (2021-09-26)
+
+**Features**
+
+  - Model RoleAssignment has a new parameter created_on
+  - Model RoleAssignment has a new parameter delegated_managed_identity_resource_id
+  - Model RoleAssignment has a new parameter updated_by
+  - Model RoleAssignment has a new parameter condition
+  - Model RoleAssignment has a new parameter description
+  - Model RoleAssignment has a new parameter updated_on
+  - Model RoleAssignment has a new parameter condition_version
+  - Model RoleAssignment has a new parameter created_by
+  - Added operation RoleAssignmentsOperations.validate
+  - Added operation RoleAssignmentsOperations.list_for_subscription
+  - Added operation RoleAssignmentsOperations.validate_by_id
+  - Added operation RoleAssignmentsOperations.create_by_id
+  - Added operation RoleAssignmentsOperations.get_by_id
+  - Added operation RoleAssignmentsOperations.delete_by_id
+  - Added operation group AccessReviewInstancesAssignedForMyApprovalOperations
+  - Added operation group RoleManagementPolicyAssignmentsOperations
+  - Added operation group EligibleChildResourcesOperations
+  - Added operation group AccessReviewInstanceDecisionsOperations
+  - Added operation group RoleAssignmentSchedulesOperations
+  - Added operation group RoleEligibilityScheduleRequestsOperations
+  - Added operation group RoleEligibilitySchedulesOperations
+  - Added operation group RoleAssignmentScheduleInstancesOperations
+  - Added operation group AccessReviewInstanceMyDecisionsOperations
+  - Added operation group RoleAssignmentApprovalStepOperations
+  - Added operation group AccessReviewInstancesOperations
+  - Added operation group AccessReviewScheduleDefinitionsOperations
+  - Added operation group ScopeRoleAssignmentApprovalOperations
+  - Added operation group RoleAssignmentScheduleRequestsOperations
+  - Added operation group RoleAssignmentApprovalStepsOperations
+  - Added operation group RoleAssignmentApprovalOperations
+  - Added operation group ScopeRoleAssignmentApprovalStepsOperations
+  - Added operation group AccessReviewDefaultSettingsOperations
+  - Added operation group RoleEligibilityScheduleInstancesOperations
+  - Added operation group AccessReviewScheduleDefinitionsAssignedForMyApprovalOperations
+  - Added operation group ScopeRoleAssignmentApprovalStepOperations
+  - Added operation group RoleAssignmentMetricsOperations
+  - Added operation group RoleManagementPoliciesOperations
+  - Added operation group Operations
+  - Added operation group AccessReviewInstanceOperations
+
+**Breaking changes**
+
+  - Operation RoleAssignmentsOperations.list_for_resource has a new signature
+  - Operation RoleAssignmentsOperations.delete has a new signature
+  - Operation RoleAssignmentsOperations.get has a new signature
+  - Operation RoleAssignmentsOperations.list_for_resource has a new signature
+  - Operation RoleAssignmentsOperations.list_for_resource_group has a new signature
+  - Operation RoleAssignmentsOperations.list_for_scope has a new signature
+  - Model RoleAssignmentFilter no longer has parameter can_delegate
+  - Model RoleAssignment no longer has parameter can_delegate
+  - Model Principal has a new signature
+  - Model RoleAssignmentCreateParameters has a new signature
+  - Removed operation RoleAssignmentsOperations.list
+
 ## 1.0.0 (2020-11-23)
 
 ## 1.0.0b1 (2020-10-13)
@@ -16,7 +74,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -24,13 +82,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 0.61.0 (2020-08-10)
 

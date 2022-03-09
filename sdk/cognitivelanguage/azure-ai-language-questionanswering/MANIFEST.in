@@ -1,0 +1,9 @@
+include _meta.json
+include *.md
+include LICENSE
+include azure/__init__.py
+include azure/ai/__init__.py
+include azure/ai/language/__init__.py
+recursive-include tests *.py
+recursive-include samples *.py *.md
+include azure/ai/language/questionanswering/py.typed

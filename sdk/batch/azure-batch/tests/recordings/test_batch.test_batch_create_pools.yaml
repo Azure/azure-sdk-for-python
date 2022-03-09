@@ -9,327 +9,297 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 01:36:00 GMT
+      - Thu, 13 Jan 2022 07:11:02 GMT
     method: GET
-    uri: https://batch.westcentralus.batch.azure.com/supportedimages?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/supportedimages?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#supportedimages\"\
-        ,\"value\":[\r\n    {\r\n      \"imageReference\":{\r\n        \"publisher\"\
-        :\"batch\",\"offer\":\"rendering-centos73\",\"sku\":\"rendering\",\"version\"\
-        :\"latest\"\r\n      },\"verificationType\":\"verified\",\"nodeAgentSKUId\"\
-        :\"batch.node.centos 7\",\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\"\
-        :{\r\n        \"publisher\":\"batch\",\"offer\":\"rendering-windows2016\"\
-        ,\"sku\":\"rendering\",\"version\":\"latest\"\r\n      },\"verificationType\"\
-        :\"verified\",\"nodeAgentSKUId\":\"batch.node.windows amd64\",\"osType\":\"\
-        windows\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"publisher\"\
-        :\"canonical\",\"offer\":\"ubuntuserver\",\"sku\":\"16.04-lts\",\"version\"\
-        :\"latest\"\r\n      },\"verificationType\":\"verified\",\"nodeAgentSKUId\"\
-        :\"batch.node.ubuntu 16.04\",\"batchSupportEndOfLife\":\"2021-05-21T00:00:00Z\"\
-        ,\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n       \
-        \ \"publisher\":\"canonical\",\"offer\":\"ubuntuserver\",\"sku\":\"16.04.0-lts\"\
-        ,\"version\":\"latest\"\r\n      },\"verificationType\":\"unverified\",\"\
-        nodeAgentSKUId\":\"batch.node.ubuntu 16.04\",\"batchSupportEndOfLife\":\"\
-        2021-05-21T00:00:00Z\",\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\"\
-        :{\r\n        \"publisher\":\"canonical\",\"offer\":\"ubuntuserver\",\"sku\"\
-        :\"16_04-lts-gen2\",\"version\":\"latest\"\r\n      },\"verificationType\"\
-        :\"unverified\",\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\",\"capabilities\"\
-        :[\r\n        \"Generation2VMImage\"\r\n      ],\"batchSupportEndOfLife\"\
-        :\"2021-05-21T00:00:00Z\",\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\"\
-        :{\r\n        \"publisher\":\"canonical\",\"offer\":\"ubuntuserver\",\"sku\"\
-        :\"18.04-lts\",\"version\":\"latest\"\r\n      },\"verificationType\":\"verified\"\
-        ,\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\",\"osType\":\"linux\"\r\n \
-        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"canonical\"\
-        ,\"offer\":\"ubuntuserver\",\"sku\":\"18_04-lts-gen2\",\"version\":\"latest\"\
-        \r\n      },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.ubuntu\
-        \ 18.04\",\"capabilities\":[\r\n        \"Generation2VMImage\"\r\n      ],\"\
-        osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"\
-        publisher\":\"credativ\",\"offer\":\"debian\",\"sku\":\"8\",\"version\":\"\
-        latest\"\r\n      },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"\
-        batch.node.debian 8\",\"batchSupportEndOfLife\":\"2020-07-30T00:00:00Z\",\"\
-        osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"\
-        publisher\":\"credativ\",\"offer\":\"debian\",\"sku\":\"9\",\"version\":\"\
-        latest\"\r\n      },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"\
-        batch.node.debian 9\",\"batchSupportEndOfLife\":\"2020-10-06T00:00:00Z\",\"\
-        osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"\
-        publisher\":\"debian\",\"offer\":\"debian-10\",\"sku\":\"10\",\"version\"\
-        :\"latest\"\r\n      },\"verificationType\":\"verified\",\"nodeAgentSKUId\"\
-        :\"batch.node.debian 10\",\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\"\
-        :{\r\n        \"publisher\":\"microsoft-azure-batch\",\"offer\":\"centos-container\"\
-        ,\"sku\":\"7-4\",\"version\":\"latest\"\r\n      },\"verificationType\":\"\
-        unverified\",\"nodeAgentSKUId\":\"batch.node.centos 7\",\"capabilities\":[\r\
-        \n        \"DockerCompatible\",\"NvidiaTeslaDriverInstalled\",\"NvidiaGridDriverInstalled\"\
-        \r\n      ],\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\
-        \n        \"publisher\":\"microsoft-azure-batch\",\"offer\":\"centos-container\"\
-        ,\"sku\":\"7-5\",\"version\":\"latest\"\r\n      },\"verificationType\":\"\
-        unverified\",\"nodeAgentSKUId\":\"batch.node.centos 7\",\"capabilities\":[\r\
-        \n        \"DockerCompatible\",\"NvidiaTeslaDriverInstalled\",\"NvidiaGridDriverInstalled\"\
-        \r\n      ],\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\
-        \n        \"publisher\":\"microsoft-azure-batch\",\"offer\":\"centos-container\"\
-        ,\"sku\":\"7-6\",\"version\":\"latest\"\r\n      },\"verificationType\":\"\
-        unverified\",\"nodeAgentSKUId\":\"batch.node.centos 7\",\"capabilities\":[\r\
-        \n        \"DockerCompatible\",\"NvidiaTeslaDriverInstalled\",\"NvidiaGridDriverInstalled\"\
-        \r\n      ],\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\
-        \n        \"publisher\":\"microsoft-azure-batch\",\"offer\":\"centos-container\"\
-        ,\"sku\":\"7-7\",\"version\":\"latest\"\r\n      },\"verificationType\":\"\
-        verified\",\"nodeAgentSKUId\":\"batch.node.centos 7\",\"capabilities\":[\r\
-        \n        \"DockerCompatible\",\"NvidiaTeslaDriverInstalled\",\"NvidiaGridDriverInstalled\"\
-        \r\n      ],\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\
-        \n        \"publisher\":\"microsoft-azure-batch\",\"offer\":\"centos-container-rdma\"\
-        ,\"sku\":\"7-4\",\"version\":\"latest\"\r\n      },\"verificationType\":\"\
-        verified\",\"nodeAgentSKUId\":\"batch.node.centos 7\",\"capabilities\":[\r\
-        \n        \"DockerCompatible\",\"NvidiaTeslaDriverInstalled\",\"SupportsRDMAOnly\"\
-        ,\"IntelMPIRuntimeInstalled\"\r\n      ],\"osType\":\"linux\"\r\n    },{\r\
-        \n      \"imageReference\":{\r\n        \"publisher\":\"microsoft-azure-batch\"\
-        ,\"offer\":\"centos-container-rdma\",\"sku\":\"7-6\",\"version\":\"latest\"\
-        \r\n      },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos\
-        \ 7\",\"capabilities\":[\r\n        \"DockerCompatible\",\"NvidiaTeslaDriverInstalled\"\
-        ,\"SupportsRDMAOnly\",\"IntelMPIRuntimeInstalled\"\r\n      ],\"osType\":\"\
-        linux\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"publisher\"\
-        :\"microsoft-azure-batch\",\"offer\":\"centos-container-rdma\",\"sku\":\"\
-        7-7\",\"version\":\"latest\"\r\n      },\"verificationType\":\"verified\"\
-        ,\"nodeAgentSKUId\":\"batch.node.centos 7\",\"capabilities\":[\r\n       \
-        \ \"DockerCompatible\",\"NvidiaTeslaDriverInstalled\",\"SupportsRDMAOnly\"\
-        ,\"IntelMPIRuntimeInstalled\"\r\n      ],\"osType\":\"linux\"\r\n    },{\r\
-        \n      \"imageReference\":{\r\n        \"publisher\":\"microsoft-azure-batch\"\
-        ,\"offer\":\"ubuntu-server-container\",\"sku\":\"16-04-lts\",\"version\":\"\
-        latest\"\r\n      },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"\
-        batch.node.ubuntu 16.04\",\"capabilities\":[\r\n        \"DockerCompatible\"\
-        ,\"NvidiaTeslaDriverInstalled\",\"NvidiaGridDriverInstalled\"\r\n      ],\"\
-        batchSupportEndOfLife\":\"2021-05-21T00:00:00Z\",\"osType\":\"linux\"\r\n\
-        \    },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoft-azure-batch\"\
-        ,\"offer\":\"ubuntu-server-container-rdma\",\"sku\":\"16-04-lts\",\"version\"\
-        :\"latest\"\r\n      },\"verificationType\":\"verified\",\"nodeAgentSKUId\"\
-        :\"batch.node.ubuntu 16.04\",\"capabilities\":[\r\n        \"DockerCompatible\"\
-        ,\"NvidiaTeslaDriverInstalled\",\"SupportsRDMAOnly\"\r\n      ],\"batchSupportEndOfLife\"\
-        :\"2021-05-21T00:00:00Z\",\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\"\
-        :{\r\n        \"publisher\":\"microsoft-dsvm\",\"offer\":\"dsvm-win-2019\"\
-        ,\"sku\":\"server-2019\",\"version\":\"latest\"\r\n      },\"verificationType\"\
-        :\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows amd64\",\"osType\"\
-        :\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"publisher\"\
-        :\"microsoft-dsvm\",\"offer\":\"ubuntu-1804\",\"sku\":\"1804\",\"version\"\
-        :\"latest\"\r\n      },\"verificationType\":\"unverified\",\"nodeAgentSKUId\"\
-        :\"batch.node.ubuntu 18.04\",\"capabilities\":[\r\n        \"NvidiaTeslaDriverInstalled\"\
-        \r\n      ],\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\
-        \n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\"\
-        ,\"sku\":\"2008-r2-sp1\",\"version\":\"latest\"\r\n      },\"verificationType\"\
-        :\"verified\",\"nodeAgentSKUId\":\"batch.node.windows amd64\",\"osType\":\"\
-        windows\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"publisher\"\
-        :\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2008-r2-sp1-smalldisk\"\
-        ,\"version\":\"latest\"\r\n      },\"verificationType\":\"verified\",\"nodeAgentSKUId\"\
-        :\"batch.node.windows amd64\",\"osType\":\"windows\"\r\n    },{\r\n      \"\
-        imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\",\"\
-        offer\":\"windowsserver\",\"sku\":\"2012-datacenter\",\"version\":\"latest\"\
-        \r\n      },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows\
-        \ amd64\",\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\
-        \n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\"\
-        ,\"sku\":\"2012-datacenter-smalldisk\",\"version\":\"latest\"\r\n      },\"\
-        verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows amd64\"\
-        ,\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n     \
-        \   \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"\
-        sku\":\"2012-r2-datacenter\",\"version\":\"latest\"\r\n      },\"verificationType\"\
-        :\"verified\",\"nodeAgentSKUId\":\"batch.node.windows amd64\",\"osType\":\"\
-        windows\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"publisher\"\
-        :\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2012-r2-datacenter-smalldisk\"\
-        ,\"version\":\"latest\"\r\n      },\"verificationType\":\"verified\",\"nodeAgentSKUId\"\
-        :\"batch.node.windows amd64\",\"osType\":\"windows\"\r\n    },{\r\n      \"\
-        imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\",\"\
-        offer\":\"windowsserver\",\"sku\":\"2016-datacenter\",\"version\":\"latest\"\
-        \r\n      },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows\
-        \ amd64\",\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\
-        \n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\"\
-        ,\"sku\":\"2016-datacenter-gensecond\",\"version\":\"latest\"\r\n      },\"\
-        verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows\
-        \ amd64\",\"capabilities\":[\r\n        \"Generation2VMImage\"\r\n      ],\"\
-        osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"\
-        publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\"\
-        :\"2016-datacenter-gs\",\"version\":\"latest\"\r\n      },\"verificationType\"\
-        :\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows amd64\",\"osType\"\
-        :\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"publisher\"\
-        :\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2016-datacenter-smalldisk\"\
-        ,\"version\":\"latest\"\r\n      },\"verificationType\":\"verified\",\"nodeAgentSKUId\"\
-        :\"batch.node.windows amd64\",\"osType\":\"windows\"\r\n    },{\r\n      \"\
-        imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\",\"\
-        offer\":\"windowsserver\",\"sku\":\"2016-datacenter-smalldisk-g2\",\"version\"\
-        :\"latest\"\r\n      },\"verificationType\":\"unverified\",\"nodeAgentSKUId\"\
-        :\"batch.node.windows amd64\",\"capabilities\":[\r\n        \"Generation2VMImage\"\
-        \r\n      ],\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\"\
-        :{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\"\
-        ,\"sku\":\"2016-datacenter-with-containers\",\"version\":\"latest\"\r\n  \
-        \    },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows\
-        \ amd64\",\"capabilities\":[\r\n        \"DockerCompatible\"\r\n      ],\"\
-        osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"\
-        publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\"\
-        :\"2016-datacenter-with-containers-gs\",\"version\":\"latest\"\r\n      },\"\
-        verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows\
-        \ amd64\",\"capabilities\":[\r\n        \"DockerCompatible\"\r\n      ],\"\
-        osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"\
-        publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\"\
-        :\"2019-datacenter\",\"version\":\"latest\"\r\n      },\"verificationType\"\
-        :\"verified\",\"nodeAgentSKUId\":\"batch.node.windows amd64\",\"osType\":\"\
-        windows\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"publisher\"\
-        :\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2019-datacenter-core\"\
-        ,\"version\":\"latest\"\r\n      },\"verificationType\":\"verified\",\"nodeAgentSKUId\"\
-        :\"batch.node.windows amd64\",\"osType\":\"windows\"\r\n    },{\r\n      \"\
-        imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\",\"\
-        offer\":\"windowsserver\",\"sku\":\"2019-datacenter-core-g2\",\"version\"\
-        :\"latest\"\r\n      },\"verificationType\":\"unverified\",\"nodeAgentSKUId\"\
-        :\"batch.node.windows amd64\",\"capabilities\":[\r\n        \"Generation2VMImage\"\
-        \r\n      ],\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\"\
-        :{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\"\
-        ,\"sku\":\"2019-datacenter-core-smalldisk\",\"version\":\"latest\"\r\n   \
-        \   },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows\
-        \ amd64\",\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\
-        \n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\"\
-        ,\"sku\":\"2019-datacenter-core-smalldisk-g2\",\"version\":\"latest\"\r\n\
-        \      },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows\
-        \ amd64\",\"capabilities\":[\r\n        \"Generation2VMImage\"\r\n      ],\"\
-        osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"\
-        publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\"\
-        :\"2019-datacenter-core-with-containers\",\"version\":\"latest\"\r\n     \
-        \ },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows\
-        \ amd64\",\"capabilities\":[\r\n        \"DockerCompatible\"\r\n      ],\"\
-        osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"\
-        publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\"\
-        :\"2019-datacenter-core-with-containers-g2\",\"version\":\"latest\"\r\n  \
-        \    },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows\
-        \ amd64\",\"capabilities\":[\r\n        \"DockerCompatible\",\"Generation2VMImage\"\
-        \r\n      ],\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\"\
-        :{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\"\
-        ,\"sku\":\"2019-datacenter-core-with-containers-smalldisk\",\"version\":\"\
-        latest\"\r\n      },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"\
-        batch.node.windows amd64\",\"capabilities\":[\r\n        \"DockerCompatible\"\
-        \r\n      ],\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\"\
-        :{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\"\
-        ,\"sku\":\"2019-datacenter-gensecond\",\"version\":\"latest\"\r\n      },\"\
-        verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows\
-        \ amd64\",\"capabilities\":[\r\n        \"Generation2VMImage\"\r\n      ],\"\
-        osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"\
-        publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\"\
-        :\"2019-datacenter-gs\",\"version\":\"latest\"\r\n      },\"verificationType\"\
-        :\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows amd64\",\"osType\"\
-        :\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"publisher\"\
-        :\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2019-datacenter-smalldisk\"\
-        ,\"version\":\"latest\"\r\n      },\"verificationType\":\"verified\",\"nodeAgentSKUId\"\
-        :\"batch.node.windows amd64\",\"osType\":\"windows\"\r\n    },{\r\n      \"\
-        imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\",\"\
-        offer\":\"windowsserver\",\"sku\":\"2019-datacenter-smalldisk-g2\",\"version\"\
-        :\"latest\"\r\n      },\"verificationType\":\"unverified\",\"nodeAgentSKUId\"\
-        :\"batch.node.windows amd64\",\"capabilities\":[\r\n        \"Generation2VMImage\"\
-        \r\n      ],\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\"\
-        :{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\"\
-        ,\"sku\":\"2019-datacenter-with-containers\",\"version\":\"latest\"\r\n  \
-        \    },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows\
-        \ amd64\",\"capabilities\":[\r\n        \"DockerCompatible\"\r\n      ],\"\
-        osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"\
-        publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\"\
-        :\"2019-datacenter-with-containers-g2\",\"version\":\"latest\"\r\n      },\"\
-        verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows\
-        \ amd64\",\"capabilities\":[\r\n        \"DockerCompatible\",\"Generation2VMImage\"\
-        \r\n      ],\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\"\
-        :{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\"\
-        ,\"sku\":\"2019-datacenter-with-containers-gs\",\"version\":\"latest\"\r\n\
-        \      },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows\
-        \ amd64\",\"capabilities\":[\r\n        \"DockerCompatible\"\r\n      ],\"\
-        osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"\
-        publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\"\
-        :\"2019-datacenter-with-containers-smalldisk\",\"version\":\"latest\"\r\n\
-        \      },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows\
-        \ amd64\",\"capabilities\":[\r\n        \"DockerCompatible\"\r\n      ],\"\
-        osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"\
-        publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\"\
-        :\"datacenter-core-1903-with-containers-smalldisk\",\"version\":\"latest\"\
-        \r\n      },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows\
-        \ amd64\",\"capabilities\":[\r\n        \"DockerCompatible\"\r\n      ],\"\
-        batchSupportEndOfLife\":\"2021-01-08T00:00:00Z\",\"osType\":\"windows\"\r\n\
-        \    },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\"\
-        ,\"offer\":\"windowsserver\",\"sku\":\"datacenter-core-2004-with-containers-smalldisk\"\
-        ,\"version\":\"latest\"\r\n      },\"verificationType\":\"unverified\",\"\
-        nodeAgentSKUId\":\"batch.node.windows amd64\",\"capabilities\":[\r\n     \
-        \   \"DockerCompatible\"\r\n      ],\"batchSupportEndOfLife\":\"2022-01-14T00:00:00Z\"\
-        ,\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n     \
-        \   \"publisher\":\"openlogic\",\"offer\":\"centos\",\"sku\":\"7.3\",\"version\"\
-        :\"latest\"\r\n      },\"verificationType\":\"unverified\",\"nodeAgentSKUId\"\
-        :\"batch.node.centos 7\",\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\"\
-        :{\r\n        \"publisher\":\"openlogic\",\"offer\":\"centos\",\"sku\":\"\
-        7.4\",\"version\":\"latest\"\r\n      },\"verificationType\":\"unverified\"\
-        ,\"nodeAgentSKUId\":\"batch.node.centos 7\",\"osType\":\"linux\"\r\n    },{\r\
-        \n      \"imageReference\":{\r\n        \"publisher\":\"openlogic\",\"offer\"\
-        :\"centos\",\"sku\":\"7.5\",\"version\":\"latest\"\r\n      },\"verificationType\"\
-        :\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos 7\",\"osType\":\"linux\"\
-        \r\n    },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"openlogic\"\
-        ,\"offer\":\"centos\",\"sku\":\"7.6\",\"version\":\"latest\"\r\n      },\"\
-        verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos 7\"\
-        ,\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n       \
-        \ \"publisher\":\"openlogic\",\"offer\":\"centos\",\"sku\":\"7.7\",\"version\"\
-        :\"latest\"\r\n      },\"verificationType\":\"unverified\",\"nodeAgentSKUId\"\
-        :\"batch.node.centos 7\",\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\"\
-        :{\r\n        \"publisher\":\"openlogic\",\"offer\":\"centos\",\"sku\":\"\
-        7_8\",\"version\":\"latest\"\r\n      },\"verificationType\":\"verified\"\
-        ,\"nodeAgentSKUId\":\"batch.node.centos 7\",\"osType\":\"linux\"\r\n    },{\r\
-        \n      \"imageReference\":{\r\n        \"publisher\":\"openlogic\",\"offer\"\
-        :\"centos\",\"sku\":\"7_8-gen2\",\"version\":\"latest\"\r\n      },\"verificationType\"\
-        :\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos 7\",\"capabilities\"\
-        :[\r\n        \"Generation2VMImage\"\r\n      ],\"osType\":\"linux\"\r\n \
-        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"openlogic\"\
-        ,\"offer\":\"centos\",\"sku\":\"8_1\",\"version\":\"latest\"\r\n      },\"\
-        verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos 8\"\
-        ,\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n       \
-        \ \"publisher\":\"openlogic\",\"offer\":\"centos\",\"sku\":\"8_2\",\"version\"\
-        :\"latest\"\r\n      },\"verificationType\":\"verified\",\"nodeAgentSKUId\"\
-        :\"batch.node.centos 8\",\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\"\
-        :{\r\n        \"publisher\":\"openlogic\",\"offer\":\"centos\",\"sku\":\"\
-        8_2-gen2\",\"version\":\"latest\"\r\n      },\"verificationType\":\"unverified\"\
-        ,\"nodeAgentSKUId\":\"batch.node.centos 8\",\"capabilities\":[\r\n       \
-        \ \"Generation2VMImage\"\r\n      ],\"osType\":\"linux\"\r\n    },{\r\n  \
-        \    \"imageReference\":{\r\n        \"publisher\":\"openlogic\",\"offer\"\
-        :\"centos-hpc\",\"sku\":\"7.3\",\"version\":\"latest\"\r\n      },\"verificationType\"\
-        :\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos 7\",\"capabilities\"\
-        :[\r\n        \"SupportsRDMAOnly\",\"IntelMPIRuntimeInstalled\"\r\n      ],\"\
-        osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"\
-        publisher\":\"openlogic\",\"offer\":\"centos-hpc\",\"sku\":\"7.4\",\"version\"\
-        :\"latest\"\r\n      },\"verificationType\":\"verified\",\"nodeAgentSKUId\"\
-        :\"batch.node.centos 7\",\"capabilities\":[\r\n        \"SupportsRDMAOnly\"\
-        ,\"IntelMPIRuntimeInstalled\"\r\n      ],\"osType\":\"linux\"\r\n    },{\r\
-        \n      \"imageReference\":{\r\n        \"publisher\":\"openlogic\",\"offer\"\
-        :\"centos-hpc\",\"sku\":\"7.6\",\"version\":\"latest\"\r\n      },\"verificationType\"\
-        :\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos 7\",\"capabilities\"\
-        :[\r\n        \"SupportsRDMAOnly\",\"IntelMPIRuntimeInstalled\"\r\n      ],\"\
-        osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"\
-        publisher\":\"openlogic\",\"offer\":\"centos-hpc\",\"sku\":\"7.7\",\"version\"\
-        :\"latest\"\r\n      },\"verificationType\":\"verified\",\"nodeAgentSKUId\"\
-        :\"batch.node.centos 7\",\"capabilities\":[\r\n        \"SupportsRDMAOnly\"\
-        ,\"IntelMPIRuntimeInstalled\"\r\n      ],\"osType\":\"linux\"\r\n    },{\r\
-        \n      \"imageReference\":{\r\n        \"publisher\":\"openlogic\",\"offer\"\
-        :\"centos-hpc\",\"sku\":\"7_7-gen2\",\"version\":\"latest\"\r\n      },\"\
-        verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos 7\"\
-        ,\"capabilities\":[\r\n        \"SupportsRDMAOnly\",\"IntelMPIRuntimeInstalled\"\
-        ,\"Generation2VMImage\"\r\n      ],\"osType\":\"linux\"\r\n    },{\r\n   \
-        \   \"imageReference\":{\r\n        \"publisher\":\"oracle\",\"offer\":\"\
-        oracle-linux\",\"sku\":\"7.4\",\"version\":\"latest\"\r\n      },\"verificationType\"\
-        :\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos 7\",\"osType\":\"linux\"\
-        \r\n    },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"oracle\"\
-        ,\"offer\":\"oracle-linux\",\"sku\":\"78\",\"version\":\"latest\"\r\n    \
-        \  },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos\
-        \ 7\",\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n  \
-        \      \"publisher\":\"oracle\",\"offer\":\"oracle-linux\",\"sku\":\"81\"\
-        ,\"version\":\"latest\"\r\n      },\"verificationType\":\"unverified\",\"\
-        nodeAgentSKUId\":\"batch.node.centos 8\",\"osType\":\"linux\"\r\n    }\r\n\
-        \  ]\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#supportedimages\",\"value\":[\r\n
+        \   {\r\n      \"imageReference\":{\r\n        \"publisher\":\"almalinux\",\"offer\":\"almalinux\",\"sku\":\"8_4\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.el
+        8\",\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"almalinux\",\"offer\":\"almalinux\",\"sku\":\"8_4-gen2\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.el
+        8\",\"capabilities\":[\r\n        \"Generation2VMImage\"\r\n      ],\"osType\":\"linux\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"batch\",\"offer\":\"rendering-centos73\",\"sku\":\"rendering\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.centos
+        7\",\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"batch\",\"offer\":\"rendering-windows2016\",\"sku\":\"rendering\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"canonical\",\"offer\":\"0001-com-ubuntu-server-focal\",\"sku\":\"20_04-lts\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.ubuntu
+        20.04\",\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"canonical\",\"offer\":\"0001-com-ubuntu-server-focal\",\"sku\":\"20_04-lts-gen2\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.ubuntu
+        20.04\",\"capabilities\":[\r\n        \"Generation2VMImage\"\r\n      ],\"osType\":\"linux\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"canonical\",\"offer\":\"ubuntuserver\",\"sku\":\"18.04-lts\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.ubuntu
+        18.04\",\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"canonical\",\"offer\":\"ubuntuserver\",\"sku\":\"18_04-lts-gen2\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.ubuntu
+        18.04\",\"capabilities\":[\r\n        \"Generation2VMImage\"\r\n      ],\"osType\":\"linux\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"debian\",\"offer\":\"debian-10\",\"sku\":\"10\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.debian
+        10\",\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoft-azure-batch\",\"offer\":\"centos-container\",\"sku\":\"7-6\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos
+        7\",\"capabilities\":[\r\n        \"DockerCompatible\",\"NvidiaTeslaDriverInstalled\",\"NvidiaGridDriverInstalled\"\r\n
+        \     ],\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoft-azure-batch\",\"offer\":\"centos-container\",\"sku\":\"7-7\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos
+        7\",\"capabilities\":[\r\n        \"DockerCompatible\",\"NvidiaTeslaDriverInstalled\",\"NvidiaGridDriverInstalled\"\r\n
+        \     ],\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoft-azure-batch\",\"offer\":\"centos-container\",\"sku\":\"7-8\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.centos
+        7\",\"capabilities\":[\r\n        \"DockerCompatible\",\"NvidiaTeslaDriverInstalled\",\"NvidiaGridDriverInstalled\"\r\n
+        \     ],\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoft-azure-batch\",\"offer\":\"centos-container\",\"sku\":\"8-2\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.centos
+        8\",\"capabilities\":[\r\n        \"DockerCompatible\",\"NvidiaTeslaDriverInstalled\",\"NvidiaGridDriverInstalled\"\r\n
+        \     ],\"batchSupportEndOfLife\":\"2021-12-31T00:00:00Z\",\"osType\":\"linux\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoft-azure-batch\",\"offer\":\"centos-container-rdma\",\"sku\":\"7-6\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos
+        7\",\"capabilities\":[\r\n        \"DockerCompatible\",\"NvidiaTeslaDriverInstalled\",\"SupportsRDMAOnly\",\"IntelMPIRuntimeInstalled\"\r\n
+        \     ],\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoft-azure-batch\",\"offer\":\"centos-container-rdma\",\"sku\":\"7-7\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos
+        7\",\"capabilities\":[\r\n        \"DockerCompatible\",\"NvidiaTeslaDriverInstalled\",\"SupportsRDMAOnly\",\"IntelMPIRuntimeInstalled\"\r\n
+        \     ],\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoft-azure-batch\",\"offer\":\"centos-container-rdma\",\"sku\":\"7-8\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.centos
+        7\",\"capabilities\":[\r\n        \"DockerCompatible\",\"NvidiaTeslaDriverInstalled\",\"SupportsRDMAOnly\",\"IntelMPIRuntimeInstalled\"\r\n
+        \     ],\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoft-azure-batch\",\"offer\":\"centos-container-rdma\",\"sku\":\"8-1\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.centos
+        8\",\"capabilities\":[\r\n        \"DockerCompatible\",\"NvidiaTeslaDriverInstalled\",\"SupportsRDMAOnly\",\"IntelMPIRuntimeInstalled\"\r\n
+        \     ],\"batchSupportEndOfLife\":\"2021-12-31T00:00:00Z\",\"osType\":\"linux\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoft-azure-batch\",\"offer\":\"ubuntu-server-container\",\"sku\":\"20-04-lts\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.ubuntu
+        20.04\",\"capabilities\":[\r\n        \"DockerCompatible\",\"NvidiaTeslaDriverInstalled\",\"NvidiaGridDriverInstalled\"\r\n
+        \     ],\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoft-azure-batch\",\"offer\":\"ubuntu-server-container-rdma\",\"sku\":\"20-04-lts\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.ubuntu
+        20.04\",\"capabilities\":[\r\n        \"DockerCompatible\",\"NvidiaTeslaDriverInstalled\",\"SupportsRDMAOnly\",\"IntelMPIRuntimeInstalled\"\r\n
+        \     ],\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoft-dsvm\",\"offer\":\"dsvm-win-2019\",\"sku\":\"server-2019\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoft-dsvm\",\"offer\":\"ubuntu-1804\",\"sku\":\"1804\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.ubuntu
+        18.04\",\"capabilities\":[\r\n        \"NvidiaTeslaDriverInstalled\"\r\n      ],\"osType\":\"linux\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoft-dsvm\",\"offer\":\"ubuntu-hpc\",\"sku\":\"1804\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.ubuntu
+        18.04\",\"capabilities\":[\r\n        \"SupportsRDMAOnly\",\"Generation2VMImage\",\"IntelMPIRuntimeInstalled\"\r\n
+        \     ],\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoft-dsvm\",\"offer\":\"ubuntu-hpc\",\"sku\":\"2004\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.ubuntu
+        20.04\",\"capabilities\":[\r\n        \"SupportsRDMAOnly\",\"Generation2VMImage\",\"IntelMPIRuntimeInstalled\"\r\n
+        \     ],\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2008-r2-sp1\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"batchSupportEndOfLife\":\"2020-02-14T00:00:00Z\",\"osType\":\"windows\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2008-r2-sp1-smalldisk\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"batchSupportEndOfLife\":\"2020-02-14T00:00:00Z\",\"osType\":\"windows\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2012-datacenter\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2012-datacenter-smalldisk\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2012-r2-datacenter\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2012-r2-datacenter-smalldisk\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2016-datacenter\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2016-datacenter-gensecond\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"capabilities\":[\r\n        \"Generation2VMImage\"\r\n      ],\"osType\":\"windows\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2016-datacenter-gs\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2016-datacenter-smalldisk\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2016-datacenter-smalldisk-g2\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"capabilities\":[\r\n        \"Generation2VMImage\"\r\n      ],\"osType\":\"windows\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2016-datacenter-with-containers\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"capabilities\":[\r\n        \"DockerCompatible\"\r\n      ],\"osType\":\"windows\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2016-datacenter-with-containers-gs\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"capabilities\":[\r\n        \"DockerCompatible\"\r\n      ],\"osType\":\"windows\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2019-datacenter\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2019-datacenter-core\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2019-datacenter-core-g2\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"capabilities\":[\r\n        \"Generation2VMImage\"\r\n      ],\"osType\":\"windows\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2019-datacenter-core-smalldisk\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2019-datacenter-core-smalldisk-g2\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"capabilities\":[\r\n        \"Generation2VMImage\"\r\n      ],\"osType\":\"windows\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2019-datacenter-core-with-containers\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"capabilities\":[\r\n        \"DockerCompatible\"\r\n      ],\"osType\":\"windows\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2019-datacenter-core-with-containers-g2\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"capabilities\":[\r\n        \"DockerCompatible\",\"Generation2VMImage\"\r\n
+        \     ],\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2019-datacenter-core-with-containers-smalldisk\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"capabilities\":[\r\n        \"DockerCompatible\"\r\n      ],\"osType\":\"windows\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2019-datacenter-gensecond\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"capabilities\":[\r\n        \"Generation2VMImage\"\r\n      ],\"osType\":\"windows\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2019-datacenter-gs\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2019-datacenter-smalldisk\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2019-datacenter-smalldisk-g2\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"capabilities\":[\r\n        \"Generation2VMImage\"\r\n      ],\"osType\":\"windows\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2019-datacenter-with-containers\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"capabilities\":[\r\n        \"DockerCompatible\"\r\n      ],\"osType\":\"windows\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2019-datacenter-with-containers-g2\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"capabilities\":[\r\n        \"DockerCompatible\",\"Generation2VMImage\"\r\n
+        \     ],\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2019-datacenter-with-containers-gs\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"capabilities\":[\r\n        \"DockerCompatible\"\r\n      ],\"osType\":\"windows\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2019-datacenter-with-containers-smalldisk\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"capabilities\":[\r\n        \"DockerCompatible\"\r\n      ],\"osType\":\"windows\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2022-datacenter\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2022-datacenter-core\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2022-datacenter-core-g2\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"capabilities\":[\r\n        \"Generation2VMImage\"\r\n      ],\"osType\":\"windows\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2022-datacenter-core-smalldisk\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2022-datacenter-core-smalldisk-g2\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"capabilities\":[\r\n        \"Generation2VMImage\"\r\n      ],\"osType\":\"windows\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2022-datacenter-g2\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"capabilities\":[\r\n        \"Generation2VMImage\"\r\n      ],\"osType\":\"windows\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2022-datacenter-smalldisk\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"2022-datacenter-smalldisk-g2\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"capabilities\":[\r\n        \"Generation2VMImage\"\r\n      ],\"osType\":\"windows\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"datacenter-core-2004-with-containers-smalldisk\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"capabilities\":[\r\n        \"DockerCompatible\"\r\n      ],\"batchSupportEndOfLife\":\"2022-01-14T00:00:00Z\",\"osType\":\"windows\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"datacenter-core-20h2-with-containers-smalldisk\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"capabilities\":[\r\n        \"DockerCompatible\"\r\n      ],\"batchSupportEndOfLife\":\"2022-06-10T00:00:00Z\",\"osType\":\"windows\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"datacenter-core-20h2-with-containers-smalldisk-g2\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"capabilities\":[\r\n        \"DockerCompatible\",\"Generation2VMImage\"\r\n
+        \     ],\"batchSupportEndOfLife\":\"2022-06-10T00:00:00Z\",\"osType\":\"windows\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"microsoftwindowsserver\",\"offer\":\"windowsserver\",\"sku\":\"datacenter-core-20h2-with-containers-smalldisk-gs\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.windows
+        amd64\",\"capabilities\":[\r\n        \"DockerCompatible\"\r\n      ],\"batchSupportEndOfLife\":\"2022-06-10T00:00:00Z\",\"osType\":\"windows\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"openlogic\",\"offer\":\"centos\",\"sku\":\"7.3\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos
+        7\",\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"openlogic\",\"offer\":\"centos\",\"sku\":\"7.4\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos
+        7\",\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"openlogic\",\"offer\":\"centos\",\"sku\":\"7.5\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos
+        7\",\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"openlogic\",\"offer\":\"centos\",\"sku\":\"7.6\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos
+        7\",\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"openlogic\",\"offer\":\"centos\",\"sku\":\"7.7\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos
+        7\",\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"openlogic\",\"offer\":\"centos\",\"sku\":\"7_8\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.centos
+        7\",\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"openlogic\",\"offer\":\"centos\",\"sku\":\"7_8-gen2\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos
+        7\",\"capabilities\":[\r\n        \"Generation2VMImage\"\r\n      ],\"osType\":\"linux\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"openlogic\",\"offer\":\"centos\",\"sku\":\"8_1\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos
+        8\",\"batchSupportEndOfLife\":\"2021-12-31T00:00:00Z\",\"osType\":\"linux\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"openlogic\",\"offer\":\"centos\",\"sku\":\"8_2\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.centos
+        8\",\"batchSupportEndOfLife\":\"2021-12-31T00:00:00Z\",\"osType\":\"linux\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"openlogic\",\"offer\":\"centos\",\"sku\":\"8_2-gen2\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos
+        8\",\"capabilities\":[\r\n        \"Generation2VMImage\"\r\n      ],\"batchSupportEndOfLife\":\"2021-12-31T00:00:00Z\",\"osType\":\"linux\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"openlogic\",\"offer\":\"centos-hpc\",\"sku\":\"7.3\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos
+        7\",\"capabilities\":[\r\n        \"SupportsRDMAOnly\",\"IntelMPIRuntimeInstalled\"\r\n
+        \     ],\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"openlogic\",\"offer\":\"centos-hpc\",\"sku\":\"7.4\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.centos
+        7\",\"capabilities\":[\r\n        \"SupportsRDMAOnly\",\"IntelMPIRuntimeInstalled\"\r\n
+        \     ],\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"openlogic\",\"offer\":\"centos-hpc\",\"sku\":\"7.6\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos
+        7\",\"capabilities\":[\r\n        \"SupportsRDMAOnly\",\"IntelMPIRuntimeInstalled\"\r\n
+        \     ],\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"openlogic\",\"offer\":\"centos-hpc\",\"sku\":\"7.7\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.centos
+        7\",\"capabilities\":[\r\n        \"SupportsRDMAOnly\",\"IntelMPIRuntimeInstalled\"\r\n
+        \     ],\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"openlogic\",\"offer\":\"centos-hpc\",\"sku\":\"7_7-gen2\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos
+        7\",\"capabilities\":[\r\n        \"SupportsRDMAOnly\",\"IntelMPIRuntimeInstalled\",\"Generation2VMImage\"\r\n
+        \     ],\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"openlogic\",\"offer\":\"centos-hpc\",\"sku\":\"8_1\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos
+        8\",\"capabilities\":[\r\n        \"SupportsRDMAOnly\",\"IntelMPIRuntimeInstalled\"\r\n
+        \     ],\"batchSupportEndOfLife\":\"2021-12-31T00:00:00Z\",\"osType\":\"linux\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"openlogic\",\"offer\":\"centos-hpc\",\"sku\":\"8_1-gen2\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos
+        8\",\"capabilities\":[\r\n        \"SupportsRDMAOnly\",\"IntelMPIRuntimeInstalled\",\"Generation2VMImage\"\r\n
+        \     ],\"batchSupportEndOfLife\":\"2021-12-31T00:00:00Z\",\"osType\":\"linux\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"oracle\",\"offer\":\"oracle-linux\",\"sku\":\"7.4\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos
+        7\",\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"oracle\",\"offer\":\"oracle-linux\",\"sku\":\"78\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos
+        7\",\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"oracle\",\"offer\":\"oracle-linux\",\"sku\":\"81\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos
+        8\",\"batchSupportEndOfLife\":\"2021-12-31T00:00:00Z\",\"osType\":\"linux\"\r\n
+        \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"xilinx\",\"offer\":\"xilinx_alveo_u250_deployment_vm_centos78_032321\",\"sku\":\"xilinx_alveo_u250_deployment_vm_centos78_032321\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos
+        7\",\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"xilinx\",\"offer\":\"xilinx_alveo_u250_deployment_vm_ubuntu1804_032321\",\"sku\":\"xilinx_alveo_u250_deployment_vm_ubuntu_1804_032321\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.ubuntu
+        18.04\",\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"xilinx\",\"offer\":\"xilinx_alveo_u250_deployment_vm_ubuntu2004_062421\",\"sku\":\"xilinx_alveo_u250_deployment_vm_ubuntu_2004_062421\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.ubuntu
+        20.04\",\"osType\":\"linux\"\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 01:36:00 GMT
+      - Thu, 13 Jan 2022 07:11:02 GMT
       request-id:
-      - 50f8bb60-8592-4013-b8ca-4c362e30b59e
+      - 884ead2d-df85-47d4-9ca6-4487c1615abe
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -342,7 +312,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"id": "batch_iaas_f0260dd0", "vmSize": "Standard_A1", "virtualMachineConfiguration":
+    body: '{"id": "batch_iaas_f0260dd0", "vmSize": "standard_d1_v2", "virtualMachineConfiguration":
       {"imageReference": {"publisher": "MicrosoftWindowsServer", "offer": "WindowsServer",
       "sku": "2016-Datacenter-smalldisk"}, "nodeAgentSKUId": "batch.node.windows amd64",
       "windowsConfiguration": {"enableAutomaticUpdates": true}}, "taskSchedulingPolicy":
@@ -357,36 +327,36 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '523'
+      - '526'
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 01:36:01 GMT
+      - Thu, 13 Jan 2022 07:11:03 GMT
     method: POST
-    uri: https://batch.westcentralus.batch.azure.com/pools?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/pools?api-version=2022-01-01.15.0
   response:
     body:
       string: ''
     headers:
       dataserviceid:
-      - https://batchf0260dd0.westcentralus.batch.azure.com/pools/batch_iaas_f0260dd0
+      - https://batchf0260dd0.southcentralus.batch.azure.com/pools/batch_iaas_f0260dd0
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 01:36:02 GMT
+      - Thu, 13 Jan 2022 07:11:03 GMT
       etag:
-      - '0x8D890194D6ED459'
+      - '0x8D9D663DC2A9857'
       last-modified:
-      - Tue, 24 Nov 2020 01:36:02 GMT
+      - Thu, 13 Jan 2022 07:11:03 GMT
       location:
-      - https://batch.westcentralus.batch.azure.com/pools/batch_iaas_f0260dd0
+      - https://batch.southcentralus.batch.azure.com/pools/batch_iaas_f0260dd0
       request-id:
-      - bb60e60a-0969-4601-b172-d1985634dae1
+      - b8d0c0e6-8531-4cbb-9086-350ed89f0940
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -408,34 +378,29 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 01:36:02 GMT
+      - Thu, 13 Jan 2022 07:11:03 GMT
     method: GET
-    uri: https://batch.westcentralus.batch.azure.com/nodecounts?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/nodecounts?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#poolnodecounts\"\
-        ,\"value\":[\r\n    {\r\n      \"poolId\":\"batch_iaas_f0260dd0\",\"dedicated\"\
-        :{\r\n        \"creating\":0,\"idle\":0,\"leavingPool\":0,\"offline\":0,\"\
-        preempted\":0,\"rebooting\":0,\"reimaging\":0,\"running\":0,\"starting\":0,\"\
-        startTaskFailed\":0,\"unusable\":0,\"unknown\":0,\"waitingForStartTask\":0,\"\
-        total\":0\r\n      },\"lowPriority\":{\r\n        \"creating\":0,\"idle\"\
-        :0,\"leavingPool\":0,\"offline\":0,\"preempted\":0,\"rebooting\":0,\"reimaging\"\
-        :0,\"running\":0,\"starting\":0,\"startTaskFailed\":0,\"unusable\":0,\"unknown\"\
-        :0,\"waitingForStartTask\":0,\"total\":0\r\n      }\r\n    }\r\n  ]\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#poolnodecounts\",\"value\":[\r\n
+        \   {\r\n      \"poolId\":\"batch_iaas_f0260dd0\",\"dedicated\":{\r\n        \"creating\":0,\"idle\":0,\"leavingPool\":0,\"offline\":0,\"preempted\":0,\"rebooting\":0,\"reimaging\":0,\"running\":0,\"starting\":0,\"startTaskFailed\":0,\"unusable\":0,\"unknown\":0,\"waitingForStartTask\":0,\"total\":0\r\n
+        \     },\"lowPriority\":{\r\n        \"creating\":0,\"idle\":0,\"leavingPool\":0,\"offline\":0,\"preempted\":0,\"rebooting\":0,\"reimaging\":0,\"running\":0,\"starting\":0,\"startTaskFailed\":0,\"unusable\":0,\"unknown\":0,\"waitingForStartTask\":0,\"total\":0\r\n
+        \     }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 01:36:02 GMT
+      - Thu, 13 Jan 2022 07:11:03 GMT
       request-id:
-      - 74cec8fe-2061-4540-aab6-c1a044f2e77b
+      - 60f73977-7e5e-49c8-abe8-3596783967aa
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -448,9 +413,9 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"id": "batch_network_f0260dd0", "vmSize": "Standard_A1", "virtualMachineConfiguration":
+    body: '{"id": "batch_network_f0260dd0", "vmSize": "standard_d1_v2", "virtualMachineConfiguration":
       {"imageReference": {"publisher": "Canonical", "offer": "UbuntuServer", "sku":
-      "16.04-LTS"}, "nodeAgentSKUId": "batch.node.ubuntu 16.04"}, "networkConfiguration":
+      "18.04-LTS"}, "nodeAgentSKUId": "batch.node.ubuntu 18.04"}, "networkConfiguration":
       {"subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1"}}'
     headers:
       Accept:
@@ -460,43 +425,41 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '405'
+      - '408'
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 01:36:02 GMT
+      - Thu, 13 Jan 2022 07:11:03 GMT
       return-client-request-id:
       - 'false'
     method: POST
-    uri: https://batch.westcentralus.batch.azure.com/pools?api-version=2020-09-01.12.0&timeout=45
+    uri: https://batch.southcentralus.batch.azure.com/pools?api-version=2022-01-01.15.0&timeout=45
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\"\
-        ,\"code\":\"InvalidPropertyValue\",\"message\":{\r\n    \"lang\":\"en-US\"\
-        ,\"value\":\"The value provided for one of the properties in the request body\
-        \ is invalid.\\nRequestId:31871243-c8a0-4f65-b78c-331bdcb45b01\\nTime:2020-11-24T01:36:02.4768332Z\"\
-        \r\n  },\"values\":[\r\n    {\r\n      \"key\":\"PropertyName\",\"value\"\
-        :\"subnetId\"\r\n    },{\r\n      \"key\":\"PropertyValue\",\"value\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1\"\
-        \r\n    },{\r\n      \"key\":\"Reason\",\"value\":\"The specified subnetId\
-        \ is in a different subscription and cannot be used with the current Batch\
-        \ account in subscription 00000000-0000-0000-0000-000000000000\"\r\n    }\r\
-        \n  ]\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\",\"code\":\"InvalidPropertyValue\",\"message\":{\r\n
+        \   \"lang\":\"en-US\",\"value\":\"The value provided for one of the properties
+        in the request body is invalid.\\nRequestId:543d2395-accd-4806-8d21-f3be3817911a\\nTime:2022-01-13T07:11:03.5696066Z\"\r\n
+        \ },\"values\":[\r\n    {\r\n      \"key\":\"PropertyName\",\"value\":\"subnetId\"\r\n
+        \   },{\r\n      \"key\":\"PropertyValue\",\"value\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1\"\r\n
+        \   },{\r\n      \"key\":\"Reason\",\"value\":\"The specified subnetId is
+        in a different subscription and cannot be used with the current Batch account
+        in subscription 00000000-0000-0000-0000-000000000000\"\r\n    }\r\n  ]\r\n}"
     headers:
       content-length:
-      - '852'
+      - '853'
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 01:36:02 GMT
+      - Thu, 13 Jan 2022 07:11:03 GMT
       request-id:
-      - 31871243-c8a0-4f65-b78c-331bdcb45b01
+      - 543d2395-accd-4806-8d21-f3be3817911a
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -508,9 +471,9 @@ interactions:
       message: The value provided for one of the properties in the request body is
         invalid.
 - request:
-    body: '{"id": "batch_image_f0260dd0", "vmSize": "Standard_A1", "virtualMachineConfiguration":
+    body: '{"id": "batch_image_f0260dd0", "vmSize": "standard_d1_v2", "virtualMachineConfiguration":
       {"imageReference": {"virtualMachineImageId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Compute/gallery/FakeGallery/images/FakeImage/versions/version"},
-      "nodeAgentSKUId": "batch.node.ubuntu 16.04"}}'
+      "nodeAgentSKUId": "batch.node.ubuntu 18.04"}}'
     headers:
       Accept:
       - application/json
@@ -519,45 +482,43 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '335'
+      - '338'
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 01:36:02 GMT
+      - Thu, 13 Jan 2022 07:11:03 GMT
       return-client-request-id:
       - 'false'
     method: POST
-    uri: https://batch.westcentralus.batch.azure.com/pools?api-version=2020-09-01.12.0&timeout=45
+    uri: https://batch.southcentralus.batch.azure.com/pools?api-version=2022-01-01.15.0&timeout=45
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\"\
-        ,\"code\":\"InvalidPropertyValue\",\"message\":{\r\n    \"lang\":\"en-US\"\
-        ,\"value\":\"The value provided for one of the properties in the request body\
-        \ is invalid.\\nRequestId:4304cea7-40ed-4cb7-abea-4bff71b2c1c2\\nTime:2020-11-24T01:36:02.6288417Z\"\
-        \r\n  },\"values\":[\r\n    {\r\n      \"key\":\"PropertyName\",\"value\"\
-        :\"virtualMachineImageId\"\r\n    },{\r\n      \"key\":\"PropertyValue\",\"\
-        value\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Compute/gallery/FakeGallery/images/FakeImage/versions/version\"\
-        \r\n    },{\r\n      \"key\":\"Reason\",\"value\":\"The specified resource\
-        \ id must be of the format /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/images/{imageName},\
-        \ /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{galleryImageName}/versions/{galleryImageVersionName},\
-        \ or /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{galleryImageName}\"\
-        \r\n    }\r\n  ]\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\",\"code\":\"InvalidPropertyValue\",\"message\":{\r\n
+        \   \"lang\":\"en-US\",\"value\":\"The value provided for one of the properties
+        in the request body is invalid.\\nRequestId:525a0976-2ee7-4451-9afc-e591209eeb20\\nTime:2022-01-13T07:11:03.6486177Z\"\r\n
+        \ },\"values\":[\r\n    {\r\n      \"key\":\"PropertyName\",\"value\":\"virtualMachineImageId\"\r\n
+        \   },{\r\n      \"key\":\"PropertyValue\",\"value\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Compute/gallery/FakeGallery/images/FakeImage/versions/version\"\r\n
+        \   },{\r\n      \"key\":\"Reason\",\"value\":\"The specified resource id
+        must be of the format /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/images/{imageName},
+        /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{galleryImageName}/versions/{galleryImageVersionName},
+        or /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{galleryImageName}\"\r\n
+        \   }\r\n  ]\r\n}"
     headers:
       content-length:
-      - '1216'
+      - '1217'
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 01:36:02 GMT
+      - Thu, 13 Jan 2022 07:11:03 GMT
       request-id:
-      - 4304cea7-40ed-4cb7-abea-4bff71b2c1c2
+      - 525a0976-2ee7-4451-9afc-e591209eeb20
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -569,9 +530,9 @@ interactions:
       message: The value provided for one of the properties in the request body is
         invalid.
 - request:
-    body: '{"id": "batch_disk_f0260dd0", "vmSize": "Standard_A1", "virtualMachineConfiguration":
+    body: '{"id": "batch_disk_f0260dd0", "vmSize": "standard_d1_v2", "virtualMachineConfiguration":
       {"imageReference": {"publisher": "Canonical", "offer": "UbuntuServer", "sku":
-      "16.04-LTS"}, "nodeAgentSKUId": "batch.node.ubuntu 16.04", "dataDisks": [{"lun":
+      "18.04-LTS"}, "nodeAgentSKUId": "batch.node.ubuntu 18.04", "dataDisks": [{"lun":
       1, "diskSizeGB": 50}]}}'
     headers:
       Accept:
@@ -581,36 +542,36 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '268'
+      - '271'
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 01:36:02 GMT
+      - Thu, 13 Jan 2022 07:11:03 GMT
     method: POST
-    uri: https://batch.westcentralus.batch.azure.com/pools?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/pools?api-version=2022-01-01.15.0
   response:
     body:
       string: ''
     headers:
       dataserviceid:
-      - https://batchf0260dd0.westcentralus.batch.azure.com/pools/batch_disk_f0260dd0
+      - https://batchf0260dd0.southcentralus.batch.azure.com/pools/batch_disk_f0260dd0
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 01:36:03 GMT
+      - Thu, 13 Jan 2022 07:11:03 GMT
       etag:
-      - '0x8D890194E012B97'
+      - '0x8D9D663DC816B3F'
       last-modified:
-      - Tue, 24 Nov 2020 01:36:03 GMT
+      - Thu, 13 Jan 2022 07:11:03 GMT
       location:
-      - https://batch.westcentralus.batch.azure.com/pools/batch_disk_f0260dd0
+      - https://batch.southcentralus.batch.azure.com/pools/batch_disk_f0260dd0
       request-id:
-      - f23be656-2ac9-42c2-8a06-c7b258a97fb4
+      - fd9036d2-908c-4f82-8f25-fa8af2e99f44
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -632,44 +593,35 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 01:36:03 GMT
+      - Thu, 13 Jan 2022 07:11:04 GMT
     method: GET
-    uri: https://batch.westcentralus.batch.azure.com/pools/batch_disk_f0260dd0?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/pools/batch_disk_f0260dd0?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#pools/@Element\"\
-        ,\"id\":\"batch_disk_f0260dd0\",\"url\":\"https://batch.westcentralus.batch.azure.com/pools/batch_disk_f0260dd0\"\
-        ,\"eTag\":\"0x8D890194E012B97\",\"lastModified\":\"2020-11-24T01:36:03.0206871Z\"\
-        ,\"creationTime\":\"2020-11-24T01:36:03.0206871Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2020-11-24T01:36:03.0206871Z\",\"allocationState\"\
-        :\"resizing\",\"allocationStateTransitionTime\":\"2020-11-24T01:36:03.0206871Z\"\
-        ,\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\"\
-        :0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\"\
-        :0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"taskSlotsPerNode\"\
-        :1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n  },\"\
-        virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\"\
-        :\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\"\
-        :\"latest\"\r\n    },\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\",\"dataDisks\"\
-        :[\r\n      {\r\n        \"lun\":1,\"caching\":\"none\",\"diskSizeGB\":50,\"\
-        storageAccountType\":\"standard_lrs\"\r\n      }\r\n    ]\r\n  }\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_disk_f0260dd0\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/batch_disk_f0260dd0\",\"eTag\":\"0x8D9D663DC816B3F\",\"lastModified\":\"2022-01-13T07:11:03.9211327Z\",\"creationTime\":\"2022-01-13T07:11:03.9211327Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-13T07:11:03.9211327Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-13T07:11:03.9211327Z\",\"vmSize\":\"standard_d1_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \   \"nodeFillType\":\"Spread\"\r\n  },\"virtualMachineConfiguration\":{\r\n
+        \   \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\",\"dataDisks\":[\r\n      {\r\n
+        \       \"lun\":1,\"caching\":\"none\",\"diskSizeGB\":50,\"storageAccountType\":\"standard_lrs\"\r\n
+        \     }\r\n    ]\r\n  }\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 01:36:03 GMT
+      - Thu, 13 Jan 2022 07:11:03 GMT
       etag:
-      - '0x8D890194E012B97'
+      - '0x8D9D663DC816B3F'
       last-modified:
-      - Tue, 24 Nov 2020 01:36:03 GMT
+      - Thu, 13 Jan 2022 07:11:03 GMT
       request-id:
-      - 13e496db-1a2a-4a2c-8237-377974dd7ce2
+      - 49c7bbdb-b0d8-4069-a7d1-d48d34bb3c78
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -682,9 +634,9 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"id": "batch_app_f0260dd0", "vmSize": "Standard_A1", "virtualMachineConfiguration":
+    body: '{"id": "batch_app_f0260dd0", "vmSize": "standard_d1_v2", "virtualMachineConfiguration":
       {"imageReference": {"publisher": "Canonical", "offer": "UbuntuServer", "sku":
-      "16.04-LTS"}, "nodeAgentSKUId": "batch.node.ubuntu 16.04", "dataDisks": [{"lun":
+      "18.04-LTS"}, "nodeAgentSKUId": "batch.node.ubuntu 18.04", "dataDisks": [{"lun":
       1, "diskSizeGB": 50}]}, "applicationLicenses": ["maya"]}'
     headers:
       Accept:
@@ -694,36 +646,36 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '300'
+      - '303'
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 01:36:03 GMT
+      - Thu, 13 Jan 2022 07:11:04 GMT
     method: POST
-    uri: https://batch.westcentralus.batch.azure.com/pools?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/pools?api-version=2022-01-01.15.0
   response:
     body:
       string: ''
     headers:
       dataserviceid:
-      - https://batchf0260dd0.westcentralus.batch.azure.com/pools/batch_app_f0260dd0
+      - https://batchf0260dd0.southcentralus.batch.azure.com/pools/batch_app_f0260dd0
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 01:36:03 GMT
+      - Thu, 13 Jan 2022 07:11:04 GMT
       etag:
-      - '0x8D890194E4E14AB'
+      - '0x8D9D663DCBCC6C7'
       last-modified:
-      - Tue, 24 Nov 2020 01:36:03 GMT
+      - Thu, 13 Jan 2022 07:11:04 GMT
       location:
-      - https://batch.westcentralus.batch.azure.com/pools/batch_app_f0260dd0
+      - https://batch.southcentralus.batch.azure.com/pools/batch_app_f0260dd0
       request-id:
-      - 700c3356-eee4-4afc-8008-8d728ba4e8d8
+      - 316773f8-af58-4179-830b-512345ae55c0
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -745,45 +697,35 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 01:36:03 GMT
+      - Thu, 13 Jan 2022 07:11:04 GMT
     method: GET
-    uri: https://batch.westcentralus.batch.azure.com/pools/batch_app_f0260dd0?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/pools/batch_app_f0260dd0?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#pools/@Element\"\
-        ,\"id\":\"batch_app_f0260dd0\",\"url\":\"https://batch.westcentralus.batch.azure.com/pools/batch_app_f0260dd0\"\
-        ,\"eTag\":\"0x8D890194E4E14AB\",\"lastModified\":\"2020-11-24T01:36:03.5247275Z\"\
-        ,\"creationTime\":\"2020-11-24T01:36:03.5247275Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2020-11-24T01:36:03.5247275Z\",\"allocationState\"\
-        :\"resizing\",\"allocationStateTransitionTime\":\"2020-11-24T01:36:03.5247275Z\"\
-        ,\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\"\
-        :0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\"\
-        :0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"taskSlotsPerNode\"\
-        :1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n  },\"\
-        virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\"\
-        :\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\"\
-        :\"latest\"\r\n    },\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\",\"dataDisks\"\
-        :[\r\n      {\r\n        \"lun\":1,\"caching\":\"none\",\"diskSizeGB\":50,\"\
-        storageAccountType\":\"standard_lrs\"\r\n      }\r\n    ]\r\n  },\"applicationLicenses\"\
-        :[\r\n    \"maya\"\r\n  ]\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_app_f0260dd0\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/batch_app_f0260dd0\",\"eTag\":\"0x8D9D663DCBCC6C7\",\"lastModified\":\"2022-01-13T07:11:04.3101383Z\",\"creationTime\":\"2022-01-13T07:11:04.3101383Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-13T07:11:04.3101383Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-13T07:11:04.3101383Z\",\"vmSize\":\"standard_d1_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \   \"nodeFillType\":\"Spread\"\r\n  },\"virtualMachineConfiguration\":{\r\n
+        \   \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\",\"dataDisks\":[\r\n      {\r\n
+        \       \"lun\":1,\"caching\":\"none\",\"diskSizeGB\":50,\"storageAccountType\":\"standard_lrs\"\r\n
+        \     }\r\n    ]\r\n  },\"applicationLicenses\":[\r\n    \"maya\"\r\n  ]\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 01:36:03 GMT
+      - Thu, 13 Jan 2022 07:11:04 GMT
       etag:
-      - '0x8D890194E4E14AB'
+      - '0x8D9D663DCBCC6C7'
       last-modified:
-      - Tue, 24 Nov 2020 01:36:03 GMT
+      - Thu, 13 Jan 2022 07:11:04 GMT
       request-id:
-      - b91b0a01-ad3f-4779-a5a4-d3ce356bd04e
+      - 726c902f-120c-45cb-af14-dd05c28b11e8
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -796,9 +738,9 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"id": "batch_ade_f0260dd0", "vmSize": "Standard_A1", "virtualMachineConfiguration":
+    body: '{"id": "batch_ade_f0260dd0", "vmSize": "standard_d1_v2", "virtualMachineConfiguration":
       {"imageReference": {"publisher": "Canonical", "offer": "UbuntuServer", "sku":
-      "16.04-LTS"}, "nodeAgentSKUId": "batch.node.ubuntu 16.04", "diskEncryptionConfiguration":
+      "18.04-LTS"}, "nodeAgentSKUId": "batch.node.ubuntu 18.04", "diskEncryptionConfiguration":
       {"targets": ["temporarydisk"]}}}'
     headers:
       Accept:
@@ -808,36 +750,36 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '285'
+      - '288'
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 01:36:03 GMT
+      - Thu, 13 Jan 2022 07:11:04 GMT
     method: POST
-    uri: https://batch.westcentralus.batch.azure.com/pools?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/pools?api-version=2022-01-01.15.0
   response:
     body:
       string: ''
     headers:
       dataserviceid:
-      - https://batchf0260dd0.westcentralus.batch.azure.com/pools/batch_ade_f0260dd0
+      - https://batchf0260dd0.southcentralus.batch.azure.com/pools/batch_ade_f0260dd0
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 01:36:04 GMT
+      - Thu, 13 Jan 2022 07:11:04 GMT
       etag:
-      - '0x8D890194EA571DE'
+      - '0x8D9D663DCF87080'
       last-modified:
-      - Tue, 24 Nov 2020 01:36:04 GMT
+      - Thu, 13 Jan 2022 07:11:04 GMT
       location:
-      - https://batch.westcentralus.batch.azure.com/pools/batch_ade_f0260dd0
+      - https://batch.southcentralus.batch.azure.com/pools/batch_ade_f0260dd0
       request-id:
-      - 426550b2-50a8-445c-837b-e245b8798806
+      - be3b8022-96be-4326-9795-0037efda3087
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -859,44 +801,34 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 01:36:04 GMT
+      - Thu, 13 Jan 2022 07:11:04 GMT
     method: GET
-    uri: https://batch.westcentralus.batch.azure.com/pools/batch_ade_f0260dd0?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/pools/batch_ade_f0260dd0?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#pools/@Element\"\
-        ,\"id\":\"batch_ade_f0260dd0\",\"url\":\"https://batch.westcentralus.batch.azure.com/pools/batch_ade_f0260dd0\"\
-        ,\"eTag\":\"0x8D890194EA571DE\",\"lastModified\":\"2020-11-24T01:36:04.0972766Z\"\
-        ,\"creationTime\":\"2020-11-24T01:36:04.0972766Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2020-11-24T01:36:04.0972766Z\",\"allocationState\"\
-        :\"resizing\",\"allocationStateTransitionTime\":\"2020-11-24T01:36:04.0972766Z\"\
-        ,\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\"\
-        :0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\"\
-        :0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"taskSlotsPerNode\"\
-        :1,\"taskSchedulingPolicy\":{\r\n    \"nodeFillType\":\"Spread\"\r\n  },\"\
-        virtualMachineConfiguration\":{\r\n    \"imageReference\":{\r\n      \"publisher\"\
-        :\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\"\
-        :\"latest\"\r\n    },\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\",\"diskEncryptionConfiguration\"\
-        :{\r\n      \"targets\":[\r\n        \"temporarydisk\"\r\n      ]\r\n    }\r\
-        \n  }\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_ade_f0260dd0\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/batch_ade_f0260dd0\",\"eTag\":\"0x8D9D663DCF87080\",\"lastModified\":\"2022-01-13T07:11:04.7011456Z\",\"creationTime\":\"2022-01-13T07:11:04.7011456Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-13T07:11:04.7011456Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-13T07:11:04.7011456Z\",\"vmSize\":\"standard_d1_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \   \"nodeFillType\":\"Spread\"\r\n  },\"virtualMachineConfiguration\":{\r\n
+        \   \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\",\"diskEncryptionConfiguration\":{\r\n
+        \     \"targets\":[\r\n        \"temporarydisk\"\r\n      ]\r\n    }\r\n  }\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 01:36:04 GMT
+      - Thu, 13 Jan 2022 07:11:04 GMT
       etag:
-      - '0x8D890194EA571DE'
+      - '0x8D9D663DCF87080'
       last-modified:
-      - Tue, 24 Nov 2020 01:36:04 GMT
+      - Thu, 13 Jan 2022 07:11:04 GMT
       request-id:
-      - 65e501bb-198e-402a-8dad-f65780d463d9
+      - 8860bb62-4d73-4432-a5c9-a2398e76b938
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -918,91 +850,51 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 01:36:04 GMT
+      - Thu, 13 Jan 2022 07:11:04 GMT
     method: GET
-    uri: https://batch.westcentralus.batch.azure.com/pools?api-version=2020-09-01.12.0
+    uri: https://batch.southcentralus.batch.azure.com/pools?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#pools\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"batch_ade_f0260dd0\",\"url\":\"https://batch.westcentralus.batch.azure.com/pools/batch_ade_f0260dd0\"\
-        ,\"eTag\":\"0x8D890194EA571DE\",\"lastModified\":\"2020-11-24T01:36:04.0972766Z\"\
-        ,\"creationTime\":\"2020-11-24T01:36:04.0972766Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2020-11-24T01:36:04.0972766Z\",\"allocationState\"\
-        :\"resizing\",\"allocationStateTransitionTime\":\"2020-11-24T01:36:04.0972766Z\"\
-        ,\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\"\
-        :0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\"\
-        :0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"taskSlotsPerNode\"\
-        :1,\"taskSchedulingPolicy\":{\r\n        \"nodeFillType\":\"Spread\"\r\n \
-        \     },\"virtualMachineConfiguration\":{\r\n        \"imageReference\":{\r\
-        \n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\"\
-        :\"16.04-LTS\",\"version\":\"latest\"\r\n        },\"nodeAgentSKUId\":\"batch.node.ubuntu\
-        \ 16.04\",\"diskEncryptionConfiguration\":{\r\n          \"targets\":[\r\n\
-        \            \"temporarydisk\"\r\n          ]\r\n        }\r\n      }\r\n\
-        \    },{\r\n      \"id\":\"batch_app_f0260dd0\",\"url\":\"https://batch.westcentralus.batch.azure.com/pools/batch_app_f0260dd0\"\
-        ,\"eTag\":\"0x8D890194E4E14AB\",\"lastModified\":\"2020-11-24T01:36:03.5247275Z\"\
-        ,\"creationTime\":\"2020-11-24T01:36:03.5247275Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2020-11-24T01:36:03.5247275Z\",\"allocationState\"\
-        :\"resizing\",\"allocationStateTransitionTime\":\"2020-11-24T01:36:03.5247275Z\"\
-        ,\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\"\
-        :0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\"\
-        :0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"taskSlotsPerNode\"\
-        :1,\"taskSchedulingPolicy\":{\r\n        \"nodeFillType\":\"Spread\"\r\n \
-        \     },\"virtualMachineConfiguration\":{\r\n        \"imageReference\":{\r\
-        \n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\"\
-        :\"16.04-LTS\",\"version\":\"latest\"\r\n        },\"nodeAgentSKUId\":\"batch.node.ubuntu\
-        \ 16.04\",\"dataDisks\":[\r\n          {\r\n            \"lun\":1,\"caching\"\
-        :\"none\",\"diskSizeGB\":50,\"storageAccountType\":\"standard_lrs\"\r\n  \
-        \        }\r\n        ]\r\n      },\"applicationLicenses\":[\r\n        \"\
-        maya\"\r\n      ]\r\n    },{\r\n      \"id\":\"batch_disk_f0260dd0\",\"url\"\
-        :\"https://batch.westcentralus.batch.azure.com/pools/batch_disk_f0260dd0\"\
-        ,\"eTag\":\"0x8D890194E012B97\",\"lastModified\":\"2020-11-24T01:36:03.0206871Z\"\
-        ,\"creationTime\":\"2020-11-24T01:36:03.0206871Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2020-11-24T01:36:03.0206871Z\",\"allocationState\"\
-        :\"resizing\",\"allocationStateTransitionTime\":\"2020-11-24T01:36:03.0206871Z\"\
-        ,\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\"\
-        :0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\"\
-        :0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"taskSlotsPerNode\"\
-        :1,\"taskSchedulingPolicy\":{\r\n        \"nodeFillType\":\"Spread\"\r\n \
-        \     },\"virtualMachineConfiguration\":{\r\n        \"imageReference\":{\r\
-        \n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\"\
-        :\"16.04-LTS\",\"version\":\"latest\"\r\n        },\"nodeAgentSKUId\":\"batch.node.ubuntu\
-        \ 16.04\",\"dataDisks\":[\r\n          {\r\n            \"lun\":1,\"caching\"\
-        :\"none\",\"diskSizeGB\":50,\"storageAccountType\":\"standard_lrs\"\r\n  \
-        \        }\r\n        ]\r\n      }\r\n    },{\r\n      \"id\":\"batch_iaas_f0260dd0\"\
-        ,\"url\":\"https://batch.westcentralus.batch.azure.com/pools/batch_iaas_f0260dd0\"\
-        ,\"eTag\":\"0x8D890194D6ED459\",\"lastModified\":\"2020-11-24T01:36:02.0616281Z\"\
-        ,\"creationTime\":\"2020-11-24T01:36:02.0616281Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2020-11-24T01:36:02.0616281Z\",\"allocationState\"\
-        :\"steady\",\"allocationStateTransitionTime\":\"2020-11-24T01:36:04.1662792Z\"\
-        ,\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\"\
-        :0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\"\
-        :0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\"\
-        :[\r\n        {\r\n          \"name\":\"test-user-1\",\"elevationLevel\":\"\
-        nonadmin\",\"windowsUserConfiguration\":{\r\n            \"loginMode\":\"\
-        batch\"\r\n          }\r\n        },{\r\n          \"name\":\"test-user-2\"\
-        ,\"elevationLevel\":\"admin\",\"windowsUserConfiguration\":{\r\n         \
-        \   \"loginMode\":\"batch\"\r\n          }\r\n        }\r\n      ],\"taskSlotsPerNode\"\
-        :1,\"taskSchedulingPolicy\":{\r\n        \"nodeFillType\":\"Pack\"\r\n   \
-        \   },\"virtualMachineConfiguration\":{\r\n        \"imageReference\":{\r\n\
-        \          \"publisher\":\"MicrosoftWindowsServer\",\"offer\":\"WindowsServer\"\
-        ,\"sku\":\"2016-Datacenter-smalldisk\",\"version\":\"latest\"\r\n        },\"\
-        nodeAgentSKUId\":\"batch.node.windows amd64\",\"windowsConfiguration\":{\r\
-        \n          \"enableAutomaticUpdates\":true\r\n        }\r\n      }\r\n  \
-        \  }\r\n  ]\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"batch_ade_f0260dd0\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/batch_ade_f0260dd0\",\"eTag\":\"0x8D9D663DCF87080\",\"lastModified\":\"2022-01-13T07:11:04.7011456Z\",\"creationTime\":\"2022-01-13T07:11:04.7011456Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-13T07:11:04.7011456Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-13T07:11:04.7011456Z\",\"vmSize\":\"standard_d1_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \       \"nodeFillType\":\"Spread\"\r\n      },\"virtualMachineConfiguration\":{\r\n
+        \       \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \       },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\",\"diskEncryptionConfiguration\":{\r\n
+        \         \"targets\":[\r\n            \"temporarydisk\"\r\n          ]\r\n
+        \       }\r\n      }\r\n    },{\r\n      \"id\":\"batch_app_f0260dd0\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/batch_app_f0260dd0\",\"eTag\":\"0x8D9D663DCBCC6C7\",\"lastModified\":\"2022-01-13T07:11:04.3101383Z\",\"creationTime\":\"2022-01-13T07:11:04.3101383Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-13T07:11:04.3101383Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-13T07:11:04.3101383Z\",\"vmSize\":\"standard_d1_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \       \"nodeFillType\":\"Spread\"\r\n      },\"virtualMachineConfiguration\":{\r\n
+        \       \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \       },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\",\"dataDisks\":[\r\n
+        \         {\r\n            \"lun\":1,\"caching\":\"none\",\"diskSizeGB\":50,\"storageAccountType\":\"standard_lrs\"\r\n
+        \         }\r\n        ]\r\n      },\"applicationLicenses\":[\r\n        \"maya\"\r\n
+        \     ]\r\n    },{\r\n      \"id\":\"batch_disk_f0260dd0\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/batch_disk_f0260dd0\",\"eTag\":\"0x8D9D663DC816B3F\",\"lastModified\":\"2022-01-13T07:11:03.9211327Z\",\"creationTime\":\"2022-01-13T07:11:03.9211327Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-13T07:11:03.9211327Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-13T07:11:03.9211327Z\",\"vmSize\":\"standard_d1_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \       \"nodeFillType\":\"Spread\"\r\n      },\"virtualMachineConfiguration\":{\r\n
+        \       \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \       },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\",\"dataDisks\":[\r\n
+        \         {\r\n            \"lun\":1,\"caching\":\"none\",\"diskSizeGB\":50,\"storageAccountType\":\"standard_lrs\"\r\n
+        \         }\r\n        ]\r\n      }\r\n    },{\r\n      \"id\":\"batch_iaas_f0260dd0\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/batch_iaas_f0260dd0\",\"eTag\":\"0x8D9D663DC2A9857\",\"lastModified\":\"2022-01-13T07:11:03.3521239Z\",\"creationTime\":\"2022-01-13T07:11:03.3521239Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-13T07:11:03.3521239Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2022-01-13T07:11:04.7441452Z\",\"vmSize\":\"standard_d1_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \       {\r\n          \"name\":\"test-user-1\",\"elevationLevel\":\"nonadmin\",\"windowsUserConfiguration\":{\r\n
+        \           \"loginMode\":\"batch\"\r\n          }\r\n        },{\r\n          \"name\":\"test-user-2\",\"elevationLevel\":\"admin\",\"windowsUserConfiguration\":{\r\n
+        \           \"loginMode\":\"batch\"\r\n          }\r\n        }\r\n      ],\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \       \"nodeFillType\":\"Pack\"\r\n      },\"virtualMachineConfiguration\":{\r\n
+        \       \"imageReference\":{\r\n          \"publisher\":\"MicrosoftWindowsServer\",\"offer\":\"WindowsServer\",\"sku\":\"2016-Datacenter-smalldisk\",\"version\":\"latest\"\r\n
+        \       },\"nodeAgentSKUId\":\"batch.node.windows amd64\",\"windowsConfiguration\":{\r\n
+        \         \"enableAutomaticUpdates\":true\r\n        }\r\n      }\r\n    }\r\n
+        \ ]\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 01:36:04 GMT
+      - Thu, 13 Jan 2022 07:11:04 GMT
       request-id:
-      - 53547ea9-e625-4230-9652-38c6a6f37ab5
+      - 143c6133-5607-44db-bc59-ee3abe9d71a6
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -1024,44 +916,34 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 01:36:04 GMT
+      - Thu, 13 Jan 2022 07:11:05 GMT
       return-client-request-id:
       - 'false'
     method: GET
-    uri: https://batch.westcentralus.batch.azure.com/pools?api-version=2020-09-01.12.0&maxresults=1&timeout=30
+    uri: https://batch.southcentralus.batch.azure.com/pools?api-version=2022-01-01.15.0&maxresults=1&timeout=30
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#pools\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"batch_ade_f0260dd0\",\"url\":\"https://batch.westcentralus.batch.azure.com/pools/batch_ade_f0260dd0\"\
-        ,\"eTag\":\"0x8D890194EA571DE\",\"lastModified\":\"2020-11-24T01:36:04.0972766Z\"\
-        ,\"creationTime\":\"2020-11-24T01:36:04.0972766Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2020-11-24T01:36:04.0972766Z\",\"allocationState\"\
-        :\"resizing\",\"allocationStateTransitionTime\":\"2020-11-24T01:36:04.0972766Z\"\
-        ,\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\"\
-        :0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\"\
-        :0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"taskSlotsPerNode\"\
-        :1,\"taskSchedulingPolicy\":{\r\n        \"nodeFillType\":\"Spread\"\r\n \
-        \     },\"virtualMachineConfiguration\":{\r\n        \"imageReference\":{\r\
-        \n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\"\
-        :\"16.04-LTS\",\"version\":\"latest\"\r\n        },\"nodeAgentSKUId\":\"batch.node.ubuntu\
-        \ 16.04\",\"diskEncryptionConfiguration\":{\r\n          \"targets\":[\r\n\
-        \            \"temporarydisk\"\r\n          ]\r\n        }\r\n      }\r\n\
-        \    }\r\n  ],\"odata.nextLink\":\"https://batch.westcentralus.batch.azure.com/pools?api-version=2020-09-01.12.0&maxresults=1&timeout=30&$skiptoken=WATV2:gy8uGqxxg9wxsB7xIqjsPNyIgFl9fk0MCQ%5EepLklstWs%5E3FVvZV7Ak5w6uw7X1j0aG9E5xEMiigTudLpVY3NntfGtEkW%5EXqC5c4OluAd5eXZfSDIq5ER6R5Trjw1TruZdHWsITKcKLR69igJsJn6EFlANwSgK3vtJeUKxd/HYff6fPRebbGHZwuDcpUVlqu9CJdVj/SyrQ7Ct3vxMRkoh7MEfyCvpfDyAGszTNCjLDJJxZx0hn6/vYzNk4mGRXjZGnQoEO0PWxQeki4Xh7pBTghRgSRsRxfWqohlOCsXnAQ=:1$1\"\
-        \r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"batch_ade_f0260dd0\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/batch_ade_f0260dd0\",\"eTag\":\"0x8D9D663DCF87080\",\"lastModified\":\"2022-01-13T07:11:04.7011456Z\",\"creationTime\":\"2022-01-13T07:11:04.7011456Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-13T07:11:04.7011456Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-13T07:11:04.7011456Z\",\"vmSize\":\"standard_d1_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \       \"nodeFillType\":\"Spread\"\r\n      },\"virtualMachineConfiguration\":{\r\n
+        \       \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\"\r\n
+        \       },\"nodeAgentSKUId\":\"batch.node.ubuntu 18.04\",\"diskEncryptionConfiguration\":{\r\n
+        \         \"targets\":[\r\n            \"temporarydisk\"\r\n          ]\r\n
+        \       }\r\n      }\r\n    }\r\n  ],\"odata.nextLink\":\"https://batch.southcentralus.batch.azure.com/pools?api-version=2022-01-01.15.0&maxresults=1&timeout=30&$skiptoken=WATV2:bvqn632eetymtxYtgzZKNpFr2BJJng96XOoMvctFZP7fhHnrd5HdnXIuFGpUYGmPdnAQ7w7hNq/cgyBD6k0iPxQi9CvSw9padYT8cwFGQkmc1gQ93mC^gIXjrzy4Si771zbHQS9fot06^3cEgbSc3bvKHZY6SukzNB6aVr9I520aRti3G9b^V3VTxSnkzLmDyhFj8i1QkNNp0KQhyZmxyMaZHAOgwfB4lhiohgOS^G581gHMruogGwFEkobVqGrFrjDchudGCbpM6/QXu4d6oZlTXVu^T1MEDNcDDEufSbc=:1$1\"\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 01:36:04 GMT
+      - Thu, 13 Jan 2022 07:11:04 GMT
       request-id:
-      - 831301fd-bb4c-4665-b3fb-f140aeb8e82a
+      - 5a33d58c-3393-4b4a-a5ff-f54857090d3f
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -1083,30 +965,30 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.5 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.19 msrest_azure/0.6.4
-        azure-batch/9.0.1 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Tue, 24 Nov 2020 01:36:04 GMT
+      - Thu, 13 Jan 2022 07:11:05 GMT
       return-client-request-id:
       - 'false'
     method: GET
-    uri: https://batch.westcentralus.batch.azure.com/pools?api-version=2020-09-01.12.0&$filter=startswith%28id%2C%27batch_app_%27%29&$select=id%2Cstate&$expand=stats&maxresults=1000&timeout=30
+    uri: https://batch.southcentralus.batch.azure.com/pools?api-version=2022-01-01.15.0&$filter=startswith%28id%2C%27batch_app_%27%29&$select=id%2Cstate&$expand=stats&maxresults=1000&timeout=30
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.westcentralus.batch.azure.com/$metadata#pools\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"batch_app_f0260dd0\",\"state\":\"\
-        active\"\r\n    }\r\n  ]\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"batch_app_f0260dd0\",\"state\":\"active\"\r\n    }\r\n
+        \ ]\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Tue, 24 Nov 2020 01:36:04 GMT
+      - Thu, 13 Jan 2022 07:11:04 GMT
       request-id:
-      - 828a1492-20cf-45e0-9a2f-61ba2dcf85ee
+      - 50ede68f-f25f-4cd5-a3a1-82e56a610082
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

@@ -1,14 +1,25 @@
 trigger: none
 
 stages:
-  - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
+  - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      BuildTargetingString: $(BuildTargetingString)
+      BuildTargetingString: azure-search-documents
+      # TODO: change/remove location back to default westus2 after search RP fixes deletion metadata issue
+      # https://github.com/Azure/azure-sdk-tools/issues/2216
+      SupportedClouds: 'Public,UsGov,China'
+      CloudConfig:
+        Public:
+          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+          Location: 'eastus2'
+        UsGov:
+          SubscriptionConfiguration: $(sub-config-gov-test-resources)
+        China:
+          SubscriptionConfiguration: $(sub-config-cn-test-resources)
       ServiceDirectory: search
       EnvVars:
-        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
-        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
-        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
-        AZURE_CLIENT_OID: $(aad-azure-sdk-test-client-oid)
-        TEST_MODE: 'RunLiveNoRecord'
+        AZURE_CLIENT_ID: $(SEARCH_CLIENT_ID)
+        AZURE_CLIENT_SECRET: $(SEARCH_CLIENT_SECRET)
+        AZURE_TENANT_ID: $(SEARCH_TENANT_ID)
+        AZURE_CLIENT_OID: $(SEARCH_CLIENT_OID)
+        AZURE_TEST_RUN_LIVE: 'True'
         AZURE_SKIP_LIVE_RECORDING: 'True'

@@ -55,5 +55,4 @@ async def receive_batch():
 
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(receive_batch())
+    asyncio.run(receive_batch())

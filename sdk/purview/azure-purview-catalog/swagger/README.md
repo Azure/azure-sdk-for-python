@@ -20,7 +20,7 @@ autorest
 ### Settings
 
 ```yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/master/specification/purview/data-plane/Azure.Analytics.Purview.Catalog/preview/2021-05-01-preview/purviewcatalog.json
+input-file: https://github.com/Azure/azure-rest-api-specs/blob/dc439efcfc15448824877603f66fc1578d1c71c5/specification/purview/data-plane/Azure.Analytics.Purview.Catalog/preview/2021-05-01-preview/purviewcatalog.json
 output-folder: ../azure/purview/catalog
 namespace: azure.purview.catalog
 package-name: azure-purview-catalog
@@ -29,10 +29,9 @@ clear-output-folder: true
 no-namespace-folders: true
 python: true
 title: PurviewCatalogClient
-low-level-client: true
-vendor: true
-package-version: 1.0.0b1
+package-version: 1.0.0b2
 add-credential: true
 credential-scopes: https://purview.azure.net/.default
 only-path-params-positional: true
+version-tolerant: true
 ```

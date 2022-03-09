@@ -1,5 +1,51 @@
 # Release History
 
+## 2.2.0 (2022-02-22)
+
+**Features**
+
+  - Added operation group OperationsResultsLocationOperations
+  - Model Cluster has a new parameter private_endpoint_connections
+  - Model Cluster has a new parameter public_ip_type
+  - Model Cluster has a new parameter virtual_cluster_graduation_properties
+  - Model ClusterPrincipalAssignment has a new parameter aad_object_id
+  - Model ClusterUpdate has a new parameter private_endpoint_connections
+  - Model ClusterUpdate has a new parameter public_ip_type
+  - Model ClusterUpdate has a new parameter virtual_cluster_graduation_properties
+  - Model DatabasePrincipalAssignment has a new parameter aad_object_id
+  - Model EventGridDataConnection has a new parameter database_routing
+  - Model EventGridDataConnection has a new parameter event_grid_resource_id
+  - Model EventGridDataConnection has a new parameter managed_identity_object_id
+  - Model EventGridDataConnection has a new parameter managed_identity_resource_id
+  - Model EventHubDataConnection has a new parameter database_routing
+  - Model EventHubDataConnection has a new parameter managed_identity_object_id
+  - Model IotHubDataConnection has a new parameter database_routing
+  - Model OperationResult has a new parameter provisioning_state
+  - Model Script has a new parameter script_content
+
+## 2.1.0 (2021-09-22)
+
+**Features**
+
+  - Model Cluster has a new parameter accepted_audiences
+  - Model Cluster has a new parameter allowed_fqdn_list
+  - Model Cluster has a new parameter enable_auto_stop
+  - Model Cluster has a new parameter allowed_ip_range_list
+  - Model Cluster has a new parameter system_data
+  - Model Cluster has a new parameter restrict_outbound_network_access
+  - Model Cluster has a new parameter public_network_access
+  - Model ClusterUpdate has a new parameter accepted_audiences
+  - Model ClusterUpdate has a new parameter allowed_fqdn_list
+  - Model ClusterUpdate has a new parameter enable_auto_stop
+  - Model ClusterUpdate has a new parameter allowed_ip_range_list
+  - Model ClusterUpdate has a new parameter restrict_outbound_network_access
+  - Model ClusterUpdate has a new parameter public_network_access
+  - Added operation AttachedDatabaseConfigurationsOperations.check_name_availability
+  - Added operation ClustersOperations.list_outbound_network_dependencies_endpoints
+  - Added operation group PrivateEndpointConnectionsOperations
+  - Added operation group ManagedPrivateEndpointsOperations
+  - Added operation group PrivateLinkResourcesOperations
+
 ## 2.0.0 (2021-04-26)
 
 **Features**
@@ -33,7 +79,7 @@ This version uses a next-generation code generator that introduces important bre
   - `credentials` parameter has been renamed `credential`
 
 - The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
-  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 - You can't import a `version` module anymore, use `__version__` instead
 - Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
 - Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
@@ -41,13 +87,13 @@ This version uses a next-generation code generator that introduces important bre
 
   - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
   - For a complete set of
-  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
 
 **General new features**
 
 - Type annotations support using `typing`. SDKs are mypy ready.
 - This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
-- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
 
 ## 0.7.0 (2020-03-20)
 

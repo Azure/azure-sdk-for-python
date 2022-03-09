@@ -23,6 +23,8 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from typing import Any, Dict
+from threading import Lock
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
@@ -61,7 +63,8 @@ class SyncTokenPolicy(SansIOHTTPPolicy):
     def __init__(self, **kwargs):  # pylint: disable=unused-argument
         # type: (**Any) -> None
         self._sync_token_header = "Sync-Token"
-        self._sync_tokens = dict()
+        self._sync_tokens = {}  # type: Dict[str, Any]
+        self._lock = Lock()
 
     def on_request(self, request):  # type: ignore # pylint: disable=arguments-differ
         # type: (PipelineRequest) -> None
@@ -69,11 +72,12 @@ class SyncTokenPolicy(SansIOHTTPPolicy):
         :param request: The PipelineRequest object.
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        sync_token_header = ",".join(str(x) for x in self._sync_tokens.values())
-        if sync_token_header:
-            request.http_request.headers.update(
-                {self._sync_token_header: sync_token_header}
-            )
+        with self._lock:
+            sync_token_header = ",".join(str(x) for x in self._sync_tokens.values())
+            if sync_token_header:
+                request.http_request.headers.update(
+                    {self._sync_token_header: sync_token_header}
+                )
 
     def on_response(self, request, response):  # type: ignore # pylint: disable=arguments-differ
         # type: (PipelineRequest, PipelineResponse) -> None
@@ -104,9 +108,10 @@ class SyncTokenPolicy(SansIOHTTPPolicy):
         # type: (SyncToken) -> None
         if not sync_token:
             return
-        existing_token = self._sync_tokens.get(sync_token.token_id, None)
-        if not existing_token:
-            self._sync_tokens[sync_token.token_id] = sync_token
-            return
-        if existing_token.sequence_number < sync_token.sequence_number:
-            self._sync_tokens[sync_token.token_id] = sync_token
+        with self._lock:
+            existing_token = self._sync_tokens.get(sync_token.token_id, None)
+            if not existing_token:
+                self._sync_tokens[sync_token.token_id] = sync_token
+                return
+            if existing_token.sequence_number < sync_token.sequence_number:
+                self._sync_tokens[sync_token.token_id] = sync_token

@@ -1,5 +1,5 @@
 [packaging]
 package_name = "azure-mgmt-databox"
-package_pprint_name = "DataBox Management"
-package_doc_id = "databox"
+package_pprint_name = "Data Box Management"
+package_doc_id = ""
 is_stable = false

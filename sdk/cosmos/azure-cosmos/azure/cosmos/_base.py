@@ -29,8 +29,7 @@ import uuid
 import binascii
 from typing import Dict, Any
 
-import six
-from six.moves.urllib.parse import quote as urllib_quote
+from urllib.parse import quote as urllib_quote
 
 from azure.core import MatchConditions
 
@@ -578,9 +577,6 @@ def IsValidBase64String(string_to_validate):
         if len(buffer) != 4:
             return False
     except Exception as e:  # pylint: disable=broad-except
-        if six.PY2:
-            e = e.message  # pylint: disable=no-member
-            # (e.message does exist on py2)
         if isinstance(e, binascii.Error):
             return False
         raise e

@@ -20,13 +20,16 @@ class _ServiceTest(PerfStressTest):
     def __init__(self, arguments):
         super().__init__(arguments)
         connection_string = self.get_from_env("AZURE_STORAGE_CONNECTION_STRING")
-        kwargs = {}
-        kwargs['max_single_put_size'] = self.args.max_put_size
-        kwargs['max_block_size'] = self.args.max_block_size
-        kwargs['min_large_block_upload_threshold'] = self.args.buffer_threshold
+        if self.args.test_proxies:
+            self._client_kwargs['_additional_pipeline_policies'] = self._client_kwargs['per_retry_policies']
+        self._client_kwargs['max_single_put_size'] = self.args.max_put_size
+        self._client_kwargs['max_block_size'] = self.args.max_block_size
+        self._client_kwargs['min_large_block_upload_threshold'] = self.args.buffer_threshold
+        # self._client_kwargs['api_version'] = '2019-02-02'  # Used only for comparison with T1 legacy tests
+
         if not _ServiceTest.service_client or self.args.no_client_share:
-            _ServiceTest.service_client = SyncBlobServiceClient.from_connection_string(conn_str=connection_string, **kwargs)
-            _ServiceTest.async_service_client = AsyncBlobServiceClient.from_connection_string(conn_str=connection_string, **kwargs)
+            _ServiceTest.service_client = SyncBlobServiceClient.from_connection_string(conn_str=connection_string, **self._client_kwargs)
+            _ServiceTest.async_service_client = AsyncBlobServiceClient.from_connection_string(conn_str=connection_string, **self._client_kwargs)
         self.service_client = _ServiceTest.service_client
         self.async_service_client =_ServiceTest.async_service_client
 

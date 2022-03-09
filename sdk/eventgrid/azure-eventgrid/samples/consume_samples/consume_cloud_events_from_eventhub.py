@@ -13,19 +13,20 @@ USAGE:
     1) EVENT_HUB_CONN_STR: The connection string to the Event hub account
     3) EVENTHUB_NAME: The name of the eventhub account
 """
+
+# Note: This sample would not work on pypy since azure-eventhub
+# depends on uamqp which is not pypy compatible.
+
 import os
 import json
 from azure.core.messaging import CloudEvent
 from azure.eventhub import EventHubConsumerClient
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-EVENTHUB_NAME = os.environ["EVENTHUB_NAME"]
-
-
+EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
 def on_event(partition_context, event):
- 
-    dict_event = CloudEvent.from_dict(json.loads(event)[0])
-    print("data: {}\n".format(deserialized_event.data))
+    dict_event = CloudEvent.from_json(event)
+    print("data: {}\n".format(dict_event.data))
 
 consumer_client = EventHubConsumerClient.from_connection_string(
     conn_str=CONNECTION_STR,

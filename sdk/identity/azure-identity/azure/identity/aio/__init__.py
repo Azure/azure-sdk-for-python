@@ -14,6 +14,7 @@ from ._credentials import (
     DefaultAzureCredential,
     EnvironmentCredential,
     ManagedIdentityCredential,
+    OnBehalfOfCredential,
     SharedTokenCacheCredential,
     VisualStudioCodeCredential,
 )
@@ -28,6 +29,7 @@ __all__ = [
     "DefaultAzureCredential",
     "EnvironmentCredential",
     "ManagedIdentityCredential",
+    "OnBehalfOfCredential",
     "ChainedTokenCredential",
     "SharedTokenCacheCredential",
     "VisualStudioCodeCredential",

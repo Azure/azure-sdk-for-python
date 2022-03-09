@@ -42,6 +42,7 @@ class MgmtContainerServiceClientTest(AzureMgmtTestCase):
             azure.mgmt.containerservice.ContainerServiceClient
         )
 
+    @unittest.skip('hard to test')
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_managed_clusters(self, resource_group):
         CLIENT_ID = getattr(self.settings, 'CLIENT_ID', "123")
@@ -128,10 +129,12 @@ class MgmtContainerServiceClientTest(AzureMgmtTestCase):
                                                                 resource_name=RESOURCE_NAME)
         result.result()
 
+    @unittest.skip('hard to test')
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_operations(self):
         result = self.mgmt_client.operations.list()
 
+    @unittest.skip('hard to test')
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_privateLinkResources(self, resource_group):
         CLIENT_ID = getattr(self.settings, 'CLIENT_ID', "123")
@@ -179,6 +182,7 @@ class MgmtContainerServiceClientTest(AzureMgmtTestCase):
         # 1
         self.mgmt_client.private_link_resources.list(resource_group_name=RESOURCE_GROUP, resource_name=RESOURCE_NAME)
 
+    @unittest.skip('hard to test')
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_resolvePrivateLinkServiceId(self, resource_group):
         CLIENT_ID = getattr(self.settings, 'CLIENT_ID', "123")
@@ -230,6 +234,7 @@ class MgmtContainerServiceClientTest(AzureMgmtTestCase):
         self.mgmt_client.resolve_private_link_service_id.post(resource_group_name=RESOURCE_GROUP,
                                                               resource_name=RESOURCE_NAME, parameters=BODY)
 
+    @unittest.skip('hard to test')
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_agentPools(self, resource_group):
         CLIENT_ID = getattr(self.settings, 'CLIENT_ID', "123")

@@ -7,6 +7,9 @@
 # --------------------------------------------------------------------------
 
 from ._service_fabric_management_client import ServiceFabricManagementClient
+from ._version import VERSION
+
+__version__ = VERSION
 __all__ = ['ServiceFabricManagementClient']
 
 try:

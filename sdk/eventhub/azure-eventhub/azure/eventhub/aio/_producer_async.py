@@ -21,9 +21,11 @@ from .._utils import (
     set_message_partition_key,
     trace_message,
     send_context_manager,
+    transform_outbound_single_message,
 )
 from .._constants import TIMEOUT_SYMBOL
 from ._client_base_async import ConsumerProducerMixin
+from ._async_utils import get_dict_with_loop_if_needed
 
 if TYPE_CHECKING:
     from uamqp.authentication import JWTTokenAsync  # pylint: disable=ungrouped-imports
@@ -55,7 +57,6 @@ class EventHubProducer(
      periods of inactivity. The default value is `None`, i.e. no keep alive pings.
     :keyword bool auto_reconnect: Whether to automatically reconnect the producer if a retryable error occurs.
      Default value is `True`.
-    :keyword ~asyncio.AbstractEventLoop loop: An event loop. If not specified the default event loop will be used.
     """
 
     def __init__(self, client: "EventHubProducerClient", target: str, **kwargs) -> None:
@@ -69,7 +70,7 @@ class EventHubProducer(
         self.running = False
         self.closed = False
 
-        self._loop = kwargs.get("loop", None)
+        self._internal_kwargs = get_dict_with_loop_if_needed(kwargs.get("loop", None))
         self._max_message_size_on_link = None
         self._client = client
         self._target = target
@@ -91,7 +92,7 @@ class EventHubProducer(
         self._handler = None  # type: Optional[SendClientAsync]
         self._outcome = None  # type: Optional[constants.MessageSendResult]
         self._condition = None  # type: Optional[Exception]
-        self._lock = asyncio.Lock(loop=self._loop)
+        self._lock = asyncio.Lock(**self._internal_kwargs)
         self._link_properties = {
             types.AMQPSymbol(TIMEOUT_SYMBOL): types.AMQPLong(int(self._timeout * 1000))
         }
@@ -110,7 +111,7 @@ class EventHubProducer(
             properties=create_properties(
                 self._client._config.user_agent  # pylint:disable=protected-access
             ),
-            loop=self._loop,
+            **self._internal_kwargs
         )
 
     async def _open_with_retry(self) -> Any:
@@ -177,9 +178,10 @@ class EventHubProducer(
         partition_key: Optional[AnyStr],
     ) -> Union[EventData, EventDataBatch]:
         if isinstance(event_data, EventData):
+            outgoing_event_data = transform_outbound_single_message(event_data, EventData)
             if partition_key:
-                set_message_partition_key(event_data.message, partition_key)
-            wrapper_event_data = event_data
+                set_message_partition_key(outgoing_event_data.message, partition_key)
+            wrapper_event_data = outgoing_event_data
             trace_message(wrapper_event_data, span)
         else:
             if isinstance(

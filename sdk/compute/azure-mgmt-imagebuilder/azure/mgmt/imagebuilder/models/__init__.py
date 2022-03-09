@@ -7,8 +7,7 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._models_py3 import ApiError
-    from ._models_py3 import ApiErrorBase
+    from ._models_py3 import CloudErrorBody
     from ._models_py3 import ComponentsVrq145SchemasImagetemplateidentityPropertiesUserassignedidentitiesAdditionalproperties
     from ._models_py3 import ImageTemplate
     from ._models_py3 import ImageTemplateCustomizer
@@ -30,7 +29,6 @@ try:
     from ._models_py3 import ImageTemplateVhdDistributor
     from ._models_py3 import ImageTemplateVmProfile
     from ._models_py3 import ImageTemplateWindowsUpdateCustomizer
-    from ._models_py3 import InnerError
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationListResult
@@ -40,10 +38,11 @@ try:
     from ._models_py3 import RunOutput
     from ._models_py3 import RunOutputCollection
     from ._models_py3 import SubResource
+    from ._models_py3 import SystemData
+    from ._models_py3 import TrackedResource
     from ._models_py3 import VirtualNetworkConfig
 except (SyntaxError, ImportError):
-    from ._models import ApiError  # type: ignore
-    from ._models import ApiErrorBase  # type: ignore
+    from ._models import CloudErrorBody  # type: ignore
     from ._models import ComponentsVrq145SchemasImagetemplateidentityPropertiesUserassignedidentitiesAdditionalproperties  # type: ignore
     from ._models import ImageTemplate  # type: ignore
     from ._models import ImageTemplateCustomizer  # type: ignore
@@ -65,7 +64,6 @@ except (SyntaxError, ImportError):
     from ._models import ImageTemplateVhdDistributor  # type: ignore
     from ._models import ImageTemplateVmProfile  # type: ignore
     from ._models import ImageTemplateWindowsUpdateCustomizer  # type: ignore
-    from ._models import InnerError  # type: ignore
     from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
     from ._models import OperationListResult  # type: ignore
@@ -75,9 +73,12 @@ except (SyntaxError, ImportError):
     from ._models import RunOutput  # type: ignore
     from ._models import RunOutputCollection  # type: ignore
     from ._models import SubResource  # type: ignore
+    from ._models import SystemData  # type: ignore
+    from ._models import TrackedResource  # type: ignore
     from ._models import VirtualNetworkConfig  # type: ignore
 
 from ._image_builder_client_enums import (
+    CreatedByType,
     ProvisioningErrorCode,
     ProvisioningState,
     ResourceIdentityType,
@@ -87,8 +88,7 @@ from ._image_builder_client_enums import (
 )
 
 __all__ = [
-    'ApiError',
-    'ApiErrorBase',
+    'CloudErrorBody',
     'ComponentsVrq145SchemasImagetemplateidentityPropertiesUserassignedidentitiesAdditionalproperties',
     'ImageTemplate',
     'ImageTemplateCustomizer',
@@ -110,7 +110,6 @@ __all__ = [
     'ImageTemplateVhdDistributor',
     'ImageTemplateVmProfile',
     'ImageTemplateWindowsUpdateCustomizer',
-    'InnerError',
     'Operation',
     'OperationDisplay',
     'OperationListResult',
@@ -120,7 +119,10 @@ __all__ = [
     'RunOutput',
     'RunOutputCollection',
     'SubResource',
+    'SystemData',
+    'TrackedResource',
     'VirtualNetworkConfig',
+    'CreatedByType',
     'ProvisioningErrorCode',
     'ProvisioningState',
     'ResourceIdentityType',

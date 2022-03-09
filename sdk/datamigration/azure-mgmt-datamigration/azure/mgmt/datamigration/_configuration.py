@@ -48,7 +48,7 @@ class DataMigrationManagementClientConfiguration(Configuration):
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = "2018-07-15-preview"
+        self.api_version = "2021-06-30"
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-datamigration/{}'.format(VERSION))
         self._configure(**kwargs)

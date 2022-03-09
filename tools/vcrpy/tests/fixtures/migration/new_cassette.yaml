@@ -1,0 +1,20 @@
+version: 1
+interactions:
+- request:
+    body: null
+    headers: 
+      accept: ['*/*']
+      accept-encoding: ['gzip, deflate, compress']
+      user-agent: ['python-requests/2.2.1 CPython/2.6.1 Darwin/10.8.0']
+    method: GET
+    uri: http://httpbin.org/ip
+  response:
+    body: {string: "{\n  \"origin\": \"217.122.164.194\"\n}"}
+    headers:
+      access-control-allow-origin: ['*']
+      content-type: [application/json]
+      date: ['Mon, 21 Apr 2014 23:06:09 GMT']
+      server: [gunicorn/0.17.4]
+      content-length: ['32']
+      connection: [keep-alive]
+    status: {code: 200, message: OK}

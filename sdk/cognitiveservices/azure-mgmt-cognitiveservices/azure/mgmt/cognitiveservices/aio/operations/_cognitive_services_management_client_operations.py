@@ -26,8 +26,8 @@ class CognitiveServicesManagementClientOperationsMixin:
         skus: List[str],
         kind: str,
         type: str,
-        **kwargs
-    ) -> "_models.CheckSkuAvailabilityResultList":
+        **kwargs: Any
+    ) -> "_models.SkuAvailabilityListResult":
         """Check available SKUs.
 
         :param location: Resource location.
@@ -39,18 +39,18 @@ class CognitiveServicesManagementClientOperationsMixin:
         :param type: The Type of the resource.
         :type type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CheckSkuAvailabilityResultList, or the result of cls(response)
-        :rtype: ~azure.mgmt.cognitiveservices.models.CheckSkuAvailabilityResultList
+        :return: SkuAvailabilityListResult, or the result of cls(response)
+        :rtype: ~azure.mgmt.cognitiveservices.models.SkuAvailabilityListResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckSkuAvailabilityResultList"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.SkuAvailabilityListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
         _parameters = _models.CheckSkuAvailabilityParameter(skus=skus, kind=kind, type=type)
-        api_version = "2017-04-18"
+        api_version = "2021-10-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -80,9 +80,10 @@ class CognitiveServicesManagementClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('CheckSkuAvailabilityResultList', pipeline_response)
+        deserialized = self._deserialize('SkuAvailabilityListResult', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -94,27 +95,30 @@ class CognitiveServicesManagementClientOperationsMixin:
         self,
         subdomain_name: str,
         type: str,
-        **kwargs
-    ) -> "_models.CheckDomainAvailabilityResult":
+        kind: Optional[str] = None,
+        **kwargs: Any
+    ) -> "_models.DomainAvailability":
         """Check whether a domain is available.
 
         :param subdomain_name: The subdomain name to use.
         :type subdomain_name: str
         :param type: The Type of the resource.
         :type type: str
+        :param kind: The Kind of the resource.
+        :type kind: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CheckDomainAvailabilityResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.cognitiveservices.models.CheckDomainAvailabilityResult
+        :return: DomainAvailability, or the result of cls(response)
+        :rtype: ~azure.mgmt.cognitiveservices.models.DomainAvailability
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.CheckDomainAvailabilityResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DomainAvailability"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        _parameters = _models.CheckDomainAvailabilityParameter(subdomain_name=subdomain_name, type=type)
-        api_version = "2017-04-18"
+        _parameters = _models.CheckDomainAvailabilityParameter(subdomain_name=subdomain_name, type=type, kind=kind)
+        api_version = "2021-10-01"
         content_type = kwargs.pop("content_type", "application/json")
         accept = "application/json"
 
@@ -143,9 +147,10 @@ class CognitiveServicesManagementClientOperationsMixin:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('CheckDomainAvailabilityResult', pipeline_response)
+        deserialized = self._deserialize('DomainAvailability', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

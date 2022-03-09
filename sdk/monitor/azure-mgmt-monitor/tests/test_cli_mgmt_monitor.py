@@ -45,17 +45,18 @@
 
 import time
 import unittest
+import os
 
 import azure.mgmt.monitor
 import azure.mgmt.monitor.models
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+import pytest
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = 'eastus'
 
-class MgmtMonitorClientTest(AzureMgmtTestCase):
+class TestMgmtMonitorClient(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtMonitorClientTest, self).setUp()
+    def setup_method(self, method):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.monitor.MonitorManagementClient
         )
@@ -154,7 +155,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
             "tag2": "value2"
           }
         }
-        result = self.eventhub_client.namespaces.create_or_update(group_name, name_space, BODY)
+        result = self.eventhub_client.namespaces.begin_create_or_update(group_name, name_space, BODY)
         result.result()
 
         # NameSpaceAuthorizationRuleCreate[put]
@@ -214,7 +215,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
             "tag1": "val1"
           }
         }
-        result = self.loganalytics_client.workspaces.create_or_update(
+        result = self.loganalytics_client.workspaces.begin_create_or_update(
             group_name,
             workspace_name,
             BODY
@@ -252,7 +253,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
     # use track 1 version
     def create_virtual_network(self, group_name, location, network_name, subnet_name):
       
-      azure_operation_poller = self.network_client.virtual_networks.create_or_update(
+      azure_operation_poller = self.network_client.virtual_networks.begin_create_or_update(
           group_name,
           network_name,
           {
@@ -263,7 +264,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
           },
       )
       result_create = azure_operation_poller.result()
-      async_subnet_creation = self.network_client.subnets.create_or_update(
+      async_subnet_creation = self.network_client.subnets.begin_create_or_update(
           group_name,
           network_name,
           subnet_name,
@@ -275,7 +276,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
     # use track 1 version
     def create_network_interface(self, group_name, location, nic_name, subnet):
 
-        async_nic_creation = self.network_client.network_interfaces.create_or_update(
+        async_nic_creation = self.network_client.network_interfaces.begin_create_or_update(
             group_name,
             nic_name,
             {
@@ -438,17 +439,19 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
 
         return vmss
 
+    @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_monitor_diagnostic_settings(self, resource_group):
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         # RESOURCE_URI = "subscriptions/{}/resourcegroups/{}".format(SUBSCRIPTION_ID, RESOURCE_GROUP)
-        STORAGE_ACCOUNT_NAME = self.get_resource_name("storageaccountx")
-        NAMESPACE_NAME = self.get_resource_name("namespacex")
-        EVENTHUB_NAME = self.get_resource_name("eventhubx")
-        AUTHORIZATIONRULE_NAME = self.get_resource_name("authorizationrulex")
-        INSIGHT_NAME = self.get_resource_name("insightx")
-        WORKSPACE_NAME = self.get_resource_name("workspacex")
+        STORAGE_ACCOUNT_NAME = self.get_resource_name("storageaccountxx")
+        NAMESPACE_NAME = self.get_resource_name("namespacexx")
+        EVENTHUB_NAME = self.get_resource_name("eventhubxx")
+        AUTHORIZATIONRULE_NAME = self.get_resource_name("authorizationrulexx")
+        INSIGHT_NAME = self.get_resource_name("insightxx")
+        WORKSPACE_NAME = self.get_resource_name("workspacexx")
         WORKFLOW_NAME = self.get_resource_name("workflow")
 
         if self.is_live:
@@ -516,12 +519,14 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         # Deletes the diagnostic setting[delete]
         result = self.mgmt_client.diagnostic_settings.delete(RESOURCE_URI, INSIGHT_NAME)
 
+    @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_log_profiles(self, resource_group):
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         LOGPROFILE_NAME  = self.get_resource_name("logprofilex")
-        STORAGE_ACCOUNT_NAME = self.get_resource_name("storageaccountx")
+        STORAGE_ACCOUNT_NAME = self.get_resource_name("storageaccountb")
 
         if self.is_live:
             storage_account_id = self.create_storage_account(RESOURCE_GROUP, AZURE_LOCATION, STORAGE_ACCOUNT_NAME)
@@ -581,9 +586,10 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
 
     @unittest.skip("cannot create or modify classic metric alerts")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_alert_rule(self, resource_group):
 
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         APP_SERVICE_PLAN_NAME = self.get_resource_name('pyarmappserviceplan')
         SITE_NAME = self.get_resource_name('pyarmsite')
@@ -600,7 +606,6 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         else:
             resource_id = "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/" + RESOURCE_GROUP + "/providers/Microsoft.Compute/virtualMachines/" + VM_NAME
 
-        # I need a subclass of "RuleDataSource"
         data_source = azure.mgmt.monitor.models.RuleMetricDataSource(
             resource_uri=resource_id,
             metric_name='CPU Credits Consumed'
@@ -615,7 +620,6 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
             time_aggregation='Average'
         )
 
-        # I need a subclass of "RuleAction"
         rule_action = azure.mgmt.monitor.models.RuleEmailAction(
             send_to_service_owners=True,
             custom_emails=[
@@ -681,9 +685,11 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         # Delete an alert rulte[delete]
         result = self.mgmt_client.alert_rules.delete(resource_group.name, ALERTRULE_NAME)
 
+    @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_metric_alerts(self, resource_group):
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         METRIC_ALERT_NAME = "metricnamexx"
         VM_NAME = "vm_name"
@@ -848,7 +854,9 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         # Delete an alert rule[delete]
         result = self.mgmt_client.metric_alerts.delete(resource_group.name, METRIC_ALERT_NAME)
 
+    @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_action_groups(self, resource_group):
 
         ACTION_GROUP_NAME = self.get_resource_name("actiongroup")
@@ -905,9 +913,11 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         # Delete an action group[delete]
         result = self.mgmt_client.action_groups.delete(resource_group.name, ACTION_GROUP_NAME)
 
+    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_activity_log_alerts(self, resource_group):
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         ACTIVITY_LOG_ALERT_NAME = self.get_resource_name("activitylogalertx")
 
         # Create or update an activity log alert[put]
@@ -976,10 +986,12 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         # Delete an activity log alert[delete]
         result = self.mgmt_client.activity_log_alerts.delete(resource_group.name, ACTIVITY_LOG_ALERT_NAME)
 
+    @unittest.skip('hard to test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_autoscale_settings(self, resource_group):
         
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         AUTOSCALESETTING_NAME = "autoscalesetting"
         VMSS_NAME = "vmss_name"
@@ -1075,12 +1087,14 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         # Delete an autoscale setting[delete]
         result = self.mgmt_client.autoscale_settings.delete(resource_group.name, AUTOSCALESETTING_NAME)
 
+    @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('true', 'yes'), reason='only run live test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_scheduled_query_rules(self, resource_group):
         RESOURCE_GROUP = resource_group.name
         WORKSPACE_NAME = self.get_resource_name("workspacex")
         SCHEDULED_QUERY_RULE_NAME = self.get_resource_name("scheduledqueryrule")
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
 
         if self.is_live:
             workspace = self.create_workspace(RESOURCE_GROUP, AZURE_LOCATION, WORKSPACE_NAME)
@@ -1147,6 +1161,7 @@ class MgmtMonitorClientTest(AzureMgmtTestCase):
         
     @unittest.skip("(InvalidResourceType) The resource type could not be found in the namespace 'microsoft.insights' for api version '2018-06-01-preview'.")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_guest_diagnostics_settings(self, resource_group):
         DIAGNOSTIC_SETTINGS_NAME = self.get_resource_name("diagnosticsettings")
 

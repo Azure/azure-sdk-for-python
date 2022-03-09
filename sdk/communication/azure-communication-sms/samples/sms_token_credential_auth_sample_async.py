@@ -23,7 +23,7 @@ import sys
 import asyncio
 from azure.communication.sms.aio import SmsClient
 from azure.communication.sms._shared.utils import parse_connection_str
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 
 sys.path.append("..")
 
@@ -59,5 +59,4 @@ class SmsTokenCredentialAuthSampleAsync(object):
 
 if __name__ == '__main__':
     sample = SmsTokenCredentialAuthSampleAsync()
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(sample.sms_token_credential_auth_async())
+    asyncio.run(sample.sms_token_credential_auth_async())

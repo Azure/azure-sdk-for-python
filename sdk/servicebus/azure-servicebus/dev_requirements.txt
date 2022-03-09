@@ -3,4 +3,4 @@
 -e ../../../tools/azure-devtools
 -e ../../../tools/azure-sdk-tools
 azure-mgmt-servicebus~=1.0.0
-aiohttp>=3.0; python_version >= '3.5'
+aiohttp>=3.0

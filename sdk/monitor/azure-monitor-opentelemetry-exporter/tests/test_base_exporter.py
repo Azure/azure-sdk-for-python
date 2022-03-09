@@ -12,12 +12,14 @@ import requests
 from opentelemetry.sdk.trace.export import SpanExportResult
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
+from azure.core.pipeline.transport import HttpResponse
 from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
     get_trace_export_result,
 )
-from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
+from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
+from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem, TrackResponse
 
 
 def throw(exc_type, *args, **kwargs):
@@ -115,44 +117,54 @@ class TestBaseExporter(unittest.TestCase):
             self._base._transmit_from_storage()
         self.assertTrue(self._base.storage.get())
 
-    def test_transmit_request_timeout(self):
-        with mock.patch("requests.Session.request", throw(requests.Timeout)):
-            result = self._base._transmit(self._envelopes_to_export)
-        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
-
     def test_transmit_http_error_retryable(self):
         with mock.patch("azure.monitor.opentelemetry.exporter.export._base._is_retryable_code") as m:
             m.return_value = True
-            with mock.patch("requests.Session.request", throw(HttpResponseError)):
+            with mock.patch.object(AzureMonitorClient, 'track', throw(HttpResponseError)):
                 result = self._base._transmit(self._envelopes_to_export)
             self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
-    def test_transmit_http_error_retryable(self):
+    def test_transmit_http_error_not_retryable(self):
         with mock.patch("azure.monitor.opentelemetry.exporter.export._base._is_retryable_code") as m:
             m.return_value = False
-            with mock.patch("requests.Session.request", throw(HttpResponseError)):
+            with mock.patch.object(AzureMonitorClient, 'track', throw(HttpResponseError)):
                 result = self._base._transmit(self._envelopes_to_export)
             self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
+    def test_transmit_http_error_redirect(self):
+        response = HttpResponse(None, None)
+        response.status_code = 307
+        response.headers = {"location":"https://example.com"}
+        prev_redirects = self._base.client._config.redirect_policy.max_redirects
+        self._base.client._config.redirect_policy.max_redirects = 2
+        prev_host = self._base.client._config.host
+        error = HttpResponseError(response=response)
+        with mock.patch.object(AzureMonitorClient, 'track') as post:
+            post.side_effect = error
+            result = self._base._transmit(self._envelopes_to_export)
+            self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+            self.assertEqual(post.call_count, 2)
+            self.assertEqual(self._base.client._config.host, "https://example.com")
+        self._base.client._config.redirect_policy.max_redirects = prev_redirects
+        self._base.client._config.host = prev_host
+
     def test_transmit_request_error(self):
-        with mock.patch("requests.Session.request", throw(ServiceRequestError, message="error")):
+        with mock.patch.object(AzureMonitorClient, 'track', throw(ServiceRequestError, message="error")):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     def test_transmit_request_exception(self):
-        with mock.patch("requests.Session.request", throw(Exception)):
+        with mock.patch.object(AzureMonitorClient, 'track', throw(Exception)):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
     def test_transmission_200(self):
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(200, json.dumps(
-                {
-                    "itemsReceived": 1,
-                    "itemsAccepted": 1,
-                    "errors": [],
-                }
-            ), reason="OK", content="")
+        with mock.patch.object(AzureMonitorClient, 'track') as post:
+            post.return_value = TrackResponse(
+                items_received=1,
+                items_accepted=1,
+                errors=[],
+            )
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.SUCCESS)
 
@@ -304,3 +316,8 @@ class MockResponse:
         self.headers = headers
         self.reason = reason
         self.content = content
+        self.raw = MockRaw()
+
+class MockRaw:
+    def __init__(self):
+        self.enforce_content_length = False

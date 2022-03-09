@@ -6,6 +6,7 @@
 
 
 import logging
+import time
 import pytest
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
@@ -25,7 +26,9 @@ from servicebus_preparer import (
     ServiceBusQueuePreparer,
     ServiceBusNamespaceAuthorizationRulePreparer,
     ServiceBusQueueAuthorizationRulePreparer,
-    CachedServiceBusQueuePreparer
+    CachedServiceBusQueuePreparer,
+    CachedServiceBusTopicPreparer,
+    CachedServiceBusSubscriptionPreparer
 )
 from utilities import get_logger
 
@@ -137,7 +140,9 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer()
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    async def test_async_sb_client_close_spawned_handlers(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
+    @CachedServiceBusSubscriptionPreparer(name_prefix='servicebustest')
+    async def test_async_sb_client_close_spawned_handlers(self, servicebus_namespace_connection_string, servicebus_queue, servicebus_topic, servicebus_subscription, **kwargs):
         client = ServiceBusClient.from_connection_string(servicebus_namespace_connection_string)
 
         await client.close()
@@ -173,6 +178,51 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
         assert not sender._handler and not sender._running
         assert not receiver._handler and not receiver._running
         assert len(client._handlers) == 0
+
+        queue_sender = client.get_queue_sender(servicebus_queue.name)
+        queue_receiver = client.get_queue_receiver(servicebus_queue.name)
+        assert len(client._handlers) == 2
+        queue_sender = client.get_queue_sender(servicebus_queue.name)
+        queue_receiver = client.get_queue_receiver(servicebus_queue.name)
+        # the previous sender/receiver can not longer be referenced, there might be a delay in CPython
+        # to remove the reference, so len of handlers should be less than 4
+        assert len(client._handlers) < 4
+        await client.close()
+
+        queue_sender = client.get_queue_sender(servicebus_queue.name)
+        queue_receiver = client.get_queue_receiver(servicebus_queue.name)
+        assert len(client._handlers) == 2
+        queue_sender = None
+        queue_receiver = None
+        assert len(client._handlers) < 2
+
+        await client.close()
+        topic_sender = client.get_topic_sender(servicebus_topic.name)
+        subscription_receiver = client.get_subscription_receiver(servicebus_topic.name, servicebus_subscription.name)
+        assert len(client._handlers) == 2
+        topic_sender = None
+        subscription_receiver = None
+        # the previous sender/receiver can not longer be referenced, so len of handlers should just be 2 instead of 4
+        assert len(client._handlers) < 4
+
+        await client.close()
+        topic_sender = client.get_topic_sender(servicebus_topic.name)
+        subscription_receiver = client.get_subscription_receiver(servicebus_topic.name, servicebus_subscription.name)
+        assert len(client._handlers) == 2
+        topic_sender = client.get_topic_sender(servicebus_topic.name)
+        subscription_receiver = client.get_subscription_receiver(servicebus_topic.name, servicebus_subscription.name)
+        # the previous sender/receiver can not longer be referenced, so len of handlers should just be 2 instead of 4
+        assert len(client._handlers) < 4
+
+        await client.close()
+        for _ in range(5):
+            queue_sender = client.get_queue_sender(servicebus_queue.name)
+            queue_receiver = client.get_queue_receiver(servicebus_queue.name)
+            topic_sender = client.get_topic_sender(servicebus_topic.name)
+            subscription_receiver = client.get_subscription_receiver(servicebus_topic.name,
+                                                                     servicebus_subscription.name)
+        assert len(client._handlers) < 15
+        await client.close()
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -352,3 +402,44 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
         async with client:
             async with client.get_queue_sender(servicebus_queue.name) as sender:
                 await sender.send_messages(ServiceBusMessage("foo"))
+
+    async def test_backoff_fixed_retry(self):
+        client = ServiceBusClient(
+            'fake.host.com',
+            'fake_eh',
+            retry_mode='fixed'
+        )
+        # queue sender
+        sender = await client.get_queue_sender('fake_name')
+        backoff = client._config.retry_backoff_factor
+        start_time = time.time()
+        sender._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
+        sleep_time_fixed = time.time() - start_time
+        # exp = 0.8 * (2 ** 1) = 1.6
+        # time.sleep() in _backoff will take AT LEAST time 'exp' for retry_mode='exponential'
+        # check that fixed is less than 'exp'
+        assert sleep_time_fixed < backoff * (2 ** 1)
+
+        # topic sender
+        sender = await client.get_topic_sender('fake_name')
+        backoff = client._config.retry_backoff_factor
+        start_time = time.time()
+        sender._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
+        sleep_time_fixed = time.time() - start_time
+        assert sleep_time_fixed < backoff * (2 ** 1)
+
+        # queue receiver 
+        receiver = await client.get_queue_receiver('fake_name')
+        backoff = client._config.retry_backoff_factor
+        start_time = time.time()
+        receiver._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
+        sleep_time_fixed = time.time() - start_time
+        assert sleep_time_fixed < backoff * (2 ** 1)
+
+        # subscription receiver 
+        receiver = await client.get_subscription_receiver('fake_topic', 'fake_sub')
+        backoff = client._config.retry_backoff_factor
+        start_time = time.time()
+        receiver._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
+        sleep_time_fixed = time.time() - start_time
+        assert sleep_time_fixed < backoff * (2 ** 1)

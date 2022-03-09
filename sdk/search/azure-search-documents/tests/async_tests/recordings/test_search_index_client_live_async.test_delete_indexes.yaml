@@ -5,56 +5,51 @@ interactions:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: DELETE
-    uri: https://search785e1686.search.windows.net/indexes('drgqefsg')?api-version=2020-06-30
+    uri: https://search785e1686.search.windows.net/indexes('drgqefsg')?api-version=2021-04-30-Preview
   response:
     body:
       string: ''
     headers:
       cache-control: no-cache
-      date: Thu, 20 May 2021 17:26:43 GMT
-      elapsed-time: '567'
+      date: Tue, 31 Aug 2021 17:34:03 GMT
+      elapsed-time: '390'
       expires: '-1'
       pragma: no-cache
-      request-id: 8acff689-b990-11eb-8cb3-a0481ca055a9
+      request-id: a38a2925-0a81-11ec-a3b6-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 204
       message: No Content
-    url: https://search785e1686.search.windows.net/indexes('drgqefsg')?api-version=2020-06-30
+    url: https://search785e1686.search.windows.net/indexes('drgqefsg')?api-version=2021-04-30-Preview
 - request:
     body: null
     headers:
       Accept:
       - application/json;odata.metadata=minimal
       User-Agent:
-      - azsdk-python-search-documents/11.2.0 Python/3.8.6 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-search-documents/11.3.0b3 Python/3.9.2 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://search785e1686.search.windows.net/indexes?api-version=2020-06-30
+    uri: https://search785e1686.search.windows.net/indexes?api-version=2021-04-30-Preview
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
-        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/In7xR79n
-        NcvabDytlm3+rv3o0Ufztl01j+7ebfKsns4fHNzPdz89+HQsf46viuWsumrGy7y9+7st8jbD2z9O
-        H+bv8uaj0UeXWbnOP3r0ve//kv8Hs/EZO1sAAAA=
+      string: '{"@odata.context":"https://search785e1686.search.windows.net/$metadata#indexes","value":[]}'
     headers:
       cache-control: no-cache
-      content-encoding: gzip
       content-length: '200'
       content-type: application/json; odata.metadata=minimal
-      date: Thu, 20 May 2021 17:26:48 GMT
-      elapsed-time: '35'
+      date: Tue, 31 Aug 2021 17:34:09 GMT
+      elapsed-time: '145'
       expires: '-1'
       odata-version: '4.0'
       pragma: no-cache
       preference-applied: odata.include-annotations="*"
-      request-id: 8e3cbba0-b990-11eb-a1fe-a0481ca055a9
+      request-id: a6ea4fe6-0a81-11ec-86da-74c63bed1137
       strict-transport-security: max-age=15724800; includeSubDomains
       vary: Accept-Encoding
     status:
       code: 200
       message: OK
-    url: https://search785e1686.search.windows.net/indexes?api-version=2020-06-30
+    url: https://search785e1686.search.windows.net/indexes?api-version=2021-04-30-Preview
 version: 1

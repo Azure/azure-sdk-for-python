@@ -7,12 +7,14 @@
 import logging
 import sys
 import os
+from concurrent.futures import ThreadPoolExecutor
 import types
 import pytest
 import time
 import uuid
 from datetime import datetime, timedelta
 import calendar
+import unittest
 
 import uamqp
 import uamqp.errors
@@ -25,13 +27,21 @@ from azure.servicebus import (
     ServiceBusMessageBatch,
     ServiceBusReceivedMessage,
     ServiceBusReceiveMode,
-    ServiceBusSubQueue
+    ServiceBusSubQueue,
+    ServiceBusMessageState
+)
+from azure.servicebus.amqp import (
+    AmqpMessageHeader,
+    AmqpMessageBodyType,
+    AmqpAnnotatedMessage,
+    AmqpMessageProperties,
 )
 from azure.servicebus._common.constants import (
     _X_OPT_LOCK_TOKEN,
     _X_OPT_PARTITION_KEY,
     _X_OPT_VIA_PARTITION_KEY,
-    _X_OPT_SCHEDULED_ENQUEUE_TIME
+    _X_OPT_SCHEDULED_ENQUEUE_TIME,
+    ServiceBusMessageState
 )
 from azure.servicebus._common.utils import utc_now
 from azure.servicebus.management._models import DictMixin
@@ -123,8 +133,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 message.content_type = 'application/text'
                 message.correlation_id = 'cid'
                 message.message_id = str(i)
-                with pytest.raises(ValueError):
-                    message.partition_key = 'pk'
+                message.partition_key = 'pk'
                 message.to = 'to'
                 message.reply_to = 'reply_to'
                 sender.send_messages(message)
@@ -210,8 +219,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 messages = []
                 for i in range(10):
                     message = ServiceBusMessage("Handler message no. {}".format(i))
-                    with pytest.raises(ValueError):
-                        message.partition_key = 'pkey'
+                    message.partition_key = 'pkey'
                     message.time_to_live = timedelta(seconds=60)
                     message.scheduled_enqueue_time_utc = utc_now() + timedelta(seconds=60)
                     message.partition_key = None
@@ -998,6 +1006,70 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             renewer.close()
             assert len(messages) == 11
 
+            renewer = AutoLockRenewer(max_workers=8)
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                for i in range(10):
+                    message = ServiceBusMessage("{}".format(i))
+                    sender.send_messages(message)
+
+            with sb_client.get_queue_receiver(servicebus_queue.name,
+                                                 max_wait_time=5,
+                                                 receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
+                                                 prefetch_count=10) as receiver:
+                received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
+                for msg in received_msgs:
+                    renewer.register(receiver, msg, max_lock_renewal_duration=30)
+                time.sleep(10)
+
+                for msg in received_msgs:
+                    receiver.complete_message(msg)
+            assert len(received_msgs) == 10
+            renewer.close()
+
+            executor = ThreadPoolExecutor(max_workers=1)
+            renewer = AutoLockRenewer(executor=executor)
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                for i in range(2):
+                    message = ServiceBusMessage("{}".format(i))
+                    sender.send_messages(message)
+
+            with sb_client.get_queue_receiver(servicebus_queue.name,
+                                                 max_wait_time=5,
+                                                 receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
+                                                 prefetch_count=3) as receiver:
+                received_msgs = receiver.receive_messages(max_message_count=3, max_wait_time=5)
+                for msg in received_msgs:
+                    renewer.register(receiver, msg, max_lock_renewal_duration=30)
+                time.sleep(10)
+
+                for msg in received_msgs:
+                    receiver.complete_message(msg)
+            assert len(received_msgs) == 2
+            assert not renewer._is_max_workers_greater_than_one
+            renewer.close()
+
+            executor = ThreadPoolExecutor(max_workers=2)
+            renewer = AutoLockRenewer(executor=executor)
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                for i in range(3):
+                    message = ServiceBusMessage("{}".format(i))
+                    sender.send_messages(message)
+
+            with sb_client.get_queue_receiver(servicebus_queue.name,
+                                                 max_wait_time=5,
+                                                 receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
+                                                 prefetch_count=3) as receiver:
+                received_msgs = receiver.receive_messages(max_message_count=3, max_wait_time=5)
+                for msg in received_msgs:
+                    renewer.register(receiver, msg, max_lock_renewal_duration=30)
+                time.sleep(10)
+
+                for msg in received_msgs:
+                    receiver.complete_message(msg)
+            assert len(received_msgs) == 3
+            assert renewer._is_max_workers_greater_than_one
+            renewer.close()
+
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -1263,7 +1335,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     message.to = 'to'
                     message.reply_to = 'reply_to'
                     message.time_to_live = timedelta(seconds=60)
-                    assert message._amqp_properties.absolute_expiry_time == message._amqp_properties.creation_time + message._amqp_header.time_to_live
+                    assert message.raw_amqp_message.properties.absolute_expiry_time == message.raw_amqp_message.properties.creation_time + message.raw_amqp_message.header.time_to_live
 
                     yield message
 
@@ -1496,6 +1568,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 assert len(messages) == 1
                 receiver.complete_message(messages[0])
 
+    @unittest.skip('hard to test')
     def test_queue_mock_auto_lock_renew_callback(self):
         # A warning to future devs: If the renew period override heuristic in registration
         # ever changes, it may break this (since it adjusts renew period if it is not short enough)
@@ -1526,8 +1599,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
         with auto_lock_renew: # Check that in normal operation it does not get called
-            auto_lock_renew.register(receiver, renewable=MockReceivedMessage(), on_lock_renew_failure=callback_mock)
-            time.sleep(3)
+            auto_lock_renew.register(receiver, renewable=MockReceivedMessage(lock_duration=5), on_lock_renew_failure=callback_mock)
+            time.sleep(6)
             assert not results
             assert not errors
 
@@ -1920,18 +1993,20 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 sender.send_messages(batch_message)
                 sender.send_messages(batch_message)
                 messages = []
-                with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
+                with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=20) as receiver:
                     for message in receiver:
                         messages.append(message)
-                assert len(messages) == 4
+                        receiver.complete_message(message)
+                    assert len(messages) == 4
                 # then normal message resending
                 sender.send_messages(message)
                 sender.send_messages(message)
                 messages = []
-                with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
+                with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=20) as receiver:
                     for message in receiver:
                         messages.append(message)
-                assert len(messages) == 2
+                        receiver.complete_message(message)
+                    assert len(messages) == 2
 
 
     @pytest.mark.liveTest
@@ -1974,21 +2049,12 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         
         message = ServiceBusMessage("body")
 
-        with pytest.raises(AttributeError): # Note: If this is made read-writeable, this would be TypeError
-            message.raw_amqp_message.properties = {"properties":1}
-        # NOTE: These are disabled pending cross-language-sdk consensus on sendability/writeability.
-        # message.raw_amqp_message.properties.subject = "subject"
-        # 
-        # message.raw_amqp_message.application_properties = {b"application_properties":1}
-        # 
-        # message.raw_amqp_message.annotations = {b"annotations":2}
-        # message.raw_amqp_message.delivery_annotations = {b"delivery_annotations":3}
-        # 
-        # with pytest.raises(TypeError):
-        #     message.raw_amqp_message.header = {"header":4}
-        # message.raw_amqp_message.header.priority = 5
-        # 
-        # message.raw_amqp_message.footer = {b"footer":6}
+        message.raw_amqp_message.properties.subject = "subject"
+        message.raw_amqp_message.application_properties = {b"application_properties":1}
+        message.raw_amqp_message.annotations = {b"annotations":2}
+        message.raw_amqp_message.delivery_annotations = {b"delivery_annotations":3}
+        message.raw_amqp_message.header.priority = 5
+        message.raw_amqp_message.footer = {b"footer":6}
 
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False) as sb_client:
@@ -1997,21 +2063,19 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 sender.send_messages(message)
                 with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
                     message = receiver.receive_messages()[0]
-                    assert message.raw_amqp_message.application_properties == None \
+                    assert message.raw_amqp_message.application_properties != None \
                         and message.raw_amqp_message.annotations != None \
                         and message.raw_amqp_message.delivery_annotations != None \
-                        and message.raw_amqp_message.footer == None \
+                        and message.raw_amqp_message.footer != None \
                         and message.raw_amqp_message.properties != None \
                         and message.raw_amqp_message.header != None
-                    # NOTE: These are disabled pending cross-language-sdk consensus on sendability/writeability.
-                    #
-                    # assert message.raw_amqp_message.properties.subject == b"subject"
-                    # assert message.raw_amqp_message.application_properties[b"application_properties"] == 1
-                    # assert message.raw_amqp_message.annotations[b"annotations"] == 2
-                    # # delivery_annotations and footer disabled pending uamqp bug https://github.com/Azure/azure-uamqp-python/issues/169
-                    # #assert message.raw_amqp_message.delivery_annotations[b"delivery_annotations"] == 3
-                    # assert message.raw_amqp_message.header.priority == 5
-                    # #assert message.raw_amqp_message.footer[b"footer"] == 6
+
+                    assert message.raw_amqp_message.properties.subject == b"subject"
+                    assert message.raw_amqp_message.application_properties[b"application_properties"] == 1
+                    assert message.raw_amqp_message.annotations[b"annotations"] == 2
+                    assert message.raw_amqp_message.delivery_annotations[b"delivery_annotations"] == 3
+                    assert message.raw_amqp_message.header.priority == 5
+                    assert message.raw_amqp_message.footer[b"footer"] == 6
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -2418,3 +2482,157 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 assert len(res) == 3
                 assert receiver.error_raised
                 assert receiver.execution_times >= 4  # at least 1 failure and 3 successful receiving iterator
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    def test_queue_send_amqp_annotated_message(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+
+        with ServiceBusClient.from_connection_string(
+                servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            sequence_body = [b'message', 123.456, True]
+            footer = {'footer_key': 'footer_value'}
+            prop = {"subject": "sequence"}
+            seq_app_prop = {"body_type": "sequence"}
+
+            sequence_message = AmqpAnnotatedMessage(
+                sequence_body=sequence_body,
+                footer=footer,
+                properties=prop,
+                application_properties=seq_app_prop
+            )
+
+            value_body = {b"key": [-123, b'data', False]}
+            header = {"priority": 10}
+            anno = {"ann_key": "ann_value"}
+            value_app_prop = {"body_type": "value"}
+
+            value_message = AmqpAnnotatedMessage(
+                value_body=value_body,
+                header=header,
+                annotations=anno,
+                application_properties=value_app_prop
+            )
+
+            data_body = [b'aa', b'bb', b'cc']
+            data_app_prop = {"body_type": "data"}
+            del_anno = {"delann_key": "delann_value"}
+            data_message = AmqpAnnotatedMessage(
+                data_body=data_body,
+                delivery_annotations=del_anno,
+                application_properties=data_app_prop
+            )
+
+            with pytest.raises(ValueError):
+                AmqpAnnotatedMessage(data_body=data_body, value_body=value_body)
+            with pytest.raises(ValueError):
+                AmqpAnnotatedMessage()
+
+            content = "normalmessage"
+            dict_message = {"body": content}
+            sb_message = ServiceBusMessage(body=content)
+            message_with_ttl = AmqpAnnotatedMessage(data_body=data_body, header=AmqpMessageHeader(time_to_live=60000))
+            uamqp_with_ttl = message_with_ttl._to_outgoing_amqp_message()
+            assert uamqp_with_ttl.properties.absolute_expiry_time == uamqp_with_ttl.properties.creation_time + uamqp_with_ttl.header.time_to_live
+
+            recv_data_msg = recv_sequence_msg = recv_value_msg = normal_msg = 0
+            with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10) as receiver:
+                with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                    batch = sender.create_message_batch()
+                    batch.add_message(data_message)
+                    batch.add_message(value_message)
+                    batch.add_message(sequence_message)
+                    batch.add_message(dict_message)
+                    batch.add_message(sb_message)
+
+                    sender.send_messages(batch)
+                    sender.send_messages([data_message, value_message, sequence_message, dict_message, sb_message])
+                    sender.send_messages(data_message)
+                    sender.send_messages(value_message)
+                    sender.send_messages(sequence_message)
+
+                    for message in receiver:
+                        raw_amqp_message = message.raw_amqp_message
+                        if raw_amqp_message.body_type == AmqpMessageBodyType.DATA:
+                            if raw_amqp_message.application_properties and raw_amqp_message.application_properties.get(b'body_type') == b'data':
+                                body = [data for data in raw_amqp_message.body]
+                                assert data_body == body
+                                assert raw_amqp_message.delivery_annotations[b'delann_key'] == b'delann_value'
+                                assert raw_amqp_message.application_properties[b'body_type'] == b'data'
+                                recv_data_msg += 1
+                            else:
+                                assert str(message) == content
+                                normal_msg += 1
+                        elif raw_amqp_message.body_type == AmqpMessageBodyType.SEQUENCE:
+                            body = [sequence for sequence in raw_amqp_message.body]
+                            assert [sequence_body] == body
+                            assert raw_amqp_message.footer[b'footer_key'] == b'footer_value'
+                            assert raw_amqp_message.properties.subject == b'sequence'
+                            assert raw_amqp_message.application_properties[b'body_type'] == b'sequence'
+                            recv_sequence_msg += 1
+                        elif raw_amqp_message.body_type == AmqpMessageBodyType.VALUE:
+                            assert raw_amqp_message.body == value_body
+                            assert raw_amqp_message.header.priority == 10
+                            assert raw_amqp_message.annotations[b'ann_key'] == b'ann_value'
+                            assert raw_amqp_message.application_properties[b'body_type'] == b'value'
+                            recv_value_msg += 1
+                        
+                        receiver.complete_message(message)
+
+                    assert recv_sequence_msg == 3
+                    assert recv_data_msg == 3
+                    assert recv_value_msg == 3
+                    assert normal_msg == 4
+
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    def test_state_scheduled(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string) as sb_client:
+
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            for i in range(10):
+                message = ServiceBusMessage("message no. {}".format(i))
+                scheduled_time_utc = datetime.utcnow() + timedelta(seconds=30)
+                sequence_number = sender.schedule_messages(message, scheduled_time_utc)
+
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name)
+            with receiver:
+                for msg in receiver.peek_messages():
+                    assert msg.state == ServiceBusMessageState.SCHEDULED
+
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    def test_state_deferred(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+        with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string) as sb_client:
+
+            sender = sb_client.get_queue_sender(servicebus_queue.name)
+            for i in range(10):
+                message = ServiceBusMessage("message no. {}".format(i))
+                sender.send_messages(message)
+
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name)
+            deferred_messages = []
+            with receiver:
+                received_msgs = receiver.receive_messages()
+                for message in received_msgs:
+                    assert message.state == ServiceBusMessageState.ACTIVE
+                    deferred_messages.append(message.sequence_number)
+                    receiver.defer_message(message)
+                if deferred_messages:
+                    received_deferred_msg = receiver.receive_deferred_messages(
+                        sequence_numbers=deferred_messages
+                        )
+                for message in received_deferred_msg:
+                    assert message.state == ServiceBusMessageState.DEFERRED
