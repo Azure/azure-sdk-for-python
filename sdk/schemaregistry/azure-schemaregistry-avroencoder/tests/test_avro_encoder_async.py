@@ -182,6 +182,28 @@ class TestAvroEncoderAsync(AzureRecordedTestCase):
             decoded_content = await sr_avro_encoder.decode(encoded_content_dict, readers_schema=readers_schema_change_name)
             print(decoded_content)
     
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy_async
+    async def test_basic_sr_avro_encoder_with_request_options(self, **kwargs):
+        schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
+        schemaregistry_group = kwargs.pop("schemaregistry_group")
+        sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
+        sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
+
+        schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
+
+        dict_content = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
+        with pytest.raises(TypeError) as e:
+            encoded_message_content = await sr_avro_encoder.encode(dict_content, schema=schema_str, request_options={"fake_kwarg": True})
+        assert 'request() got an unexpected keyword' in str(e.value)
+        encoded_message_content = await sr_avro_encoder.encode(dict_content, schema=schema_str)
+        content_type = encoded_message_content["content_type"]
+        encoded_content = encoded_message_content["content"]
+
+        encoded_content_dict = {"content": encoded_content, "content_type": content_type}
+        with pytest.raises(TypeError) as e:
+            decoded_content = await sr_avro_encoder.decode(encoded_content_dict, request_options={"fake_kwarg": True})
+        assert 'request() got an unexpected keyword' in str(e.value)
 
     ################################################################# 
     ######################### PARSE SCHEMAS #########################
