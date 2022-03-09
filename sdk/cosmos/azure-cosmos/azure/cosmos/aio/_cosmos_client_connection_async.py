@@ -141,9 +141,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if consistency_level is not None:
             self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
 
-        # Keeps the latest request headers from the client.
-        self.last_request_headers = None
-
         # Keeps the latest response headers from the server.
         self.last_response_headers = None
 
@@ -329,7 +326,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         headers = base.GetHeaders(self, initial_headers, "get", "", "", "", {})  # path  # id  # type
 
         request_params = _request_object.RequestObject("databaseaccount", documents._OperationType.Read, url_connection)
-        self.last_request_headers = headers.copy()
         result, self.last_response_headers = await self.__Get("", request_params, headers, **kwargs)
         database_account = documents.DatabaseAccount()
         database_account.DatabasesLink = "/dbs/"
@@ -579,7 +575,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         # ExecuteStoredProcedure will use WriteEndpoint since it uses POST operation
         request_params = _request_object.RequestObject("sprocs", documents._OperationType.ExecuteJavaScript)
-        self.last_request_headers = headers.copy()
         result, self.last_response_headers = await self.__Post(path, request_params, params, headers, **kwargs)
         return result
 
@@ -608,7 +603,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         # Create will use WriteEndpoint since it uses POST operation
 
         request_params = _request_object.RequestObject(typ, documents._OperationType.Create)
-        self.last_request_headers = headers.copy()
         result, self.last_response_headers = await self.__Post(path, request_params, body, headers, **kwargs)
 
         # update session for write request
@@ -723,7 +717,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         # Upsert will use WriteEndpoint since it uses POST operation
         request_params = _request_object.RequestObject(typ, documents._OperationType.Upsert)
-        self.last_request_headers = headers.copy()
         result, self.last_response_headers = await self.__Post(path, request_params, body, headers, **kwargs)
         # update session for write request
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
@@ -964,7 +957,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         headers = base.GetHeaders(self, initial_headers, "get", path, id, typ, options)
         # Read will use ReadEndpoint since it uses GET operation
         request_params = _request_object.RequestObject(typ, documents._OperationType.Read)
-        self.last_request_headers = headers.copy()
         result, self.last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
         return result
 
@@ -1227,7 +1219,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         headers = base.GetHeaders(self, initial_headers, "put", path, id, typ, options)
         # Replace will use WriteEndpoint since it uses PUT operation
         request_params = _request_object.RequestObject(typ, documents._OperationType.Replace)
-        self.last_request_headers = headers.copy()
         result, self.last_response_headers = await self.__Put(path, request_params, resource, headers, **kwargs)
 
         # update session for request mutates data on server side
@@ -1472,7 +1463,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         headers = base.GetHeaders(self, initial_headers, "delete", path, id, typ, options)
         # Delete will use WriteEndpoint since it uses DELETE operation
         request_params = _request_object.RequestObject(typ, documents._OperationType.Delete)
-        self.last_request_headers = headers.copy()
         result, self.last_response_headers = await self.__Delete(path, request_params, headers, **kwargs)
 
         # update session for request mutates data on server side
@@ -2263,7 +2253,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             request_params = _request_object.RequestObject(typ,
                         documents._OperationType.QueryPlan if is_query_plan else documents._OperationType.ReadFeed)
             headers = base.GetHeaders(self, initial_headers, "get", path, id_, typ, options, partition_key_range_id)
-            self.last_request_headers = headers.copy()
             result, self.last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
             if response_hook:
                 response_hook(self.last_response_headers, result)
@@ -2287,9 +2276,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         # Query operations will use ReadEndpoint even though it uses POST(for regular query operations)
         request_params = _request_object.RequestObject(typ, documents._OperationType.SqlQuery)
-        headers = base.GetHeaders(self, initial_headers, "post", path, id_, typ, options, partition_key_range_id)
-        self.last_request_headers = headers.copy()
-        result, self.last_response_headers = await self.__Post(path, request_params, query, headers, **kwargs)
+        req_headers = base.GetHeaders(self, initial_headers, "post", path, id_, typ, options, partition_key_range_id)
+        result, self.last_response_headers = await self.__Post(path, request_params, query, req_headers, **kwargs)
 
         if response_hook:
             response_hook(self.last_response_headers, result)

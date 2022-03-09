@@ -199,7 +199,7 @@ class ContainerProxy(object):
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
         max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
-        if max_integrated_cache_staleness_in_ms:
+        if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
 
