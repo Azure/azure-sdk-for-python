@@ -191,3 +191,27 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
         ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
         table_name = self._get_table_reference()
         ts.delete_table(table_name)
+        
+    @cosmos_decorator
+    @recorded_by_proxy
+    def test_create_table_underscore_name(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
+        table_name = "my_table"
+
+        client = ts.create_table(table_name)
+        assert client.table_name == table_name
+        
+        ts.delete_table(table_name)
+        
+    @cosmos_decorator
+    @recorded_by_proxy
+    def test_create_table_unicode_name(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        # Arrange
+        ts = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
+        table_name = u'啊齄丂狛狜'
+
+        client = ts.create_table(table_name)
+        assert client.table_name == table_name
+        
+        ts.delete_table(table_name)
