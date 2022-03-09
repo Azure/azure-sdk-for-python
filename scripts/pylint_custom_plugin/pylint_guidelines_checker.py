@@ -1740,7 +1740,28 @@ class CheckEnumUpperCase(BaseChecker):
         try:
             for func in node.body:
                 if isinstance(func, astroid.FunctionDef):
-                    self.check_for_admonition(node)
+                    print(func)
+                    # Want to check the bases of the function to see if it includes an Enum
+                    # Then look into the body of an Enum 
+                    print(func.body)
+                    # The body contains an assign statement
+                    print(func.body[0])
+                    # Has Targets and value
+                    print(func.body[0].targets)
+                    print(func.body[0].value) 
+                    # Can get the value of AssignName
+                    print(func.body[0].targets[0].name) # This is the name of the enum 
+
+                    print(func.body[0].targets[0].name.islower())
+                    lowercase = False
+                    for x in func.body[0].targets[0].name:
+                        if x.islower():
+                            lowercase = True
+                   
+                            self.add_message(
+                                    "enum-must-be-uppercase", node=func, confidence=None
+                                )
+                            break
         except Exception:
             logger.debug("Pylint custom checker failed to check enum.")
             pass
