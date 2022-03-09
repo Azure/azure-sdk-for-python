@@ -1706,7 +1706,7 @@ class CheckDocstringAdmonitionNewline(BaseChecker):
     # this line makes it work for async functions
     visit_asyncfunctiondef = visit_functiondef
 
-class CheckEnumUpperCase(BaseChecker):
+class CheckEnum(BaseChecker):
     __implements__ = IAstroidChecker
 
     name = "check-enum"
@@ -1718,6 +1718,12 @@ class CheckEnumUpperCase(BaseChecker):
             "enum-must-be-uppercase",
             "Capitalize enum name.",
         ),
+        "C4747":(
+            "The enum must inherit from CaseInsensitiveEnumMeta. "
+            "https://azure.github.io/azure-sdk/python_implementation.html#extensible-enumerations",
+            "enum-must-inherit-case-insensitive-enum-meta",
+            "Inherit CaseInsensitiveEnumMeta.",
+        ),
     }
     options = (
         (
@@ -1728,6 +1734,14 @@ class CheckEnumUpperCase(BaseChecker):
                 "metavar": "<y_or_n>",
                 "help": "Allow an enum to not be capitalized.",
             },
+            "ignore-enum-must-inherit-case-insensitive-enum-meta",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow an enum to not inherit CaseInsensitiveEnumMeta.",
+            },
+
         ),
     )
 
@@ -1739,14 +1753,19 @@ class CheckEnumUpperCase(BaseChecker):
         """
         try:
             enum_class = False
+            case_insensitive_meta = False
             # Want to check the bases of the function to see if it includes an Enum
             for base in node.bases:
                 if base.name == "Enum":
                     enum_class = True
-                    break
+                if base.name == "CaseInsensitiveEnumMeta":
+                    case_insensitive_meta = True
             
-            # Then look into the body of an Enum 
-           
+            if not case_insensitive_meta:
+                self.add_message(
+                    "enum-must-inherit-case-insensitive-enum-meta", node=node, confidence=None
+                )
+                            
             # The body contains an assign statement
             if enum_class:
                 for nod in node.body:
