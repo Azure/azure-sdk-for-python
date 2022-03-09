@@ -1,10 +1,8 @@
 # Release History
 
-## 12.2.0b1 (Unreleased)
+## 12.2.0 (2022-03-08)
 
 This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
-
-### Features Added
 
 ### Bugs Fixed
 - Update `azure-core` dependency to avoid inconsistent dependencies from being installed.

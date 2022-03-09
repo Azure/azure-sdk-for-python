@@ -62,7 +62,7 @@ from azure.core.pipeline import (
     ABC,
     AbstractContextManager,
 )
-from ...utils._utils import _case_insensitive_dict
+from ...utils._utils import case_insensitive_dict
 from ...utils._pipeline_transport_rest_shared import (
     _format_parameters_helper,
     _prepare_multipart_body_helper,
@@ -170,7 +170,7 @@ class HttpRequest(object):
         # type: (str, str, Mapping[str, str], Any, Any) -> None
         self.method = method
         self.url = url
-        self.headers = _case_insensitive_dict(headers)
+        self.headers = case_insensitive_dict(headers)
         self.files = files
         self.data = data
         self.multipart_mixed_info = None  # type: Optional[Tuple]
@@ -472,7 +472,7 @@ class _HttpClientTransportResponse(_HttpResponseBase):
     def __init__(self, request, httpclient_response):
         super(_HttpClientTransportResponse, self).__init__(request, httpclient_response)
         self.status_code = httpclient_response.status
-        self.headers = _case_insensitive_dict(httpclient_response.getheaders())
+        self.headers = case_insensitive_dict(httpclient_response.getheaders())
         self.reason = httpclient_response.reason
         self.content_type = self.headers.get("Content-Type")
         self.data = None

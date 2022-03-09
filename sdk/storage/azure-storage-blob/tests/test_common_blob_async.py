@@ -287,6 +287,31 @@ class StorageCommonBlobAsyncTest(AsyncStorageTestCase):
         # Assert
         self.assertEqual(data, raw_data*2)
 
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_upload_blob_from_pipe(self, storage_account_name, storage_account_key):
+        # Different OSs have different behavior, so this can't be recorded.
+
+        await self._setup(storage_account_name, storage_account_key)
+        blob_name = self._get_blob_reference()
+        data = b"Hello World"
+
+        reader_fd, writer_fd = os.pipe()
+
+        with os.fdopen(writer_fd, 'wb') as writer:
+            writer.write(data)
+
+        # Act
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        with os.fdopen(reader_fd, mode='rb') as reader:
+            await blob.upload_blob(data=reader, overwrite=True)
+
+        blob_data = await (await blob.download_blob()).readall()
+
+        # Assert
+        self.assertEqual(data, blob_data)
+
     @BlobPreparer()
     @AsyncStorageTestCase.await_prepared_test
     async def test_blob_snapshot_not_exists(self, storage_account_name, storage_account_key):

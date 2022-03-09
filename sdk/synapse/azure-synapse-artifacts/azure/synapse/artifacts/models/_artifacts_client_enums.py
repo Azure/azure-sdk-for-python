@@ -696,6 +696,45 @@ class SchedulerCurrentState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SCHEDULED = "Scheduled"
     ENDED = "Ended"
 
+class ScriptActivityLogDestination(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The destination of logs. Type: string.
+    """
+
+    ACTIVITY_OUTPUT = "ActivityOutput"
+    EXTERNAL_STORE = "ExternalStore"
+
+class ScriptActivityParameterDirection(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The direction of the parameter.
+    """
+
+    INPUT = "Input"
+    OUTPUT = "Output"
+    INPUT_OUTPUT = "InputOutput"
+
+class ScriptActivityParameterType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of the parameter.
+    """
+
+    BOOLEAN = "Boolean"
+    DATE_TIME = "DateTime"
+    DATE_TIME_OFFSET = "DateTimeOffset"
+    DECIMAL = "Decimal"
+    DOUBLE = "Double"
+    GUID = "Guid"
+    INT16 = "Int16"
+    INT32 = "Int32"
+    INT64 = "Int64"
+    SINGLE = "Single"
+    STRING = "String"
+    TIMESPAN = "Timespan"
+
+class ScriptType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The type of the query. Type: string.
+    """
+
+    QUERY = "Query"
+    NON_QUERY = "NonQuery"
+
 class ServiceNowAuthenticationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The authentication type to use.
     """
@@ -825,6 +864,13 @@ class SybaseAuthenticationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     BASIC = "Basic"
     WINDOWS = "Windows"
 
+class TeamDeskAuthenticationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The authentication type to use.
+    """
+
+    BASIC = "Basic"
+    TOKEN = "Token"
+
 class TeradataAuthenticationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """AuthenticationType to be used for connection.
     """
@@ -907,3 +953,10 @@ class WebHookActivityMethod(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """
 
     POST = "POST"
+
+class ZendeskAuthenticationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The authentication type to use.
+    """
+
+    BASIC = "Basic"
+    TOKEN = "Token"

@@ -524,7 +524,7 @@ class TableClient(TablesBaseClient):
         )
 
     @distributed_trace
-    def query_entities(
+    def query_entities(  # pylint: disable=line-too-long
         self,
         query_filter,
         **kwargs
@@ -532,7 +532,8 @@ class TableClient(TablesBaseClient):
         # type: (str, Dict[str, Any]) -> ItemPaged[TableEntity]
         """Lists entities in a table.
 
-        :param str query_filter: Specify a filter to return certain entities
+        :param str query_filter: Specify a filter to return certain entities. For more information
+         on filter formatting, see the `samples documentation <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples#writing-filters>`_.
         :keyword int results_per_page: Number of entities returned per service request.
         :keyword select: Specify desired properties of an entity to return.
         :paramtype select: str or List[str]

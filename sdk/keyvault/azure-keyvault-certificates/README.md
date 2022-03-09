@@ -147,7 +147,7 @@ This section contains code snippets covering common tasks:
 * [Retrieve a Certificate](#retrieve-a-certificate "Retrieve a Certificate")
 * [Update Properties of an existing Certificate](#update-properties-of-an-existing-certificate "Update Properties of an existing Certificate")
 * [Delete a Certificate](#delete-a-certificate "Delete a Certificate")
-* [List Properites of Certificates](#list-properties-of-certificates "List Properties of Certificates")
+* [List Properties of Certificates](#list-properties-of-certificates "List Properties of Certificates")
 * [Asynchronously create a Certificate](#asynchronously-create-a-certificate "Asynchronously create a Certificate")
 * [Asynchronously list properties of Certificates](#asynchronously-list-properties-of-certificates "Asynchronously list properties of Certificates")
 
