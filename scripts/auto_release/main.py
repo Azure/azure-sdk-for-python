@@ -263,8 +263,9 @@ class CodegenTestPR:
 
     # Use the template to update readme and setup by packaging_tools
     def check_sdk_readme_and_setup(self):
-        path = self.sdk_folder
+        path = str(Path(f'sdk/{self.sdk_folder}'))
         print_check_with_path(f'python -m packaging_tools --build-conf azure-mgmt-{self.package_name}',path)
+        log(f' packaging_tools --build-conf successfully ')
 
     def check_pprint_name(self):
         pprint_name = self.package_name.capitalize()
@@ -412,9 +413,8 @@ class CodegenTestPR:
 
     def check_file(self):
         self.check_pprint_name()
-        # self.check_sdk_readme_and_setup()
-        print(f'**{self.sdk_folder=}')
-        self.check_sdk_setup()
+        self.check_sdk_readme_and_setup()
+        # self.check_sdk_setup()
         self.check_version()
         self.check_changelog_file()
         self.check_ci_file()
