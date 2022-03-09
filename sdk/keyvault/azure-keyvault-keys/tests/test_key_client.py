@@ -17,7 +17,9 @@ from azure.keyvault.keys import (
     KeyClient,
     KeyReleasePolicy,
     KeyRotationLifetimeAction,
+    KeyRotationPolicy,
     KeyRotationPolicyAction,
+    KeyType,
 )
 import pytest
 from six import byte2int
@@ -627,31 +629,38 @@ class KeyClientTests(KeysTestCase, KeyVaultTestCase):
         key_name = self.get_resource_name("rotation-key")
         self._create_rsa_key(client, key_name)
 
-        actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.ROTATE, time_after_create="P2M")]
-        updated_policy = client.update_key_rotation_policy(key_name, lifetime_actions=actions)
+        # updating a rotation policy with an empty policy and override
+        actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.rotate, time_after_create="P2M")]
+        updated_policy = client.update_key_rotation_policy(key_name, KeyRotationPolicy(), lifetime_actions=actions)
         fetched_policy = client.get_key_rotation_policy(key_name)
         assert updated_policy.expires_in is None
         _assert_rotation_policies_equal(updated_policy, fetched_policy)
 
         updated_policy_actions = updated_policy.lifetime_actions[0]
         fetched_policy_actions = fetched_policy.lifetime_actions[0]
-        assert updated_policy_actions.action == KeyRotationPolicyAction.ROTATE
+        assert updated_policy_actions.action == KeyRotationPolicyAction.rotate
         assert updated_policy_actions.time_after_create == "P2M"
         assert updated_policy_actions.time_before_expiry is None
         _assert_lifetime_actions_equal(updated_policy_actions, fetched_policy_actions)
 
-        new_actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.NOTIFY, time_before_expiry="P30D")]
-        new_policy = client.update_key_rotation_policy(key_name, expires_in="P90D", lifetime_actions=new_actions)
-        new_fetched_policy = client.get_key_rotation_policy(key_name)
+        # updating with a round-tripped policy and overriding expires_in
+        new_policy = client.update_key_rotation_policy(key_name, policy=updated_policy, expires_in="P90D")
         assert new_policy.expires_in == "P90D"
-        _assert_rotation_policies_equal(new_policy, new_fetched_policy)
+        _assert_lifetime_actions_equal(updated_policy_actions, new_policy.lifetime_actions[0])
 
-        new_policy_actions = new_policy.lifetime_actions[0]
-        new_fetched_policy_actions = new_fetched_policy.lifetime_actions[0]
-        assert new_policy_actions.action == KeyRotationPolicyAction.NOTIFY
-        assert new_policy_actions.time_after_create is None
-        assert new_policy_actions.time_before_expiry == "P30D"
-        _assert_lifetime_actions_equal(new_policy_actions, new_fetched_policy_actions)
+        # updating with a round-tripped policy and overriding lifetime_actions
+        newest_actions = [KeyRotationLifetimeAction(KeyRotationPolicyAction.notify, time_before_expiry="P30D")]
+        newest_policy = client.update_key_rotation_policy(key_name, policy=new_policy, lifetime_actions=newest_actions)
+        newest_fetched_policy = client.get_key_rotation_policy(key_name)
+        assert newest_policy.expires_in == "P90D"
+        _assert_rotation_policies_equal(newest_policy, newest_fetched_policy)
+
+        newest_policy_actions = newest_policy.lifetime_actions[0]
+        newest_fetched_policy_actions = newest_fetched_policy.lifetime_actions[0]
+        assert newest_policy_actions.action == KeyRotationPolicyAction.notify
+        assert newest_policy_actions.time_after_create is None
+        assert newest_policy_actions.time_before_expiry == "P30D"
+        _assert_lifetime_actions_equal(newest_policy_actions, newest_fetched_policy_actions)
 
     @all_api_versions()
     @client_setup
@@ -709,3 +718,15 @@ def test_custom_hook_policy():
 
     client = KeyClient("...", object(), custom_hook_policy=CustomHookPolicy())
     assert isinstance(client._client._config.custom_hook_policy, CustomHookPolicy)
+
+
+def test_case_insensitive_key_type():
+    """Ensure a KeyType can be created regardless of casing since the service can create keys with non-standard casing.
+    See https://github.com/Azure/azure-sdk-for-python/issues/22797
+    """
+    # KeyType with all upper-case value
+    assert KeyType("rsa") == KeyType.rsa
+    # KeyType with all lower-case value
+    assert KeyType("OCT") == KeyType.oct
+    # KeyType with mixed-case value
+    assert KeyType("oct-hsm") == KeyType.oct_hsm

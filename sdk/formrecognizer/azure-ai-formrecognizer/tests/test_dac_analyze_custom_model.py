@@ -18,6 +18,9 @@ DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPrepa
 
 class TestDACAnalyzeCustomModel(FormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @FormRecognizerPreparer()
     def test_analyze_document_none_model_id(self, **kwargs):
         formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
@@ -53,11 +56,11 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
             responses.append(document)
 
         with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         poller = da_client.begin_analyze_document(
             model.model_id,
-            myfile,
+            my_file,
             cls=callback
         )
         document = poller.result()
@@ -99,11 +102,11 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
             responses.append(document)
 
         with open(self.multipage_invoice_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         poller = da_client.begin_analyze_document(
             model.model_id,
-            myfile,
+            my_file,
             cls=callback
         )
         document = poller.result()
@@ -137,7 +140,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         model = poller.result()
 
         with open(self.selection_form_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         responses = []
 
@@ -149,7 +152,7 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
 
         poller = da_client.begin_analyze_document(
             model.model_id,
-            myfile,
+            my_file,
             cls=callback
         )
         document = poller.result()
@@ -180,12 +183,12 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         da_client = client.get_document_analysis_client()
 
         with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         build_poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
         model = build_poller.result()
 
-        poller = da_client.begin_analyze_document(model.model_id, myfile, pages="1")
+        poller = da_client.begin_analyze_document(model.model_id, my_file, pages="1")
         assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']
         result = poller.result()
         assert result
@@ -198,14 +201,14 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         da_client = client.get_document_analysis_client()
 
         with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         build_polling = client.begin_build_model(formrecognizer_storage_container_sas_url, "template")
         model = build_polling.result()
 
         poller = da_client.begin_analyze_document(
             model.model_id,
-            myfile,
+            my_file,
         )
         result = poller.result()
 

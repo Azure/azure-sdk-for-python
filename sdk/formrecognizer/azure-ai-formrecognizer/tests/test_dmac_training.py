@@ -21,6 +21,9 @@ DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPrepa
 
 class TestDMACTraining(FormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -71,7 +74,7 @@ class TestDMACTraining(FormRecognizerTest):
             build_mode="template",
             model_id=model_id,
             description="a v3 model",
-            tags={"frtests": "testvalue"}
+            tags={"testkey": "testvalue"}
         )
         model = poller.result()
 
@@ -81,7 +84,7 @@ class TestDMACTraining(FormRecognizerTest):
         assert model.model_id
         assert model.description == "a v3 model"
         assert model.created_on
-        assert model.tags == {"frtests": "testvalue"}
+        assert model.tags == {"testkey": "testvalue"}
         for name, doc_type in model.doc_types.items():
             assert name
             for key, field in doc_type.field_schema.items():

@@ -23,6 +23,9 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -78,13 +81,13 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
     @recorded_by_proxy_async
     async def test_auto_detect_unsupported_stream_content(self, client):
         with open(self.unsupported_content_py, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         with pytest.raises(HttpResponseError):
             async with client:
                 poller = await client.begin_analyze_document(
                     "prebuilt-receipt",
-                    myfile,
+                    my_file,
                 )
                 result = await poller.result()
 
@@ -103,12 +106,12 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
             responses.append(extracted_receipt)
 
         with open(self.receipt_png, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         async with client:
             poller = await client.begin_analyze_document(
                 "prebuilt-receipt",
-                document=myfile,
+                document=my_file,
                 cls=callback
             )
             result = await poller.result()
@@ -144,12 +147,12 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
             responses.append(extracted_receipt)
 
         with open(self.receipt_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         async with client:
             poller = await client.begin_analyze_document(
                 "prebuilt-receipt",
-                document=myfile,
+                document=my_file,
                 cls=callback
             )
             result = await poller.result()
@@ -245,12 +248,12 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
             responses.append(extracted_receipt)
 
         with open(self.multipage_receipt_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         async with client:
             poller = await client.begin_analyze_document(
                 "prebuilt-receipt",
-                document=myfile,
+                document=my_file,
                 cls=callback
             )
             result = await poller.result()
@@ -351,7 +354,7 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
         assert len(business_card.fields.get("Websites").value) == 1
         assert business_card.fields.get("Websites").value[0].value == "https://www.contoso.com"
 
-        # FIXME: the service isnt returning this value currently
+        # FIXME: the service isn't returning this value currently
         # assert len(business_card.fields.get("OtherPhones").value) == 1
         # assert business_card.fields.get("OtherPhones").value[0].value == "+14257793479"
 
@@ -449,12 +452,12 @@ class TestDACAnalyzePrebuiltsAsync(AsyncFormRecognizerTest):
             responses.append(extracted_invoice)
 
         with open(self.invoice_tiff, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         async with client:
             poller = await client.begin_analyze_document(
                 model="prebuilt-invoice",
-                document=myfile,
+                document=my_file,
                 cls=callback
             )
 
