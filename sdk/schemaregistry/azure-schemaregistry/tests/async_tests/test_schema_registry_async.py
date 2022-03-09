@@ -24,7 +24,7 @@ import os
 
 from azure.schemaregistry.aio import SchemaRegistryClient
 from azure.identity.aio import ClientSecretCredential
-from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async

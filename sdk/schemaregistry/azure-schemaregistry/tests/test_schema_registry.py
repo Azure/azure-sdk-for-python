@@ -23,12 +23,11 @@ import json
 
 from azure.schemaregistry import SchemaRegistryClient
 from azure.identity import ClientSecretCredential
-from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 
 SchemaRegistryEnvironmentVariableLoader = functools.partial(EnvironmentVariableLoader, "schemaregistry", schemaregistry_fully_qualified_namespace="fake_resource.servicebus.windows.net/", schemaregistry_group="fakegroup")
-
 
 class TestSchemaRegistry(AzureRecordedTestCase):
 
