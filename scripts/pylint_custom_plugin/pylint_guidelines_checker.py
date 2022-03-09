@@ -1738,24 +1738,19 @@ class CheckEnumUpperCase(BaseChecker):
         :return: None
         """
         try:
-            print(node)
+        
             # Want to check the bases of the function to see if it includes an Enum
             # Then look into the body of an Enum 
-            print(node.body)
+           
             # The body contains an assign statement
-            print(node.body[0])
+           
             # Has Targets and value
-            print(node.body[0].targets)
-            print(node.body[0].value) 
-            # Can get the value of AssignName
-            print(node.body[0].targets[0].name) # This is the name of the enum 
+           
+            # Can get the value of AssignName from the Targets
 
-            print(node.body[0].targets[0].name.islower())
-            lowercase = False
             for x in node.body[0].targets[0].name:
                 if x.islower():
-                    lowercase = True
-            
+                    # if the name has any lowercase letters
                     self.add_message(
                             "enum-must-be-uppercase", node=node, confidence=None
                         )
