@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import Type
+import platform
 import pytest
 from unittest import TestCase
 try:
@@ -39,6 +40,7 @@ class TestCommunicationTokenCredential(TestCase):
     def test_communicationtokencredential_throws_if_nonstring_token(self):
         self.assertRaises(TypeError, lambda: CommunicationTokenCredential(454))
     
+    @pytest.mark.skipif(platform.python_implementation() == 'PyPy', reason="This tests take too long for pypy")
     def test_communicationtokencredential_throws_if_proactive_refresh_enabled_without_token_refresher(self):
         with pytest.raises(ValueError) as err:
             CommunicationTokenCredential(self.sample_token, proactive_refresh=True)
@@ -50,10 +52,12 @@ class TestCommunicationTokenCredential(TestCase):
                 token_refresher=None)
         assert str(err.value) == "'token_refresher' must not be None."
 
+    @pytest.mark.skipif(platform.python_implementation() == 'PyPy', reason="This tests take too long for pypy")
     def test_communicationtokencredential_static_token_returns_expired_token(self):
         with CommunicationTokenCredential(self.expired_token) as credential:
             self.assertEqual(credential.get_token().token, self.expired_token)
 
+    @pytest.mark.skipif(platform.python_implementation() == 'PyPy', reason="This tests take too long for pypy")
     def test_communicationtokencredential_token_expired_refresh_called(self):
         refresher = MagicMock(
             return_value=create_access_token(self.sample_token))
@@ -62,6 +66,7 @@ class TestCommunicationTokenCredential(TestCase):
         refresher.assert_called_once()
         self.assertEqual(access_token.token, self.sample_token)
 
+    @pytest.mark.skipif(platform.python_implementation() == 'PyPy', reason="This tests take too long for pypy")
     def test_communicationtokencredential_raises_if_refresher_returns_expired_token(self):
         refresher = MagicMock(
             return_value=create_access_token(self.expired_token))
@@ -70,6 +75,7 @@ class TestCommunicationTokenCredential(TestCase):
                 credential.get_token()
             self.assertEqual(refresher.call_count, 1)
 
+    @pytest.mark.skipif(platform.python_implementation() == 'PyPy', reason="This tests take too long for pypy")
     def test_uses_initial_token_as_expected(self):
         refresher = MagicMock(
             return_value=create_access_token(self.expired_token))
@@ -81,6 +87,7 @@ class TestCommunicationTokenCredential(TestCase):
         self.assertEqual(refresher.call_count, 0)
         self.assertEqual(access_token.token, self.sample_token)
 
+    @pytest.mark.skipif(platform.python_implementation() == 'PyPy', reason="This tests take too long for pypy")
     def test_proactive_refresher_should_not_be_called_before_specified_time(self):
         refresh_minutes = 10
         token_validity_minutes = 60
@@ -107,6 +114,7 @@ class TestCommunicationTokenCredential(TestCase):
                 # check that next refresh is always scheduled
                 assert credential._timer is not None
 
+    @pytest.mark.skipif(platform.python_implementation() == 'PyPy', reason="This tests take too long for pypy")
     def test_proactive_refresher_should_be_called_after_specified_time(self):
         refresh_minutes = 10
         token_validity_minutes = 60
@@ -134,6 +142,7 @@ class TestCommunicationTokenCredential(TestCase):
                 # check that next refresh is always scheduled
                 assert credential._timer is not None
 
+    @pytest.mark.skipif(platform.python_implementation() == 'PyPy', reason="This tests take too long for pypy")
     def test_proactive_refresher_keeps_scheduling_again(self):
         refresh_minutes = 10
         token_validity_minutes = 60
@@ -161,6 +170,7 @@ class TestCommunicationTokenCredential(TestCase):
                 # check that next refresh is always scheduled
                 assert credential._timer is not None
         
+    @pytest.mark.skipif(platform.python_implementation() == 'PyPy', reason="This tests take too long for pypy")
     def test_fractional_backoff_applied_when_token_expiring(self):
         token_validity_seconds = 5 * 60
         expiring_token = generate_token_with_custom_expiry(
@@ -184,6 +194,7 @@ class TestCommunicationTokenCredential(TestCase):
             next_milestone = next_milestone / 2
             assert credential._timer.interval == next_milestone       
 
+    @pytest.mark.skipif(platform.python_implementation() == 'PyPy', reason="This tests take too long for pypy")
     def test_refresher_should_not_be_called_when_token_still_valid(self):
         generated_token = generate_token_with_custom_expiry(15 * 60)
         new_token = generate_token_with_custom_expiry(10 * 60)
@@ -198,6 +209,8 @@ class TestCommunicationTokenCredential(TestCase):
         refresher.assert_not_called()
         assert generated_token == access_token.token
 
+
+    @pytest.mark.skipif(platform.python_implementation() == 'PyPy', reason="This tests take too long for pypy")
     def test_exit_cancels_timer(self):
         refresher = MagicMock(return_value=self.sample_token)
         credential = CommunicationTokenCredential(
