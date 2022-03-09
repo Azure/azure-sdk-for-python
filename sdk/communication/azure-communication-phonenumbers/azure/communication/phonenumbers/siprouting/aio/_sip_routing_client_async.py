@@ -98,7 +98,8 @@ class SipRoutingClient(object):
     ):  # type: (...) -> SipTrunk
         """Getter for single SIP trunk.
 
-        :param str trunk_fqdn: FQDN of the desired SIP trunk.
+        :param trunk_fqdn: FQDN of the desired SIP trunk.
+        :type trunk_fqdn: str
         :returns: SIP trunk with specified trunk_fqdn.
         :rtype: ~azure.communication.siprouting.models.SipTrunk
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError, LookupError
@@ -123,7 +124,8 @@ class SipRoutingClient(object):
     ):  # type: (...) -> SipTrunkRoute
         """Getter for single SIP route.
 
-        :param str route_name: Name of the desired SIP route.
+        :param route_name: Name of the desired SIP route.
+        :type route_name: str
         :returns: SIP route with specified route_name.
         :rtype: ~azure.communication.siprouting.models.SipTrunkRoute
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError, LookupError
@@ -293,7 +295,7 @@ class SipRoutingClient(object):
             )
         if len(trunks) > 0:
             await self._patch_trunks_(trunks, **kwargs)
-            
+
         return old_trunks
 
     @distributed_trace_async
