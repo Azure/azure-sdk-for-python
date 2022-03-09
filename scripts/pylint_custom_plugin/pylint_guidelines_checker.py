@@ -1738,23 +1738,28 @@ class CheckEnumUpperCase(BaseChecker):
         :return: None
         """
         try:
-        
+            enum_class = False
             # Want to check the bases of the function to see if it includes an Enum
+            for base in node.bases:
+                if base.name == "Enum":
+                    enum_class = True
+                    break
+            
             # Then look into the body of an Enum 
            
             # The body contains an assign statement
-           
-            # Has Targets and value
-           
-            # Can get the value of AssignName from the Targets
-
-            for x in node.body[0].targets[0].name:
-                if x.islower():
-                    # if the name has any lowercase letters
-                    self.add_message(
-                            "enum-must-be-uppercase", node=node, confidence=None
-                        )
-                    break
+            if enum_class:
+                for nod in node.body:
+                    if isinstance(nod, astroid.Assign):
+                        #an Enum is an assign statement
+            
+                        for x in nod.targets[0].name:
+                            if x.islower():
+                                # if the name has any lowercase letters
+                                self.add_message(
+                                        "enum-must-be-uppercase", node=node, confidence=None
+                                    )
+                                break
         except Exception:
             logger.debug("Pylint custom checker failed to check enum.")
             pass
