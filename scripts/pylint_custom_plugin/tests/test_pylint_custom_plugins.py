@@ -2569,3 +2569,42 @@ class TestCheckDocstringAdmonitionNewline(pylint.testutils.CheckerTestCase):
                 )
         ):
             self.checker.visit_classdef(class_node)
+
+class TestCheckEnumUpperCase(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.CheckEnumUpperCase
+
+    def test_enum(self):
+        function_node = astroid.extract_node(
+            """
+            class MyGoodEnum(str,Enum):
+                ONE = "one"
+                TWO = "two"
+            
+            class MyBadEnum(str,Enum):
+                One = "one"
+            """
+        )
+            
+
+        with self.assertAddsMessages(
+                        pylint.testutils.Message(
+                            msg_id="enum-must-be-uppercase", node=function_node
+                        )
+                ):
+                    self.checker.visit_classdef(function_node)
+    
+    def test_ignore_other(self):
+        function_node = astroid.extract_node(
+            """
+               class SomeClient(object):
+                
+                def __init__(self):
+                    pass
+                def something(self):
+                    my_list = []
+            """
+        )
+            
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(function_node)
