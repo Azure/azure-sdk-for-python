@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+
 import threading
 import time
 import logging
@@ -198,6 +199,7 @@ class ServiceBusReceiver(
         self._session = (
             None if self._session_id is None else ServiceBusSession(self._session_id, self)
         )
+        self._keep_receiving_thread = None
 
     def __iter__(self):
         return self._iter_contextual_wrapper()
@@ -239,30 +241,30 @@ class ServiceBusReceiver(
 
     def __next__(self):
         # Normally this would wrap the yield of the iter, but for a direct next call we just trace imperitively.
-        message = self._inner_next()
-        links = get_receive_links(message)
-        with receive_trace_context_manager(self, links=links):
-            return message
+        try:
+            self._receive_context.set()
+            message = self._inner_next()
+            links = get_receive_links(message)
+            with receive_trace_context_manager(self, links=links):
+                return message
+        finally:
+            self._receive_context.clear()
 
     next = __next__  # for python2.7
 
     def _iter_next(self):
-        try:
-            self._receive_context.set()
-            self._open()
-            if not self._message_iter:
-                self._message_iter = self._handler.receive_messages_iter()
-            uamqp_message = next(self._message_iter)
-            message = self._build_message(uamqp_message)
-            if (
-                self._auto_lock_renewer
-                and not self._session
-                and self._receive_mode != ServiceBusReceiveMode.RECEIVE_AND_DELETE
-            ):
-                self._auto_lock_renewer.register(self, message)
-            return message
-        finally:
-            self._receive_context.clear()
+        self._open()
+        if not self._message_iter:
+            self._message_iter = self._handler.receive_messages_iter()
+        uamqp_message = next(self._message_iter)
+        message = self._build_message(uamqp_message)
+        if (
+            self._auto_lock_renewer
+            and not self._session
+            and self._receive_mode != ServiceBusReceiveMode.RECEIVE_AND_DELETE
+        ):
+            self._auto_lock_renewer.register(self, message)
+        return message
 
     @classmethod
     def _from_connection_string(cls, conn_str, **kwargs):
@@ -327,7 +329,6 @@ class ServiceBusReceiver(
 
     def _create_handler(self, auth):
         # type: (AMQPAuth) -> None
-        keep_alive_interval = 5 if self._prefetch_count == 1 else self._config.keep_alive
         self._handler = ReceiveClient(
             self._get_source(),
             auth=auth,
@@ -344,7 +345,8 @@ class ServiceBusReceiver(
             else None,
             timeout=self._max_wait_time * 1000 if self._max_wait_time else 0,
             prefetch=self._prefetch_count,
-            keep_alive_interval=keep_alive_interval,
+            # If prefetch is 1, then keep_receiving thread serves as the keep_alive
+            keep_alive_interval=self._config.keep_alive if self._prefetch_count != 1 else None,
             shutdown_after_timeout=False,
         )
         if self._prefetch_count == 1:
@@ -368,14 +370,13 @@ class ServiceBusReceiver(
             self._close_handler()
             raise
 
+        if self._prefetch_count == 1:
+            self._keep_receiving_thread = threading.Thread(target=self._keep_receiving)
+            self._keep_receiving_thread.daemon = True
+            self._keep_receiving_thread.start()
+
         if self._auto_lock_renewer and self._session:
             self._auto_lock_renewer.register(self, self.session)
-
-    def _enhanced_message_received(self, message):
-        if self._receive_context.is_set():
-            self._handler._received_messages.put(message)
-        else:
-            message.release()
 
     def _receive(self, max_message_count=None, timeout=None):
         # type: (Optional[int], Optional[float]) -> List[ServiceBusReceivedMessage]
@@ -563,6 +564,16 @@ class ServiceBusReceiver(
         self._message_iter = None
         super(ServiceBusReceiver, self)._close_handler()
 
+    def _keep_receiving(self):
+        while not self._shutdown.is_set() and self._handler:
+            try:
+                self._handler._connection.work()  # pylint: disable=protected-access
+                time.sleep(5)
+                print('I am keeping alive')
+                _LOGGER.debug("Keep receiving alive")
+            except Exception as e:
+                _LOGGER.info("Keep receiving failed %r", e)
+
     @property
     def session(self):
         # type: () -> ServiceBusSession
@@ -586,6 +597,8 @@ class ServiceBusReceiver(
     def close(self):
         # type: () -> None
         super(ServiceBusReceiver, self).close()
+        if self._prefetch_count == 1:
+            self._keep_receiving_thread.join()
         self._message_iter = None  # pylint: disable=attribute-defined-outside-init
 
     def _get_streaming_message_iter(self, max_wait_time=None):
