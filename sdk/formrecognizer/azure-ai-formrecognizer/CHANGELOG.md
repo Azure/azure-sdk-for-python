@@ -7,6 +7,7 @@
 ### Breaking Changes
 - Renamed `begin_copy_model()` to `begin_copy_model_to()`.
 - In `begin_create_composed_model()`, renamed required parameter `model_ids` to `component_model_ids`.
+- Renamed `model_count` and `model_limit` on `AccountInfo` to `document_model_count` and `document_model_limit`.
 
 ### Bugs Fixed
 
