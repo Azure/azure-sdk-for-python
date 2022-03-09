@@ -7,6 +7,7 @@
 Pylint custom checkers for SDK guidelines: C4717 - C4744
 """
 
+from lib2to3.pytree import Base
 import logging
 import astroid
 from pylint.checkers import BaseChecker
@@ -1705,6 +1706,45 @@ class CheckDocstringAdmonitionNewline(BaseChecker):
     # this line makes it work for async functions
     visit_asyncfunctiondef = visit_functiondef
 
+class CheckEnumUpperCase(BaseChecker):
+    __implements__ = IAstroidChecker
+
+    name = "check-enum"
+    priority = -1
+    msgs = {
+        "C4746": (
+            "The enum must use uppercase naming. "
+            "https://azure.github.io/azure-sdk/python_design.html#enumerations",
+            "enum-must-be-uppercase",
+            "Capitalize enum name.",
+        ),
+    }
+    options = (
+        (
+            "ignore-enum-must-be-uppercase",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow an enum to not be capitalized.",
+            },
+        ),
+    )
+
+    def visit_classdef(self, node):
+        """Visits every class docstring.
+
+        :param node: ast.ClassDef
+        :return: None
+        """
+        try:
+            for func in node.body:
+                if isinstance(func, astroid.FunctionDef):
+                    self.check_for_admonition(node)
+        except Exception:
+            logger.debug("Pylint custom checker failed to check enum.")
+            pass
+
 
 # if a linter is registered in this function then it will be checked with pylint
 def register(linter):
@@ -1723,6 +1763,7 @@ def register(linter):
     linter.register_checker(PackageNameDoesNotUseUnderscoreOrPeriod(linter))
     linter.register_checker(ServiceClientUsesNameWithClientSuffix(linter))
     linter.register_checker(CheckDocstringAdmonitionNewline(linter))
+    linter.register_checker(CheckEnumUpperCase(linter))
 
     # disabled by default, use pylint --enable=check-docstrings if you want to use it
     linter.register_checker(CheckDocstringParameters(linter))
