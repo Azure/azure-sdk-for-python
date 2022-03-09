@@ -7,7 +7,6 @@
 Pylint custom checkers for SDK guidelines: C4717 - C4744
 """
 
-from lib2to3.pytree import Base
 import logging
 import astroid
 from pylint.checkers import BaseChecker
