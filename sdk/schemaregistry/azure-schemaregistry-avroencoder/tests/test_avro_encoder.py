@@ -42,6 +42,11 @@ SchemaRegistryEnvironmentVariableLoader = functools.partial(EnvironmentVariableL
 
 class TestAvroEncoder(AzureRecordedTestCase):
 
+    def create_client(self, **kwargs):
+        fully_qualified_namespace = kwargs.pop("fully_qualified_namespace")
+        credential = self.get_credential(SchemaRegistryClient)
+        return self.create_client_from_credential(SchemaRegistryClient, credential, fully_qualified_namespace=fully_qualified_namespace)
+
     def test_raw_avro_encoder(self):
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         schema = avro.schema.parse(schema_str)
@@ -85,7 +90,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
     def test_basic_sr_avro_encoder_with_auto_register_schemas(self, **kwargs):
         schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
         schemaregistry_group = kwargs.pop("schemaregistry_group")
-        sr_client = self.create_basic_client(SchemaRegistryClient, fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
+        sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
 
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
@@ -152,7 +157,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
     def test_basic_sr_avro_encoder_without_auto_register_schemas(self, **kwargs):
         schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
         schemaregistry_group = kwargs.pop("schemaregistry_group")
-        sr_client = self.create_basic_client(SchemaRegistryClient, fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
+        sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group)
 
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
@@ -178,8 +183,8 @@ class TestAvroEncoder(AzureRecordedTestCase):
     @SchemaRegistryEnvironmentVariableLoader()
     @recorded_by_proxy
     def test_basic_sr_avro_encoder_decode_readers_schema(self, **kwargs):
-        sr_client = self.create_basic_client(SchemaRegistryClient, fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
+        sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         schemaregistry_group = kwargs.pop("schemaregistry_group")
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
 
@@ -215,7 +220,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
     def test_basic_sr_avro_encoder_with_request_options(self, **kwargs):
         schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
         schemaregistry_group = kwargs.pop("schemaregistry_group")
-        sr_client = self.create_basic_client(SchemaRegistryClient, fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
+        sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
 
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
@@ -243,7 +248,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
     def test_parse_invalid_json_string(self, **kwargs):
         schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
         schemaregistry_group = kwargs.pop("schemaregistry_group")
-        sr_client = self.create_basic_client(SchemaRegistryClient, fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
+        sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
         invalid_schema = {
             "name":"User",
@@ -262,7 +267,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
     def test_parse_primitive_types(self, **kwargs):
         schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
         schemaregistry_group = kwargs.pop("schemaregistry_group")
-        sr_client = self.create_basic_client(SchemaRegistryClient, fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
+        sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
 
         primitive_string = "string"
@@ -276,7 +281,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
     def test_parse_fixed_types(self, **kwargs):
         schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
         schemaregistry_group = kwargs.pop("schemaregistry_group")
-        sr_client = self.create_basic_client(SchemaRegistryClient, fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
+        sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
 
         # avro bug: should give warning from IgnoredLogicalType error since precision < 0
@@ -306,7 +311,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
     def test_parse_invalid_type(self, **kwargs):
         schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
         schemaregistry_group = kwargs.pop("schemaregistry_group")
-        sr_client = self.create_basic_client(SchemaRegistryClient, fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
+        sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
 
         schema_no_type = """{
@@ -333,7 +338,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
     def test_parse_record_name(self, **kwargs):
         schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
         schemaregistry_group = kwargs.pop("schemaregistry_group")
-        sr_client = self.create_basic_client(SchemaRegistryClient, fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
+        sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
 
         schema_name_has_dot = """{
@@ -411,7 +416,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
     def test_parse_error_schema_as_record(self, **kwargs):
         schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
         schemaregistry_group = kwargs.pop("schemaregistry_group")
-        sr_client = self.create_basic_client(SchemaRegistryClient, fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
+        sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
 
         schema_error_type = """{
@@ -431,7 +436,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
     def test_parse_record_fields(self, **kwargs):
         schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
         schemaregistry_group = kwargs.pop("schemaregistry_group")
-        sr_client = self.create_basic_client(SchemaRegistryClient, fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
+        sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
 
         schema_no_fields = """{
@@ -514,7 +519,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
     def test_encode_primitive(self, **kwargs):
         schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
         schemaregistry_group = kwargs.pop("schemaregistry_group")
-        sr_client = self.create_basic_client(SchemaRegistryClient, fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
+        sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
 
         null_type = """{"type": "null"}"""
@@ -526,7 +531,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
     def test_encode_record(self, **kwargs):
         schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
         schemaregistry_group = kwargs.pop("schemaregistry_group")
-        sr_client = self.create_basic_client(SchemaRegistryClient, fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
+        sr_client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         sr_avro_encoder = AvroEncoder(client=sr_client, group_name=schemaregistry_group, auto_register_schemas=True)
 
         # add below to schema fields later if needed
