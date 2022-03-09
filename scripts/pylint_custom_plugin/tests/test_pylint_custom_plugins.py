@@ -2576,15 +2576,10 @@ class TestCheckEnumUpperCase(pylint.testutils.CheckerTestCase):
     def test_enum(self):
         function_node = astroid.extract_node(
             """
-            class MyGoodEnum(str,Enum):
-                ONE = "one"
-                TWO = "two"
-            
             class MyBadEnum(str,Enum):
                 One = "one"
             """
         )
-            
 
         with self.assertAddsMessages(
                         pylint.testutils.Message(
@@ -2597,14 +2592,10 @@ class TestCheckEnumUpperCase(pylint.testutils.CheckerTestCase):
         function_node = astroid.extract_node(
             """
                class SomeClient(object):
-                
-                def __init__(self):
-                    pass
-                def something(self):
                     my_list = []
             """
         )
-            
+
 
         with self.assertNoMessages():
             self.checker.visit_classdef(function_node)
