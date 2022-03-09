@@ -36,8 +36,6 @@ with open('CHANGELOG.md', encoding='utf-8') as f:
     changelog = f.read()
 
 setup(
-    name=PACKAGE_NAME,
-    version=version,
     description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
     long_description=readme + '\n\n' + changelog,
     long_description_content_type='text/markdown',
@@ -54,8 +52,6 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python :: 3.9',
-        'Programming Language :: Python :: 3.10',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
