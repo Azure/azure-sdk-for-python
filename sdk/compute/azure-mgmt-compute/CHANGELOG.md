@@ -1,5 +1,19 @@
 # Release History
 
+## 26.1.0 (2022-02-28)
+
+**Features**
+
+  - Model Disk has a new parameter data_access_auth_mode
+  - Model DiskUpdate has a new parameter data_access_auth_mode
+  - Model GalleryImage has a new parameter architecture
+  - Model GalleryImageUpdate has a new parameter architecture
+  - Model PurchasePlan has a new parameter promotion_code
+  - Model Snapshot has a new parameter data_access_auth_mode
+  - Model SnapshotUpdate has a new parameter data_access_auth_mode
+  - Model SupportedCapabilities has a new parameter architecture
+  - Model VirtualMachineImage has a new parameter architecture
+
 ## 26.0.0 (2022-02-14)
 
 **Features**

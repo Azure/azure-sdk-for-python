@@ -66,6 +66,7 @@ from ._models_py3 import UserArtifactSource
 
 from ._compute_management_client_enums import (
     AggregatedReplicationState,
+    Architecture,
     ConfidentialVMEncryptionType,
     GalleryApplicationVersionPropertiesProvisioningState,
     GalleryExpandParams,
@@ -146,6 +147,7 @@ __all__ = [
     'UserArtifactManage',
     'UserArtifactSource',
     'AggregatedReplicationState',
+    'Architecture',
     'ConfidentialVMEncryptionType',
     'GalleryApplicationVersionPropertiesProvisioningState',
     'GalleryExpandParams',

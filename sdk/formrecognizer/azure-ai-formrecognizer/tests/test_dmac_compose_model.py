@@ -19,6 +19,9 @@ DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPrepa
 
 class TestTraining(FormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -33,7 +36,7 @@ class TestTraining(FormRecognizerTest):
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url, "template", model_id=model_id_2, description="model2")
         model_2 = poller.result()
 
-        poller = client.begin_create_composed_model([model_1.model_id, model_2.model_id], model_id=composed_id, description="my composed model", tags={"frtests": "testvalue"})
+        poller = client.begin_create_composed_model([model_1.model_id, model_2.model_id], model_id=composed_id, description="my composed model", tags={"testkey": "testvalue"})
 
         composed_model = poller.result()
         if self.is_live:
@@ -42,15 +45,13 @@ class TestTraining(FormRecognizerTest):
         assert composed_model.model_id
         assert composed_model.description == "my composed model"
         assert composed_model.created_on
-        assert composed_model.tags == {"frtests": "testvalue"}
+        assert composed_model.tags == {"testkey": "testvalue"}
         for name, doc_type in composed_model.doc_types.items():
             assert name
             for key, field in doc_type.field_schema.items():
                 assert key
                 assert field["type"]
                 assert doc_type.field_confidence[key] is not None
-
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -82,8 +83,6 @@ class TestTraining(FormRecognizerTest):
         document_model_dict = document_model.to_dict()
         document_model_from_dict = DocumentModel.from_dict(document_model_dict)
         self.assertModelTransformCorrect(document_model_from_dict, generated)
-
-        return {}
 
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
@@ -126,5 +125,3 @@ class TestTraining(FormRecognizerTest):
         assert poller.resource_location_url
         assert poller.created_on
         assert poller.last_updated_on
-
-        return {}

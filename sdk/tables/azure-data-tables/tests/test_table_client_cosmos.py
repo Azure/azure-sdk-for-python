@@ -345,7 +345,7 @@ class TestTableClientUnit(TableTestCase):
             assert service.credential.named_key.name == self.tables_cosmos_account_name
             assert service.credential.named_key.key == self.tables_primary_cosmos_account_key
             assert service._primary_endpoint.startswith('https://www.mydomain.com')
-
+            assert service.scheme == 'https'
 
     def test_create_service_with_conn_str_custom_domain_trailing_slash(self):
         # Arrange
@@ -425,6 +425,7 @@ class TestTableClientUnit(TableTestCase):
             assert service.credential.named_key.name == self.tables_cosmos_account_name
             assert service.credential.named_key.key == self.tables_primary_cosmos_account_key
             assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
+            assert service.scheme == 'http'
 
         service = TableServiceClient(endpoint=custom_account_url)
         assert service.account_name == "custom"
@@ -432,6 +433,7 @@ class TestTableClientUnit(TableTestCase):
         assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
         # mine doesnt have a question mark at the end
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
+        assert service.scheme == 'http'
 
         service = TableClient(endpoint=custom_account_url, table_name="foo")
         assert service.account_name == "custom"
@@ -439,6 +441,7 @@ class TestTableClientUnit(TableTestCase):
         assert service.credential ==  None
         assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
+        assert service.scheme == 'http'
 
         service = TableClient.from_table_url("http://local-machine:11002/custom/account/path/foo" + self.sas_token.signature)
         assert service.account_name == "custom"
@@ -446,6 +449,7 @@ class TestTableClientUnit(TableTestCase):
         assert service.credential ==  None
         assert service._primary_hostname ==  'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path')
+        assert service.scheme == 'http'
 
     def test_create_table_client_with_complete_table_url(self):
         # Arrange
@@ -511,6 +515,7 @@ class TestTableClientUnit(TableTestCase):
         assert client.credential.named_key.name == 'localhost'
         assert client.credential.named_key.key == self.tables_primary_cosmos_account_key
         assert client._cosmos_endpoint
+        assert client.scheme == 'http'
 
         client = TableServiceClient("http://localhost:8902/", credential=emulator_credential)
         assert client.url == "http://localhost:8902"
@@ -518,6 +523,7 @@ class TestTableClientUnit(TableTestCase):
         assert client.credential.named_key.name == 'localhost'
         assert client.credential.named_key.key == self.tables_primary_cosmos_account_key
         assert client._cosmos_endpoint
+        assert client.scheme == 'http'
 
         table = TableClient.from_connection_string(emulator_connstr, 'tablename')
         assert table.url == "http://localhost:8902"
@@ -526,6 +532,7 @@ class TestTableClientUnit(TableTestCase):
         assert table.credential.named_key.name == 'localhost'
         assert table.credential.named_key.key == self.tables_primary_cosmos_account_key
         assert table._cosmos_endpoint
+        assert table.scheme == 'http'
 
         table = TableClient("http://localhost:8902/", "tablename", credential=emulator_credential)
         assert table.url == "http://localhost:8902"
@@ -534,6 +541,7 @@ class TestTableClientUnit(TableTestCase):
         assert table.credential.named_key.name == 'localhost'
         assert table.credential.named_key.key == self.tables_primary_cosmos_account_key
         assert table._cosmos_endpoint
+        assert table.scheme == 'http'
 
         table = TableClient.from_table_url("http://localhost:8902/Tables('tablename')", credential=emulator_credential)
         assert table.url == "http://localhost:8902"
@@ -542,6 +550,7 @@ class TestTableClientUnit(TableTestCase):
         assert table.credential.named_key.name == 'localhost'
         assert table.credential.named_key.key == self.tables_primary_cosmos_account_key
         assert table._cosmos_endpoint
+        assert table.scheme == 'http'
 
     def test_closing_pipeline_client(self):
         # Arrange

@@ -50,6 +50,8 @@ steps:
 
   - ${{ parameters.BeforeTestSteps }}
 
+  - template: /eng/pipelines/templates/steps/seed-virtualenv-wheels.yml
+
   - task: PythonScript@0
     displayName: 'Run Tests'
     inputs:

@@ -20,6 +20,9 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 class TestDACAnalyzeLayout(FormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -54,8 +57,6 @@ class TestDACAnalyzeLayout(FormRecognizerTest):
 
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
-
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -92,8 +93,6 @@ class TestDACAnalyzeLayout(FormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -129,16 +128,14 @@ class TestDACAnalyzeLayout(FormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
-        return {}
-
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
     def test_layout_multipage_table_span_pdf(self, client):
         with open(self.multipage_table_pdf, "rb") as fd:
-            myfile = fd.read()
-        poller = client.begin_analyze_document("prebuilt-layout", myfile)
+            my_file = fd.read()
+        poller = client.begin_analyze_document("prebuilt-layout", my_file)
         layout = poller.result()
         assert len(layout.tables) == 3
         assert layout.tables[0].row_count == 30
@@ -170,5 +167,3 @@ class TestDACAnalyzeLayout(FormRecognizerTest):
         poller = client.begin_analyze_document("prebuilt-layout", document, pages="1-2, 3")
         result = poller.result()
         assert len(result.pages) == 3
-
-        return {}
