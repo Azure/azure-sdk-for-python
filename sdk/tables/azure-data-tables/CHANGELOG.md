@@ -1,10 +1,11 @@
 # Release History
 
-## 12.2.1 (Unreleased)
+## 12.2.1 (2022-03-08)
 
 ### Bugs Fixed
 * Fixed hard-coded URL scheme in batch requests (#21953)
 * Improved documentation for query formatting in `query_entities` APIs (#23235)
+* Removed unsecure debug logging
 
 ### Other Changes
 * Python 2.7 is no longer supported. Please use Python version 3.6 or later.

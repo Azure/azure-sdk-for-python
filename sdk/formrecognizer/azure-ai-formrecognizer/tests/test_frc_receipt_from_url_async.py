@@ -21,6 +21,9 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 
 class TestReceiptFromUrlAsync(AsyncFormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async

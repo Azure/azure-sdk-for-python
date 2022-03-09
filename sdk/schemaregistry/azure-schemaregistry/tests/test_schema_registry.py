@@ -136,3 +136,78 @@ class TestSchemaRegistry(AzureRecordedTestCase):
 
         with pytest.raises(HttpResponseError):
             client.get_schema('a' * 32)
+
+    @SchemaRegistryPowerShellPreparer()
+    def test_register_schema_errors(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        client = self.create_client(schemaregistry_fully_qualified_namespace)
+        name = 'test-schema'
+        schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}"""
+        format = "Avro"
+
+        with pytest.raises(ValueError) as e:
+            client.register_schema(None, name, schema_str, format)
+
+        with pytest.raises(ValueError) as e:
+            client.register_schema(schemaregistry_group, None, schema_str, format)
+
+        with pytest.raises(HttpResponseError) as e:
+            client.register_schema(schemaregistry_group, name, None, format)
+        assert e.value.error.code == 'InvalidRequest'
+        assert e.value.status_code == 400
+        assert e.value.reason == 'Bad Request'
+
+        with pytest.raises(AttributeError) as e:
+            client.register_schema(schemaregistry_group, name, schema_str, None)
+
+        with pytest.raises(HttpResponseError) as e:
+            client.register_schema(schemaregistry_group, name, schema_str, 'invalid-format')
+        assert e.value.error.code == 'InvalidSchemaType'
+        assert e.value.status_code == 415
+        assert e.value.reason == 'Unsupported Media Type'
+
+    
+    @SchemaRegistryPowerShellPreparer()
+    def test_get_schema_properties_errors(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        client = self.create_client(schemaregistry_fully_qualified_namespace)
+        name = 'test-schema'
+        schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}"""
+        format = "Avro"
+
+        with pytest.raises(ValueError) as e:
+            client.get_schema_properties(None, name, schema_str, format)
+
+        with pytest.raises(ValueError) as e:
+            client.get_schema_properties(schemaregistry_group, None, schema_str, format)
+
+        with pytest.raises(HttpResponseError) as e:
+            client.get_schema_properties(schemaregistry_group, name, None, format)
+        assert e.value.error.code == 'InvalidRequest'
+        assert e.value.status_code == 400
+        assert e.value.reason == 'Bad Request'
+
+        with pytest.raises(AttributeError) as e:
+            client.get_schema_properties(schemaregistry_group, name, schema_str, None)
+
+        with pytest.raises(HttpResponseError) as e:
+            client.get_schema_properties(schemaregistry_group, name, schema_str, 'invalid-format')
+        assert e.value.error.code == 'InvalidSchemaType'
+        assert e.value.status_code == 415
+        assert e.value.reason == 'Unsupported Media Type'
+
+        with pytest.raises(HttpResponseError) as e:
+            client.get_schema_properties(schemaregistry_group, 'never-registered', schema_str, format)
+        assert e.value.error.code == 'ItemNotFound'
+        assert e.value.status_code == 404
+        assert e.value.reason == 'Not Found'
+
+    @SchemaRegistryPowerShellPreparer()
+    def test_get_schema_errors(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
+        client = self.create_client(schemaregistry_fully_qualified_namespace)
+        with pytest.raises(ValueError) as e:
+            client.get_schema(None)
+
+        with pytest.raises(HttpResponseError) as e:
+            client.get_schema('fakeschemaid')
+        assert e.value.error.code == 'InvalidRequest'
+        assert e.value.status_code == 400
+        assert e.value.reason == 'Bad Request'

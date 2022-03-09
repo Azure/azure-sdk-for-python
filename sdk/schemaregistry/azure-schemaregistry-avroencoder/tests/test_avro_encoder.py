@@ -212,7 +212,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
     
     @SchemaRegistryEnvironmentVariableLoader()
     @recorded_by_proxy
-    def test_basic_sr_avro_encoder_with_request_kwargs(self, **kwargs):
+    def test_basic_sr_avro_encoder_with_request_options(self, **kwargs):
         schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
         schemaregistry_group = kwargs.pop("schemaregistry_group")
         sr_client = self.create_basic_client(SchemaRegistryClient, fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
@@ -222,7 +222,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
 
         dict_content = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
         with pytest.raises(TypeError) as e:
-            encoded_message_content = sr_avro_encoder.encode(dict_content, schema=schema_str, request_kwargs={"fake_kwarg": True})
+            encoded_message_content = sr_avro_encoder.encode(dict_content, schema=schema_str, request_options={"fake_kwarg": True})
         assert 'request() got an unexpected keyword' in str(e.value)
         encoded_message_content = sr_avro_encoder.encode(dict_content, schema=schema_str)
         content_type = encoded_message_content["content_type"]
@@ -230,7 +230,7 @@ class TestAvroEncoder(AzureRecordedTestCase):
 
         encoded_content_dict = {"content": encoded_content, "content_type": content_type}
         with pytest.raises(TypeError) as e:
-            decoded_content = sr_avro_encoder.decode(encoded_content_dict, request_kwargs={"fake_kwarg": True})
+            decoded_content = sr_avro_encoder.decode(encoded_content_dict, request_options={"fake_kwarg": True})
         assert 'request() got an unexpected keyword' in str(e.value)
 
 

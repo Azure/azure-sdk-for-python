@@ -97,6 +97,20 @@ The keyword-argument `enable_cross_partition_query` accepts 2 options: `None` (d
 
 When using queries that try to find items based on an **id** value, always make sure you are passing in a string type variable. Azure Cosmos DB only allows string id values and if you use any other datatype, this SDK will return no results and no error messages.
 
+## Note on client consistency levels
+
+As of release version 4.3.0b3, if a user does not pass in an explicit consistency level to their client initialization,
+their client will use their database account's default level. Previously, the default was being set to `Session` consistency.
+If for some reason you'd like to keep doing this, you can change your client initialization to include the explicit parameter for this like shown:
+```Python
+from azure.cosmos import CosmosClient
+
+import os
+URL = os.environ['ACCOUNT_URI']
+KEY = os.environ['ACCOUNT_KEY']
+client = CosmosClient(URL, credential=KEY, consistency_level='Session')
+```
+
 ## Limitations
 
 Currently the features below are **not supported**. For alternatives options, check the **Workarounds** section below.
@@ -114,7 +128,6 @@ Currently the features below are **not supported**. For alternatives options, ch
 * Change Feed: Read from the beggining
 * Change Feed: Pull model
 * Cross-partition ORDER BY for mixed types
-* Cross partition queries do not handle partition splits (410 Gone errors)
 
 ### Control Plane Limitations:
 
@@ -138,7 +151,7 @@ If you want to use Python SDK to perform bulk inserts to Cosmos DB, the best alt
 
 ### Control Plane Limitations Workaround
 
-Typically you can use [Azure Portal](https://portal.azure.com/), [Azure Cosmos DB Resource Provider REST API](https://docs.microsoft.com/rest/api/cosmos-db-resource-provider), [Azure CLI](https://docs.microsoft.com/cli/azure/azure-cli-reference-for-cosmos-db) or [PowerShell](https://docs.microsoft.com/azure/cosmos-db/manage-with-powershell) for the control plane unsupported limitations.
+Typically, you can use [Azure Portal](https://portal.azure.com/), [Azure Cosmos DB Resource Provider REST API](https://docs.microsoft.com/rest/api/cosmos-db-resource-provider), [Azure CLI](https://docs.microsoft.com/cli/azure/azure-cli-reference-for-cosmos-db) or [PowerShell](https://docs.microsoft.com/azure/cosmos-db/manage-with-powershell) for the control plane unsupported limitations.
 
 ### AAD Support Workaround
 

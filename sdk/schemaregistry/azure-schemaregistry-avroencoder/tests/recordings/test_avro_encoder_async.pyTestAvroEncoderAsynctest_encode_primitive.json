@@ -10,7 +10,7 @@
         "Content-Length": "16",
         "Content-Type": "application/json; serialization=Avro",
         "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "2220a0ff-9fcd-11ec-962b-9c2976df0bde"
+        "x-ms-client-request-id": "afefa138-9fce-11ec-ba41-9c2976df0bde"
       },
       "RequestBody": {
         "type": "null"
@@ -18,7 +18,7 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Wed, 09 Mar 2022 17:19:52 GMT",
+        "Date": "Wed, 09 Mar 2022 17:31:00 GMT",
         "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/null/versions/1?api-version=2021-10",
         "Schema-Group-Name": "fakegroup",
         "Schema-Id": "a172d38467034fb7861db0bd5018377f",

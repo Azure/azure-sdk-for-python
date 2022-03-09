@@ -247,12 +247,12 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         :keyword file_last_write_time:
             Last write time for the file.
         :paramtype file_last_write_time:~datetime.datetime or str
-        :keyword dict(str,str) metadata:
+        :keyword Dict[str,str] metadata:
             A name-value pair to associate with a file storage object.
-        :keyword lease:
+        :keyword destination_lease:
             Required if the destination file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
-        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
+        :paramtype destination_lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :returns: The new Directory Client.
         :rtype: ~azure.storage.fileshare.ShareDirectoryClient
         """
@@ -283,14 +283,14 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
 
-        access_conditions = get_dest_access_conditions(kwargs.pop('lease', None))
+        destination_access_conditions = get_dest_access_conditions(kwargs.pop('destination_lease', None))
 
         try:
             await new_directory_client._client.directory.rename(  # pylint: disable=protected-access
                 self.url,
                 timeout=timeout,
                 replace_if_exists=overwrite,
-                destination_lease_access_conditions=access_conditions,
+                destination_lease_access_conditions=destination_access_conditions,
                 headers=headers,
                 **kwargs)
 
@@ -377,7 +377,8 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
 
         :kwarg int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: boolean
+        :returns: True if the directory exists, False otherwise.
+        :rtype: bool
         """
         try:
             await self._client.directory.get_properties(**kwargs)
