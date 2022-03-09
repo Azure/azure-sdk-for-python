@@ -20,7 +20,7 @@
     "*.tgz",
     "*.pfx",
     "sdk/**/azure-mgmt**/**",
-    "sdk/**/azure-mgmt**/ci.yml",
+    "sdk/**/ci.yml",
     "sdk/**/azure-cognitiveservices**",
     "sdk/**/_generated/**",
     "**/*requirement*.txt",
