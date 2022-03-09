@@ -261,8 +261,8 @@ class TablesBaseClient(AccountHostsMixin):
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
-    def _batch_send(self, *reqs, **kwargs):
-        # type: (List[HttpRequest], Any) -> List[Mapping[str, Any]]
+    def _batch_send(self, table_name, *reqs, **kwargs):
+        # type: (str, List[HttpRequest], Any) -> List[Mapping[str, Any]]
         """Given a series of request, do a Storage batch call."""
         # Pop it here, so requests doesn't feel bad about additional kwarg
         policies = [StorageHeadersPolicy()]
@@ -296,7 +296,7 @@ class TablesBaseClient(AccountHostsMixin):
                 error_type=RequestTooLargeError)
         if response.status_code != 202:
             decoded = _decode_error(response)
-            _validate_tablename_error(decoded, self.table_name)
+            _validate_tablename_error(decoded, table_name)
             raise decoded
 
         parts = list(response.parts())
@@ -311,7 +311,7 @@ class TablesBaseClient(AccountHostsMixin):
                 response=error_parts[0],
                 error_type=TableTransactionError
             )
-            _validate_tablename_error(decoded, self.table_name)
+            _validate_tablename_error(decoded, table_name)
             raise decoded
         return [extract_batch_part_metadata(p) for p in parts]
 

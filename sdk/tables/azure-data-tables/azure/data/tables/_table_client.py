@@ -725,4 +725,4 @@ class TableClient(TablesBaseClient):
                 "The value of 'operations' must be an iterator "
                 "of Tuples. Please check documentation for correct Tuple format."
             )
-        return self._batch_send(*batched_requests.requests, **kwargs)  # type: ignore
+        return self._batch_send(self.table_name, *batched_requests.requests, **kwargs)  # type: ignore

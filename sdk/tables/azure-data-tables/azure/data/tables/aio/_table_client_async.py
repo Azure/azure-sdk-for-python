@@ -718,4 +718,4 @@ class TableClient(AsyncTablesBaseClient):
                   "of Tuples. Please check documentation for correct Tuple format."
                 )
 
-        return await self._batch_send(*batched_requests.requests, **kwargs)
+        return await self._batch_send(self.table_name, *batched_requests.requests, **kwargs)

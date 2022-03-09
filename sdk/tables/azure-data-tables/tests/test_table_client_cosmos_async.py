@@ -117,9 +117,14 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 with pytest.raises(ValueError) as error:
                     await client.create_table()
                 assert "Table names names must contain from 1-255 characters" in str(error.value)
-                with pytest.raises(ValueError) as error:
-                    await client.delete_table()
-                assert "Table names names must contain from 1-255 characters" in str(error.value)
+                try:
+                    with pytest.raises(ValueError) as error:
+                        await client.delete_table()
+                    assert "Table names names must contain from 1-255 characters" in str(error.value)
+                except HttpResponseError as error:
+                    # Delete table returns a MethodNotAllowed for tablename == "\"
+                    if error.error_code != 'MethodNotAllowed':
+                        raise
                 with pytest.raises(ValueError) as error:
                     await client.create_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
                 assert "Table names names must contain from 1-255 characters" in str(error.value)

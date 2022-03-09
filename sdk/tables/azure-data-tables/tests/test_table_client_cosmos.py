@@ -123,9 +123,14 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
             with pytest.raises(ValueError) as error:
                 client.create_table()
             assert "Table names names must contain from 1-255 characters" in str(error.value)
-            with pytest.raises(ValueError) as error:
-                client.delete_table()
-            assert "Table names names must contain from 1-255 characters" in str(error.value)
+            try:
+                with pytest.raises(ValueError) as error:
+                    client.delete_table()
+                assert "Table names names must contain from 1-255 characters" in str(error.value)
+            except HttpResponseError as error:
+                    # Delete table returns a MethodNotAllowed for tablename == "\"
+                    if error.error_code != 'MethodNotAllowed':
+                        raise
             with pytest.raises(ValueError) as error:
                 client.create_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
             assert "Table names names must contain from 1-255 characters" in str(error.value)
