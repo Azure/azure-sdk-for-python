@@ -40,7 +40,6 @@ class TestCommunicationTokenCredential(TestCase):
     def test_communicationtokencredential_throws_if_nonstring_token(self):
         self.assertRaises(TypeError, lambda: CommunicationTokenCredential(454))
     
-    @pytest.mark.skipif(platform.python_implementation() == 'PyPy', reason="This tests take too long for pypy")
     def test_communicationtokencredential_throws_if_proactive_refresh_enabled_without_token_refresher(self):
         with pytest.raises(ValueError) as err:
             CommunicationTokenCredential(self.sample_token, proactive_refresh=True)
@@ -52,12 +51,10 @@ class TestCommunicationTokenCredential(TestCase):
                 token_refresher=None)
         assert str(err.value) == "'token_refresher' must not be None."
 
-    @pytest.mark.skipif(platform.python_implementation() == 'PyPy', reason="This tests take too long for pypy")
     def test_communicationtokencredential_static_token_returns_expired_token(self):
         with CommunicationTokenCredential(self.expired_token) as credential:
             self.assertEqual(credential.get_token().token, self.expired_token)
 
-    @pytest.mark.skipif(platform.python_implementation() == 'PyPy', reason="This tests take too long for pypy")
     def test_communicationtokencredential_token_expired_refresh_called(self):
         refresher = MagicMock(
             return_value=create_access_token(self.sample_token))
@@ -66,7 +63,6 @@ class TestCommunicationTokenCredential(TestCase):
         refresher.assert_called_once()
         self.assertEqual(access_token.token, self.sample_token)
 
-    @pytest.mark.skipif(platform.python_implementation() == 'PyPy', reason="This tests take too long for pypy")
     def test_communicationtokencredential_raises_if_refresher_returns_expired_token(self):
         refresher = MagicMock(
             return_value=create_access_token(self.expired_token))
