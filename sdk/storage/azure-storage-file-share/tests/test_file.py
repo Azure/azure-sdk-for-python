@@ -339,6 +339,31 @@ class StorageFileTest(StorageTestCase):
         self.assertIsNotNone(file_properties.last_write_time)
 
     @FileSharePreparer()
+    def test_create_file_set_smb_properties(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        file_client = self._get_file_client()
+
+        file_attributes = NTFSAttributes(read_only=True, archive=True)
+        file_creation_time = file_last_write_time = file_change_time = datetime.utcnow()
+
+        # Act
+        file_client.create_file(
+            size=1024,
+            file_attributes=file_attributes,
+            file_creation_time=file_creation_time,
+            file_last_write_time=file_last_write_time,
+            file_change_time=file_change_time)
+        file_properties = file_client.get_file_properties()
+
+        # Assert
+        self.assertIsNotNone(file_properties)
+        self.assertEqual(file_creation_time, file_properties.creation_time)
+        self.assertEqual(file_last_write_time, file_properties.last_write_time)
+        self.assertEqual(file_change_time, file_properties.change_time)
+        self.assertIn('ReadOnly', file_properties.file_attributes)
+        self.assertIn('Archive', file_properties.file_attributes)
+
+    @FileSharePreparer()
     def test_file_exists(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         file_client = self._create_file()
@@ -487,6 +512,7 @@ class StorageFileTest(StorageTestCase):
         ntfs_attributes = NTFSAttributes(archive=True, temporary=True)
         last_write_time = properties_on_creation.last_write_time + timedelta(hours=3)
         creation_time = properties_on_creation.creation_time + timedelta(hours=3)
+        change_time = properties_on_creation.change_time + timedelta(hours=3)
 
         # Act
         file_client.set_http_headers(
@@ -494,6 +520,7 @@ class StorageFileTest(StorageTestCase):
             file_attributes=ntfs_attributes,
             file_last_write_time=last_write_time,
             file_creation_time=creation_time,
+            file_change_time=change_time
         )
 
         # Assert
@@ -502,6 +529,7 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(properties.content_settings.content_disposition, content_settings.content_disposition)
         self.assertEqual(properties.creation_time, creation_time)
         self.assertEqual(properties.last_write_time, last_write_time)
+        self.assertEqual(properties.change_time, change_time)
         self.assertIn("Archive", properties.file_attributes)
         self.assertIn("Temporary", properties.file_attributes)
 
@@ -1195,7 +1223,7 @@ class StorageFileTest(StorageTestCase):
             file_path='file1copy',
             credential=storage_account_key)
 
-        file_creation_time = "2017-05-10T17:52:33.9551860Z"
+        file_creation_time = file_last_write_time = file_change_time = datetime.utcnow()
         file_attributes = "Temporary|NoScrubData"
 
         # Act
@@ -1204,14 +1232,17 @@ class StorageFileTest(StorageTestCase):
             ignore_read_only=True,
             file_permission=TEST_FILE_PERMISSIONS,
             file_attributes=file_attributes,
-            file_creation_time=file_creation_time
+            file_creation_time=file_creation_time,
+            file_last_write_time=file_last_write_time,
+            file_change_time=file_change_time
         )
 
         # Assert
         dest_prop = file_client.get_file_properties()
         # to make sure the attributes are the same as the set ones
-        self.assertEqual(_datetime_to_str(dest_prop['creation_time']),
-                         file_creation_time)
+        self.assertEqual(file_creation_time, dest_prop['creation_time'])
+        self.assertEqual(file_last_write_time, dest_prop['last_write_time'])
+        self.assertEqual(file_change_time, dest_prop['change_time'])
         self.assertIn('Temporary', dest_prop['file_attributes'])
         self.assertIn('NoScrubData', dest_prop['file_attributes'])
 
@@ -2218,13 +2249,15 @@ class StorageFileTest(StorageTestCase):
         file_attributes = NTFSAttributes(read_only=True, archive=True)
         file_creation_time = datetime(2022, 1, 26, 10, 9, 30, 500000)
         file_last_write_time = datetime(2022, 1, 26, 10, 14, 30, 500000)
+        file_change_time = datetime(2022, 3, 7, 10, 14, 30, 500000)
 
         # Act
         new_file = source_file.rename_file(
             'file2',
             file_attributes=file_attributes,
             file_creation_time=file_creation_time,
-            file_last_write_time=file_last_write_time)
+            file_last_write_time=file_last_write_time,
+            file_change_time=file_change_time)
 
         # Assert
         props = new_file.get_file_properties()
@@ -2232,6 +2265,7 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(str(file_attributes), props.file_attributes.replace(' ', ''))
         self.assertEqual(file_creation_time, props.creation_time)
         self.assertEqual(file_last_write_time, props.last_write_time)
+        self.assertEqual(file_change_time, props.change_time)
 
     @FileSharePreparer()
     def test_rename_file_content_type(self, storage_account_name, storage_account_key):

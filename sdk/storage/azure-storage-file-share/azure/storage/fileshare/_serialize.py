@@ -105,6 +105,7 @@ def get_smb_properties(kwargs):
     file_attributes = kwargs.pop('file_attributes', None)
     file_creation_time = kwargs.pop('file_creation_time', None) or ""
     file_last_write_time = kwargs.pop('file_last_write_time', None) or ""
+    file_change_time = kwargs.pop('file_change_time', None)
 
     file_permission_copy_mode = None
     file_permission = _get_file_permission(file_permission, file_permission_key, None)
@@ -130,6 +131,7 @@ def get_smb_properties(kwargs):
             file_attributes=file_attributes,
             file_creation_time=_datetime_to_str(file_creation_time),
             file_last_write_time=_datetime_to_str(file_last_write_time),
+            file_change_time=_datetime_to_str(file_change_time),
             set_archive_attribute=set_archive_attribute
         )
 
@@ -143,6 +145,7 @@ def get_rename_smb_properties(kwargs):
     file_attributes = kwargs.pop('file_attributes', None)
     file_creation_time = kwargs.pop('file_creation_time', None)
     file_last_write_time = kwargs.pop('file_last_write_time', None)
+    file_change_time = kwargs.pop('file_change_time', None)
 
     file_permission = _get_file_permission(file_permission, file_permission_key, None)
 
@@ -151,8 +154,9 @@ def get_rename_smb_properties(kwargs):
         'file_permission_key': file_permission_key,
         'copy_file_smb_info': CopyFileSmbInfo(
             file_attributes=file_attributes,
-            file_creation_time=_datetime_to_str(file_creation_time) if file_creation_time else None,
-            file_last_write_time=_datetime_to_str(file_last_write_time) if file_last_write_time else None
+            file_creation_time=_datetime_to_str(file_creation_time),
+            file_last_write_time=_datetime_to_str(file_last_write_time),
+            file_change_time=_datetime_to_str(file_change_time)
         )}
 
 
