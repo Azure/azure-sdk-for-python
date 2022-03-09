@@ -108,7 +108,6 @@ class TestCommunicationTokenCredential(TestCase):
                 # check that next refresh is always scheduled
                 assert credential._timer is not None
 
-    @pytest.mark.skipif(platform.python_implementation() == 'PyPy', reason="This tests take too long for pypy")
     def test_proactive_refresher_should_be_called_after_specified_time(self):
         refresh_minutes = 10
         token_validity_minutes = 60
@@ -136,7 +135,6 @@ class TestCommunicationTokenCredential(TestCase):
                 # check that next refresh is always scheduled
                 assert credential._timer is not None
 
-    @pytest.mark.skipif(platform.python_implementation() == 'PyPy', reason="This tests take too long for pypy")
     def test_proactive_refresher_keeps_scheduling_again(self):
         refresh_minutes = 10
         token_validity_minutes = 60
