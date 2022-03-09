@@ -39,6 +39,7 @@ def authentication_with_api_key_credential_document_analysis_client():
     # [START create_da_client_with_key]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer import DocumentAnalysisClient
+    from azure.core.exceptions import HttpResponseError
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
@@ -73,6 +74,7 @@ def authentication_with_azure_active_directory_document_analysis_client():
     """
     from azure.ai.formrecognizer import DocumentAnalysisClient
     from azure.identity import DefaultAzureCredential
+    from azure.core.exceptions import HttpResponseError
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     credential = DefaultAzureCredential()
