@@ -1777,7 +1777,7 @@ class CheckEnum(BaseChecker):
                             if x.islower():
                                 # if the name has any lowercase letters
                                 self.add_message(
-                                        "enum-must-be-uppercase", node=node, confidence=None
+                                        "enum-must-be-uppercase", node=nod.targets[0], confidence=None
                                     )
                                 break
                 if not case_insensitive_meta:
