@@ -24,6 +24,9 @@ DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPrepa
 
 class TestDMACTrainingAsync(AsyncFormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -79,7 +82,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
                 "template",
                 model_id=model_id,
                 description="a v3 model",
-                tags={"frtests": "testvalue"}
+                tags={"testkey": "testvalue"}
             )
             model = await poller.result()
 
@@ -89,7 +92,7 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
         assert model.model_id
         assert model.description == "a v3 model"
         assert model.created_on
-        assert model.tags == {"frtests": "testvalue"}
+        assert model.tags == {"testkey": "testvalue"}
         for name, doc_type in model.doc_types.items():
             assert name
             for key, field in doc_type.field_schema.items():

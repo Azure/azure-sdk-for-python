@@ -20,6 +20,9 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -135,9 +138,9 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
     async def test_document_multipage_table_span_pdf(self, client, **kwargs):
 
         with open(self.multipage_table_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
         async with client:
-            poller = await client.begin_analyze_document("prebuilt-document", myfile)
+            poller = await client.begin_analyze_document("prebuilt-document", my_file)
             document = await poller.result()
         assert len(document.tables) == 3
         assert document.tables[0].row_count == 30

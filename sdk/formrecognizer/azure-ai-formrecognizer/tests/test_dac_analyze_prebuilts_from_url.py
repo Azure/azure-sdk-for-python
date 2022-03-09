@@ -20,7 +20,10 @@ from preparers import FormRecognizerPreparer
 DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
 
 
-class TestDACAnalyzePrebuiltsfromUrl(FormRecognizerTest):
+class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
+
+    def teardown(self):
+        self.sleep(4)
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -45,7 +48,7 @@ class TestDACAnalyzePrebuiltsfromUrl(FormRecognizerTest):
         assert len(business_card.fields.get("Websites").value) == 1
         assert business_card.fields.get("Websites").value[0].value == "https://www.contoso.com"
 
-        # FIXME: the service isnt returning this currently
+        # FIXME: the service isn't returning this currently
         # assert len(business_card.fields.get("OtherPhones").value) == 1
         # assert business_card.fields.get("OtherPhones").value[0].value == "+14257793479"
 
