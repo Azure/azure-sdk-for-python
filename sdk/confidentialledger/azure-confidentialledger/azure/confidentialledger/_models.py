@@ -293,7 +293,6 @@ class TransactionReceipt(object):
         transaction_id,  # type: str
         receipt,  # type: List[int]
     ):
-        # type: (int, List[int]) -> None
         self._transaction_id = transaction_id
         self._contents = receipt
 
