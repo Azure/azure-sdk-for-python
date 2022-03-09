@@ -89,23 +89,36 @@ def _validate_cosmos_tablename(table_name):
 def _validate_tablename_error(decoded_error, table_name):
     if (decoded_error.error_code == 'InvalidResourceName' and
         'The specifed resource name contains invalid characters' in decoded_error.message):
+        # This error is raised by Storage for any table/entity operations where the table name contains
+        # forbidden characters.
         _validate_storage_tablename(table_name)
     elif (decoded_error.error_code == 'OutOfRangeInput' and
           'The specified resource name length is not within the permissible limits' in decoded_error.message):
+        # This error is raised by Storage for any table/entity operations where the table name is < 3 or > 63
+        # characters long
         _validate_storage_tablename(table_name)
     elif (decoded_error.error_code == 'InternalServerError' and
           ('The resource name presented contains invalid character' in decoded_error.message or
            'The resource name can\'t end with space'in decoded_error.message)):
+        # This error is raised by Cosmos during create_table if the table name contains forbidden
+        # characters or ends in a space.
         _validate_cosmos_tablename(table_name)
     elif (decoded_error.error_code == 'BadRequest' and
           'The input name is invalid.' in decoded_error.message):
+        # This error is raised by Cosmos specifically during create_table if the table name is 255 or more
+        # characters. Entity operations on a too-long-table name simply result in a ResourceNotFoundError.
         _validate_cosmos_tablename(table_name)
     elif (decoded_error.error_code == 'InvalidInput' and
           ('Request url is invalid.' in decoded_error.message or
            'One of the input values is invalid.' in decoded_error.message)):
+        # This error is raised by Cosmos for any entity operations or delete_table if the table name contains
+        # forbidden characters (except in the case of trailing space and backslash).
         _validate_cosmos_tablename(table_name)
     elif (decoded_error.error_code == 'Unauthorized' and
-          'The input authorization token can\'t serve the request.' in decoded_error.message):
+          ('The input authorization token can\'t serve the request.' in decoded_error.message or
+           'The MAC signature found in the HTTP request' in decoded_error.message)):
+        # This error is raised by Cosmos specifically on entity operations where the table name contains
+        # some forbidden characters, and seems to be a bug in the service authentication.
         _validate_cosmos_tablename(table_name)
 
 
