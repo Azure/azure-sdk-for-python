@@ -10,10 +10,10 @@
         "Content-Length": "272",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 07 Mar 2022 15:08:34 GMT",
+        "Date": "Wed, 09 Mar 2022 09:49:36 GMT",
         "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "753db329-9e28-11ec-aa57-5cf37093a909",
-        "x-ms-date": "Mon, 07 Mar 2022 15:08:34 GMT",
+        "x-ms-client-request-id": "3af3fffe-9f8e-11ec-b23b-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:49:36 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": {
@@ -22,16 +22,16 @@
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Mon, 07 Mar 2022 15:08:32 GMT",
+        "Date": "Wed, 09 Mar 2022 09:49:33 GMT",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "d1660021-ea6d-40c5-ada9-4d6efb464a43"
+        "x-ms-request-id": "8051ab4f-e41c-4427-b513-d3de2d3dd2a4"
       },
       "ResponseBody": {
         "odata.error": {
           "code": "BadRequest",
           "message": {
             "lang": "en-us",
-            "value": "Message: {\u0022Errors\u0022:[\u0022The input name is invalid. Ensure to provide a unique non-empty string less than \u0027255\u0027 characters.\u0022,\u0022The request payload is invalid. Ensure to provide a valid request payload.\u0022]}\r\nActivityId: 0d09275f-77a7-4f9a-9674-5d64b3ad005d, Request URI: /apps/65aac279-ad0e-4cb7-b730-2a2f857a95fb/services/6feef3ac-3035-46e0-b5a6-220840588823/partitions/5c56d008-c03a-4de0-b634-ad02d51ecc9f/replicas/132810375063654023p, RequestStats: , SDK: Microsoft.Azure.Documents.Common/2.14.0, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:d1660021-ea6d-40c5-ada9-4d6efb464a43\n"
+            "value": "Message: {\u0022Errors\u0022:[\u0022The input name is invalid. Ensure to provide a unique non-empty string less than \u0027255\u0027 characters.\u0022,\u0022The request payload is invalid. Ensure to provide a valid request payload.\u0022]}\r\nActivityId: 700d579a-93c7-49a0-b3ac-2caf047e5e75, Request URI: /apps/9c967a2b-7b0d-4f49-a38d-36f1391fda86/services/5f2436c0-bf30-4016-9542-50f4ad767af4/partitions/d9a66888-db22-4c3c-a432-0ec6613fd00b/replicas/132903336061876927p, RequestStats: , SDK: Microsoft.Azure.Documents.Common/2.14.0, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:8051ab4f-e41c-4427-b513-d3de2d3dd2a4\n"
           }
         }
       }
@@ -46,10 +46,10 @@
         "Content-Length": "116",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 07 Mar 2022 15:08:34 GMT",
+        "Date": "Wed, 09 Mar 2022 09:49:36 GMT",
         "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "75767a3b-9e28-11ec-99d6-5cf37093a909",
-        "x-ms-date": "Mon, 07 Mar 2022 15:08:34 GMT",
+        "x-ms-client-request-id": "3b38d31b-9f8e-11ec-b108-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:49:36 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": {
@@ -61,16 +61,16 @@
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Mon, 07 Mar 2022 15:08:32 GMT",
+        "Date": "Wed, 09 Mar 2022 09:49:34 GMT",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "d5104a39-5c3a-4009-b6c4-3b50cefff09b"
+        "x-ms-request-id": "46766768-9c54-4d97-989e-838bfa4c0b75"
       },
       "ResponseBody": {
         "odata.error": {
           "code": "ResourceNotFound",
           "message": {
             "lang": "en-us",
-            "value": "The specified resource does not exist.\nRequestID:d5104a39-5c3a-4009-b6c4-3b50cefff09b\n"
+            "value": "The specified resource does not exist.\nRequestID:46766768-9c54-4d97-989e-838bfa4c0b75\n"
           }
         }
       }
@@ -85,11 +85,11 @@
         "Content-Length": "116",
         "Content-Type": "application/json",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 07 Mar 2022 15:08:34 GMT",
+        "Date": "Wed, 09 Mar 2022 09:49:36 GMT",
         "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
         "X-HTTP-Method": "MERGE",
-        "x-ms-client-request-id": "757b4a28-9e28-11ec-b332-5cf37093a909",
-        "x-ms-date": "Mon, 07 Mar 2022 15:08:34 GMT",
+        "x-ms-client-request-id": "3b3d1a82-9f8e-11ec-a838-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:49:36 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": {
@@ -101,47 +101,16 @@
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Mon, 07 Mar 2022 15:08:32 GMT",
+        "Date": "Wed, 09 Mar 2022 09:49:34 GMT",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "e2421cac-d6ba-4e8a-9c97-0b54ccd38a02"
+        "x-ms-request-id": "c2783037-6ffa-45a1-a2d1-15cd58cb22c8"
       },
       "ResponseBody": {
         "odata.error": {
           "code": "ResourceNotFound",
           "message": {
             "lang": "en-us",
-            "value": "The specified resource does not exist.\nRequestID:e2421cac-d6ba-4e8a-9c97-0b54ccd38a02\n"
-          }
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakeendpoint.table.cosmos.azure.com/---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------?comp=acl",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "application/xml",
-        "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
-        "Date": "Mon, 07 Mar 2022 15:08:34 GMT",
-        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "757edbf4-9e28-11ec-81d4-5cf37093a909",
-        "x-ms-date": "Mon, 07 Mar 2022 15:08:34 GMT",
-        "x-ms-version": "2019-02-02"
-      },
-      "RequestBody": null,
-      "StatusCode": 405,
-      "ResponseHeaders": {
-        "Content-Type": "application/json; odata=fullmetadata",
-        "Date": "Mon, 07 Mar 2022 15:08:32 GMT",
-        "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "78e9b5b8-374a-4eab-91dc-c49b4553446d"
-      },
-      "ResponseBody": {
-        "odata.error": {
-          "code": "MethodNotAllowed",
-          "message": {
-            "lang": "en-us",
-            "value": "The requested operation is not supported.\r\nActivityId: 78e9b5b8-374a-4eab-91dc-c49b4553446d, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:78e9b5b8-374a-4eab-91dc-c49b4553446d\n"
+            "value": "The specified resource does not exist.\nRequestID:c2783037-6ffa-45a1-a2d1-15cd58cb22c8\n"
           }
         }
       }
@@ -156,22 +125,22 @@
         "Content-Length": "1066",
         "Content-Type": "multipart/mixed; boundary=batch_00000000-0000-0000-0000-000000000000",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 07 Mar 2022 15:08:34 GMT",
+        "Date": "Wed, 09 Mar 2022 09:49:37 GMT",
         "MaxDataServiceVersion": "3.0;NetFx",
         "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "7580fb95-9e28-11ec-8666-5cf37093a909",
-        "x-ms-date": "Mon, 07 Mar 2022 15:08:34 GMT",
+        "x-ms-client-request-id": "3b428e1a-9f8e-11ec-939e-5cf37093a909",
+        "x-ms-date": "Wed, 09 Mar 2022 09:49:37 GMT",
         "x-ms-version": "2019-02-02"
       },
-      "RequestBody": "LS1iYXRjaF9hYmJmNzY5My05NmIzLTRjNTMtYTFiNi03MmNkOGY0Yjk4MzcNCkNvbnRlbnQtVHlwZTogbXVsdGlwYXJ0L21peGVkOyBib3VuZGFyeT1jaGFuZ2VzZXRfODdlNzhkNzgtZGEwOS00ZmVjLWFkY2EtOWRlMWY1ZTY1ZGZjDQoNCi0tY2hhbmdlc2V0Xzg3ZTc4ZDc4LWRhMDktNGZlYy1hZGNhLTlkZTFmNWU2NWRmYw0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9odHRwDQpDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiBiaW5hcnkNCkNvbnRlbnQtSUQ6IDANCg0KUE9TVCBodHRwczovL3lhbGx0YnRlc3RzcHJpbS50YWJsZS5jb3Ntb3MuYXp1cmUuY29tLy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLShQYXJ0aXRpb25LZXk9J0EnLFJvd0tleT0nQicpIEhUVFAvMS4xDQp4LW1zLXZlcnNpb246IDIwMTktMDItMDINCkRhdGFTZXJ2aWNlVmVyc2lvbjogMy4wDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24NCkFjY2VwdDogYXBwbGljYXRpb24vanNvbg0KQ29udGVudC1MZW5ndGg6IDExMg0KWC1IVFRQLU1ldGhvZDogTUVSR0UNCngtbXMtZGF0ZTogTW9uLCAwNyBNYXIgMjAyMiAxNTowODozNCBHTVQNCkRhdGU6IE1vbiwgMDcgTWFyIDIwMjIgMTU6MDg6MzQgR01UDQoNCnsiUGFydGl0aW9uS2V5IjogIkEiLCAiUGFydGl0aW9uS2V5QG9kYXRhLnR5cGUiOiAiRWRtLlN0cmluZyIsICJSb3dLZXkiOiAiQiIsICJSb3dLZXlAb2RhdGEudHlwZSI6ICJFZG0uU3RyaW5nIn0NCi0tY2hhbmdlc2V0Xzg3ZTc4ZDc4LWRhMDktNGZlYy1hZGNhLTlkZTFmNWU2NWRmYy0tDQoNCi0tYmF0Y2hfYWJiZjc2OTMtOTZiMy00YzUzLWExYjYtNzJjZDhmNGI5ODM3LS0NCg==",
+      "RequestBody": "LS1iYXRjaF82YTI1MTY1ZC0yMzhhLTQwYmUtOWEyMy1kZTdiNzM2MjlkZWENCkNvbnRlbnQtVHlwZTogbXVsdGlwYXJ0L21peGVkOyBib3VuZGFyeT1jaGFuZ2VzZXRfMDFjNDU1ODctOGIyZC00MjliLWI4MjktOGEzZjlmNzQwYWFkDQoNCi0tY2hhbmdlc2V0XzAxYzQ1NTg3LThiMmQtNDI5Yi1iODI5LThhM2Y5Zjc0MGFhZA0KQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9odHRwDQpDb250ZW50LVRyYW5zZmVyLUVuY29kaW5nOiBiaW5hcnkNCkNvbnRlbnQtSUQ6IDANCg0KUE9TVCBodHRwczovL3lhbGx0YnRlc3RzcHJpbS50YWJsZS5jb3Ntb3MuYXp1cmUuY29tLy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLShQYXJ0aXRpb25LZXk9J0EnLFJvd0tleT0nQicpIEhUVFAvMS4xDQp4LW1zLXZlcnNpb246IDIwMTktMDItMDINCkRhdGFTZXJ2aWNlVmVyc2lvbjogMy4wDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24NCkFjY2VwdDogYXBwbGljYXRpb24vanNvbg0KQ29udGVudC1MZW5ndGg6IDExMg0KWC1IVFRQLU1ldGhvZDogTUVSR0UNCngtbXMtZGF0ZTogV2VkLCAwOSBNYXIgMjAyMiAwOTo0OTozNiBHTVQNCkRhdGU6IFdlZCwgMDkgTWFyIDIwMjIgMDk6NDk6MzYgR01UDQoNCnsiUGFydGl0aW9uS2V5IjogIkEiLCAiUGFydGl0aW9uS2V5QG9kYXRhLnR5cGUiOiAiRWRtLlN0cmluZyIsICJSb3dLZXkiOiAiQiIsICJSb3dLZXlAb2RhdGEudHlwZSI6ICJFZG0uU3RyaW5nIn0NCi0tY2hhbmdlc2V0XzAxYzQ1NTg3LThiMmQtNDI5Yi1iODI5LThhM2Y5Zjc0MGFhZC0tDQoNCi0tYmF0Y2hfNmEyNTE2NWQtMjM4YS00MGJlLTlhMjMtZGU3YjczNjI5ZGVhLS0NCg==",
       "StatusCode": 202,
       "ResponseHeaders": {
         "Content-Type": "multipart/mixed; boundary=batchresponse_00000000-0000-0000-0000-000000000000",
-        "Date": "Mon, 07 Mar 2022 15:08:32 GMT",
+        "Date": "Wed, 09 Mar 2022 09:49:34 GMT",
         "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "785a81fc-819a-48b5-99a5-63b01bfd6ec3"
+        "x-ms-request-id": "0de2816a-c857-49b2-b221-14e4cb4dd126"
       },
-      "ResponseBody": "LS1iYXRjaHJlc3BvbnNlX2I3YWNkNThmLTE2NzgtNDI2Ni1iMjQzLThkMTNmZDQ3YTk3Mw0KQ29udGVudC1UeXBlOiBtdWx0aXBhcnQvbWl4ZWQ7IGJvdW5kYXJ5PWNoYW5nZXNldHJlc3BvbnNlXzMzMmYzMWUzLWFjMWEtNDEzYy1iOWNjLWZkMDM4MGNkNDcyNw0KDQotLWNoYW5nZXNldHJlc3BvbnNlXzMzMmYzMWUzLWFjMWEtNDEzYy1iOWNjLWZkMDM4MGNkNDcyNwpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2h0dHAKQ29udGVudC1UcmFuc2Zlci1FbmNvZGluZzogYmluYXJ5CgpIVFRQLzEuMSA0MDQgTm90IEZvdW5kDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb247b2RhdGE9ZnVsbG1ldGFkYXRhDQoNCnsib2RhdGEuZXJyb3IiOnsiY29kZSI6IlJlc291cmNlTm90Rm91bmQiLCJtZXNzYWdlIjp7ImxhbmciOiJlbi11cyIsInZhbHVlIjoiVGhlIHNwZWNpZmllZCByZXNvdXJjZSBkb2VzIG5vdCBleGlzdC5cblJlcXVlc3RJRDo3ODVhODFmYy04MTlhLTQ4YjUtOTlhNS02M2IwMWJmZDZlYzNcbiJ9fX0NCi0tY2hhbmdlc2V0cmVzcG9uc2VfMzMyZjMxZTMtYWMxYS00MTNjLWI5Y2MtZmQwMzgwY2Q0NzI3LS0KLS1iYXRjaHJlc3BvbnNlX2I3YWNkNThmLTE2NzgtNDI2Ni1iMjQzLThkMTNmZDQ3YTk3My0tDQo="
+      "ResponseBody": "LS1iYXRjaHJlc3BvbnNlX2YxNjY3OGFhLWZjZjgtNDU4NS05NDk5LTdkZjM3NThhZmEyZA0KQ29udGVudC1UeXBlOiBtdWx0aXBhcnQvbWl4ZWQ7IGJvdW5kYXJ5PWNoYW5nZXNldHJlc3BvbnNlXzljNzExYWMzLTQxYjYtNDJiYy1hYmNhLTBiMGMwZTg4ODM3NQ0KDQotLWNoYW5nZXNldHJlc3BvbnNlXzljNzExYWMzLTQxYjYtNDJiYy1hYmNhLTBiMGMwZTg4ODM3NQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2h0dHAKQ29udGVudC1UcmFuc2Zlci1FbmNvZGluZzogYmluYXJ5CgpIVFRQLzEuMSA0MDQgTm90IEZvdW5kDQpDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb247b2RhdGE9ZnVsbG1ldGFkYXRhDQoNCnsib2RhdGEuZXJyb3IiOnsiY29kZSI6IlJlc291cmNlTm90Rm91bmQiLCJtZXNzYWdlIjp7ImxhbmciOiJlbi11cyIsInZhbHVlIjoiVGhlIHNwZWNpZmllZCByZXNvdXJjZSBkb2VzIG5vdCBleGlzdC5cblJlcXVlc3RJRDowZGUyODE2YS1jODU3LTQ5YjItYjIyMS0xNGU0Y2I0ZGQxMjZcbiJ9fX0NCi0tY2hhbmdlc2V0cmVzcG9uc2VfOWM3MTFhYzMtNDFiNi00MmJjLWFiY2EtMGIwYzBlODg4Mzc1LS0KLS1iYXRjaHJlc3BvbnNlX2YxNjY3OGFhLWZjZjgtNDU4NS05NDk5LTdkZjM3NThhZmEyZC0tDQo="
     }
   ],
   "Variables": {}
