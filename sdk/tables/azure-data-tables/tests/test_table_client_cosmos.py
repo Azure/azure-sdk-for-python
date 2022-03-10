@@ -123,29 +123,29 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
                 endpoint=endpoint, credential=tables_primary_cosmos_account_key, table_name=invalid_name)
             with pytest.raises(ValueError) as error:
                 client.create_table()
-            assert "Table names names must contain from 1-255 characters" in str(error.value)
+            assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
             try:
                 with pytest.raises(ValueError) as error:
                     client.delete_table()
-                assert "Table names names must contain from 1-255 characters" in str(error.value)
+                assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
             except HttpResponseError as error:
                     # Delete table returns a MethodNotAllowed for tablename == "\"
                     if error.error_code != 'MethodNotAllowed':
                         raise
             with pytest.raises(ValueError) as error:
                 client.create_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
-            assert "Table names names must contain from 1-255 characters" in str(error.value)
+            assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
             with pytest.raises(ValueError) as error:
                 client.upsert_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
-            assert "Table names names must contain from 1-255 characters" in str(error.value)
+            assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
             with pytest.raises(ValueError) as error:
                 client.delete_entity("PK", "RK")
-            assert "Table names names must contain from 1-255 characters" in str(error.value)
+            assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
             with pytest.raises(ValueError) as error:
                 batch = []
                 batch.append(('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}))
                 client.submit_transaction(batch)
-            assert "Table names names must contain from 1-255 characters" in str(error.value)
+            assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
             
     @pytest.mark.live_test_only
     @cosmos_decorator
@@ -157,7 +157,7 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
         client = TableClient(endpoint=endpoint, credential=tables_primary_cosmos_account_key, table_name="-"*255)
         with pytest.raises(ValueError) as error:
             client.create_table()
-        assert "Table names names must contain from 1-255 characters" in str(error.value)
+        assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
         with pytest.raises(ResourceNotFoundError):
             client.create_entity({'PartitionKey': 'foo', 'RowKey': 'foo'})
         with pytest.raises(ResourceNotFoundError):

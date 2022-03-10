@@ -42,7 +42,7 @@ async def sample_manage_models_async():
     async with document_model_admin_client:
         account_info = await document_model_admin_client.get_account_info()
         print("Our account has {} custom models, and we can have at most {} custom models\n".format(
-            account_info.model_count, account_info.model_limit
+            account_info.document_model_count, account_info.document_model_limit
         ))
         # [END get_account_info_async]
 

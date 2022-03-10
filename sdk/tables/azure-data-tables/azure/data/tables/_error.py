@@ -40,7 +40,7 @@ _ERROR_UNKNOWN_KEY_WRAP_ALGORITHM = "Unknown key wrap algorithm."
 
 # Storage table validation regex breakdown:
 # ^ Match start of string.
-# [a-zA-Z]{1} Match an letter for exactly 1 character.
+# [a-zA-Z]{1} Match any letter for exactly 1 character.
 # [a-zA-Z0-9]{2,62} Match any alphanumeric character for between 2 and 62 characters.
 # $ End of string
 _STORAGE_VALID_TABLE = re.compile(r"^[a-zA-Z]{1}[a-zA-Z0-9]{2,62}$")
@@ -75,14 +75,14 @@ def _wrap_exception(ex, desired_type):
 def _validate_storage_tablename(table_name):
     if _STORAGE_VALID_TABLE.match(table_name) is None:
         raise ValueError(
-            "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long."
+            "Storage table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long."  # pylint: disable=line-too-long
         )
 
 
 def _validate_cosmos_tablename(table_name):
     if _COSMOS_VALID_TABLE.match(table_name) is None:
         raise ValueError(
-            "Table names names must contain from 1-255 characters, and they cannot contain /, \\, #, ?, or a trailing space."  # pylint: disable=line-too-long
+            "Cosmos table names must contain from 1-255 characters, and they cannot contain /, \\, #, ?, or a trailing space."  # pylint: disable=line-too-long
         )
 
 
