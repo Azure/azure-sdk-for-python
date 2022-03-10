@@ -780,6 +780,34 @@ class StorageFileTest(StorageTestCase):
         # Assert
 
     @FileSharePreparer()
+    def test_update_range_last_written_mode_now(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        file_client = self._create_file()
+        current_last_write_time = file_client.get_file_properties().last_write_time
+
+        # Act
+        data = b'abcdefghijklmnop' * 32
+        file_client.upload_range(data, offset=0, length=512, file_last_written_mode="Now")
+
+        # Assert
+        new_last_write_time = file_client.get_file_properties().last_write_time
+        self.assertNotEqual(current_last_write_time, new_last_write_time)
+
+    @FileSharePreparer()
+    def test_update_range_last_written_mode_preserve(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        file_client = self._create_file()
+        current_last_write_time = file_client.get_file_properties().last_write_time
+
+        # Act
+        data = b'abcdefghijklmnop' * 32
+        file_client.upload_range(data, offset=0, length=512, file_last_written_mode="Preserve")
+
+        # Assert
+        new_last_write_time = file_client.get_file_properties().last_write_time
+        self.assertEqual(current_last_write_time, new_last_write_time)
+
+    @FileSharePreparer()
     def test_update_range_from_file_url_when_source_file_does_not_have_enough_bytes(self, storage_account_name, storage_account_key):
         self._setup(storage_account_name, storage_account_key)
         source_file_name = 'testfile1'
@@ -930,6 +958,64 @@ class StorageFileTest(StorageTestCase):
         self.assertEqual(0, file_ranges[0].get('start'))
         self.assertEqual(end, file_ranges[0].get('end'))
         self.assertEqual(data, file_content)
+
+    @FileSharePreparer()
+    def test_update_range_from_file_url_last_written_mode_now(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        source_file_client = self._create_file(file_name='testfile')
+        data = b'abcdefghijklmnop' * 32
+        source_file_client.upload_range(data, offset=0, length=512)
+
+        destination_file_client = self._create_empty_file(file_name='filetoupdate')
+        current_last_write_time = destination_file_client.get_file_properties().last_write_time
+
+        # generate SAS for the source file
+        sas_token_for_source_file = generate_file_sas(
+            source_file_client.account_name,
+            source_file_client.share_name,
+            source_file_client.file_path,
+            source_file_client.credential.account_key,
+            FileSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1))
+
+        source_file_url = source_file_client.url + '?' + sas_token_for_source_file
+
+        # Act
+        destination_file_client.upload_range_from_url(source_file_url, offset=0, length=512, source_offset=0,
+                                                      file_last_written_mode="Now")
+
+        # Assert
+        new_last_write_time = destination_file_client.get_file_properties().last_write_time
+        self.assertNotEqual(current_last_write_time, new_last_write_time)
+
+    @FileSharePreparer()
+    def test_update_range_from_file_url_last_written_mode_preserve(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        source_file_client = self._create_file(file_name='testfile')
+        data = b'abcdefghijklmnop' * 32
+        source_file_client.upload_range(data, offset=0, length=512)
+
+        destination_file_client = self._create_empty_file(file_name='filetoupdate')
+        current_last_write_time = destination_file_client.get_file_properties().last_write_time
+
+        # generate SAS for the source file
+        sas_token_for_source_file = generate_file_sas(
+            source_file_client.account_name,
+            source_file_client.share_name,
+            source_file_client.file_path,
+            source_file_client.credential.account_key,
+            FileSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1))
+
+        source_file_url = source_file_client.url + '?' + sas_token_for_source_file
+
+        # Act
+        destination_file_client.upload_range_from_url(source_file_url, offset=0, length=512, source_offset=0,
+                                                      file_last_written_mode="Preserve")
+
+        # Assert
+        new_last_write_time = destination_file_client.get_file_properties().last_write_time
+        self.assertEqual(current_last_write_time, new_last_write_time)
 
     @FileSharePreparer()
     def test_clear_range(self, storage_account_name, storage_account_key):

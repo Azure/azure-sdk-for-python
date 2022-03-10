@@ -324,7 +324,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         file_creation_time = kwargs.pop('file_creation_time', 'now')
         file_last_write_time = kwargs.pop('file_last_write_time', 'now')
         file_change_time = kwargs.pop('file_change_time', None)
-        file_permission = kwargs.pop('file_permission', 'inherit')
+        file_permission = kwargs.pop('file_permission', None)
         file_permission_key = kwargs.pop('file_permission_key', None)
         file_permission = _get_file_permission(file_permission, file_permission_key, 'Inherit')
 
@@ -333,7 +333,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                 file_attributes=str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
-                file_change_time=_datetime_to_str(file_change_time)
+                file_change_time=_datetime_to_str(file_change_time),
                 file_permission=file_permission,
                 file_permission_key=file_permission_key,
                 timeout=timeout,

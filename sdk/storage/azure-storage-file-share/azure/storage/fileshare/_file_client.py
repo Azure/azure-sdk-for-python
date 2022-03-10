@@ -1117,6 +1117,14 @@ class ShareFileClient(StorageAccountHostsMixin):
             bitflips on the wire if using http instead of https as https (the default)
             will already validate. Note that this MD5 hash is not stored with the
             file.
+        :keyword str file_last_written_mode:
+            If the file last write time should be preserved or overwritten. Possible str values
+            are "Preserve" or "Now". If not specified, file last write time will be changed to
+            the current date/time.
+
+            .. versionadded:: 12.8.0
+                This parameter was introduced in API version '2021-06-08'.
+
         :keyword lease:
             Required if the file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
@@ -1124,13 +1132,6 @@ class ShareFileClient(StorageAccountHostsMixin):
             .. versionadded:: 12.1.0
 
         :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
-        :keyword str file_last_written_mode:
-            If the file last write time should be preserved or overwritten. Possible str values
-            are "Preserve" or "Now".
-
-            .. versionadded:: 12.8.0
-                This parameter was introduced in API version '2021-06-08'.
-
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword str encoding:
@@ -1245,13 +1246,6 @@ class ShareFileClient(StorageAccountHostsMixin):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions source_match_condition:
             The source match condition to use upon the etag.
-        :keyword lease:
-            Required if the file has an active lease. Value can be a ShareLeaseClient object
-            or the lease ID as a string.
-
-            .. versionadded:: 12.1.0
-
-        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword str file_last_written_mode:
             If the file last write time should be preserved or overwritten. Possible str values
             are "Preserve" or "Now".
@@ -1259,6 +1253,13 @@ class ShareFileClient(StorageAccountHostsMixin):
             .. versionadded:: 12.8.0
                 This parameter was introduced in API version '2021-06-08'.
 
+        :keyword lease:
+            Required if the file has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+
+            .. versionadded:: 12.1.0
+
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword str source_authorization:
