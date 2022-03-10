@@ -1869,7 +1869,6 @@ def register(linter):
     linter.register_checker(PackageNameDoesNotUseUnderscoreOrPeriod(linter))
     linter.register_checker(ServiceClientUsesNameWithClientSuffix(linter))
     linter.register_checker(CheckDocstringAdmonitionNewline(linter))
-    linter.register_checker(CheckNoAliasGeneratedCode(linter))
     linter.register_checker(CheckEnum(linter))
 
     # disabled by default, use pylint --enable=check-docstrings if you want to use it
