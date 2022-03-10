@@ -4,9 +4,9 @@ import logging
 from typing import Sequence, Any
 
 from opentelemetry.sdk._logs import LogData
+from opentelemetry.sdk._logs.severity import SeverityNumber
 from opentelemetry.sdk._logs.export import LogExporter, LogExportResult
 from opentelemetry.sdk.util import ns_to_iso_str
-from opentelemetry.trace import Span, SpanKind
 
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.models import (
@@ -21,8 +21,8 @@ from azure.monitor.opentelemetry.exporter.export._base import (
 
 _logger = logging.getLogger(__name__)
 
-_DEFAULT_SPAN_ID = "0x0000000000000000"
-_DEFAULT_TRACE_ID = "0x00000000000000000000000000000000"
+_DEFAULT_SPAN_ID = 0
+_DEFAULT_TRACE_ID = 0
 
 __all__ = ["AzureMonitorLogExporter"]
 
@@ -57,10 +57,10 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
         """
         self.storage.close()
 
-    def _log_to_envelope(self, log: LogData) -> TelemetryItem:
-        if not log:
+    def _log_to_envelope(self, log_data: LogData) -> TelemetryItem:
+        if not log_data:
             return None
-        envelope = _convert_log_to_envelope(log)
+        envelope = _convert_log_to_envelope(log_data)
         envelope.instrumentation_key = self._instrumentation_key
         return envelope
 
@@ -79,21 +79,26 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
         """
         return cls(connection_string=conn_str, **kwargs)
 
-def _convert_log_to_envelope(log: LogData) -> TelemetryItem:
+# pylint: disable=protected-access
+def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
+    log_record = log_data.log_record
     envelope = TelemetryItem(
         name="",
         instrumentation_key="",
         tags=dict(_utils.azure_monitor_context),
-        time=ns_to_iso_str(log.timestamp),
+        time=ns_to_iso_str(log_record.timestamp),
     )
-    # pylint: disable=protected-access
-    envelope.tags.update(_utils._populate_part_a_fields(log.resource))
+    envelope.tags.update(_utils._populate_part_a_fields(log_record.resource))
+    envelope.tags['ai.operation.id'] = "{:032x}".format(
+        log_record.trace_id or _DEFAULT_TRACE_ID
+    )
+    envelope.tags['ai.operation.parentId'] = "{:016x}".format(
+        log_record.span_id or _DEFAULT_SPAN_ID
+    )
 
-    envelope.tags['ai.operation.id'] = log.trace_id or _DEFAULT_TRACE_ID
-    envelope.tags['ai.operation.parentId'] = log.span_id or _DEFAULT_SPAN_ID
-
-    # TODO: Properties
+    # TODO: Pre-defined Properties
     properties = {}
+    properties.update(log_record.attributes)
     # properties = {
     #     'process': record.processName,
     #     'module': record.module,
@@ -101,17 +106,16 @@ def _convert_log_to_envelope(log: LogData) -> TelemetryItem:
     #     'lineNumber': record.lineno,
     #     'level': record.levelname,
     # }
-    # TODO: Custom dimensions
     # TODO: Exceptions
 
     envelope.name = 'Microsoft.ApplicationInsights.Message'
     # Severity number: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-severitynumber
     data = MessageData(
-        message=log.body,
-        severityLevel= _get_severity_level(log.severity_number),
+        message=log_record.body,
+        severity_level=_get_severity_level(log_record.severity_number),
         properties=properties,
     )
-    envelope.data = MonitorBase(baseData=data, baseType='MessageData')
+    envelope.data = MonitorBase(base_data=data, base_type='MessageData')
 
     return envelope
 
@@ -125,7 +129,7 @@ def _get_log_export_result(result: ExportResult) -> LogExportResult:
         return LogExportResult.FAILURE
     return None
 
-def _get_severity_level(severity_number):
-    if severity_number < 9:
+def _get_severity_level(severity_number: SeverityNumber):
+    if severity_number.value < 9:
         return 0
-    return (severity_number-1)/4 - 1
+    return (severity_number.value-1)/4 - 1

@@ -1,0 +1,198 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+import os
+import platform
+import shutil
+import unittest
+from unittest import mock
+
+# pylint: disable=import-error
+from opentelemetry.sdk import _logs
+from opentelemetry.sdk.util.instrumentation import InstrumentationInfo
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.sdk._logs.export import LogExportResult
+from opentelemetry.sdk._logs.severity import SeverityNumber
+
+from azure.monitor.opentelemetry.exporter.export._base import ExportResult
+from azure.monitor.opentelemetry.exporter.export.logs._exporter import (
+    AzureMonitorLogExporter,
+    _get_log_export_result,
+    _get_severity_level,
+)
+from azure.monitor.opentelemetry.exporter._utils import azure_monitor_context
+
+
+def throw(exc_type, *args, **kwargs):
+    def func(*_args, **_kwargs):
+        raise exc_type(*args, **kwargs)
+
+    return func
+
+
+# pylint: disable=import-error
+# pylint: disable=protected-access
+# pylint: disable=too-many-lines
+class TestAzureLogExporter(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        os.environ.clear()
+        os.environ[
+            "APPINSIGHTS_INSTRUMENTATIONKEY"
+        ] = "1234abcd-5678-4efa-8abc-1234567890ab"
+        cls._exporter = AzureMonitorLogExporter()
+        cls._log_data = _logs.LogData(
+            _logs.LogRecord(
+                timestamp = 1646865018558419456,
+                trace_id = 125960616039069540489478540494783893221,
+                span_id = 2909973987304607650,
+                severity_text = "WARNING",
+                trace_flags = None,
+                severity_number = SeverityNumber.WARN,
+                name = None,
+                body = "Test message",
+                resource = Resource.create(
+                    attributes={"asd":"test_resource"}
+                ),
+                attributes={
+                    "test": "attribute"
+                },
+            ),
+            InstrumentationInfo("test_name"),
+        )
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls._exporter.storage._path, True)
+
+    def test_constructor(self):
+        """Test the constructor."""
+        exporter = AzureMonitorLogExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab",
+        )
+        self.assertEqual(
+            exporter._instrumentation_key,
+            "4321abcd-5678-4efa-8abc-1234567890ab",
+        )
+
+    def test_from_connection_string(self):
+        exporter = AzureMonitorLogExporter.from_connection_string(
+            "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab"
+        )
+        self.assertTrue(isinstance(exporter, AzureMonitorLogExporter))
+        self.assertEqual(
+            exporter._instrumentation_key,
+            "4321abcd-5678-4efa-8abc-1234567890ab",
+        )
+
+    def test_export_empty(self):
+        exporter = self._exporter
+        result = exporter.export([])
+        self.assertEqual(result, LogExportResult.SUCCESS)
+
+    def test_export_failure(self):
+        exporter = self._exporter
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter._transmit"
+        ) as transmit:  # noqa: E501
+            transmit.return_value = ExportResult.FAILED_RETRYABLE
+            storage_mock = mock.Mock()
+            exporter.storage.put = storage_mock
+            result = exporter.export([self._log_data])
+        self.assertEqual(result, LogExportResult.FAILURE)
+        self.assertEqual(storage_mock.call_count, 1)
+
+    def test_export_success(self):
+        exporter = self._exporter
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter._transmit"
+        ) as transmit:  # noqa: E501
+            transmit.return_value = ExportResult.SUCCESS
+            storage_mock = mock.Mock()
+            exporter._transmit_from_storage = storage_mock
+            result = exporter.export([self._log_data])
+            self.assertEqual(result, LogExportResult.SUCCESS)
+            self.assertEqual(storage_mock.call_count, 1)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.logs._exporter._logger")
+    def test_export_exception(self, logger_mock):
+        exporter = self._exporter
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter._transmit",
+            throw(Exception),
+        ):  # noqa: E501
+            result = exporter.export([self._log_data])
+            self.assertEqual(result, LogExportResult.FAILURE)
+            self.assertEqual(logger_mock.exception.called, True)
+
+    def test_export_not_retryable(self):
+        exporter = self._exporter
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter._transmit"
+        ) as transmit:  # noqa: E501
+            transmit.return_value = ExportResult.FAILED_NOT_RETRYABLE
+            result = exporter.export([self._log_data])
+            self.assertEqual(result, LogExportResult.FAILURE)
+
+    def test_log_to_envelope_partA(self):
+        exporter = self._exporter
+        old_resource = self._log_data.log_record.resource
+        resource = Resource(
+            {"service.name": "testServiceName",
+             "service.namespace": "testServiceNamespace",
+             "service.instance.id": "testServiceInstanceId"})
+        self._log_data.log_record.resource = resource
+        envelope = exporter._log_to_envelope(self._log_data)
+
+        self.assertEqual(envelope.instrumentation_key,
+                         "1234abcd-5678-4efa-8abc-1234567890ab")
+        self.assertIsNotNone(envelope.tags)
+        self.assertEqual(envelope.tags.get("ai.device.id"), azure_monitor_context["ai.device.id"])
+        self.assertEqual(envelope.tags.get("ai.device.locale"), azure_monitor_context["ai.device.locale"])
+        self.assertEqual(envelope.tags.get("ai.device.osVersion"), azure_monitor_context["ai.device.osVersion"])
+        self.assertEqual(envelope.tags.get("ai.device.type"), azure_monitor_context["ai.device.type"])
+        self.assertEqual(envelope.tags.get("ai.internal.sdkVersion"), azure_monitor_context["ai.internal.sdkVersion"])
+
+        self.assertEqual(envelope.tags.get("ai.cloud.role"), "testServiceNamespace.testServiceName")
+        self.assertEqual(envelope.tags.get("ai.cloud.roleInstance"), "testServiceInstanceId")
+        self.assertEqual(envelope.tags.get("ai.internal.nodeName"), "testServiceInstanceId")
+        trace_id = self._log_data.log_record.trace_id
+        self.assertEqual(envelope.tags.get("ai.operation.id"), "{:032x}".format(trace_id))
+        span_id = self._log_data.log_record.span_id
+        self.assertEqual(envelope.tags.get("ai.operation.parentId"), "{:016x}".format(span_id))
+        self._log_data.log_record.resource = old_resource
+
+    def test_span_to_envelope_partA_default(self):
+        exporter = self._exporter
+        old_resource = self._log_data.log_record.resource
+        resource = Resource(
+            {"service.name": "testServiceName"})
+        self._log_data.log_record.resource = resource
+        envelope = exporter._log_to_envelope(self._log_data)
+        self.assertEqual(envelope.tags.get("ai.cloud.role"), "testServiceName")
+        self.assertEqual(envelope.tags.get("ai.cloud.roleInstance"), platform.node())
+        self.assertEqual(envelope.tags.get("ai.internal.nodeName"), envelope.tags.get("ai.cloud.roleInstance"))
+        self._log_data.log_record.resource = old_resource
+
+    def test_log_to_envelope_properties(self):
+        exporter = self._exporter
+        envelope = exporter._log_to_envelope(self._log_data)
+        record = self._log_data.log_record
+        self.assertEqual(envelope.data.base_data.message, record.body)
+        self.assertEqual(envelope.data.base_data.severity_level, _get_severity_level(record.severity_number))
+        self.assertEqual(envelope.data.base_data.properties["test"], "attribute")
+
+class TestAzureLogExporterUtils(unittest.TestCase):
+    def test_get_log_export_result(self):
+        self.assertEqual(
+            _get_log_export_result(ExportResult.SUCCESS),
+            LogExportResult.SUCCESS,
+        )
+        self.assertEqual(
+            _get_log_export_result(ExportResult.FAILED_NOT_RETRYABLE),
+            LogExportResult.FAILURE,
+        )
+        self.assertEqual(
+            _get_log_export_result(ExportResult.FAILED_RETRYABLE),
+            LogExportResult.FAILURE,
+        )
+        self.assertEqual(_get_log_export_result(None), None)
