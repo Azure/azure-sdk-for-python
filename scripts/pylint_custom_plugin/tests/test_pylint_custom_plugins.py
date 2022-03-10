@@ -10,7 +10,6 @@ from azure.core import PipelineClient
 from azure.core.configuration import Configuration
 from pylint_custom_plugin import pylint_guidelines_checker as checker
 
-
 class TestClientMethodsHaveTracingDecorators(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.ClientMethodsHaveTracingDecorators
 
@@ -2568,7 +2567,116 @@ class TestCheckDocstringAdmonitionNewline(pylint.testutils.CheckerTestCase):
                     msg_id="docstring-admonition-needs-newline", node=class_node
                 )
         ):
-            self.checker.visit_classdef(class_node)
+            self.checker.visit_classdef(class_node)        
+    
+    
+class TestCheckNoAliasGeneratedCode(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.CheckNoAliasGeneratedCode
+
+    def test_ignores_correct_alias_code(self):
+        module_node = astroid.extract_node(
+            """
+            import something as somethingElse
+            """
+        )
+
+        with self.assertNoMessages():
+            self.checker.visit_module(module_node)
+
+    def test_catches_incorrect_import_alias_code(self):
+        import_one = astroid.extract_node(
+            'import Something'
+           
+        )
+        import_two =  astroid.extract_node(
+            'import Something2 as SomethingTwo'
+           
+        )
+        assign_one = astroid.extract_node(
+        """
+            __all__ =(
+            "Something",
+            "SomethingTwo", 
+            ) 
+          """
+        )
+      
+        module_node = astroid.Module(name = "node", file="__init__.py", doc = """ """)
+        module_node.body = [import_one,import_two,assign_one]
+
+        for name in module_node.body[-1].assigned_stmts():
+            err_node = name.elts[1]
+     
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="aliasing-generated-code", node=err_node ,confidence=None
+                )
+        ):
+            self.checker.visit_module(module_node)
+
+    def test_catches_incorrect_from_import_alias_code(self):
+        import_one = astroid.extract_node(
+            'import Something'
+           
+        )
+        import_two =  astroid.extract_node(
+            'from Something2 import SomethingToo as SomethingTwo'
+           
+        )
+        assign_one = astroid.extract_node(
+        """
+            __all__ =(
+            "Something",
+            "SomethingTwo", 
+            ) 
+          """
+        )
+      
+        module_node = astroid.Module(name = "node", file="__init__.py", doc = """ """)
+        module_node.body = [import_one,import_two,assign_one]
+
+        for name in module_node.body[-1].assigned_stmts():
+            err_node = name.elts[1]
+     
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="aliasing-generated-code", node=err_node ,confidence=None
+                )
+        ):
+            self.checker.visit_module(module_node)
+
+    def test_ignores_unaliased_import_init(self):
+        import_one = astroid.extract_node(
+            'import Something'
+           
+        )
+        import_two =  astroid.extract_node(
+            'import Something2 as SomethingTwo'
+           
+        )
+        assign_one = astroid.extract_node(
+        """
+            __all__ =(
+            "Something",
+            "Something2", 
+            ) 
+          """
+        )
+      
+        module_node = astroid.Module(name = "node", file="__init__.py", doc = """ """)
+        module_node.body = [import_one,import_two,assign_one]
+
+        with self.assertNoMessages():
+            self.checker.visit_module(module_node)
+    
+    def test_disable_pylint_alias(self):
+
+        file = open("./test_files/__init__.py")
+        node = astroid.parse(file.read())
+        file.close()
+
+        with self.assertNoMessages():
+            self.checker.visit_module(node)
 
 class TestCheckEnum(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.CheckEnum
@@ -2614,4 +2722,3 @@ class TestCheckEnum(pylint.testutils.CheckerTestCase):
                     )
                 ):
                 self.checker.visit_classdef(function_node)
-    
