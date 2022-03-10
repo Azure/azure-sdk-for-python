@@ -2722,3 +2722,4 @@ class TestCheckEnum(pylint.testutils.CheckerTestCase):
                     )
                 ):
                 self.checker.visit_classdef(function_node)
+                
