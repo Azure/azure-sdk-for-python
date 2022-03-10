@@ -137,9 +137,10 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         with pytest.raises(HttpResponseError):
             client.get_schema('a' * 32)
 
-    @SchemaRegistryPowerShellPreparer()
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy
     def test_register_schema_errors(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
-        client = self.create_client(schemaregistry_fully_qualified_namespace)
+        client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         name = 'test-schema'
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}"""
         format = "Avro"
@@ -166,9 +167,10 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         assert e.value.reason == 'Unsupported Media Type'
 
     
-    @SchemaRegistryPowerShellPreparer()
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy
     def test_get_schema_properties_errors(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
-        client = self.create_client(schemaregistry_fully_qualified_namespace)
+        client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         name = 'test-schema'
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}"""
         format = "Avro"
@@ -200,9 +202,10 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         assert e.value.status_code == 404
         assert e.value.reason == 'Not Found'
 
-    @SchemaRegistryPowerShellPreparer()
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy
     def test_get_schema_errors(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
-        client = self.create_client(schemaregistry_fully_qualified_namespace)
+        client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         with pytest.raises(ValueError) as e:
             client.get_schema(None)
 

@@ -33,8 +33,8 @@ from .exceptions import (
     SchemaEncodeError,
     SchemaDecodeError,
 )
-from ._apache_avro_encoder import ApacheAvroObjectEncoder as AvroObjectEncoder
-from ._message_protocol import MessageContent, MessageType
+from ._apache_avro_encoder import ApacheAvroObjectEncoder as AvroObjectEncoder  # pylint: disable=import-error
+from ._message_protocol import MessageContent, MessageType  # pylint: disable=import-error
 from ._constants import (
     SCHEMA_ID_START_INDEX,
     SCHEMA_ID_LENGTH,

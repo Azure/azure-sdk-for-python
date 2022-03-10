@@ -143,9 +143,10 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
                 await client.get_schema('a' * 32)
         await client._generated_client._config.credential.close()
 
-    @SchemaRegistryPowerShellPreparer()
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy_async
     async def test_register_schema_errors(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
-        client = self.create_client(schemaregistry_fully_qualified_namespace)
+        client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         name = 'test-schema'
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}"""
         format = "Avro"
@@ -172,9 +173,10 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
             assert e.value.status_code == 415
             assert e.value.reason == 'Unsupported Media Type'
     
-    @SchemaRegistryPowerShellPreparer()
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy_async
     async def test_get_schema_properties_errors(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
-        client = self.create_client(schemaregistry_fully_qualified_namespace)
+        client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         name = 'test-schema'
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}"""
         format = "Avro"
@@ -207,9 +209,10 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
             assert e.value.status_code == 404
             assert e.value.reason == 'Not Found'
 
-    @SchemaRegistryPowerShellPreparer()
+    @SchemaRegistryEnvironmentVariableLoader()
+    @recorded_by_proxy_async
     async def test_get_schema_errors(self, schemaregistry_fully_qualified_namespace, schemaregistry_group, **kwargs):
-        client = self.create_client(schemaregistry_fully_qualified_namespace)
+        client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         async with client:
             with pytest.raises(ValueError) as e:
                 await client.get_schema(None)

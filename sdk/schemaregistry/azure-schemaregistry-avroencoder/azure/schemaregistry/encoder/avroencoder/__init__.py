@@ -27,8 +27,9 @@ from ._version import VERSION
 
 __version__ = VERSION
 
-from ._schema_registry_avro_encoder import AvroEncoder
-from ._message_protocol import MessageType, MessageContent
+from ._schema_registry_avro_encoder import AvroEncoder  # pylint: disable=import-error
+from ._message_protocol import MessageType, MessageContent  # pylint: disable=import-error
+
 
 __all__ = [
     "AvroEncoder",

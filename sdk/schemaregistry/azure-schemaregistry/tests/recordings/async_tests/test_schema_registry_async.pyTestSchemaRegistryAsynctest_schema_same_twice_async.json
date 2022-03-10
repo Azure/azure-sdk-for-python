@@ -10,7 +10,7 @@
         "Content-Length": "179",
         "Content-Type": "application/json; serialization=Avro",
         "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "32b81dea-9f28-11ec-b538-f01dbca229e9"
+        "x-ms-client-request-id": "6b49722f-a0be-11ec-be74-9c2976df0bde"
       },
       "RequestBody": {
         "namespace": "example.avro",
@@ -40,11 +40,11 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Tue, 08 Mar 2022 21:39:14 GMT",
+        "Date": "Thu, 10 Mar 2022 22:07:04 GMT",
         "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-twice-async7cc33aff/versions/1?api-version=2021-10",
         "Schema-Group-Name": "fakegroup",
-        "Schema-Id": "ada645ab8f9144ad95021b2dc79604bb",
-        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/ada645ab8f9144ad95021b2dc79604bb?api-version=2021-10",
+        "Schema-Id": "2ef7c94a65884ec3950695c603eb5ad9",
+        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/2ef7c94a65884ec3950695c603eb5ad9?api-version=2021-10",
         "Schema-Name": "test-schema-twice-async7cc33aff",
         "Schema-Version": "1",
         "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-twice-async7cc33aff/versions?api-version=2021-10",
@@ -63,7 +63,7 @@
         "Content-Length": "179",
         "Content-Type": "application/json; serialization=Avro",
         "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "33317eac-9f28-11ec-a647-f01dbca229e9"
+        "x-ms-client-request-id": "6bb0aff1-a0be-11ec-a642-9c2976df0bde"
       },
       "RequestBody": {
         "namespace": "example.avro",
@@ -93,11 +93,11 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Tue, 08 Mar 2022 21:39:15 GMT",
+        "Date": "Thu, 10 Mar 2022 22:07:04 GMT",
         "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-twice-async7cc33aff/versions/1?api-version=2021-10",
         "Schema-Group-Name": "fakegroup",
-        "Schema-Id": "ada645ab8f9144ad95021b2dc79604bb",
-        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/ada645ab8f9144ad95021b2dc79604bb?api-version=2021-10",
+        "Schema-Id": "2ef7c94a65884ec3950695c603eb5ad9",
+        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/2ef7c94a65884ec3950695c603eb5ad9?api-version=2021-10",
         "Schema-Name": "test-schema-twice-async7cc33aff",
         "Schema-Version": "1",
         "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-twice-async7cc33aff/versions?api-version=2021-10",

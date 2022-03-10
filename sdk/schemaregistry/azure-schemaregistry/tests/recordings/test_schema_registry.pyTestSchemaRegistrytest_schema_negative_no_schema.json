@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.9.0b1 Python/3.9.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-identity/1.9.0b2 Python/3.9.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -17,17 +17,17 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 08 Mar 2022 21:39:08 GMT",
+        "Date": "Thu, 10 Mar 2022 22:06:54 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AhlfkW3EwO1OsoITIh8R_9OlEE-xAwAAAObDudkOAAAA; expires=Thu, 07-Apr-2022 21:39:08 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=Ak7M2k8Kr8BIqE7OvvisY-mlEE-xBAAAAGdtvNkOAAAA; expires=Sat, 09-Apr-2022 22:06:54 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12559.4 - EUS ProdSlices",
-        "x-ms-request-id": "a8cfd82d-c57d-4ed2-a0d2-990081380a00"
+        "x-ms-ests-server": "2.1.12559.5 - EUS ProdSlices",
+        "x-ms-request-id": "b5dc265e-2901-4071-ae60-00079c5d0600"
       },
       "ResponseBody": {
         "token_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
@@ -104,8 +104,8 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=AhlfkW3EwO1OsoITIh8R_9OlEE-xAwAAAObDudkOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
-        "User-Agent": "azsdk-python-identity/1.9.0b1 Python/3.9.0 (Windows-10-10.0.22000-SP0)"
+        "Cookie": "fpc=Ak7M2k8Kr8BIqE7OvvisY-mlEE-xBAAAAGdtvNkOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.9.0b2 Python/3.9.0 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -115,17 +115,17 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 08 Mar 2022 21:39:08 GMT",
+        "Date": "Thu, 10 Mar 2022 22:06:54 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AhlfkW3EwO1OsoITIh8R_9OlEE-xAwAAAObDudkOAAAA; expires=Thu, 07-Apr-2022 21:39:08 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=Ak7M2k8Kr8BIqE7OvvisY-mlEE-xBAAAAGdtvNkOAAAA; expires=Sat, 09-Apr-2022 22:06:54 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12529.17 - NCUS ProdSlices",
-        "x-ms-request-id": "0967ca58-f63f-44dd-b152-efadbbbaba00"
+        "x-ms-ests-server": "2.1.12559.4 - SCUS ProdSlices",
+        "x-ms-request-id": "86bcfda4-52d6-4cdc-89ff-57d61e170e00"
       },
       "ResponseBody": {
         "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
@@ -183,13 +183,13 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "2f81f4ab-9f28-11ec-834c-f01dbca229e9"
+        "x-ms-client-request-id": "658f9689-a0be-11ec-aa1c-9c2976df0bde"
       },
       "RequestBody": null,
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Tue, 08 Mar 2022 21:39:09 GMT",
+        "Date": "Thu, 10 Mar 2022 22:06:54 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -198,7 +198,7 @@
       "ResponseBody": {
         "error": {
           "code": "InvalidRequest",
-          "message": "SubCode=40000, UnknownType:The request is invalid. [MGResponseHttpError=BadRequest]. TrackingId:6f1bb162-9ce7-4986-847c-7c252a341f94_G0, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/$schemas/a, Timestamp:2022-03-08T21:39:09"
+          "message": "SubCode=40000, UnknownType:The request is invalid. [MGResponseHttpError=BadRequest]. TrackingId:b1235c39-0103-47be-9a90-6631c3b86cfc_G25, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/$schemas/a, Timestamp:2022-03-10T22:06:55"
         }
       }
     },
@@ -211,13 +211,13 @@
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "3003d1a6-9f28-11ec-b1b4-f01dbca229e9"
+        "x-ms-client-request-id": "661aa675-a0be-11ec-9b8e-9c2976df0bde"
       },
       "RequestBody": null,
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Tue, 08 Mar 2022 21:39:09 GMT",
+        "Date": "Thu, 10 Mar 2022 22:06:55 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -226,7 +226,7 @@
       "ResponseBody": {
         "error": {
           "code": "ItemNotFound",
-          "message": "Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does not exist. TrackingId:e29cbd1e-c5db-495a-bfc4-3a0407ef48a6_G0, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/$schemas/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, Timestamp:2022-03-08T21:39:09"
+          "message": "Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does not exist. TrackingId:55458984-49d1-4ba0-b343-cb0cd207595c_G25, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/$schemas/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, Timestamp:2022-03-10T22:06:55"
         }
       }
     }
