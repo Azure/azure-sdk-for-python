@@ -1742,11 +1742,19 @@ class CheckNoAliasGeneratedCode(BaseChecker):
         :type node: ast.Module
         :return: None
         """
+        with open(".\scripts\pylint_custom_plugin\ignore_files.txt") as file:
+            ignore_list = file.read().split()
+            print(ignore_list, "done")
+
         try:
-        
+            print(node.name)
+            if node.name in ignore_list:
+                print("node")
+                print(node.name)
+                return
             if node.file.endswith("__init__.py"):
                 aliased = []
-              
+            
                 for nod in node.body:
                     if isinstance(nod, astroid.ImportFrom) or isinstance(nod, astroid.Import):
                         # If the model has been aliased

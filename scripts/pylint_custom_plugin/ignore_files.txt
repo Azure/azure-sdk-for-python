@@ -1,0 +1,7 @@
+azure
+azure.ai
+azure.ai.metricsadvisor
+azure.ai.metricsadvisor.models
+azure.keyvault
+azure.keyvault.secrets
+azure.keyvault.secrets._shared
