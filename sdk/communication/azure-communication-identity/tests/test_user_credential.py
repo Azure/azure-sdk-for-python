@@ -162,6 +162,7 @@ class TestCommunicationTokenCredential(TestCase):
                 # check that next refresh is always scheduled
                 assert credential._timer is not None
         
+    @pytest.mark.skipif(platform.python_implementation() == 'PyPy', reason="This tests take too long for pypy")
     def test_fractional_backoff_applied_when_token_expiring(self):
         token_validity_seconds = 5 * 60
         expiring_token = generate_token_with_custom_expiry(
