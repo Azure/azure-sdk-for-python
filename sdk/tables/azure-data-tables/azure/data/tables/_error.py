@@ -82,7 +82,7 @@ def _validate_storage_tablename(table_name):
 def _validate_cosmos_tablename(table_name):
     if _COSMOS_VALID_TABLE.match(table_name) is None:
         raise ValueError(
-            "Cosmos table names names must contain from 1-255 characters, and they cannot contain /, \\, #, ?, or a trailing space."  # pylint: disable=line-too-long
+            "Cosmos table names must contain from 1-255 characters, and they cannot contain /, \\, #, ?, or a trailing space."  # pylint: disable=line-too-long
         )
 
 
