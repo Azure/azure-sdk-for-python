@@ -395,7 +395,7 @@ class TableClient(AsyncTablesBaseClient):
                 if entity.get("RowKey") is None:
                     raise ValueError("RowKey must be present in an entity")
             _validate_tablename_error(decoded, self.table_name)
-            _reraise_error(decoded)
+            _reraise_error(error)
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
 
