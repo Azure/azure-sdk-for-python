@@ -5,7 +5,6 @@
 # -------------------------------------------------------------------------
 import uuid
 import functools
-import threading
 from typing import Optional, Callable
 
 from uamqp import Source
