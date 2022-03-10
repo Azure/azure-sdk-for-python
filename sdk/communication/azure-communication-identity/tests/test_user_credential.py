@@ -203,7 +203,6 @@ class TestCommunicationTokenCredential(TestCase):
         assert generated_token == access_token.token
 
 
-    @pytest.mark.skipif(platform.python_implementation() == 'PyPy', reason="This tests take too long for pypy")
     def test_exit_cancels_timer(self):
         refresher = MagicMock(return_value=self.sample_token)
         credential = CommunicationTokenCredential(
