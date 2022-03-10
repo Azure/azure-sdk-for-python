@@ -44,13 +44,13 @@ class TestCommunicationTokenCredential(TestCase):
     async def test_communicationtokencredential_throws_if_proactive_refresh_enabled_without_token_refresher(self):
         with pytest.raises(ValueError) as err:
             CommunicationTokenCredential(self.sample_token, proactive_refresh=True)
-        assert str(err.value) == "'token_refresher' must not be None."
+        assert str(err.value) == "When 'proactive_refresh' is True, 'token_refresher' must not be None."
         with pytest.raises(ValueError) as err:
             CommunicationTokenCredential(
                 self.sample_token, 
                 proactive_refresh=True,
                 token_refresher=None)
-        assert str(err.value) == "'token_refresher' must not be None."
+        assert str(err.value) == "When 'proactive_refresh' is True, 'token_refresher' must not be None."
 
     @pytest.mark.asyncio
     async def test_refresher_should_be_called_immediately_with_expired_token(self):
