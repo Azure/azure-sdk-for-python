@@ -1,6 +1,6 @@
 # Release History
 
-## 1.22.2 (Unreleased)
+## 1.23.1 (Unreleased)
 
 ### Features Added
 
@@ -10,7 +10,22 @@
 
 ### Other Changes
 
+## 1.23.0 (2022-03-03)
+
+### Features Added
+
+- Improve intellisense type hinting for service client methods. #22891
+
+- Add a case insensitive dict `case_insensitive_dict` in `azure.core.utils`.  #23206
+
+### Bugs Fixed
+
+- Use "\n" rather than "/n" for new line in log.     #23261
+
+### Other Changes
+
 - Log "WWW-Authenticate" header in `HttpLoggingPolicy`  #22990
+- Added dependency on `typing-extensions` >= 4.0.1
 
 ## 1.22.1 (2022-02-09)
 

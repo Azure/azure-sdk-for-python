@@ -245,12 +245,12 @@ class StorageInsightState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ERROR = "ERROR"
 
 class TablePlanEnum(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The table plan.
+    """Instruct the system how to handle and charge the logs ingested to this table.
     """
 
-    #: Basic - logs that are adjusted to support high volume / low value verbose logs.
+    #: Logs  that are adjusted to support high volume low value verbose logs.
     BASIC = "Basic"
-    #: Analytics - logs that allow monitoring and analytics.
+    #: Logs  that allow monitoring and analytics.
     ANALYTICS = "Analytics"
 
 class TableSubTypeEnum(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):

@@ -7,50 +7,80 @@
         "Accept": "application/json, text/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "2123",
+        "Content-Length": "2125",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "28adc300-5d0f-11ec-ba46-b831b58100e8"
+        "x-ms-client-request-id": "91fcf173-8b89-11ec-b1f7-b831b58100e8"
       },
-      "RequestBody": "{\u0022tasks\u0022: {\u0022entityRecognitionTasks\u0022: [], \u0022entityRecognitionPiiTasks\u0022: [], \u0022keyPhraseExtractionTasks\u0022: [], \u0022entityLinkingTasks\u0022: [], \u0022sentimentAnalysisTasks\u0022: [], \u0022extractiveSummarizationTasks\u0022: [{\u0022parameters\u0022: {\u0022stringIndexType\u0022: \u0022UnicodeCodePoint\u0022, \u0022sentenceCount\u0022: 5, \u0022sortBy\u0022: \u0022Rank\u0022}, \u0022taskName\u0022: \u00220\u0022}], \u0022customEntityRecognitionTasks\u0022: [], \u0022customSingleClassificationTasks\u0022: [], \u0022customMultiClassificationTasks\u0022: []}, \u0022analysisInput\u0022: {\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris Johnson, quit on Monday, hours after the resignation late on Sunday night of the minister in charge of Brexit negotiations, David Davis. Their decision to leave the government came three days after May appeared to have agreed a deal with herfractured Cabinet on the UK\u0027s post Brexit relationship with the EU. That plan is now in tatters and her political future appears uncertain. May appeared in Parliament on Monday afternoon to defend her plan, minutes after Downing Street confirmed the departure of Johnson. May acknowledged the splits in her statement to MPs, saying of the ministers who quit: We do not agree about the best way of delivering our shared commitment to honoring the result of the referendum. The Prime Minister\u0027s latest plitical drama began late on Sunday night when Davis quit, declaring he could not support May\u0027s Brexit plan. He said it involved too close a relationship with the EU and gave only an illusion of control being returned to the UK after it left the EU. It seems to me we\u0027re giving too much away, too easily, and that\u0027s a dangerous strategy at this time, Davis said in a BBC radio interview Monday morning. Johnson\u0027s resignation came Monday afternoon local time, just before the Prime Minister was due to make a scheduled statement in Parliament. This afternoon, the Prime Minister accepted the resignation of Boris Johnson as Foreign Secretary, a statement from Downing Street said.\u0022, \u0022language\u0022: \u0022en\u0022}]}}",
+      "RequestBody": {
+        "tasks": {
+          "entityRecognitionTasks": [],
+          "entityRecognitionPiiTasks": [],
+          "keyPhraseExtractionTasks": [],
+          "entityLinkingTasks": [],
+          "sentimentAnalysisTasks": [],
+          "extractiveSummarizationTasks": [
+            {
+              "parameters": {
+                "stringIndexType": "UnicodeCodePoint",
+                "sentenceCount": 5,
+                "sortBy": "Rank"
+              },
+              "taskName": "0"
+            }
+          ],
+          "customEntityRecognitionTasks": [],
+          "customSingleClassificationTasks": [],
+          "customMultiClassificationTasks": []
+        },
+        "analysisInput": {
+          "documents": [
+            {
+              "id": "0",
+              "text": "The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris Johnson, quit on Monday, hours after the resignation late on Sunday night of the minister in charge of Brexit negotiations, David Davis. Their decision to leave the government came three days after May appeared to have agreed a deal with her fractured Cabinet on the UK\u0027s post Brexit relationship with the EU. That plan is now in tatters and her political future appears uncertain. May appeared in Parliament on Monday afternoon to defend her plan, minutes after Downing Street confirmed the departure of Johnson. May acknowledged the splits in her statement to MPs, saying of the ministers who quit: We do not agree about the best way of delivering our shared commitment to honoring the result of the referendum. The Prime Minister\u0027s latest political drama began late on Sunday night when Davis quit, declaring he could not support May\u0027s Brexit plan. He said it involved too close a relationship with the EU and gave only an illusion of control being returned to the UK after it left the EU. It seems to me we\u0027re giving too much away, too easily, and that\u0027s a dangerous strategy at this time, Davis said in a BBC radio interview Monday morning. Johnson\u0027s resignation came Monday afternoon local time, just before the Prime Minister was due to make a scheduled statement in Parliament. This afternoon, the Prime Minister accepted the resignation of Boris Johnson as Foreign Secretary, a statement from Downing Street said.",
+              "language": "en"
+            }
+          ]
+        }
+      },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "51650200-2a9e-4635-a3b5-db7eadaa9617",
-        "Date": "Tue, 14 Dec 2021 18:53:43 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/6df49330-1b99-4d8a-b3e1-da845654f7ef",
+        "apim-request-id": "58e145ee-e2b3-4822-abdf-0d5e9cd029df",
+        "Date": "Fri, 11 Feb 2022 22:25:51 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/fedb0f9a-b51f-4e7b-8ec0-b10eb1ec780e",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "166"
+        "x-envoy-upstream-service-time": "112"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/6df49330-1b99-4d8a-b3e1-da845654f7ef?showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/analyze/jobs/fedb0f9a-b51f-4e7b-8ec0-b10eb1ec780e?showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "28adc300-5d0f-11ec-ba46-b831b58100e8"
+        "x-ms-client-request-id": "91fcf173-8b89-11ec-b1f7-b831b58100e8"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "ba4f8dc3-a58e-4658-adc3-6d753fbad808",
+        "apim-request-id": "f16da9d6-2d8a-4b1e-a00a-18059737cb25",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 14 Dec 2021 18:53:47 GMT",
+        "Date": "Fri, 11 Feb 2022 22:25:56 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "48"
+        "x-envoy-upstream-service-time": "37"
       },
       "ResponseBody": {
-        "jobId": "6df49330-1b99-4d8a-b3e1-da845654f7ef",
-        "lastUpdateDateTime": "2021-12-14T18:53:45Z",
-        "createdDateTime": "2021-12-14T18:53:43Z",
-        "expirationDateTime": "2021-12-15T18:53:43Z",
+        "jobId": "fedb0f9a-b51f-4e7b-8ec0-b10eb1ec780e",
+        "lastUpdateDateTime": "2022-02-11T22:25:55Z",
+        "createdDateTime": "2022-02-11T22:25:52Z",
+        "expirationDateTime": "2022-02-12T22:25:52Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -60,7 +90,7 @@
           "total": 1,
           "extractiveSummarizationTasks": [
             {
-              "lastUpdateDateTime": "2021-12-14T18:53:45.9335319Z",
+              "lastUpdateDateTime": "2022-02-11T22:25:55.2562638Z",
               "taskName": "0",
               "state": "succeeded",
               "results": {
@@ -74,7 +104,7 @@
                   {
                     "id": "0",
                     "statistics": {
-                      "charactersCount": 1625,
+                      "charactersCount": 1627,
                       "transactionsCount": 2
                     },
                     "sentences": [
@@ -91,22 +121,22 @@
                         "length": 176
                       },
                       {
-                        "text": "Their decision to leave the government came three days after May appeared to have agreed a deal with herfractured Cabinet on the UK\u0027s post Brexit relationship with the EU.",
-                        "rankScore": 0.47,
+                        "text": "Their decision to leave the government came three days after May appeared to have agreed a deal with her fractured Cabinet on the UK\u0027s post Brexit relationship with the EU.",
+                        "rankScore": 0.56,
                         "offset": 342,
-                        "length": 171
+                        "length": 172
                       },
                       {
                         "text": "That plan is now in tatters and her political future appears uncertain.",
-                        "rankScore": 0.36,
-                        "offset": 514,
+                        "rankScore": 0.4,
+                        "offset": 515,
                         "length": 71
                       },
                       {
-                        "text": "The Prime Minister\u0027s latest plitical drama began late on Sunday night when Davis quit, declaring he could not support May\u0027s Brexit plan.",
-                        "rankScore": 0.26,
-                        "offset": 918,
-                        "length": 136
+                        "text": "The Prime Minister\u0027s latest political drama began late on Sunday night when Davis quit, declaring he could not support May\u0027s Brexit plan.",
+                        "rankScore": 0.25,
+                        "offset": 919,
+                        "length": 137
                       }
                     ],
                     "warnings": []

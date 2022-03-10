@@ -14,7 +14,7 @@ DESCRIPTION:
     By default, model_version is set to "latest". This indicates that the latest generally available version
     of the model will be used. Model versions are date based, e.g "2021-06-01".
     See the documentation for a list of all model versions:
-    https://docs.microsoft.com/azure/cognitive-services/language-service/named-entity-recognition/how-to-call#specify-the-ner-model
+    https://aka.ms/text-analytics-model-versioning
 
 USAGE:
     python sample_model_version.py

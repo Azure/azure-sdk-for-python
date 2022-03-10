@@ -1,15 +1,16 @@
 # Release History
 
-## 12.2.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 12.2.1 (2022-03-10)
 
 ### Bugs Fixed
+* Fixed hard-coded URL scheme in batch requests (#21953)
+* Improved documentation for query formatting in `query_entities` APIs (#23235)
+* Removed unsecure debug logging
+* Remove client validation of table names (#23106)
 
 ### Other Changes
-* Python 2.7 and 3.6 are no longer supported. Please use Python version 3.7 or later.
+* Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+* Bumped dependency on `azure-core` to `>=1.15.0`
 
 ## 12.2.0 (2021-11-10)
 **Warning** This release involves a bug fix that may change the behaviour for some users. Partition and Row keys that contain a single quote character (`'`) will now be automatically escaped for upsert, update and delete entity operations. Partition and Row keys that were already escaped, or contained duplicate single quote char (`''`) will now be treated as unescaped values.
