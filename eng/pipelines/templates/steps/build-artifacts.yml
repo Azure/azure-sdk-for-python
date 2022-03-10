@@ -63,6 +63,11 @@ steps:
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
+  # - pwsh: |
+  #     Write-Host "Generate output here"
+  #   displayName: "Generate regression variable"
+  #   condition: and(succeededOrFailed(), or(eq(variables['Run.Regression'], 'true'), and(eq(variables['Build.Reason'], 'Schedule'), eq(variables['System.TeamProject'],'internal'))))
+
   - task: Powershell@2
     inputs:
       filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
