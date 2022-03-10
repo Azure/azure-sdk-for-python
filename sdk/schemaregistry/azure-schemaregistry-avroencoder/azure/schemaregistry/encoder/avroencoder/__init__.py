@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from ._version import VERSION
+from ._version import VERSION   # pylint: disable=import-error
 
 __version__ = VERSION
 
