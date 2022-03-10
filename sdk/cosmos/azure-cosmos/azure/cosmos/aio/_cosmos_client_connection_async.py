@@ -141,7 +141,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if consistency_level is not None:
             self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
 
-        # Keeps the latest response headers from server.
+        # Keeps the latest response headers from the server.
         self.last_response_headers = None
 
         self._useMultipleWriteLocations = False
