@@ -1790,68 +1790,6 @@ class CheckEnum(BaseChecker):
             pass
 
 
-class CheckNoAliasGeneratedCode(BaseChecker):
-    __implements__ = IAstroidChecker
-
-    name = "check-alias"
-    priority = -1
-    msgs = {
-        "C4745": (
-            "Exposing aliased generated code."
-            "This messes up sphinx, intellisense, and apiview, so please modify the name of the generated code through"
-            " the swagger / directives, or code customizations",
-            "aliasing-generated-code",
-            "Do not alias models imported from the generated code.",
-        ),
-    }
-    options = (
-        (
-            "ignore-aliasing-generated-code",
-            {
-                "default": False,
-                "type": "yn",
-                "metavar": "<y_or_n>",
-                "help": "Allow generated code to be aliased.",
-            },
-        ),
-    )
-
-    def __init__(self, linter=None):
-        super(CheckNoAliasGeneratedCode, self).__init__(linter)
-
-    def visit_module(self, node):
-        """Visits __init__.py and checks that there are not aliased models.
-
-        :param node: module node
-        :type node: ast.Module
-        :return: None
-        """
-        try:
-        
-            if node.file.endswith("__init__.py"):
-                aliased = []
-              
-                for nod in node.body:
-                    if isinstance(nod, astroid.ImportFrom) or isinstance(nod, astroid.Import):
-                        # If the model has been aliased
-                        for name in nod.names:
-                            if name[1] != None:
-                                aliased.append(name[1])
-
-                    if isinstance(nod, astroid.Assign): 
-                        if nod.targets[0].as_string() == "__all__":
-                            for models in nod.assigned_stmts():
-                                for model_name in models.elts:
-                                    if model_name.value in aliased:
-                                        self.add_message(
-                                            msgid="aliasing-generated-code", node=model_name, confidence=None
-                                        )
-    
-        except Exception:
-                logger.debug("Pylint custom checker failed to check if model is aliased.")
-                pass
-
-
 # if a linter is registered in this function then it will be checked with pylint
 def register(linter):
     linter.register_checker(ClientsDoNotUseStaticMethods(linter))
