@@ -200,6 +200,7 @@ class ServiceBusReceiver(
             None if self._session_id is None else ServiceBusSession(self._session_id, self)
         )
         self._keep_receiving_thread = None
+        self._receive_context = threading.Event()
 
     def __iter__(self):
         return self._iter_contextual_wrapper()
@@ -573,9 +574,9 @@ class ServiceBusReceiver(
             try:
                 self._handler._connection.work()  # pylint: disable=protected-access
                 time.sleep(5)
-                _LOGGER.debug("Keep receiving alive")
+                _LOGGER.debug("Keep connection alive")
             except Exception as e:  # pylint: disable=broad-except
-                _LOGGER.info("Keep receiving failed %r", e)
+                _LOGGER.info("Keep connection failed %r", e)
                 break
 
     @property

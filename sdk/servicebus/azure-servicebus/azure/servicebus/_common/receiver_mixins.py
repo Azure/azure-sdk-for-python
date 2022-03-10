@@ -85,7 +85,6 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
                 "Messages received in RECEIVE_AND_DELETE receive mode cannot have their locks removed "
                 "as they have been deleted, providing an AutoLockRenewer in this mode is invalid."
             )
-        self._receive_context = threading.Event()
 
     def _build_message(self, received, message_type=ServiceBusReceivedMessage):
         message = message_type(

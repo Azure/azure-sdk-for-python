@@ -195,6 +195,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             None if self._session_id is None else ServiceBusSession(self._session_id, self)
         )
         self._keep_receiving_coroutine = None
+        self._receive_context = asyncio.Event()
 
     # Python 3.5 does not allow for yielding from a coroutine, so instead of the try-finally functional wrapper
     # trick to restore the timeout, let's use a wrapper class to maintain the override that may be specified.
@@ -561,11 +562,11 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             try:
                 await self._handler._connection.work_async()  # pylint: disable=protected-access
                 await asyncio.sleep(5)
-                _LOGGER.debug("Keep receiving alive")
+                _LOGGER.debug("Keep connection alive")
             except asyncio.CancelledError:
                 pass
             except Exception as e:  # pylint: disable=broad-except
-                _LOGGER.info("Keep receiving failed %r", e)
+                _LOGGER.info("Keep connection failed %r", e)
                 break
 
     @property
