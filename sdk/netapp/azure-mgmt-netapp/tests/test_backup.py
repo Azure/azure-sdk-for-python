@@ -100,7 +100,6 @@ class TestNetAppBackup(AzureMgmtRecordedTestCase):
 
     # Before tests are run live a resource group needs to be created along with vnet and subnet
     # Note that when tests are run in live mode it is best to run one test at a time.
-    @pytest.mark.live_test_only
     @recorded_by_proxy
     def test_create_delete_backup(self):
         # Create 2 backups since delete backups can only be used when volume has multiple backups
@@ -121,7 +120,6 @@ class TestNetAppBackup(AzureMgmtRecordedTestCase):
 
         clean_up(self.client, disable_bp=False, live=self.is_live)
 
-    @pytest.mark.live_test_only
     @recorded_by_proxy
     def test_list_backup(self):
         create_backup(self.client, live=self.is_live)
@@ -141,7 +139,6 @@ class TestNetAppBackup(AzureMgmtRecordedTestCase):
 
         clean_up(self.client, disable_bp=False, live=self.is_live)
 
-    @pytest.mark.live_test_only
     @recorded_by_proxy
     def test_get_backup_by_name(self):
         create_backup(self.client, live=self.is_live)
@@ -151,7 +148,6 @@ class TestNetAppBackup(AzureMgmtRecordedTestCase):
 
         clean_up(self.client, live=self.is_live)
 
-    @pytest.mark.live_test_only
     @recorded_by_proxy
     def test_update_backup(self):
         create_backup(self.client, live=self.is_live)
@@ -163,7 +159,6 @@ class TestNetAppBackup(AzureMgmtRecordedTestCase):
 
         clean_up(self.client, live=self.is_live)
 
-    @pytest.mark.live_test_only
     @recorded_by_proxy
     def test_get_backup_status(self):
         create_backup(self.client, live=self.is_live)

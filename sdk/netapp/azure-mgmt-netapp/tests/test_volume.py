@@ -170,7 +170,6 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
 
     # Before tests are run live a resource group needs to be created along with vnet and subnet
     # Note that when tests are run in live mode it is best to run one test at a time.
-    @pytest.mark.live_test_only
     @recorded_by_proxy
     def test_create_delete_list_volume(self):
         volume = create_volume(
@@ -199,7 +198,6 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
         delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
-    @pytest.mark.live_test_only
     @recorded_by_proxy
     def test_list_volumes(self):
         create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, LOCATION, live=self.is_live)
@@ -218,7 +216,6 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
         delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
-    @pytest.mark.live_test_only
     @recorded_by_proxy
     def test_volume_replication(self):
         source_volume = create_volume(
@@ -311,7 +308,6 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
         delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
-    @pytest.mark.live_test_only
     @recorded_by_proxy
     def test_get_volume_by_name(self):
         create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, LOCATION, live=self.is_live)
@@ -323,7 +319,6 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
         delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
-    @pytest.mark.live_test_only
     @recorded_by_proxy
     def test_update_volume(self):
         volume = create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
@@ -353,7 +348,6 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
         delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
-    @pytest.mark.live_test_only
     @recorded_by_proxy
     def test_patch_volume(self):
         volume = create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)
@@ -369,7 +363,6 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
         delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
         delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
-    @pytest.mark.live_test_only
     @recorded_by_proxy
     def test_pool_change(self):
         create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, live=self.is_live)

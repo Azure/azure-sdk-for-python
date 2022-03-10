@@ -51,7 +51,6 @@ class TestNetAppSnapshot(AzureMgmtRecordedTestCase):
 
     # Before tests are run live a resource group needs to be created along with vnet and subnet
     # Note that when tests are run in live mode it is best to run one test at a time.
-    @pytest.mark.live_test_only
     @recorded_by_proxy
     def test_create_delete_snapshot(self):
         create_snapshot(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SNAPSHOT_1, LOCATION)
@@ -67,7 +66,6 @@ class TestNetAppSnapshot(AzureMgmtRecordedTestCase):
         delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, self.is_live)
         delete_account(self.client, TEST_RG, TEST_ACC_1, self.is_live)
 
-    @pytest.mark.live_test_only
     @recorded_by_proxy
     def test_list_snapshots(self):
         create_snapshot(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SNAPSHOT_1, LOCATION)
@@ -87,7 +85,6 @@ class TestNetAppSnapshot(AzureMgmtRecordedTestCase):
         delete_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, self.is_live)
         delete_account(self.client, TEST_RG, TEST_ACC_1, self.is_live)
 
-    @pytest.mark.live_test_only
     @recorded_by_proxy
     def test_get_snapshot_by_name(self):
         create_snapshot(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1, TEST_SNAPSHOT_1, LOCATION)
