@@ -96,7 +96,7 @@ class CosmosClient(object):
     :param str url: The URL of the Cosmos DB account.
     :param credential: Can be the account key, or a dictionary of resource tokens.
     :type credential: str or dict[str, str]
-    :keyword str consistency_level: Consistency level to use for the session. The default value is "Session".
+    :param str consistency_level: Consistency level to use for the session. The default value is None (Account level).
 
     .. admonition:: Example:
 
@@ -109,11 +109,10 @@ class CosmosClient(object):
             :name: create_client
     """
 
-    def __init__(self, url, credential, **kwargs):
-        # type: (str, Any, str, Any) -> None
+    def __init__(self, url, credential, consistency_level=None, **kwargs):
+        # type: (str, Any, Optional[str], Any) -> None
         """Instantiate a new CosmosClient."""
         auth = _build_auth(credential)
-        consistency_level = kwargs.get('consistency_level', 'Session')
         connection_policy = _build_connection_policy(kwargs)
         self.client_connection = CosmosClientConnection(
             url,
@@ -141,8 +140,8 @@ class CosmosClient(object):
         await self.__aexit__()
 
     @classmethod
-    def from_connection_string(cls, conn_str, credential=None, consistency_level="Session", **kwargs):
-        # type: (str, Optional[Union[str, Dict[str, str]]], str, Any) -> CosmosClient
+    def from_connection_string(cls, conn_str, credential=None, consistency_level=None, **kwargs):
+        # type: (str, Optional[Union[str, Dict[str, str]]], Optional[str], Any) -> CosmosClient
         """Create a CosmosClient instance from a connection string.
 
         This can be retrieved from the Azure portal.For full list of optional
@@ -155,8 +154,8 @@ class CosmosClient(object):
         :type credential: str or Dict[str, str]
         :param conn_str: The connection string.
         :type conn_str: str
-        :param consistency_level: Consistency level to use for the session. The default value is "Session".
-        :type consistency_level: str
+        :param consistency_level: Consistency level to use for the session. The default value is None (Account level).
+        :type consistency_level: Optional[str]
         """
         settings = _parse_connection_str(conn_str, credential)
         return cls(

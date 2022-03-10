@@ -1,106 +1,105 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels:build?api-version=2021-09-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels:build?api-version=2022-01-30-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "108",
+        "Content-Length": "131",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "0c359e9d-5ee6-11ec-8cb7-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "9ce55ace-7f2b-11ec-a27c-c8348e073d30"
       },
       "RequestBody": {
-        "modelId": "34bc6bbc-108e-4ecd-a85f-c25bf2ee2d6b",
+        "modelId": "4c17f2df-a171-440a-8018-23fa9556f170",
+        "buildMode": "template",
         "azureBlobSource": {
           "containerUrl": "https://blob_sas_url"
         }
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "d75f6bc8-8587-4e81-9259-2b05e7393924",
+        "apim-request-id": "bc6aeebd-1127-4b07-ad89-5f1fb18687cd",
         "Content-Length": "0",
-        "Date": "Fri, 17 Dec 2021 03:04:29 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/operations/31526657732_d75f6bc8-8587-4e81-9259-2b05e7393924?api-version=2021-09-30-preview",
+        "Date": "Thu, 27 Jan 2022 04:43:04 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/operations/31523109417_bc6aeebd-1127-4b07-ad89-5f1fb18687cd?api-version=2022-01-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "1931"
+        "x-envoy-upstream-service-time": "2174"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/operations/31526657732_d75f6bc8-8587-4e81-9259-2b05e7393924?api-version=2021-09-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/operations/31523109417_bc6aeebd-1127-4b07-ad89-5f1fb18687cd?api-version=2022-01-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "0c359e9d-5ee6-11ec-8cb7-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "9ce55ace-7f2b-11ec-a27c-c8348e073d30"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "f1284583-87c5-49d2-b7a8-de728f59cd6e",
+        "apim-request-id": "2f90449b-3679-4172-a46d-0d20fbcecba5",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Dec 2021 03:04:34 GMT",
+        "Date": "Thu, 27 Jan 2022 04:43:10 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "39"
+        "x-envoy-upstream-service-time": "70"
       },
-      "ResponseBody": [
-        "{\n",
-        "  \u0022operationId\u0022: \u002231526657732_d75f6bc8-8587-4e81-9259-2b05e7393924\u0022,\n",
-        "  \u0022kind\u0022: \u0022documentModelBuild\u0022,\n",
-        "  \u0022status\u0022: \u0022succeeded\u0022,\n",
-        "  \u0022createdDateTime\u0022: \u00222021-12-17T03:04:28Z\u0022,\n",
-        "  \u0022lastUpdatedDateTime\u0022: \u00222021-12-17T03:04:31Z\u0022,\n",
-        "  \u0022resourceLocation\u0022: \u0022https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/34bc6bbc-108e-4ecd-a85f-c25bf2ee2d6b?api-version=2021-09-30-preview\u0022,\n",
-        "  \u0022percentCompleted\u0022: 100,\n",
-        "  \u0022result\u0022: {\n",
-        "    \u0022docTypes\u0022: {\n",
-        "      \u002234bc6bbc-108e-4ecd-a85f-c25bf2ee2d6b\u0022: {\n",
-        "        \u0022fieldSchema\u0022: {\n",
-        "          \u0022table\u0022: {\n",
-        "            \u0022type\u0022: \u0022array\u0022,\n",
-        "            \u0022items\u0022: {\n",
-        "              \u0022type\u0022: \u0022object\u0022,\n",
-        "              \u0022properties\u0022: {\n",
-        "                \u0022Item\u0022: {\n",
-        "                  \u0022type\u0022: \u0022string\u0022\n",
-        "                },\n",
-        "                \u0022Price\u0022: {\n",
-        "                  \u0022type\u0022: \u0022string\u0022\n",
-        "                },\n",
-        "                \u0022Tax\u0022: {\n",
-        "                  \u0022type\u0022: \u0022string\u0022\n",
-        "                },\n",
-        "                \u0022Total\u0022: {\n",
-        "                  \u0022type\u0022: \u0022string\u0022\n",
-        "                }\n",
-        "              }\n",
-        "            }\n",
-        "          }\n",
-        "        },\n",
-        "        \u0022technique\u0022: \u0022fixedTemplate-2021-07-30\u0022,\n",
-        "        \u0022modelType\u0022: \u0022form\u0022,\n",
-        "        \u0022fieldConfidence\u0022: {\n",
-        "          \u0022table\u0022: 0.95,\n",
-        "          \u0022table: Item\u0022: 0.95,\n",
-        "          \u0022table: Price\u0022: 0.95,\n",
-        "          \u0022table: Tax\u0022: 0.95,\n",
-        "          \u0022table: Total\u0022: 0.95\n",
-        "        }\n",
-        "      }\n",
-        "    },\n",
-        "    \u0022modelId\u0022: \u002234bc6bbc-108e-4ecd-a85f-c25bf2ee2d6b\u0022,\n",
-        "    \u0022createdDateTime\u0022: \u00222021-12-17T03:04:31Z\u0022\n",
-        "  }\n",
-        "}"
-      ]
+      "ResponseBody": {
+        "operationId": "31523109417_bc6aeebd-1127-4b07-ad89-5f1fb18687cd",
+        "kind": "documentModelBuild",
+        "status": "succeeded",
+        "createdDateTime": "2022-01-27T04:43:03Z",
+        "lastUpdatedDateTime": "2022-01-27T04:43:06Z",
+        "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/4c17f2df-a171-440a-8018-23fa9556f170?api-version=2022-01-30-preview",
+        "percentCompleted": 100,
+        "result": {
+          "docTypes": {
+            "4c17f2df-a171-440a-8018-23fa9556f170": {
+              "fieldSchema": {
+                "table": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "Item": {
+                        "type": "string"
+                      },
+                      "Price": {
+                        "type": "string"
+                      },
+                      "Tax": {
+                        "type": "string"
+                      },
+                      "Total": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              },
+              "buildMode": "template",
+              "fieldConfidence": {
+                "table": 0.95,
+                "table: Item": 0.95,
+                "table: Price": 0.95,
+                "table: Tax": 0.95,
+                "table: Total": 0.95
+              }
+            }
+          },
+          "modelId": "4c17f2df-a171-440a-8018-23fa9556f170",
+          "createdDateTime": "2022-01-27T04:43:06Z",
+          "apiVersion": "2022-01-30-preview"
+        }
+      }
     }
   ],
   "Variables": {}

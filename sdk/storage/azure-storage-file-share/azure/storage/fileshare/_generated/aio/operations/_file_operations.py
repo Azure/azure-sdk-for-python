@@ -1490,7 +1490,7 @@ class FileOperations:
         if _file_permission_copy_mode is not None:
             header_parameters['x-ms-file-permission-copy-mode'] = self._serialize.header("file_permission_copy_mode", _file_permission_copy_mode, 'str')
         if _ignore_read_only is not None:
-            header_parameters['x-ms-file-copy-ignore-read-only'] = self._serialize.header("ignore_read_only", _ignore_read_only, 'bool')
+            header_parameters['x-ms-file-copy-ignore-readonly'] = self._serialize.header("ignore_read_only", _ignore_read_only, 'bool')
         if _file_attributes is not None:
             header_parameters['x-ms-file-attributes'] = self._serialize.header("file_attributes", _file_attributes, 'str')
         if _file_creation_time is not None:
@@ -1774,3 +1774,151 @@ class FileOperations:
             return cls(pipeline_response, None, response_headers)
 
     force_close_handles.metadata = {'url': '/{shareName}/{directory}/{fileName}'}  # type: ignore
+
+    async def rename(
+        self,
+        rename_source: str,
+        timeout: Optional[int] = None,
+        replace_if_exists: Optional[bool] = None,
+        ignore_read_only: Optional[bool] = None,
+        file_permission: Optional[str] = "inherit",
+        file_permission_key: Optional[str] = None,
+        metadata: Optional[str] = None,
+        source_lease_access_conditions: Optional["_models.SourceLeaseAccessConditions"] = None,
+        destination_lease_access_conditions: Optional["_models.DestinationLeaseAccessConditions"] = None,
+        copy_file_smb_info: Optional["_models.CopyFileSmbInfo"] = None,
+        **kwargs: Any
+    ) -> None:
+        """Renames a file.
+
+        :param rename_source: Required. Specifies the URI-style path of the source file, up to 2 KB in
+         length.
+        :type rename_source: str
+        :param timeout: The timeout parameter is expressed in seconds. For more information, see
+         :code:`<a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>`.
+        :type timeout: int
+        :param replace_if_exists: Optional. A boolean value for if the destination file already exists,
+         whether this request will overwrite the file or not. If true, the rename will succeed and will
+         overwrite the destination file. If not provided or if false and the destination file does
+         exist, the request will not overwrite the destination file. If provided and the destination
+         file doesn’t exist, the rename will succeed. Note: This value does not override the
+         x-ms-file-copy-ignore-read-only header value.
+        :type replace_if_exists: bool
+        :param ignore_read_only: Optional. A boolean value that specifies whether the ReadOnly
+         attribute on a preexisting destination file should be respected. If true, the rename will
+         succeed, otherwise, a previous file at the destination with the ReadOnly attribute set will
+         cause the rename to fail.
+        :type ignore_read_only: bool
+        :param file_permission: If specified the permission (security descriptor) shall be set for the
+         directory/file. This header can be used if Permission size is <= 8KB, else
+         x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
+         input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
+         x-ms-file-permission-key should be specified.
+        :type file_permission: str
+        :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
+         one of the x-ms-file-permission or x-ms-file-permission-key should be specified.
+        :type file_permission_key: str
+        :param metadata: A name-value pair to associate with a file storage object.
+        :type metadata: str
+        :param source_lease_access_conditions: Parameter group.
+        :type source_lease_access_conditions: ~azure.storage.fileshare.models.SourceLeaseAccessConditions
+        :param destination_lease_access_conditions: Parameter group.
+        :type destination_lease_access_conditions: ~azure.storage.fileshare.models.DestinationLeaseAccessConditions
+        :param copy_file_smb_info: Parameter group.
+        :type copy_file_smb_info: ~azure.storage.fileshare.models.CopyFileSmbInfo
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+        
+        _source_lease_id = None
+        _destination_lease_id = None
+        _file_attributes = None
+        _file_creation_time = None
+        _file_last_write_time = None
+        if copy_file_smb_info is not None:
+            _file_attributes = copy_file_smb_info.file_attributes
+            _file_creation_time = copy_file_smb_info.file_creation_time
+            _file_last_write_time = copy_file_smb_info.file_last_write_time
+        if destination_lease_access_conditions is not None:
+            _destination_lease_id = destination_lease_access_conditions.destination_lease_id
+        if source_lease_access_conditions is not None:
+            _source_lease_id = source_lease_access_conditions.source_lease_id
+        comp = "rename"
+        accept = "application/xml"
+
+        # Construct URL
+        url = self.rename.metadata['url']  # type: ignore
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+
+        # Construct headers
+        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        header_parameters['x-ms-file-rename-source'] = self._serialize.header("rename_source", rename_source, 'str')
+        if replace_if_exists is not None:
+            header_parameters['x-ms-file-rename-replace-if-exists'] = self._serialize.header("replace_if_exists", replace_if_exists, 'bool')
+        if ignore_read_only is not None:
+            header_parameters['x-ms-file-rename-ignore-readonly'] = self._serialize.header("ignore_read_only", ignore_read_only, 'bool')
+        if _source_lease_id is not None:
+            header_parameters['x-ms-source-lease-id'] = self._serialize.header("source_lease_id", _source_lease_id, 'str')
+        if _destination_lease_id is not None:
+            header_parameters['x-ms-destination-lease-id'] = self._serialize.header("destination_lease_id", _destination_lease_id, 'str')
+        if _file_attributes is not None:
+            header_parameters['x-ms-file-attributes'] = self._serialize.header("file_attributes", _file_attributes, 'str')
+        if _file_creation_time is not None:
+            header_parameters['x-ms-file-creation-time'] = self._serialize.header("file_creation_time", _file_creation_time, 'str')
+        if _file_last_write_time is not None:
+            header_parameters['x-ms-file-last-write-time'] = self._serialize.header("file_last_write_time", _file_last_write_time, 'str')
+        if file_permission is not None:
+            header_parameters['x-ms-file-permission'] = self._serialize.header("file_permission", file_permission, 'str')
+        if file_permission_key is not None:
+            header_parameters['x-ms-file-permission-key'] = self._serialize.header("file_permission_key", file_permission_key, 'str')
+        if metadata is not None:
+            header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
+        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+
+        request = self._client.put(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.StorageError, response)
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers['ETag']=self._deserialize('str', response.headers.get('ETag'))
+        response_headers['Last-Modified']=self._deserialize('rfc-1123', response.headers.get('Last-Modified'))
+        response_headers['x-ms-request-id']=self._deserialize('str', response.headers.get('x-ms-request-id'))
+        response_headers['x-ms-version']=self._deserialize('str', response.headers.get('x-ms-version'))
+        response_headers['Date']=self._deserialize('rfc-1123', response.headers.get('Date'))
+        response_headers['x-ms-request-server-encrypted']=self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted'))
+        response_headers['x-ms-file-permission-key']=self._deserialize('str', response.headers.get('x-ms-file-permission-key'))
+        response_headers['x-ms-file-attributes']=self._deserialize('str', response.headers.get('x-ms-file-attributes'))
+        response_headers['x-ms-file-creation-time']=self._deserialize('str', response.headers.get('x-ms-file-creation-time'))
+        response_headers['x-ms-file-last-write-time']=self._deserialize('str', response.headers.get('x-ms-file-last-write-time'))
+        response_headers['x-ms-file-change-time']=self._deserialize('str', response.headers.get('x-ms-file-change-time'))
+        response_headers['x-ms-file-id']=self._deserialize('str', response.headers.get('x-ms-file-id'))
+        response_headers['x-ms-file-parent-id']=self._deserialize('str', response.headers.get('x-ms-file-parent-id'))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    rename.metadata = {'url': '/{shareName}/{directory}/{fileName}'}  # type: ignore

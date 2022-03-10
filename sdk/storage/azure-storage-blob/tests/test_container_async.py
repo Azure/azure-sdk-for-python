@@ -1280,6 +1280,47 @@ class StorageContainerAsyncTest(AsyncStorageTestCase):
         self.assertNamedItemInContainer(resp, 'b/')
         self.assertNamedItemInContainer(resp, 'blob4')
 
+    @BlobPreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_find_blobs_by_tags(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        container = await self._create_container(bsc)
+
+        data = b'hello world'
+        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+        other_tags = {'tag1': 'other'}
+        filter_expression = "tag1='firsttag' and tag2='secondtag'"
+
+        c1 = container.get_blob_client('blob1')
+        await c1.upload_blob(data, tags=tags)
+        c2 = container.get_blob_client('blob2')
+        await c2.upload_blob(data, tags=tags)
+        c3 = container.get_blob_client('blob3')
+        await c3.upload_blob(data, tags=tags)
+        c4 = container.get_blob_client('blob4')
+        await c4.upload_blob(data, tags=other_tags)
+
+        if self.is_live:
+            sleep(10)
+
+        # Act
+        blob_pages = container.find_blobs_by_tags(filter_expression, results_per_page=2).by_page()
+        first_page = await blob_pages.__anext__()
+        items_on_page1 = list()
+        async for item in first_page:
+            items_on_page1.append(item)
+        second_page = await blob_pages.__anext__()
+        items_on_page2 = list()
+        async for item in second_page:
+            items_on_page2.append(item)
+
+        # Assert
+        self.assertEqual(2, len(items_on_page1))
+        self.assertEqual(1, len(items_on_page2))
+        self.assertEqual(len(items_on_page2[0]['tags']), 2)
+        self.assertEqual(items_on_page2[0]['tags']['tag1'], 'firsttag')
+        self.assertEqual(items_on_page2[0]['tags']['tag2'], 'secondtag')
+
     def test_batch_delete_empty_blob_list(self):
         container_client = ContainerClient("https://mystorageaccount.blob.core.windows.net", "container")
         blob_list = list()

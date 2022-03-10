@@ -19,14 +19,14 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
-        azure-batch/11.0.0 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Fri, 30 Jul 2021 12:28:44 GMT
+      - Thu, 13 Jan 2022 07:05:08 GMT
     method: POST
-    uri: https://batch.southcentralus.batch.azure.com/pools?api-version=2021-06-01.14.0
+    uri: https://batch.southcentralus.batch.azure.com/pools?api-version=2022-01-01.15.0
   response:
     body:
       string: ''
@@ -36,15 +36,15 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Fri, 30 Jul 2021 12:28:44 GMT
+      - Thu, 13 Jan 2022 07:05:08 GMT
       etag:
-      - '0x8D9535592A8A0F6'
+      - '0x8D9D66308BBCA09'
       last-modified:
-      - Fri, 30 Jul 2021 12:28:44 GMT
+      - Thu, 13 Jan 2022 07:05:08 GMT
       location:
       - https://batch.southcentralus.batch.azure.com/pools/batch_iaas_449c15bb
       request-id:
-      - 5c17a5a9-b747-4b48-a7ee-9918bd75089e
+      - 9996c072-b4e7-4da2-a413-7aa74d79d349
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -66,17 +66,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.3 (macOS-10.15.7-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
-        azure-batch/11.0.0 Azure-SDK-For-Python
+      - python/3.7.5 (Windows-10-10.0.22000-SP0) msrest/0.6.21 msrest_azure/0.6.4
+        azure-batch/12.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Fri, 30 Jul 2021 12:28:44 GMT
+      - Thu, 13 Jan 2022 07:05:08 GMT
     method: GET
-    uri: https://batch.southcentralus.batch.azure.com/pools/batch_iaas_449c15bb?api-version=2021-06-01.14.0
+    uri: https://batch.southcentralus.batch.azure.com/pools/batch_iaas_449c15bb?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_iaas_449c15bb\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/batch_iaas_449c15bb\",\"eTag\":\"0x8D9535592A8A0F6\",\"lastModified\":\"2021-07-30T12:28:44.7486198Z\",\"creationTime\":\"2021-07-30T12:28:44.7486198Z\",\"state\":\"active\",\"stateTransitionTime\":\"2021-07-30T12:28:44.7486198Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2021-07-30T12:28:44.7486198Z\",\"vmSize\":\"standard_d1_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+      string: "{\r\n  \"odata.metadata\":\"https://batch.southcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_iaas_449c15bb\",\"url\":\"https://batch.southcentralus.batch.azure.com/pools/batch_iaas_449c15bb\",\"eTag\":\"0x8D9D66308BBCA09\",\"lastModified\":\"2022-01-13T07:05:08.6266889Z\",\"creationTime\":\"2022-01-13T07:05:08.6266889Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-01-13T07:05:08.6266889Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2022-01-13T07:05:08.6266889Z\",\"vmSize\":\"standard_d1_v2\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
         \   \"nodeFillType\":\"Pack\"\r\n  },\"virtualMachineConfiguration\":{\r\n
         \   \"imageReference\":{\r\n      \"publisher\":\"MicrosoftWindowsServer\",\"offer\":\"WindowsServer\",\"sku\":\"2016-Datacenter-smalldisk\",\"version\":\"latest\"\r\n
         \   },\"nodeAgentSKUId\":\"batch.node.windows amd64\",\"windowsConfiguration\":{\r\n
@@ -89,13 +89,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Fri, 30 Jul 2021 12:28:44 GMT
+      - Thu, 13 Jan 2022 07:05:08 GMT
       etag:
-      - '0x8D9535592A8A0F6'
+      - '0x8D9D66308BBCA09'
       last-modified:
-      - Fri, 30 Jul 2021 12:28:44 GMT
+      - Thu, 13 Jan 2022 07:05:08 GMT
       request-id:
-      - bb4ce40a-96da-47ac-bc24-43de0b0de1ac
+      - e2ddb328-8ea3-44b2-a2aa-3392fda84059
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

@@ -19,6 +19,9 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 
 class TestBusinessCard(FormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
@@ -26,9 +29,9 @@ class TestBusinessCard(FormRecognizerTest):
     def test_passing_enum_content_type(self, client):
         set_bodiless_matcher()
         with open(self.business_card_png, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
         poller = client.begin_recognize_business_cards(
-            myfile,
+            my_file,
             content_type=FormContentType.IMAGE_PNG
         )
         result = poller.result()
@@ -59,10 +62,10 @@ class TestBusinessCard(FormRecognizerTest):
     def test_passing_bad_content_type_param_passed(self, **kwargs):
         client = kwargs.pop("client")
         with open(self.business_card_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
         with pytest.raises(ValueError):
             poller = client.begin_recognize_business_cards(
-                myfile,
+                my_file,
                 content_type="application/jpeg"
             )
 

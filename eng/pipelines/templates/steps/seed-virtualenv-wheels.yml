@@ -1,0 +1,22 @@
+parameters:
+  WHEEL_VERSION: '0.37.0'
+  SETUPTOOLS_VERSION: '59.6.0'
+  PIP_VERSION: '20.3.3'
+
+steps:
+  - pwsh: |
+      pip install virtualenv
+    displayName: Ensure virtualenv installed
+
+  - pwsh: |
+      mkdir $(Agent.TempDirectory)/_virtualenv
+      Write-Host "##vso[task.setvariable variable=VIRTUALENV_OVERRIDE_APP_DATA]$(Agent.TempDirectory)/_virtualenv"
+    displayName: Set VIRTUALENV_OVERRIDE_APP_DATA
+
+  - pwsh: |
+      $(Build.SourcesDirectory)/eng/scripts/seed-virtualenv-wheels.ps1 `
+        -Pip "${{ parameters.PIP_VERSION }}" `
+        -SetupTools "${{ parameters.SETUPTOOLS_VERSION }}" `
+        -Wheel "${{ parameters.WHEEL_VERSION }}" `
+        -SeedDirectory "$(Agent.TempDirectory)/seed_env"
+    displayName: Populate the seed dir

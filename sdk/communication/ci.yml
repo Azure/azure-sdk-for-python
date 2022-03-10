@@ -30,8 +30,6 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: communication
-    MatrixFilters:
-        - PythonVersion=^(?!pypy3|2.7|3.6).*
     Artifacts:
     - name: azure-communication-identity
       safeName: azurecommunicationidentity

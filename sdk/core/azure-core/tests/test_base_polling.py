@@ -31,6 +31,7 @@ import types
 import pickle
 import platform
 import six
+
 try:
     from unittest import mock
 except ImportError:
@@ -46,10 +47,11 @@ from azure.core import PipelineClient
 from azure.core.pipeline import PipelineResponse, Pipeline, PipelineContext
 from azure.core.pipeline.transport import HttpTransport
 
-from azure.core.polling.base_polling import LROBasePolling
+from azure.core.polling.base_polling import LROBasePolling, OperationResourcePolling
 from azure.core.pipeline.policies._utils import _FixedOffset
-from utils import request_and_responses_product, REQUESTS_TRANSPORT_RESPONSES, create_transport_response
+from utils import request_and_responses_product, REQUESTS_TRANSPORT_RESPONSES, create_transport_response, HTTP_REQUESTS
 from azure.core.pipeline._tools import is_rest
+from rest_client import TestRestClient
 
 class SimpleResource:
     """An implementation of Python 3 SimpleNamespace.
@@ -756,3 +758,139 @@ class TestBasePolling(object):
 
         LOCATION_BODY = json.dumps({ 'name': TEST_NAME })
         POLLING_STATUS = 200
+
+    @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(REQUESTS_TRANSPORT_RESPONSES))
+    def test_post_final_state_via(self, pipeline_client_builder, deserialization_cb, http_request, http_response):
+        # Test POST LRO with both Location and Operation-Location
+        CLIENT.http_request_type = http_request
+        CLIENT.http_response_type = http_response
+        # The initial response contains both Location and Operation-Location, a 202 and no Body
+        initial_response = TestBasePolling.mock_send(
+            http_request,
+            http_response,
+            'POST',
+            202,
+            {
+                'location': 'http://example.org/location',
+                'operation-location': 'http://example.org/async_monitor',
+            },
+            ''
+        )
+
+        def send(request, **kwargs):
+            assert request.method == 'GET'
+
+            if request.url == 'http://example.org/location':
+                return TestBasePolling.mock_send(
+                    http_request,
+                    http_response,
+                    'GET',
+                    200,
+                    body={'location_result': True}
+                ).http_response
+            elif request.url == 'http://example.org/async_monitor':
+                return TestBasePolling.mock_send(
+                    http_request,
+                    http_response,
+                    'GET',
+                    200,
+                    body={'status': 'Succeeded'}
+                ).http_response
+            else:
+                pytest.fail("No other query allowed")
+
+        client = pipeline_client_builder(send)
+
+        # Test 1, LRO options with Location final state
+        poll = LROPoller(
+            client,
+            initial_response,
+            deserialization_cb,
+            LROBasePolling(0, lro_options={"final-state-via": "location"}))
+        result = poll.result()
+        assert result['location_result'] == True
+
+        # Test 2, LRO options with Operation-Location final state
+        poll = LROPoller(
+            client,
+            initial_response,
+            deserialization_cb,
+            LROBasePolling(0, lro_options={"final-state-via": "operation-location"}))
+        result = poll.result()
+        assert result['status'] == 'Succeeded'
+
+        # Test 3, "do the right thing" and use Location by default
+        poll = LROPoller(
+            client,
+            initial_response,
+            deserialization_cb,
+            LROBasePolling(0))
+        result = poll.result()
+        assert result['location_result'] == True
+
+        # Test 4, location has no body
+
+        def send(request, **kwargs):
+            assert request.method == 'GET'
+
+            if request.url == 'http://example.org/location':
+                return TestBasePolling.mock_send(
+                    http_request,
+                    http_response,
+                    'GET',
+                    200,
+                    body=None
+                ).http_response
+            elif request.url == 'http://example.org/async_monitor':
+                return TestBasePolling.mock_send(
+                    http_request,
+                    http_response,
+                    'GET',
+                    200,
+                    body={'status': 'Succeeded'}
+                ).http_response
+            else:
+                pytest.fail("No other query allowed")
+
+        client = pipeline_client_builder(send)
+
+        poll = LROPoller(
+            client,
+            initial_response,
+            deserialization_cb,
+            LROBasePolling(0, lro_options={"final-state-via": "location"}))
+        result = poll.result()
+        assert result is None
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_final_get_via_location(port, http_request, deserialization_cb):
+    client = TestRestClient(port)
+    request = http_request(
+        "PUT",
+        "http://localhost:{}/polling/polling-with-options".format(port),
+    )
+    request.set_json_body({"hello": "world!"})
+    initial_response = client._client._pipeline.run(request)
+    poller = LROPoller(
+        client._client,
+        initial_response,
+        deserialization_cb,
+        LROBasePolling(0, lro_options={"final-state-via": "location"}),
+    )
+    result = poller.result()
+    assert result == {"returnedFrom": "locationHeaderUrl"}
+
+# THIS TEST WILL BE REMOVED SOON
+"""Weird test, but we are temporarily adding back the POST check in OperationResourcePolling
+get_final_get_url. With the test added back, we should not exit on final state via checks and
+continue through the rest of the code. Since the rest of the code requires inspection of pipeline_response
+and since I don't want to bother with adding a pipeline response object, just check that we get
+past the final state via checks
+"""
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_post_check_patch(http_request):
+    algorithm = OperationResourcePolling(lro_options={"final-state-via": "azure-async-operation"})
+    algorithm._request = http_request("PUT", "http://fakeurl.com")
+    with pytest.raises(AttributeError) as ex:
+        algorithm.get_final_get_url(None)
+    assert "'NoneType' object has no attribute 'http_response'" in str(ex.value)

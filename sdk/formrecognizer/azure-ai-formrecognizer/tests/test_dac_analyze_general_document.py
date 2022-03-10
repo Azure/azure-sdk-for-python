@@ -20,6 +20,9 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 class TestDACAnalyzeDocument(FormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -131,14 +134,14 @@ class TestDACAnalyzeDocument(FormRecognizerTest):
     @recorded_by_proxy
     def test_document_multipage_table_span_pdf(self, client):
         with open(self.multipage_table_pdf, "rb") as fd:
-            myfile = fd.read()
-        poller = client.begin_analyze_document("prebuilt-document", myfile)
+            my_file = fd.read()
+        poller = client.begin_analyze_document("prebuilt-document", my_file)
         document = poller.result()
         assert len(document.tables) == 3
-        assert document.tables[0].row_count == 29
+        assert document.tables[0].row_count == 30
         assert document.tables[0].column_count == 5
         assert document.tables[1].row_count == 6
-        assert document.tables[1].column_count == 4
+        assert document.tables[1].column_count == 5
         assert document.tables[2].row_count == 23
         assert document.tables[2].column_count == 5
 

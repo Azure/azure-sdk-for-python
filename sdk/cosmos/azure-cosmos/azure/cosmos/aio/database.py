@@ -275,9 +275,7 @@ class DatabaseProxy(object):
         analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
         try:
             container_proxy = self.get_container_client(id)
-            await container_proxy.read(
-                **kwargs
-            )
+            await container_proxy.read(**kwargs)
             return container_proxy
         except CosmosResourceNotFoundError:
             return await self.create_container(

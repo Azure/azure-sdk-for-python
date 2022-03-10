@@ -17,10 +17,10 @@ The async versions of the samples require Python 3.6 or later.
 |**File Name**|**Description**|
 |-------------|---------------|
 |[sample_hello_world.py][hello_world] ([sample_hello_world_async.py][hello_world_async]) |Instantiate a `ContainerRegistryClient` object and iterating through the collection of tags in the repository with anonymous access |
-|[sample_delete_tags.py][delete_tags] and [sample_delete_tags_async.py][delete_tags_async] | Delete tags from a repository |
-|[sample_delete_images.py][delete_images] and [sample_delete_images_async.py][delete_images_async] | Delete images from a repository |
-|[sample_set_image_properties.py][set_image_properties] and [sample_set_image_properties_async.py][set_image_properties_async] | Set read/write/delete properties on an image |
-|[sample_list_tags.py][list_tags] and [sample_list_tags_async.py][list_tags_async] | List tags on an image using an anonymous access |
+|[sample_delete_tags.py][delete_tags] ([sample_delete_tags_async.py][delete_tags_async]) | Delete tags from a repository |
+|[sample_delete_images.py][delete_images] ([sample_delete_images_async.py][delete_images_async]) | Delete images from a repository |
+|[sample_set_image_properties.py][set_image_properties] ([sample_set_image_properties_async.py][set_image_properties_async]) | Set read/write/delete properties on an image |
+|[sample_list_tags.py][list_tags] ([sample_list_tags_async.py][list_tags_async]) | List tags on an image with anonymous access |
 
 ### Prerequisites
 * Python 3.6 or later is required to use this package.

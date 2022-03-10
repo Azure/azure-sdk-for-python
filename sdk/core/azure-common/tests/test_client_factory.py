@@ -290,7 +290,7 @@ class TestCommon(unittest.TestCase):
 
             with pytest.raises(ValueError) as excinfo:
                 get_client_from_auth_file(KeyVaultClientTrack2, temp_auth_file.name)
-            assert "https://aka.ms/azsdk/python/azidmigration" in str(excinfo.value)
+            assert "https://aka.ms/azsdk/python/identity/migration" in str(excinfo.value)
 
             os.unlink(temp_auth_file.name)
 

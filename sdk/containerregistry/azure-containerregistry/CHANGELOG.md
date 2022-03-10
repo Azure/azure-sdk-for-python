@@ -1,5 +1,17 @@
 # Release History
 
+## 1.0.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Fixed a spell error in a property of `RepositoryProperties` to `last_updated_on`.
+
 ## 1.0.0 (2022-01-25)
 
 ### Features Added
@@ -44,7 +56,7 @@
 
 ### Bugs Fixed
 
-- Fixeed a bug where `credential_scopes` keyword on `ContainerRegistryClient` was not passed through and the client could not authenticate with foreign clouds.
+- Fixed a bug where `credential_scopes` keyword on `ContainerRegistryClient` was not passed through and the client could not authenticate with foreign clouds.
 
 ## 1.0.0b3 (2021-06-08)
 

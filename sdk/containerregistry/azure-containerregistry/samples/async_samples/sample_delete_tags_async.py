@@ -44,14 +44,12 @@ class DeleteTagsAsync(object):
                 print(repository)
                 # [END list_repository_names]
 
-                # [START list_tag_properties]
                 # Keep the three most recent tags, delete everything else
                 tag_count = 0
                 async for tag in client.list_tag_properties(repository, order_by=ArtifactTagOrder.LAST_UPDATED_ON_DESCENDING):
                     tag_count += 1
                     if tag_count > 3:
                         await client.delete_tag(repository, tag.name)
-                # [END list_tag_properties]
 
 
 async def main():
