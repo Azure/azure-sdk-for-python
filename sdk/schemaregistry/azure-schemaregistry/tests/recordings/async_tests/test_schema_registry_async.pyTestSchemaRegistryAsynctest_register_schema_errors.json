@@ -10,13 +10,13 @@
         "Content-Length": "0",
         "Content-Type": "application/json; serialization=Avro",
         "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "7029145b-a0be-11ec-bcf8-9c2976df0bde"
+        "x-ms-client-request-id": "2faca65f-a159-11ec-820e-9c2976df0bde"
       },
       "RequestBody": null,
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Thu, 10 Mar 2022 22:07:12 GMT",
+        "Date": "Fri, 11 Mar 2022 16:34:55 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -25,7 +25,7 @@
       "ResponseBody": {
         "error": {
           "code": "InvalidRequest",
-          "message": "Error when consuming request body: The body of the message cannot be read because it is empty. TrackingId:4896c43b-e34d-4767-a0b4-5c812c48a91e_G25, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/fakegroup/schemas/test-schema, Timestamp:2022-03-10T22:07:12"
+          "message": "Error when consuming request body: The body of the message cannot be read because it is empty. TrackingId:f44b45c2-0ac9-4aef-b4ad-cf31dda1a031_G1, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/fakegroup/schemas/test-schema, Timestamp:2022-03-11T16:34:56"
         }
       }
     },
@@ -39,7 +39,7 @@
         "Content-Length": "179",
         "Content-Type": "application/json; serialization=Invalid-format",
         "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "708636fc-a0be-11ec-8305-9c2976df0bde"
+        "x-ms-client-request-id": "30090442-a159-11ec-8ae6-9c2976df0bde"
       },
       "RequestBody": {
         "namespace": "example.avro",
@@ -69,7 +69,7 @@
       "StatusCode": 415,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Thu, 10 Mar 2022 22:07:12 GMT",
+        "Date": "Fri, 11 Mar 2022 16:34:56 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -78,7 +78,7 @@
       "ResponseBody": {
         "error": {
           "code": "InvalidSchemaType",
-          "message": "Invalid schema type for PUT request. \u0027invalid-format\u0027 is not supported. TrackingId:96549494-7bde-4836-ab03-6ac317ca0758_G25, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/fakegroup/schemas/test-schema, Timestamp:2022-03-10T22:07:13"
+          "message": "Invalid schema type for PUT request. \u0027invalid-format\u0027 is not supported. TrackingId:8caae4c0-c143-41e7-bf84-b95a790c6f6d_G1, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/fakegroup/schemas/test-schema, Timestamp:2022-03-11T16:34:56"
         }
       }
     }
