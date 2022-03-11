@@ -24,7 +24,7 @@ import os
 
 from azure.schemaregistry.aio import SchemaRegistryClient
 from azure.identity.aio import ClientSecretCredential
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
+from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -127,7 +127,8 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
             name = self.get_resource_name('test-schema-nonexist-async')
             schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
             format = "Avro"
-            with pytest.raises(HttpResponseError):
+            # TODO: failing locally b/c test proxy results in HttpResponseError, but passes in live test pipeline
+            with pytest.raises(ServiceRequestError):
                 await client.register_schema(schemaregistry_group, name, schema_str, format)
         await client._generated_client._config.credential.close()
 

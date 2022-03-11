@@ -23,7 +23,7 @@ import json
 
 from azure.schemaregistry import SchemaRegistryClient
 from azure.identity import ClientSecretCredential
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
+from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 
@@ -105,6 +105,7 @@ class TestSchemaRegistry(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_schema_negative_wrong_credential(self, **kwargs):
         schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
+        print(schemaregistry_fully_qualified_namespace)
         schemaregistry_group = kwargs.pop("schemaregistry_group")
         credential = ClientSecretCredential(tenant_id="fake", client_id="fake", client_secret="fake")
         client = SchemaRegistryClient(fully_qualified_namespace=schemaregistry_fully_qualified_namespace, credential=credential)
@@ -122,7 +123,8 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         name = self.get_resource_name('test-schema-nonexist')
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
         format = "Avro"
-        with pytest.raises(HttpResponseError):
+        # TODO: failing locally b/c test proxy results in HttpResponseError, but passes in live test pipeline
+        with pytest.raises(ServiceRequestError):
             client.register_schema(schemaregistry_group, name, schema_str, format)
 
     @SchemaRegistryEnvironmentVariableLoader()
