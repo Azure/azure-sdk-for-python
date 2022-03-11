@@ -28,14 +28,14 @@ from functools import lru_cache
 from io import BytesIO
 from typing import Any, Dict, Mapping, Optional, Union, Callable
 
-from .exceptions import (
+from .exceptions import (  # pylint: disable=import-error
     SchemaParseError,
     SchemaEncodeError,
     SchemaDecodeError,
 )
-from ._apache_avro_encoder import ApacheAvroObjectEncoder as AvroObjectEncoder
-from ._message_protocol import MessageContent, MessageType
-from ._constants import (
+from ._apache_avro_encoder import ApacheAvroObjectEncoder as AvroObjectEncoder  # pylint: disable=import-error
+from ._message_protocol import MessageContent, MessageType  # pylint: disable=import-error
+from ._constants import (   # pylint: disable=import-error
     SCHEMA_ID_START_INDEX,
     SCHEMA_ID_LENGTH,
     CONTENT_START_INDEX,
