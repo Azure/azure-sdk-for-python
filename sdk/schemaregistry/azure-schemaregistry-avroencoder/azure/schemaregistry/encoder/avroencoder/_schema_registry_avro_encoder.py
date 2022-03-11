@@ -28,7 +28,7 @@ from functools import lru_cache
 from io import BytesIO
 from typing import Any, Dict, Mapping, Optional, Union, Callable
 
-from .exceptions import (
+from .exceptions import (  # pylint: disable=import-error
     SchemaParseError,
     SchemaEncodeError,
     SchemaDecodeError,
