@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from threading import Lock, Condition, Timer
+from threading import Lock, Condition, Timer, TIMEOUT_MAX
 from datetime import timedelta
 from typing import Any
 import six
@@ -15,11 +15,15 @@ from .utils import create_access_token
 class CommunicationTokenCredential(object):
     """Credential type used for authenticating to an Azure Communication service.
     :param str token: The token used to authenticate to an Azure Communication service.
-    :keyword Callable[[], Awaitable[azure.core.credentials.AccessToken]] token_refresher: The async token
-     refresher to provide capacity to fetch a fresh token. The returned token must be valid (expiration
-     date must be in the future).
-    :keyword bool refresh_proactively: Whether to refresh the token proactively or not.
-    :raises: TypeError
+    :keyword token_refresher: The sync token refresher to provide capacity to fetch a fresh token.
+     The returned token must be valid (expiration date must be in the future).
+    :paramtype token_refresher: Callable[[], AccessToken]
+    :keyword bool proactive_refresh: Whether to refresh the token proactively or not.
+     If the proactive refreshing is enabled ('proactive_refresh' is true), the credential will use
+     a background thread to attempt to refresh the token within 10 minutes before the cached token expires,
+     the proactive refresh will request a new token by calling the 'token_refresher' callback.
+    :raises: TypeError if paramater 'token' is not a string
+    :raises: ValueError if the 'proactive_refresh' is enabled without providing the 'token_refresher' callable.
     """
 
     _ON_DEMAND_REFRESHING_INTERVAL_MINUTES = 2
@@ -30,19 +34,12 @@ class CommunicationTokenCredential(object):
             raise TypeError("Token must be a string.")
         self._token = create_access_token(token)
         self._token_refresher = kwargs.pop('token_refresher', None)
-        self._refresh_proactively = kwargs.pop('refresh_proactively', False)
+        self._proactive_refresh = kwargs.pop('proactive_refresh', False)
+        if(self._proactive_refresh and self._token_refresher is None):
+            raise ValueError("When 'proactive_refresh' is True, 'token_refresher' must not be None.")
         self._timer = None
         self._lock = Condition(Lock())
         self._some_thread_refreshing = False
-        if self._refresh_proactively:
-            self._schedule_refresh()
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, *args):
-        if self._timer is not None:
-            self._timer.cancel()
 
     def get_token(self, *scopes, **kwargs):  # pylint: disable=unused-argument
         # type (*str, **Any) -> AccessToken
@@ -84,7 +81,7 @@ class CommunicationTokenCredential(object):
                     self._some_thread_refreshing = False
                     self._lock.notify_all()
                 raise
-        if self._refresh_proactively:
+        if self._proactive_refresh:
             self._schedule_refresh()
         return self._token
 
@@ -101,15 +98,16 @@ class CommunicationTokenCredential(object):
             # Schedule the next refresh for when it gets in to the soon-to-expire window.
             timespan = token_ttl - timedelta(
                 minutes=self._DEFAULT_AUTOREFRESH_INTERVAL_MINUTES).total_seconds()
-        self._timer = Timer(timespan, self._update_token_and_reschedule)
-        self._timer.start()
+        if timespan <= TIMEOUT_MAX:
+            self._timer = Timer(timespan, self._update_token_and_reschedule)
+            self._timer.start()
 
     def _wait_till_lock_owner_finishes_refreshing(self):
         self._lock.release()
         self._lock.acquire()
 
     def _is_token_expiring_soon(self, token):
-        if self._refresh_proactively:
+        if self._proactive_refresh:
             interval = timedelta(
                 minutes=self._DEFAULT_AUTOREFRESH_INTERVAL_MINUTES)
         else:
@@ -121,3 +119,16 @@ class CommunicationTokenCredential(object):
     @classmethod
     def _is_token_valid(cls, token):
         return get_current_utc_as_int() < token.expires_on
+
+    def __enter__(self):
+        if self._proactive_refresh:
+            self._schedule_refresh()
+        return self
+
+    def __exit__(self, *args):
+        self.close()
+
+    def close(self) -> None:
+        if self._timer is not None:
+            self._timer.cancel()
+        self._timer = None

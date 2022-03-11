@@ -7,6 +7,7 @@
 from asyncio import Condition, Lock
 from datetime import timedelta
 from typing import Any
+import sys
 import six
 from .utils import get_current_utc_as_int
 from .utils import create_access_token
@@ -40,6 +41,9 @@ class CommunicationTokenCredential(object):
             raise ValueError("When 'proactive_refresh' is True, 'token_refresher' must not be None.")
         self._timer = None
         self._async_mutex = Lock()
+        if sys.version_info[:3] == (3, 10, 0):
+            # Workaround for Python 3.10 bug(https://bugs.python.org/issue45416):
+            getattr(self._async_mutex, '_get_loop', lambda: None)()
         self._lock = Condition(self._async_mutex)
         self._some_thread_refreshing = False
 
