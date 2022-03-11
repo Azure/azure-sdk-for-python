@@ -402,50 +402,29 @@ class TestTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
             assert entities[1]['text'] == u'hello'
         finally:
             await tsc.delete_table(table.table_name)
+    
+    @tables_decorator_async
+    @recorded_by_proxy_async
+    async def test_unicode_create_table_unicode_name(self, tables_storage_account_name, tables_primary_storage_account_key):
+        account_url = self.account_url(tables_storage_account_name, "table")
+        tsc = TableServiceClient(account_url, credential=tables_primary_storage_account_key)
+        invalid_table_name = u'啊齄丂狛狜'
 
-
-class TestTablesUnitTest(AsyncTableTestCase):
-    tables_storage_account_name = "fake_storage_account"
-    tables_primary_storage_account_key = "fakeXMZjnGsZGvd4bVr3Il5SeHA"
-    credential = AzureNamedKeyCredential(name=tables_storage_account_name, key=tables_primary_storage_account_key)
-
-    @pytest.mark.asyncio
-    async def test_unicode_create_table_unicode_name(self):
-        # Arrange
-        account_url = self.account_url(self.tables_storage_account_name, "table")
-        tsc = TableServiceClient(account_url, credential=self.credential)
-
-        table_name = u'啊齄丂狛狜'
-
-        # Act
         with pytest.raises(ValueError) as excinfo:
-            await tsc.create_table(table_name)
-
-            assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
+            async with tsc:
+                await tsc.create_table(invalid_table_name)
+            assert "Storage table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
                 excinfo)
-
-    @pytest.mark.asyncio
-    async def test_create_table_invalid_name(self):
-        # Arrange
-        account_url = self.account_url(self.tables_storage_account_name, "table")
-        tsc = TableServiceClient(account_url, credential=self.credential)
+    
+    @tables_decorator_async
+    @recorded_by_proxy_async
+    async def test_create_table_invalid_name(self, tables_storage_account_name, tables_primary_storage_account_key):
+        account_url = self.account_url(tables_storage_account_name, "table")
+        tsc = TableServiceClient(account_url, credential=tables_primary_storage_account_key)
         invalid_table_name = "my_table"
 
         with pytest.raises(ValueError) as excinfo:
-            await tsc.create_table(table_name=invalid_table_name)
-
-        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
-            excinfo)
-
-    @pytest.mark.asyncio
-    async def test_delete_table_invalid_name(self):
-        # Arrange
-        account_url = self.account_url(self.tables_storage_account_name, "table")
-        tsc = TableServiceClient(account_url, credential=self.credential)
-        invalid_table_name = "my_table"
-
-        with pytest.raises(ValueError) as excinfo:
-            await tsc.create_table(invalid_table_name)
-
-        assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
-            excinfo)
+            async with tsc:
+                await tsc.create_table(table_name=invalid_table_name)
+            assert "Storage table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
+                excinfo)

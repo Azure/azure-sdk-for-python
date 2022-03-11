@@ -7,17 +7,17 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_copy_model.py
+FILE: sample_copy_model_to_async.py
 
 DESCRIPTION:
     This sample demonstrates how to copy a custom model from a source Form Recognizer resource
     to a target Form Recognizer resource.
 
-    The model used in this sample can be created in the sample_build_model.py using the
+    The model used in this sample can be created in the sample_build_model_async.py using the
     training files in https://aka.ms/azsdk/formrecognizer/sampletrainingfiles
 
 USAGE:
-    python sample_copy_model.py
+    python sample_copy_model_to_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_SOURCE_ENDPOINT - the endpoint to your source Form Recognizer resource.
@@ -31,11 +31,13 @@ USAGE:
 """
 
 import os
+import asyncio
 
-def sample_copy_model(custom_model_id):
-    # [START begin_copy_model]
+
+async def sample_copy_model_to_async(custom_model_id):
+    # [START begin_copy_model_to_async]
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.formrecognizer import DocumentModelAdministrationClient
+    from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
 
     source_endpoint = os.environ["AZURE_FORM_RECOGNIZER_SOURCE_ENDPOINT"]
     source_key = os.environ["AZURE_FORM_RECOGNIZER_SOURCE_KEY"]
@@ -44,37 +46,39 @@ def sample_copy_model(custom_model_id):
     source_model_id = os.getenv("AZURE_SOURCE_MODEL_ID", custom_model_id)
 
     target_client = DocumentModelAdministrationClient(endpoint=target_endpoint, credential=AzureKeyCredential(target_key))
-
-    target = target_client.get_copy_authorization(
-        description="model copied from other resource"
-    )
+    async with target_client:
+        target = await target_client.get_copy_authorization(
+            description="model copied from other resource"
+        )
 
     source_client = DocumentModelAdministrationClient(endpoint=source_endpoint, credential=AzureKeyCredential(source_key))
-    poller = source_client.begin_copy_model(
-        model_id=source_model_id,
-        target=target  # output from target client's call to get_copy_authorization()
-    )
-    copied_over_model = poller.result()
+    async with source_client:
+        poller = await source_client.begin_copy_model_to(
+            model_id=source_model_id,
+            target=target  # output from target client's call to get_copy_authorization()
+        )
+        copied_over_model = await poller.result()
 
-    print("Model ID: {}".format(model.model_id))
-    print("Description: {}".format(model.description))
-    print("Model created on: {}\n".format(model.created_on))
+    print("Model ID: {}".format(copied_over_model.model_id))
+    print("Description: {}".format(copied_over_model.description))
+    print("Model created on: {}\n".format(copied_over_model.created_on))
     print("Doc types the model can recognize:")
-    for name, doc_type in model.doc_types.items():
+    for name, doc_type in copied_over_model.doc_types.items():
         print("\nDoc Type: '{}' which has the following fields:".format(name))
         for field_name, field in doc_type.field_schema.items():
             print("Field: '{}' has type '{}' and confidence score {}".format(
                 field_name, field["type"], doc_type.field_confidence[field_name]
             ))
-    # [END begin_copy_model]
+    # [END begin_copy_model_to_async]
 
 
-if __name__ == '__main__':
+async def main():
     model_id = None
     if os.getenv("CONTAINER_SAS_URL"):
 
         from azure.core.credentials import AzureKeyCredential
-        from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentBuildMode
+        from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
+        from azure.ai.formrecognizer import DocumentBuildMode
 
         endpoint = os.getenv("AZURE_FORM_RECOGNIZER_SOURCE_ENDPOINT")
         key = os.getenv("AZURE_FORM_RECOGNIZER_SOURCE_KEY")
@@ -85,7 +89,11 @@ if __name__ == '__main__':
         document_model_admin_client = DocumentModelAdministrationClient(
             endpoint=endpoint, credential=AzureKeyCredential(key)
         )
-        model = document_model_admin_client.begin_build_model(os.getenv("CONTAINER_SAS_URL"), DocumentBuildMode.TEMPLATE).result()
-        model_id = model.model_id
+        async with document_model_admin_client:
+            model = await (await document_model_admin_client.begin_build_model(os.getenv("CONTAINER_SAS_URL"), DocumentBuildMode.TEMPLATE)).result()
+            model_id = model.model_id
 
-    sample_copy_model(model_id)
+    await sample_copy_model_to_async(model_id)
+
+if __name__ == '__main__':
+    asyncio.run(main())
