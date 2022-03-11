@@ -420,7 +420,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         :keyword destination_lease:
             Required if the destination file has an active lease. Value can be a ShareLeaseClient object
             or the lease ID as a string.
-        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
+        :paramtype destination_lease: ~azure.storage.fileshare.ShareLeaseClient or str
         :returns: The new Directory Client.
         :rtype: ~azure.storage.fileshare.ShareDirectoryClient
         """
