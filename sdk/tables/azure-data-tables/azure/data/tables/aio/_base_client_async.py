@@ -30,7 +30,12 @@ from .._generated.aio import AzureTable
 from .._base_client import AccountHostsMixin, get_api_version, extract_batch_part_metadata
 from .._authentication import SharedKeyCredentialPolicy
 from .._constants import STORAGE_OAUTH_SCOPE
-from .._error import RequestTooLargeError, TableTransactionError, _decode_error
+from .._error import (
+    RequestTooLargeError,
+    TableTransactionError,
+    _decode_error,
+    _validate_tablename_error
+)
 from .._policies import StorageHosts, StorageHeadersPolicy
 from .._sdk_moniker import SDK_MONIKER
 from ._policies_async import AsyncTablesRetryPolicy
@@ -102,7 +107,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):
             HttpLoggingPolicy(**kwargs),
         ]
 
-    async def _batch_send(self, *reqs: "HttpRequest", **kwargs) -> List[Mapping[str, Any]]:
+    async def _batch_send(self, table_name: str, *reqs: "HttpRequest", **kwargs) -> List[Mapping[str, Any]]:
         """Given a series of request, do a Storage batch call."""
         # Pop it here, so requests doesn't feel bad about additional kwarg
         policies = [StorageHeadersPolicy()]
@@ -137,7 +142,9 @@ class AsyncTablesBaseClient(AccountHostsMixin):
                 error_message="The transaction request was too large",
                 error_type=RequestTooLargeError)
         if response.status_code != 202:
-            raise _decode_error(response)
+            decoded = _decode_error(response)
+            _validate_tablename_error(decoded, table_name)
+            raise decoded
 
         parts_iter = response.parts()
         parts = []
@@ -150,10 +157,12 @@ class AsyncTablesBaseClient(AccountHostsMixin):
                     response,
                     error_message="The transaction request was too large",
                     error_type=RequestTooLargeError)
-            raise _decode_error(
+            decoded = _decode_error(
                 response=error_parts[0],
                 error_type=TableTransactionError,
             )
+            _validate_tablename_error(decoded, table_name)
+            raise decoded
         return [extract_batch_part_metadata(p) for p in parts]
 
 

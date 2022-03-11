@@ -77,6 +77,6 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.20.1",
         "msrest>=0.6.21",
-        "azure-storage-blob<13.0.0,>=12.10.0b2"
+        "azure-storage-blob<13.0.0,>=12.10.0"
     ],
 )
