@@ -1756,8 +1756,9 @@ class CheckEnum(BaseChecker):
             case_insensitive_meta = False
             # Want to check the bases of the function to see if it includes an Enum
             # If it uses the CaseInsensitiveMeta it embeds the Enum base in further
-            if node.declared_metaclass().name ==  "CaseInsensitiveEnumMeta":
-                case_insensitive_meta = True
+            if node.declared_metaclass():
+                if node.declared_metaclass().name ==  "CaseInsensitiveEnumMeta":
+                    case_insensitive_meta = True
             for base in node.bases:
                 if isinstance(base,astroid.Call):
                     for arg in base.args:
@@ -1774,7 +1775,8 @@ class CheckEnum(BaseChecker):
                 for nod in node.body:
                     if isinstance(nod, astroid.Assign):
                         #an Enum is an assign statement
-            
+                        print("ENUM name")
+                        print(nod.targets[0].name)
                         for x in nod.targets[0].name:
                             if x.islower():
                                 # if the name has any lowercase letters
