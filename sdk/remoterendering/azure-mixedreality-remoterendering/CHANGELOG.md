@@ -1,14 +1,8 @@
 # Release History
 
-## 1.0.0b2 (Unreleased)
+## 1.0.0b2 (2022-11-03)
 
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Fixed bug in testing pipeline.
 
 ## 1.0.0b1 (2021-11-15)
 
