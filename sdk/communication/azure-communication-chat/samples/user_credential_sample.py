@@ -7,7 +7,7 @@
 """
 FILE: user_credential_sample.py
 DESCRIPTION:
-    These samples demonstrate create a CommunicationTokenCredential object.
+    These samples demonstrate creating a `CommunicationTokenCredential` object.
     The `CommunicationTokenCredential` object is used to authenticate a user with Communication Services,
     such as Chat or Calling. It optionally provides an auto-refresh mechanism to ensure a continuously
     stable authentication state during communications.
@@ -27,19 +27,19 @@ class CommunicationTokenCredentialSamples(object):
     
     connection_string = os.environ.get("COMMUNICATION_SAMPLES_CONNECTION_STRING", None)
     if not connection_string:
-        raise ValueError("Set COMMUNICATION_SAMPLES_CONNECTION_STRING env before run this sample.")
+        raise ValueError("Set COMMUNICATION_SAMPLES_CONNECTION_STRING env before running this sample.")
 
     identity_client = CommunicationIdentityClient.from_connection_string(connection_string)
     user = identity_client.create_user()
-    tokenresponse = identity_client.get_token(user, scopes=["chat"])
-    token = tokenresponse.token
+    token_response = identity_client.get_token(user, scopes=["chat"])
+    token = token_response.token
 
     def create_credential_with_static_token(self):
         # For short-lived clients, refreshing the token upon expiry is not necessary 
         # and `CommunicationTokenCredential` may be instantiated with a static token.
         with CommunicationTokenCredential(self.token) as credential:
-            tokenresponse = credential.get_token()
-            print("Token issued with value: " + tokenresponse.token)
+            token_response = credential.get_token()
+            print("Token issued with value: " + token_response.token)
 
     def create_credential_with_refreshing_callback(self):
         # Alternatively, for long-lived clients, you can create a `CommunicationTokenCredential` with a callback to renew tokens if expired.
@@ -48,8 +48,8 @@ class CommunicationTokenCredentialSamples(object):
         fetch_token_from_server = lambda: None 
         with CommunicationTokenCredential(
             self.token, token_refresher=fetch_token_from_server) as credential:
-            tokenresponse = credential.get_token()
-            print("Token issued with value: " + tokenresponse.token)
+            token_response = credential.get_token()
+            print("Token issued with value: " + token_response.token)
 
     def create_credential_with_proactive_refreshing_callback(self):
         # Optionally, you can enable proactive token refreshing where a fresh token will be acquired as soon as the
@@ -57,8 +57,8 @@ class CommunicationTokenCredentialSamples(object):
         fetch_token_from_server = lambda: None 
         with CommunicationTokenCredential(
             self.token, token_refresher=fetch_token_from_server, proactive_refresh=True) as credential:
-            tokenresponse = credential.get_token()
-            print("Token issued with value: " + tokenresponse.token)
+            token_response = credential.get_token()
+            print("Token issued with value: " + token_response.token)
             
     def clean_up(self):
         print("cleaning up: deleting created user.")
