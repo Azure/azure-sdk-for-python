@@ -196,3 +196,19 @@ class TestAzureLogExporterUtils(unittest.TestCase):
             LogExportResult.FAILURE,
         )
         self.assertEqual(_get_log_export_result(None), None)
+
+    def test_get_severity_level(self):
+        for sev_num in SeverityNumber:
+            num = sev_num.value
+            level = _get_severity_level(sev_num)
+            print(num)
+            if num in range(0,9):
+                self.assertEqual(level, 0)
+            elif num in range(9,13):
+                self.assertEqual(level, 1)
+            elif num in range(13,17):
+                self.assertEqual(level, 2)
+            elif num in range(17,21):
+                self.assertEqual(level, 3)
+            else:
+                self.assertEqual(level, 4)

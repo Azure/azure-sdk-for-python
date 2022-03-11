@@ -13,7 +13,7 @@ from opentelemetry.sdk._logs import (
     OTLPHandler,
     set_log_emitter_provider,
 )
-from opentelemetry.sdk._logs.export import BatchLogProcessor, ConsoleLogExporter
+from opentelemetry.sdk._logs.export import BatchLogProcessor
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 
@@ -34,14 +34,13 @@ set_log_emitter_provider(log_emitter_provider)
 exporter = AzureMonitorLogExporter.from_connection_string(
     os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 )
-exporter2 = ConsoleLogExporter()
 
 # You can also instantiate the exporter via the constructor
 # The connection string will be automatically populated via the
 # APPLICATIONINSIGHTS_CONNECTION_STRING environment variable
 # exporter = AzureMonitorLogExporter()
 
-log_emitter_provider.add_log_processor(BatchLogProcessor(exporter2))
+log_emitter_provider.add_log_processor(BatchLogProcessor(exporter))
 handler = OTLPHandler()
 
 # Attach OTel handler to root logger
@@ -59,5 +58,3 @@ logger.error("ERROR: After span")
 logger.debug("DEBUG: Debug with properties", extra={"debug": "true"})
 
 log_emitter_provider.shutdown()
-
-input(...)

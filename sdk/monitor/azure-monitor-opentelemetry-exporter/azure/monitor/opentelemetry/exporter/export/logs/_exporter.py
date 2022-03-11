@@ -129,7 +129,9 @@ def _get_log_export_result(result: ExportResult) -> LogExportResult:
         return LogExportResult.FAILURE
     return None
 
+# Common schema: https://github.com/microsoft/common-schema/blob/main/Mappings/AzureMonitor-AI.md#messageseveritylevel
+# SeverityNumber specs: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-severitynumber
 def _get_severity_level(severity_number: SeverityNumber):
     if severity_number.value < 9:
         return 0
-    return (severity_number.value-1)/4 - 1
+    return int((severity_number.value-1)/4 - 1)
