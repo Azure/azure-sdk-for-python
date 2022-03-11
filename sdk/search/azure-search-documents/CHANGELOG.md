@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Bug fix for async paged requests to use api keys
 
 ### Other Changes
 
