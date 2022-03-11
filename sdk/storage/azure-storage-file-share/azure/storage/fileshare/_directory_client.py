@@ -326,7 +326,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         file_change_time = kwargs.pop('file_change_time', None)
         file_permission = kwargs.pop('file_permission', None)
         file_permission_key = kwargs.pop('file_permission_key', None)
-        file_permission = _get_file_permission(file_permission, file_permission_key, 'Inherit')
+        file_permission = _get_file_permission(file_permission, file_permission_key, 'inherit')
 
         try:
             return self._client.directory.create( # type: ignore
