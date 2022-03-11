@@ -2476,21 +2476,25 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     def test_queue_receive_iterator_resume_after_link_detach(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
 
         def hack_iter_next_mock_error(self):
-            self._open()
-            # when trying to receive the second message (execution_times is 1), raising LinkDetach error to mock 10 mins idle timeout
-            if self.execution_times == 1:
-                from uamqp.errors import LinkDetach
-                from uamqp.constants import ErrorCodes
-                self.execution_times += 1
-                self.error_raised = True
-                raise LinkDetach(ErrorCodes.LinkDetachForced)
-            else:
-                self.execution_times += 1
-            if not self._message_iter:
-                self._message_iter = self._handler.receive_messages_iter()
-            uamqp_message = next(self._message_iter)
-            message = self._build_message(uamqp_message)
-            return message
+            try:
+                self._receive_context.set()
+                self._open()
+                # when trying to receive the second message (execution_times is 1), raising LinkDetach error to mock 10 mins idle timeout
+                if self.execution_times == 1:
+                    from uamqp.errors import LinkDetach
+                    from uamqp.constants import ErrorCodes
+                    self.execution_times += 1
+                    self.error_raised = True
+                    raise LinkDetach(ErrorCodes.LinkDetachForced)
+                else:
+                    self.execution_times += 1
+                if not self._message_iter:
+                    self._message_iter = self._handler.receive_messages_iter()
+                uamqp_message = next(self._message_iter)
+                message = self._build_message(uamqp_message)
+                return message
+            finally:
+                self._receive_context.clear()
 
         with ServiceBusClient.from_connection_string(
                 servicebus_namespace_connection_string, logging_enable=False) as sb_client:
