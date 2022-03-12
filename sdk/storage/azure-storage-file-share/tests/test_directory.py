@@ -92,7 +92,7 @@ class StorageDirectoryTest(StorageTestCase):
 
         directory_client = share_client.get_directory_client('dir1')
         file_attributes = NTFSAttributes(read_only=True, directory=True)
-        file_creation_time = file_last_write_time = file_change_time = datetime.utcnow()
+        file_creation_time = file_last_write_time = file_change_time = datetime(2022, 3, 10, 10, 14, 30, 500000)
 
         # Act
         directory_client.create_directory(

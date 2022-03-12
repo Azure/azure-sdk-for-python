@@ -5,9 +5,9 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-file-share/12.7.0 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file-share/12.8.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 11 Mar 2022 00:13:41 GMT
+      - Sat, 12 Mar 2022 00:39:13 GMT
       x-ms-version:
       - '2021-06-08'
     method: PUT
@@ -17,9 +17,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 11 Mar 2022 00:13:41 GMT
-      etag: '"0x8DA02F3FFF5C1F7"'
-      last-modified: Fri, 11 Mar 2022 00:13:42 GMT
+      date: Sat, 12 Mar 2022 00:39:13 GMT
+      etag: '"0x8DA03C0BAFD59B0"'
+      last-modified: Sat, 12 Mar 2022 00:39:13 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2021-06-08'
     status:
@@ -32,17 +32,17 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-file-share/12.7.0 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file-share/12.8.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 11 Mar 2022 00:13:42 GMT
+      - Sat, 12 Mar 2022 00:39:13 GMT
       x-ms-file-attributes:
       - ReadOnly|Directory
       x-ms-file-change-time:
-      - '2022-03-11T00:13:42.1333590Z'
+      - '2022-03-10T10:14:30.5000000Z'
       x-ms-file-creation-time:
-      - '2022-03-11T00:13:42.1333590Z'
+      - '2022-03-10T10:14:30.5000000Z'
       x-ms-file-last-write-time:
-      - '2022-03-11T00:13:42.1333590Z'
+      - '2022-03-10T10:14:30.5000000Z'
       x-ms-file-permission:
       - inherit
       x-ms-version:
@@ -54,15 +54,15 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 11 Mar 2022 00:13:41 GMT
-      etag: '"0x8DA02F3FFFB9856"'
-      last-modified: Fri, 11 Mar 2022 00:13:42 GMT
+      date: Sat, 12 Mar 2022 00:39:13 GMT
+      etag: '"0x8DA027EC4121240"'
+      last-modified: Thu, 10 Mar 2022 10:14:30 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: ReadOnly | Directory
-      x-ms-file-change-time: '2022-03-11T00:13:42.1333590Z'
-      x-ms-file-creation-time: '2022-03-11T00:13:42.1333590Z'
+      x-ms-file-change-time: '2022-03-10T10:14:30.5000000Z'
+      x-ms-file-creation-time: '2022-03-10T10:14:30.5000000Z'
       x-ms-file-id: '13835128424026341376'
-      x-ms-file-last-write-time: '2022-03-11T00:13:42.1333590Z'
+      x-ms-file-last-write-time: '2022-03-10T10:14:30.5000000Z'
       x-ms-file-parent-id: '0'
       x-ms-file-permission-key: 13361685536844353511*15111010650564761710
       x-ms-request-server-encrypted: 'true'
@@ -77,9 +77,9 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-file-share/12.7.0 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file-share/12.8.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 11 Mar 2022 00:13:42 GMT
+      - Sat, 12 Mar 2022 00:39:13 GMT
       x-ms-version:
       - '2021-06-08'
     method: GET
@@ -89,15 +89,15 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 11 Mar 2022 00:13:41 GMT
-      etag: '"0x8DA02F3FFFB9856"'
-      last-modified: Fri, 11 Mar 2022 00:13:42 GMT
+      date: Sat, 12 Mar 2022 00:39:13 GMT
+      etag: '"0x8DA027EC4121240"'
+      last-modified: Thu, 10 Mar 2022 10:14:30 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: ReadOnly | Directory
-      x-ms-file-change-time: '2022-03-11T00:13:42.1333590Z'
-      x-ms-file-creation-time: '2022-03-11T00:13:42.1333590Z'
+      x-ms-file-change-time: '2022-03-10T10:14:30.5000000Z'
+      x-ms-file-creation-time: '2022-03-10T10:14:30.5000000Z'
       x-ms-file-id: '13835128424026341376'
-      x-ms-file-last-write-time: '2022-03-11T00:13:42.1333590Z'
+      x-ms-file-last-write-time: '2022-03-10T10:14:30.5000000Z'
       x-ms-file-parent-id: '0'
       x-ms-file-permission-key: 13361685536844353511*15111010650564761710
       x-ms-server-encrypted: 'true'

@@ -287,8 +287,8 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         :keyword str file_permission:
             If specified the permission (security descriptor) shall be set
             for the directory/file. This header can be used if Permission size is
-            <= 8KB, else file-permission-key header shall be used. 
-            Default value: Inherit. If SDDL is specified as input, it must have owner, group and dacl. 
+            <= 8KB, else file-permission-key header shall be used.
+            Default value: Inherit. If SDDL is specified as input, it must have owner, group and dacl.
             Note: Only one of the file-permission or file-permission-key should be specified.
         :keyword str file_permission_key:
             Key of the permission to be set for the directory/file.

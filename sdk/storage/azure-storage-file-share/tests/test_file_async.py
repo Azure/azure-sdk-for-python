@@ -378,7 +378,7 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
         file_client = await self._get_file_client(storage_account_name, storage_account_key)
 
         file_attributes = NTFSAttributes(read_only=True, archive=True)
-        file_creation_time = file_last_write_time = file_change_time = datetime.utcnow()
+        file_creation_time = file_last_write_time = file_change_time = datetime(2022, 3, 10, 10, 14, 30, 500000)
 
         # Act
         await file_client.create_file(
@@ -1412,8 +1412,11 @@ class StorageFileAsyncTest(AsyncStorageTestCase):
             file_path='file1copy',
             credential=storage_account_key,
             transport=AiohttpTestTransport())
+        source_props = await source_client.get_file_properties()
 
-        file_creation_time = file_last_write_time = file_change_time = datetime.utcnow()
+        file_creation_time = source_props.creation_time - timedelta(hours=1)
+        file_last_write_time = source_props.last_write_time - timedelta(hours=1)
+        file_change_time = source_props.change_time - timedelta(hours=1)
         file_attributes = "Temporary|NoScrubData"
 
         # Act
