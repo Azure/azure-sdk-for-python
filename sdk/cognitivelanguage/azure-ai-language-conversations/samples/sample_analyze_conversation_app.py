@@ -78,9 +78,9 @@ def sample_analyze_conversation_app_language_parm():
         if entity.resolutions:
             print("resolutions")
             for resolution in entity.resolutions:
+                if isinstance(resolution, DateTimeResolution):
+                    print(resolution)
                 print(resolution)
-                # print("kind: {}".format(resolution.resolution_kind))
-                # print("value: {}".format(resolution.value))
 
     # [END analyze_conversation_app_language_parm]
 

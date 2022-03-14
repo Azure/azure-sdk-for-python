@@ -74,9 +74,12 @@ def sample_analyze_orchestration_app_luis_response():
     print("project kind: {}".format(top_intent_object.target_kind))
 
     if isinstance(top_intent_object, LUISTargetIntentResult):
-        print("view luis response:")
-        # luis_response = result.prediction.intents[top_intent].result
-        # print("\tluis response: {}\n".format(luis_response))
+        print("\nluis response:")
+        luis_response = top_intent_object.result["prediction"]
+        print("top intent: {}".format(luis_response["topIntent"]))
+        print("\nentities:")
+        for entity in luis_response["entities"]:
+            print("\n{}".format(entity))
 
     # [END analyze_orchestration_app_luis_response]
 
