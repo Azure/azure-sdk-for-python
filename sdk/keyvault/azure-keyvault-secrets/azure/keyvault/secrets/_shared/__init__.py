@@ -53,14 +53,14 @@ def parse_key_vault_id(source_id):
     try:
         parsed_uri = parse.urlparse(source_id)
     except Exception:  # pylint: disable=broad-except
-        raise ValueError("'{}' is not not a valid ID".format(source_id))
+        raise ValueError("'{}' is not a valid ID".format(source_id))
     if not (parsed_uri.scheme and parsed_uri.hostname):
-        raise ValueError("'{}' is not not a valid ID".format(source_id))
+        raise ValueError("'{}' is not a valid ID".format(source_id))
 
     path = list(filter(None, parsed_uri.path.split("/")))
 
     if len(path) < 2 or len(path) > 3:
-        raise ValueError("'{}' is not not a valid ID".format(source_id))
+        raise ValueError("'{}' is not a valid ID".format(source_id))
 
     return KeyVaultResourceId(
         source_id=source_id,

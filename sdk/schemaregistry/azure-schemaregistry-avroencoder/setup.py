@@ -67,6 +67,9 @@ setup(
     ],
     python_requires=">=3.6",
     zip_safe=False,
-    packages=find_packages(exclude=exclude_packages),
+    packages=[
+        'azure.schemaregistry.encoder.avroencoder',
+        'azure.schemaregistry.encoder.avroencoder.aio',
+    ],
     install_requires=install_packages
 )

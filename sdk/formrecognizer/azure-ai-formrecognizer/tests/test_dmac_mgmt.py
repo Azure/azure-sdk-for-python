@@ -27,6 +27,9 @@ DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPrepa
 
 class TestManagement(FormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     def test_active_directory_auth(self):
@@ -44,8 +47,6 @@ class TestManagement(FormRecognizerTest):
         client = DocumentModelAdministrationClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
         with pytest.raises(ClientAuthenticationError):
             result = client.get_account_info()
-
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -81,10 +82,8 @@ class TestManagement(FormRecognizerTest):
     def test_account_info(self, client):
         info = client.get_account_info()
 
-        assert info.model_limit
-        assert info.model_count
-
-        return {}
+        assert info.document_model_limit
+        assert info.document_model_count
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -102,8 +101,6 @@ class TestManagement(FormRecognizerTest):
                 assert key
                 assert field["type"]
             assert doc_type.field_confidence is None
-
-        return {}
 
     @pytest.mark.skip()
     @FormRecognizerPreparer()
@@ -194,8 +191,6 @@ class TestManagement(FormRecognizerTest):
             assert error.message
             assert error.details
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_get_operation_bad_model_id(self, **kwargs):
@@ -221,5 +216,3 @@ class TestManagement(FormRecognizerTest):
                 assert dac._api_version == DocumentAnalysisApiVersion.V2022_01_30_PREVIEW
             dtc.get_account_info()
             assert transport.session is not None
-
-        return {}
