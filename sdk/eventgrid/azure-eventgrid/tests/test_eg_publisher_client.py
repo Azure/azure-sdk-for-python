@@ -344,3 +344,15 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
                 data_version="2.0"
                 )
         client.send(eg_event)
+
+    @EventGridPreparer()
+    @recorded_by_proxy
+    def test_send_partner_namespace(self, variables, eventgrid_partner_namespace_endpoint, eventgrid_partner_namespace_key):
+        credential = AzureKeyCredential(eventgrid_partner_namespace_key)
+        client = EventGridPublisherClient(eventgrid_partner_namespace_endpoint, eventgrid_partner_namespace_key)
+        cloud_event = CloudEvent(
+                source = "http://samplesource.dev",
+                data = "cloudevent",
+                type="Sample.Cloud.Event"
+                )
+        client.send(cloud_event, channel_name='data-plane-sdk-pt-ch')
