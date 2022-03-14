@@ -52,13 +52,12 @@ if TYPE_CHECKING:
     from typing import Any, Callable, Dict, Optional, TypeVar, Union
     from ._operations._operations import JSONType
 
-    T = TypeVar('T')
+    T = TypeVar("T")
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Type, TypeVar, Any, Union, Dict
-
 
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline import PipelineRequest
@@ -166,9 +165,7 @@ class JwtCredentialPolicy(SansIOHTTPPolicy):
         url = request.http_request.url
         if self._reverse_proxy_endpoint:
             url = url.replace(self._reverse_proxy_endpoint, self._original_url, 1)
-        request.http_request.headers["Authorization"] = "Bearer " + self._encode(
-            url
-        )
+        request.http_request.headers["Authorization"] = "Bearer " + self._encode(url)
         return super(JwtCredentialPolicy, self).on_request(request)
 
     def _encode(self, url: AzureKeyCredential) -> str:
@@ -188,7 +185,6 @@ class JwtCredentialPolicy(SansIOHTTPPolicy):
 
 
 class ApiManagementProxy(ProxyPolicy):
-
     def __init__(self, **kwargs: Any) -> None:
         """Create a new instance of the policy.
 
@@ -198,9 +194,8 @@ class ApiManagementProxy(ProxyPolicy):
         :type proxy_endpoint: str
         """
         super(ApiManagementProxy, self).__init__(**kwargs)
-        self._endpoint = kwargs.pop('origin_endpoint', None)
-        self._reverse_proxy_endpoint = kwargs.pop('reverse_proxy_endpoint', None)
-
+        self._endpoint = kwargs.pop("origin_endpoint", None)
+        self._reverse_proxy_endpoint = kwargs.pop("reverse_proxy_endpoint", None)
 
     def on_request(self, request: PipelineRequest) -> None:
         """Is executed before sending the request from next policy.
@@ -229,14 +224,10 @@ class WebPubSubServiceClientConfiguration(Configuration):
     """
 
     def __init__(
-        self,
-        hub: str,
-        endpoint: str,
-        credential: Union[TokenCredential, AzureKeyCredential],
-        **kwargs: Any
+        self, hub: str, endpoint: str, credential: Union[TokenCredential, AzureKeyCredential], **kwargs: Any
     ) -> None:
         super().__init__(**kwargs)
-        api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
+        api_version = kwargs.pop("api_version", "2021-10-01")  # type: str
 
         if hub is None:
             raise ValueError("Parameter 'hub' must not be None.")
@@ -249,34 +240,35 @@ class WebPubSubServiceClientConfiguration(Configuration):
         self.endpoint = endpoint
         self.credential = credential
         self.api_version = api_version
-        self.credential_scopes = kwargs.pop('credential_scopes', ['https://webpubsub.azure.com/.default'])
-        kwargs.setdefault('sdk_moniker', 'messaging-webpubsubservice/{}'.format(VERSION))
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://webpubsub.azure.com/.default"])
+        kwargs.setdefault("sdk_moniker", "messaging-webpubsubservice/{}".format(VERSION))
         self._configure(**kwargs)
 
     def _configure(
-        self,
-        **kwargs  # type: Any
+        self, **kwargs  # type: Any
     ):
         # type: (...) -> None
-        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
-        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
-        self.proxy_policy = kwargs.get('proxy_policy') or ApiManagementProxy(**kwargs)
-        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
-        self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get('retry_policy') or policies.RetryPolicy(**kwargs)
-        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)
-        self.authentication_policy = kwargs.get('authentication_policy')
+        self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
+        self.proxy_policy = kwargs.get("proxy_policy") or ApiManagementProxy(**kwargs)
+        self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(**kwargs)
+        self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
             if isinstance(self.credential, AzureKeyCredential):
                 self.authentication_policy = JwtCredentialPolicy(
                     self.credential,
                     user=kwargs.get("user"),
                     origin_endpoint=kwargs.get("origin_endpoint"),
-                    reverse_proxy_endpoint=kwargs.get("reverse_proxy_endpoint")
+                    reverse_proxy_endpoint=kwargs.get("reverse_proxy_endpoint"),
                 )
             else:
-                self.authentication_policy = policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
+                self.authentication_policy = policies.BearerTokenCredentialPolicy(
+                    self.credential, *self.credential_scopes, **kwargs
+                )
 
 
 class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
@@ -295,16 +287,12 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
     """
 
     def __init__(
-        self,
-        endpoint: str,
-        hub: str,
-        credential: Union[TokenCredential, AzureKeyCredential],
-        **kwargs: Any
+        self, endpoint: str, hub: str, credential: Union[TokenCredential, AzureKeyCredential], **kwargs: Any
     ) -> None:
         if kwargs.get("port") and endpoint:
-            endpoint = endpoint.rstrip("/") + ":{}".format(kwargs.pop('port'))
-        kwargs['origin_endpoint'] = endpoint
-        _endpoint = '{Endpoint}'
+            endpoint = endpoint.rstrip("/") + ":{}".format(kwargs.pop("port"))
+        kwargs["origin_endpoint"] = endpoint
+        _endpoint = "{Endpoint}"
         self._config = WebPubSubServiceClientConfiguration(hub=hub, endpoint=endpoint, credential=credential, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
@@ -353,9 +341,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         endpoint = self._config.endpoint.lower()
         if not endpoint.startswith("http://") and not endpoint.startswith("https://"):
             raise ValueError(
-                "Invalid endpoint: '{}' has unknown scheme - expected 'http://' or 'https://'".format(
-                    endpoint
-                )
+                "Invalid endpoint: '{}' has unknown scheme - expected 'http://' or 'https://'".format(endpoint)
             )
 
         # Ensure endpoint has no trailing slash
@@ -369,14 +355,15 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         if isinstance(self._config.credential, AzureKeyCredential):
             token = _get_token_by_key(endpoint, hub, self._config.credential.key, jwt_headers=jwt_headers, **kwargs)
         else:
-            token = super(WebPubSubServiceClient, self).get_client_access_token(**kwargs).get('token')
+            token = super(WebPubSubServiceClient, self).get_client_access_token(**kwargs).get("token")
 
         return {
             "baseUrl": client_url,
             "token": token,
             "url": "{}?access_token={}".format(client_url, token),
         }
-    get_client_access_token.metadata = {'url': '/api/hubs/{hub}/:generateToken'}  # type: ignore
+
+    get_client_access_token.metadata = {"url": "/api/hubs/{hub}/:generateToken"}  # type: ignore
 
 
 def patch_sdk():
