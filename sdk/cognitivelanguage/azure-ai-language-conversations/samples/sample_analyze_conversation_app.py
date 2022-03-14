@@ -5,15 +5,16 @@
 # ------------------------------------
 
 """
-FILE: sample_analyze_conversation_app.py
+FILE: sample_analyze_conversation_app_language_parm.py
 
 DESCRIPTION:
-    This sample demonstrates how to analyze user query for intents and entities using a conversation project.
+    This sample demonstrates how to analyze user query for intents and entities using
+    a conversation project with a language parameter.
 
     For more info about how to setup a CLU conversation project, see the README.
 
 USAGE:
-    python sample_analyze_conversation_app.py
+    python sample_analyze_conversation_app_language_parm.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_CONVERSATIONS_ENDPOINT - the endpoint to your CLU resource.
@@ -21,51 +22,68 @@ USAGE:
     3) AZURE_CONVERSATIONS_PROJECT - the name of your CLU conversations project.
 """
 
-def sample_analyze_conversation_app():
-    # [START analyze_conversation_app]
+def sample_analyze_conversation_app_language_parm():
+    # [START analyze_conversation_app_language_parm]
     # import libraries
     import os
     from azure.core.credentials import AzureKeyCredential
 
     from azure.ai.language.conversations import ConversationAnalysisClient
-    from azure.ai.language.conversations.models import ConversationAnalysisOptions
+    from azure.ai.language.conversations.models import DateTimeResolution
 
     # get secrets
     conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
-    conv_project = os.environ["AZURE_CONVERSATIONS_PROJECT"]
-
-    # prepare data
-    query = "One california maki please."
-    input = ConversationAnalysisOptions(
-        query=query
-    )
+    project_name = os.environ["AZURE_CONVERSATIONS_PROJECT_NAME"]
+    deployment_name = os.environ["AZURE_CONVERSATIONS_DEPLOYMENT_NAME"]
 
     # analyze quey
     client = ConversationAnalysisClient(conv_endpoint, AzureKeyCredential(conv_key))
     with client:
-        result = client.analyze_conversations(
-            input,
-            project_name=conv_project,
-            deployment_name='production'
+        query = "Send an email to Carol about the tomorrow's demo"
+        result = client.conversation_analysis.analyze_conversation(
+            body={
+                "kind": "CustomConversation",
+                "analysisInput": {
+                    "conversationItem": {
+                        "participantId": "1",
+                        "id": "1",
+                        "modality": "text",
+                        "language": "en",
+                        "text": query
+                    },
+                    "isLoggingEnabled": False
+                },
+                "parameters": {
+                    "projectName": project_name,
+                    "deploymentName": deployment_name,
+                    "verbose": True
+                }
+            }
         )
 
     # view result
-    print("query: {}".format(result.query))
-    print("project kind: {}\n".format(result.prediction.project_kind))
+    print("query: {}".format(result.results.query))
+    print("project kind: {}\n".format(result.results.prediction.project_kind))
 
-    print("view top intent:")
-    print("\ttop intent: {}".format(result.prediction.top_intent))
-    print("\tcategory: {}".format(result.prediction.intents[0].category))
-    print("\tconfidence score: {}\n".format(result.prediction.intents[0].confidence_score))
+    print("top intent: {}".format(result.results.prediction.top_intent))
+    print("category: {}".format(result.results.prediction.intents[0].category))
+    print("confidence score: {}\n".format(result.results.prediction.intents[0].confidence))
 
-    print("view entities:")
-    for entity in result.prediction.entities:
-        print("\tcategory: {}".format(entity.category))
-        print("\ttext: {}".format(entity.text))
-        print("\tconfidence score: {}".format(entity.confidence_score))
-    # [END analyze_conversation_app]
+    print("entities:")
+    for entity in result.results.prediction.entities:
+        print("\ncategory: {}".format(entity.category))
+        print("text: {}".format(entity.text))
+        print("confidence score: {}".format(entity.confidence))
+        if entity.resolutions:
+            print("resolutions")
+            for resolution in entity.resolutions:
+                print(resolution)
+                # print("kind: {}".format(resolution.resolution_kind))
+                # print("value: {}".format(resolution.value))
+
+    # [END analyze_conversation_app_language_parm]
 
 
 if __name__ == '__main__':
-    sample_analyze_conversation_app()
+    sample_analyze_conversation_app_language_parm()
