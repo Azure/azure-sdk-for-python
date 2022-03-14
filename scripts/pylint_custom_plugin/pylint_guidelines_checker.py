@@ -9,6 +9,7 @@ Pylint custom checkers for SDK guidelines: C4717 - C4744
 
 import logging
 import astroid
+from jinja2 import ChoiceLoader
 from pylint.checkers import BaseChecker
 from pylint.interfaces import IAstroidChecker
 logger = logging.getLogger(__name__)
@@ -1713,8 +1714,8 @@ class CheckApiVersion(BaseChecker):
     msgs = {
         "C4748": (
             "Check api version",
-            "api-version-incorrect",
-            "Change the api version.",
+            "api-version-not-keyword",
+            "Acceot a keyword argument called api_version.",
         ),
     }
     options = (
@@ -1724,13 +1725,44 @@ class CheckApiVersion(BaseChecker):
                 "default": False,
                 "type": "yn",
                 "metavar": "<y_or_n>",
-                "help": "Allow incorrect api version.",
+                "help": "Allow for no keyword api version.",
             },
         ),
     )
+    ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
-        super(CheckApiVersion, self).__init__(linter)
+        super(CheckApiVersion, self).__init__(linter)             
+
+    def visit_classdef(self, node):
+        """Visits every class in file and checks if it is a client.
+        If it is a client, it checks that there is an api_version keyword.
+
+        :param node: class node
+        :type node: ast.ClassDef
+        :return: None
+        """
+        try:
+            api_version = False
+            if node.name.endswith("Client") and node.name not in self.ignore_clients:
+                for func in node.body:
+                    if func.name == "__init__":
+                        for child in func.get_children():
+                            if isinstance(child,astroid.Assign):
+                                for att in child.targets:
+                                    if att.attrname:
+                                        name = att.attrname
+                                        if name == "_api_version" or name == "api_version":
+                                            api_version=True
+                                            break
+                        if not api_version:
+                            self.add_message(
+                                msgid="api-version-not-keyword", node=node, confidence=None
+                            )   
+      
+        except AttributeError:
+            logger.debug("Pylint custom checker failed to check if client uses connection string param in constructor.")
+            pass                                                                                    
 
 
 # if a linter is registered in this function then it will be checked with pylint
