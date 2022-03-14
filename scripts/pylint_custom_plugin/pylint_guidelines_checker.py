@@ -1706,6 +1706,7 @@ class CheckDocstringAdmonitionNewline(BaseChecker):
     visit_asyncfunctiondef = visit_functiondef
 
 
+
 # if a linter is registered in this function then it will be checked with pylint
 def register(linter):
     linter.register_checker(ClientsDoNotUseStaticMethods(linter))
