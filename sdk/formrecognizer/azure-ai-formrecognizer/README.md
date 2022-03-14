@@ -544,7 +544,7 @@ document_model_admin_client = DocumentModelAdministrationClient(endpoint, creden
 
 account_info = document_model_admin_client.get_account_info()
 print("Our account has {} custom models, and we can have at most {} custom models".format(
-    account_info.model_count, account_info.model_limit
+    account_info.document_model_count, account_info.document_model_limit
 ))
 
 # Here we get a paged list of all of our models

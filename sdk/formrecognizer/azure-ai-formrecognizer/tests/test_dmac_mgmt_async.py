@@ -87,8 +87,8 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         async with client:
             info = await client.get_account_info()
 
-        assert info.model_limit
-        assert info.model_count
+        assert info.document_model_limit
+        assert info.document_model_count
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
