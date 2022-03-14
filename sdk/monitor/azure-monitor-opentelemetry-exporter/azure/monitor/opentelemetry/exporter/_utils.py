@@ -7,8 +7,9 @@ import time
 
 import pkg_resources
 
-from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
 from opentelemetry.semconv.resource import ResourceAttributes
+
+from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
 
 
 # Workaround for missing version file

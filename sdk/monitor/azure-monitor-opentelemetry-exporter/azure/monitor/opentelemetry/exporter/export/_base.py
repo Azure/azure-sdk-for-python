@@ -7,8 +7,6 @@ from enum import Enum
 from typing import List, Any
 from urllib.parse import urlparse
 
-from opentelemetry.sdk.trace.export import SpanExportResult
-
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
 from azure.core.pipeline.policies import ContentDecodePolicy, HttpLoggingPolicy, RedirectPolicy, RequestIdPolicy
 from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient

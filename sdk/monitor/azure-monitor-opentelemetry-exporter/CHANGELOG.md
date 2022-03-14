@@ -4,7 +4,7 @@
 
 ### Features Added
 - Implement log exporter using experimental OT logging sdk
-    ([#20489](https://github.com/Azure/azure-sdk-for-python/pull/20489))
+    ([#23486](https://github.com/Azure/azure-sdk-for-python/pull/23486))
 
 ### Breaking Changes
 

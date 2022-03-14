@@ -32,8 +32,8 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
 
     def export(self, batch: Sequence[LogData], **kwargs: Any) -> LogExportResult: # pylint: disable=unused-argument
         """Export log data
-        :param logs: Open Telemetry LogData to export.
-        :type logs: Sequence[~opentelemetry._logs.LogData]
+        :param batch: Open Telemetry LogData(s) to export.
+        :type batch: Sequence[~opentelemetry._logs.LogData]
         :rtype: ~opentelemetry.sdk._logs.export.LogData
         """
         envelopes = [self._log_to_envelope(log) for log in batch]
@@ -109,6 +109,7 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
     # TODO: Exceptions
 
     envelope.name = 'Microsoft.ApplicationInsights.Message'
+    # pylint: disable=line-too-long
     # Severity number: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-severitynumber
     data = MessageData(
         message=log_record.body,
@@ -129,6 +130,7 @@ def _get_log_export_result(result: ExportResult) -> LogExportResult:
         return LogExportResult.FAILURE
     return None
 
+# pylint: disable=line-too-long
 # Common schema: https://github.com/microsoft/common-schema/blob/main/Mappings/AzureMonitor-AI.md#messageseveritylevel
 # SeverityNumber specs: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-severitynumber
 def _get_severity_level(severity_number: SeverityNumber):
