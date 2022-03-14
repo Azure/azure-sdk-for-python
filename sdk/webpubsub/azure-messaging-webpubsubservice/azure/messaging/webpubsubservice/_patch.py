@@ -59,7 +59,6 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Type, TypeVar, Any, Union, Dict
 
-    ClientType = TypeVar("ClientType", bound="WebPubSubServiceClient")
 
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline import PipelineRequest
@@ -80,8 +79,7 @@ class _UTC_TZ(tzinfo):
         return self.__class__.ZERO
 
 
-def _get_token_by_key(endpoint, hub, key, **kwargs):
-    # type: (str, str, str, Any) -> str
+def _get_token_by_key(endpoint: str, hub: str, key: str, **kwargs: Any) -> str:
     """build token with access key.
 
     :param endpoint:  HTTPS endpoint for the WebPubSub service instance.
@@ -112,8 +110,7 @@ def _get_token_by_key(endpoint, hub, key, **kwargs):
     return six.ensure_str(jwt.encode(payload, key, algorithm="HS256", headers=kwargs.pop("jwt_headers", {})))
 
 
-def _parse_connection_string(connection_string, **kwargs):
-    # type: (str, Any) -> JSONType
+def _parse_connection_string(connection_string: str, **kwargs: Any) -> JSONType:
     for segment in connection_string.split(";"):
         if "=" in segment:
             key, value = segment.split("=", 1)
@@ -160,8 +157,7 @@ class JwtCredentialPolicy(SansIOHTTPPolicy):
         self._original_url = origin_endpoint
         self._reverse_proxy_endpoint = reverse_proxy_endpoint
 
-    def on_request(self, request):
-        # type: (PipelineRequest) -> typing.Union[None, typing.Awaitable[None]]
+    def on_request(self, request: PipelineRequest) -> typing.Union[None, typing.Awaitable[None]]:
         """Is executed before sending the request from next policy.
 
         :param request: Request to be modified before sent from next policy.
@@ -175,8 +171,7 @@ class JwtCredentialPolicy(SansIOHTTPPolicy):
         )
         return super(JwtCredentialPolicy, self).on_request(request)
 
-    def _encode(self, url):
-        # type: (AzureKeyCredential) -> str
+    def _encode(self, url: AzureKeyCredential) -> str:
         data = {
             "aud": url,
             "exp": datetime.now(tz=_UTC_TZ()) + timedelta(seconds=60),
@@ -194,8 +189,7 @@ class JwtCredentialPolicy(SansIOHTTPPolicy):
 
 class ApiManagementProxy(ProxyPolicy):
 
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
+    def __init__(self, **kwargs: Any) -> None:
         """Create a new instance of the policy.
 
         :param endpoint: endpoint to be replaced
@@ -208,8 +202,7 @@ class ApiManagementProxy(ProxyPolicy):
         self._reverse_proxy_endpoint = kwargs.pop('reverse_proxy_endpoint', None)
 
 
-    def on_request(self, request):
-        # type: (PipelineRequest) -> None
+    def on_request(self, request: PipelineRequest) -> None:
         """Is executed before sending the request from next policy.
 
         :param request: Request to be modified before sent from next policy.
@@ -237,13 +230,12 @@ class WebPubSubServiceClientConfiguration(Configuration):
 
     def __init__(
         self,
-        hub,  # type: str
-        endpoint,  # type: str
-        credential,  # type: Union[TokenCredential, AzureKeyCredential]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        super(WebPubSubServiceClientConfiguration, self).__init__(**kwargs)
+        hub: str,
+        endpoint: str,
+        credential: Union[TokenCredential, AzureKeyCredential],
+        **kwargs: Any
+    ) -> None:
+        super().__init__(**kwargs)
         api_version = kwargs.pop('api_version', "2021-10-01")  # type: str
 
         if hub is None:
@@ -304,12 +296,11 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
 
     def __init__(
         self,
-        endpoint,  # type: str
-        hub,  # type: str
-        credential,  # type: Union[TokenCredential, AzureKeyCredential]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        endpoint: str,
+        hub: str,
+        credential: Union[TokenCredential, AzureKeyCredential],
+        **kwargs: Any
+    ) -> None:
         if kwargs.get("port") and endpoint:
             endpoint = endpoint.rstrip("/") + ":{}".format(kwargs.pop('port'))
         kwargs['origin_endpoint'] = endpoint
@@ -322,8 +313,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         self._serialize.client_side_validation = False
 
     @classmethod
-    def from_connection_string(cls, connection_string, hub, **kwargs):
-        # type: (Type[ClientType], str, str, Any) -> ClientType
+    def from_connection_string(cls, connection_string: str, hub: str, **kwargs: Any) -> "WebPubSubServiceClient":
         """Create a new WebPubSubServiceClient from a connection string.
 
         :param connection_string: Connection string
@@ -339,8 +329,7 @@ class WebPubSubServiceClient(GeneratedWebPubSubServiceClient):
         return cls(hub=hub, credential=credential, **kwargs)
 
     @distributed_trace
-    def get_client_access_token(self, **kwargs):
-        # type: (Any) -> JSONType
+    def get_client_access_token(self, **kwargs: Any) -> JSONType:
         """Build an authentication token.
 
         :keyword user_id: User Id.
