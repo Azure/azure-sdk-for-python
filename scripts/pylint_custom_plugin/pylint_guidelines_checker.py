@@ -1705,6 +1705,32 @@ class CheckDocstringAdmonitionNewline(BaseChecker):
     # this line makes it work for async functions
     visit_asyncfunctiondef = visit_functiondef
 
+class CheckApiVersion(BaseChecker):
+    __implements__ = IAstroidChecker
+
+    name = "check-api-version"
+    priority = -1
+    msgs = {
+        "C4748": (
+            "Check api version",
+            "api-version-incorrect",
+            "Change the api version.",
+        ),
+    }
+    options = (
+        (
+            "ignore-api-version-incorrect",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow incorrect api version.",
+            },
+        ),
+    )
+
+    def __init__(self, linter=None):
+        super(CheckApiVersion, self).__init__(linter)
 
 
 # if a linter is registered in this function then it will be checked with pylint
@@ -1724,6 +1750,7 @@ def register(linter):
     linter.register_checker(PackageNameDoesNotUseUnderscoreOrPeriod(linter))
     linter.register_checker(ServiceClientUsesNameWithClientSuffix(linter))
     linter.register_checker(CheckDocstringAdmonitionNewline(linter))
+    linter.register_checker(CheckApiVersion(linter))
 
     # disabled by default, use pylint --enable=check-docstrings if you want to use it
     linter.register_checker(CheckDocstringParameters(linter))
