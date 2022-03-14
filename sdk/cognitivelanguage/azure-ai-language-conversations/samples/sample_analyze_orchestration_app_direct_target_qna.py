@@ -17,9 +17,10 @@ USAGE:
     python sample_analyze_orchestration_app_qna_response.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_CONVERSATIONS_ENDPOINT - the endpoint to your CLU resource.
-    2) AZURE_CONVERSATIONS_KEY - your CLU API key.
-    3) AZURE_CONVERSATIONS_WORKFLOW_PROJECT - the name of your CLU orchestration project.
+    1) AZURE_CLU_ENDPOINT                       - endpoint for your CLU resource.
+    2) AZURE_CLU_KEY                            - API key for your CLU resource.
+    3) AZURE_CLU_ORCHESTRATION_PROJECT_NAME     - project name for your CLU orchestration project.
+    4) AZURE_CLU_ORCHESTRATION_DEPLOYMENT_NAME  - deployment name for your CLU orchestration project.
 """
 
 def sample_analyze_orchestration_app_qna_response():
@@ -32,17 +33,17 @@ def sample_analyze_orchestration_app_qna_response():
     from azure.ai.language.conversations.models import QuestionAnsweringTargetIntentResult
 
     # get secrets
-    conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
-    conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
-    project_name = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT_NAME"]
-    deployment_name = os.environ["AZURE_CONVERSATIONS_WORKFLOW_DEPLOYMENT_NAME"]
+    clu_endpoint = os.environ["AZURE_CLU_ENDPOINT"]
+    clu_key = os.environ["AZURE_CLU_KEY"]
+    project_name = os.environ["AZURE_CLU_ORCHESTRATION_PROJECT_NAME"]
+    deployment_name = os.environ["AZURE_CLU_ORCHESTRATION_DEPLOYMENT_NAME"]
 
     # analyze query
-    client = ConversationAnalysisClient(conv_endpoint, AzureKeyCredential(conv_key))
+    client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
     with client:
         query = "How are you?"
-        result = client.conversation_analysis.analyze_conversation(
-            body={
+        result = client.analyze_conversation(
+            task={
                 "kind": "CustomConversation",
                 "analysisInput": {
                     "conversationItem": {
@@ -52,7 +53,8 @@ def sample_analyze_orchestration_app_qna_response():
                         "language": "en",
                         "text": query
                     },
-                    "isLoggingEnabled": False
+                    "isLoggingEnabled": False,
+                    "directTarget": "ChitChat-QnA"
                 },
                 "parameters": {
                     "projectName": project_name,
@@ -73,12 +75,13 @@ def sample_analyze_orchestration_app_qna_response():
     print("confidence score: {}".format(top_intent_object.confidence))
     print("project kind: {}".format(top_intent_object.target_kind))
 
-    top_intent_object = result.prediction.intents[0]
-    print("\tconfidence score: {}\n".format(top_intent_object.confidence_score))
+    if top_intent_object.target_kind == "question_answering":
+        print("\nview qna result:")
+        qna_result = top_intent_object.result
+        for answer in qna_result.answers:
+            print("\nanswer: {}".format(answer.answer))
+            print("answer: {}".format(answer.confidence_score))
 
-    print("view qna result:")
-    qna_result = result.prediction.intents[0]
-    print("\tanswer: {}\n".format(qna_result))
     # [END analyze_orchestration_app_qna_response]
 
 if __name__ == '__main__':

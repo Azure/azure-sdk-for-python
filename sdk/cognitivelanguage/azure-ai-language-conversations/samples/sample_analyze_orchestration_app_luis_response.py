@@ -29,35 +29,49 @@ def sample_analyze_orchestration_app_luis_response():
     from azure.core.credentials import AzureKeyCredential
 
     from azure.ai.language.conversations import ConversationAnalysisClient
-    from azure.ai.language.conversations.models import ConversationAnalysisOptions
+    from azure.ai.language.conversations.models import LUISTargetIntentResult
 
     # get secrets
     conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
-    orchestration_project = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT"]
-
-    # prepare data
-    query = "book me a flight ticket to Bali",
-    input = ConversationAnalysisOptions(
-        query=query
-    )
+    project_name = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT_NAME"]
+    deployment_name = os.environ["AZURE_CONVERSATIONS_WORKFLOW_DEPLOYMENT_NAME"]
 
     # analyze query
     client = ConversationAnalysisClient(conv_endpoint, AzureKeyCredential(conv_key))
     with client:
-        result = client.analyze_conversations(
-            input,
-            project_name=orchestration_project,
-            deployment_name='production',
+        query = "Reserve a table for 2 at the Italian restaurant"
+        result = client.conversation_analysis.analyze_conversation(
+            body={
+                "kind": "CustomConversation",
+                "analysisInput": {
+                    "conversationItem": {
+                        "participantId": "1",
+                        "id": "1",
+                        "modality": "text",
+                        "language": "en",
+                        "text": query
+                    },
+                    "isLoggingEnabled": False
+                },
+                "parameters": {
+                    "projectName": project_name,
+                    "deploymentName": deployment_name,
+                    "verbose": True
+                }
+            }
         )
 
     # view result
-    print("query: {}".format(result.query))
-    print("project kind: {}\n".format(result.prediction.project_kind))
+    print("query: {}".format(result.results.query))
+    print("project kind: {}\n".format(result.results.prediction.project_kind))
 
-    print("view top intent:")
-    top_intent = result.prediction.top_intent
-    print("\ttop intent: {}".format(top_intent))
+    # top intent
+    top_intent = result.results.prediction.top_intent
+    print("top intent: {}".format(top_intent))
+    top_intent_object = result.results.prediction.intents[top_intent]
+    print("confidence score: {}".format(top_intent_object.confidence))
+    print("project kind: {}".format(top_intent_object.target_kind))
 
     top_intent_object = result.prediction.intents[0]
     print("\tconfidence score: {}\n".format(top_intent_object.confidence_score))
