@@ -3384,6 +3384,9 @@ class ModelOperationInfo(object):
     :vartype api_version: str
     :ivar tags: List of user defined key-value tag attributes associated with the model.
     :vartype tags: dict[str, str]
+
+    .. versionadded:: v2022-01-30-preview
+        The *api_version* and *tags* properties
     """
 
     def __init__(self, **kwargs):
@@ -3502,6 +3505,9 @@ class ModelOperation(ModelOperationInfo):
     :vartype api_version: str
     :ivar tags: List of user defined key-value tag attributes associated with the model.
     :vartype tags: dict[str, str]
+
+    .. versionadded:: v2022-01-30-preview
+        The *api_version* and *tags* properties
     """
 
     def __init__(self, **kwargs):
@@ -3691,6 +3697,9 @@ class AnalyzeResult(object):
     :vartype styles: list[~azure.ai.formrecognizer.DocumentStyle]
     :ivar documents: Extracted documents.
     :vartype documents: list[~azure.ai.formrecognizer.AnalyzedDocument]
+
+    .. versionadded:: v2022-01-30-preview
+        The *languages* property
     """
 
     def __init__(self, **kwargs):
@@ -3842,6 +3851,9 @@ class DocumentModelInfo(object):
     :vartype api_version: str
     :ivar tags: List of user defined key-value tag attributes associated with the model.
     :vartype tags: dict[str, str]
+
+    .. versionadded:: v2022-01-30-preview
+        The *api_version* and *tags* properties
     """
 
     def __init__(
@@ -3921,6 +3933,9 @@ class DocumentModel(DocumentModelInfo):
     :vartype tags: dict[str, str]
     :ivar doc_types: Supported document types, including the fields for each document and their types.
     :vartype doc_types: dict[str, ~azure.ai.formrecognizer.DocTypeInfo]
+
+    .. versionadded:: v2022-01-30-preview
+        The *api_version* and *tags* properties
     """
 
     def __init__(
@@ -4003,6 +4018,9 @@ class DocTypeInfo(object):
     :vartype field_schema: dict[str, Any]
     :ivar field_confidence: Estimated confidence for each field.
     :vartype field_confidence: dict[str, float]
+
+    .. versionadded:: v2022-01-30-preview
+        The *build_mode* property
     """
 
     def __init__(
@@ -4068,30 +4086,30 @@ class DocTypeInfo(object):
 class AccountInfo(object):
     """Info regarding models under the Form Recognizer resource.
 
-    :ivar int model_count: Number of custom models in the current resource.
-    :ivar int model_limit: Maximum number of custom models supported in the current resource.
+    :ivar int document_model_count: Number of custom models in the current resource.
+    :ivar int document_model_limit: Maximum number of custom models supported in the current resource.
     """
 
     def __init__(
         self,
         **kwargs
     ):
-        self.model_count = kwargs.get('model_count', None)
-        self.model_limit = kwargs.get('model_limit', None)
+        self.document_model_count = kwargs.get('document_model_count', None)
+        self.document_model_limit = kwargs.get('document_model_limit', None)
 
     def __repr__(self):
         return (
-            "AccountInfo(model_count={}, model_limit={})".format(
-                self.model_count,
-                self.model_limit,
+            "AccountInfo(document_model_count={}, document_model_limit={})".format(
+                self.document_model_count,
+                self.document_model_limit,
             )
         )
 
     @classmethod
     def _from_generated(cls, info):
         return cls(
-            model_count=info.count,
-            model_limit=info.limit,
+            document_model_count=info.count,
+            document_model_limit=info.limit,
         )
 
 
@@ -4103,8 +4121,8 @@ class AccountInfo(object):
         :rtype: dict
         """
         return {
-            "model_count": self.model_count,
-            "model_limit": self.model_limit,
+            "document_model_count": self.document_model_count,
+            "document_model_limit": self.document_model_limit,
         }
 
     @classmethod
@@ -4117,8 +4135,8 @@ class AccountInfo(object):
         :rtype: AccountInfo
         """
         return cls(
-            model_count=data.get("model_count", None),
-            model_limit=data.get("model_limit", None),
+            document_model_count=data.get("document_model_count", None),
+            document_model_limit=data.get("document_model_limit", None),
         )
 
 

@@ -3315,7 +3315,11 @@ class ImageReference(SubResource):
      the virtual machine. The allowed formats are Major.Minor.Build or 'latest'. Major, Minor, and
      Build are decimal numbers. Specify 'latest' to use the latest version of an image available at
      deploy time. Even if you use 'latest', the VM image will not automatically update after deploy
-     time even if a new version becomes available.
+     time even if a new version becomes available. Please do not use field 'version' for gallery
+     image deployment, gallery image should always use 'id' field for deployment, to use 'latest'
+     version of gallery image, just set
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageName}'
+     in the 'id' field without version input.
     :vartype version: str
     :ivar exact_version: Specifies in decimal numbers, the version of platform image or marketplace
      image used to create the virtual machine. This readonly field differs from 'version', only if
@@ -3370,7 +3374,11 @@ class ImageReference(SubResource):
          create the virtual machine. The allowed formats are Major.Minor.Build or 'latest'. Major,
          Minor, and Build are decimal numbers. Specify 'latest' to use the latest version of an image
          available at deploy time. Even if you use 'latest', the VM image will not automatically update
-         after deploy time even if a new version becomes available.
+         after deploy time even if a new version becomes available. Please do not use field 'version'
+         for gallery image deployment, gallery image should always use 'id' field for deployment, to use
+         'latest' version of gallery image, just set
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageName}'
+         in the 'id' field without version input.
         :paramtype version: str
         :keyword shared_gallery_image_id: Specified the shared gallery image unique id for vm
          deployment. This can be fetched from shared gallery image GET call.
@@ -9013,6 +9021,8 @@ class VirtualMachineImage(VirtualMachineImageResource):
     :vartype disallowed: ~azure.mgmt.compute.v2021_11_01.models.DisallowedConfiguration
     :ivar features:
     :vartype features: list[~azure.mgmt.compute.v2021_11_01.models.VirtualMachineImageFeature]
+    :ivar architecture: Specifies the Architecture Type. Possible values include: "x64", "Arm64".
+    :vartype architecture: str or ~azure.mgmt.compute.v2021_11_01.models.ArchitectureTypes
     """
 
     _validation = {
@@ -9033,6 +9043,7 @@ class VirtualMachineImage(VirtualMachineImageResource):
         'hyper_v_generation': {'key': 'properties.hyperVGeneration', 'type': 'str'},
         'disallowed': {'key': 'properties.disallowed', 'type': 'DisallowedConfiguration'},
         'features': {'key': 'properties.features', 'type': '[VirtualMachineImageFeature]'},
+        'architecture': {'key': 'properties.architecture', 'type': 'str'},
     }
 
     def __init__(
@@ -9050,6 +9061,7 @@ class VirtualMachineImage(VirtualMachineImageResource):
         hyper_v_generation: Optional[Union[str, "HyperVGenerationTypes"]] = None,
         disallowed: Optional["DisallowedConfiguration"] = None,
         features: Optional[List["VirtualMachineImageFeature"]] = None,
+        architecture: Optional[Union[str, "ArchitectureTypes"]] = None,
         **kwargs
     ):
         """
@@ -9085,6 +9097,9 @@ class VirtualMachineImage(VirtualMachineImageResource):
         :paramtype disallowed: ~azure.mgmt.compute.v2021_11_01.models.DisallowedConfiguration
         :keyword features:
         :paramtype features: list[~azure.mgmt.compute.v2021_11_01.models.VirtualMachineImageFeature]
+        :keyword architecture: Specifies the Architecture Type. Possible values include: "x64",
+         "Arm64".
+        :paramtype architecture: str or ~azure.mgmt.compute.v2021_11_01.models.ArchitectureTypes
         """
         super(VirtualMachineImage, self).__init__(id=id, name=name, location=location, tags=tags, extended_location=extended_location, **kwargs)
         self.plan = plan
@@ -9094,6 +9109,7 @@ class VirtualMachineImage(VirtualMachineImageResource):
         self.hyper_v_generation = hyper_v_generation
         self.disallowed = disallowed
         self.features = features
+        self.architecture = architecture
 
 
 class VirtualMachineImageFeature(msrest.serialization.Model):

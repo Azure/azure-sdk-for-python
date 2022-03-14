@@ -182,17 +182,24 @@ class EventData(object):
         event_str += " }"
         return event_str
 
-    def __message_data__(self) -> Dict:
+    def __message_content__(self) -> Dict:
         if self.body_type != AmqpMessageBodyType.DATA:
             raise TypeError('`body_type` must be `AmqpMessageBodyType.DATA`.')
-        data = bytearray()
-        for d in self.body: # type: ignore
-            data += d   # type: ignore
-        return {"data": bytes(data), "content_type": self.content_type}
+        content = bytearray()
+        for c in self.body: # type: ignore
+            content += c   # type: ignore
+        return {"content": bytes(content), "content_type": self.content_type}
 
     @classmethod
-    def from_message_data(cls, data: bytes, content_type: str) -> "EventData":
-        event_data = cls(data)
+    def from_message_content(cls, content: bytes, content_type: str) -> "EventData":
+        """
+        Creates an EventData object given content type and a content value to be set as body.
+
+        :param bytes content: The content value to be set as the body of the message.
+        :param str content_type: The content type to be set on the message.
+        :rtype: ~azure.eventhub.EventData
+        """
+        event_data = cls(content)
         event_data.content_type = content_type
         return event_data
 

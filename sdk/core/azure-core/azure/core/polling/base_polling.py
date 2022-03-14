@@ -237,6 +237,7 @@ class OperationResourcePolling(LongRunningOperation):
                 _FinalStateViaOption.AZURE_ASYNC_OPERATION_FINAL_STATE,
                 _FinalStateViaOption.OPERATION_LOCATION_FINAL_STATE
             ]
+            and self._request.method == "POST"
         ):
             return None
         response = pipeline_response.http_response

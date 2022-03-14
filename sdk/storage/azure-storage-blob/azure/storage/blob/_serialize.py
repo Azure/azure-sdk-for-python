@@ -4,6 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=no-self-use
+from typing import (  # pylint: disable=unused-import
+    Any, Dict, Optional, Tuple, Union,
+    TYPE_CHECKING)
+
 try:
     from urllib.parse import quote
 except ImportError:
@@ -28,6 +32,9 @@ from ._generated.models import (
     BlobTag,
     BlobTags, LeaseAccessConditions
 )
+
+if TYPE_CHECKING:
+    from ._lease import BlobLeaseClient
 
 
 _SUPPORTED_API_VERSIONS = [

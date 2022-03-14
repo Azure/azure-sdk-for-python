@@ -37,6 +37,7 @@ if TYPE_CHECKING:
     from datetime import datetime
     from .._models import (  # pylint: disable=unused-import
         ContentSettings,
+        ImmutabilityPolicy,
         PremiumPageBlobTier,
         StandardBlobTier,
         SequenceNumberAction
@@ -242,7 +243,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
     @distributed_trace_async
     async def upload_blob(
-            self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
+            self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
             length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
@@ -806,7 +807,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
     @distributed_trace_async
     async def set_immutability_policy(self, immutability_policy, **kwargs):
-        # type: (**Any) -> Dict[str, str]
+        # type: (ImmutabilityPolicy, **Any) -> Dict[str, str]
         """The Set Immutability Policy operation sets the immutability policy on the blob.
 
         .. versionadded:: 12.10.0

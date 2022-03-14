@@ -126,7 +126,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: v2022-01-30-preview
-            The *tags* keyword argument
+            The required *build_mode* parameter and *tags* keyword argument
 
         .. admonition:: Example:
 
@@ -181,7 +181,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         )
 
     @distributed_trace
-    def begin_create_composed_model(self, model_ids, **kwargs):
+    def begin_create_composed_model(self, component_model_ids, **kwargs):
         # type: (List[str], Any) -> DocumentModelAdministrationLROPoller[DocumentModel]
         """Creates a composed model from a collection of existing models.
 
@@ -189,7 +189,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         submitted to be analyzed with a composed model ID, a classification step is first performed to
         route it to the correct custom model.
 
-        :param list[str] model_ids: List of model IDs to use in the composed model.
+        :param list[str] component_model_ids: List of model IDs to use in the composed model.
         :keyword str model_id: A unique ID for your composed model.
             If not specified, a model ID will be created for you.
         :keyword str description: An optional description to add to the model.
@@ -243,9 +243,9 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
                 tags=tags,
                 component_models=[
                     self._generated_models.ComponentModelInfo(model_id=model_id)
-                    for model_id in model_ids
+                    for model_id in component_model_ids
                 ]
-                if model_ids
+                if component_model_ids
                 else [],
             ),
             cls=kwargs.pop("cls", _compose_callback),
@@ -264,7 +264,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         """Generate authorization for copying a custom model into the target Form Recognizer resource.
 
         This should be called by the target resource (where the model will be copied to)
-        and the output can be passed as the `target` parameter into :func:`~begin_copy_model()`.
+        and the output can be passed as the `target` parameter into :func:`~begin_copy_model_to()`.
 
         :keyword str model_id: A unique ID for your copied model.
             If not specified, a model ID will be created for you.
@@ -296,7 +296,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         return target
 
     @distributed_trace
-    def begin_copy_model(
+    def begin_copy_model_to(
         self,
         model_id,  # type: str
         target,  # type: Dict
@@ -323,8 +323,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2-beta/sample_copy_model.py
-                :start-after: [START begin_copy_model]
-                :end-before: [END begin_copy_model]
+                :start-after: [START begin_copy_model_to]
+                :end-before: [END begin_copy_model_to]
                 :language: python
                 :dedent: 4
                 :caption: Copy a model from the source resource to the target resource

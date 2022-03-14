@@ -27,6 +27,9 @@ DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPrepa
 
 class TestManagementAsync(AsyncFormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     async def test_active_directory_auth_async(self):
@@ -44,8 +47,6 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         with pytest.raises(ClientAuthenticationError):
             async with client:
                 result = await client.get_account_info()
-
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -86,10 +87,8 @@ class TestManagementAsync(AsyncFormRecognizerTest):
         async with client:
             info = await client.get_account_info()
 
-        assert info.model_limit
-        assert info.model_count
-
-        return {}
+        assert info.document_model_limit
+        assert info.document_model_count
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -106,8 +105,6 @@ class TestManagementAsync(AsyncFormRecognizerTest):
                     assert key
                     assert field["type"]
                 assert doc_type.field_confidence is None
-
-        return {}
 
     @pytest.mark.skip()
     @FormRecognizerPreparer()
@@ -196,8 +193,6 @@ class TestManagementAsync(AsyncFormRecognizerTest):
                 assert error.message
                 assert error.details
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     async def test_get_operation_bad_model_id(self, **kwargs):
@@ -223,5 +218,3 @@ class TestManagementAsync(AsyncFormRecognizerTest):
                 assert dac._api_version == DocumentAnalysisApiVersion.V2022_01_30_PREVIEW
             await dtc.get_account_info()
             assert transport.session is not None
-
-        return {}

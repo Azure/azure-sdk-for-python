@@ -1,6 +1,37 @@
 # Release History
 
-## 4.5.0b6 (Unreleased)
+## 4.5.0b7 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+> These changes do not impact the API of stable versions such as 4.4.0.
+> Only code written against a beta version such as 4.5.0b1 may be affected.
+- `KeyClient.update_key_rotation_policy` accepts a required `policy` argument
+  ([#22981](https://github.com/Azure/azure-sdk-for-python/issues/22981))
+- The optional `version` parameter in `KeyClient.release_key` is now a keyword-only argument
+  ([#22981](https://github.com/Azure/azure-sdk-for-python/issues/22981))
+- Renamed the `name` parameter in `KeyClient.get_key_rotation_policy` and
+  `KeyClient.update_key_rotation_policy` to `key_name`
+  ([#22981](https://github.com/Azure/azure-sdk-for-python/issues/22981))
+- Enum values in `azure-keyvault-keys` are now uniformly lower-cased
+  ([#22981](https://github.com/Azure/azure-sdk-for-python/issues/22981))
+
+### Bugs Fixed
+- `KeyType` now ignores casing during declaration, which resolves a scenario where Key Vault
+  keys created with non-standard casing could not be fetched with the SDK
+  ([#22797](https://github.com/Azure/azure-sdk-for-python/issues/22797))
+
+### Other Changes
+- (From 4.5.0b6) Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+- (From 4.5.0b6) Updated minimum `azure-core` version to 1.20.0
+- (From 4.5.0b5) To support multi-tenant authentication, `get_token` calls during challenge
+  authentication requests now pass in a `tenant_id` keyword argument
+  ([#20698](https://github.com/Azure/azure-sdk-for-python/issues/20698)). See
+  https://aka.ms/azsdk/python/identity/tokencredential for more details on how to integrate
+  this parameter if `get_token` is implemented by a custom credential.
+
+## 4.5.0b6 (2022-02-08)
 
 ### Features Added
 - Added `immutable` keyword-only argument and property to `KeyReleasePolicy` to support immutable
@@ -12,11 +43,14 @@
 - Renamed the required argument `data` in `KeyReleasePolicy`'s constructor to
   `encoded_policy`
 
-### Bugs Fixed
-
 ### Other Changes
 - Python 2.7 is no longer supported. Please use Python version 3.6 or later.
 - Updated minimum `azure-core` version to 1.20.0
+- Updated type hints for `KeyProperties` model's `managed`, `exportable`, and `release_policy`
+  properties ([#22368](https://github.com/Azure/azure-sdk-for-python/pull/22368))
+- (From 4.5.0b5) To support multi-tenant authentication, `get_token` calls during challenge
+  authentication requests now pass in a `tenant_id` keyword argument
+  ([#20698](https://github.com/Azure/azure-sdk-for-python/issues/20698))
 
 ## 4.5.0b5 (2021-11-11)
 

@@ -26,13 +26,13 @@ class TestCopyModel(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     def test_copy_model_none_model_id(self, client):
         with pytest.raises(ValueError):
-            client.begin_copy_model(model_id=None, target={})
+            client.begin_copy_model_to(model_id=None, target={})
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_copy_model_empty_model_id(self, client):
         with pytest.raises(ValueError):
-            client.begin_copy_model(model_id="", target={})
+            client.begin_copy_model_to(model_id="", target={})
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -43,15 +43,15 @@ class TestCopyModel(FormRecognizerTest):
         poller = client.begin_build_model(formrecognizer_storage_container_sas_url)
         model = poller.result()
 
-        target = client.get_copy_authorization(tags={"frtests": "testvalue"})
+        target = client.get_copy_authorization(tags={"testkey": "testvalue"})
 
-        poller = client.begin_copy_model(model.model_id, target=target)
+        poller = client.begin_copy_model_to(model.model_id, target=target)
         copy = poller.result()
 
         assert copy.model_id == target["targetModelId"]
         assert copy.description is None
         assert copy.created_on
-        assert copy.tags == {"frtests": "testvalue"}
+        assert copy.tags == {"testkey": "testvalue"}
         for name, doc_type in copy.doc_types.items():
             assert name == target["targetModelId"]
             for key, field in doc_type.field_schema.items():
@@ -72,7 +72,7 @@ class TestCopyModel(FormRecognizerTest):
         description = "this is my copied model"
         target = client.get_copy_authorization(model_id=model_id, description=description)
 
-        poller = client.begin_copy_model(model.model_id, target=target)
+        poller = client.begin_copy_model_to(model.model_id, target=target)
         copy = poller.result()
         if self.is_live:
             assert copy.model_id == model_id
@@ -99,7 +99,7 @@ class TestCopyModel(FormRecognizerTest):
 
         with pytest.raises(HttpResponseError):
             # give bad model_id
-            poller = client.begin_copy_model("00000000-0000-0000-0000-000000000000", target=target)
+            poller = client.begin_copy_model_to("00000000-0000-0000-0000-000000000000", target=target)
             copy = poller.result()
 
     @FormRecognizerPreparer()
@@ -122,7 +122,7 @@ class TestCopyModel(FormRecognizerTest):
             raw_response.append(model_info)
             raw_response.append(document_model)
 
-        poller = client.begin_copy_model(model.model_id, target=target, cls=callback)
+        poller = client.begin_copy_model_to(model.model_id, target=target, cls=callback)
         copy = poller.result()
 
         generated = raw_response[0]
@@ -160,7 +160,7 @@ class TestCopyModel(FormRecognizerTest):
 
         target = client.get_copy_authorization()
 
-        poller = client.begin_copy_model(composed_model.model_id, target=target)
+        poller = client.begin_copy_model_to(composed_model.model_id, target=target)
         copy = poller.result()
 
         assert target["targetModelId"] == copy.model_id
@@ -186,10 +186,10 @@ class TestCopyModel(FormRecognizerTest):
         model = poller.result()
 
         target = client.get_copy_authorization()
-        initial_poller = client.begin_copy_model(model.model_id, target=target)
+        initial_poller = client.begin_copy_model_to(model.model_id, target=target)
         cont_token = initial_poller.continuation_token()
 
-        poller = client.begin_copy_model(model.model_id, None, continuation_token=cont_token)
+        poller = client.begin_copy_model_to(model.model_id, None, continuation_token=cont_token)
         result = poller.result()
         assert result
 
@@ -205,7 +205,7 @@ class TestCopyModel(FormRecognizerTest):
 
         target = client.get_copy_authorization()
 
-        poller = client.begin_copy_model(model.model_id, target=target)
+        poller = client.begin_copy_model_to(model.model_id, target=target)
         assert poller.operation_id
         assert poller.percent_completed is not None
         poller.result()

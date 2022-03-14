@@ -14,31 +14,31 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/unknown Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
     method: PATCH
     uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton?api-version=2021-10-01
   response:
     body:
       string: "{\n  \"projectName\": \"IssacNewton\",\n  \"description\": \"biography
         of Sir Issac Newton\",\n  \"language\": \"en\",\n  \"multilingualResource\":
-        false,\n  \"createdDateTime\": \"2022-01-30T16:06:11Z\",\n  \"lastModifiedDateTime\":
-        \"2022-01-30T16:07:15Z\",\n  \"settings\": {\n    \"defaultAnswer\": \"no
+        false,\n  \"createdDateTime\": \"2022-02-10T19:42:15Z\",\n  \"lastModifiedDateTime\":
+        \"2022-02-10T19:43:19Z\",\n  \"settings\": {\n    \"defaultAnswer\": \"no
         answer\"\n  }\n}"
     headers:
       apim-request-id:
-      - 6f8745c7-4f9f-4393-8add-b8d3210d6e39
+      - a6d581ca-6584-4a8f-9962-1e4a6f2f2901
       content-length:
       - '286'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 30 Jan 2022 16:07:15 GMT
+      - Thu, 10 Feb 2022 19:43:18 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '124'
+      - '21'
     status:
       code: 200
       message: OK
@@ -58,7 +58,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/unknown Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
     method: PATCH
     uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/sources?api-version=2021-10-01
   response:
@@ -66,19 +66,19 @@ interactions:
       string: ''
     headers:
       apim-request-id:
-      - 62f1a688-345e-4811-ba1d-9502c727599d
+      - bc35ccf9-a6ad-46cb-8fdc-d28c7a73771e
       content-length:
       - '0'
       date:
-      - Sun, 30 Jan 2022 16:07:15 GMT
+      - Thu, 10 Feb 2022 19:43:19 GMT
       operation-location:
-      - https://test-resource.api.cognitive.microsoft.com:443/language/query-knowledgebases/projects/IssacNewton/sources/jobs/5535d335-06ef-4e36-9f41-904c8e7ca02b?api-version=2021-10-01
+      - https://test-resource.api.cognitive.microsoft.com:443/language/query-knowledgebases/projects/IssacNewton/sources/jobs/3af97bf1-c8f7-4f58-883d-5304c4a455af?api-version=2021-10-01
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '733'
+      - '142'
     status:
       code: 202
       message: Accepted
@@ -92,30 +92,30 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/unknown Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
     method: GET
-    uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/sources/jobs/5535d335-06ef-4e36-9f41-904c8e7ca02b?api-version=2021-10-01
+    uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/sources/jobs/3af97bf1-c8f7-4f58-883d-5304c4a455af?api-version=2021-10-01
   response:
     body:
-      string: "{\n  \"createdDateTime\": \"2022-01-30T16:07:16+00:00\",\n  \"expirationDateTime\":
-        \"2022-01-30T22:07:16+00:00\",\n  \"jobId\": \"5535d335-06ef-4e36-9f41-904c8e7ca02b\",\n
-        \ \"lastUpdatedDateTime\": \"2022-01-30T16:07:36+00:00\",\n  \"status\": \"succeeded\",\n
+      string: "{\n  \"createdDateTime\": \"2022-02-10T19:43:19+00:00\",\n  \"expirationDateTime\":
+        \"2022-02-11T01:43:19+00:00\",\n  \"jobId\": \"3af97bf1-c8f7-4f58-883d-5304c4a455af\",\n
+        \ \"lastUpdatedDateTime\": \"2022-02-10T19:43:49+00:00\",\n  \"status\": \"succeeded\",\n
         \ \"resultUrl\": \"/knowledgebases/IssacNewton\"\n}"
     headers:
       apim-request-id:
-      - a901cea6-e567-4a24-84d4-e3d6faeb8918
+      - ab79ed99-f3cc-4232-8ba4-4bc5524fa898
       content-length:
       - '281'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 30 Jan 2022 16:07:47 GMT
+      - Thu, 10 Feb 2022 19:43:49 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '47'
+      - '13'
     status:
       code: 200
       message: OK
@@ -129,33 +129,33 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/unknown Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
     method: GET
     uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/sources?api-version=2021-10-01
   response:
     body:
       string: "{\n  \"value\": [\n    {\n      \"source\": \"Editorial\",\n      \"sourceKind\":
         \"file\",\n      \"contentStructureKind\": \"semistructured\",\n      \"lastUpdatedDateTime\":
-        \"2022-01-30T16:06:43.79085Z\"\n    },\n    {\n      \"displayName\": \"MicrosoftFAQ\",\n
+        \"2022-02-10T19:42:48.0442242Z\"\n    },\n    {\n      \"displayName\": \"MicrosoftFAQ\",\n
         \     \"source\": \"https://www.microsoft.com/en-in/software-download/faq\",\n
         \     \"sourceUri\": \"https://www.microsoft.com/en-in/software-download/faq\",\n
         \     \"sourceKind\": \"url\",\n      \"contentStructureKind\": \"unstructured\",\n
-        \     \"lastUpdatedDateTime\": \"2022-01-30T16:07:33.9400901Z\"\n    }\n  ]\n}"
+        \     \"lastUpdatedDateTime\": \"2022-02-10T19:43:46.5564214Z\"\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - 4853e546-d77e-4718-9f42-eee23e5663a2
+      - a6d7bef3-cc79-479c-9dee-4e24c0129141
       content-length:
-      - '527'
+      - '529'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 30 Jan 2022 16:07:47 GMT
+      - Thu, 10 Feb 2022 19:43:49 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '48'
+      - '14'
     status:
       code: 200
       message: OK
@@ -169,33 +169,33 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-ai-language-questionanswering/unknown Python/3.10.1 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-ai-language-questionanswering/1.1.0b1 Python/3.10.1 (Windows-10-10.0.19044-SP0)
     method: GET
     uri: https://test-resource.api.cognitive.microsoft.com/language/query-knowledgebases/projects/IssacNewton/sources?api-version=2021-10-01
   response:
     body:
       string: "{\n  \"value\": [\n    {\n      \"source\": \"Editorial\",\n      \"sourceKind\":
         \"file\",\n      \"contentStructureKind\": \"semistructured\",\n      \"lastUpdatedDateTime\":
-        \"2022-01-30T16:06:43.79085Z\"\n    },\n    {\n      \"displayName\": \"MicrosoftFAQ\",\n
+        \"2022-02-10T19:42:48.0442242Z\"\n    },\n    {\n      \"displayName\": \"MicrosoftFAQ\",\n
         \     \"source\": \"https://www.microsoft.com/en-in/software-download/faq\",\n
         \     \"sourceUri\": \"https://www.microsoft.com/en-in/software-download/faq\",\n
         \     \"sourceKind\": \"url\",\n      \"contentStructureKind\": \"unstructured\",\n
-        \     \"lastUpdatedDateTime\": \"2022-01-30T16:07:33.9400901Z\"\n    }\n  ]\n}"
+        \     \"lastUpdatedDateTime\": \"2022-02-10T19:43:46.5564214Z\"\n    }\n  ]\n}"
     headers:
       apim-request-id:
-      - 1d13f5e8-fc1f-44ad-8c41-bf046da05c42
+      - 780eae88-7d02-47b8-9dc7-ec75249c0eba
       content-length:
-      - '527'
+      - '529'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sun, 30 Jan 2022 16:07:47 GMT
+      - Thu, 10 Feb 2022 19:43:49 GMT
       strict-transport-security:
       - max-age=31536000; includeSubDomains; preload
       x-content-type-options:
       - nosniff
       x-envoy-upstream-service-time:
-      - '44'
+      - '11'
     status:
       code: 200
       message: OK
