@@ -5,7 +5,7 @@
 # ------------------------------------
 
 """
-FILE: sample_analyze_conversation_app_language_parm.py
+FILE: sample_analyze_conversation_app.py
 
 DESCRIPTION:
     This sample demonstrates how to analyze user query for intents and entities using
@@ -14,16 +14,17 @@ DESCRIPTION:
     For more info about how to setup a CLU conversation project, see the README.
 
 USAGE:
-    python sample_analyze_conversation_app_language_parm.py
+    python sample_analyze_conversation_app.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_CONVERSATIONS_ENDPOINT - the endpoint to your CLU resource.
-    2) AZURE_CONVERSATIONS_KEY - your CLU API key.
-    3) AZURE_CONVERSATIONS_PROJECT - the name of your CLU conversations project.
+    1) AZURE_CLU_ENDPOINT                       - endpoint for your CLU resource.
+    2) AZURE_CLU_KEY                            - API key for your CLU resource.
+    3) AZURE_CLU_CONVERSATIONS_PROJECT_NAME     - project name for your CLU conversations project.
+    4) AZURE_CLU_CONVERSATIONS_DEPLOYMENT_NAME  - deployment name for your CLU conversations project.
 """
 
-def sample_analyze_conversation_app_language_parm():
-    # [START analyze_conversation_app_language_parm]
+def sample_analyze_conversation_app():
+    # [START analyze_conversation_app]
     # import libraries
     import os
     from azure.core.credentials import AzureKeyCredential
@@ -32,13 +33,13 @@ def sample_analyze_conversation_app_language_parm():
     from azure.ai.language.conversations.models import DateTimeResolution
 
     # get secrets
-    conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
-    conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
-    project_name = os.environ["AZURE_CONVERSATIONS_PROJECT_NAME"]
-    deployment_name = os.environ["AZURE_CONVERSATIONS_DEPLOYMENT_NAME"]
+    clu_endpoint = os.environ["AZURE_CLU_ENDPOINT"]
+    clu_key = os.environ["AZURE_CLU_KEY"]
+    project_name = os.environ["AZURE_CLU_CONVERSATIONS_PROJECT_NAME"]
+    deployment_name = os.environ["AZURE_CLU_CONVERSATIONS_DEPLOYMENT_NAME"]
 
     # analyze quey
-    client = ConversationAnalysisClient(conv_endpoint, AzureKeyCredential(conv_key))
+    client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
     with client:
         query = "Send an email to Carol about the tomorrow's demo"
         result = client.conversation_analysis.analyze_conversation(
@@ -82,8 +83,8 @@ def sample_analyze_conversation_app_language_parm():
                     print(resolution)
                 print(resolution)
 
-    # [END analyze_conversation_app_language_parm]
+    # [END analyze_conversation_app]
 
 
 if __name__ == '__main__':
-    sample_analyze_conversation_app_language_parm()
+    sample_analyze_conversation_app()
