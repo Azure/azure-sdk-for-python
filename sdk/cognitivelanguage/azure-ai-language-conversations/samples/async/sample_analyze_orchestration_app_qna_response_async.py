@@ -5,7 +5,7 @@
 # ------------------------------------
 
 """
-FILE: sample_analyze_orchestration_app_qna_response_async.py
+FILE: sample_analyze_orchestration_app_qna_response.py
 
 DESCRIPTION:
     This sample demonstrates how to analyze user query using an orchestration project.
@@ -14,52 +14,65 @@ DESCRIPTION:
     For more info about how to setup a CLU orchestration project, see the README.
 
 USAGE:
-    python sample_analyze_orchestration_app_qna_response_async.py
+    python sample_analyze_orchestration_app_qna_response.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_CONVERSATIONS_ENDPOINT - the endpoint to your CLU resource.
-    2) AZURE_CONVERSATIONS_KEY - your CLU API key.
-    3) AZURE_CONVERSATIONS_WORKFLOW_PROJECT - the name of your CLU orchestration project.
+    1) AZURE_CLU_ENDPOINT                       - endpoint for your CLU resource.
+    2) AZURE_CLU_KEY                            - API key for your CLU resource.
+    3) AZURE_CLU_ORCHESTRATION_PROJECT_NAME     - project name for your CLU orchestration project.
+    4) AZURE_CLU_ORCHESTRATION_DEPLOYMENT_NAME  - deployment name for your CLU orchestration project.
 """
 
-import asyncio
-
-async def sample_analyze_orchestration_app_qna_response_async():
-    # [START analyze_orchestration_app_qna_response_async]
+def sample_analyze_orchestration_app_qna_response():
+    # [START analyze_orchestration_app_qna_response]
     # import libraries
     import os
     from azure.core.credentials import AzureKeyCredential
 
-    from azure.ai.language.conversations.aio import ConversationAnalysisClient
-    from azure.ai.language.conversations.models import ConversationAnalysisOptions
+    from azure.ai.language.conversations import ConversationAnalysisClient
+    from azure.ai.language.conversations.models import QuestionAnsweringTargetIntentResult
 
     # get secrets
-    conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
-    conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
-    orchestration_project = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT"]
-
-    # prepare data
-    query = "How do you make sushi rice?",
-    input = ConversationAnalysisOptions(
-        query=query
-    )
+    clu_endpoint = os.environ["AZURE_CLU_ENDPOINT"]
+    clu_key = os.environ["AZURE_CLU_KEY"]
+    project_name = os.environ["AZURE_CLU_ORCHESTRATION_PROJECT_NAME"]
+    deployment_name = os.environ["AZURE_CLU_ORCHESTRATION_DEPLOYMENT_NAME"]
 
     # analyze query
-    client = ConversationAnalysisClient(conv_endpoint, AzureKeyCredential(conv_key))
-    async with client:
-        result = await client.analyze_conversations(
-            input,
-            project_name=orchestration_project,
-            deployment_name='production',
+    client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
+    with client:
+        query = "How are you?"
+        result = client.conversation_analysis.analyze_conversation(
+            body={
+                "kind": "CustomConversation",
+                "analysisInput": {
+                    "conversationItem": {
+                        "participantId": "1",
+                        "id": "1",
+                        "modality": "text",
+                        "language": "en",
+                        "text": query
+                    },
+                    "isLoggingEnabled": False
+                },
+                "parameters": {
+                    "projectName": project_name,
+                    "deploymentName": deployment_name,
+                    "verbose": True
+                }
+            }
         )
 
-        # view result
-        print("query: {}".format(result.query))
-        print("project kind: {}\n".format(result.prediction.project_kind))
+    # view result
+    print("query: {}".format(result.results.query))
+    print("project kind: {}\n".format(result.results.prediction.project_kind))
 
-        print("view top intent:")
-        top_intent = result.prediction.top_intent
-        print("\ttop intent: {}".format(top_intent))
+    # top intent
+    top_intent = result.results.prediction.top_intent
+    print("top intent: {}".format(top_intent))
+    top_intent_object = result.results.prediction.intents[top_intent]
+    print("confidence score: {}".format(top_intent_object.confidence))
+    print("project kind: {}".format(top_intent_object.target_kind))
 
         top_intent_object = result.prediction.intents[0]
         print("\tconfidence score: {}\n".format(top_intent_object.confidence_score))
@@ -70,9 +83,7 @@ async def sample_analyze_orchestration_app_qna_response_async():
     # [END analyze_orchestration_app_qna_response_async]
 
 
-async def main():
-    await sample_analyze_orchestration_app_qna_response_async()
+    # [END analyze_orchestration_app_qna_response]
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    sample_analyze_orchestration_app_qna_response()
