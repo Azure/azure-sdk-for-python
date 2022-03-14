@@ -36,36 +36,51 @@ def sample_analyze_conversation_app_language_parm():
     conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
     conv_project = os.environ["AZURE_CONVERSATIONS_PROJECT"]
 
-    # prepare data
-    query = "One california maki please."
-    input = ConversationAnalysisOptions(
-        query=query,
-        language="en"
-    )
-
     # analyze quey
     client = ConversationAnalysisClient(conv_endpoint, AzureKeyCredential(conv_key))
     with client:
-        result = client.analyze_conversations(
-            input,
-            project_name=conv_project,
-            deployment_name='production'
+        result = client.conversation_analysis.analyze_conversation(
+            body={
+                "kind": "CustomConversation",
+                "analysisInput": {
+                    "conversationItem": {
+                        "participantId": "1",
+                        "id": "1",
+                        "modality": "text",
+                        "language": "en",
+                        "text": "book a flight on Monday 1/1/2022 from London to Seattle"
+                    },
+                    "isLoggingEnabled": False
+                },
+                "parameters": {
+                    "projectName": conv_project,
+                    "deploymentName": "production",
+                    "verbose": True
+                }
+            }
         )
 
     # view result
-    print("query: {}".format(result.query))
-    print("project kind: {}\n".format(result.prediction.project_kind))
+    print("query: {}".format(result.results.query))
+    print("project kind: {}\n".format(result.results.prediction.project_kind))
 
     print("view top intent:")
-    print("\ttop intent: {}".format(result.prediction.top_intent))
-    print("\tcategory: {}".format(result.prediction.intents[0].category))
-    print("\tconfidence score: {}\n".format(result.prediction.intents[0].confidence_score))
+    print("top intent: {}".format(result.results.prediction.top_intent))
+    print("category: {}".format(result.results.prediction.intents[0].category))
+    print("confidence score: {}\n".format(result.results.prediction.intents[0].confidence))
 
     print("view entities:")
-    for entity in result.prediction.entities:
-        print("\tcategory: {}".format(entity.category))
-        print("\ttext: {}".format(entity.text))
-        print("\tconfidence score: {}".format(entity.confidence_score))
+    for entity in result.results.prediction.entities:
+        print("category: {}".format(entity.category))
+        print("text: {}".format(entity.text))
+        print("confidence score: {}".format(entity.confidence))
+        if entity.resolutions:
+            print("resolutions")
+            for resolution in entity.resolutions:
+                print("text: {}".format(resolution.text))
+                print("kind: {}".format(resolution.resolution_kind))
+                print("value: {}".format(resolution.value))
+
     # [END analyze_conversation_app_language_parm]
 
 
