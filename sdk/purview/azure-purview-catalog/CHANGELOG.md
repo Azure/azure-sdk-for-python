@@ -2,15 +2,9 @@
 
 ## 1.0.0b3 (Unreleased)
 
-### Features Added
+**Bugs Fixed**
 
-### Breaking Changes
-
-### Bugs Fixed
-
-- Fix `delete_by_guids` to get rid of bad request error #22487
-
-### Other Changes
+  - Fix `delete_by_guids` to get rid of bad request error #22487
 
 ## 1.0.0b2 (2021-09-29)
 
