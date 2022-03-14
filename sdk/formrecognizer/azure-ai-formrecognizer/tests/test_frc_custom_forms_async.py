@@ -33,14 +33,14 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         fr_client = client.get_form_recognizer_client()
 
         with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         async with client:
             training_poller = await client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
             model = await training_poller.result()
 
             async with fr_client:
-                poller = await fr_client.begin_recognize_custom_forms(model.model_id, myfile, content_type=FormContentType.IMAGE_JPEG)
+                poller = await fr_client.begin_recognize_custom_forms(model.model_id, my_file, content_type=FormContentType.IMAGE_JPEG)
                 form = await poller.result()
         assert form[0].form_type ==  "form-0"
         self.assertUnlabeledRecognizedFormHasValues(form[0], model)
@@ -52,7 +52,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         set_bodiless_matcher()
         fr_client = client.get_form_recognizer_client()
         with open(self.multipage_invoice_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         async with client:
             training_poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=False)
@@ -61,7 +61,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             async with fr_client:
                 poller = await fr_client.begin_recognize_custom_forms(
                     model.model_id,
-                    myfile,
+                    my_file,
                     content_type=FormContentType.APPLICATION_PDF
                 )
                 forms = await poller.result()
@@ -79,7 +79,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         set_bodiless_matcher()
         fr_client = client.get_form_recognizer_client()
         with open(self.multipage_invoice_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         async with client:
             training_poller = await client.begin_training(
@@ -91,7 +91,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             async with fr_client:
                 poller = await fr_client.begin_recognize_custom_forms(
                     model.model_id,
-                    myfile,
+                    my_file,
                     content_type=FormContentType.APPLICATION_PDF
                 )
                 forms = await poller.result()
@@ -116,7 +116,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             responses.append(form)
 
         with open(self.multipage_invoice_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         async with client:
             training_poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=False)
@@ -125,7 +125,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             async with fr_client:
                 poller = await fr_client.begin_recognize_custom_forms(
                     model.model_id,
-                    myfile,
+                    my_file,
                     include_field_elements=True,
                     cls=callback
                 )
@@ -153,7 +153,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         formrecognizer_storage_container_sas_url_v2 = kwargs.pop("formrecognizer_storage_container_sas_url_v2")
         fr_client = client.get_form_recognizer_client()
         with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         async with client:
             poller = await client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
@@ -162,7 +162,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             async with fr_client:
                 initial_poller = await fr_client.begin_recognize_custom_forms(
                     model.model_id,
-                    myfile
+                    my_file
                 )
 
                 cont_token = initial_poller.continuation_token()
@@ -192,7 +192,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             responses.append(form)
 
         with open(self.multipage_vendor_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         async with client:
             poller = await client.begin_training(formrecognizer_multipage_storage_container_sas_url_2_v2, use_training_labels=False)
@@ -201,7 +201,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             async with fr_client:
                 poller = await fr_client.begin_recognize_custom_forms(
                     model.model_id,
-                    myfile,
+                    my_file,
                     include_field_elements=True,
                     cls=callback
                 )
@@ -230,7 +230,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
         responses = []
 
         with open(self.multipage_vendor_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         def callback(raw_response, _, headers):
             analyze_result = fr_client._deserialize(AnalyzeOperationResult, raw_response)
@@ -245,7 +245,7 @@ class TestCustomFormsAsync(AsyncFormRecognizerTest):
             async with fr_client:
                 poller = await fr_client.begin_recognize_custom_forms(
                     model.model_id,
-                    myfile,
+                    my_file,
                     include_field_elements=True,
                     cls=callback
                 )

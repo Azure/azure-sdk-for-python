@@ -59,6 +59,7 @@ class _test_config(object):
     THROUGHPUT_FOR_1_PARTITION = 400
 
     TEST_DATABASE_ID = os.getenv('COSMOS_TEST_DATABASE_ID', "Python SDK Test Database " + str(uuid.uuid4()))
+    TEST_DATABASE_ID_PLAIN = "COSMOS_TEST_DATABASE"
     TEST_THROUGHPUT_DATABASE_ID = "Python SDK Test Throughput Database " + str(uuid.uuid4())
     TEST_COLLECTION_SINGLE_PARTITION_ID = "Single Partition Test Collection"
     TEST_COLLECTION_MULTI_PARTITION_ID = "Multi Partition Test Collection"
