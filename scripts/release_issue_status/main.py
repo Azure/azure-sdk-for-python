@@ -190,7 +190,8 @@ def main():
     rest_repo = g.get_repo('Azure/azure-rest-api-specs')
     sdk_repo = g.get_repo('Azure/azure-sdk-for-python')
     label1 = request_repo.get_label('ManagementPlane')
-    open_issues = request_repo.get_issues(state='open', labels=[label1])
+    label2 = request_repo.get_label('Python')
+    open_issues = request_repo.get_issues(state='open', labels=[label1, label2])
     issue_status = []
     issue_status_python = []
     duplicated_issue = dict()
@@ -211,7 +212,7 @@ def main():
                 (time.mktime(time.strptime(issue.target_date, '%Y-%m-%d')) - time.time()) / 3600 / 24)
         except Exception:
             issue.target_date = 'fail to get.'
-            issue.date_from_target = 1000  # make a ridiculous data to remind failure when error happens
+            issue.days_from_target = 1000  # make a ridiculous data to remind failure when error happens
         issue.create_date = item.created_at.timestamp()
         issue.delay_from_create_date = int((time.time() - item.created_at.timestamp()) / 3600 / 24)
         issue.latest_update = item.updated_at.timestamp()
