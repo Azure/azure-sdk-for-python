@@ -12,6 +12,7 @@ trigger:
     - sdk/core/
     - eng/
     - tools/
+    - scripts/pylint_custom_plugin/
 
 pr:
   branches:
@@ -26,6 +27,7 @@ pr:
     - sdk/core/
     - eng/
     - tools/
+    - scripts/pylint_custom_plugin/
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
