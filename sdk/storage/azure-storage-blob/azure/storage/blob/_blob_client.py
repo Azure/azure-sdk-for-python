@@ -580,7 +580,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         # type: (...) -> Any
         """Creates a new blob from a data source with automatic chunking.
 
-        :param data: The blob data to upload.
+        :param data: The blob data to upload to the service.
         :param ~azure.storage.blob.BlobType blob_type: The type of the blob. This can be
             either BlockBlob, PageBlob or AppendBlob. The default value is BlockBlob.
         :param int length:
