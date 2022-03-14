@@ -1759,6 +1759,7 @@ class CheckApiVersion(BaseChecker):
                             self.add_message(
                                 msgid="api-version-not-keyword", node=node, confidence=None
                             )   
+                            
       
         except AttributeError:
             logger.debug("Pylint custom checker failed to check if client uses connection string param in constructor.")
