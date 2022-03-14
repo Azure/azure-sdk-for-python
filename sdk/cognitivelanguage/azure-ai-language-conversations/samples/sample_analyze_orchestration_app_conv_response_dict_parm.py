@@ -29,16 +29,18 @@ def sample_analyze_orchestration_app_conversation_response():
     from azure.core.credentials import AzureKeyCredential
 
     from azure.ai.language.conversations import ConversationAnalysisClient
-    from azure.ai.language.conversations.models import ConversationAnalysisOptions
+    from azure.ai.language.conversations.models import ConversationTargetIntentResult
 
     # get secrets
     conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
-    orchestration_project = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT"]
+    project_name = os.environ["AZURE_CONVERSATIONS_WORKFLOW_PROJECT_NAME"]
+    deployment_name = os.environ["AZURE_CONVERSATIONS_WORKFLOW_DEPLOYMENT_NAME"]
 
     # analyze query
     client = ConversationAnalysisClient(conv_endpoint, AzureKeyCredential(conv_key))
     with client:
+        query = "Send an email to Carol about the tomorrow's demo"
         result = client.conversation_analysis.analyze_conversation(
             body={
                 "kind": "CustomConversation",
@@ -48,13 +50,13 @@ def sample_analyze_orchestration_app_conversation_response():
                         "id": "1",
                         "modality": "text",
                         "language": "en",
-                        "text": "book a flight on Monday 1/1/2022 from London to Seattle"
+                        "text": query
                     },
                     "isLoggingEnabled": False
                 },
                 "parameters": {
-                    "projectName": orchestration_project,
-                    "deploymentName": "production",
+                    "projectName": project_name,
+                    "deploymentName": deployment_name,
                     "verbose": True
                 }
             }
@@ -62,26 +64,28 @@ def sample_analyze_orchestration_app_conversation_response():
 
     # view result
     print("query: {}".format(result.results.query))
-    print("project kind: {}".format(result.results.prediction.project_kind))
+    print("project kind: {}\n".format(result.results.prediction.project_kind))
 
     # top intent
     top_intent = result.results.prediction.top_intent
     print("top intent: {}".format(top_intent))
     top_intent_object = result.results.prediction.intents[top_intent]
     print("confidence score: {}".format(top_intent_object.confidence))
+    print("project kind: {}".format(top_intent_object.target_kind))
 
     # conversation result
-    print("view conversation result:")
-    print("intents:")
-    for intent in top_intent_object.result.results.prediction.intents:
-        print("category: {}".format(intent.category))
-        print("confidence score: {}".format(intent.confidence_score))
+    if isinstance(top_intent_object, ConversationTargetIntentResult):
+        print("\nview conversation result:")
+        print("intents:")
+        for intent in top_intent_object.result.prediction.intents:
+            print("\ncategory: {}".format(intent.category))
+            print("confidence score: {}".format(intent.confidence))
 
-    print("view entities:")
-    for entity in top_intent_object.result.results.prediction.entities:
-        print("category: {}".format(entity.category))
-        print("text: {}".format(entity.text))
-        print("confidence score: {}".format(entity.confidence_score))
+        print("\nview entities:")
+        for entity in top_intent_object.result.prediction.entities:
+            print("\ncategory: {}".format(entity.category))
+            print("text: {}".format(entity.text))
+            print("confidence score: {}".format(entity.confidence))
 
     # [END analyze_orchestration_app_conversation_response]
 

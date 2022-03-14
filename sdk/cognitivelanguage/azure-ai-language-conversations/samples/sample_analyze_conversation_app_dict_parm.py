@@ -29,16 +29,18 @@ def sample_analyze_conversation_app_language_parm():
     from azure.core.credentials import AzureKeyCredential
 
     from azure.ai.language.conversations import ConversationAnalysisClient
-    from azure.ai.language.conversations.models import ConversationAnalysisOptions
+    from azure.ai.language.conversations.models import DateTimeResolution
 
     # get secrets
     conv_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     conv_key = os.environ["AZURE_CONVERSATIONS_KEY"]
-    conv_project = os.environ["AZURE_CONVERSATIONS_PROJECT"]
+    project_name = os.environ["AZURE_CONVERSATIONS_PROJECT_NAME"]
+    deployment_name = os.environ["AZURE_CONVERSATIONS_DEPLOYMENT_NAME"]
 
     # analyze quey
     client = ConversationAnalysisClient(conv_endpoint, AzureKeyCredential(conv_key))
     with client:
+        query = "Send an email to Carol about the tomorrow's demo"
         result = client.conversation_analysis.analyze_conversation(
             body={
                 "kind": "CustomConversation",
@@ -48,13 +50,13 @@ def sample_analyze_conversation_app_language_parm():
                         "id": "1",
                         "modality": "text",
                         "language": "en",
-                        "text": "One california maki please."
+                        "text": query
                     },
                     "isLoggingEnabled": False
                 },
                 "parameters": {
-                    "projectName": conv_project,
-                    "deploymentName": "production",
+                    "projectName": project_name,
+                    "deploymentName": deployment_name,
                     "verbose": True
                 }
             }
@@ -76,9 +78,9 @@ def sample_analyze_conversation_app_language_parm():
         if entity.resolutions:
             print("resolutions")
             for resolution in entity.resolutions:
-                print("text: {}".format(resolution.text))
-                print("kind: {}".format(resolution.resolution_kind))
-                print("value: {}".format(resolution.value))
+                print(resolution)
+                # print("kind: {}".format(resolution.resolution_kind))
+                # print("value: {}".format(resolution.value))
 
     # [END analyze_conversation_app_language_parm]
 
