@@ -5,7 +5,7 @@
 # ------------------------------------
 
 """
-FILE: sample_analyze_orchestration_app_conv_response.py
+FILE: sample_analyze_orchestration_app_conv_response_async.py
 
 DESCRIPTION:
     This sample demonstrates how to analyze user query using an orchestration project.
@@ -14,7 +14,7 @@ DESCRIPTION:
     For more info about how to setup a CLU orchestration project, see the README.
 
 USAGE:
-    python sample_analyze_orchestration_app_conv_response.py
+    python sample_analyze_orchestration_app_conv_response_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_CLU_ENDPOINT                       - endpoint for your CLU resource.
@@ -23,13 +23,15 @@ USAGE:
     4) AZURE_CLU_ORCHESTRATION_DEPLOYMENT_NAME  - deployment name for your CLU orchestration project.
 """
 
-def sample_analyze_orchestration_app_conv_response():
-    # [START analyze_orchestration_app_conv_response]
+import asyncio
+
+async def sample_analyze_orchestration_app_conv_response_async():
+    # [START analyze_orchestration_app_conv_response_async]
     # import libraries
     import os
     from azure.core.credentials import AzureKeyCredential
 
-    from azure.ai.language.conversations import ConversationAnalysisClient
+    from azure.ai.language.conversations.aio import ConversationAnalysisClient
     from azure.ai.language.conversations.models import ConversationTargetIntentResult
 
     # get secrets
@@ -40,9 +42,9 @@ def sample_analyze_orchestration_app_conv_response():
 
     # analyze query
     client = ConversationAnalysisClient(clu_endpoint, AzureKeyCredential(clu_key))
-    with client:
+    async with client:
         query = "Send an email to Carol about the tomorrow's demo"
-        result = client.conversation_analysis.analyze_conversation(
+        result = await client.conversation_analysis.analyze_conversation(
             body={
                 "kind": "CustomConversation",
                 "analysisInput": {
@@ -63,36 +65,41 @@ def sample_analyze_orchestration_app_conv_response():
             }
         )
 
-    # view result
-    print("query: {}".format(result.results.query))
-    print("project kind: {}\n".format(result.results.prediction.project_kind))
+        # view result
+        print("query: {}".format(result.results.query))
+        print("project kind: {}\n".format(result.results.prediction.project_kind))
 
-    # top intent
-    top_intent = result.results.prediction.top_intent
-    print("top intent: {}".format(top_intent))
-    top_intent_object = result.results.prediction.intents[top_intent]
-    print("confidence score: {}".format(top_intent_object.confidence))
-    print("project kind: {}".format(top_intent_object.target_kind))
+        # top intent
+        top_intent = result.results.prediction.top_intent
+        print("top intent: {}".format(top_intent))
+        top_intent_object = result.results.prediction.intents[top_intent]
+        print("confidence score: {}".format(top_intent_object.confidence))
+        print("project kind: {}".format(top_intent_object.target_kind))
 
-    # conversation result
-    if isinstance(top_intent_object, ConversationTargetIntentResult):
-        print("\nview conversation result:")
+        # conversation result
+        if isinstance(top_intent_object, ConversationTargetIntentResult):
+            print("\nview conversation result:")
 
-        print("\ntop intent: {}".format(top_intent_object.result.prediction.top_intent))
-        print("category: {}".format(top_intent_object.result.prediction.intents[0].category))
-        print("confidence score: {}\n".format(top_intent_object.result.prediction.intents[0].confidence))
+            print("\ntop intent: {}".format(top_intent_object.result.prediction.top_intent))
+            print("category: {}".format(top_intent_object.result.prediction.intents[0].category))
+            print("confidence score: {}\n".format(top_intent_object.result.prediction.intents[0].confidence))
 
-        print("\nview entities:")
-        for entity in top_intent_object.result.prediction.entities:
-            print("\ncategory: {}".format(entity.category))
-            print("text: {}".format(entity.text))
-            print("confidence score: {}".format(entity.confidence))
-            if entity.resolutions:
-                print("resolutions:")
-                for resolution in entity.resolutions:
-                    print(resolution)
+            print("\nview entities:")
+            for entity in top_intent_object.result.prediction.entities:
+                print("\ncategory: {}".format(entity.category))
+                print("text: {}".format(entity.text))
+                print("confidence score: {}".format(entity.confidence))
+                if entity.resolutions:
+                    print("resolutions:")
+                    for resolution in entity.resolutions:
+                        print(resolution)
 
-    # [END analyze_orchestration_app_conv_response]
+    # [END analyze_orchestration_app_conv_response_async]
+
+
+async def main():
+    await sample_analyze_orchestration_app_conv_response_async()
 
 if __name__ == '__main__':
-    sample_analyze_orchestration_app_conv_response()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
