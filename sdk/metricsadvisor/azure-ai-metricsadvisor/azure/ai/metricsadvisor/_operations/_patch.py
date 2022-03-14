@@ -134,7 +134,9 @@ class OperationMixinHelpers:
             ]
         except KeyError:
             raise ValueError(response_json)
-        deserialized = self._deserialize(generated_models.AnomalyAlertConfiguration, response_json)  # pylint: disable=no-member
+        deserialized = self._deserialize(  # pylint: disable=no-member
+            generated_models.AnomalyAlertConfiguration, response_json
+        )
         if cls:
             return cls(pipeline_response, deserialized, {})
 
@@ -593,7 +595,10 @@ class OperationMixinHelpers:
             alert_configuration_id = alert_configuration
             if "metricAlertingConfigurations" in update:
                 update["metricAlertingConfigurations"] = (
-                    [config._to_generated() for config in update["metricAlertingConfigurations"]]  # pylint: disable=protected-access
+                    [
+                        config._to_generated()  # pylint: disable=protected-access
+                        for config in update["metricAlertingConfigurations"]
+                    ]
                     if update["metricAlertingConfigurations"]
                     else None
                 )
@@ -601,7 +606,9 @@ class OperationMixinHelpers:
 
         else:
             alert_configuration_id = alert_configuration.id
-            alert_configuration_patch = alert_configuration._to_generated(**update).serialize()  # pylint: disable=protected-access
+            alert_configuration_patch = alert_configuration._to_generated(  # pylint: disable=protected-access
+                **update
+            ).serialize()
         content_type = kwargs.pop("content_type", "application/merge-patch+json")  # type: Optional[str]
 
         _json = self._serialize.body(alert_configuration_patch, "object")  # pylint: disable=no-member
@@ -612,7 +619,9 @@ class OperationMixinHelpers:
             json=_json,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),  # pylint: disable=no-member
+            "endpoint": self._serialize.url(  # pylint: disable=no-member
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True  # pylint: disable=no-member
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # pylint: disable=no-member
         return request, kwargs
@@ -628,7 +637,9 @@ class OperationMixinHelpers:
             error = self._deserialize.failsafe_deserialize(ErrorCode, pipeline_response)  # pylint: disable=no-member
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize(generated_models.AnomalyAlertConfiguration, pipeline_response)  # pylint: disable=no-member
+        deserialized = self._deserialize(  # pylint: disable=no-member
+            generated_models.AnomalyAlertConfiguration, pipeline_response
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -640,7 +651,9 @@ class OperationMixinHelpers:
             feedback_id=feedback_id,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),  # pylint: disable=no-member
+            "endpoint": self._serialize.url(  # pylint: disable=no-member
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True  # pylint: disable=no-member
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # pylint: disable=no-member
         return request
@@ -730,12 +743,12 @@ class OperationMixinHelpers:
                     return datetime.datetime.strptime(date_time, "%Y-%m-%d %H:%M:%S")
         raise TypeError("Bad datetime type")
 
-    def _get_paging_prepare_request(
-        self, initial_request: HttpRequest, next_request: HttpRequest
-    ) -> Callable:
+    def _get_paging_prepare_request(self, initial_request: HttpRequest, next_request: HttpRequest) -> Callable:
         def prepare_request(next_link=None):
             path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),  # pylint: disable=no-member
+                "endpoint": self._serialize.url(  # pylint: disable=no-member
+                    "self._config.endpoint", self._config.endpoint, "str", skip_quote=True  # pylint: disable=no-member
+                ),
             }
             if not next_link:
                 request = initial_request
@@ -753,7 +766,7 @@ class OperationMixinHelpers:
         return DataFeed._from_generated(  # pylint: disable=protected-access
             self._deserialize(generated_models.DataFeed, json_response),  # pylint: disable=no-member
             data_source_parameter,
-            data_source_type
+            data_source_type,
         )
 
 
@@ -773,9 +786,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
-        prepare_request = self._get_paging_prepare_request(
-            initial_request=initial_request, next_request=next_request
-        )
+        prepare_request = self._get_paging_prepare_request(initial_request=initial_request, next_request=next_request)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -795,12 +806,8 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def create_alert_configuration(  # pylint: disable=arguments-differ
-        self,
-        name: str,
-        metric_alert_configurations: List[MetricAlertConfiguration],
-        hook_ids: List[str],
-        **kwargs: Any
+    def create_alert_configuration(  # type: ignore # pylint: disable=arguments-differ
+        self, name: str, metric_alert_configurations: List[MetricAlertConfiguration], hook_ids: List[str], **kwargs: Any
     ) -> AnomalyAlertConfiguration:
         cross_metrics_operator = kwargs.pop("cross_metrics_operator", None)
         response_headers = super().create_alert_configuration(  # type: ignore
@@ -821,7 +828,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         return self.get_alert_configuration(config_id)
 
     @distributed_trace
-    def create_data_feed(  # pylint: disable=arguments-differ
+    def create_data_feed(  # type: ignore # pylint: disable=arguments-differ
         self,
         name: str,
         source: DataFeedSourceUnion,
@@ -850,10 +857,8 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         return self.get_data_feed(data_feed_id)
 
     @distributed_trace
-    def create_hook(  # pylint: disable=arguments-differ
-        self,
-        hook: Union[EmailNotificationHook, WebNotificationHook],
-        **kwargs: Any
+    def create_hook(  # type: ignore # pylint: disable=arguments-differ
+        self, hook: Union[EmailNotificationHook, WebNotificationHook], **kwargs: Any
     ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
         response_headers = super().create_hook(  # type: ignore
             hook, cls=lambda pipeline_response, _, response_headers: response_headers, **kwargs  # type: ignore
@@ -862,12 +867,8 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         return self.get_hook(hook_id)
 
     @distributed_trace
-    def create_detection_configuration(  # pylint: disable=arguments-differ
-        self,
-        name: str,
-        metric_id: str,
-        whole_series_detection_condition: MetricDetectionCondition,
-        **kwargs: Any
+    def create_detection_configuration(  # type: ignore # pylint: disable=arguments-differ
+        self, name: str, metric_id: str, whole_series_detection_condition: MetricDetectionCondition, **kwargs: Any
     ) -> AnomalyDetectionConfiguration:
         config = AnomalyDetectionConfiguration(
             name=name,
@@ -915,7 +916,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         return self._deserialize_data_feed(response.json())
 
     @distributed_trace
-    def get_alert_configuration(  # pylint: disable=arguments-differ
+    def get_alert_configuration(  # type: ignore # pylint: disable=arguments-differ
         self, alert_configuration_id: str, **kwargs: Any
     ) -> AnomalyAlertConfiguration:
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -942,7 +943,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         return self._deserialize_anomaly_detection_configuration(pipeline_response, **kwargs)
 
     @distributed_trace
-    def refresh_data_feed_ingestion(  # pylint: disable=arguments-differ
+    def refresh_data_feed_ingestion(  # type: ignore # pylint: disable=arguments-differ
         self,
         data_feed_id: str,
         start_time: Union[str, datetime.datetime],
@@ -958,39 +959,35 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         )
 
     @distributed_trace
-    def delete_alert_configuration(self, *alert_configuration_id, **kwargs):
-        # type: (*str, Any) -> None
+    def delete_alert_configuration(self, *alert_configuration_id: str, **kwargs: Any) -> None:
         if len(alert_configuration_id) != 1:
             raise TypeError("Alert configuration requires exactly one id.")
 
         super().delete_alert_configuration(alert_configuration_id[0], **kwargs)
 
     @distributed_trace
-    def delete_detection_configuration(self, *detection_configuration_id, **kwargs):
-        # type: (*str, Any) -> None
+    def delete_detection_configuration(self, *detection_configuration_id: str, **kwargs: Any) -> None:
         if len(detection_configuration_id) != 1:
             raise TypeError("Detection configuration requires exactly one id.")
 
         super().delete_detection_configuration(detection_configuration_id[0], **kwargs)
 
     @distributed_trace
-    def delete_data_feed(self, *data_feed_id, **kwargs):
-        # type: (*str, Any) -> None
+    def delete_data_feed(self, *data_feed_id: str, **kwargs: Any) -> None:
         if len(data_feed_id) != 1:
             raise TypeError("Data feed requires exactly one id.")
 
         super().delete_data_feed(data_feed_id[0], **kwargs)
 
     @distributed_trace
-    def delete_hook(self, *hook_id, **kwargs):
-        # type: (*str, Any) -> None
+    def delete_hook(self, *hook_id: str, **kwargs: Any) -> None:
         if len(hook_id) != 1:
             raise TypeError("Hook requires exactly one id.")
 
         super().delete_hook(hook_id[0], **kwargs)
 
     @distributed_trace
-    def update_data_feed(  # pylint: disable=arguments-differ
+    def update_data_feed(  # type: ignore # pylint: disable=arguments-differ
         self, data_feed: Union[str, DataFeed], **kwargs: Any
     ) -> DataFeed:
         data_feed_id, data_feed_patch, kwargs = self._update_data_feed_helper(data_feed, **kwargs)
@@ -998,7 +995,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         return self._deserialize_data_feed(response)
 
     @distributed_trace
-    def update_alert_configuration(  # pylint: disable=arguments-differ
+    def update_alert_configuration(  # type: ignore # pylint: disable=arguments-differ
         self, alert_configuration: Union[str, AnomalyAlertConfiguration], **kwargs: Any
     ) -> AnomalyAlertConfiguration:
         request, kwargs = self._update_alert_configuration_helper(alert_configuration, **kwargs)
@@ -1008,7 +1005,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         return self._deserialize_anomaly_detection_configuration(pipeline_response, **kwargs)
 
     @distributed_trace
-    def update_detection_configuration(  # pylint: disable=arguments-differ
+    def update_detection_configuration(  # type: ignore # pylint: disable=arguments-differ
         self, detection_configuration: Union[str, AnomalyDetectionConfiguration], **kwargs: Any
     ) -> AnomalyDetectionConfiguration:
         detection_configuration_id, detection_config_patch, kwargs = self._update_detection_configuration_helper(
@@ -1020,7 +1017,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         )
 
     @distributed_trace
-    def update_hook(  # pylint: disable=arguments-differ
+    def update_hook(  # type: ignore # pylint: disable=arguments-differ
         self, hook: Union[str, EmailNotificationHook, WebNotificationHook], **kwargs: Any
     ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
         hook_id, hook_patch, kwargs = self._update_hook_helper(hook, **kwargs)
@@ -1028,7 +1025,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         return super().update_hook(hook_id, hook_patch, **kwargs)
 
     @distributed_trace
-    def list_data_feeds(  # pylint: disable=arguments-differ
+    def list_data_feeds(  # type: ignore # pylint: disable=arguments-differ
         self,
         *,
         data_feed_name: Optional[str] = None,
@@ -1056,7 +1053,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         )
 
     @distributed_trace
-    def list_alert_configurations(  # pylint: disable=arguments-differ
+    def list_alert_configurations(  # type: ignore # pylint: disable=arguments-differ
         self, detection_configuration_id: str, **kwargs: Any
     ) -> ItemPaged[AnomalyAlertConfiguration]:
         def _deserialize(deserializer, line):
@@ -1080,7 +1077,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         )
 
     @distributed_trace
-    def list_data_feed_ingestion_status(  # pylint: disable=arguments-differ
+    def list_data_feed_ingestion_status(  # type: ignore # pylint: disable=arguments-differ
         self,
         data_feed_id: str,
         start_time: Union[str, datetime.datetime],
@@ -1098,7 +1095,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         )
 
     @distributed_trace
-    def create_datasource_credential(  # pylint: disable=arguments-differ
+    def create_datasource_credential(  # type: ignore # pylint: disable=arguments-differ
         self, datasource_credential: DatasourceCredentialUnion, **kwargs: Any
     ) -> DatasourceCredentialUnion:
         response_headers = super().create_datasource_credential(  # type: ignore
@@ -1115,17 +1112,14 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         return self._deserialize_datasource_credential(response)
 
     @distributed_trace
-    def update_datasource_credential(  # pylint: disable=arguments-differ
-        self,
-        datasource_credential: DatasourceCredentialUnion,
-        **kwargs: Any
+    def update_datasource_credential(  # type: ignore # pylint: disable=arguments-differ
+        self, datasource_credential: DatasourceCredentialUnion, **kwargs: Any
     ) -> DatasourceCredentialUnion:
         response = super().update_datasource_credential(datasource_credential.id, datasource_credential, **kwargs)
         return self._deserialize_datasource_credential(response)
 
     @distributed_trace
-    def delete_datasource_credential(self, *credential_id, **kwargs):
-        # type: (*str, Any) -> None
+    def delete_datasource_credential(self, *credential_id: str, **kwargs: Any) -> None:
         if len(credential_id) != 1:
             raise TypeError("Credential requires exactly one id.")
 
@@ -1145,7 +1139,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         return self._get_feedback_deserialize(pipeline_response, cls=cls, error_map=error_map, **kwargs)
 
     @distributed_trace
-    def list_feedback(  # pylint: disable=arguments-differ
+    def list_feedback(  # type: ignore # pylint: disable=arguments-differ
         self, metric_id: str, **kwargs: Any
     ) -> ItemPaged[Union[MetricFeedback, FeedbackUnion]]:
         deserializer = functools.partial(self._deserialize, generated_models.MetricFeedback)
@@ -1155,7 +1149,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         )
 
     @distributed_trace
-    def list_metric_enriched_series_data(  # pylint: disable=arguments-differ
+    def list_metric_enriched_series_data(  # type: ignore # pylint: disable=arguments-differ
         self,
         detection_configuration_id: str,
         series: Union[List[SeriesIdentity], List[Dict[str, str]]],
@@ -1179,7 +1173,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         )
 
     @distributed_trace
-    def list_alerts(  # pylint: disable=arguments-differ
+    def list_alerts(  # type: ignore # pylint: disable=arguments-differ
         self,
         alert_configuration_id: str,
         start_time: datetime.datetime,
@@ -1246,7 +1240,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         return self._list_anomalies_for_alert(**kwargs)  # type: ignore
 
     @distributed_trace
-    def list_anomaly_dimension_values(  # pylint: disable=arguments-differ
+    def list_anomaly_dimension_values(  # type: ignore # pylint: disable=arguments-differ
         self,
         detection_configuration_id: str,
         dimension_name: str,
@@ -1323,7 +1317,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         return self._list_incidents_for_alert(**kwargs)  # type: ignore
 
     @distributed_trace
-    def list_metric_dimension_values(self, metric_id, dimension_name, **kwargs):  # pylint: disable=arguments-differ
+    def list_metric_dimension_values(self, metric_id, dimension_name, **kwargs):  # type: ignore # pylint: disable=arguments-differ
         # type: (str, str, Any) -> ItemPaged[str]
         initial_request, next_request, kwargs = self._list_metric_dimension_values_requests(
             metric_id=metric_id, dimension_name=dimension_name, **kwargs
@@ -1333,7 +1327,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         )
 
     @distributed_trace
-    def list_metric_series_data(  # pylint: disable=arguments-differ
+    def list_metric_series_data(  # type: ignore # pylint: disable=arguments-differ
         self,
         metric_id: str,
         series_keys: List[Dict[str, str]],
@@ -1353,7 +1347,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         )
 
     @distributed_trace
-    def list_metric_series_definitions(  # pylint: disable=arguments-differ
+    def list_metric_series_definitions(  # type: ignore # pylint: disable=arguments-differ
         self, metric_id: str, active_since: datetime.datetime, **kwargs: Any
     ) -> ItemPaged[MetricSeriesDefinition]:
         initial_request, next_request, kwargs = self._list_metric_series_definitions_requests(
@@ -1369,7 +1363,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         )
 
     @distributed_trace
-    def list_metric_enrichment_status(  # pylint: disable=arguments-differ
+    def list_metric_enrichment_status(  # type: ignore # pylint: disable=arguments-differ
         self,
         metric_id: str,
         start_time: Union[str, datetime.datetime],
@@ -1401,7 +1395,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         )
 
     @distributed_trace
-    def list_hooks(self, **kwargs: Any) -> ItemPaged[NotificationHook]:
+    def list_hooks(self, **kwargs: Any) -> ItemPaged[NotificationHook]:  # type: ignore
         initial_request, next_request, kwargs = self._list_hooks_requests(**kwargs)
         return self._paging_helper(
             initial_request=initial_request,
@@ -1411,7 +1405,9 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         )
 
     @distributed_trace
-    def list_detection_configurations(self, metric_id: str, **kwargs: Any) -> ItemPaged[AnomalyDetectionConfiguration]:
+    def list_detection_configurations(  # type: ignore
+        self, metric_id: str, **kwargs: Any
+    ) -> ItemPaged[AnomalyDetectionConfiguration]:
         initial_request, next_request, kwargs = self._list_detection_configurations_requests(metric_id, **kwargs)
         return self._paging_helper(
             initial_request=initial_request,
@@ -1421,7 +1417,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
         )
 
     @distributed_trace
-    def list_datasource_credentials(self, **kwargs: Any) -> ItemPaged[DatasourceCredential]:
+    def list_datasource_credentials(self, **kwargs: Any) -> ItemPaged[DatasourceCredential]:  # type: ignore
         initial_request, next_request, kwargs = self._list_datasource_credentials_requests(**kwargs)
         return self._paging_helper(
             initial_request=initial_request,

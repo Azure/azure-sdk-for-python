@@ -69,13 +69,14 @@ from ..._operations._operations import (
     build_update_detection_configuration_request,
     build_update_hook_request,
 )
+from .._vendor import MixinABC
 
 T = TypeVar("T")
 JSONType = Any
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-methods
+class MetricsAdvisorClientOperationsMixin(MixinABC):  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def get_alert_configuration(
         self, configuration_id: str, **kwargs: Any
@@ -90,9 +91,10 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.AnomalyAlertConfiguration"]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
+
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.AnomalyAlertConfiguration"]
 
         request = build_get_alert_configuration_request(
             configuration_id=configuration_id,
@@ -100,9 +102,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
@@ -135,11 +137,11 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :rtype: ~azure.ai.metricsadvisor.models.AnomalyAlertConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.AnomalyAlertConfiguration"]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.AnomalyAlertConfiguration"]
 
         _json = self._serialize.body(body, "object")
 
@@ -151,9 +153,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
@@ -184,9 +186,10 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_delete_alert_configuration_request(
             configuration_id=configuration_id,
@@ -194,9 +197,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
@@ -223,11 +226,11 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = self._serialize.body(body, "AnomalyAlertConfiguration")
 
@@ -238,9 +241,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
@@ -284,8 +287,8 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.AlertResultList"]
+
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
@@ -305,7 +308,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
                 _json = self._serialize.body(body, "object")
@@ -320,7 +323,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -382,6 +385,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.AnomalyResultList"]
+
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
@@ -399,7 +403,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
 
@@ -412,7 +416,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -474,6 +478,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.IncidentResultList"]
+
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
@@ -491,7 +496,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
 
@@ -504,7 +509,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -552,9 +557,10 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :rtype: ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.AnomalyDetectionConfiguration"]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
+
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.AnomalyDetectionConfiguration"]
 
         request = build_get_detection_configuration_request(
             detection_configuration_id=detection_configuration_id,
@@ -562,9 +568,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
@@ -597,11 +603,11 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :rtype: ~azure.ai.metricsadvisor.models.AnomalyDetectionConfiguration
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.AnomalyDetectionConfiguration"]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.AnomalyDetectionConfiguration"]
 
         _json = self._serialize.body(body, "object")
 
@@ -613,9 +619,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
@@ -646,9 +652,10 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_delete_detection_configuration_request(
             configuration_id=configuration_id,
@@ -656,9 +663,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
@@ -685,11 +692,11 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = self._serialize.body(body, "AnomalyDetectionConfiguration")
 
@@ -700,9 +707,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
@@ -738,6 +745,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.AnomalyAlertingConfigurationList"]
+
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
@@ -754,7 +762,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
 
@@ -766,7 +774,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -818,8 +826,8 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.SeriesResultList"]
+
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
@@ -837,7 +845,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
                 _json = self._serialize.body(body, "object")
@@ -852,7 +860,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -914,8 +922,8 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.AnomalyResultList"]
+
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
@@ -935,7 +943,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
                 _json = self._serialize.body(body, "object")
@@ -950,7 +958,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1012,8 +1020,8 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.AnomalyDimensionList"]
+
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
@@ -1033,7 +1041,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
                 _json = self._serialize.body(body, "object")
@@ -1048,7 +1056,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1102,8 +1110,8 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.IncidentResultList"]
+
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
@@ -1122,7 +1130,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
                 _json = self._serialize.body(body, "object")
@@ -1137,7 +1145,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1191,6 +1199,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.IncidentResultList"]
+
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
@@ -1207,7 +1216,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
 
@@ -1219,7 +1228,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1270,6 +1279,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.RootCauseList"]
+
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
@@ -1285,7 +1295,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
 
@@ -1298,7 +1308,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1346,11 +1356,11 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = self._serialize.body(body, "DatasourceCredential")
 
@@ -1361,9 +1371,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
@@ -1397,6 +1407,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.DataSourceCredentialList"]
+
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
@@ -1412,7 +1423,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
 
@@ -1422,7 +1433,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1470,11 +1481,11 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :rtype: any
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
 
         _json = self._serialize.body(body, "object")
 
@@ -1486,9 +1497,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
@@ -1519,9 +1530,10 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_delete_datasource_credential_request(
             credential_id=credential_id,
@@ -1529,9 +1541,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
@@ -1556,9 +1568,10 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :rtype: any
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
 
         request = build_get_datasource_credential_request(
             credential_id=credential_id,
@@ -1566,9 +1579,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
@@ -1621,6 +1634,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.DataFeedList"]
+
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
@@ -1641,7 +1655,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
 
@@ -1651,7 +1665,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1699,11 +1713,11 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = self._serialize.body(body, "DataFeed")
 
@@ -1714,9 +1728,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
@@ -1744,9 +1758,10 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :rtype: ~azure.ai.metricsadvisor.models.DataFeed
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DataFeed"]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
+
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DataFeed"]
 
         request = build_get_data_feed_request(
             data_feed_id=data_feed_id,
@@ -1754,9 +1769,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
@@ -1787,11 +1802,11 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :rtype: any
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Any]
 
         _json = self._serialize.body(body, "object")
 
@@ -1803,9 +1818,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
@@ -1836,9 +1851,10 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_delete_data_feed_request(
             data_feed_id=data_feed_id,
@@ -1846,9 +1862,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
@@ -1873,9 +1889,10 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :rtype: ~azure.ai.metricsadvisor.models.MetricFeedback
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.MetricFeedback"]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
+
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.MetricFeedback"]
 
         request = build_get_feedback_request(
             feedback_id=feedback_id,
@@ -1883,9 +1900,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
@@ -1922,8 +1939,8 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.MetricFeedbackList"]
+
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
@@ -1942,7 +1959,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
                 _json = self._serialize.body(body, "object")
@@ -1956,7 +1973,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2004,11 +2021,11 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = self._serialize.body(feedback, "MetricFeedback")
 
@@ -2019,9 +2036,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
@@ -2061,6 +2078,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.HookList"]
+
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
@@ -2077,7 +2095,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
 
@@ -2087,7 +2105,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2135,11 +2153,11 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = self._serialize.body(body, "NotificationHook")
 
@@ -2150,9 +2168,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
@@ -2180,9 +2198,10 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :rtype: ~azure.ai.metricsadvisor.models.NotificationHook
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.NotificationHook"]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
+
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.NotificationHook"]
 
         request = build_get_hook_request(
             hook_id=hook_id,
@@ -2190,9 +2209,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
@@ -2223,11 +2242,11 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :rtype: ~azure.ai.metricsadvisor.models.NotificationHook
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.NotificationHook"]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
         content_type = kwargs.pop("content_type", "application/merge-patch+json")  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.NotificationHook"]
 
         _json = self._serialize.body(body, "object")
 
@@ -2239,9 +2258,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
@@ -2270,9 +2289,10 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_delete_hook_request(
             hook_id=hook_id,
@@ -2280,9 +2300,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
@@ -2323,8 +2343,8 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.IngestionStatusList"]
+
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
@@ -2344,7 +2364,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
                 _json = self._serialize.body(body, "object")
@@ -2359,7 +2379,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2409,11 +2429,11 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _json = self._serialize.body(body, "object")
 
@@ -2425,9 +2445,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
@@ -2454,9 +2474,10 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :rtype: ~azure.ai.metricsadvisor.models.DataFeedIngestionProgress
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DataFeedIngestionProgress"]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
+
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DataFeedIngestionProgress"]
 
         request = build_get_data_feed_ingestion_progress_request(
             data_feed_id=data_feed_id,
@@ -2464,9 +2485,9 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
@@ -2500,8 +2521,8 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.MetricDataList"]
+
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
@@ -2519,7 +2540,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
                 _json = self._serialize.body(body, "object")
@@ -2534,7 +2555,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2590,8 +2611,8 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.MetricSeriesList"]
+
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
@@ -2611,7 +2632,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
                 _json = self._serialize.body(body, "object")
@@ -2626,7 +2647,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2682,8 +2703,8 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.MetricDimensionList"]
+
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
@@ -2703,7 +2724,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
                 _json = self._serialize.body(body, "object")
@@ -2718,7 +2739,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2772,6 +2793,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.AnomalyDetectionConfigurationList"]
+
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
@@ -2788,7 +2810,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
 
@@ -2800,7 +2822,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2856,8 +2878,8 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
-
         cls = kwargs.pop("cls", None)  # type: ClsType["_models.EnrichmentStatusList"]
+
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
 
@@ -2877,7 +2899,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
                 _json = self._serialize.body(body, "object")
@@ -2892,7 +2914,7 @@ class MetricsAdvisorClientOperationsMixin:  # pylint: disable=too-many-public-me
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(next_link, **path_format_arguments)
+                request.url = self._client.format_url(next_link, **path_format_arguments)  # type: ignore
 
                 path_format_arguments = {
                     "endpoint": self._serialize.url(

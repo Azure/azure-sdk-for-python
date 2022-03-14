@@ -25,7 +25,7 @@
 #
 # --------------------------------------------------------------------------
 import datetime
-from typing import List, Dict, Any, Union, overload, TYPE_CHECKING
+from typing import List, Dict, Any, Union, overload, TYPE_CHECKING, cast
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -48,7 +48,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-public-methods
+class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-methods
     """MetricsAdvisorAdministrationClient is used to create and manage data feeds.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
@@ -68,8 +68,9 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
             :caption: Authenticate MetricsAdvisorAdministrationClient with a MetricsAdvisorKeyCredential
     """
 
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[MetricsAdvisorKeyCredential, AsyncTokenCredential], **Any) -> None
+    def __init__(
+        self, endpoint: str, credential: Union[MetricsAdvisorKeyCredential, AsyncTokenCredential], **kwargs: Any
+    ) -> None:
         try:
             if not endpoint.lower().startswith("http"):
                 endpoint = "https://" + endpoint
@@ -682,7 +683,10 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :dedent: 4
                 :caption: List all the notification hooks under an account
         """
-        return self._client.list_hooks(**kwargs)
+        return cast(
+            AsyncItemPaged[Union[NotificationHook, EmailNotificationHook, WebNotificationHook]],
+            self._client.list_hooks(**kwargs),
+        )
 
     @distributed_trace
     def list_data_feeds(self, **kwargs: Any) -> AsyncItemPaged[DataFeed]:
@@ -710,7 +714,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :dedent: 4
                 :caption: List data feeds under an account.
         """
-        return self._client.list_data_feeds(**kwargs)
+        return cast(AsyncItemPaged[DataFeed], self._client.list_data_feeds(**kwargs))
 
     @distributed_trace
     def list_alert_configurations(
@@ -733,7 +737,10 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :dedent: 4
                 :caption: List all anomaly alert configurations for specific anomaly detection configuration
         """
-        return self._client.list_alert_configurations(detection_configuration_id=detection_configuration_id, **kwargs)
+        return cast(
+            AsyncItemPaged[AnomalyAlertConfiguration],
+            self._client.list_alert_configurations(detection_configuration_id=detection_configuration_id, **kwargs),
+        )
 
     @distributed_trace
     def list_detection_configurations(
@@ -756,17 +763,19 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :dedent: 4
                 :caption: List all anomaly detection configurations for a specific metric
         """
-        return self._client.list_detection_configurations(metric_id=metric_id, **kwargs)
+        return cast(
+            AsyncItemPaged[AnomalyDetectionConfiguration],
+            self._client.list_detection_configurations(metric_id=metric_id, **kwargs),
+        )
 
     @distributed_trace
     def list_data_feed_ingestion_status(
         self,
-        data_feed_id,  # type: str
-        start_time,  # type: Union[str, datetime.datetime]
-        end_time,  # type: Union[str, datetime.datetime]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> AsyncItemPaged[DataFeedIngestionStatus]
+        data_feed_id: str,
+        start_time: Union[str, datetime.datetime],
+        end_time: Union[str, datetime.datetime],
+        **kwargs: Any
+    ) -> AsyncItemPaged[DataFeedIngestionStatus]:
         """Get data ingestion status by data feed.
 
         :param str data_feed_id: The data feed unique id.
@@ -788,17 +797,15 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :dedent: 4
                 :caption: List the data feed ingestion statuses by data feed ID
         """
-        return self._client.list_data_feed_ingestion_status(
-            data_feed_id=data_feed_id, start_time=start_time, end_time=end_time, **kwargs
+        return cast(
+            AsyncItemPaged[DataFeedIngestionStatus],
+            self._client.list_data_feed_ingestion_status(
+                data_feed_id=data_feed_id, start_time=start_time, end_time=end_time, **kwargs
+            ),
         )
 
     @distributed_trace_async
-    async def get_datasource_credential(
-        self,
-        credential_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> DatasourceCredentialUnion
+    async def get_datasource_credential(self, credential_id: str, **kwargs: Any) -> DatasourceCredentialUnion:
         """Get a datasource credential
 
         :param str credential_id: Datasource credential unique ID.
@@ -823,11 +830,8 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
 
     @distributed_trace_async
     async def create_datasource_credential(
-        self,
-        datasource_credential,  # type: DatasourceCredentialUnion
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> DatasourceCredentialUnion
+        self, datasource_credential: DatasourceCredentialUnion, **kwargs: Any
+    ) -> DatasourceCredentialUnion:
         """Create a new datasource credential.
 
         :param datasource_credential: The datasource credential to create
@@ -854,10 +858,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         return await self._client.create_datasource_credential(datasource_credential=datasource_credential, **kwargs)
 
     @distributed_trace
-    def list_datasource_credentials(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> AsyncItemPaged[DatasourceCredentialUnion]
+    def list_datasource_credentials(self, **kwargs: Any) -> AsyncItemPaged[DatasourceCredentialUnion]:
         """List all datasource credential.
 
         :param skip: for paging, skipped number.
@@ -880,15 +881,12 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
                 :dedent: 4
                 :caption: List all of the datasource credentials under the account
         """
-        return self._client.list_datasource_credentials(**kwargs)
+        return cast(AsyncItemPaged[DatasourceCredentialUnion], self._client.list_datasource_credentials(**kwargs))
 
     @distributed_trace_async
     async def update_datasource_credential(
-        self,
-        datasource_credential,  # type: DatasourceCredentialUnion
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> DatasourceCredentialUnion
+        self, datasource_credential: DatasourceCredentialUnion, **kwargs: Any
+    ) -> DatasourceCredentialUnion:
         """Update a credential entity.
 
         :param datasource_credential: The new datasource credential object
@@ -934,7 +932,7 @@ class MetricsAdvisorAdministrationClient(object):  # pylint:disable=too-many-pub
         return await self._client.delete_datasource_credential(*credential_id, **kwargs)
 
 
-class MetricsAdvisorClient(object):
+class MetricsAdvisorClient:
     """Represents an client that calls restful API of Azure Metrics Advisor service.
 
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
@@ -943,11 +941,11 @@ class MetricsAdvisorClient(object):
         which requires both subscription key and API key. Or an object which can provide an access
         token for the vault, such as a credential from :mod:`azure.identity`
     :type credential: ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential or ~azure.core.credentials.TokenCredential
-
     """
 
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Union[MetricsAdvisorKeyCredential, AsyncTokenCredential], **Any) -> None
+    def __init__(
+        self, endpoint: str, credential: Union[MetricsAdvisorKeyCredential, AsyncTokenCredential], **kwargs: Any
+    ) -> None:
         try:
             if not endpoint.lower().startswith("http"):
                 endpoint = "https://" + endpoint
@@ -965,17 +963,14 @@ class MetricsAdvisorClient(object):
             **kwargs
         )
 
-    def __repr__(self):
-        # type: () -> str
+    def __repr__(self) -> str:
         return "<MetricsAdvisorClient [endpoint={}]>".format(repr(self._endpoint))[:1024]
 
-    async def __aenter__(self):
-        # type: () -> MetricsAdvisorClient
+    async def __aenter__(self) -> "MetricsAdvisorClient":
         await self._client.__aenter__()  # pylint:disable=no-member
         return self
 
-    async def __aexit__(self, *args):
-        # type: (*Any) -> None
+    async def __aexit__(self, *args: Any) -> None:
         await self._client.__aexit__(*args)  # pylint:disable=no-member
 
     async def close(self) -> None:
@@ -983,8 +978,7 @@ class MetricsAdvisorClient(object):
         await self._client.__aexit__()
 
     @distributed_trace_async
-    async def add_feedback(self, feedback, **kwargs):
-        # type: (FeedbackUnion, Any) -> None
+    async def add_feedback(self, feedback: FeedbackUnion, **kwargs: Any) -> None:
         """Create a new metric feedback.
 
         :param feedback: metric feedback.
@@ -1006,8 +1000,7 @@ class MetricsAdvisorClient(object):
         return await self._client.add_feedback(feedback=feedback, **kwargs)
 
     @distributed_trace_async
-    async def get_feedback(self, feedback_id, **kwargs):
-        # type: (str, Any) -> Union[MetricFeedback, FeedbackUnion]
+    async def get_feedback(self, feedback_id: str, **kwargs: Any) -> Union[MetricFeedback, FeedbackUnion]:
         """Get a metric feedback by its id.
 
         :param str feedback_id: the id of the feedback.
@@ -1031,13 +1024,7 @@ class MetricsAdvisorClient(object):
         return await self._client.get_feedback(feedback_id=feedback_id, **kwargs)
 
     @distributed_trace
-    def list_feedback(
-        self,
-        metric_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> AsyncItemPaged[Union[MetricFeedback, FeedbackUnion]]
-
+    def list_feedback(self, metric_id: str, **kwargs: Any) -> AsyncItemPaged[Union[MetricFeedback, FeedbackUnion]]:
         """List feedback on the given metric.
 
         :param str metric_id: filter feedbacks by metric id
@@ -1066,12 +1053,15 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: List feedback on the given metric.
         """
-        return self._client.list_feedback(metric_id=metric_id, **kwargs)
+        return cast(
+            AsyncItemPaged[Union[MetricFeedback, FeedbackUnion]],
+            self._client.list_feedback(metric_id=metric_id, **kwargs),
+        )
 
     @distributed_trace
-    def list_incident_root_causes(self, detection_configuration_id, incident_id, **kwargs):
-        # type: (str, str, Any) -> AsyncItemPaged[IncidentRootCause]
-
+    def list_incident_root_causes(
+        self, detection_configuration_id: str, incident_id: str, **kwargs: Any
+    ) -> AsyncItemPaged[IncidentRootCause]:
         """Query root cause for incident.
 
         :param detection_configuration_id: anomaly detection configuration unique id.
@@ -1091,20 +1081,22 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: Query incident root causes.
         """
-        return self._client.list_incident_root_causes(
-            detection_configuration_id=detection_configuration_id, incident_id=incident_id, **kwargs
+        return cast(
+            AsyncItemPaged[IncidentRootCause],
+            self._client.list_incident_root_causes(
+                detection_configuration_id=detection_configuration_id, incident_id=incident_id, **kwargs
+            ),
         )
 
     @distributed_trace
     def list_metric_enriched_series_data(
         self,
-        detection_configuration_id,  # type: str
-        series,  # type: Union[List[SeriesIdentity], List[Dict[str, str]]]
-        start_time,  # type: Union[str, datetime.datetime]
-        end_time,  # type: Union[str, datetime.datetime]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> AsyncItemPaged[MetricEnrichedSeriesData]
+        detection_configuration_id: str,
+        series: Union[List[SeriesIdentity], List[Dict[str, str]]],
+        start_time: Union[str, datetime.datetime],
+        end_time: Union[str, datetime.datetime],
+        **kwargs: Any
+    ) -> AsyncItemPaged[MetricEnrichedSeriesData]:
         """Query series enriched by anomaly detection.
 
         :param str detection_configuration_id: anomaly alerting configuration unique id.
@@ -1125,24 +1117,26 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: Query metric enriched series data.
         """
-        return self._client.list_metric_enriched_series_data(
-            detection_configuration_id=detection_configuration_id,
-            series=series,
-            start_time=start_time,
-            end_time=end_time,
-            **kwargs
+        return cast(
+            AsyncItemPaged[MetricEnrichedSeriesData],
+            self._client.list_metric_enriched_series_data(
+                detection_configuration_id=detection_configuration_id,
+                series=series,
+                start_time=start_time,
+                end_time=end_time,
+                **kwargs
+            ),
         )
 
     @distributed_trace
     def list_alerts(
         self,
-        alert_configuration_id,  # type: str
-        start_time,  # type: Union[str, datetime.datetime]
-        end_time,  # type: Union[str, datetime.datetime]
-        time_mode,  # type: Union[str, AlertQueryTimeMode]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> AsyncItemPaged[AnomalyAlert]
+        alert_configuration_id: str,
+        start_time: Union[str, datetime.datetime],
+        end_time: Union[str, datetime.datetime],
+        time_mode: Union[str, AlertQueryTimeMode],
+        **kwargs: Any
+    ) -> AsyncItemPaged[AnomalyAlert]:
         """Query alerts under anomaly alert configuration.
 
         :param alert_configuration_id: anomaly alert configuration unique id.
@@ -1166,12 +1160,15 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: Query anomaly detection results.
         """
-        return self._client.list_alerts(
-            alert_configuration_id=alert_configuration_id,
-            start_time=start_time,
-            end_time=end_time,
-            time_mode=time_mode,
-            **kwargs
+        return cast(
+            AsyncItemPaged[AnomalyAlert],
+            self._client.list_alerts(
+                alert_configuration_id=alert_configuration_id,
+                start_time=start_time,
+                end_time=end_time,
+                time_mode=time_mode,
+                **kwargs
+            ),
         )
 
     @overload
@@ -1223,8 +1220,7 @@ class MetricsAdvisorClient(object):
         """
 
     @distributed_trace
-    def list_anomalies(self, **kwargs):
-        # type: (Any) -> AsyncItemPaged[DataPointAnomaly]
+    def list_anomalies(self, **kwargs: Any) -> AsyncItemPaged[DataPointAnomaly]:
         """Query anomalies under a specific alert or detection configuration.
 
         :keyword str alert_configuration_id: anomaly alert configuration unique id.
@@ -1239,12 +1235,17 @@ class MetricsAdvisorClient(object):
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.DataPointAnomaly]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return self._client.list_anomalies(**kwargs)
+        return cast(AsyncItemPaged[DataPointAnomaly], self._client.list_anomalies(**kwargs))
 
     @distributed_trace
-    def list_anomaly_dimension_values(self, detection_configuration_id, dimension_name, start_time, end_time, **kwargs):
-        # type: (str, str, Union[str, datetime.datetime], Union[str, datetime.datetime], Any) -> AsyncItemPaged[str]
-
+    def list_anomaly_dimension_values(
+        self,
+        detection_configuration_id: str,
+        dimension_name: str,
+        start_time: Union[str, datetime.datetime],
+        end_time: Union[str, datetime.datetime],
+        **kwargs: Any
+    ) -> AsyncItemPaged[str]:
         """Query dimension values of anomalies.
 
         :param detection_configuration_id: anomaly detection configuration unique id.
@@ -1267,12 +1268,15 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: Query dimension values.
         """
-        return self._client.list_anomaly_dimension_values(
-            detection_configuration_id=detection_configuration_id,
-            dimension_name=dimension_name,
-            start_time=start_time,
-            end_time=end_time,
-            **kwargs
+        return cast(
+            AsyncItemPaged[str],
+            self._client.list_anomaly_dimension_values(
+                detection_configuration_id=detection_configuration_id,
+                dimension_name=dimension_name,
+                start_time=start_time,
+                end_time=end_time,
+                **kwargs
+            ),
         )
 
     @overload
@@ -1333,9 +1337,7 @@ class MetricsAdvisorClient(object):
         """
 
     @distributed_trace
-    def list_incidents(self, **kwargs):
-        # type: (Any) -> AsyncItemPaged[AnomalyIncident]
-
+    def list_incidents(self, **kwargs: Any) -> AsyncItemPaged[AnomalyIncident]:
         """Query incidents under a specific alert or detection configuration.
 
         :keyword str alert_configuration_id: anomaly alerting configuration unique id.
@@ -1350,11 +1352,10 @@ class MetricsAdvisorClient(object):
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyIncident]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return self._client.list_incidents(**kwargs)
+        return cast(AsyncItemPaged[AnomalyIncident], self._client.list_incidents(**kwargs))
 
     @distributed_trace
-    def list_metric_dimension_values(self, metric_id, dimension_name, **kwargs):
-        # type: (str, str, Any) -> AsyncItemPaged[str]
+    def list_metric_dimension_values(self, metric_id: str, dimension_name: str, **kwargs: Any) -> AsyncItemPaged[str]:
         """List dimension from certain metric.
 
         :param metric_id: metric unique id.
@@ -1377,18 +1378,20 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: Query metric dimension values.
         """
-        return self._client.list_metric_dimension_values(metric_id=metric_id, dimension_name=dimension_name, **kwargs)
+        return cast(
+            AsyncItemPaged[str],
+            self._client.list_metric_dimension_values(metric_id=metric_id, dimension_name=dimension_name, **kwargs),
+        )
 
     @distributed_trace
     def list_metric_series_data(
         self,
-        metric_id,  # type: str
-        series_keys,  # type: List[Dict[str, str]]
-        start_time,  # type: Union[str, datetime.datetime]
-        end_time,  # type: Union[str, datetime.datetime]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> AsyncItemPaged[MetricSeriesData]
+        metric_id: str,
+        series_keys: List[Dict[str, str]],
+        start_time: Union[str, datetime.datetime],
+        end_time: Union[str, datetime.datetime],
+        **kwargs: Any
+    ) -> AsyncItemPaged[MetricSeriesData]:
         """Get time series data from metric.
 
         :param metric_id: metric unique id.
@@ -1410,13 +1413,17 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: Query metrics series data.
         """
-        return self._client.list_metric_series_data(
-            metric_id=metric_id, series_keys=series_keys, start_time=start_time, end_time=end_time, **kwargs
+        return cast(
+            AsyncItemPaged[MetricSeriesData],
+            self._client.list_metric_series_data(
+                metric_id=metric_id, series_keys=series_keys, start_time=start_time, end_time=end_time, **kwargs
+            ),
         )
 
     @distributed_trace
-    def list_metric_series_definitions(self, metric_id, active_since, **kwargs):
-        # type: (str, datetime.datetime, Any) -> AsyncItemPaged[MetricSeriesDefinition]
+    def list_metric_series_definitions(
+        self, metric_id: str, active_since: datetime.datetime, **kwargs: Any
+    ) -> AsyncItemPaged[MetricSeriesDefinition]:
         """List series (dimension combinations) from metric.
 
         :param metric_id: metric unique id.
@@ -1440,17 +1447,19 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: Query metric series definitions.
         """
-        return self._client.list_metric_series_definitions(metric_id=metric_id, active_since=active_since, **kwargs)
+        return cast(
+            AsyncItemPaged[MetricSeriesDefinition],
+            self._client.list_metric_series_definitions(metric_id=metric_id, active_since=active_since, **kwargs),
+        )
 
     @distributed_trace
     def list_metric_enrichment_status(
         self,
-        metric_id,  # type: str
-        start_time,  # type: Union[str, datetime.datetime]
-        end_time,  # type: Union[str, datetime.datetime]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> AsyncItemPaged[EnrichmentStatus]
+        metric_id: str,
+        start_time: Union[str, datetime.datetime],
+        end_time: Union[str, datetime.datetime],
+        **kwargs: Any
+    ) -> AsyncItemPaged[EnrichmentStatus]:
         """Query anomaly detection status.
 
         :param metric_id: filter feedbacks by metric id.
@@ -1471,8 +1480,11 @@ class MetricsAdvisorClient(object):
                 :dedent: 4
                 :caption: Query metric enrichment status.
         """
-        return self._client.list_metric_enrichment_status(
-            metric_id=metric_id, start_time=start_time, end_time=end_time, **kwargs
+        return cast(
+            AsyncItemPaged[EnrichmentStatus],
+            self._client.list_metric_enrichment_status(
+                metric_id=metric_id, start_time=start_time, end_time=end_time, **kwargs
+            ),
         )
 
 

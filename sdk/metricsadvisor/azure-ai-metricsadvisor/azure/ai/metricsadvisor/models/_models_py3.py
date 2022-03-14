@@ -11,7 +11,7 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 import msrest.serialization
 
-from ._metrics_advisor_client_enums import *  # pylint: disable=unused-wildcard-import
+from ._metrics_advisor_client_enums import *
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports

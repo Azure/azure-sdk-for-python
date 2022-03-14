@@ -447,7 +447,7 @@ class DataFeed(generated_models.DataFeed):  # pylint:disable=too-many-instance-a
             DataFeedRollupType._to_generated(rollup_type)
         retval = generated_models.DataFeed(
             data_source_parameter=kwargs.pop(
-                "dataSourceParameter", TYPE_TO_DATA_SOURCE[self.source.data_source_type].serialize(self.source)
+                "dataSourceParameter", TYPE_TO_DATA_SOURCE[self.source.data_source_type].serialize(self.source)  # type: ignore
             ),
             id=kwargs.pop("id", self.id),
             name=kwargs.pop("dataFeedName", None) or self.name,
@@ -490,10 +490,10 @@ class DataFeed(generated_models.DataFeed):  # pylint:disable=too-many-instance-a
             status=kwargs.pop("status", self.status),
             created_time=kwargs.pop("createdTime", self.created_time),
             action_link_template=kwargs.pop("actionLinkTemplate", self.action_link_template),
-            authentication_type=kwargs.pop("authenticationType", self.source.authentication_type),
-            credential_id=kwargs.pop("credentialId", self.source.credential_id),
+            authentication_type=kwargs.pop("authenticationType", self.source.authentication_type), # type: ignore
+            credential_id=kwargs.pop("credentialId", self.source.credential_id),  # type: ignore
         )
-        retval.data_source_type = self.source.data_source_type
+        retval.data_source_type = self.source.data_source_type  # type: ignore
         return retval
 
 
@@ -678,7 +678,9 @@ class MetricAlertConfiguration(generated_models.MetricAlertConfiguration):
     :paramtype alert_snooze_condition: ~azure.ai.metricsadvisor.models.MetricAnomalyAlertSnoozeCondition
     """
 
-    def __init__(self, detection_configuration_id: str, alert_scope: MetricAnomalyAlertScope, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
+    def __init__(  # pylint: disable=super-init-not-called
+        self, detection_configuration_id: str, alert_scope: MetricAnomalyAlertScope, **kwargs: Any
+    ) -> None:
         self.detection_configuration_id = detection_configuration_id
         self.alert_scope = alert_scope
         self.negation_operation = kwargs.get("negation_operation", None)
@@ -852,7 +854,7 @@ class DataFeedSource(DictMixin):
     """
 
     def __init__(self, data_source_type: str, **kwargs: Any) -> None:
-        super().__init__(data_source_type=data_source_type, **kwargs)
+        super().__init__(data_source_type=data_source_type, **kwargs)  # type: ignore
         self.data_source_type = data_source_type
         self.authentication_type = kwargs.get("authentication_type", None)
         self.credential_id = kwargs.get("credential_id", None)
@@ -1404,8 +1406,7 @@ class MongoDbDataFeedSource(DataFeedSource, generated_models.MongoDbDataFeedSour
     :param str command: Required. Query script.
     """
 
-    def __init__(self, command: str, **kwargs: Any):
-        # type: (str, **Any) -> None
+    def __init__(self, command: str, **kwargs: Any) -> None:
         super().__init__(command=command, data_source_type="MongoDB", authentication_type="Basic", **kwargs)
 
     def __repr__(self):
@@ -2029,8 +2030,7 @@ class IncidentRootCause(msrest.serialization.Model):
         )[:1024]
 
     @classmethod
-    def _from_generated(cls, root_cause):
-        # type: (IncidentRootCause) -> Union[IncidentRootCause, None]
+    def _from_generated(cls, root_cause: generated_models.IncidentRootCause) -> Union["IncidentRootCause", None]:
         if not root_cause:
             return None
         dimension_key = root_cause.root_cause.dimension if root_cause.root_cause else None

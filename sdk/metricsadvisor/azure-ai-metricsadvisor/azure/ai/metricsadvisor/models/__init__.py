@@ -103,7 +103,7 @@ from ._metrics_advisor_client_enums import (
     SnoozeScope,
 )
 from ._patch import __all__ as _patch_all
-from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -200,5 +200,5 @@ __all__ = [
     "PeriodType",
     "SnoozeScope",
 ]
-__all__.extend(_patch_all)
+__all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
