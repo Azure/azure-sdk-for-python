@@ -1,0 +1,1504 @@
+{
+    "value": [
+      {
+        "@search.action": "upload",
+        "hotelId": "1",
+        "hotelName": "Fancy Stay",
+        "description": "Best hotel in town if you like luxury hotels. They have an amazing infinity pool, a spa, and a really helpful concierge. The location is perfect -- right downtown, close to all the tourist attractions. We highly recommend this hotel.",
+        "descriptionFr": "Meilleur hôtel en ville si vous aimez les hôtels de luxe. Ils ont une magnifique piscine à débordement, un spa et un concierge très utile. L'emplacement est parfait – en plein centre, à proximité de toutes les attractions touristiques. Nous recommandons fortement cet hôtel.",
+        "category": "Luxury",
+        "tags": [
+          "pool",
+          "view",
+          "wifi",
+          "concierge"
+        ],
+        "parkingIncluded": false,
+        "smokingAllowed": false,
+        "lastRenovationDate": "2010-06-27T00:00:00+00:00",
+        "rating": 5,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            47.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "2",
+        "hotelName": "Roach Motel",
+        "description": "Cheapest hotel in town. Infact, a motel.",
+        "descriptionFr": "Hôtel le moins cher en ville. Infact, un motel.",
+        "category": "Budget",
+        "tags": [
+          "motel",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": true,
+        "lastRenovationDate": "1982-04-28T00:00:00+00:00",
+        "rating": 1,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            49.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "3",
+        "hotelName": "EconoStay",
+        "description": "Very popular hotel in town",
+        "descriptionFr": "Hôtel le plus populaire en ville",
+        "category": "Budget",
+        "tags": [
+          "wifi",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": false,
+        "lastRenovationDate": "1995-07-01T00:00:00+00:00",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            46.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "4",
+        "hotelName": "Express Rooms",
+        "description": "Pretty good hotel",
+        "descriptionFr": "Assez bon hôtel",
+        "category": "Budget",
+        "tags": [
+          "wifi",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": false,
+        "lastRenovationDate": "1995-07-01T00:00:00+00:00",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            48.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "5",
+        "hotelName": "Comfy Place",
+        "description": "Another good hotel",
+        "descriptionFr": "Un autre bon hôtel",
+        "category": "Budget",
+        "tags": [
+          "wifi",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": false,
+        "lastRenovationDate": "2012-08-12T00:00:00+00:00",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            48.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "6",
+        "description": "Surprisingly expensive. Model suites have an ocean-view."
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "7",
+        "hotelName": "Modern Stay",
+        "description": "Modern architecture, very polite staff and very clean. Also very affordable.",
+        "descriptionFr": "Architecture moderne, personnel poli et très propre. Aussi très abordable."
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "8",
+        "description": "Has some road noise and is next to the very police station. Bathrooms had morel coverings.",
+        "descriptionFr": "Il y a du bruit de la route et se trouve à côté de la station de police. Les salles de bain avaient des revêtements de morilles."
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "9",
+        "hotelName": "Secret Point Motel",
+        "description": "The hotel is ideally located on the main commercial artery of the city in the heart of New York. A few minutes away is Time's Square and the historic centre of the city, as well as other places of interest that make New York one of America's most attractive and cosmopolitan cities.",
+        "descriptionFr": "L'hôtel est idéalement situé sur la principale artère commerciale de la ville en plein cœur de New York. A quelques minutes se trouve la place du temps et le centre historique de la ville, ainsi que d'autres lieux d'intérêt qui font de New York l'une des villes les plus attractives et cosmopolites de l'Amérique.",
+        "category": "Boutique",
+        "tags": [
+          "pool",
+          "air conditioning",
+          "concierge"
+        ],
+        "parkingIncluded": false,
+        "smokingAllowed": true,
+        "lastRenovationDate": "1970-01-18T00:00:00-05:00",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -73.975403,
+            40.760586
+          ]
+        },
+        "address": {
+          "streetAddress": "677 5th Ave",
+          "city": "New York",
+          "stateProvince": "NY",
+          "country": "USA",
+          "postalCode": "10022"
+        },
+        "rooms": [
+          {
+            "description": "Budget Room, 1 Queen Bed (Cityside)",
+            "descriptionFr": "Chambre Économique, 1 grand lit (côté ville)",
+            "type": "Budget Room",
+            "baseRate": 9.69,
+            "bedOptions": "1 Queen Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": true,
+            "tags": [
+              "vcr/dvd"
+            ]
+          },
+          {
+            "description": "Budget Room, 1 King Bed (Mountain View)",
+            "descriptionFr": "Chambre Économique, 1 très grand lit (Mountain View)",
+            "type": "Budget Room",
+            "baseRate": 8.09,
+            "bedOptions": "1 King Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": true,
+            "tags": [
+              "vcr/dvd",
+              "jacuzzi tub"
+            ]
+          }
+        ]
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "10",
+        "hotelName": "Countryside Hotel",
+        "description": "Save up to 50% off traditional hotels.  Free WiFi, great location near downtown, full kitchen, washer & dryer, 24/7 support, bowling alley, fitness center and more.",
+        "descriptionFr": "Économisez jusqu'à 50% sur les hôtels traditionnels.  WiFi gratuit, très bien situé près du centre-ville, cuisine complète, laveuse & sécheuse, support 24/7, bowling, centre de fitness et plus encore.",
+        "category": "Budget",
+        "tags": [
+          "24-hour front desk service",
+          "coffee in lobby",
+          "restaurant"
+        ],
+        "parkingIncluded": false,
+        "smokingAllowed": true,
+        "lastRenovationDate": "1999-09-06T00:00:00+00:00",
+        "rating": 3,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -78.940483,
+            35.90416
+          ]
+        },
+        "address": {
+          "streetAddress": "6910 Fayetteville Rd",
+          "city": "Durham",
+          "stateProvince": "NC",
+          "country": "USA",
+          "postalCode": "27713"
+        },
+        "rooms": [
+          {
+            "description": "Suite, 1 King Bed (Amenities)",
+            "descriptionFr": "Suite, 1 très grand lit (Services)",
+            "type": "Suite",
+            "baseRate": 2.44,
+            "bedOptions": "1 King Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": true,
+            "tags": [
+              "coffee maker"
+            ]
+          },
+          {
+            "description": "Budget Room, 1 Queen Bed (Amenities)",
+            "descriptionFr": "Chambre Économique, 1 grand lit (Services)",
+            "type": "Budget Room",
+            "baseRate": 7.69,
+            "bedOptions": "1 Queen Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": false,
+            "tags": [
+              "coffee maker"
+            ]
+          }
+        ]
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "11",
+        "hotelName": "Fancy Stay 1",
+        "description": "Best hotel in town if you like luxury hotels. They have an amazing infinity pool, a spa, and a really helpful concierge. The location is perfect -- right downtown, close to all the tourist attractions. We highly recommend this hotel.",
+        "descriptionFr": "Meilleur hôtel en ville si vous aimez les hôtels de luxe. Ils ont une magnifique piscine à débordement, un spa et un concierge très utile. L'emplacement est parfait – en plein centre, à proximité de toutes les attractions touristiques. Nous recommandons fortement cet hôtel.",
+        "category": "Luxury",
+        "tags": [
+          "pool",
+          "view",
+          "wifi",
+          "concierge"
+        ],
+        "parkingIncluded": false,
+        "smokingAllowed": false,
+        "lastRenovationDate": "2010-06-27T00:00:00+00:00",
+        "rating": 5,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            47.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "12",
+        "hotelName": "Roach Motel 1",
+        "description": "Cheapest hotel in town. Infact, a motel.",
+        "descriptionFr": "Hôtel le moins cher en ville. Infact, un motel.",
+        "category": "Budget",
+        "tags": [
+          "motel",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": true,
+        "lastRenovationDate": "1982-04-28T00:00:00+00:00",
+        "rating": 1,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            49.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "13",
+        "hotelName": "EconoStay 1",
+        "description": "Very popular hotel in town",
+        "descriptionFr": "Hôtel le plus populaire en ville",
+        "category": "Budget",
+        "tags": [
+          "wifi",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": false,
+        "lastRenovationDate": "1995-07-01T00:00:00+00:00",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            46.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "14",
+        "hotelName": "Express Rooms 1",
+        "description": "Pretty good hotel",
+        "descriptionFr": "Assez bon hôtel",
+        "category": "Budget",
+        "tags": [
+          "wifi",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": false,
+        "lastRenovationDate": "1995-07-01T00:00:00+00:00",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            48.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "15",
+        "hotelName": "Comfy Place 1",
+        "description": "Another good hotel",
+        "descriptionFr": "Un autre bon hôtel",
+        "category": "Budget",
+        "tags": [
+          "wifi",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": false,
+        "lastRenovationDate": "2012-08-12T00:00:00+00:00",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            48.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "16",
+        "description": "Surprisingly expensive. Model suites have an ocean-view."
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "17",
+        "hotelName": "Modern Stay1",
+        "description": "Modern architecture, very polite staff and very clean. Also very affordable.",
+        "descriptionFr": "Architecture moderne, personnel poli et très propre. Aussi très abordable."
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "18",
+        "description": "Has some road noise and is next to the very police station. Bathrooms had morel coverings.",
+        "descriptionFr": "Il y a du bruit de la route et se trouve à côté de la station de police. Les salles de bain avaient des revêtements de morilles."
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "19",
+        "hotelName": "Secret Point Motel 1",
+        "description": "The hotel is ideally located on the main commercial artery of the city in the heart of New York. A few minutes away is Time's Square and the historic centre of the city, as well as other places of interest that make New York one of America's most attractive and cosmopolitan cities.",
+        "descriptionFr": "L'hôtel est idéalement situé sur la principale artère commerciale de la ville en plein cœur de New York. A quelques minutes se trouve la place du temps et le centre historique de la ville, ainsi que d'autres lieux d'intérêt qui font de New York l'une des villes les plus attractives et cosmopolites de l'Amérique.",
+        "category": "Boutique",
+        "tags": [
+          "pool",
+          "air conditioning",
+          "concierge"
+        ],
+        "parkingIncluded": false,
+        "smokingAllowed": true,
+        "lastRenovationDate": "1970-01-18T00:00:00-05:00",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -73.975403,
+            40.760586
+          ]
+        },
+        "address": {
+          "streetAddress": "677 5th Ave",
+          "city": "New York",
+          "stateProvince": "NY",
+          "country": "USA",
+          "postalCode": "10022"
+        },
+        "rooms": [
+          {
+            "description": "Budget Room, 1 Queen Bed (Cityside)",
+            "descriptionFr": "Chambre Économique, 1 grand lit (côté ville)",
+            "type": "Budget Room",
+            "baseRate": 9.69,
+            "bedOptions": "1 Queen Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": true,
+            "tags": [
+              "vcr/dvd"
+            ]
+          },
+          {
+            "description": "Budget Room, 1 King Bed (Mountain View)",
+            "descriptionFr": "Chambre Économique, 1 très grand lit (Mountain View)",
+            "type": "Budget Room",
+            "baseRate": 8.09,
+            "bedOptions": "1 King Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": true,
+            "tags": [
+              "vcr/dvd",
+              "jacuzzi tub"
+            ]
+          }
+        ]
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "20",
+        "hotelName": "Countryside Hotel 1",
+        "description": "Save up to 50% off traditional hotels.  Free WiFi, great location near downtown, full kitchen, washer & dryer, 24/7 support, bowling alley, fitness center and more.",
+        "descriptionFr": "Économisez jusqu'à 50% sur les hôtels traditionnels.  WiFi gratuit, très bien situé près du centre-ville, cuisine complète, laveuse & sécheuse, support 24/7, bowling, centre de fitness et plus encore.",
+        "category": "Budget",
+        "tags": [
+          "24-hour front desk service",
+          "coffee in lobby",
+          "restaurant"
+        ],
+        "parkingIncluded": false,
+        "smokingAllowed": true,
+        "lastRenovationDate": "1999-09-06T00:00:00+00:00",
+        "rating": 3,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -78.940483,
+            35.90416
+          ]
+        },
+        "address": {
+          "streetAddress": "6910 Fayetteville Rd",
+          "city": "Durham",
+          "stateProvince": "NC",
+          "country": "USA",
+          "postalCode": "27713"
+        },
+        "rooms": [
+          {
+            "description": "Suite, 1 King Bed (Amenities)",
+            "descriptionFr": "Suite, 1 très grand lit (Services)",
+            "type": "Suite",
+            "baseRate": 2.44,
+            "bedOptions": "1 King Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": true,
+            "tags": [
+              "coffee maker"
+            ]
+          },
+          {
+            "description": "Budget Room, 1 Queen Bed (Amenities)",
+            "descriptionFr": "Chambre Économique, 1 grand lit (Services)",
+            "type": "Budget Room",
+            "baseRate": 7.69,
+            "bedOptions": "1 Queen Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": false,
+            "tags": [
+              "coffee maker"
+            ]
+          }
+        ]
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "21",
+        "hotelName": "Fancy Stay 2",
+        "description": "Best hotel in town if you like luxury hotels. They have an amazing infinity pool, a spa, and a really helpful concierge. The location is perfect -- right downtown, close to all the tourist attractions. We highly recommend this hotel.",
+        "descriptionFr": "Meilleur hôtel en ville si vous aimez les hôtels de luxe. Ils ont une magnifique piscine à débordement, un spa et un concierge très utile. L'emplacement est parfait – en plein centre, à proximité de toutes les attractions touristiques. Nous recommandons fortement cet hôtel.",
+        "category": "Luxury",
+        "tags": [
+          "pool",
+          "view",
+          "wifi",
+          "concierge"
+        ],
+        "parkingIncluded": false,
+        "smokingAllowed": false,
+        "lastRenovationDate": "2010-06-27T00:00:00+00:00",
+        "rating": 5,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            47.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "22",
+        "hotelName": "Roach Motel2",
+        "description": "Cheapest hotel in town. Infact, a motel.",
+        "descriptionFr": "Hôtel le moins cher en ville. Infact, un motel.",
+        "category": "Budget",
+        "tags": [
+          "motel",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": true,
+        "lastRenovationDate": "1982-04-28T00:00:00+00:00",
+        "rating": 1,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            49.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "23",
+        "hotelName": "EconoStay2",
+        "description": "Very popular hotel in town",
+        "descriptionFr": "Hôtel le plus populaire en ville",
+        "category": "Budget",
+        "tags": [
+          "wifi",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": false,
+        "lastRenovationDate": "1995-07-01T00:00:00+00:00",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            46.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "24",
+        "hotelName": "Express Rooms2",
+        "description": "Pretty good hotel",
+        "descriptionFr": "Assez bon hôtel",
+        "category": "Budget",
+        "tags": [
+          "wifi",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": false,
+        "lastRenovationDate": "1995-07-01T00:00:00+00:00",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            48.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "25",
+        "hotelName": "Comfy Place2",
+        "description": "Another good hotel",
+        "descriptionFr": "Un autre bon hôtel",
+        "category": "Budget",
+        "tags": [
+          "wifi",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": false,
+        "lastRenovationDate": "2012-08-12T00:00:00+00:00",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            48.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "26",
+        "description": "Surprisingly expensive. Model suites have an ocean-view."
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "27",
+        "hotelName": "Modern Stay2",
+        "description": "Modern architecture, very polite staff and very clean. Also very affordable.",
+        "descriptionFr": "Architecture moderne, personnel poli et très propre. Aussi très abordable."
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "28",
+        "description": "Has some road noise and is next to the very police station. Bathrooms had morel coverings.",
+        "descriptionFr": "Il y a du bruit de la route et se trouve à côté de la station de police. Les salles de bain avaient des revêtements de morilles."
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "29",
+        "hotelName": "Secret Point Motel2",
+        "description": "The hotel is ideally located on the main commercial artery of the city in the heart of New York. A few minutes away is Time's Square and the historic centre of the city, as well as other places of interest that make New York one of America's most attractive and cosmopolitan cities.",
+        "descriptionFr": "L'hôtel est idéalement situé sur la principale artère commerciale de la ville en plein cœur de New York. A quelques minutes se trouve la place du temps et le centre historique de la ville, ainsi que d'autres lieux d'intérêt qui font de New York l'une des villes les plus attractives et cosmopolites de l'Amérique.",
+        "category": "Boutique",
+        "tags": [
+          "pool",
+          "air conditioning",
+          "concierge"
+        ],
+        "parkingIncluded": false,
+        "smokingAllowed": true,
+        "lastRenovationDate": "1970-01-18T00:00:00-05:00",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -73.975403,
+            40.760586
+          ]
+        },
+        "address": {
+          "streetAddress": "677 5th Ave",
+          "city": "New York",
+          "stateProvince": "NY",
+          "country": "USA",
+          "postalCode": "10022"
+        },
+        "rooms": [
+          {
+            "description": "Budget Room, 1 Queen Bed (Cityside)",
+            "descriptionFr": "Chambre Économique, 1 grand lit (côté ville)",
+            "type": "Budget Room",
+            "baseRate": 9.69,
+            "bedOptions": "1 Queen Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": true,
+            "tags": [
+              "vcr/dvd"
+            ]
+          },
+          {
+            "description": "Budget Room, 1 King Bed (Mountain View)",
+            "descriptionFr": "Chambre Économique, 1 très grand lit (Mountain View)",
+            "type": "Budget Room",
+            "baseRate": 8.09,
+            "bedOptions": "1 King Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": true,
+            "tags": [
+              "vcr/dvd",
+              "jacuzzi tub"
+            ]
+          }
+        ]
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "30",
+        "hotelName": "Countryside Hotel 2",
+        "description": "Save up to 50% off traditional hotels.  Free WiFi, great location near downtown, full kitchen, washer & dryer, 24/7 support, bowling alley, fitness center and more.",
+        "descriptionFr": "Économisez jusqu'à 50% sur les hôtels traditionnels.  WiFi gratuit, très bien situé près du centre-ville, cuisine complète, laveuse & sécheuse, support 24/7, bowling, centre de fitness et plus encore.",
+        "category": "Budget",
+        "tags": [
+          "24-hour front desk service",
+          "coffee in lobby",
+          "restaurant"
+        ],
+        "parkingIncluded": false,
+        "smokingAllowed": true,
+        "lastRenovationDate": "1999-09-06T00:00:00+00:00",
+        "rating": 3,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -78.940483,
+            35.90416
+          ]
+        },
+        "address": {
+          "streetAddress": "6910 Fayetteville Rd",
+          "city": "Durham",
+          "stateProvince": "NC",
+          "country": "USA",
+          "postalCode": "27713"
+        },
+        "rooms": [
+          {
+            "description": "Suite, 1 King Bed (Amenities)",
+            "descriptionFr": "Suite, 1 très grand lit (Services)",
+            "type": "Suite",
+            "baseRate": 2.44,
+            "bedOptions": "1 King Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": true,
+            "tags": [
+              "coffee maker"
+            ]
+          },
+          {
+            "description": "Budget Room, 1 Queen Bed (Amenities)",
+            "descriptionFr": "Chambre Économique, 1 grand lit (Services)",
+            "type": "Budget Room",
+            "baseRate": 7.69,
+            "bedOptions": "1 Queen Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": false,
+            "tags": [
+              "coffee maker"
+            ]
+          }
+        ]
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "31",
+        "hotelName": "Fancy Stay3",
+        "description": "Best hotel in town if you like luxury hotels. They have an amazing infinity pool, a spa, and a really helpful concierge. The location is perfect -- right downtown, close to all the tourist attractions. We highly recommend this hotel.",
+        "descriptionFr": "Meilleur hôtel en ville si vous aimez les hôtels de luxe. Ils ont une magnifique piscine à débordement, un spa et un concierge très utile. L'emplacement est parfait – en plein centre, à proximité de toutes les attractions touristiques. Nous recommandons fortement cet hôtel.",
+        "category": "Luxury",
+        "tags": [
+          "pool",
+          "view",
+          "wifi",
+          "concierge"
+        ],
+        "parkingIncluded": false,
+        "smokingAllowed": false,
+        "lastRenovationDate": "2010-06-27T00:00:00+00:00",
+        "rating": 5,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            47.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "32",
+        "hotelName": "Roach Motel3",
+        "description": "Cheapest hotel in town. Infact, a motel.",
+        "descriptionFr": "Hôtel le moins cher en ville. Infact, un motel.",
+        "category": "Budget",
+        "tags": [
+          "motel",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": true,
+        "lastRenovationDate": "1982-04-28T00:00:00+00:00",
+        "rating": 1,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            49.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "33",
+        "hotelName": "EconoStay3",
+        "description": "Very popular hotel in town",
+        "descriptionFr": "Hôtel le plus populaire en ville",
+        "category": "Budget",
+        "tags": [
+          "wifi",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": false,
+        "lastRenovationDate": "1995-07-01T00:00:00+00:00",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            46.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "34",
+        "hotelName": "Express Rooms3",
+        "description": "Pretty good hotel",
+        "descriptionFr": "Assez bon hôtel",
+        "category": "Budget",
+        "tags": [
+          "wifi",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": false,
+        "lastRenovationDate": "1995-07-01T00:00:00+00:00",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            48.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "35",
+        "hotelName": "Comfy Place3",
+        "description": "Another good hotel",
+        "descriptionFr": "Un autre bon hôtel",
+        "category": "Budget",
+        "tags": [
+          "wifi",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": false,
+        "lastRenovationDate": "2012-08-12T00:00:00+00:00",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            48.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "36",
+        "description": "Surprisingly expensive. Model suites have an ocean-view."
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "37",
+        "hotelName": "Modern Stay3",
+        "description": "Modern architecture, very polite staff and very clean. Also very affordable.",
+        "descriptionFr": "Architecture moderne, personnel poli et très propre. Aussi très abordable."
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "38",
+        "description": "Has some road noise and is next to the very police station. Bathrooms had morel coverings.",
+        "descriptionFr": "Il y a du bruit de la route et se trouve à côté de la station de police. Les salles de bain avaient des revêtements de morilles."
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "39",
+        "hotelName": "Secret Point Motel3",
+        "description": "The hotel is ideally located on the main commercial artery of the city in the heart of New York. A few minutes away is Time's Square and the historic centre of the city, as well as other places of interest that make New York one of America's most attractive and cosmopolitan cities.",
+        "descriptionFr": "L'hôtel est idéalement situé sur la principale artère commerciale de la ville en plein cœur de New York. A quelques minutes se trouve la place du temps et le centre historique de la ville, ainsi que d'autres lieux d'intérêt qui font de New York l'une des villes les plus attractives et cosmopolites de l'Amérique.",
+        "category": "Boutique",
+        "tags": [
+          "pool",
+          "air conditioning",
+          "concierge"
+        ],
+        "parkingIncluded": false,
+        "smokingAllowed": true,
+        "lastRenovationDate": "1970-01-18T00:00:00-05:00",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -73.975403,
+            40.760586
+          ]
+        },
+        "address": {
+          "streetAddress": "677 5th Ave",
+          "city": "New York",
+          "stateProvince": "NY",
+          "country": "USA",
+          "postalCode": "10022"
+        },
+        "rooms": [
+          {
+            "description": "Budget Room, 1 Queen Bed (Cityside)",
+            "descriptionFr": "Chambre Économique, 1 grand lit (côté ville)",
+            "type": "Budget Room",
+            "baseRate": 9.69,
+            "bedOptions": "1 Queen Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": true,
+            "tags": [
+              "vcr/dvd"
+            ]
+          },
+          {
+            "description": "Budget Room, 1 King Bed (Mountain View)",
+            "descriptionFr": "Chambre Économique, 1 très grand lit (Mountain View)",
+            "type": "Budget Room",
+            "baseRate": 8.09,
+            "bedOptions": "1 King Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": true,
+            "tags": [
+              "vcr/dvd",
+              "jacuzzi tub"
+            ]
+          }
+        ]
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "40",
+        "hotelName": "Countryside Hotel",
+        "description": "Save up to 50% off traditional hotels.  Free WiFi, great location near downtown, full kitchen, washer & dryer, 24/7 support, bowling alley, fitness center and more.",
+        "descriptionFr": "Économisez jusqu'à 50% sur les hôtels traditionnels.  WiFi gratuit, très bien situé près du centre-ville, cuisine complète, laveuse & sécheuse, support 24/7, bowling, centre de fitness et plus encore.",
+        "category": "Budget",
+        "tags": [
+          "24-hour front desk service",
+          "coffee in lobby",
+          "restaurant"
+        ],
+        "parkingIncluded": false,
+        "smokingAllowed": true,
+        "lastRenovationDate": "1999-09-06T00:00:00+00:00",
+        "rating": 3,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -78.940483,
+            35.90416
+          ]
+        },
+        "address": {
+          "streetAddress": "6910 Fayetteville Rd",
+          "city": "Durham",
+          "stateProvince": "NC",
+          "country": "USA",
+          "postalCode": "27713"
+        },
+        "rooms": [
+          {
+            "description": "Suite, 1 King Bed (Amenities)",
+            "descriptionFr": "Suite, 1 très grand lit (Services)",
+            "type": "Suite",
+            "baseRate": 2.44,
+            "bedOptions": "1 King Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": true,
+            "tags": [
+              "coffee maker"
+            ]
+          },
+          {
+            "description": "Budget Room, 1 Queen Bed (Amenities)",
+            "descriptionFr": "Chambre Économique, 1 grand lit (Services)",
+            "type": "Budget Room",
+            "baseRate": 7.69,
+            "bedOptions": "1 Queen Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": false,
+            "tags": [
+              "coffee maker"
+            ]
+          }
+        ]
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "41",
+        "hotelName": "Fancy Stay4",
+        "description": "Best hotel in town if you like luxury hotels. They have an amazing infinity pool, a spa, and a really helpful concierge. The location is perfect -- right downtown, close to all the tourist attractions. We highly recommend this hotel.",
+        "descriptionFr": "Meilleur hôtel en ville si vous aimez les hôtels de luxe. Ils ont une magnifique piscine à débordement, un spa et un concierge très utile. L'emplacement est parfait – en plein centre, à proximité de toutes les attractions touristiques. Nous recommandons fortement cet hôtel.",
+        "category": "Luxury",
+        "tags": [
+          "pool",
+          "view",
+          "wifi",
+          "concierge"
+        ],
+        "parkingIncluded": false,
+        "smokingAllowed": false,
+        "lastRenovationDate": "2010-06-27T00:00:00+00:00",
+        "rating": 5,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            47.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "42",
+        "hotelName": "Roach Motel4",
+        "description": "Cheapest hotel in town. Infact, a motel.",
+        "descriptionFr": "Hôtel le moins cher en ville. Infact, un motel.",
+        "category": "Budget",
+        "tags": [
+          "motel",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": true,
+        "lastRenovationDate": "1982-04-28T00:00:00+00:00",
+        "rating": 1,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            49.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "43",
+        "hotelName": "EconoStay4",
+        "description": "Very popular hotel in town",
+        "descriptionFr": "Hôtel le plus populaire en ville",
+        "category": "Budget",
+        "tags": [
+          "wifi",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": false,
+        "lastRenovationDate": "1995-07-01T00:00:00+00:00",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            46.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "44",
+        "hotelName": "Express Rooms4",
+        "description": "Pretty good hotel",
+        "descriptionFr": "Assez bon hôtel",
+        "category": "Budget",
+        "tags": [
+          "wifi",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": false,
+        "lastRenovationDate": "1995-07-01T00:00:00+00:00",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            48.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "45",
+        "hotelName": "Comfy Place4",
+        "description": "Another good hotel",
+        "descriptionFr": "Un autre bon hôtel",
+        "category": "Budget",
+        "tags": [
+          "wifi",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": false,
+        "lastRenovationDate": "2012-08-12T00:00:00+00:00",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            48.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "46",
+        "description": "Surprisingly expensive. Model suites have an ocean-view."
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "47",
+        "hotelName": "Modern Stay4",
+        "description": "Modern architecture, very polite staff and very clean. Also very affordable.",
+        "descriptionFr": "Architecture moderne, personnel poli et très propre. Aussi très abordable."
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "48",
+        "description": "Has some road noise and is next to the very police station. Bathrooms had morel coverings.",
+        "descriptionFr": "Il y a du bruit de la route et se trouve à côté de la station de police. Les salles de bain avaient des revêtements de morilles."
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "49",
+        "hotelName": "Secret Point Motel4",
+        "description": "The hotel is ideally located on the main commercial artery of the city in the heart of New York. A few minutes away is Time's Square and the historic centre of the city, as well as other places of interest that make New York one of America's most attractive and cosmopolitan cities.",
+        "descriptionFr": "L'hôtel est idéalement situé sur la principale artère commerciale de la ville en plein cœur de New York. A quelques minutes se trouve la place du temps et le centre historique de la ville, ainsi que d'autres lieux d'intérêt qui font de New York l'une des villes les plus attractives et cosmopolites de l'Amérique.",
+        "category": "Boutique",
+        "tags": [
+          "pool",
+          "air conditioning",
+          "concierge"
+        ],
+        "parkingIncluded": false,
+        "smokingAllowed": true,
+        "lastRenovationDate": "1970-01-18T00:00:00-05:00",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -73.975403,
+            40.760586
+          ]
+        },
+        "address": {
+          "streetAddress": "677 5th Ave",
+          "city": "New York",
+          "stateProvince": "NY",
+          "country": "USA",
+          "postalCode": "10022"
+        },
+        "rooms": [
+          {
+            "description": "Budget Room, 1 Queen Bed (Cityside)",
+            "descriptionFr": "Chambre Économique, 1 grand lit (côté ville)",
+            "type": "Budget Room",
+            "baseRate": 9.69,
+            "bedOptions": "1 Queen Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": true,
+            "tags": [
+              "vcr/dvd"
+            ]
+          },
+          {
+            "description": "Budget Room, 1 King Bed (Mountain View)",
+            "descriptionFr": "Chambre Économique, 1 très grand lit (Mountain View)",
+            "type": "Budget Room",
+            "baseRate": 8.09,
+            "bedOptions": "1 King Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": true,
+            "tags": [
+              "vcr/dvd",
+              "jacuzzi tub"
+            ]
+          }
+        ]
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "50",
+        "hotelName": "Countryside Hotel",
+        "description": "Save up to 50% off traditional hotels.  Free WiFi, great location near downtown, full kitchen, washer & dryer, 24/7 support, bowling alley, fitness center and more.",
+        "descriptionFr": "Économisez jusqu'à 50% sur les hôtels traditionnels.  WiFi gratuit, très bien situé près du centre-ville, cuisine complète, laveuse & sécheuse, support 24/7, bowling, centre de fitness et plus encore.",
+        "category": "Budget",
+        "tags": [
+          "24-hour front desk service",
+          "coffee in lobby",
+          "restaurant"
+        ],
+        "parkingIncluded": false,
+        "smokingAllowed": true,
+        "lastRenovationDate": "1999-09-06T00:00:00+00:00",
+        "rating": 3,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -78.940483,
+            35.90416
+          ]
+        },
+        "address": {
+          "streetAddress": "6910 Fayetteville Rd",
+          "city": "Durham",
+          "stateProvince": "NC",
+          "country": "USA",
+          "postalCode": "27713"
+        },
+        "rooms": [
+          {
+            "description": "Suite, 1 King Bed (Amenities)",
+            "descriptionFr": "Suite, 1 très grand lit (Services)",
+            "type": "Suite",
+            "baseRate": 2.44,
+            "bedOptions": "1 King Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": true,
+            "tags": [
+              "coffee maker"
+            ]
+          },
+          {
+            "description": "Budget Room, 1 Queen Bed (Amenities)",
+            "descriptionFr": "Chambre Économique, 1 grand lit (Services)",
+            "type": "Budget Room",
+            "baseRate": 7.69,
+            "bedOptions": "1 Queen Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": false,
+            "tags": [
+              "coffee maker"
+            ]
+          }
+        ]
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "51",
+        "hotelName": "Fancy Stay5",
+        "description": "Best hotel in town if you like luxury hotels. They have an amazing infinity pool, a spa, and a really helpful concierge. The location is perfect -- right downtown, close to all the tourist attractions. We highly recommend this hotel.",
+        "descriptionFr": "Meilleur hôtel en ville si vous aimez les hôtels de luxe. Ils ont une magnifique piscine à débordement, un spa et un concierge très utile. L'emplacement est parfait – en plein centre, à proximité de toutes les attractions touristiques. Nous recommandons fortement cet hôtel.",
+        "category": "Luxury",
+        "tags": [
+          "pool",
+          "view",
+          "wifi",
+          "concierge"
+        ],
+        "parkingIncluded": false,
+        "smokingAllowed": false,
+        "lastRenovationDate": "2010-06-27T00:00:00+00:00",
+        "rating": 5,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            47.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "52",
+        "hotelName": "Roach Motel5",
+        "description": "Cheapest hotel in town. Infact, a motel.",
+        "descriptionFr": "Hôtel le moins cher en ville. Infact, un motel.",
+        "category": "Budget",
+        "tags": [
+          "motel",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": true,
+        "lastRenovationDate": "1982-04-28T00:00:00+00:00",
+        "rating": 1,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            49.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "53",
+        "hotelName": "EconoStay5",
+        "description": "Very popular hotel in town",
+        "descriptionFr": "Hôtel le plus populaire en ville",
+        "category": "Budget",
+        "tags": [
+          "wifi",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": false,
+        "lastRenovationDate": "1995-07-01T00:00:00+00:00",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            46.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "54",
+        "hotelName": "Express Rooms5",
+        "description": "Pretty good hotel",
+        "descriptionFr": "Assez bon hôtel",
+        "category": "Budget",
+        "tags": [
+          "wifi",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": false,
+        "lastRenovationDate": "1995-07-01T00:00:00+00:00",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            48.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "55",
+        "hotelName": "Comfy Place5",
+        "description": "Another good hotel",
+        "descriptionFr": "Un autre bon hôtel",
+        "category": "Budget",
+        "tags": [
+          "wifi",
+          "budget"
+        ],
+        "parkingIncluded": true,
+        "smokingAllowed": false,
+        "lastRenovationDate": "2012-08-12T00:00:00+00:00",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -122.131577,
+            48.678581
+          ]
+        }
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "56",
+        "description": "Surprisingly expensive. Model suites have an ocean-view."
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "57",
+        "hotelName": "Modern Stay5",
+        "description": "Modern architecture, very polite staff and very clean. Also very affordable.",
+        "descriptionFr": "Architecture moderne, personnel poli et très propre. Aussi très abordable."
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "58",
+        "description": "Has some road noise and is next to the very police station. Bathrooms had morel coverings.",
+        "descriptionFr": "Il y a du bruit de la route et se trouve à côté de la station de police. Les salles de bain avaient des revêtements de morilles."
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "59",
+        "hotelName": "Secret Point Motel5",
+        "description": "The hotel is ideally located on the main commercial artery of the city in the heart of New York. A few minutes away is Time's Square and the historic centre of the city, as well as other places of interest that make New York one of America's most attractive and cosmopolitan cities.",
+        "descriptionFr": "L'hôtel est idéalement situé sur la principale artère commerciale de la ville en plein cœur de New York. A quelques minutes se trouve la place du temps et le centre historique de la ville, ainsi que d'autres lieux d'intérêt qui font de New York l'une des villes les plus attractives et cosmopolites de l'Amérique.",
+        "category": "Boutique",
+        "tags": [
+          "pool",
+          "air conditioning",
+          "concierge"
+        ],
+        "parkingIncluded": false,
+        "smokingAllowed": true,
+        "lastRenovationDate": "1970-01-18T00:00:00-05:00",
+        "rating": 4,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -73.975403,
+            40.760586
+          ]
+        },
+        "address": {
+          "streetAddress": "677 5th Ave",
+          "city": "New York",
+          "stateProvince": "NY",
+          "country": "USA",
+          "postalCode": "10022"
+        },
+        "rooms": [
+          {
+            "description": "Budget Room, 1 Queen Bed (Cityside)",
+            "descriptionFr": "Chambre Économique, 1 grand lit (côté ville)",
+            "type": "Budget Room",
+            "baseRate": 9.69,
+            "bedOptions": "1 Queen Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": true,
+            "tags": [
+              "vcr/dvd"
+            ]
+          },
+          {
+            "description": "Budget Room, 1 King Bed (Mountain View)",
+            "descriptionFr": "Chambre Économique, 1 très grand lit (Mountain View)",
+            "type": "Budget Room",
+            "baseRate": 8.09,
+            "bedOptions": "1 King Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": true,
+            "tags": [
+              "vcr/dvd",
+              "jacuzzi tub"
+            ]
+          }
+        ]
+      },
+      {
+        "@search.action": "upload",
+        "hotelId": "60",
+        "hotelName": "Countryside Hotel 5",
+        "description": "Save up to 50% off traditional hotels.  Free WiFi, great location near downtown, full kitchen, washer & dryer, 24/7 support, bowling alley, fitness center and more.",
+        "descriptionFr": "Économisez jusqu'à 50% sur les hôtels traditionnels.  WiFi gratuit, très bien situé près du centre-ville, cuisine complète, laveuse & sécheuse, support 24/7, bowling, centre de fitness et plus encore.",
+        "category": "Budget",
+        "tags": [
+          "24-hour front desk service",
+          "coffee in lobby",
+          "restaurant"
+        ],
+        "parkingIncluded": false,
+        "smokingAllowed": true,
+        "lastRenovationDate": "1999-09-06T00:00:00+00:00",
+        "rating": 3,
+        "location": {
+          "type": "Point",
+          "coordinates": [
+            -78.940483,
+            35.90416
+          ]
+        },
+        "address": {
+          "streetAddress": "6910 Fayetteville Rd",
+          "city": "Durham",
+          "stateProvince": "NC",
+          "country": "USA",
+          "postalCode": "27713"
+        },
+        "rooms": [
+          {
+            "description": "Suite, 1 King Bed (Amenities)",
+            "descriptionFr": "Suite, 1 très grand lit (Services)",
+            "type": "Suite",
+            "baseRate": 2.44,
+            "bedOptions": "1 King Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": true,
+            "tags": [
+              "coffee maker"
+            ]
+          },
+          {
+            "description": "Budget Room, 1 Queen Bed (Amenities)",
+            "descriptionFr": "Chambre Économique, 1 grand lit (Services)",
+            "type": "Budget Room",
+            "baseRate": 7.69,
+            "bedOptions": "1 Queen Bed",
+            "sleepsCount": 2,
+            "smokingAllowed": false,
+            "tags": [
+              "coffee maker"
+            ]
+          }
+        ]
+      }
+    ]
+  }
