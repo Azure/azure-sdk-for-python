@@ -1745,6 +1745,9 @@ class CheckEnum(BaseChecker):
         ),
     )
 
+    def __init__(self, linter=None):
+        super(CheckEnum, self).__init__(linter)
+
     def visit_classdef(self, node):
         """Visits every class docstring.
 
