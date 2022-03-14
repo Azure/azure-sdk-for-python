@@ -74,10 +74,11 @@ def sample_analyze_orchestration_app_qna_response():
     print("project kind: {}".format(top_intent_object.target_kind))
 
     if isinstance(top_intent_object, QuestionAnsweringTargetIntentResult):
-        print("view qna result:")
-        qna_result = result.prediction.intents[top_intent].result
+        print("\nview qna result:")
+        qna_result = top_intent_object.result
         for answer in qna_result.answers:
-            print("\tanswer: {}\n".format(answer.answer))
+            print("\nanswer: {}".format(answer.answer))
+            print("answer: {}".format(answer.confidence_score))
 
     # [END analyze_orchestration_app_qna_response]
 
