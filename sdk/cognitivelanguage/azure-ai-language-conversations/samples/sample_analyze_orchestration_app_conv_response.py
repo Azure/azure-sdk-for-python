@@ -76,16 +76,20 @@ def sample_analyze_orchestration_app_conversation_response():
     # conversation result
     if isinstance(top_intent_object, ConversationTargetIntentResult):
         print("\nview conversation result:")
-        print("intents:")
-        for intent in top_intent_object.result.prediction.intents:
-            print("\ncategory: {}".format(intent.category))
-            print("confidence score: {}".format(intent.confidence))
+
+        print("\ntop intent: {}".format(top_intent_object.result.prediction.top_intent))
+        print("category: {}".format(top_intent_object.result.prediction.intents[0].category))
+        print("confidence score: {}\n".format(top_intent_object.result.prediction.intents[0].confidence))
 
         print("\nview entities:")
         for entity in top_intent_object.result.prediction.entities:
             print("\ncategory: {}".format(entity.category))
             print("text: {}".format(entity.text))
             print("confidence score: {}".format(entity.confidence))
+            if entity.resolutions:
+                print("resolutions:")
+                for resolution in entity.resolutions:
+                    print(resolution)
 
     # [END analyze_orchestration_app_conversation_response]
 
