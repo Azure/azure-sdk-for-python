@@ -25,20 +25,22 @@
 #
 # --------------------------------------------------------------------------
 from typing import Any, TYPE_CHECKING, Optional, Union, Awaitable
+from datetime import datetime, timedelta
 import jwt
 import six
-from datetime import datetime, timedelta
-
-from ._web_pub_sub_service_client import WebPubSubServiceClient as WebPubSubServiceClientGenerated
-from ._operations._patch import _UTC_TZ
 
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import SansIOHTTPPolicy, ProxyPolicy
 from azure.core.credentials import AzureKeyCredential
 
+from ._web_pub_sub_service_client import WebPubSubServiceClient as WebPubSubServiceClientGenerated
+from ._operations._patch import _UTC_TZ
+
+
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
+
 
 def _parse_connection_string(connection_string: str, **kwargs: Any) -> Any:
     for segment in connection_string.split(";"):
@@ -138,6 +140,7 @@ class ApiManagementProxy(ProxyPolicy):
         if self._endpoint and self._reverse_proxy_endpoint:
             request.http_request.url = request.http_request.url.replace(self._endpoint, self._reverse_proxy_endpoint)
 
+
 class WebPubSubServiceClientBase:
     """Base class for init"""
 
@@ -150,10 +153,11 @@ class WebPubSubServiceClientBase:
                 credential,
                 user=kwargs.get("user"),
                 origin_endpoint=kwargs.get("origin_endpoint"),
-                reverse_proxy_endpoint=kwargs.get("reverse_proxy_endpoint")
+                reverse_proxy_endpoint=kwargs.get("reverse_proxy_endpoint"),
             )
         kwargs["proxy_policy"] = kwargs.pop("proxy_policy", ApiManagementProxy(**kwargs))
         super().__init__(endpoint=endpoint, hub=hub, credential=credential, **kwargs)
+
 
 class WebPubSubServiceClient(WebPubSubServiceClientBase, WebPubSubServiceClientGenerated):
     """WebPubSubServiceClient.
@@ -173,9 +177,7 @@ class WebPubSubServiceClient(WebPubSubServiceClientBase, WebPubSubServiceClientG
     def __init__(
         self, endpoint: str, hub: str, credential: Union["TokenCredential", AzureKeyCredential], **kwargs: Any
     ) -> None:
-        super().__init__(
-            endpoint=endpoint, hub=hub, credential=credential, **kwargs
-        )
+        super().__init__(endpoint=endpoint, hub=hub, credential=credential, **kwargs)
 
     @classmethod
     def from_connection_string(cls, connection_string: str, hub: str, **kwargs: Any) -> "WebPubSubServiceClient":
@@ -193,7 +195,9 @@ class WebPubSubServiceClient(WebPubSubServiceClientBase, WebPubSubServiceClientG
         credential = AzureKeyCredential(kwargs.pop("accesskey"))
         return cls(hub=hub, credential=credential, **kwargs)
 
+
 __all__ = ["WebPubSubServiceClient"]
+
 
 def patch_sdk():
     pass

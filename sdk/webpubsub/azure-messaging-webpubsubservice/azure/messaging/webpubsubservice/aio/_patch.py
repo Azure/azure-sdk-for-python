@@ -24,17 +24,12 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
 from typing import Any, TYPE_CHECKING, Union
 
-from azure.core import AsyncPipelineClient
-from msrest import Deserializer
-
-from .._patch import  _parse_connection_string, WebPubSubServiceClientBase
-from ._web_pub_sub_service_client import WebPubSubServiceClient as WebPubSubServiceClientGenerated
-
 from azure.core.credentials import AzureKeyCredential
-from msrest import Serializer
+
+from .._patch import _parse_connection_string, WebPubSubServiceClientBase
+from ._web_pub_sub_service_client import WebPubSubServiceClient as WebPubSubServiceClientGenerated
 
 
 if TYPE_CHECKING:
@@ -77,7 +72,9 @@ class WebPubSubServiceClient(WebPubSubServiceClientBase, WebPubSubServiceClientG
         credential = AzureKeyCredential(kwargs.pop("accesskey"))
         return cls(hub=hub, credential=credential, **kwargs)
 
+
 __all__ = ["WebPubSubServiceClient"]
+
 
 def patch_sdk():
     pass
