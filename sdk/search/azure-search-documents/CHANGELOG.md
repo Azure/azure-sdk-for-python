@@ -7,7 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
-- Bug fix for async paged requests to use api keys
+- Fixed issue where async `search` call would fail with a 403 error when retrieving large number of documents.
 
 ### Other Changes
 
