@@ -8,3 +8,8 @@
 
 from ._storage_cache_management_client import StorageCacheManagementClient
 __all__ = ['StorageCacheManagementClient']
+
+# `._patch.py` is used for handwritten extensions to the generated code
+# Example: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md
+from ._patch import patch_sdk
+patch_sdk()
