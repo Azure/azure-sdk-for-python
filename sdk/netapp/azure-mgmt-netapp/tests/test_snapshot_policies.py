@@ -1,7 +1,7 @@
 import time
 import pytest
 from azure.mgmt.resource import ResourceManagementClient
-from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, set_bodiless_matcher
 from azure.mgmt.netapp.models import SnapshotPolicy, SnapshotPolicyPatch, HourlySchedule, DailySchedule, VolumeSnapshotProperties, VolumePatchPropertiesDataProtection, VolumePatch
 from test_account import create_account, delete_account
 from test_pool import delete_pool
@@ -125,6 +125,7 @@ class TestNetAppSnapshotPolicy(AzureMgmtRecordedTestCase):
 
     @recorded_by_proxy
     def test_assign_snapshot_policy_to_volume(self):
+        set_bodiless_matcher()
         # create volume and snapshot policy
         create_volume(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, TEST_VOL_1)
         snapshot_policy = create_snapshot_policy(self.client, TEST_SNAPSHOT_POLICY_1)
