@@ -102,13 +102,16 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         """Build a custom model.
 
         The request must include a `source` parameter that is an
-        externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI).
+        externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI). Note that
+        a container URI (without SAS) is accepted only when the container is public or has a managed identity
+        configured, see more about configuring managed identities to work with Form Recognizer here:
+        https://docs.microsoft.com/azure/applied-ai-services/form-recognizer/managed-identities.
         Models are built using documents that are of the following content type - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff', or 'image/bmp'. Other types of content in the container is ignored.
 
         :param str source: An Azure Storage blob container's SAS URI. A container URI (without SAS)
-            can be used if the container is public. For more information on setting up a training data set, see:
-            https://aka.ms/azsdk/formrecognizer/buildtrainingset
+            can be used if the container is public or has a managed identity configured. For more information on
+            setting up a training data set, see: https://aka.ms/azsdk/formrecognizer/buildtrainingset.
         :param build_mode: The custom model build mode. Possible values include: "template", "neural".
             For more information about build modes, see: https://aka.ms/azsdk/formrecognizer/buildmode.
         :type build_mode: str or :class:`~azure.ai.formrecognizer.DocumentBuildMode`
