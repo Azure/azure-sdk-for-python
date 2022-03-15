@@ -21,7 +21,7 @@ except ImportError:
 import six
 
 from azure.core import MatchConditions
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
@@ -302,6 +302,57 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
+
+    @distributed_trace
+    def create_if_not_exists(self, metadata=None, public_access=None, **kwargs):
+        # type: (Optional[Dict[str, str]], Optional[Union[PublicAccess, str]], **Any) -> None
+        """
+        Creates a new container under the specified account. If the container
+        with the same name already exists, it is not changed.
+
+        :param metadata:
+            A dict with name_value pairs to associate with the
+            container as metadata. Example:{'Category':'test'}
+        :type metadata: dict[str, str]
+        :param ~azure.storage.blob.PublicAccess public_access:
+            Possible values include: 'container', 'blob'.
+        :keyword container_encryption_scope:
+            Specifies the default encryption scope to set on the container and use for
+            all future writes.
+
+            .. versionadded:: 12.2.0
+
+        :paramtype container_encryption_scope: dict or ~azure.storage.blob.ContainerEncryptionScope
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: None
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/blob_samples_containers.py
+                :start-after: [START create_container]
+                :end-before: [END create_container]
+                :language: python
+                :dedent: 12
+                :caption: Creating a container to store blobs.
+        """
+        headers = kwargs.pop('headers', {})
+        timeout = kwargs.pop('timeout', None)
+        headers.update(add_metadata_headers(metadata)) # type: ignore
+        container_cpk_scope_info = get_container_cpk_scope_info(kwargs)
+        try:
+            return self._client.container.create( # type: ignore
+                timeout=timeout,
+                access=public_access,
+                container_cpk_scope_info=container_cpk_scope_info,
+                cls=return_response_headers,
+                headers=headers,
+                **kwargs)
+        except HttpResponseError as error:
+            try:
+                process_storage_error(error)
+            except ResourceExistsError:
+                return None
 
     @distributed_trace
     def _rename_container(self, new_name, **kwargs):
