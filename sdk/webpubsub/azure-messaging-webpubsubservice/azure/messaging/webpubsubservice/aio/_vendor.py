@@ -14,24 +14,13 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from msrest import Deserializer, Serializer
 
-    from azure.core import PipelineClient
-
-
-def _format_url_section(template, **kwargs):
-    components = template.split("/")
-    while components:
-        try:
-            return template.format(**kwargs)
-        except KeyError as key:
-            formatted_components = template.split("/")
-            components = [c for c in formatted_components if "{}".format(key.args[0]) not in c]
-            template = "/".join(components)
+    from azure.core import AsyncPipelineClient
 
 
 class MixinABC(ABC):
     """DO NOT use this class. It is for internal typing use only."""
 
-    _client: "PipelineClient"
+    _client: "AsyncPipelineClient"
     _config: WebPubSubServiceClientConfiguration
     _serialize: "Serializer"
     _deserialize: "Deserializer"
