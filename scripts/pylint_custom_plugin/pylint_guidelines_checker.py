@@ -1749,7 +1749,7 @@ class CheckEnum(BaseChecker):
         super(CheckEnum, self).__init__(linter)
 
     def visit_classdef(self, node):
-        """Visits every class docstring.
+        """Visits every enum class.
 
         :param node: ast.ClassDef
         :return: None
