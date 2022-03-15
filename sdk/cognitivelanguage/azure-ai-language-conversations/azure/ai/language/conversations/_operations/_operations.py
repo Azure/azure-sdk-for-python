@@ -8,40 +8,59 @@
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Dict, Optional, TypeVar
 
+from msrest import Serializer
+
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
+from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
-from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.tracing.decorator import distributed_trace
 
-from ... import models as _models
-from ...operations._operations import build_conversation_analysis_analyze_conversation_request
+from .. import models as _models
 T = TypeVar('T')
 JSONType = Any
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class ConversationAnalysisOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 
-        Instead, you should access the following operations through
-        :class:`~azure.ai.language.conversations.aio.ConversationAnalysisClient`'s
-        :attr:`conversation_analysis` attribute.
-    """
+def build_analyze_conversation_request(
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = kwargs.pop('api_version', "2022-03-01-preview")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    models = _models
+    accept = "application/json"
+    # Construct URL
+    _url = "/:analyze-conversations"
 
-    def __init__(self, *args, **kwargs) -> None:
-        args = list(args)
-        self._client = args.pop(0) if args else kwargs.pop("client")
-        self._config = args.pop(0) if args else kwargs.pop("config")
-        self._serialize = args.pop(0) if args else kwargs.pop("serializer")
-        self._deserialize = args.pop(0) if args else kwargs.pop("deserializer")
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
-    @distributed_trace_async
-    async def analyze_conversation(
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        json=json,
+        content=content,
+        **kwargs
+    )
+
+class ConversationAnalysisClientOperationsMixin(object):
+
+    @distributed_trace
+    def analyze_conversation(
         self,
         body: "_models.AnalyzeConversationTask",
         **kwargs: Any
@@ -65,7 +84,7 @@ class ConversationAnalysisOperations:
 
         _json = self._serialize.body(body, 'AnalyzeConversationTask')
 
-        request = build_conversation_analysis_analyze_conversation_request(
+        request = build_analyze_conversation_request(
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -75,7 +94,7 @@ class ConversationAnalysisOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,
             **kwargs

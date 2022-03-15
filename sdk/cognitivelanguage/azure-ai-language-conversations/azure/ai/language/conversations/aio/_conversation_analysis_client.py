@@ -17,9 +17,9 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .. import models
 from ._configuration import ConversationAnalysisClientConfiguration
-from .operations import ConversationAnalysisOperations
+from ._operations import ConversationAnalysisClientOperationsMixin
 
-class ConversationAnalysisClient:
+class ConversationAnalysisClient(ConversationAnalysisClientOperationsMixin):
     """This API accepts a request and mediates among multiple language projects, such as LUIS
     Generally Available, Question Answering, Conversational Language Understanding, and then calls
     the best candidate service to handle the request. At last, it returns a response with the
@@ -28,9 +28,6 @@ class ConversationAnalysisClient:
      In some cases, this API needs to forward requests and responses between the caller and an
     upstream service.
 
-    :ivar conversation_analysis: ConversationAnalysisOperations operations
-    :vartype conversation_analysis:
-     azure.ai.language.conversations.aio.operations.ConversationAnalysisOperations
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.api.cognitiveservices.azure.com).
     :type endpoint: str
@@ -55,7 +52,6 @@ class ConversationAnalysisClient:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.conversation_analysis = ConversationAnalysisOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
     def send_request(
