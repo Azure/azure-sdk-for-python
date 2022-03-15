@@ -60,10 +60,10 @@ class ConversationAppAsyncTests(AsyncConversationTest):
             assert result.results.prediction.top_intent == 'Read'
             assert len(result.results.prediction.intents) > 0
             assert result.results.prediction.intents[0].category == 'Read'
-            assert result.results.prediction.intents[0].confidence_score > 0
+            assert result.results.prediction.intents[0].confidence > 0
             # assert - entities
             assert len(result.results.prediction.entities) > 0
             assert result.results.prediction.entities[0].category == 'Contact'
             assert result.results.prediction.entities[0].text == 'Carol'
-            assert result.results.prediction.entities[0].confidence_score > 0
+            assert result.results.prediction.entities[0].confidence > 0
  

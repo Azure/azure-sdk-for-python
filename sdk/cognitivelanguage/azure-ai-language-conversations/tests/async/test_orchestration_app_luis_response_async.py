@@ -65,7 +65,7 @@ class OrchestrationAppLuisResponseAsyncTests(AsyncConversationTest):
             # assert intent and entities
             top_intent = "RestaurantReservation.Reserve"
             luis_result = top_intent_object.result["prediction"]
-            assert luis_result["top_intent"] == top_intent
+            assert luis_result["topIntent"] == top_intent
             assert len(luis_result["intents"]) > 0
             assert luis_result["intents"][top_intent]["score"] > 0
             # assert - entities
