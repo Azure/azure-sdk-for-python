@@ -16,7 +16,7 @@ except ImportError:
     from urllib2 import quote, unquote # type: ignore
 
 import six
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
@@ -370,6 +370,74 @@ class ShareClient(StorageAccountHostsMixin):
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
+
+    @distributed_trace
+    def create_share_if_not_exists(self, **kwargs):
+        # type: (Any) -> Dict[str, Any]
+        """Creates a new Share under the account. If a share with the
+        same name already exists, it is not changed.
+
+        :keyword dict(str,str) metadata:
+            Name-value pairs associated with the share as metadata.
+        :keyword int quota:
+            The quota to be allotted.
+        :keyword access_tier:
+            Specifies the access tier of the share.
+            Possible values: 'TransactionOptimized', 'Hot', 'Cool'
+        :paramtype access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
+
+            .. versionadded:: 12.4.0
+
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :keyword protocols:
+            Protocols to enable on the share. Only one protocol can be enabled on the share.
+        :paramtype protocols: str or ~azure.storage.fileshare.ShareProtocols
+        :keyword root_squash:
+            Root squash to set on the share.
+            Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
+        :paramtype root_squash: str or ~azure.storage.fileshare.ShareRootSquash
+        :returns: Share-updated property dict (Etag and last modified).
+        :rtype: dict(str, Any)
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/file_samples_share.py
+                :start-after: [START create_share]
+                :end-before: [END create_share]
+                :language: python
+                :dedent: 8
+                :caption: Creates a file share.
+        """
+        metadata = kwargs.pop('metadata', None)
+        quota = kwargs.pop('quota', None)
+        access_tier = kwargs.pop('access_tier', None)
+        timeout = kwargs.pop('timeout', None)
+        root_squash = kwargs.pop('root_squash', None)
+        protocols = kwargs.pop('protocols', None)
+        if protocols and protocols not in ['NFS', 'SMB', ShareProtocols.SMB, ShareProtocols.NFS]:
+            raise ValueError("The enabled protocol must be set to either SMB or NFS.")
+        if root_squash and protocols not in ['NFS', ShareProtocols.NFS]:
+            raise ValueError("The 'root_squash' keyword can only be used on NFS enabled shares.")
+        headers = kwargs.pop('headers', {})
+        headers.update(add_metadata_headers(metadata)) # type: ignore
+
+        try:
+            return self._client.share.create( # type: ignore
+                timeout=timeout,
+                metadata=metadata,
+                quota=quota,
+                access_tier=access_tier,
+                root_squash=root_squash,
+                enabled_protocols=protocols,
+                cls=return_response_headers,
+                headers=headers,
+                **kwargs)
+        except HttpResponseError as error:
+            try:
+                process_storage_error(error)
+            except ResourceExistsError:
+                return None
 
     @distributed_trace
     def create_snapshot( # type: ignore
