@@ -181,8 +181,7 @@ class DataFeedGranularity:
     :keyword int custom_granularity_value: Must be populated if granularity_type is "Custom".
     """
 
-    def __init__(self, granularity_type, **kwargs):
-        # type: (Union[str, generated_models.DataFeedGranularityType], Any) -> None
+    def __init__(self, granularity_type: Union[str, generated_models.DataFeedGranularityType], **kwargs: Any) -> None:
         self.granularity_type = granularity_type
         self.custom_granularity_value = kwargs.get("custom_granularity_value", None)
 
@@ -212,8 +211,7 @@ class DataFeedIngestionSettings:
         schedule time in seconds.
     """
 
-    def __init__(self, ingestion_begin_time, **kwargs):
-        # type: (datetime.datetime, Any) -> None
+    def __init__(self, ingestion_begin_time: datetime.datetime, **kwargs: Any) -> None:
         self.ingestion_begin_time = ingestion_begin_time
         self.ingestion_start_offset = kwargs.get("ingestion_start_offset", 0)
         self.data_source_request_concurrency = kwargs.get("data_source_request_concurrency", -1)
@@ -297,8 +295,7 @@ class DataFeedSchema:
         If timestamp_column is None, start time of every time slice will be used as default value.
     """
 
-    def __init__(self, metrics, **kwargs):
-        # type: (List[DataFeedMetric], Any) -> None
+    def __init__(self, metrics: List["DataFeedMetric"], **kwargs: Any) -> None:
         self.metrics = metrics
         self.dimensions = kwargs.get("dimensions", None)
         self.timestamp_column = kwargs.get("timestamp_column", None)
@@ -490,7 +487,7 @@ class DataFeed(generated_models.DataFeed):  # pylint:disable=too-many-instance-a
             status=kwargs.pop("status", self.status),
             created_time=kwargs.pop("createdTime", self.created_time),
             action_link_template=kwargs.pop("actionLinkTemplate", self.action_link_template),
-            authentication_type=kwargs.pop("authenticationType", self.source.authentication_type), # type: ignore
+            authentication_type=kwargs.pop("authenticationType", self.source.authentication_type),  # type: ignore
             credential_id=kwargs.pop("credentialId", self.source.credential_id),  # type: ignore
         )
         retval.data_source_type = self.source.data_source_type  # type: ignore
@@ -879,8 +876,7 @@ class AzureApplicationInsightsDataFeedSource(DataFeedSource, generated_models.Az
     :keyword str api_key: API Key.
     """
 
-    def __init__(self, query, **kwargs):
-        # type: (str, **Any) -> None
+    def __init__(self, query: str, **kwargs: Any) -> None:
         super().__init__(
             data_source_type="AzureApplicationInsights", authentication_type="Basic", query=query, **kwargs
         )
@@ -1346,8 +1342,7 @@ class AzureLogAnalyticsDataFeedSource(DataFeedSource, generated_models.AzureLogA
      Analytics.
     """
 
-    def __init__(self, workspace_id, query, **kwargs):
-        # type: (str, str, **Any) -> None
+    def __init__(self, workspace_id: str, query: str, **kwargs: Any) -> None:
         super().__init__(data_source_type="AzureLogAnalytics", **kwargs)
         authentication_type, credential_id = get_auth_from_datasource_kwargs(
             default_authentication_type="Basic",
@@ -3071,6 +3066,7 @@ __all__ = [
     "AlertQueryTimeMode",
     "FeedbackQueryTimeMode",
     "SeriesIdentity",
+    "AlertQueryTimeMode",
 ]
 
 

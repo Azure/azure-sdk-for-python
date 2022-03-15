@@ -30,6 +30,7 @@ from typing import List, Dict, Any, Union, overload, TYPE_CHECKING, cast
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
+from azure.core.credentials_async import AsyncTokenCredential
 
 from .._operations._patch import (
     DataFeedSourceUnion,
@@ -42,10 +43,7 @@ from .._patch import (
     get_authentication_policy,
 )
 from ._metrics_advisor_client import MetricsAdvisorClient as _ClientAsync
-from ..models import *  # pylint: disable=unused-wildcard-import,wildcard-import
-
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
+from .. import models
 
 
 class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-methods
@@ -88,8 +86,7 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
             **kwargs
         )
 
-    def __repr__(self):
-        # type: () -> str
+    def __repr__(self) -> str:
         return "<MetricsAdvisorAdministrationClient [endpoint={}]>".format(repr(self._endpoint))[:1024]
 
     async def __aenter__(self) -> "MetricsAdvisorAdministrationClient":
@@ -105,8 +102,12 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
 
     @distributed_trace_async
     async def create_alert_configuration(
-        self, name: str, metric_alert_configurations: List[MetricAlertConfiguration], hook_ids: List[str], **kwargs: Any
-    ) -> AnomalyAlertConfiguration:
+        self,
+        name: str,
+        metric_alert_configurations: List[models.MetricAlertConfiguration],
+        hook_ids: List[str],
+        **kwargs: Any
+    ) -> models.AnomalyAlertConfiguration:
         """Create an anomaly alert configuration.
 
         :param str name: Name for the anomaly alert configuration.
@@ -140,11 +141,11 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
         self,
         name: str,
         source: DataFeedSourceUnion,
-        granularity: Union[str, DataFeedGranularityType, DataFeedGranularity],
-        schema: Union[List[str], DataFeedSchema],
-        ingestion_settings: Union[datetime.datetime, DataFeedIngestionSettings],
+        granularity: Union[str, models.DataFeedGranularityType, models.DataFeedGranularity],
+        schema: Union[List[str], models.DataFeedSchema],
+        ingestion_settings: Union[datetime.datetime, models.DataFeedIngestionSettings],
         **kwargs: Any
-    ) -> DataFeed:
+    ) -> models.DataFeed:
         """Create a new data feed.
 
         :param str name: Name for the data feed.
@@ -199,8 +200,8 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
 
     @distributed_trace_async
     async def create_hook(
-        self, hook: Union[EmailNotificationHook, WebNotificationHook], **kwargs: Any
-    ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
+        self, hook: Union[models.EmailNotificationHook, models.WebNotificationHook], **kwargs: Any
+    ) -> Union[models.NotificationHook, models.EmailNotificationHook, models.WebNotificationHook]:
         """Create a new email or web hook.
 
         :param hook: An email or web hook to create
@@ -225,8 +226,12 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
 
     @distributed_trace_async
     async def create_detection_configuration(
-        self, name: str, metric_id: str, whole_series_detection_condition: MetricDetectionCondition, **kwargs: Any
-    ) -> AnomalyDetectionConfiguration:
+        self,
+        name: str,
+        metric_id: str,
+        whole_series_detection_condition: models.MetricDetectionCondition,
+        **kwargs: Any
+    ) -> models.AnomalyDetectionConfiguration:
         """Create anomaly detection configuration.
 
         :param str name: The name for the anomaly detection configuration
@@ -259,7 +264,7 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
         )
 
     @distributed_trace_async
-    async def get_data_feed(self, data_feed_id: str, **kwargs: Any) -> DataFeed:
+    async def get_data_feed(self, data_feed_id: str, **kwargs: Any) -> models.DataFeed:
         """Get a data feed by its id.
 
         :param data_feed_id: The data feed unique id.
@@ -280,7 +285,9 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
         return await self._client.get_data_feed(data_feed_id=data_feed_id, **kwargs)
 
     @distributed_trace_async
-    async def get_alert_configuration(self, alert_configuration_id: str, **kwargs: Any) -> AnomalyAlertConfiguration:
+    async def get_alert_configuration(
+        self, alert_configuration_id: str, **kwargs: Any
+    ) -> models.AnomalyAlertConfiguration:
         """Get a single anomaly alert configuration.
 
         :param alert_configuration_id: anomaly alert configuration unique id.
@@ -303,7 +310,7 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
     @distributed_trace_async
     async def get_detection_configuration(
         self, detection_configuration_id: str, **kwargs: Any
-    ) -> AnomalyDetectionConfiguration:
+    ) -> models.AnomalyDetectionConfiguration:
         """Get a single anomaly detection configuration.
 
         :param detection_configuration_id: anomaly detection configuration unique id.
@@ -328,7 +335,7 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
     @distributed_trace_async
     async def get_hook(
         self, hook_id: str, **kwargs: Any
-    ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
+    ) -> Union[models.NotificationHook, models.EmailNotificationHook, models.WebNotificationHook]:
         """Get a web or email hook by its id.
 
         :param hook_id: Hook unique ID.
@@ -351,7 +358,9 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
         return await self._client.get_hook(hook_id=hook_id, **kwargs)
 
     @distributed_trace_async
-    async def get_data_feed_ingestion_progress(self, data_feed_id: str, **kwargs: Any) -> DataFeedIngestionProgress:
+    async def get_data_feed_ingestion_progress(
+        self, data_feed_id: str, **kwargs: Any
+    ) -> models.DataFeedIngestionProgress:
         """Get last successful data ingestion job timestamp by data feed.
 
         :param data_feed_id: The data feed unique id.
@@ -486,7 +495,7 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
         return await self._client.delete_hook(*hook_id, **kwargs)
 
     @distributed_trace_async
-    async def update_data_feed(self, data_feed: Union[str, DataFeed], **kwargs: Any) -> DataFeed:
+    async def update_data_feed(self, data_feed: Union[str, models.DataFeed], **kwargs: Any) -> models.DataFeed:
         """Update a data feed. Either pass the entire DataFeed object with the chosen updates
         or the ID to your data feed with updates passed via keyword arguments. If you pass both
         the DataFeed object and keyword arguments, the keyword arguments will take precedence.
@@ -548,8 +557,8 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
 
     @distributed_trace_async
     async def update_alert_configuration(
-        self, alert_configuration: Union[str, AnomalyAlertConfiguration], **kwargs: Any
-    ) -> AnomalyAlertConfiguration:
+        self, alert_configuration: Union[str, models.AnomalyAlertConfiguration], **kwargs: Any
+    ) -> models.AnomalyAlertConfiguration:
         """Update anomaly alerting configuration. Either pass the entire AnomalyAlertConfiguration object
         with the chosen updates or the ID to your alert configuration with updates passed via keyword arguments.
         If you pass both the AnomalyAlertConfiguration object and keyword arguments, the keyword arguments
@@ -582,8 +591,8 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
 
     @distributed_trace_async
     async def update_detection_configuration(
-        self, detection_configuration: Union[str, AnomalyDetectionConfiguration], **kwargs: Any
-    ) -> AnomalyDetectionConfiguration:
+        self, detection_configuration: Union[str, models.AnomalyDetectionConfiguration], **kwargs: Any
+    ) -> models.AnomalyDetectionConfiguration:
         """Update anomaly metric detection configuration. Either pass the entire AnomalyDetectionConfiguration object
         with the chosen updates or the ID to your detection configuration with updates passed via keyword arguments.
         If you pass both the AnomalyDetectionConfiguration object and keyword arguments, the keyword arguments
@@ -623,8 +632,8 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
 
     @distributed_trace_async
     async def update_hook(
-        self, hook: Union[str, EmailNotificationHook, WebNotificationHook], **kwargs: Any
-    ) -> Union[NotificationHook, EmailNotificationHook, WebNotificationHook]:
+        self, hook: Union[str, models.EmailNotificationHook, models.WebNotificationHook], **kwargs: Any
+    ) -> Union[models.NotificationHook, models.EmailNotificationHook, models.WebNotificationHook]:
         """Update a hook. Either pass the entire EmailNotificationHook or WebNotificationHook object with the
         chosen updates, or the ID to your hook configuration with the updates passed via keyword arguments.
         If you pass both the hook object and keyword arguments, the keyword arguments will take precedence.
@@ -664,7 +673,7 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
     @distributed_trace
     def list_hooks(
         self, **kwargs: Any
-    ) -> AsyncItemPaged[Union[NotificationHook, EmailNotificationHook, WebNotificationHook]]:
+    ) -> AsyncItemPaged[Union[models.NotificationHook, models.EmailNotificationHook, models.WebNotificationHook]]:
         """List all hooks.
 
         :keyword str hook_name: filter hook by its name.
@@ -684,12 +693,12 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
                 :caption: List all the notification hooks under an account
         """
         return cast(
-            AsyncItemPaged[Union[NotificationHook, EmailNotificationHook, WebNotificationHook]],
+            AsyncItemPaged[Union[models.NotificationHook, models.EmailNotificationHook, models.WebNotificationHook]],
             self._client.list_hooks(**kwargs),
         )
 
     @distributed_trace
-    def list_data_feeds(self, **kwargs: Any) -> AsyncItemPaged[DataFeed]:
+    def list_data_feeds(self, **kwargs: Any) -> AsyncItemPaged[models.DataFeed]:
         """List all data feeds.
 
         :keyword str data_feed_name: filter data feed by its name.
@@ -714,12 +723,12 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
                 :dedent: 4
                 :caption: List data feeds under an account.
         """
-        return cast(AsyncItemPaged[DataFeed], self._client.list_data_feeds(**kwargs))
+        return cast(AsyncItemPaged[models.DataFeed], self._client.list_data_feeds(**kwargs))
 
     @distributed_trace
     def list_alert_configurations(
         self, detection_configuration_id: str, **kwargs: Any
-    ) -> AsyncItemPaged[AnomalyAlertConfiguration]:
+    ) -> AsyncItemPaged[models.AnomalyAlertConfiguration]:
         """Query all anomaly alert configurations for specific anomaly detection configuration.
 
         :param detection_configuration_id: anomaly detection configuration unique id.
@@ -738,14 +747,14 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
                 :caption: List all anomaly alert configurations for specific anomaly detection configuration
         """
         return cast(
-            AsyncItemPaged[AnomalyAlertConfiguration],
+            AsyncItemPaged[models.AnomalyAlertConfiguration],
             self._client.list_alert_configurations(detection_configuration_id=detection_configuration_id, **kwargs),
         )
 
     @distributed_trace
     def list_detection_configurations(
         self, metric_id: str, **kwargs: Any
-    ) -> AsyncItemPaged[AnomalyDetectionConfiguration]:
+    ) -> AsyncItemPaged[models.AnomalyDetectionConfiguration]:
         """Query all anomaly detection configurations for specific metric.
 
         :param metric_id: metric unique id.
@@ -764,7 +773,7 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
                 :caption: List all anomaly detection configurations for a specific metric
         """
         return cast(
-            AsyncItemPaged[AnomalyDetectionConfiguration],
+            AsyncItemPaged[models.AnomalyDetectionConfiguration],
             self._client.list_detection_configurations(metric_id=metric_id, **kwargs),
         )
 
@@ -775,7 +784,7 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
         start_time: Union[str, datetime.datetime],
         end_time: Union[str, datetime.datetime],
         **kwargs: Any
-    ) -> AsyncItemPaged[DataFeedIngestionStatus]:
+    ) -> AsyncItemPaged[models.DataFeedIngestionStatus]:
         """Get data ingestion status by data feed.
 
         :param str data_feed_id: The data feed unique id.
@@ -798,7 +807,7 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
                 :caption: List the data feed ingestion statuses by data feed ID
         """
         return cast(
-            AsyncItemPaged[DataFeedIngestionStatus],
+            AsyncItemPaged[models.DataFeedIngestionStatus],
             self._client.list_data_feed_ingestion_status(
                 data_feed_id=data_feed_id, start_time=start_time, end_time=end_time, **kwargs
             ),
@@ -1000,7 +1009,7 @@ class MetricsAdvisorClient:
         return await self._client.add_feedback(feedback=feedback, **kwargs)
 
     @distributed_trace_async
-    async def get_feedback(self, feedback_id: str, **kwargs: Any) -> Union[MetricFeedback, FeedbackUnion]:
+    async def get_feedback(self, feedback_id: str, **kwargs: Any) -> Union[models.MetricFeedback, FeedbackUnion]:
         """Get a metric feedback by its id.
 
         :param str feedback_id: the id of the feedback.
@@ -1024,7 +1033,9 @@ class MetricsAdvisorClient:
         return await self._client.get_feedback(feedback_id=feedback_id, **kwargs)
 
     @distributed_trace
-    def list_feedback(self, metric_id: str, **kwargs: Any) -> AsyncItemPaged[Union[MetricFeedback, FeedbackUnion]]:
+    def list_feedback(
+        self, metric_id: str, **kwargs: Any
+    ) -> AsyncItemPaged[Union[models.MetricFeedback, FeedbackUnion]]:
         """List feedback on the given metric.
 
         :param str metric_id: filter feedbacks by metric id
@@ -1054,14 +1065,14 @@ class MetricsAdvisorClient:
                 :caption: List feedback on the given metric.
         """
         return cast(
-            AsyncItemPaged[Union[MetricFeedback, FeedbackUnion]],
+            AsyncItemPaged[Union[models.MetricFeedback, FeedbackUnion]],
             self._client.list_feedback(metric_id=metric_id, **kwargs),
         )
 
     @distributed_trace
     def list_incident_root_causes(
         self, detection_configuration_id: str, incident_id: str, **kwargs: Any
-    ) -> AsyncItemPaged[IncidentRootCause]:
+    ) -> AsyncItemPaged[models.IncidentRootCause]:
         """Query root cause for incident.
 
         :param detection_configuration_id: anomaly detection configuration unique id.
@@ -1082,7 +1093,7 @@ class MetricsAdvisorClient:
                 :caption: Query incident root causes.
         """
         return cast(
-            AsyncItemPaged[IncidentRootCause],
+            AsyncItemPaged[models.IncidentRootCause],
             self._client.list_incident_root_causes(
                 detection_configuration_id=detection_configuration_id, incident_id=incident_id, **kwargs
             ),
@@ -1092,11 +1103,11 @@ class MetricsAdvisorClient:
     def list_metric_enriched_series_data(
         self,
         detection_configuration_id: str,
-        series: Union[List[SeriesIdentity], List[Dict[str, str]]],
+        series: Union[List[models.SeriesIdentity], List[Dict[str, str]]],
         start_time: Union[str, datetime.datetime],
         end_time: Union[str, datetime.datetime],
         **kwargs: Any
-    ) -> AsyncItemPaged[MetricEnrichedSeriesData]:
+    ) -> AsyncItemPaged[models.MetricEnrichedSeriesData]:
         """Query series enriched by anomaly detection.
 
         :param str detection_configuration_id: anomaly alerting configuration unique id.
@@ -1118,7 +1129,7 @@ class MetricsAdvisorClient:
                 :caption: Query metric enriched series data.
         """
         return cast(
-            AsyncItemPaged[MetricEnrichedSeriesData],
+            AsyncItemPaged[models.MetricEnrichedSeriesData],
             self._client.list_metric_enriched_series_data(
                 detection_configuration_id=detection_configuration_id,
                 series=series,
@@ -1134,9 +1145,9 @@ class MetricsAdvisorClient:
         alert_configuration_id: str,
         start_time: Union[str, datetime.datetime],
         end_time: Union[str, datetime.datetime],
-        time_mode: Union[str, AlertQueryTimeMode],
+        time_mode: Union[str, models.AlertQueryTimeMode],
         **kwargs: Any
-    ) -> AsyncItemPaged[AnomalyAlert]:
+    ) -> AsyncItemPaged[models.AnomalyAlert]:
         """Query alerts under anomaly alert configuration.
 
         :param alert_configuration_id: anomaly alert configuration unique id.
@@ -1161,7 +1172,7 @@ class MetricsAdvisorClient:
                 :caption: Query anomaly detection results.
         """
         return cast(
-            AsyncItemPaged[AnomalyAlert],
+            AsyncItemPaged[models.AnomalyAlert],
             self._client.list_alerts(
                 alert_configuration_id=alert_configuration_id,
                 start_time=start_time,
@@ -1174,7 +1185,7 @@ class MetricsAdvisorClient:
     @overload
     def list_anomalies(
         self, *, alert_configuration_id: str, alert_id: str, **kwargs: Any
-    ) -> AsyncItemPaged[DataPointAnomaly]:
+    ) -> AsyncItemPaged[models.DataPointAnomaly]:
         """Query anomalies under a specific alert.
 
         :param alert_configuration_id: anomaly alert configuration unique id.
@@ -1204,7 +1215,7 @@ class MetricsAdvisorClient:
         start_time: Union[str, datetime.datetime],
         end_time: Union[str, datetime.datetime],
         **kwargs: Any
-    ) -> AsyncItemPaged[DataPointAnomaly]:
+    ) -> AsyncItemPaged[models.DataPointAnomaly]:
         """Query anomalies under a detection configuration.
 
         :param detection_configuration_id: anomaly detection configuration unique id.
@@ -1220,7 +1231,7 @@ class MetricsAdvisorClient:
         """
 
     @distributed_trace
-    def list_anomalies(self, **kwargs: Any) -> AsyncItemPaged[DataPointAnomaly]:
+    def list_anomalies(self, **kwargs: Any) -> AsyncItemPaged[models.DataPointAnomaly]:
         """Query anomalies under a specific alert or detection configuration.
 
         :keyword str alert_configuration_id: anomaly alert configuration unique id.
@@ -1235,7 +1246,7 @@ class MetricsAdvisorClient:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.DataPointAnomaly]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return cast(AsyncItemPaged[DataPointAnomaly], self._client.list_anomalies(**kwargs))
+        return cast(AsyncItemPaged[models.DataPointAnomaly], self._client.list_anomalies(**kwargs))  # type: ignore
 
     @distributed_trace
     def list_anomaly_dimension_values(
@@ -1281,9 +1292,8 @@ class MetricsAdvisorClient:
 
     @overload
     def list_incidents(
-        self, alert_configuration_id: str, alert_id: str, **kwargs: Any
-    ) -> AsyncItemPaged[AnomalyIncident]:
-
+        self, *, alert_configuration_id: str, alert_id: str, **kwargs: Any
+    ) -> AsyncItemPaged[models.AnomalyIncident]:
         """Query incidents under a specific alert.
 
         :param alert_configuration_id: anomaly alerting configuration unique id.
@@ -1308,12 +1318,12 @@ class MetricsAdvisorClient:
     @overload
     def list_incidents(
         self,
+        *,
         detection_configuration_id: str,
         start_time: Union[str, datetime.datetime],
         end_time: Union[str, datetime.datetime],
         **kwargs: Any
-    ) -> AsyncItemPaged[AnomalyIncident]:
-
+    ) -> AsyncItemPaged[models.AnomalyIncident]:
         """Query incidents under a detection configuration.
 
         :param detection_configuration_id: anomaly detection configuration unique id.
@@ -1337,7 +1347,7 @@ class MetricsAdvisorClient:
         """
 
     @distributed_trace
-    def list_incidents(self, **kwargs: Any) -> AsyncItemPaged[AnomalyIncident]:
+    def list_incidents(self, **kwargs: Any) -> AsyncItemPaged[models.AnomalyIncident]:
         """Query incidents under a specific alert or detection configuration.
 
         :keyword str alert_configuration_id: anomaly alerting configuration unique id.
@@ -1352,7 +1362,7 @@ class MetricsAdvisorClient:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.metricsadvisor.models.AnomalyIncident]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return cast(AsyncItemPaged[AnomalyIncident], self._client.list_incidents(**kwargs))
+        return cast(AsyncItemPaged[models.AnomalyIncident], self._client.list_incidents(**kwargs))  # type: ignore
 
     @distributed_trace
     def list_metric_dimension_values(self, metric_id: str, dimension_name: str, **kwargs: Any) -> AsyncItemPaged[str]:
@@ -1391,7 +1401,7 @@ class MetricsAdvisorClient:
         start_time: Union[str, datetime.datetime],
         end_time: Union[str, datetime.datetime],
         **kwargs: Any
-    ) -> AsyncItemPaged[MetricSeriesData]:
+    ) -> AsyncItemPaged[models.MetricSeriesData]:
         """Get time series data from metric.
 
         :param metric_id: metric unique id.
@@ -1414,7 +1424,7 @@ class MetricsAdvisorClient:
                 :caption: Query metrics series data.
         """
         return cast(
-            AsyncItemPaged[MetricSeriesData],
+            AsyncItemPaged[models.MetricSeriesData],
             self._client.list_metric_series_data(
                 metric_id=metric_id, series_keys=series_keys, start_time=start_time, end_time=end_time, **kwargs
             ),
@@ -1423,7 +1433,7 @@ class MetricsAdvisorClient:
     @distributed_trace
     def list_metric_series_definitions(
         self, metric_id: str, active_since: datetime.datetime, **kwargs: Any
-    ) -> AsyncItemPaged[MetricSeriesDefinition]:
+    ) -> AsyncItemPaged[models.MetricSeriesDefinition]:
         """List series (dimension combinations) from metric.
 
         :param metric_id: metric unique id.
@@ -1448,7 +1458,7 @@ class MetricsAdvisorClient:
                 :caption: Query metric series definitions.
         """
         return cast(
-            AsyncItemPaged[MetricSeriesDefinition],
+            AsyncItemPaged[models.MetricSeriesDefinition],
             self._client.list_metric_series_definitions(metric_id=metric_id, active_since=active_since, **kwargs),
         )
 
@@ -1459,7 +1469,7 @@ class MetricsAdvisorClient:
         start_time: Union[str, datetime.datetime],
         end_time: Union[str, datetime.datetime],
         **kwargs: Any
-    ) -> AsyncItemPaged[EnrichmentStatus]:
+    ) -> AsyncItemPaged[models.EnrichmentStatus]:
         """Query anomaly detection status.
 
         :param metric_id: filter feedbacks by metric id.
@@ -1481,14 +1491,14 @@ class MetricsAdvisorClient:
                 :caption: Query metric enrichment status.
         """
         return cast(
-            AsyncItemPaged[EnrichmentStatus],
+            AsyncItemPaged[models.EnrichmentStatus],
             self._client.list_metric_enrichment_status(
                 metric_id=metric_id, start_time=start_time, end_time=end_time, **kwargs
             ),
         )
 
 
-def patch_sdk():  # pylint: disable=function-redefined
+def patch_sdk():
     pass
 
 

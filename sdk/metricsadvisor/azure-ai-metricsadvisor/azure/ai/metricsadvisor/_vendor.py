@@ -5,7 +5,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from __future__ import annotations
 from abc import ABC
 from typing import TYPE_CHECKING
 
@@ -32,7 +31,7 @@ def _format_url_section(template, **kwargs):
 class MixinABC(ABC):
     """DO NOT use this class. It is for internal typing use only."""
 
-    _client: PipelineClient
+    _client: "PipelineClient"
     _config: MetricsAdvisorClientConfiguration
-    _serialize: Serializer
-    _deserialize: Deserializer
+    _serialize: "Serializer"
+    _deserialize: "Deserializer"
