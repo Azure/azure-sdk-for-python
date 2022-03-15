@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b2 (Unreleased)
+## 1.0.0b2 (2022-03-09)
 
 ### Features Added
 
@@ -11,7 +11,7 @@
 
 - `MessageMetadataDict` has been renamed `MessageContent`.
 - `data` in `MessageContent` has been renamed `content`.
-- The `data` parameter in `encode` and `decode` on the sync and async `AvroEncoder` have been renamed `content`.
+- The `data` parameter in `encode` and `decode` on the sync and async `AvroEncoder` has been renamed `content`.
 - The `from_message_data` method in the `MessageType` protocol has been renamed `from_message_content`. The `data` parameter in `from_message_content` has been renamed `content`.
 - The `__message_data__` method in the `MessageType` protocol has been renamed `__message_content__`.
 

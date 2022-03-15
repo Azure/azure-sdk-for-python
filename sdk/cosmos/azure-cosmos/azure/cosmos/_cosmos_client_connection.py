@@ -141,7 +141,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             http_constants.HttpHeaders.IsContinuationExpected: False,
         }
 
-        # Keeps the latest response headers from server.
+        # Keeps the latest response headers from the server.
         self.last_response_headers = None
 
         self._useMultipleWriteLocations = False
