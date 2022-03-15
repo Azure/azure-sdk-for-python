@@ -17,19 +17,19 @@ from testcase import (
 from azure.ai.language.conversations import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
     AnalyzeConversationResult,
-    ConversationTargetIntentResult,
+    QuestionAnsweringTargetIntentResult,
     OrchestratorPrediction,
 )
 
-class OrchestrationAppConvResponseTests(ConversationTest):
+class OrchestrationAppQnaResponseTests(ConversationTest):
 
     @GlobalConversationAccountPreparer()
-    def test_orchestration_app_conv_response(self, endpoint, key, orch_project_name, orch_deployment_name):
+    def test_orchestration_app_qna_response(self, endpoint, key, orch_project_name, orch_deployment_name):
 
         # analyze query
         client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
         with client:
-            query = "Send an email to Carol about the tomorrow's demo"
+            query = "How are you?"
             result = client.conversation_analysis.analyze_conversation(
                 body={
                     "kind": "CustomConversation",
@@ -52,7 +52,7 @@ class OrchestrationAppConvResponseTests(ConversationTest):
             )
         
             # assert - main object
-            top_project = "EmailIntent"
+            top_project = "RestaurantIntent"
             assert not result is None
             assert isinstance(result, AnalyzeConversationResult)
             assert result.results.query == query
@@ -62,17 +62,10 @@ class OrchestrationAppConvResponseTests(ConversationTest):
             # assert - top matching project
             assert result.results.prediction.top_intent == top_project
             top_intent_object = result.results.prediction.intents[top_project]
-            assert isinstance(top_intent_object, ConversationTargetIntentResult)
-            assert top_intent_object.target_kind == "conversation"
+            assert isinstance(top_intent_object, QuestionAnsweringTargetIntentResult)
+            assert top_intent_object.target_kind == "question_answering"
             # assert intent and entities
-            conversation_result = top_intent_object.result.prediction
-            assert conversation_result.top_intent == 'SendEmail'
-            assert len(conversation_result.intents) > 0
-            assert conversation_result.intents[0].category == 'SendEmail'
-            assert conversation_result.intents[0].confidence_score > 0
-            # assert - entities
-            assert len(conversation_result.entities) > 0
-            assert conversation_result.entities[0].category == 'ContactName'
-            assert conversation_result.entities[0].text == 'Carol'
-            assert conversation_result.entities[0].confidence_score > 0
+            qna_result = top_intent_object.result
+            answer = qna_result["answers"][0]["answer"]
+            assert not answer is None
 
