@@ -103,7 +103,7 @@ class StorageContainerTest(StorageTestCase):
         created = container.create_if_not_exists()
 
         # Assert
-        self.assertEqual(created, None)
+        self.assertIsNone(created)
 
     @BlobPreparer()
     def test_create_container_with_public_access_container(self, storage_account_name, storage_account_key):
