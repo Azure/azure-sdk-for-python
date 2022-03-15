@@ -69,10 +69,10 @@ class OrchestrationAppConvResponseTests(ConversationTest):
             assert conversation_result.top_intent == 'SendEmail'
             assert len(conversation_result.intents) > 0
             assert conversation_result.intents[0].category == 'SendEmail'
-            assert conversation_result.intents[0].confidence_score > 0
+            assert conversation_result.intents[0].confidence > 0
             # assert - entities
             assert len(conversation_result.entities) > 0
             assert conversation_result.entities[0].category == 'ContactName'
             assert conversation_result.entities[0].text == 'Carol'
-            assert conversation_result.entities[0].confidence_score > 0
+            assert conversation_result.entities[0].confidence > 0
 

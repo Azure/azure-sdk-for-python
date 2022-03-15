@@ -52,7 +52,7 @@ class OrchestrationAppQnaResponseTests(ConversationTest):
             )
         
             # assert - main object
-            top_project = "RestaurantIntent"
+            top_project = 'ChitChat-QnA'
             assert not result is None
             assert isinstance(result, CustomConversationalTaskResult)
             assert result.results.query == query
@@ -66,6 +66,6 @@ class OrchestrationAppQnaResponseTests(ConversationTest):
             assert top_intent_object.target_kind == "question_answering"
             # assert intent and entities
             qna_result = top_intent_object.result
-            answer = qna_result["answers"][0]["answer"]
+            answer = qna_result.answers[0].answer
             assert not answer is None
 
