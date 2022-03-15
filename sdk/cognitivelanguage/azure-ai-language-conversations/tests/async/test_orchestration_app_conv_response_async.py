@@ -14,7 +14,7 @@ from asynctestcase import AsyncConversationTest
 
 from azure.ai.language.conversations.aio import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
-    AnalyzeConversationResult,
+    CustomConversationalTaskResult,
     ConversationTargetIntentResult,
     OrchestratorPrediction,
 )
@@ -52,7 +52,7 @@ class OrchestrationAppConvResponseAsyncTests(AsyncConversationTest):
             # assert - main object
             top_project = "EmailIntent"
             assert not result is None
-            assert isinstance(result, AnalyzeConversationResult)
+            assert isinstance(result, CustomConversationalTaskResult)
             assert result.results.query == query
             # assert - prediction type
             assert isinstance(result.results.prediction, OrchestratorPrediction)

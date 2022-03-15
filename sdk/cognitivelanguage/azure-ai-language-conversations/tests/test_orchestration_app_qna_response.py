@@ -16,7 +16,7 @@ from testcase import (
 
 from azure.ai.language.conversations import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
-    AnalyzeConversationResult,
+    CustomConversationalTaskResult,
     QuestionAnsweringTargetIntentResult,
     OrchestratorPrediction,
 )
@@ -54,7 +54,7 @@ class OrchestrationAppQnaResponseTests(ConversationTest):
             # assert - main object
             top_project = "RestaurantIntent"
             assert not result is None
-            assert isinstance(result, AnalyzeConversationResult)
+            assert isinstance(result, CustomConversationalTaskResult)
             assert result.results.query == query
             # assert - prediction type
             assert isinstance(result.results.prediction, OrchestratorPrediction)

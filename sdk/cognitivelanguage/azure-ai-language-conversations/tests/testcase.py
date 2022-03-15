@@ -33,10 +33,10 @@ class FakeTokenCredential(object):
 
 TEST_ENDPOINT = 'https://test-resource.api.cognitive.microsoft.com'
 TEST_KEY = '0000000000000000'
-TEST_CONV_PROJECT_NAME = ""
-TEST_CONV_DEPLOYMENT_NAME = ""
-TEST_ORCH_PROJECT_NAME = ""
-TEST_ORCH_DEPLOYMENT_NAME = ""
+TEST_CONV_PROJECT_NAME = "conv_test"
+TEST_CONV_DEPLOYMENT_NAME = "dep_test"
+TEST_ORCH_PROJECT_NAME = "orch_test"
+TEST_ORCH_DEPLOYMENT_NAME = "dep_test"
 
 class ConversationTest(AzureTestCase):
     FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['Ocp-Apim-Subscription-Key']
@@ -45,6 +45,11 @@ class ConversationTest(AzureTestCase):
         super(ConversationTest, self).__init__(method_name)
         self.scrubber.register_name_pair(os.environ.get("AZURE_CLU_ENDPOINT"), TEST_ENDPOINT)
         self.scrubber.register_name_pair(os.environ.get("AZURE_CLU_KEY"), TEST_KEY)
+        self.scrubber.register_name_pair(os.environ.get("AZURE_CLU_CONVERSATIONS_PROJECT_NAME"), TEST_CONV_PROJECT_NAME)
+        self.scrubber.register_name_pair(os.environ.get("AZURE_CLU_CONVERSATIONS_DEPLOYMENT_NAME"), TEST_CONV_DEPLOYMENT_NAME)
+        self.scrubber.register_name_pair(os.environ.get("AZURE_CLU_ORCHESTRATION_PROJECT_NAME"), TEST_ORCH_PROJECT_NAME)
+        self.scrubber.register_name_pair(os.environ.get("AZURE_CLU_ORCHESTRATION_DEPLOYMENT_NAME"), TEST_ORCH_DEPLOYMENT_NAME)
+
 
     def generate_fake_token(self):
         return FakeTokenCredential()
@@ -83,10 +88,10 @@ class GlobalConversationAccountPreparer(AzureMgmtPreparer):
                 'resource_group': "rgname",
                 'endpoint': os.environ.get("AZURE_CLU_ENDPOINT"),
                 'key': os.environ.get("AZURE_CLU_KEY"),
-                'conv_project_name': TEST_CONV_PROJECT_NAME,
-                'conv_deployment_name': TEST_CONV_DEPLOYMENT_NAME,
-                'orch_project_name': TEST_ORCH_PROJECT_NAME,
-                'orch_deployment_name': TEST_ORCH_DEPLOYMENT_NAME
+                'conv_project_name': os.environ.get("AZURE_CLU_CONVERSATIONS_PROJECT_NAME"),
+                'conv_deployment_name': os.environ.get("AZURE_CLU_CONVERSATIONS_DEPLOYMENT_NAME"),
+                'orch_project_name': os.environ.get("AZURE_CLU_ORCHESTRATION_PROJECT_NAME"),
+                'orch_deployment_name': os.environ.get("AZURE_CLU_ORCHESTRATION_DEPLOYMENT_NAME")
             }
         return {
             'location': REGION,

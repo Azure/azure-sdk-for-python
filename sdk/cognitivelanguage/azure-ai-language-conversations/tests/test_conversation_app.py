@@ -16,7 +16,7 @@ from testcase import (
 
 from azure.ai.language.conversations import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
-    AnalyzeConversationResult,
+    CustomConversationalTaskResult,
     ConversationPrediction
 )
 
@@ -53,7 +53,7 @@ class ConversationAppTests(ConversationTest):
         
             # assert - main object
             assert not result is None
-            assert isinstance(result, AnalyzeConversationResult)
+            assert isinstance(result, CustomConversationalTaskResult)
             # assert - prediction type
             assert result.results.query == query
             assert isinstance(result.results.prediction, ConversationPrediction)
@@ -62,10 +62,10 @@ class ConversationAppTests(ConversationTest):
             assert result.results.prediction.top_intent == 'Read'
             assert len(result.results.prediction.intents) > 0
             assert result.results.prediction.intents[0].category == 'Read'
-            assert result.results.prediction.intents[0].confidence_score > 0
+            assert result.results.prediction.intents[0].confidence > 0
             # assert - entities
             assert len(result.results.prediction.entities) > 0
             assert result.results.prediction.entities[0].category == 'Contact'
             assert result.results.prediction.entities[0].text == 'Carol'
-            assert result.results.prediction.entities[0].confidence_score > 0
+            assert result.results.prediction.entities[0].confidence > 0
  
