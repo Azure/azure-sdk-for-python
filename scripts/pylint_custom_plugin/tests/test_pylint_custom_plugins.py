@@ -2570,8 +2570,8 @@ class TestCheckDocstringAdmonitionNewline(pylint.testutils.CheckerTestCase):
             self.checker.visit_classdef(class_node)        
     
     
-class TestCheckNoAliasGeneratedCode(pylint.testutils.CheckerTestCase):
-    CHECKER_CLASS = checker.CheckNoAliasGeneratedCode
+class TestCheckNamingMismatch(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.CheckNamingMismatch
 
     def test_ignores_correct_alias_code(self):
         module_node = astroid.extract_node(
@@ -2609,7 +2609,7 @@ class TestCheckNoAliasGeneratedCode(pylint.testutils.CheckerTestCase):
      
         with self.assertAddsMessages(
                 pylint.testutils.Message(
-                    msg_id="aliasing-generated-code", node=err_node ,confidence=None
+                    msg_id="naming-mismatch", node=err_node ,confidence=None
                 )
         ):
             self.checker.visit_module(module_node)
@@ -2640,7 +2640,7 @@ class TestCheckNoAliasGeneratedCode(pylint.testutils.CheckerTestCase):
      
         with self.assertAddsMessages(
                 pylint.testutils.Message(
-                    msg_id="aliasing-generated-code", node=err_node ,confidence=None
+                    msg_id="naming-mismatch", node=err_node ,confidence=None
                 )
         ):
             self.checker.visit_module(module_node)

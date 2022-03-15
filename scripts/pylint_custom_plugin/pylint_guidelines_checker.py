@@ -1706,23 +1706,23 @@ class CheckDocstringAdmonitionNewline(BaseChecker):
     visit_asyncfunctiondef = visit_functiondef
 
 
-class CheckNoAliasGeneratedCode(BaseChecker):
+class CheckNamingMismatch(BaseChecker):
     __implements__ = IAstroidChecker
 
-    name = "check-alias"
+    name = "check-naming"
     priority = -1
     msgs = {
         "C4745": (
             "Exposing aliased generated code."
             "This messes up sphinx, intellisense, and apiview, so please modify the name of the generated code through"
             " the swagger / directives, or code customizations",
-            "aliasing-generated-code",
+            "naming-mismatch",
             "Do not alias models imported from the generated code.",
         ),
     }
     options = (
         (
-            "ignore-aliasing-generated-code",
+            "ignore-naming-mismatch",
             {
                 "default": False,
                 "type": "yn",
@@ -1733,7 +1733,7 @@ class CheckNoAliasGeneratedCode(BaseChecker):
     )
 
     def __init__(self, linter=None):
-        super(CheckNoAliasGeneratedCode, self).__init__(linter)
+        super(CheckNamingMismatch, self).__init__(linter)
 
     def visit_module(self, node):
         """Visits __init__.py and checks that there are not aliased models.
@@ -1785,7 +1785,7 @@ def register(linter):
     linter.register_checker(PackageNameDoesNotUseUnderscoreOrPeriod(linter))
     linter.register_checker(ServiceClientUsesNameWithClientSuffix(linter))
     linter.register_checker(CheckDocstringAdmonitionNewline(linter))
-    linter.register_checker(CheckNoAliasGeneratedCode(linter))
+    linter.register_checker(CheckNamingMismatch(linter))
 
     # disabled by default, use pylint --enable=check-docstrings if you want to use it
     linter.register_checker(CheckDocstringParameters(linter))

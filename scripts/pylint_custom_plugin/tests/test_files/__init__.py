@@ -3,5 +3,5 @@ from something2 import something2 as somethingTwo
 
 __all__ = (
     Something,
-    somethingTwo, #pylint: disable=aliasing-generated-code
+    somethingTwo, #pylint: disable=naming-mismatch
 )
