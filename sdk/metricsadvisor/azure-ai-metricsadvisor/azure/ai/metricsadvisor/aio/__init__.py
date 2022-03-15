@@ -8,8 +8,11 @@
 
 from ._metrics_advisor_client import MetricsAdvisorClient
 
-from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore[misc] # pylint: disable=unused-wildcard-import
+try:
+    from ._patch import __all__ as _patch_all
+    from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+except ImportError:
+    _patch_all = []
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = ["MetricsAdvisorClient"]

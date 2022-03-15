@@ -1337,10 +1337,7 @@ class MetricsAdvisorClientOperationsMixin(  # pylint: disable=too-many-public-me
 
     @distributed_trace
     def list_metric_dimension_values(  # type: ignore # pylint: disable=arguments-differ
-        self,
-        metric_id: str,
-        dimension_name: str,
-        **kwargs: Any
+        self, metric_id: str, dimension_name: str, **kwargs: Any
     ) -> ItemPaged[str]:
         initial_request, next_request, kwargs = self._list_metric_dimension_values_requests(
             metric_id=metric_id, dimension_name=dimension_name, **kwargs
