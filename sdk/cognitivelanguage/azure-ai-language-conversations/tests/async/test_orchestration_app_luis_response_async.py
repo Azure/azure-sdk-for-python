@@ -15,19 +15,19 @@ from asynctestcase import AsyncConversationTest
 from azure.ai.language.conversations.aio import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
     AnalyzeConversationResult,
-    ConversationPrediction
+    LUISTargetIntentResult,
+    OrchestratorPrediction,
 )
 
-
-class ConversationAppAsyncTests(AsyncConversationTest):
+class OrchestrationAppLuisResponseAsyncTests(AsyncConversationTest):
 
     @GlobalConversationAccountPreparer()
-    async def test_conversation_app(self, endpoint, key, conv_project_name, conv_deployment_name):
+    async def test_orchestration_app_luis_response(self, endpoint, key, orch_project_name, orch_deployment_name):
 
         # analyze query
         client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
         async with client:
-            query = "Send an email to Carol about the tomorrow's demo"
+            query = "Reserve a table for 2 at the Italian restaurant"
             result = await client.conversation_analysis.analyze_conversation(
                 body={
                     "kind": "CustomConversation",
@@ -42,28 +42,32 @@ class ConversationAppAsyncTests(AsyncConversationTest):
                         "isLoggingEnabled": False
                     },
                     "parameters": {
-                        "projectName": conv_project_name,
-                        "deploymentName": conv_deployment_name,
+                        "projectName": orch_project_name,
+                        "deploymentName": orch_deployment_name,
                         "verbose": True
                     }
                 }
             )
         
             # assert - main object
+            top_project = "RestaurantIntent"
             assert not result is None
             assert isinstance(result, AnalyzeConversationResult)
-            # assert - prediction type
             assert result.results.query == query
-            assert isinstance(result.results.prediction, ConversationPrediction)
-            assert result.results.prediction.project_kind == 'conversation'
-            # assert - top intent
-            assert result.results.prediction.top_intent == 'Read'
-            assert len(result.results.prediction.intents) > 0
-            assert result.results.prediction.intents[0].category == 'Read'
-            assert result.results.prediction.intents[0].confidence_score > 0
+            # assert - prediction type
+            assert isinstance(result.results.prediction, OrchestratorPrediction)
+            assert result.results.prediction.project_kind == "workflow"
+            # assert - top matching project
+            assert result.results.prediction.top_intent == top_project
+            top_intent_object = result.results.prediction.intents[top_project]
+            assert isinstance(top_intent_object, LUISTargetIntentResult)
+            assert top_intent_object.target_kind == "luis"
+            # assert intent and entities
+            top_intent = "RestaurantReservation.Reserve"
+            luis_result = top_intent_object.result["prediction"]
+            assert luis_result["top_intent"] == top_intent
+            assert len(luis_result["intents"]) > 0
+            assert luis_result["intents"][top_intent]["score"] > 0
             # assert - entities
-            assert len(result.results.prediction.entities) > 0
-            assert result.results.prediction.entities[0].category == 'Contact'
-            assert result.results.prediction.entities[0].text == 'Carol'
-            assert result.results.prediction.entities[0].confidence_score > 0
- 
+            assert len(luis_result["entities"]) > 0
+

@@ -15,19 +15,19 @@ from asynctestcase import AsyncConversationTest
 from azure.ai.language.conversations.aio import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
     AnalyzeConversationResult,
-    ConversationPrediction
+    QuestionAnsweringTargetIntentResult,
+    OrchestratorPrediction,
 )
 
-
-class ConversationAppAsyncTests(AsyncConversationTest):
+class OrchestrationAppQnaResponseAsyncTests(AsyncConversationTest):
 
     @GlobalConversationAccountPreparer()
-    async def test_conversation_app(self, endpoint, key, conv_project_name, conv_deployment_name):
+    async def test_orchestration_app_qna_response(self, endpoint, key, orch_project_name, orch_deployment_name):
 
         # analyze query
         client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
         async with client:
-            query = "Send an email to Carol about the tomorrow's demo"
+            query = "How are you?"
             result = await client.conversation_analysis.analyze_conversation(
                 body={
                     "kind": "CustomConversation",
@@ -42,28 +42,28 @@ class ConversationAppAsyncTests(AsyncConversationTest):
                         "isLoggingEnabled": False
                     },
                     "parameters": {
-                        "projectName": conv_project_name,
-                        "deploymentName": conv_deployment_name,
+                        "projectName": orch_project_name,
+                        "deploymentName": orch_deployment_name,
                         "verbose": True
                     }
                 }
             )
         
             # assert - main object
+            top_project = "RestaurantIntent"
             assert not result is None
             assert isinstance(result, AnalyzeConversationResult)
-            # assert - prediction type
             assert result.results.query == query
-            assert isinstance(result.results.prediction, ConversationPrediction)
-            assert result.results.prediction.project_kind == 'conversation'
-            # assert - top intent
-            assert result.results.prediction.top_intent == 'Read'
-            assert len(result.results.prediction.intents) > 0
-            assert result.results.prediction.intents[0].category == 'Read'
-            assert result.results.prediction.intents[0].confidence_score > 0
-            # assert - entities
-            assert len(result.results.prediction.entities) > 0
-            assert result.results.prediction.entities[0].category == 'Contact'
-            assert result.results.prediction.entities[0].text == 'Carol'
-            assert result.results.prediction.entities[0].confidence_score > 0
- 
+            # assert - prediction type
+            assert isinstance(result.results.prediction, OrchestratorPrediction)
+            assert result.results.prediction.project_kind == "workflow"
+            # assert - top matching project
+            assert result.results.prediction.top_intent == top_project
+            top_intent_object = result.results.prediction.intents[top_project]
+            assert isinstance(top_intent_object, QuestionAnsweringTargetIntentResult)
+            assert top_intent_object.target_kind == "question_answering"
+            # assert intent and entities
+            qna_result = top_intent_object.result
+            answer = qna_result["answers"][0]["answer"]
+            assert not answer is None
+

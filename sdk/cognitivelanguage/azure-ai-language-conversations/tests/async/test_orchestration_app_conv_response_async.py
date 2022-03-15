@@ -15,14 +15,14 @@ from asynctestcase import AsyncConversationTest
 from azure.ai.language.conversations.aio import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
     AnalyzeConversationResult,
-    ConversationPrediction
+    ConversationTargetIntentResult,
+    OrchestratorPrediction,
 )
 
-
-class ConversationAppAsyncTests(AsyncConversationTest):
+class OrchestrationAppConvResponseAsyncTests(AsyncConversationTest):
 
     @GlobalConversationAccountPreparer()
-    async def test_conversation_app(self, endpoint, key, conv_project_name, conv_deployment_name):
+    async def test_orchestration_app_conv_response(self, endpoint, key, orch_project_name, orch_deployment_name):
 
         # analyze query
         client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
@@ -42,28 +42,35 @@ class ConversationAppAsyncTests(AsyncConversationTest):
                         "isLoggingEnabled": False
                     },
                     "parameters": {
-                        "projectName": conv_project_name,
-                        "deploymentName": conv_deployment_name,
+                        "projectName": orch_project_name,
+                        "deploymentName": orch_deployment_name,
                         "verbose": True
                     }
                 }
             )
         
             # assert - main object
+            top_project = "EmailIntent"
             assert not result is None
             assert isinstance(result, AnalyzeConversationResult)
-            # assert - prediction type
             assert result.results.query == query
-            assert isinstance(result.results.prediction, ConversationPrediction)
-            assert result.results.prediction.project_kind == 'conversation'
-            # assert - top intent
-            assert result.results.prediction.top_intent == 'Read'
-            assert len(result.results.prediction.intents) > 0
-            assert result.results.prediction.intents[0].category == 'Read'
-            assert result.results.prediction.intents[0].confidence_score > 0
+            # assert - prediction type
+            assert isinstance(result.results.prediction, OrchestratorPrediction)
+            assert result.results.prediction.project_kind == "workflow"
+            # assert - top matching project
+            assert result.results.prediction.top_intent == top_project
+            top_intent_object = result.results.prediction.intents[top_project]
+            assert isinstance(top_intent_object, ConversationTargetIntentResult)
+            assert top_intent_object.target_kind == "conversation"
+            # assert intent and entities
+            conversation_result = top_intent_object.result.prediction
+            assert conversation_result.top_intent == 'SendEmail'
+            assert len(conversation_result.intents) > 0
+            assert conversation_result.intents[0].category == 'SendEmail'
+            assert conversation_result.intents[0].confidence_score > 0
             # assert - entities
-            assert len(result.results.prediction.entities) > 0
-            assert result.results.prediction.entities[0].category == 'Contact'
-            assert result.results.prediction.entities[0].text == 'Carol'
-            assert result.results.prediction.entities[0].confidence_score > 0
- 
+            assert len(conversation_result.entities) > 0
+            assert conversation_result.entities[0].category == 'ContactName'
+            assert conversation_result.entities[0].text == 'Carol'
+            assert conversation_result.entities[0].confidence_score > 0
+
