@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b3 (Unreleased)
+## 1.0.0b3 (2022-03-15)
 
 **Bugs Fixed**
 
