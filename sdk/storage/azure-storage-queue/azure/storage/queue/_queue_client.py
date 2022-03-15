@@ -16,7 +16,7 @@ except ImportError:
 
 import six
 
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from ._serialize import get_api_version
@@ -241,6 +241,49 @@ class QueueClient(StorageAccountHostsMixin):
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
+
+    @distributed_trace
+    def create_queue_if_not_exists(self, **kwargs):
+        # type: (Any) -> None
+        """Creates a new queue in the storage account.
+
+        If a queue with the same name already exists, it is not changed.
+
+        :keyword dict(str,str) metadata:
+            A dict containing name-value pairs to associate with the queue as
+            metadata. Note that metadata names preserve the case with which they
+            were created, but are case-insensitive when set or read.
+        :keyword int timeout:
+            The server timeout, expressed in seconds.
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises: StorageErrorException
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/queue_samples_hello_world.py
+                :start-after: [START create_queue]
+                :end-before: [END create_queue]
+                :language: python
+                :dedent: 8
+                :caption: Create a queue.
+        """
+        headers = kwargs.pop('headers', {})
+        metadata = kwargs.pop('metadata', None)
+        timeout = kwargs.pop('timeout', None)
+        headers.update(add_metadata_headers(metadata)) # type: ignore
+        try:
+            return self._client.queue.create( # type: ignore
+                metadata=metadata,
+                timeout=timeout,
+                headers=headers,
+                cls=deserialize_queue_creation,
+                **kwargs)
+        except HttpResponseError as error:
+            try: 
+                process_storage_error(error)
+            except ResourceExistsError:
+                return None
 
     @distributed_trace
     def delete_queue(self, **kwargs):
