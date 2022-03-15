@@ -102,7 +102,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         """Build a custom model.
 
         The request must include a `source` parameter that is an
-        externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI).
+        externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI). Note that
+        a container URI (without SAS) is accepted only when the container is public or has a managed identity configured,
+        see more about configuring managed identities for Form Recognizer here:
+        https://docs.microsoft.com/azure/applied-ai-services/form-recognizer/managed-identities.
         Models are built using documents that are of the following content type - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff', or 'image/bmp'. Other types of content in the container is ignored.
 
