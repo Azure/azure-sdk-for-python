@@ -101,6 +101,8 @@ class ActiveDirectory(msrest.serialization.Model):
     :ivar encrypt_dc_connections: If enabled, Traffic between the SMB server to Domain Controller
      (DC) will be encrypted.
     :vartype encrypt_dc_connections: bool
+    :ivar ldap_search_scope: LDAP Search scope options.
+    :vartype ldap_search_scope: ~azure.mgmt.netapp.models.LdapSearchScopeOpt
     """
 
     _validation = {
@@ -134,6 +136,7 @@ class ActiveDirectory(msrest.serialization.Model):
         'ldap_over_tls': {'key': 'ldapOverTLS', 'type': 'bool'},
         'allow_local_nfs_users_with_ldap': {'key': 'allowLocalNfsUsersWithLdap', 'type': 'bool'},
         'encrypt_dc_connections': {'key': 'encryptDCConnections', 'type': 'bool'},
+        'ldap_search_scope': {'key': 'ldapSearchScope', 'type': 'LdapSearchScopeOpt'},
     }
 
     def __init__(
@@ -158,6 +161,7 @@ class ActiveDirectory(msrest.serialization.Model):
         ldap_over_tls: Optional[bool] = None,
         allow_local_nfs_users_with_ldap: Optional[bool] = None,
         encrypt_dc_connections: Optional[bool] = None,
+        ldap_search_scope: Optional["LdapSearchScopeOpt"] = None,
         **kwargs
     ):
         """
@@ -213,6 +217,8 @@ class ActiveDirectory(msrest.serialization.Model):
         :keyword encrypt_dc_connections: If enabled, Traffic between the SMB server to Domain
          Controller (DC) will be encrypted.
         :paramtype encrypt_dc_connections: bool
+        :keyword ldap_search_scope: LDAP Search scope options.
+        :paramtype ldap_search_scope: ~azure.mgmt.netapp.models.LdapSearchScopeOpt
         """
         super(ActiveDirectory, self).__init__(**kwargs)
         self.active_directory_id = active_directory_id
@@ -236,6 +242,7 @@ class ActiveDirectory(msrest.serialization.Model):
         self.ldap_over_tls = ldap_over_tls
         self.allow_local_nfs_users_with_ldap = allow_local_nfs_users_with_ldap
         self.encrypt_dc_connections = encrypt_dc_connections
+        self.ldap_search_scope = ldap_search_scope
 
 
 class AuthorizeRequest(msrest.serialization.Model):
@@ -489,6 +496,8 @@ class BackupPolicy(msrest.serialization.Model):
     :vartype type: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
     :ivar backup_policy_id: Backup Policy Resource ID.
     :vartype backup_policy_id: str
     :ivar provisioning_state: Azure lifecycle management.
@@ -513,6 +522,7 @@ class BackupPolicy(msrest.serialization.Model):
         'name': {'readonly': True},
         'etag': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'backup_policy_id': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'volumes_assigned': {'readonly': True},
@@ -526,6 +536,7 @@ class BackupPolicy(msrest.serialization.Model):
         'etag': {'key': 'etag', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'backup_policy_id': {'key': 'properties.backupPolicyId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'daily_backups_to_keep': {'key': 'properties.dailyBackupsToKeep', 'type': 'int'},
@@ -568,6 +579,7 @@ class BackupPolicy(msrest.serialization.Model):
         self.etag = None
         self.type = None
         self.tags = tags
+        self.system_data = None
         self.backup_policy_id = None
         self.provisioning_state = None
         self.daily_backups_to_keep = daily_backups_to_keep
@@ -913,9 +925,11 @@ class CapacityPool(msrest.serialization.Model):
     :vartype type: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
     :ivar pool_id: UUID v4 used to identify the Pool.
     :vartype pool_id: str
-    :ivar size: Required. Provisioned size of the pool (in bytes). Allowed values are in 4TiB
+    :ivar size: Required. Provisioned size of the pool (in bytes). Allowed values are in 1TiB
      chunks (value must be multiply of 4398046511104).
     :vartype size: long
     :ivar service_level: Required. The service level of the file system. Possible values include:
@@ -943,8 +957,9 @@ class CapacityPool(msrest.serialization.Model):
         'name': {'readonly': True},
         'etag': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'pool_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
-        'size': {'required': True, 'maximum': 549755813888000, 'minimum': 4398046511104},
+        'size': {'required': True},
         'service_level': {'required': True},
         'provisioning_state': {'readonly': True},
         'total_throughput_mibps': {'readonly': True},
@@ -958,6 +973,7 @@ class CapacityPool(msrest.serialization.Model):
         'etag': {'key': 'etag', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'pool_id': {'key': 'properties.poolId', 'type': 'str'},
         'size': {'key': 'properties.size', 'type': 'long'},
         'service_level': {'key': 'properties.serviceLevel', 'type': 'str'},
@@ -973,7 +989,7 @@ class CapacityPool(msrest.serialization.Model):
         self,
         *,
         location: str,
-        size: int,
+        size: int = 4398046511104,
         service_level: Union[str, "ServiceLevel"] = "Premium",
         tags: Optional[Dict[str, str]] = None,
         qos_type: Optional[Union[str, "QosType"]] = None,
@@ -986,7 +1002,7 @@ class CapacityPool(msrest.serialization.Model):
         :paramtype location: str
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword size: Required. Provisioned size of the pool (in bytes). Allowed values are in 4TiB
+        :keyword size: Required. Provisioned size of the pool (in bytes). Allowed values are in 1TiB
          chunks (value must be multiply of 4398046511104).
         :paramtype size: long
         :keyword service_level: Required. The service level of the file system. Possible values
@@ -1008,6 +1024,7 @@ class CapacityPool(msrest.serialization.Model):
         self.etag = None
         self.type = None
         self.tags = tags
+        self.system_data = None
         self.pool_id = None
         self.size = size
         self.service_level = service_level
@@ -1066,7 +1083,7 @@ class CapacityPoolPatch(msrest.serialization.Model):
     :vartype type: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
-    :ivar size: Provisioned size of the pool (in bytes). Allowed values are in 4TiB chunks (value
+    :ivar size: Provisioned size of the pool (in bytes). Allowed values are in 1TiB chunks (value
      must be multiply of 4398046511104).
     :vartype size: long
     :ivar qos_type: The qos type of the pool. Possible values include: "Auto", "Manual".
@@ -1077,7 +1094,6 @@ class CapacityPoolPatch(msrest.serialization.Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'size': {'maximum': 549755813888000, 'minimum': 4398046511104},
     }
 
     _attribute_map = {
@@ -1104,7 +1120,7 @@ class CapacityPoolPatch(msrest.serialization.Model):
         :paramtype location: str
         :keyword tags: A set of tags. Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword size: Provisioned size of the pool (in bytes). Allowed values are in 4TiB chunks
+        :keyword size: Provisioned size of the pool (in bytes). Allowed values are in 1TiB chunks
          (value must be multiply of 4398046511104).
         :paramtype size: long
         :keyword qos_type: The qos type of the pool. Possible values include: "Auto", "Manual".
@@ -1508,6 +1524,53 @@ class HourlySchedule(msrest.serialization.Model):
         self.snapshots_to_keep = snapshots_to_keep
         self.minute = minute
         self.used_bytes = used_bytes
+
+
+class LdapSearchScopeOpt(msrest.serialization.Model):
+    """LDAP search scope.
+
+    :ivar user_dn: This specifies the user DN, which overrides the base DN for user lookups.
+    :vartype user_dn: str
+    :ivar group_dn: This specifies the group DN, which overrides the base DN for group lookups.
+    :vartype group_dn: str
+    :ivar group_membership_filter: This specifies the custom LDAP search filter to be used when
+     looking up group membership from LDAP server.
+    :vartype group_membership_filter: str
+    """
+
+    _validation = {
+        'user_dn': {'max_length': 255, 'min_length': 0},
+        'group_dn': {'max_length': 255, 'min_length': 0},
+        'group_membership_filter': {'max_length': 255, 'min_length': 0},
+    }
+
+    _attribute_map = {
+        'user_dn': {'key': 'userDN', 'type': 'str'},
+        'group_dn': {'key': 'groupDN', 'type': 'str'},
+        'group_membership_filter': {'key': 'groupMembershipFilter', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        user_dn: Optional[str] = None,
+        group_dn: Optional[str] = None,
+        group_membership_filter: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword user_dn: This specifies the user DN, which overrides the base DN for user lookups.
+        :paramtype user_dn: str
+        :keyword group_dn: This specifies the group DN, which overrides the base DN for group lookups.
+        :paramtype group_dn: str
+        :keyword group_membership_filter: This specifies the custom LDAP search filter to be used when
+         looking up group membership from LDAP server.
+        :paramtype group_membership_filter: str
+        """
+        super(LdapSearchScopeOpt, self).__init__(**kwargs)
+        self.user_dn = user_dn
+        self.group_dn = group_dn
+        self.group_membership_filter = group_membership_filter
 
 
 class LogSpecification(msrest.serialization.Model):
@@ -2772,6 +2835,8 @@ class SnapshotPolicy(msrest.serialization.Model):
     :vartype type: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
     :ivar hourly_schedule: Schedule for hourly snapshots.
     :vartype hourly_schedule: ~azure.mgmt.netapp.models.HourlySchedule
     :ivar daily_schedule: Schedule for daily snapshots.
@@ -2792,6 +2857,7 @@ class SnapshotPolicy(msrest.serialization.Model):
         'name': {'readonly': True},
         'etag': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -2802,6 +2868,7 @@ class SnapshotPolicy(msrest.serialization.Model):
         'etag': {'key': 'etag', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'hourly_schedule': {'key': 'properties.hourlySchedule', 'type': 'HourlySchedule'},
         'daily_schedule': {'key': 'properties.dailySchedule', 'type': 'DailySchedule'},
         'weekly_schedule': {'key': 'properties.weeklySchedule', 'type': 'WeeklySchedule'},
@@ -2845,6 +2912,7 @@ class SnapshotPolicy(msrest.serialization.Model):
         self.etag = None
         self.type = None
         self.tags = tags
+        self.system_data = None
         self.hourly_schedule = hourly_schedule
         self.daily_schedule = daily_schedule
         self.weekly_schedule = weekly_schedule
@@ -3062,6 +3130,44 @@ class SnapshotPolicyVolumeList(msrest.serialization.Model):
         self.value = value
 
 
+class SnapshotRestoreFiles(msrest.serialization.Model):
+    """Restore payload for Single File Snapshot Restore.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar file_paths: Required. List of files to be restored.
+    :vartype file_paths: list[str]
+    :ivar destination_path: Destination folder where the files will be restored.
+    :vartype destination_path: str
+    """
+
+    _validation = {
+        'file_paths': {'required': True, 'max_items': 10, 'min_items': 1},
+    }
+
+    _attribute_map = {
+        'file_paths': {'key': 'filePaths', 'type': '[str]'},
+        'destination_path': {'key': 'destinationPath', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        file_paths: List[str],
+        destination_path: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword file_paths: Required. List of files to be restored.
+        :paramtype file_paths: list[str]
+        :keyword destination_path: Destination folder where the files will be restored.
+        :paramtype destination_path: str
+        """
+        super(SnapshotRestoreFiles, self).__init__(**kwargs)
+        self.file_paths = file_paths
+        self.destination_path = destination_path
+
+
 class SnapshotsList(msrest.serialization.Model):
     """List of Snapshots.
 
@@ -3161,6 +3267,246 @@ class SubscriptionQuotaItemList(msrest.serialization.Model):
         """
         super(SubscriptionQuotaItemList, self).__init__(**kwargs)
         self.value = value
+
+
+class SubvolumeInfo(ProxyResource):
+    """Subvolume Information properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar path: Path to the subvolume.
+    :vartype path: str
+    :ivar size: Truncate subvolume to the provided size in bytes.
+    :vartype size: long
+    :ivar parent_path: parent path to the subvolume.
+    :vartype parent_path: str
+    :ivar provisioning_state: Azure lifecycle management.
+    :vartype provisioning_state: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'path': {'key': 'properties.path', 'type': 'str'},
+        'size': {'key': 'properties.size', 'type': 'long'},
+        'parent_path': {'key': 'properties.parentPath', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        path: Optional[str] = None,
+        size: Optional[int] = None,
+        parent_path: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword path: Path to the subvolume.
+        :paramtype path: str
+        :keyword size: Truncate subvolume to the provided size in bytes.
+        :paramtype size: long
+        :keyword parent_path: parent path to the subvolume.
+        :paramtype parent_path: str
+        """
+        super(SubvolumeInfo, self).__init__(**kwargs)
+        self.system_data = None
+        self.path = path
+        self.size = size
+        self.parent_path = parent_path
+        self.provisioning_state = None
+
+
+class SubvolumeModel(msrest.serialization.Model):
+    """Result of the post subvolume and action is to get metadata of the subvolume.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar path: Path to the subvolume.
+    :vartype path: str
+    :ivar parent_path: Path to the parent subvolume.
+    :vartype parent_path: str
+    :ivar size: Size of subvolume.
+    :vartype size: long
+    :ivar bytes_used: Bytes used.
+    :vartype bytes_used: long
+    :ivar permissions: Permissions of the subvolume.
+    :vartype permissions: str
+    :ivar creation_time_stamp: Creation time and date.
+    :vartype creation_time_stamp: ~datetime.datetime
+    :ivar accessed_time_stamp: Most recent access time and date.
+    :vartype accessed_time_stamp: ~datetime.datetime
+    :ivar modified_time_stamp: Most recent modification time and date.
+    :vartype modified_time_stamp: ~datetime.datetime
+    :ivar changed_time_stamp: Most recent change time and date.
+    :vartype changed_time_stamp: ~datetime.datetime
+    :ivar provisioning_state: Azure lifecycle management.
+    :vartype provisioning_state: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'path': {'key': 'properties.path', 'type': 'str'},
+        'parent_path': {'key': 'properties.parentPath', 'type': 'str'},
+        'size': {'key': 'properties.size', 'type': 'long'},
+        'bytes_used': {'key': 'properties.bytesUsed', 'type': 'long'},
+        'permissions': {'key': 'properties.permissions', 'type': 'str'},
+        'creation_time_stamp': {'key': 'properties.creationTimeStamp', 'type': 'iso-8601'},
+        'accessed_time_stamp': {'key': 'properties.accessedTimeStamp', 'type': 'iso-8601'},
+        'modified_time_stamp': {'key': 'properties.modifiedTimeStamp', 'type': 'iso-8601'},
+        'changed_time_stamp': {'key': 'properties.changedTimeStamp', 'type': 'iso-8601'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        path: Optional[str] = None,
+        parent_path: Optional[str] = None,
+        size: Optional[int] = None,
+        bytes_used: Optional[int] = None,
+        permissions: Optional[str] = None,
+        creation_time_stamp: Optional[datetime.datetime] = None,
+        accessed_time_stamp: Optional[datetime.datetime] = None,
+        modified_time_stamp: Optional[datetime.datetime] = None,
+        changed_time_stamp: Optional[datetime.datetime] = None,
+        provisioning_state: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword path: Path to the subvolume.
+        :paramtype path: str
+        :keyword parent_path: Path to the parent subvolume.
+        :paramtype parent_path: str
+        :keyword size: Size of subvolume.
+        :paramtype size: long
+        :keyword bytes_used: Bytes used.
+        :paramtype bytes_used: long
+        :keyword permissions: Permissions of the subvolume.
+        :paramtype permissions: str
+        :keyword creation_time_stamp: Creation time and date.
+        :paramtype creation_time_stamp: ~datetime.datetime
+        :keyword accessed_time_stamp: Most recent access time and date.
+        :paramtype accessed_time_stamp: ~datetime.datetime
+        :keyword modified_time_stamp: Most recent modification time and date.
+        :paramtype modified_time_stamp: ~datetime.datetime
+        :keyword changed_time_stamp: Most recent change time and date.
+        :paramtype changed_time_stamp: ~datetime.datetime
+        :keyword provisioning_state: Azure lifecycle management.
+        :paramtype provisioning_state: str
+        """
+        super(SubvolumeModel, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.path = path
+        self.parent_path = parent_path
+        self.size = size
+        self.bytes_used = bytes_used
+        self.permissions = permissions
+        self.creation_time_stamp = creation_time_stamp
+        self.accessed_time_stamp = accessed_time_stamp
+        self.modified_time_stamp = modified_time_stamp
+        self.changed_time_stamp = changed_time_stamp
+        self.provisioning_state = provisioning_state
+
+
+class SubvolumePatchRequest(msrest.serialization.Model):
+    """Subvolume Patch Request properties.
+
+    :ivar size: Truncate subvolume to the provided size in bytes.
+    :vartype size: long
+    :ivar path: path to the subvolume.
+    :vartype path: str
+    """
+
+    _attribute_map = {
+        'size': {'key': 'properties.size', 'type': 'long'},
+        'path': {'key': 'properties.path', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        size: Optional[int] = None,
+        path: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword size: Truncate subvolume to the provided size in bytes.
+        :paramtype size: long
+        :keyword path: path to the subvolume.
+        :paramtype path: str
+        """
+        super(SubvolumePatchRequest, self).__init__(**kwargs)
+        self.size = size
+        self.path = path
+
+
+class SubvolumesList(msrest.serialization.Model):
+    """List of Subvolumes.
+
+    :ivar value: A list of Subvolumes.
+    :vartype value: list[~azure.mgmt.netapp.models.SubvolumeInfo]
+    :ivar next_link: URL to get the next set of results.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[SubvolumeInfo]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["SubvolumeInfo"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: A list of Subvolumes.
+        :paramtype value: list[~azure.mgmt.netapp.models.SubvolumeInfo]
+        :keyword next_link: URL to get the next set of results.
+        :paramtype next_link: str
+        """
+        super(SubvolumesList, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 
 
 class SystemData(msrest.serialization.Model):
@@ -3326,6 +3672,8 @@ class Volume(msrest.serialization.Model):
     :vartype type: str
     :ivar tags: A set of tags. Resource tags.
     :vartype tags: dict[str, str]
+    :ivar system_data: The system meta data relating to this resource.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
     :ivar file_system_id: Unique FileSystem Identifier.
     :vartype file_system_id: str
     :ivar creation_token: Required. A unique file path for the volume. Used when creating mount
@@ -3423,6 +3771,9 @@ class Volume(msrest.serialization.Model):
     :ivar default_group_quota_in_ki_bs: Default group quota for volume in KiBs. If
      isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies.
     :vartype default_group_quota_in_ki_bs: long
+    :ivar maximum_number_of_files: Maximum number of files allowed. Needs a service request in
+     order to be changed. Only allowed to be changed if volume quota is more than 4TiB.
+    :vartype maximum_number_of_files: long
     :ivar volume_group_name: Volume Group Name.
     :vartype volume_group_name: str
     :ivar capacity_pool_resource_id: Pool Resource Id used in case of creating a volume through
@@ -3437,6 +3788,9 @@ class Volume(msrest.serialization.Model):
     :vartype volume_spec_name: str
     :ivar placement_rules: Application specific placement rules for the particular volume.
     :vartype placement_rules: list[~azure.mgmt.netapp.models.PlacementKeyValuePairs]
+    :ivar enable_subvolumes: Flag indicating whether subvolume operations are enabled on the
+     volume. Possible values include: "Enabled", "Disabled". Default value: "Disabled".
+    :vartype enable_subvolumes: str or ~azure.mgmt.netapp.models.EnableSubvolumes
     """
 
     _validation = {
@@ -3445,6 +3799,7 @@ class Volume(msrest.serialization.Model):
         'name': {'readonly': True},
         'etag': {'readonly': True},
         'type': {'readonly': True},
+        'system_data': {'readonly': True},
         'file_system_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'creation_token': {'required': True, 'max_length': 80, 'min_length': 1, 'pattern': r'^[a-zA-Z][a-zA-Z0-9\-]{0,79}$'},
         'usage_threshold': {'required': True, 'maximum': 109951162777600, 'minimum': 107374182400},
@@ -3459,6 +3814,7 @@ class Volume(msrest.serialization.Model):
         'coolness_period': {'maximum': 63, 'minimum': 7},
         'unix_permissions': {'max_length': 4, 'min_length': 4},
         'clone_progress': {'readonly': True},
+        'maximum_number_of_files': {'readonly': True},
         'volume_group_name': {'readonly': True},
         't2_network': {'readonly': True},
     }
@@ -3470,6 +3826,7 @@ class Volume(msrest.serialization.Model):
         'etag': {'key': 'etag', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'file_system_id': {'key': 'properties.fileSystemId', 'type': 'str'},
         'creation_token': {'key': 'properties.creationToken', 'type': 'str'},
         'service_level': {'key': 'properties.serviceLevel', 'type': 'str'},
@@ -3504,12 +3861,14 @@ class Volume(msrest.serialization.Model):
         'is_default_quota_enabled': {'key': 'properties.isDefaultQuotaEnabled', 'type': 'bool'},
         'default_user_quota_in_ki_bs': {'key': 'properties.defaultUserQuotaInKiBs', 'type': 'long'},
         'default_group_quota_in_ki_bs': {'key': 'properties.defaultGroupQuotaInKiBs', 'type': 'long'},
+        'maximum_number_of_files': {'key': 'properties.maximumNumberOfFiles', 'type': 'long'},
         'volume_group_name': {'key': 'properties.volumeGroupName', 'type': 'str'},
         'capacity_pool_resource_id': {'key': 'properties.capacityPoolResourceId', 'type': 'str'},
         'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'str'},
         't2_network': {'key': 'properties.t2Network', 'type': 'str'},
         'volume_spec_name': {'key': 'properties.volumeSpecName', 'type': 'str'},
         'placement_rules': {'key': 'properties.placementRules', 'type': '[PlacementKeyValuePairs]'},
+        'enable_subvolumes': {'key': 'properties.enableSubvolumes', 'type': 'str'},
     }
 
     def __init__(
@@ -3548,6 +3907,7 @@ class Volume(msrest.serialization.Model):
         proximity_placement_group: Optional[str] = None,
         volume_spec_name: Optional[str] = None,
         placement_rules: Optional[List["PlacementKeyValuePairs"]] = None,
+        enable_subvolumes: Optional[Union[str, "EnableSubvolumes"]] = "Disabled",
         **kwargs
     ):
         """
@@ -3643,6 +4003,9 @@ class Volume(msrest.serialization.Model):
         :paramtype volume_spec_name: str
         :keyword placement_rules: Application specific placement rules for the particular volume.
         :paramtype placement_rules: list[~azure.mgmt.netapp.models.PlacementKeyValuePairs]
+        :keyword enable_subvolumes: Flag indicating whether subvolume operations are enabled on the
+         volume. Possible values include: "Enabled", "Disabled". Default value: "Disabled".
+        :paramtype enable_subvolumes: str or ~azure.mgmt.netapp.models.EnableSubvolumes
         """
         super(Volume, self).__init__(**kwargs)
         self.location = location
@@ -3651,6 +4014,7 @@ class Volume(msrest.serialization.Model):
         self.etag = None
         self.type = None
         self.tags = tags
+        self.system_data = None
         self.file_system_id = None
         self.creation_token = creation_token
         self.service_level = service_level
@@ -3685,12 +4049,14 @@ class Volume(msrest.serialization.Model):
         self.is_default_quota_enabled = is_default_quota_enabled
         self.default_user_quota_in_ki_bs = default_user_quota_in_ki_bs
         self.default_group_quota_in_ki_bs = default_group_quota_in_ki_bs
+        self.maximum_number_of_files = None
         self.volume_group_name = None
         self.capacity_pool_resource_id = capacity_pool_resource_id
         self.proximity_placement_group = proximity_placement_group
         self.t2_network = None
         self.volume_spec_name = volume_spec_name
         self.placement_rules = placement_rules
+        self.enable_subvolumes = enable_subvolumes
 
 
 class VolumeBackupProperties(msrest.serialization.Model):
@@ -4115,6 +4481,9 @@ class VolumeGroupVolumeProperties(msrest.serialization.Model):
     :ivar default_group_quota_in_ki_bs: Default group quota for volume in KiBs. If
      isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies.
     :vartype default_group_quota_in_ki_bs: long
+    :ivar maximum_number_of_files: Maximum number of files allowed. Needs a service request in
+     order to be changed. Only allowed to be changed if volume quota is more than 4TiB.
+    :vartype maximum_number_of_files: long
     :ivar volume_group_name: Volume Group Name.
     :vartype volume_group_name: str
     :ivar capacity_pool_resource_id: Pool Resource Id used in case of creating a volume through
@@ -4129,6 +4498,9 @@ class VolumeGroupVolumeProperties(msrest.serialization.Model):
     :vartype volume_spec_name: str
     :ivar placement_rules: Application specific placement rules for the particular volume.
     :vartype placement_rules: list[~azure.mgmt.netapp.models.PlacementKeyValuePairs]
+    :ivar enable_subvolumes: Flag indicating whether subvolume operations are enabled on the
+     volume. Possible values include: "Enabled", "Disabled". Default value: "Disabled".
+    :vartype enable_subvolumes: str or ~azure.mgmt.netapp.models.EnableSubvolumes
     """
 
     _validation = {
@@ -4148,6 +4520,7 @@ class VolumeGroupVolumeProperties(msrest.serialization.Model):
         'coolness_period': {'maximum': 63, 'minimum': 7},
         'unix_permissions': {'max_length': 4, 'min_length': 4},
         'clone_progress': {'readonly': True},
+        'maximum_number_of_files': {'readonly': True},
         'volume_group_name': {'readonly': True},
         't2_network': {'readonly': True},
     }
@@ -4191,12 +4564,14 @@ class VolumeGroupVolumeProperties(msrest.serialization.Model):
         'is_default_quota_enabled': {'key': 'properties.isDefaultQuotaEnabled', 'type': 'bool'},
         'default_user_quota_in_ki_bs': {'key': 'properties.defaultUserQuotaInKiBs', 'type': 'long'},
         'default_group_quota_in_ki_bs': {'key': 'properties.defaultGroupQuotaInKiBs', 'type': 'long'},
+        'maximum_number_of_files': {'key': 'properties.maximumNumberOfFiles', 'type': 'long'},
         'volume_group_name': {'key': 'properties.volumeGroupName', 'type': 'str'},
         'capacity_pool_resource_id': {'key': 'properties.capacityPoolResourceId', 'type': 'str'},
         'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'str'},
         't2_network': {'key': 'properties.t2Network', 'type': 'str'},
         'volume_spec_name': {'key': 'properties.volumeSpecName', 'type': 'str'},
         'placement_rules': {'key': 'properties.placementRules', 'type': '[PlacementKeyValuePairs]'},
+        'enable_subvolumes': {'key': 'properties.enableSubvolumes', 'type': 'str'},
     }
 
     def __init__(
@@ -4235,6 +4610,7 @@ class VolumeGroupVolumeProperties(msrest.serialization.Model):
         proximity_placement_group: Optional[str] = None,
         volume_spec_name: Optional[str] = None,
         placement_rules: Optional[List["PlacementKeyValuePairs"]] = None,
+        enable_subvolumes: Optional[Union[str, "EnableSubvolumes"]] = "Disabled",
         **kwargs
     ):
         """
@@ -4330,6 +4706,9 @@ class VolumeGroupVolumeProperties(msrest.serialization.Model):
         :paramtype volume_spec_name: str
         :keyword placement_rules: Application specific placement rules for the particular volume.
         :paramtype placement_rules: list[~azure.mgmt.netapp.models.PlacementKeyValuePairs]
+        :keyword enable_subvolumes: Flag indicating whether subvolume operations are enabled on the
+         volume. Possible values include: "Enabled", "Disabled". Default value: "Disabled".
+        :paramtype enable_subvolumes: str or ~azure.mgmt.netapp.models.EnableSubvolumes
         """
         super(VolumeGroupVolumeProperties, self).__init__(**kwargs)
         self.id = None
@@ -4370,12 +4749,14 @@ class VolumeGroupVolumeProperties(msrest.serialization.Model):
         self.is_default_quota_enabled = is_default_quota_enabled
         self.default_user_quota_in_ki_bs = default_user_quota_in_ki_bs
         self.default_group_quota_in_ki_bs = default_group_quota_in_ki_bs
+        self.maximum_number_of_files = None
         self.volume_group_name = None
         self.capacity_pool_resource_id = capacity_pool_resource_id
         self.proximity_placement_group = proximity_placement_group
         self.t2_network = None
         self.volume_spec_name = volume_spec_name
         self.placement_rules = placement_rules
+        self.enable_subvolumes = enable_subvolumes
 
 
 class VolumeList(msrest.serialization.Model):
@@ -4448,6 +4829,13 @@ class VolumePatch(msrest.serialization.Model):
     :ivar default_group_quota_in_ki_bs: Default group quota for volume in KiBs. If
      isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies.
     :vartype default_group_quota_in_ki_bs: long
+    :ivar unix_permissions: UNIX permissions for NFS volume accepted in octal 4 digit format. First
+     digit selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second digit
+     selects permission for the owner of the file: read (4), write (2) and execute (1). Third
+     selects permissions for other users in the same group. the fourth for other users not in the
+     group. 0755 - gives read/write/execute permissions to owner and read/execute to group and other
+     users.
+    :vartype unix_permissions: str
     """
 
     _validation = {
@@ -4455,6 +4843,7 @@ class VolumePatch(msrest.serialization.Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'usage_threshold': {'maximum': 109951162777600, 'minimum': 107374182400},
+        'unix_permissions': {'max_length': 4, 'min_length': 4},
     }
 
     _attribute_map = {
@@ -4471,6 +4860,7 @@ class VolumePatch(msrest.serialization.Model):
         'is_default_quota_enabled': {'key': 'properties.isDefaultQuotaEnabled', 'type': 'bool'},
         'default_user_quota_in_ki_bs': {'key': 'properties.defaultUserQuotaInKiBs', 'type': 'long'},
         'default_group_quota_in_ki_bs': {'key': 'properties.defaultGroupQuotaInKiBs', 'type': 'long'},
+        'unix_permissions': {'key': 'properties.unixPermissions', 'type': 'str'},
     }
 
     def __init__(
@@ -4486,6 +4876,7 @@ class VolumePatch(msrest.serialization.Model):
         is_default_quota_enabled: Optional[bool] = False,
         default_user_quota_in_ki_bs: Optional[int] = 0,
         default_group_quota_in_ki_bs: Optional[int] = 0,
+        unix_permissions: Optional[str] = None,
         **kwargs
     ):
         """
@@ -4516,6 +4907,13 @@ class VolumePatch(msrest.serialization.Model):
         :keyword default_group_quota_in_ki_bs: Default group quota for volume in KiBs. If
          isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies.
         :paramtype default_group_quota_in_ki_bs: long
+        :keyword unix_permissions: UNIX permissions for NFS volume accepted in octal 4 digit format.
+         First digit selects the set user ID(4), set group ID (2) and sticky (1) attributes. Second
+         digit selects permission for the owner of the file: read (4), write (2) and execute (1). Third
+         selects permissions for other users in the same group. the fourth for other users not in the
+         group. 0755 - gives read/write/execute permissions to owner and read/execute to group and other
+         users.
+        :paramtype unix_permissions: str
         """
         super(VolumePatch, self).__init__(**kwargs)
         self.location = location
@@ -4531,6 +4929,7 @@ class VolumePatch(msrest.serialization.Model):
         self.is_default_quota_enabled = is_default_quota_enabled
         self.default_user_quota_in_ki_bs = default_user_quota_in_ki_bs
         self.default_group_quota_in_ki_bs = default_group_quota_in_ki_bs
+        self.unix_permissions = unix_permissions
 
 
 class VolumePatchPropertiesDataProtection(msrest.serialization.Model):
