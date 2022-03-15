@@ -1753,6 +1753,7 @@ class CheckNoAliasGeneratedCode(BaseChecker):
                             if name[1] != None:
                                 aliased.append(name[1])
 
+                for nod in node.body:
                     if isinstance(nod, astroid.Assign): 
                         if nod.targets[0].as_string() == "__all__":
                             for models in nod.assigned_stmts():
