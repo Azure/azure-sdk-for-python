@@ -5,10 +5,14 @@
 ### Features Added
 
 ### Breaking Changes
+- Renamed `begin_copy_model()` to `begin_copy_model_to()`.
+- In `begin_create_composed_model()`, renamed required parameter `model_ids` to `component_model_ids`.
+- Renamed `model_count` and `model_limit` on `AccountInfo` to `document_model_count` and `document_model_limit`.
 
 ### Bugs Fixed
 
 ### Other Changes
+- Renamed `sample_copy_model.py` and `sample_copy_model_async.py` to `sample_copy_model_to.py` and `sample_copy_model_to_async.py` under the `3.2-beta` samples folder. Updated the samples to use renamed copy model method.
 
 ## 3.2.0b3 (2022-02-10)
 

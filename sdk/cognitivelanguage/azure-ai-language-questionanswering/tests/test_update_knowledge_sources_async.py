@@ -26,7 +26,7 @@ class SourcesQnasSynonymsTests(AsyncQuestionAnsweringTest):
 
         # create project
         project_name = "IssacNewton"
-        await QnaAuthoringAsyncHelper.create_test_project(client, project_name=project_name)
+        await QnaAuthoringAsyncHelper.create_test_project(client, project_name=project_name, **self.kwargs_for_polling)
 
         # add sources
         source_display_name = "MicrosoftFAQ"
@@ -42,7 +42,8 @@ class SourcesQnasSynonymsTests(AsyncQuestionAnsweringTest):
                     "contentStructureKind": "unstructured",
                     "refresh": False
                 }
-            }]
+            }],
+            **self.kwargs_for_polling
         )
         await sources_poller.result() # wait until done
 
@@ -62,7 +63,7 @@ class SourcesQnasSynonymsTests(AsyncQuestionAnsweringTest):
 
         # create project
         project_name = "IssacNewton"
-        await QnaAuthoringAsyncHelper.create_test_project(client, project_name=project_name)
+        await QnaAuthoringAsyncHelper.create_test_project(client, project_name=project_name, **self.kwargs_for_polling)
 
         # add qnas
         question = "What is the easiest way to use azure services in my .NET project?"
@@ -77,7 +78,8 @@ class SourcesQnasSynonymsTests(AsyncQuestionAnsweringTest):
                     ],
                     "answer": answer
                 }
-            }]
+            }],
+            **self.kwargs_for_polling
         )
         await qna_poller.result()
 
@@ -97,7 +99,7 @@ class SourcesQnasSynonymsTests(AsyncQuestionAnsweringTest):
 
         # create project
         project_name = "IssacNewton"
-        await QnaAuthoringAsyncHelper.create_test_project(client, project_name=project_name)
+        await QnaAuthoringAsyncHelper.create_test_project(client, project_name=project_name, **self.kwargs_for_polling)
 
         # add synonyms
         await client.update_synonyms(
