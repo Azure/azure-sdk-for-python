@@ -22,7 +22,7 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._snapshots_operations import build_create_request_initial, build_delete_request_initial, build_get_request, build_list_request, build_update_request_initial
+from ...operations._snapshots_operations import build_create_request_initial, build_delete_request_initial, build_get_request, build_list_request, build_restore_files_request_initial, build_update_request_initial
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -589,3 +589,131 @@ class SnapshotsOperations:
             return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     begin_delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}'}  # type: ignore
+
+    async def _restore_files_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        snapshot_name: str,
+        body: "_models.SnapshotRestoreFiles",
+        **kwargs: Any
+    ) -> None:
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(body, 'SnapshotRestoreFiles')
+
+        request = build_restore_files_request_initial(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            snapshot_name=snapshot_name,
+            content_type=content_type,
+            json=_json,
+            template_url=self._restore_files_initial.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    _restore_files_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}/restoreFiles'}  # type: ignore
+
+
+    @distributed_trace_async
+    async def begin_restore_files(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        pool_name: str,
+        volume_name: str,
+        snapshot_name: str,
+        body: "_models.SnapshotRestoreFiles",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Create a new Snapshot Restore Files request.
+
+        Restore the specified files from the specified snapshot to the active filesystem.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account.
+        :type account_name: str
+        :param pool_name: The name of the capacity pool.
+        :type pool_name: str
+        :param volume_name: The name of the volume.
+        :type volume_name: str
+        :param snapshot_name: The name of the snapshot.
+        :type snapshot_name: str
+        :param body: Restore payload supplied in the body of the operation.
+        :type body: ~azure.mgmt.netapp.models.SnapshotRestoreFiles
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._restore_files_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                pool_name=pool_name,
+                volume_name=volume_name,
+                snapshot_name=snapshot_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+        kwargs.pop('error_map', None)
+
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
+
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        else:
+            return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+    begin_restore_files.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}/restoreFiles'}  # type: ignore
