@@ -1760,7 +1760,7 @@ class CheckNamingMismatch(BaseChecker):
                                 for model_name in models.elts:
                                     if model_name.value in aliased:
                                         self.add_message(
-                                            msgid="aliasing-generated-code", node=model_name, confidence=None
+                                            msgid="naming-mismatch", node=model_name, confidence=None
                                         )
     
         except Exception:
