@@ -120,7 +120,7 @@ class StorageShareTest(StorageTestCase):
         created = self._create_share_if_not_exists()
 
         # Assert
-        self.assertEqual(created, None)
+        self.assertIsNone(created)
         self._delete_shares(share.share_name)
 
 

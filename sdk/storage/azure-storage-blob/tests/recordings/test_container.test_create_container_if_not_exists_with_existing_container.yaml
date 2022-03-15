@@ -13,45 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.10.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
       x-ms-date:
-      - Tue, 15 Mar 2022 22:04:02 GMT
-      x-ms-version:
-      - '2021-04-10'
-    method: PUT
-    uri: https://storagename.blob.core.windows.net/container785a1eaa?restype=container
-  response:
-    body:
-      string: ''
-    headers:
-      content-length:
-      - '0'
-      date:
-      - Tue, 15 Mar 2022 22:04:02 GMT
-      etag:
-      - '"0x8DA06CFB72C4033"'
-      last-modified:
-      - Tue, 15 Mar 2022 22:04:02 GMT
-      server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version:
-      - '2021-04-10'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-blob/12.10.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
-      x-ms-date:
-      - Tue, 15 Mar 2022 22:04:02 GMT
+      - Tue, 15 Mar 2022 23:41:24 GMT
       x-ms-version:
       - '2021-04-10'
     method: PUT
@@ -59,14 +21,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
-        specified container already exists.\nRequestId:0d0b7f89-f01e-0099-33b8-38a57f000000\nTime:2022-03-15T22:04:02.8323483Z</Message></Error>"
+        specified container already exists.\nRequestId:034148b4-001e-0034-4dc6-38e90a000000\nTime:2022-03-15T23:41:24.6429893Z</Message></Error>"
     headers:
       content-length:
       - '230'
       content-type:
       - application/xml
       date:
-      - Tue, 15 Mar 2022 22:04:02 GMT
+      - Tue, 15 Mar 2022 23:41:24 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
