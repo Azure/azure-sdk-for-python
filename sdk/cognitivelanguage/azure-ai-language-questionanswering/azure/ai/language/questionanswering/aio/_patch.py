@@ -10,6 +10,7 @@ from typing import Any, List
 from azure.core.credentials import AzureKeyCredential
 from ._question_answering_client import QuestionAnsweringClient as QuestionAnsweringClientGenerated
 
+
 class QuestionAnsweringClient(QuestionAnsweringClientGenerated):
     __doc__ = QuestionAnsweringClientGenerated.__doc__
 
@@ -17,7 +18,10 @@ class QuestionAnsweringClient(QuestionAnsweringClientGenerated):
         super().__init__(endpoint, credential, **kwargs)
         self._default_language = kwargs.pop("default_language", None)
 
-__all__: List[str] = ["QuestionAnsweringClient"]  # Add all objects you want publicly available to users at this package level
+
+__all__: List[str] = [
+    "QuestionAnsweringClient"
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

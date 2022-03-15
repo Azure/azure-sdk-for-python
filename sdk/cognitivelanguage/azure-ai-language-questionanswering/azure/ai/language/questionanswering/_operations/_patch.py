@@ -107,7 +107,9 @@ def _get_answers_prepare_options(*args: AnswersOptions, **kwargs: Any) -> Tuple[
     return _handle_metadata_filter_conversion(options), kwargs
 
 
-def _get_answers_from_text_prepare_options(*args: AnswersFromTextOptions, **kwargs: Any) -> Tuple[AnswersFromTextOptions, Any]:
+def _get_answers_from_text_prepare_options(
+    *args: AnswersFromTextOptions, **kwargs: Any
+) -> Tuple[AnswersFromTextOptions, Any]:
     options = _get_positional_body(*args, **kwargs) or AnswersFromTextOptions(
         question=kwargs.pop("question"),
         text_documents=kwargs.pop("text_documents"),

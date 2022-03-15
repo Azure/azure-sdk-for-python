@@ -5,7 +5,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from __future__ import annotations
 from abc import ABC
 from typing import TYPE_CHECKING
 
@@ -21,7 +20,7 @@ if TYPE_CHECKING:
 class MixinABC(ABC):
     """DO NOT use this class. It is for internal typing use only."""
 
-    _client: PipelineClient
+    _client: "PipelineClient"
     _config: QuestionAnsweringClientConfiguration
-    _serialize: Serializer
-    _deserialize: Deserializer
+    _serialize: "Serializer"
+    _deserialize: "Deserializer"
