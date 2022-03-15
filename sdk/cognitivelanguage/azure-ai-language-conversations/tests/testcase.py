@@ -33,19 +33,18 @@ class FakeTokenCredential(object):
 
 TEST_ENDPOINT = 'https://test-resource.api.cognitive.microsoft.com'
 TEST_KEY = '0000000000000000'
-TEST_PROJECT = 'test-project'
-TEST_WORKFLOW = 'test-workflow'
-
+TEST_CONV_PROJECT_NAME = ""
+TEST_CONV_DEPLOYMENT_NAME = ""
+TEST_ORCH_PROJECT_NAME = ""
+TEST_ORCH_DEPLOYMENT_NAME = ""
 
 class ConversationTest(AzureTestCase):
     FILTER_HEADERS = ReplayableTest.FILTER_HEADERS + ['Ocp-Apim-Subscription-Key']
 
     def __init__(self, method_name):
         super(ConversationTest, self).__init__(method_name)
-        self.scrubber.register_name_pair(os.environ.get("AZURE_CONVERSATIONS_ENDPOINT"), TEST_ENDPOINT)
-        self.scrubber.register_name_pair(os.environ.get("AZURE_CONVERSATIONS_KEY"), TEST_KEY)
-        self.scrubber.register_name_pair(os.environ.get("AZURE_CONVERSATIONS_PROJECT"), TEST_PROJECT)
-        self.scrubber.register_name_pair(os.environ.get("AZURE_CONVERSATIONS_WORKFLOW_PROJECT"), TEST_WORKFLOW)
+        self.scrubber.register_name_pair(os.environ.get("AZURE_CLU_ENDPOINT"), TEST_ENDPOINT)
+        self.scrubber.register_name_pair(os.environ.get("AZURE_CLU_KEY"), TEST_KEY)
 
     def generate_fake_token(self):
         return FakeTokenCredential()
@@ -82,16 +81,20 @@ class GlobalConversationAccountPreparer(AzureMgmtPreparer):
             return {
                 'location': REGION,
                 'resource_group': "rgname",
-                'conv_account': os.environ.get("AZURE_CONVERSATIONS_ENDPOINT"),
-                'conv_key': os.environ.get("AZURE_CONVERSATIONS_KEY"),
-                'conv_project': os.environ.get("AZURE_CONVERSATIONS_PROJECT"),
-                'orchestration_project': os.environ.get("AZURE_CONVERSATIONS_WORKFLOW_PROJECT")
+                'endpoint': os.environ.get("AZURE_CLU_ENDPOINT"),
+                'key': os.environ.get("AZURE_CLU_KEY"),
+                'conv_project_name': TEST_CONV_PROJECT_NAME,
+                'conv_deployment_name': TEST_CONV_DEPLOYMENT_NAME,
+                'orch_project_name': TEST_ORCH_PROJECT_NAME,
+                'orch_deployment_name': TEST_ORCH_DEPLOYMENT_NAME
             }
         return {
             'location': REGION,
             'resource_group': "rgname",
-            'conv_account': TEST_ENDPOINT,
-            'conv_key': TEST_KEY,
-            'conv_project': TEST_PROJECT,
-            'orchestration_project': TEST_WORKFLOW
+            'endpoint': TEST_ENDPOINT,
+            'key': TEST_KEY,
+            'conv_project_name': TEST_CONV_PROJECT_NAME,
+            'conv_deployment_name': TEST_CONV_DEPLOYMENT_NAME,
+            'orch_project_name': TEST_ORCH_PROJECT_NAME,
+            'orch_deployment_name': TEST_ORCH_DEPLOYMENT_NAME
         }
