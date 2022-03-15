@@ -37,3 +37,13 @@ credential-default-policy-type: AzureKeyCredentialPolicy
 credential-key-header-name: Ocp-Apim-Subscription-Key
 black: true
 ```
+
+### Remove intermediary from analyze operation
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["paths"]["/:analyze-conversations"]["post"]
+      transform: >
+          $["operationId"] = "analyzeConversation";
+```
