@@ -30,7 +30,7 @@ class OrchestrationAppConvResponseTests(ConversationTest):
         client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
         with client:
             query = "Send an email to Carol about the tomorrow's demo"
-            result = client.conversation_analysis.analyze_conversation(
+            result = client.analyze_conversation(
                 body={
                     "kind": "CustomConversation",
                     "analysisInput": {
