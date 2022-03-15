@@ -5,7 +5,7 @@ stages:
     parameters:
       BuildTargetingString: azure-ai-formrecognizer
       ServiceDirectory: formrecognizer
-      TestTimeoutInMinutes: 400
+      TestTimeoutInMinutes: 480
       MatrixReplace:
         - TestSamples=.*/true
       SupportedClouds: 'Public,UsGov,China'

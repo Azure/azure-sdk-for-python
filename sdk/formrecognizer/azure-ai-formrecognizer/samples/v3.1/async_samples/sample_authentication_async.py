@@ -52,7 +52,7 @@ class AuthenticationSampleAsync(object):
 
             # The test is unstable in China cloud, we try to set the number of retries in the code to increase stability
             retry_times = 0
-            while retry_times != 5 :
+            while retry_times != 10 :
                 try:
                     # Begin recognize content from url, this sample test is unstable in China cloud.(We are testing sovereign cloud test)
                     # Increasing the number of retries in the code until there is a better solution
