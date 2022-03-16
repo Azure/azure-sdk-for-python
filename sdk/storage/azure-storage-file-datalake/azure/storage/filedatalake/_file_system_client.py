@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
+from importlib.resources import Resource
 from typing import Optional, Any, Union, TypeVar
 
 try:
@@ -268,7 +269,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         # type: (...) ->  Dict[str, Union[str, datetime]]
         """Creates a new file system under the specified account.
 
-        If the file system with the same name already exists, it is not changed.
+        If a file system with the same name already exists, it is not changed.
 
         .. admonition:: Example:
 
