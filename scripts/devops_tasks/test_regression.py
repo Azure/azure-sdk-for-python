@@ -373,7 +373,7 @@ def run_main(args):
     # find package dependency map for azure sdk
     pkg_dependency = find_package_dependency(AZURE_GLOB_STRING, code_repo_root, args.dependent_service)
 
-    logging.info("Package dependency: {}".format(dependency_map))
+    logging.info("Package dependency: {}".format(pkg_dependency))
 
     # Create regression text context. One context object will be reused for all packages
     context = RegressionContext(args.whl_dir, temp_dir, str_to_bool(args.verify_latest), args.mark_arg)
