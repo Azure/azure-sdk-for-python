@@ -192,7 +192,7 @@ jobs:
     parameters:
       JobTemplatePath: /eng/pipelines/templates/jobs/regression.yml
       GenerateJobName: generate_regression_matrix
-      SparseCheckoutPaths: [ "scripts/" ]
+      SparseCheckoutPaths: [ "scripts/", "sdk/" ]
       MatrixConfigs:
           - Name: Python_regression_envs
             Path: eng/pipelines/templates/stages/regression-job-matrix.json
