@@ -1713,7 +1713,7 @@ class CheckNamingMismatchGeneratedCode(BaseChecker):
     priority = -1
     msgs = {
         "C4745": (
-            "Do not expose aliased generated code."
+            "Do not alias generated code."
             "This messes up sphinx, intellisense, and apiview, so please modify the name of the generated code through"
             " the swagger / directives, or code customizations",
             "naming-mismatch",
