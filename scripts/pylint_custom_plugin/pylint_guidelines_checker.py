@@ -1742,24 +1742,40 @@ class CheckApiVersion(BaseChecker):
         :type node: ast.ClassDef
         :return: None
         """
+
+        #Need to take into account python 2 versus version 3 of python
+        # Do accept an optional api_version kwargs
+
         try:
             api_version = False
+            
             if node.name.endswith("Client") and node.name not in self.ignore_clients:
                 for func in node.body:
-                    if func.name == "__init__":
-                        for child in func.get_children():
-                            if isinstance(child,astroid.Assign):
-                                for att in child.targets:
-                                    if att.attrname:
-                                        name = att.attrname
-                                        if name == "_api_version" or name == "api_version":
-                                            api_version=True
-                                            break
-                        if not api_version:
-                            self.add_message(
-                                msgid="api-version-not-keyword", node=node, confidence=None
-                            )   
-                            
+                    if isinstance(func,astroid.FunctionDef):
+                        if func.name == '__init__':
+                            pass
+                            # print(func)
+                            # print(node)
+                            # print(func)
+                            #print(func.args.type_comment_args)
+                    # if func.name == "__init__":
+                            # print(func.keyword)
+                            # for child in func.get_children():
+                            #     print("HERE")
+                            #     print(child)
+                            #     if isinstance(child,astroid.Assign):
+                            #         for att in child.targets:
+                            #             print(att)
+                            #             if att.attrname:
+                            #                 name = att.attrname
+                            #                 if name == "_api_version" or name == "api_version":
+                            #                     api_version=True
+                            #                     break
+                            # if not api_version:
+                            #     self.add_message(
+                            #         msgid="api-version-not-keyword", node=node, confidence=None
+                            #     )   
+                                
       
         except AttributeError:
             logger.debug("Pylint custom checker failed to check if client uses connection string param in constructor.")
