@@ -1706,14 +1706,14 @@ class CheckDocstringAdmonitionNewline(BaseChecker):
     visit_asyncfunctiondef = visit_functiondef
 
 
-class CheckNamingMismatch(BaseChecker):
+class CheckNamingMismatchGeneratedCode(BaseChecker):
     __implements__ = IAstroidChecker
 
-    name = "check-naming"
+    name = "check-naming-mismatch"
     priority = -1
     msgs = {
         "C4745": (
-            "Exposing aliased generated code."
+            "Do not expose aliased generated code."
             "This messes up sphinx, intellisense, and apiview, so please modify the name of the generated code through"
             " the swagger / directives, or code customizations",
             "naming-mismatch",
