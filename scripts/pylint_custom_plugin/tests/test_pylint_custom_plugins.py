@@ -2570,8 +2570,8 @@ class TestCheckDocstringAdmonitionNewline(pylint.testutils.CheckerTestCase):
             self.checker.visit_classdef(class_node)        
     
     
-class TestCheckNamingMismatch(pylint.testutils.CheckerTestCase):
-    CHECKER_CLASS = checker.CheckNamingMismatch
+class TestCheckNamingMismatchGeneratedCode(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.CheckNamingMismatchGeneratedCode
 
     def test_ignores_correct_alias_code(self):
         module_node = astroid.extract_node(
