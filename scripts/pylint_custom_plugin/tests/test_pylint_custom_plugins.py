@@ -2569,3 +2569,41 @@ class TestCheckDocstringAdmonitionNewline(pylint.testutils.CheckerTestCase):
                 )
         ):
             self.checker.visit_classdef(class_node)
+
+class TestCheckApiVersion(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.CheckApiVersion
+
+    def test_bad_api_version(self):
+        class_node = astroid.extract_node(
+            """
+            class SomeClient(object):
+                '''
+                   : param str something
+                '''
+                def __init__(self, something, **kwargs):
+                    pass
+            """
+        )
+
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="api-version-not-keyword", node=class_node
+                )
+        ):
+            self.checker.visit_classdef(class_node)
+
+    def test_good_api_version(self):
+        class_node = astroid.extract_node(
+            """
+            class SomeClient(object):
+                '''
+                   : param str something
+                   : keyword str api_version
+                '''
+                def __init__(self, something, **kwargs):
+                    pass
+            """
+        )
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
