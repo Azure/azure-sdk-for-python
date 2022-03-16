@@ -1733,7 +1733,7 @@ class CheckNamingMismatchGeneratedCode(BaseChecker):
     )
 
     def __init__(self, linter=None):
-        super(CheckNamingMismatch, self).__init__(linter)
+        super(CheckNamingMismatchGeneratedCode, self).__init__(linter)
 
     def visit_module(self, node):
         """Visits __init__.py and checks that there are not aliased models.
