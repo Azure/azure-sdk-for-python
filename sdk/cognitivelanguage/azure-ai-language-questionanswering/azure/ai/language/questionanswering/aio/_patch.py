@@ -1,12 +1,13 @@
-# coding=utf-8
-# --------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for license information.
-# --------------------------------------------------------------------------
-from typing import Any
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+"""Customize generated code here.
 
+Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
+"""
+from typing import Any, List
 from azure.core.credentials import AzureKeyCredential
-
 from ._question_answering_client import QuestionAnsweringClient as QuestionAnsweringClientGenerated
 
 
@@ -30,8 +31,15 @@ class QuestionAnsweringClient(QuestionAnsweringClientGenerated):
         self._default_language = kwargs.pop("default_language", None)
 
 
+__all__: List[str] = [
+    "QuestionAnsweringClient"
+]  # Add all objects you want publicly available to users at this package level
+
+
 def patch_sdk():
-    pass
+    """Do not remove from this file.
 
-
-__all__ = ["QuestionAnsweringClient"]
+    `patch_sdk` is a last resort escape hatch that allows you to do customizations
+    you can't accomplish using the techniques described in
+    https://aka.ms/azsdk/python/dpcodegen/python/customize
+    """
