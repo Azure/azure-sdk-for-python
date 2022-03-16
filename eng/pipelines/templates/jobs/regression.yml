@@ -41,7 +41,7 @@ jobs:
             eq(variables['System.TeamProject'], 'internal'),
             eq(variables['Build.Reason'], 'Schedule')
           )
-        ),
+        )
       )
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
 
