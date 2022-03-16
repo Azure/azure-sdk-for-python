@@ -6,26 +6,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import ActivityLogAlertActionGroup
-    from ._models_py3 import ActivityLogAlertActionList
-    from ._models_py3 import ActivityLogAlertAllOfCondition
-    from ._models_py3 import ActivityLogAlertLeafCondition
-    from ._models_py3 import ActivityLogAlertList
-    from ._models_py3 import ActivityLogAlertResource
-    from ._models_py3 import ActivityLogAlertResourcePatch
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import Resource
-except (SyntaxError, ImportError):
-    from ._models import ActivityLogAlertActionGroup  # type: ignore
-    from ._models import ActivityLogAlertActionList  # type: ignore
-    from ._models import ActivityLogAlertAllOfCondition  # type: ignore
-    from ._models import ActivityLogAlertLeafCondition  # type: ignore
-    from ._models import ActivityLogAlertList  # type: ignore
-    from ._models import ActivityLogAlertResource  # type: ignore
-    from ._models import ActivityLogAlertResourcePatch  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import Resource  # type: ignore
+from ._models_py3 import ActivityLogAlertActionGroup
+from ._models_py3 import ActivityLogAlertActionList
+from ._models_py3 import ActivityLogAlertAllOfCondition
+from ._models_py3 import ActivityLogAlertLeafCondition
+from ._models_py3 import ActivityLogAlertList
+from ._models_py3 import ActivityLogAlertResource
+from ._models_py3 import ActivityLogAlertResourcePatch
+from ._models_py3 import ErrorResponse
+from ._models_py3 import Resource
+
 
 __all__ = [
     'ActivityLogAlertActionGroup',
