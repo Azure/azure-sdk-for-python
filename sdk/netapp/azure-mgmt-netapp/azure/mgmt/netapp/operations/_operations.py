@@ -29,7 +29,7 @@ _SERIALIZER.client_side_validation = False
 def build_list_request(
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2021-08-01"
+    api_version = "2021-10-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/providers/Microsoft.NetApp/operations')

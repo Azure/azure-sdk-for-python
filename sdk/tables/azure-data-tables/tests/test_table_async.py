@@ -413,7 +413,7 @@ class TestTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
         with pytest.raises(ValueError) as excinfo:
             async with tsc:
                 await tsc.create_table(invalid_table_name)
-            assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
+            assert "Storage table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
                 excinfo)
     
     @tables_decorator_async
@@ -426,5 +426,5 @@ class TestTableAsync(AzureRecordedTestCase, AsyncTableTestCase):
         with pytest.raises(ValueError) as excinfo:
             async with tsc:
                 await tsc.create_table(table_name=invalid_table_name)
-            assert "Table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
+            assert "Storage table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long.""" in str(
                 excinfo)
