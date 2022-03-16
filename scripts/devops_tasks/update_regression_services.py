@@ -91,5 +91,3 @@ if __name__ == "__main__":
 
     with open(args.json, "w") as f:
         f.write(json_result)
-
-    pdb.set_trace()
