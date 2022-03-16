@@ -6,80 +6,43 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AutoscaleErrorResponse
-    from ._models_py3 import AutoscaleErrorResponseError
-    from ._models_py3 import AutoscaleNotification
-    from ._models_py3 import AutoscaleProfile
-    from ._models_py3 import AutoscaleSettingResource
-    from ._models_py3 import AutoscaleSettingResourceCollection
-    from ._models_py3 import AutoscaleSettingResourcePatch
-    from ._models_py3 import DiagnosticSettingsCategoryResource
-    from ._models_py3 import DiagnosticSettingsCategoryResourceCollection
-    from ._models_py3 import DiagnosticSettingsResource
-    from ._models_py3 import DiagnosticSettingsResourceCollection
-    from ._models_py3 import EmailNotification
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import LogSettings
-    from ._models_py3 import ManagementGroupDiagnosticSettingsResource
-    from ._models_py3 import ManagementGroupDiagnosticSettingsResourceCollection
-    from ._models_py3 import ManagementGroupLogSettings
-    from ._models_py3 import MetricSettings
-    from ._models_py3 import MetricTrigger
-    from ._models_py3 import PredictiveAutoscalePolicy
-    from ._models_py3 import PredictiveResponse
-    from ._models_py3 import PredictiveValue
-    from ._models_py3 import Recurrence
-    from ._models_py3 import RecurrentSchedule
-    from ._models_py3 import Resource
-    from ._models_py3 import RetentionPolicy
-    from ._models_py3 import ScaleAction
-    from ._models_py3 import ScaleCapacity
-    from ._models_py3 import ScaleRule
-    from ._models_py3 import ScaleRuleMetricDimension
-    from ._models_py3 import SubscriptionDiagnosticSettingsResource
-    from ._models_py3 import SubscriptionDiagnosticSettingsResourceCollection
-    from ._models_py3 import SubscriptionLogSettings
-    from ._models_py3 import SystemData
-    from ._models_py3 import TimeWindow
-    from ._models_py3 import WebhookNotification
-except (SyntaxError, ImportError):
-    from ._models import AutoscaleErrorResponse  # type: ignore
-    from ._models import AutoscaleErrorResponseError  # type: ignore
-    from ._models import AutoscaleNotification  # type: ignore
-    from ._models import AutoscaleProfile  # type: ignore
-    from ._models import AutoscaleSettingResource  # type: ignore
-    from ._models import AutoscaleSettingResourceCollection  # type: ignore
-    from ._models import AutoscaleSettingResourcePatch  # type: ignore
-    from ._models import DiagnosticSettingsCategoryResource  # type: ignore
-    from ._models import DiagnosticSettingsCategoryResourceCollection  # type: ignore
-    from ._models import DiagnosticSettingsResource  # type: ignore
-    from ._models import DiagnosticSettingsResourceCollection  # type: ignore
-    from ._models import EmailNotification  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import LogSettings  # type: ignore
-    from ._models import ManagementGroupDiagnosticSettingsResource  # type: ignore
-    from ._models import ManagementGroupDiagnosticSettingsResourceCollection  # type: ignore
-    from ._models import ManagementGroupLogSettings  # type: ignore
-    from ._models import MetricSettings  # type: ignore
-    from ._models import MetricTrigger  # type: ignore
-    from ._models import PredictiveAutoscalePolicy  # type: ignore
-    from ._models import PredictiveResponse  # type: ignore
-    from ._models import PredictiveValue  # type: ignore
-    from ._models import Recurrence  # type: ignore
-    from ._models import RecurrentSchedule  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import RetentionPolicy  # type: ignore
-    from ._models import ScaleAction  # type: ignore
-    from ._models import ScaleCapacity  # type: ignore
-    from ._models import ScaleRule  # type: ignore
-    from ._models import ScaleRuleMetricDimension  # type: ignore
-    from ._models import SubscriptionDiagnosticSettingsResource  # type: ignore
-    from ._models import SubscriptionDiagnosticSettingsResourceCollection  # type: ignore
-    from ._models import SubscriptionLogSettings  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import TimeWindow  # type: ignore
-    from ._models import WebhookNotification  # type: ignore
+from ._models_py3 import AutoscaleErrorResponse
+from ._models_py3 import AutoscaleErrorResponseError
+from ._models_py3 import AutoscaleNotification
+from ._models_py3 import AutoscaleProfile
+from ._models_py3 import AutoscaleSettingResource
+from ._models_py3 import AutoscaleSettingResourceCollection
+from ._models_py3 import AutoscaleSettingResourcePatch
+from ._models_py3 import DiagnosticSettingsCategoryResource
+from ._models_py3 import DiagnosticSettingsCategoryResourceCollection
+from ._models_py3 import DiagnosticSettingsResource
+from ._models_py3 import DiagnosticSettingsResourceCollection
+from ._models_py3 import EmailNotification
+from ._models_py3 import ErrorResponse
+from ._models_py3 import LogSettings
+from ._models_py3 import ManagementGroupDiagnosticSettingsResource
+from ._models_py3 import ManagementGroupDiagnosticSettingsResourceCollection
+from ._models_py3 import ManagementGroupLogSettings
+from ._models_py3 import MetricSettings
+from ._models_py3 import MetricTrigger
+from ._models_py3 import PredictiveAutoscalePolicy
+from ._models_py3 import PredictiveResponse
+from ._models_py3 import PredictiveValue
+from ._models_py3 import Recurrence
+from ._models_py3 import RecurrentSchedule
+from ._models_py3 import Resource
+from ._models_py3 import RetentionPolicy
+from ._models_py3 import ScaleAction
+from ._models_py3 import ScaleCapacity
+from ._models_py3 import ScaleRule
+from ._models_py3 import ScaleRuleMetricDimension
+from ._models_py3 import SubscriptionDiagnosticSettingsResource
+from ._models_py3 import SubscriptionDiagnosticSettingsResourceCollection
+from ._models_py3 import SubscriptionLogSettings
+from ._models_py3 import SystemData
+from ._models_py3 import TimeWindow
+from ._models_py3 import WebhookNotification
+
 
 from ._monitor_management_client_enums import (
     CategoryType,
