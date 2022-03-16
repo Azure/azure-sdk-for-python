@@ -310,6 +310,11 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         Creates a new container under the specified account. If the container
         with the same name already exists, it is not changed.
 
+        :keyword Dict[str, str] metadata:
+            A dict with name_value pairs to associate with the
+            container as metadata. Example:{'Category':'test'}
+        :keyword ~azure.storage.blob.PublicAccess public_access:
+            Possible values include: 'container', 'blob'.
         :keyword container_encryption_scope:
             Specifies the default encryption scope to set on the container and use for
             all future writes.
@@ -320,15 +325,6 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/blob_samples_containers.py
-                :start-after: [START create_container]
-                :end-before: [END create_container]
-                :language: python
-                :dedent: 12
-                :caption: Creating a container to store blobs.
         """
         try:
             return self.create_container(**kwargs)
