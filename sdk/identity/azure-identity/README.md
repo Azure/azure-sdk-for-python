@@ -38,7 +38,7 @@ local development.
 
 Developers using Visual Studio Code can use the [Azure Account extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account) to authenticate via the editor. Apps using `DefaultAzureCredential` or `VisualStudioCodeCredential` can then use this account to authenticate calls in their app when running locally.
 
-To authenticate in Visual Studio Code, ensure **version 0.9.11 or earlier** of the Azure Account extension is installed. Once installed, open the **Command Palette** and run the **Azure: Sign In** command.
+To authenticate in Visual Studio Code, ensure **version 0.9.11 or earlier** of the Azure Account extension is installed. To track progress toward supporting newer extension versions, see [this GitHub issue](https://github.com/Azure/azure-sdk-for-net/issues/27263). Once installed, open the **Command Palette** and run the **Azure: Sign In** command.
 
 #### Authenticate via the Azure CLI
 
