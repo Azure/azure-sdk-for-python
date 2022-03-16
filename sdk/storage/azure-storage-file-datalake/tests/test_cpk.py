@@ -8,7 +8,7 @@
 import unittest
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
-from azure.storage.filedatalake import CustomerProvidedEncryptionKey, DataLakeServiceClient, DelimitedTextDialect
+from azure.storage.filedatalake import CustomerProvidedEncryptionKey, DataLakeServiceClient
 from devtools_testutils.storage import StorageTestCase
 from tests.test_quick_query import DATALAKE_CSV_DATA
 from settings.testcase import DataLakePreparer
