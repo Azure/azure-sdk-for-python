@@ -340,13 +340,12 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             else None,
             timeout=self._max_wait_time * 1000 if self._max_wait_time else 0,
             prefetch=self._prefetch_count,
-            # If prefetch is 1, then keep_receiving coroutine serves as the keep_alive
+            # If prefetch is 1, then keep_alive coroutine serves as keep receiving for releasing messages
             keep_alive_interval=self._config.keep_alive if self._prefetch_count != 1 else 5,
             shutdown_after_timeout=False,
         )
         if self._prefetch_count == 1:
             self._handler._message_received = self._enhanced_message_received  # pylint: disable=protected-access
-            self._handler._keep_alive= self._keep_receiving
 
     async def _open(self):
         # pylint: disable=protected-access
@@ -553,18 +552,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     async def _close_handler(self):
         self._message_iter = None
         await super(ServiceBusReceiver, self)._close_handler()
-
-    async def _keep_receiving(self):
-        while not self._shutdown.is_set() and self._handler:
-            try:
-                await self._handler._connection.work_async()  # pylint: disable=protected-access
-                await asyncio.sleep(5)
-                _LOGGER.debug("Keep connection alive")
-            except asyncio.CancelledError:
-                pass
-            except Exception as e:  # pylint: disable=broad-except
-                _LOGGER.info("Keep connection failed %r", e)
-                break
 
     @property
     def session(self) -> ServiceBusSession:
