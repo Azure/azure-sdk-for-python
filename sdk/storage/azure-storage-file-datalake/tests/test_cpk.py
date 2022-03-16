@@ -8,8 +8,9 @@
 import unittest
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
-from azure.storage.filedatalake import CustomerProvidedEncryptionKey, DataLakeServiceClient
+from azure.storage.filedatalake import CustomerProvidedEncryptionKey, DataLakeServiceClient, DelimitedTextDialect
 from devtools_testutils.storage import StorageTestCase
+from tests.test_quick_query import DATALAKE_CSV_DATA
 from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
@@ -85,6 +86,19 @@ class DatalakeCpkTest(StorageTestCase):
         self.assertIsNotNone(response)
         self.assertTrue(response['request_server_encrypted'])
         self.assertEqual(TEST_ENCRYPTION_KEY.key_hash, response['encryption_key_sha256'])
+
+    @DataLakePreparer()
+    def test_create_sub_directory_cpk(self, datalake_storage_account_name, datalake_storage_account_key):
+        # Arrange
+        self._setup(datalake_storage_account_name, datalake_storage_account_key)
+        directory_client = self._create_directory(cpk=TEST_ENCRYPTION_KEY)
+
+        # Act
+        sub_directory_client = directory_client.create_sub_directory('cpksubdirectory', cpk=TEST_ENCRYPTION_KEY)
+        props = sub_directory_client.get_directory_properties(cpk=TEST_ENCRYPTION_KEY)
+
+        # Assert
+        self.assertIsNotNone(props)
 
     @DataLakePreparer()
     def test_create_file_cpk(self, datalake_storage_account_name, datalake_storage_account_key):
@@ -183,6 +197,63 @@ class DatalakeCpkTest(StorageTestCase):
         self.assertIsNotNone(response)
         self.assertTrue(response['request_server_encrypted'])
         self.assertEqual(TEST_ENCRYPTION_KEY.key_hash, response['encryption_key_sha256'])
+
+    @DataLakePreparer()
+    def test_file_download_cpk(self, datalake_storage_account_name, datalake_storage_account_key):
+        # Arrange
+        self._setup(datalake_storage_account_name, datalake_storage_account_key)
+        directory_name = self._get_directory_reference()
+        file_client = self._create_file(directory_name=directory_name, cpk=TEST_ENCRYPTION_KEY)
+        data = self.get_random_bytes(1024)
+        file_client.upload_data(data, cpk=TEST_ENCRYPTION_KEY)
+
+        # Act
+        file = file_client.download_file(cpk=TEST_ENCRYPTION_KEY).readall()
+
+        # Assert
+        self.assertIsNotNone(file)
+        self.assertEqual(data, file)
+
+    @DataLakePreparer()
+    def test_set_metadata_cpk(self, datalake_storage_account_name, datalake_storage_account_key):
+        # Arrange
+        self._setup(datalake_storage_account_name, datalake_storage_account_key)
+        directory_name = self._get_directory_reference()
+        file_client = self._create_file(directory_name=directory_name, cpk=TEST_ENCRYPTION_KEY)
+        metadata = {'hello': 'world', 'number': '42'}
+
+        # Act
+        file_client.set_metadata(metadata, cpk=TEST_ENCRYPTION_KEY)
+        props = file_client.get_file_properties(cpk=TEST_ENCRYPTION_KEY)
+
+        # Assert
+        self.assertIsNotNone(props)
+        self.assertEqual(metadata, props.metadata)
+
+    @DataLakePreparer()
+    def test_query_file_cpk(self, datalake_storage_account_name, datalake_storage_account_key):
+        # Arrange
+        self._setup(datalake_storage_account_name, datalake_storage_account_key)
+        directory_name = self._get_directory_reference()
+        file_client = self._create_file(directory_name=directory_name, cpk=TEST_ENCRYPTION_KEY)
+        file_client.upload_data(DATALAKE_CSV_DATA, overwrite=True, cpk=TEST_ENCRYPTION_KEY)
+
+        errors = []
+
+        def on_error(error):
+            errors.append(error)
+
+        # Act
+        reader = file_client.query_file(
+            "SELECT * from DataLakeStorage",
+            on_error=on_error,
+            cpk=TEST_ENCRYPTION_KEY)
+        reader.readall()
+
+        # Assert
+        self.assertEqual(len(errors), 0)
+        self.assertEqual(len(reader), len(DATALAKE_CSV_DATA))
+        self.assertEqual(len(reader), reader._blob_query_reader._bytes_processed)
 
 
 if __name__ == '__main__':

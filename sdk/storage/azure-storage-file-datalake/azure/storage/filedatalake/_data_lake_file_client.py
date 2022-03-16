@@ -631,6 +631,10 @@ class DataLakeFileClient(PathClient):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Decrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            Required if the file was created with a Customer-Provided Key.
         :keyword int max_concurrency:
             The number of parallel connections with which to download.
         :keyword int timeout:
@@ -804,6 +808,10 @@ class DataLakeFileClient(PathClient):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Decrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            Required if the file was created with a Customer-Provided Key.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A streaming object (DataLakeFileQueryReader)

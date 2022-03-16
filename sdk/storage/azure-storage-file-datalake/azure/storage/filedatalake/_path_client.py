@@ -816,7 +816,7 @@ class PathClient(StorageAccountHostsMixin):
         :param metadata:
             A dict containing name-value pairs to associate with the file system as
             metadata. Example: {'category':'test'}
-        :type metadata: dict[str, str]
+        :type metadata: Dict[str, str]
         :keyword lease:
             If specified, set_file_system_metadata only succeeds if the
             file system's lease is active and matches this ID.
@@ -838,6 +838,9 @@ class PathClient(StorageAccountHostsMixin):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: file system-updated property dict (Etag and last modified).
