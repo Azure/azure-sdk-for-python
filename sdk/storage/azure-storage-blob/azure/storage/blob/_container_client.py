@@ -304,18 +304,12 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             process_storage_error(error)
 
     @distributed_trace
-    def create_if_not_exists(self, metadata=None, public_access=None, **kwargs):
-        # type: (Optional[Dict[str, str]], Optional[Union[PublicAccess, str]], **Any) -> None
+    def create_if_not_exists(self, **kwargs):
+        # type: (**Any) -> None
         """
         Creates a new container under the specified account. If the container
         with the same name already exists, it is not changed.
 
-        :param metadata:
-            A dict with name_value pairs to associate with the
-            container as metadata. Example:{'Category':'test'}
-        :type metadata: dict[str, str]
-        :param ~azure.storage.blob.PublicAccess public_access:
-            Possible values include: 'container', 'blob'.
         :keyword container_encryption_scope:
             Specifies the default encryption scope to set on the container and use for
             all future writes.
@@ -336,18 +330,8 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
                 :dedent: 12
                 :caption: Creating a container to store blobs.
         """
-        headers = kwargs.pop('headers', {})
-        timeout = kwargs.pop('timeout', None)
-        headers.update(add_metadata_headers(metadata)) # type: ignore
-        container_cpk_scope_info = get_container_cpk_scope_info(kwargs)
         try:
-            return self._client.container.create( # type: ignore
-                timeout=timeout,
-                access=public_access,
-                container_cpk_scope_info=container_cpk_scope_info,
-                cls=return_response_headers,
-                headers=headers,
-                **kwargs)
+            return self.create_container(**kwargs)
         except HttpResponseError as error:
             try:
                 process_storage_error(error)
