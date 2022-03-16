@@ -96,6 +96,10 @@ stages:
                         inputs:
                           artifactFeeds: ${{parameters.DevFeedName}}
 
+                      - pwsh: |
+                          cat $(PYPIRC_PATH)
+                        displayName: Dump PyPI Output
+
                       - script: |
                           set -e
                           twine upload --repository 'pypi' --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*.whl
