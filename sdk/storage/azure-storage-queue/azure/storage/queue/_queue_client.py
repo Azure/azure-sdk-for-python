@@ -268,17 +268,8 @@ class QueueClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Create a queue.
         """
-        headers = kwargs.pop('headers', {})
-        metadata = kwargs.pop('metadata', None)
-        timeout = kwargs.pop('timeout', None)
-        headers.update(add_metadata_headers(metadata)) # type: ignore
         try:
-            return self._client.queue.create( # type: ignore
-                metadata=metadata,
-                timeout=timeout,
-                headers=headers,
-                cls=deserialize_queue_creation,
-                **kwargs)
+            return self.create_queue(**kwargs)
         except HttpResponseError as error:
             try: 
                 process_storage_error(error)
