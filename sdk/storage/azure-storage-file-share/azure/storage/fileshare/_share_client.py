@@ -409,30 +409,8 @@ class ShareClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Creates a file share.
         """
-        metadata = kwargs.pop('metadata', None)
-        quota = kwargs.pop('quota', None)
-        access_tier = kwargs.pop('access_tier', None)
-        timeout = kwargs.pop('timeout', None)
-        root_squash = kwargs.pop('root_squash', None)
-        protocols = kwargs.pop('protocols', None)
-        if protocols and protocols not in ['NFS', 'SMB', ShareProtocols.SMB, ShareProtocols.NFS]:
-            raise ValueError("The enabled protocol must be set to either SMB or NFS.")
-        if root_squash and protocols not in ['NFS', ShareProtocols.NFS]:
-            raise ValueError("The 'root_squash' keyword can only be used on NFS enabled shares.")
-        headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata)) # type: ignore
-
         try:
-            return self._client.share.create( # type: ignore
-                timeout=timeout,
-                metadata=metadata,
-                quota=quota,
-                access_tier=access_tier,
-                root_squash=root_squash,
-                enabled_protocols=protocols,
-                cls=return_response_headers,
-                headers=headers,
-                **kwargs)
+            return self.create_share(**kwargs)
         except HttpResponseError as error:
             try:
                 process_storage_error(error)
