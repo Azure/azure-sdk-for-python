@@ -1,14 +1,12 @@
 # Release History
 
-## 12.6.1 (Unreleased)
+## 12.7.0b1 (Unreleased)
 
 ### Features Added
-
-### Breaking Changes
+- Added support for service version 2021-06-08 as well as previous versions.
+- Add support for Customer-Provided Keys (cpk) to all required APIs.
 
 ### Bugs Fixed
-
-### Other Changes
 
 ## 12.6.0 (2022-03-08)
 
