@@ -14,7 +14,7 @@ except ImportError:
 import six
 
 from azure.core.pipeline import Pipeline
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.storage.blob import ContainerClient
 from ._shared.base_client import TransportWrapper, StorageAccountHostsMixin, parse_query, parse_connection_str
@@ -263,6 +263,30 @@ class FileSystemClient(StorageAccountHostsMixin):
         return self._container_client.create_container(metadata=metadata,
                                                        public_access=public_access,
                                                        **kwargs)
+
+    def create_file_system_if_not_exists(self, **kwargs):
+        # type: (...) ->  Dict[str, Union[str, datetime]]
+        """Creates a new file system under the specified account.
+
+        If the file system with the same name already exists, it is not changed.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_file_system.py
+                :start-after: [START create_file_system]
+                :end-before: [END create_file_system]
+                :language: python
+                :dedent: 12
+                :caption: Creating a file system in the datalake service.
+        """
+        try:
+            return self.create_file_system(**kwargs)
+        except HttpResponseError as error:
+            try:
+                process_storage_error(error)
+            except ResourceExistsError:
+                return None
+
 
     def exists(self, **kwargs):
         # type: (**Any) -> bool
