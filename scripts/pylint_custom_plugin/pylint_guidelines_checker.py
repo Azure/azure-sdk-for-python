@@ -1753,28 +1753,18 @@ class CheckApiVersion(BaseChecker):
                 for func in node.body:
                     if isinstance(func,astroid.FunctionDef):
                         if func.name == '__init__':
-                            pass
-                            # print(func)
-                            # print(node)
-                            # print(func)
-                            #print(func.args.type_comment_args)
-                    # if func.name == "__init__":
-                            # print(func.keyword)
-                            # for child in func.get_children():
-                            #     print("HERE")
-                            #     print(child)
-                            #     if isinstance(child,astroid.Assign):
-                            #         for att in child.targets:
-                            #             print(att)
-                            #             if att.attrname:
-                            #                 name = att.attrname
-                            #                 if name == "_api_version" or name == "api_version":
-                            #                     api_version=True
-                            #                     break
-                            # if not api_version:
-                            #     self.add_message(
-                            #         msgid="api-version-not-keyword", node=node, confidence=None
-                            #     )   
+                            if node.doc:
+                                kwargs_found = node.doc.split("keyword")
+                                if "api_version" in " ".join(kwargs_found[1::]):
+                                    api_version = True
+                            if not api_version:
+                                
+                                self.add_message(
+                                    msgid="api-version-not-keyword", node=node, confidence=None
+                                )   
+                            
+
+                              
                                 
       
         except AttributeError:
