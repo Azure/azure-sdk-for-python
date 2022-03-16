@@ -17,6 +17,7 @@ from azure.storage.blob import AccessPolicy as BlobAccessPolicy
 from azure.storage.blob import DelimitedTextDialect as BlobDelimitedTextDialect
 from azure.storage.blob import DelimitedJsonDialect as BlobDelimitedJSON
 from azure.storage.blob import ArrowDialect as BlobArrowDialect
+from azure.storage.blob import CustomerProvidedEncryptionKey as BlobCustomerProvidedEncryptionKey
 from azure.storage.blob._models import ContainerPropertiesPaged
 from azure.storage.blob._generated.models import Logging as GenLogging, Metrics as GenMetrics, \
     RetentionPolicy as GenRetentionPolicy, StaticWebsite as GenStaticWebsite, CorsRule as GenCorsRule
@@ -741,6 +742,32 @@ class ArrowDialect(BlobArrowDialect):
     :keyword int precision: The precision of the field.
     :keyword int scale: The scale of the field.
     """
+
+
+class CustomerProvidedEncryptionKey(BlobCustomerProvidedEncryptionKey):
+    """
+    All data in Azure Storage is encrypted at-rest using an account-level encryption key.
+    In versions 2021-06-08 and newer, you can manage the key used to encrypt file contents
+    and application metadata per-file by providing an AES-256 encryption key in requests to the storage service.
+
+    When you use a customer-provided key, Azure Storage does not manage or persist your key.
+    When writing data to a file, the provided key is used to encrypt your data before writing it to disk.
+    A SHA-256 hash of the encryption key is written alongside the file contents,
+    and is used to verify that all subsequent operations against the file use the same encryption key.
+    This hash cannot be used to retrieve the encryption key or decrypt the contents of the file.
+    When reading a file, the provided key is used to decrypt your data after reading it from disk.
+    In both cases, the provided encryption key is securely discarded
+    as soon as the encryption or decryption process completes.
+
+    :param str key_value:
+        Base64-encoded AES-256 encryption key value.
+    :param str key_hash:
+        Base64-encoded SHA256 of the encryption key.
+    :ivar str algorithm:
+        Specifies the algorithm to use when encrypting data using the given key. Must be AES256.
+    """
+    def __init__(self, key_value, key_hash):
+        super().__init__(key_value, key_hash)
 
 
 class QuickQueryDialect(str, Enum):
