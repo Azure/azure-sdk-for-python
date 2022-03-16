@@ -194,7 +194,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         self._session = (
             None if self._session_id is None else ServiceBusSession(self._session_id, self)
         )
-        self._keep_receiving_coroutine = None
         self._receive_context = asyncio.Event()
 
     # Python 3.5 does not allow for yielding from a coroutine, so instead of the try-finally functional wrapper
@@ -342,11 +341,12 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             timeout=self._max_wait_time * 1000 if self._max_wait_time else 0,
             prefetch=self._prefetch_count,
             # If prefetch is 1, then keep_receiving coroutine serves as the keep_alive
-            keep_alive_interval=self._config.keep_alive if self._prefetch_count != 1 else None,
+            keep_alive_interval=self._config.keep_alive if self._prefetch_count != 1 else 5,
             shutdown_after_timeout=False,
         )
         if self._prefetch_count == 1:
             self._handler._message_received = self._enhanced_message_received  # pylint: disable=protected-access
+            self._handler._keep_alive= self._keep_receiving
 
     async def _open(self):
         # pylint: disable=protected-access
@@ -364,9 +364,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         except:
             await self._close_handler()
             raise
-
-        if self._prefetch_count == 1:
-            self._keep_receiving_coroutine = asyncio.ensure_future(self._keep_receiving())
 
         if self._auto_lock_renewer and self._session:
             self._auto_lock_renewer.register(self, self.session)
@@ -590,8 +587,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
     async def close(self) -> None:
         await super(ServiceBusReceiver, self).close()
-        if self._prefetch_count == 1 and self._keep_receiving_coroutine:
-            await self._keep_receiving_coroutine
         self._message_iter = None
 
     def _get_streaming_message_iter(

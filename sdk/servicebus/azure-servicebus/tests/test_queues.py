@@ -230,7 +230,61 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         assert msg.delivery_count == 0  # release would not increase delivery count
                         receiver.complete_message(msg)
                     assert len(received_msgs) == 20
+
+            def sub_test_releasing_messages_iterator():
+                # test nested iterator scenario
+                receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10)
+                sender = sb_client.get_queue_sender(servicebus_queue.name)
+                with sender, receiver:
+                    # send 10 msgs to queue first
+                    sender.send_messages([ServiceBusMessage('test') for _ in range(10)])
+                    first_time = True
+                    iterator_recv_cnt = 0
+                    # iterator + receive batch
+                    for msg in receiver:
+                        assert msg.delivery_count == 0  # release would not increase delivery count
+                        receiver.complete_message(msg)
+                        iterator_recv_cnt += 1
+                        if first_time:
+                            received_msgs = receiver.receive_messages(max_message_count=20, max_wait_time=5)
+                            for sub_msg in received_msgs:
+                                assert sub_msg.delivery_count == 0
+                                receiver.complete_message(sub_msg)
+                            assert len(received_msgs) == 9
+                            sender.send_messages([ServiceBusMessage('test') for _ in range(20)])
+                            time.sleep(15)  # sleep > message expiration time
+                            received_msgs = receiver.receive_messages(max_message_count=5, max_wait_time=5)
+                            for sub_msg in received_msgs:
+                                assert sub_msg.delivery_count == 0  # release would not increase delivery count
+                                receiver.complete_message(sub_msg)
+                            assert len(received_msgs) == 5
+                            first_time = False
+                    assert iterator_recv_cnt == 16  # 1 + 15
+                    # iterator + iterator
+                    sender.send_messages([ServiceBusMessage('test') for _ in range(10)])
+                    outter_recv_cnt = 0
+                    inner_recv_cnt = 0
+                    for msg in receiver:
+                        assert msg.delivery_count == 0
+                        outter_recv_cnt += 1
+                        receiver.complete_message(msg)
+                        for sub_msg in receiver:
+                            assert sub_msg.delivery_count == 0
+                            inner_recv_cnt += 1
+                            receiver.complete_message(sub_msg)
+                            if inner_recv_cnt == 5:
+                                time.sleep(15)
+                                break
+                    assert outter_recv_cnt == 1
+                    outter_recv_cnt = 0
+                    for msg in receiver:
+                        assert msg.delivery_count == 0
+                        outter_recv_cnt += 1
+                        receiver.complete_message(msg)
+                    assert outter_recv_cnt == 4
+
             sub_test_releasing_messages()
+            sub_test_releasing_messages_iterator()
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only

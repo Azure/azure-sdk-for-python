@@ -123,6 +123,87 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             with pytest.raises(ValueError):
                 await receiver.peek_messages()
 
+            async def sub_test_releasing_messages():
+                # test releasing messages when prefetch is 1 and link credits are issue dynamically
+                receiver = sb_client.get_queue_receiver(servicebus_queue.name)
+                sender = sb_client.get_queue_sender(servicebus_queue.name)
+                async with sender, receiver:
+                    # send 10 msgs to queue first
+                    await sender.send_messages([ServiceBusMessage('test') for _ in range(10)])
+
+                    # issue 30 link credits, client should consume 10 msgs from the service
+                    # leaving 20 credits on the wire
+                    received_msgs = await receiver.receive_messages(max_message_count=30, max_wait_time=5)
+                    for msg in received_msgs:
+                        await receiver.complete_message(msg)
+                    assert len(received_msgs) == 10
+
+                    # send 20 more messages, those messages would arrive at the client while the program is sleeping
+                    await sender.send_messages([ServiceBusMessage('test') for _ in range(20)])
+                    await asyncio.sleep(15)  # sleep > message expiration time
+
+                    # issue 20 link credits, client should consume 20 msgs from the service, leaving no link credits
+                    received_msgs = await receiver.receive_messages(max_message_count=30, max_wait_time=5)
+                    for msg in received_msgs:
+                        assert msg.delivery_count == 0  # release would not increase delivery count
+                        await receiver.complete_message(msg)
+                    assert len(received_msgs) == 20
+
+            async def sub_test_releasing_messages_iterator():
+                # test nested iterator scenario
+                receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10)
+                sender = sb_client.get_queue_sender(servicebus_queue.name)
+                async with sender, receiver:
+                    # send 10 msgs to queue first
+                    await sender.send_messages([ServiceBusMessage('test') for _ in range(10)])
+                    first_time = True
+                    iterator_recv_cnt = 0
+                    # iterator + receive batch
+                    async for msg in receiver:
+                        assert msg.delivery_count == 0  # release would not increase delivery count
+                        await receiver.complete_message(msg)
+                        iterator_recv_cnt += 1
+                        if first_time:
+                            received_msgs = await receiver.receive_messages(max_message_count=20, max_wait_time=5)
+                            for sub_msg in received_msgs:
+                                assert sub_msg.delivery_count == 0
+                                await receiver.complete_message(sub_msg)
+                            assert len(received_msgs) == 9
+                            await sender.send_messages([ServiceBusMessage('test') for _ in range(20)])
+                            await asyncio.sleep(15)  # sleep > message expiration time
+                            received_msgs = await receiver.receive_messages(max_message_count=5, max_wait_time=5)
+                            for sub_msg in received_msgs:
+                                assert sub_msg.delivery_count == 0  # release would not increase delivery count
+                                await receiver.complete_message(sub_msg)
+                            assert len(received_msgs) == 5
+                            first_time = False
+                    assert iterator_recv_cnt == 16  # 1 + 15
+                    # iterator + iterator
+                    await sender.send_messages([ServiceBusMessage('test') for _ in range(10)])
+                    outter_recv_cnt = 0
+                    inner_recv_cnt = 0
+                    async for msg in receiver:
+                        assert msg.delivery_count == 0
+                        outter_recv_cnt += 1
+                        await receiver.complete_message(msg)
+                        async for sub_msg in receiver:
+                            assert sub_msg.delivery_count == 0
+                            inner_recv_cnt += 1
+                            await receiver.complete_message(sub_msg)
+                            if inner_recv_cnt == 5:
+                                time.sleep(15)
+                                break
+                    assert outter_recv_cnt == 1
+                    outter_recv_cnt = 0
+                    async for msg in receiver:
+                        assert msg.delivery_count == 0
+                        outter_recv_cnt += 1
+                        await receiver.complete_message(msg)
+                    assert outter_recv_cnt == 4
+
+            await sub_test_releasing_messages()
+            await sub_test_releasing_messages_iterator()
+
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')

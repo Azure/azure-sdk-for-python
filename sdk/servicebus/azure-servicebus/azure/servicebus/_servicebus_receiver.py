@@ -199,7 +199,6 @@ class ServiceBusReceiver(
         self._session = (
             None if self._session_id is None else ServiceBusSession(self._session_id, self)
         )
-        self._keep_receiving_thread = None
         self._receive_context = threading.Event()
 
     def __iter__(self):
@@ -351,11 +350,12 @@ class ServiceBusReceiver(
             timeout=self._max_wait_time * 1000 if self._max_wait_time else 0,
             prefetch=self._prefetch_count,
             # If prefetch is 1, then keep_receiving thread serves as the keep_alive
-            keep_alive_interval=self._config.keep_alive if self._prefetch_count != 1 else None,
+            keep_alive_interval=self._config.keep_alive if self._prefetch_count != 1 else 5,
             shutdown_after_timeout=False,
         )
         if self._prefetch_count == 1:
             self._handler._message_received = self._enhanced_message_received  # pylint: disable=protected-access
+            self._handler._keep_alive = self._keep_receiving  # pylint: disable=protected-access
 
     def _open(self):
         # pylint: disable=protected-access
@@ -374,11 +374,6 @@ class ServiceBusReceiver(
         except:
             self._close_handler()
             raise
-
-        if self._prefetch_count == 1:
-            self._keep_receiving_thread = threading.Thread(target=self._keep_receiving)
-            self._keep_receiving_thread.daemon = True
-            self._keep_receiving_thread.start()
 
         if self._auto_lock_renewer and self._session:
             self._auto_lock_renewer.register(self, self.session)
@@ -602,8 +597,6 @@ class ServiceBusReceiver(
     def close(self):
         # type: () -> None
         super(ServiceBusReceiver, self).close()
-        if self._prefetch_count == 1 and self._keep_receiving_thread:
-            self._keep_receiving_thread.join()
         self._message_iter = None  # pylint: disable=attribute-defined-outside-init
 
     def _get_streaming_message_iter(self, max_wait_time=None):

@@ -546,5 +546,5 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
         :rtype: None
         """
-        self._close_handler()
         self._shutdown.set()
+        self._close_handler()
