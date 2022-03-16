@@ -1,0 +1,57 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.10.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
+      x-ms-date:
+      - Wed, 16 Mar 2022 23:41:26 GMT
+      x-ms-version:
+      - '2021-04-10'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/acontainer399c2127?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Wed, 16 Mar 2022 23:41:25 GMT
+      etag: '"0x8DA07A67C95BCF7"'
+      last-modified: Wed, 16 Mar 2022 23:41:26 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2021-04-10'
+    status:
+      code: 201
+      message: Created
+    url: https://vincenttrancanary.blob.core.windows.net/acontainer399c2127?restype=container
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.10.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
+      x-ms-date:
+      - Wed, 16 Mar 2022 23:41:27 GMT
+      x-ms-version:
+      - '2021-04-10'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/acontainer399c2127?restype=container
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
+        specified container already exists.\nRequestId:f437034a-c01e-0076-108f-39508a000000\nTime:2022-03-16T23:41:26.3199679Z</Message></Error>"
+    headers:
+      content-length: '230'
+      content-type: application/xml
+      date: Wed, 16 Mar 2022 23:41:25 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: ContainerAlreadyExists
+      x-ms-version: '2021-04-10'
+    status:
+      code: 409
+      message: The specified container already exists.
+    url: https://vincenttrancanary.blob.core.windows.net/acontainer399c2127?restype=container
+version: 1
