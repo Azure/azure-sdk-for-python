@@ -19,7 +19,7 @@ root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "
 def parse_service(pkg_path):
     path = os.path.normpath(pkg_path)
     path = path.split(os.sep)
-   
+
     current_segment = ""
 
     for path_segment in reversed(path):
@@ -28,6 +28,7 @@ def parse_service(pkg_path):
         current_segment = path_segment
 
     return pkg_path
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -62,8 +63,10 @@ if __name__ == "__main__":
         target_dir = os.path.join(root_dir, service_dir)
     else:
         target_dir = root_dir
-    
-    targeted_packages = [os.path.basename(path_name) for path_name in process_glob_string(args.glob_string, target_dir, "", "Regression")]
+
+    targeted_packages = [
+        os.path.basename(path_name) for path_name in process_glob_string(args.glob_string, target_dir, "", "Regression")
+    ]
     deps = find_package_dependency(AZURE_GLOB_STRING, root_dir, "")
     package_set = []
 
@@ -76,7 +79,7 @@ if __name__ == "__main__":
     service_list = set([parse_service(pkg) for pkg in package_set])
 
     try:
-        with open(args.json, 'r') as f:
+        with open(args.json, "r") as f:
             settings_json = f.read()
     except FileNotFoundError as f:
         print("The json file {} cannot be loaded.".format(args.json))
@@ -86,7 +89,7 @@ if __name__ == "__main__":
     settings["matrix"]["DependentService"] = list(service_list)
     json_result = json.dumps(settings)
 
-    with open(args.json, 'w') as f:
+    with open(args.json, "w") as f:
         f.write(json_result)
 
     pdb.set_trace()

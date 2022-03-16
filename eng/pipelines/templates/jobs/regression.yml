@@ -28,20 +28,20 @@ parameters:
 
 # The variable $(DependentService) is set from the matrix configuration.
 
-# or(
-#           eq(variables['Run.Regression'], 'true'),
-#           and(
-#             eq(variables['System.TeamProject'], 'internal'),
-#             eq(variables['Build.Reason'], 'Schedule')
-#           )
-#         ),
 jobs:
   - job:
     displayName: 'RegressTest'
     condition: |
       and(
         succeededOrFailed(),
-        ne(${{ parameters.Matrix }}, '{}')
+        ne(${{ parameters.Matrix }}, '{}'),
+        or(
+          eq(variables['Run.Regression'], 'true'),
+          and(
+            eq(variables['System.TeamProject'], 'internal'),
+            eq(variables['Build.Reason'], 'Schedule')
+          )
+        ),
       )
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
 
