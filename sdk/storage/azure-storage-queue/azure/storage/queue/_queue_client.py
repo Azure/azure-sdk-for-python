@@ -255,18 +255,12 @@ class QueueClient(StorageAccountHostsMixin):
             were created, but are case-insensitive when set or read.
         :keyword int timeout:
             The server timeout, expressed in seconds.
+            
+            .. versionadded:: 12.10.01
+            
         :return: None or the result of cls(response)
         :rtype: None
         :raises: StorageErrorException
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/queue_samples_hello_world.py
-                :start-after: [START create_queue]
-                :end-before: [END create_queue]
-                :language: python
-                :dedent: 8
-                :caption: Create a queue.
         """
         try:
             return self.create_queue(**kwargs)

@@ -269,16 +269,20 @@ class FileSystemClient(StorageAccountHostsMixin):
         # type: (...) ->  Dict[str, Union[str, datetime]]
         """Creates a new file system under the specified account.
 
-        If a file system with the same name already exists, it is not changed.
+        If the file system with the same name already exists, it is not changed. 
 
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/datalake_samples_file_system.py
-                :start-after: [START create_file_system]
-                :end-before: [END create_file_system]
-                :language: python
-                :dedent: 12
-                :caption: Creating a file system in the datalake service.
+        :keyword metadata:
+            A dict with name-value pairs to associate with the
+            file system as metadata. Example: `{'Category':'test'}`
+        :type metadata: dict(str, str)
+        :keyword public_access:
+            To specify whether data in the file system may be accessed publicly and the level of access.
+        :type public_access: ~azure.storage.filedatalake.PublicAccess
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        
+            .. versionadded:: 12.10.01
+        :rtype: None
         """
         try:
             return self.create_file_system(**kwargs)

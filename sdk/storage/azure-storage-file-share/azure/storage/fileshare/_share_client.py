@@ -373,7 +373,7 @@ class ShareClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def create_share_if_not_exists(self, **kwargs):
-        # type: (Any) -> Dict[str, Any]
+        # type: (Any) -> None
         """Creates a new Share under the account. If a share with the
         same name already exists, it is not changed.
 
@@ -384,33 +384,23 @@ class ShareClient(StorageAccountHostsMixin):
         :keyword access_tier:
             Specifies the access tier of the share.
             Possible values: 'TransactionOptimized', 'Hot', 'Cool'
-        :paramtype access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
+        :keyword access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
 
-            .. versionadded:: 12.4.0
+            .. versionadded:: 12.10.01
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :keyword protocols:
             Protocols to enable on the share. Only one protocol can be enabled on the share.
-        :paramtype protocols: str or ~azure.storage.fileshare.ShareProtocols
+        :keyword protocols: str or ~azure.storage.fileshare.ShareProtocols
         :keyword root_squash:
             Root squash to set on the share.
             Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
-        :paramtype root_squash: str or ~azure.storage.fileshare.ShareRootSquash
-        :returns: Share-updated property dict (Etag and last modified).
-        :rtype: dict(str, Any)
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/file_samples_share.py
-                :start-after: [START create_share]
-                :end-before: [END create_share]
-                :language: python
-                :dedent: 8
-                :caption: Creates a file share.
+        :keyword root_squash: str or ~azure.storage.fileshare.ShareRootSquash
+        :rtype: None
         """
         try:
-            return self.create_share(**kwargs)
+            return self.create_share()
         except HttpResponseError as error:
             try:
                 process_storage_error(error)

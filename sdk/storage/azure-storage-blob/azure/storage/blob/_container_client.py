@@ -319,7 +319,7 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
             Specifies the default encryption scope to set on the container and use for
             all future writes.
 
-            .. versionadded:: 12.2.0
+            .. versionadded:: 12.10.01
 
         :paramtype container_encryption_scope: dict or ~azure.storage.blob.ContainerEncryptionScope
         :keyword int timeout:
