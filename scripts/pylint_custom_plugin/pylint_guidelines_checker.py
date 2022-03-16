@@ -1774,7 +1774,7 @@ class CheckEnum(BaseChecker):
                     enum_class = True
                
                     
-            # The body contains an assign statement
+            # If it is an enum class, make sure enums are capitalized
             if enum_class:
                 for nod in node.body:
                     if isinstance(nod, astroid.Assign):
