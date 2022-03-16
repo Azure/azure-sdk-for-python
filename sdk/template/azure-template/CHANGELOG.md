@@ -1,5 +1,15 @@
 # Release History
 
+## 0.2.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 0.2.0b1 (2022-03-16)
 - Test release for new pypi token
 
