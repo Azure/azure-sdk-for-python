@@ -1,5 +1,8 @@
 # Release History
 
+## 0.1.0b1 (2022-03-16)
+- Test release for new pypi token
+
 ## 0.0.18b2 (2020-09-04)
 - Testing release tag version
 
