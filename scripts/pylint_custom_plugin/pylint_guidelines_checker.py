@@ -1750,7 +1750,7 @@ class CheckNamingMismatchGeneratedCode(BaseChecker):
                     if isinstance(nod, astroid.ImportFrom) or isinstance(nod, astroid.Import):
                         # If the model has been aliased
                         for name in nod.names:
-                            if name[1] != None:
+                            if name[1] is not None:
                                 aliased.append(name[1])
 
                 for nod in node.body:
