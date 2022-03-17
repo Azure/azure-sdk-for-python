@@ -9,9 +9,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.0b2 Python/3.7.4 (Windows-10-10.0.22523-SP0)
+      - azsdk-python-communication-identity/1.2.0 Python/3.7.4 (Windows-10-10.0.22523-SP0)
       x-ms-date:
-      - Thu, 03 Feb 2022 18:48:53 GMT
+      - Thu, 17 Mar 2022 20:37:20 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -21,56 +21,56 @@ interactions:
       string: '{"identity": {"id": "sanitized"}}'
     headers:
       api-supported-versions: 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07,
-        2021-03-31-preview1, 2021-10-31-preview, 2021-11-01, 2022-06-01
+        2021-10-31-preview, 2021-11-01, 2022-06-01
       content-length: '101'
       content-type: application/json; charset=utf-8
-      date: Thu, 03 Feb 2022 18:48:52 GMT
-      ms-cv: kOGruAYNnU6ZbLZhNUoUFA.0
+      date: Thu, 17 Mar 2022 20:37:19 GMT
+      ms-cv: zXU3eNDtyU6ncl03nMuI2g.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 50ms
+      x-processing-time: 37ms
     status:
       code: 201
       message: Created
     url: https://smstestapp.communication.azure.com/identities?api-version=2021-10-31-preview
 - request:
-    body: '{"id": "sanitized"}'
+    body: '{"id": "sanitized", "ttl": 172800}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '89'
+      - '104'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-networktraversal/1.0.0 Python/3.7.4 (Windows-10-10.0.22523-SP0)
+      - azsdk-python-communication-networktraversal/1.1.0-beta.1 Python/3.7.4 (Windows-10-10.0.22523-SP0)
       x-ms-date:
-      - Thu, 03 Feb 2022 18:48:53 GMT
+      - Thu, 17 Mar 2022 20:37:20 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/networkTraversal/:issueRelayConfiguration?api-version=2022-02-01
+    uri: https://sanitized.communication.azure.com/networkTraversal/:issueRelayConfiguration?api-version=2022-03-01-preview
   response:
     body:
       string: '{"iceServers": [{"routeType": "any", "urls": ["turn.skype.com", "turn:turn.azure.com:3478"],
         "username": "sanitized", "credential": "sanitized"}, {"routeType": "nearest",
         "urls": ["stun:13.107.17.41:3478", "turn:13.107.17.41:3478"], "username":
-        "BQAANgXq6bcB2BrBt5f14jsG/lyJbl6efa38r47pVPsAAAAMARCsgNlqhd5IsZldo6P6NifI5VKqIv9QRHddKT/0AL0VmCUA4yg=",
-        "credential": "gPqFWLs+JTtu0j+w8ccmjxYejfo="}], "expiresOn": "2022-02-05T18:48:53.773773+00:00"}'
+        "BQAANiHBrFwB2DvRn37Gf06I8995phipQRmsm58xQLgAAAAMARCsgNlqhd5IsZldo6P6NifIzFsdsvc5f+vRzKUI57YUZpszDng=",
+        "credential": "G4b9LqwUwvi6GirKKocUoCORSFg="}], "expiresOn": "2022-03-19T20:37:20.8019035+00:00"}'
     headers:
       api-supported-versions: 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview,
-        2022-02-01
-      content-length: '545'
+        2022-03-01-preview
+      content-length: '546'
       content-type: application/json; charset=utf-8
-      date: Thu, 03 Feb 2022 18:48:53 GMT
-      ms-cv: AZ7+TGWb3E2e792YF8PRJQ.0
+      date: Thu, 17 Mar 2022 20:37:19 GMT
+      ms-cv: usfigMMuwUGRwUEvG3olUw.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 51ms
+      x-processing-time: 27ms
     status:
       code: 200
       message: OK
-    url: https://smstestapp.communication.azure.com/networkTraversal/:issueRelayConfiguration?api-version=2022-02-01
+    url: https://smstestapp.communication.azure.com/networkTraversal/:issueRelayConfiguration?api-version=2022-03-01-preview
 version: 1

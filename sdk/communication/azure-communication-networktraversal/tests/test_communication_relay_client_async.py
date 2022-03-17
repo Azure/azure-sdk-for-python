@@ -18,6 +18,8 @@ from _shared.communication_service_preparer import CommunicationPreparer
 from _shared.utils import get_http_logging_policy
 from _shared.utils import parse_connection_str
 from azure.identity.aio import DefaultAzureCredential
+from datetime import datetime, timedelta
+from pytz import timezone
 
 class FakeTokenCredential(object):
     def __init__(self):
@@ -145,7 +147,7 @@ class CommunicationRelayClientTestAsync(AsyncCommunicationTestCase):
 
         async with networkTraversalClient:
             print('Getting relay config with nearest type:\n')
-            config = await networkTraversalClient.get_relay_configuration(user= user, route_type=RouteType.ANY)
+            config = await networkTraversalClient.get_relay_configuration(user=user, route_type=RouteType.ANY)
         
         print('Ice Servers Async:\n')
         for iceServer in config.ice_servers:
@@ -163,3 +165,39 @@ class CommunicationRelayClientTestAsync(AsyncCommunicationTestCase):
 
         assert config is not None
         
+    @CommunicationPreparer()
+    async def test_get_relay_configuration_with_ttl(self, communication_livetest_dynamic_connection_string):   
+
+        networkTraversalClient = CommunicationRelayClient.from_connection_string(
+            communication_livetest_dynamic_connection_string,
+            http_logging_policy=get_http_logging_policy()
+        )
+
+        expiry_time = 100
+        # Make the request time to be time zome aware
+        request_time = datetime.now(timezone('UTC'))+ timedelta(seconds=100)
+        
+        async with networkTraversalClient:
+            print('Getting relay config with nearest type:\n')
+            config = await networkTraversalClient.get_relay_configuration(ttl=expiry_time)
+        
+        assert config is not None
+
+        print('Requested time:' + request_time.strftime("%m/%d/%Y, %H:%M:%S"))
+        print('Expires on:' + config.expires_on.strftime("%m/%d/%Y, %H:%M:%S"))
+        assert request_time <= config.expires_on
+
+        print('Ice Servers Async:\n')
+        for iceServer in config.ice_servers:
+            assert iceServer.username is not None
+            print('Username: ' + iceServer.username)
+
+            assert iceServer.credential is not None
+            print('Credential: ' + iceServer.credential)
+            
+            assert iceServer.urls is not None
+            for url in iceServer.urls:
+                print('Url:' + url)
+            
+            print(iceServer.route_type)
+            assert iceServer.route_type is not None
