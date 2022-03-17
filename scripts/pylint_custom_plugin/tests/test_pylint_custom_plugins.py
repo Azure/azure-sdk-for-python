@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from lib2to3.pytree import Node
 import astroid
 import pylint.testutils
 
