@@ -220,4 +220,4 @@ jobs:
       AdditionalParameters:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        TestTimeoutInMinutes: 180
+        TestTimeoutInMinutes: 90
