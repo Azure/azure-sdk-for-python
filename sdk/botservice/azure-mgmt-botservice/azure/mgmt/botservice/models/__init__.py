@@ -6,125 +6,86 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AlexaChannel
-    from ._models_py3 import AlexaChannelProperties
-    from ._models_py3 import Bot
-    from ._models_py3 import BotChannel
-    from ._models_py3 import BotProperties
-    from ._models_py3 import BotResponseList
-    from ._models_py3 import Channel
-    from ._models_py3 import ChannelResponseList
-    from ._models_py3 import CheckNameAvailabilityRequestBody
-    from ._models_py3 import CheckNameAvailabilityResponseBody
-    from ._models_py3 import ConnectionItemName
-    from ._models_py3 import ConnectionSetting
-    from ._models_py3 import ConnectionSettingParameter
-    from ._models_py3 import ConnectionSettingProperties
-    from ._models_py3 import ConnectionSettingResponseList
-    from ._models_py3 import DirectLineChannel
-    from ._models_py3 import DirectLineChannelProperties
-    from ._models_py3 import DirectLineSite
-    from ._models_py3 import DirectLineSpeechChannel
-    from ._models_py3 import DirectLineSpeechChannelProperties
-    from ._models_py3 import EmailChannel
-    from ._models_py3 import EmailChannelProperties
-    from ._models_py3 import Error
-    from ._models_py3 import ErrorBody
-    from ._models_py3 import FacebookChannel
-    from ._models_py3 import FacebookChannelProperties
-    from ._models_py3 import FacebookPage
-    from ._models_py3 import HostSettingsResponse
-    from ._models_py3 import KikChannel
-    from ._models_py3 import KikChannelProperties
-    from ._models_py3 import LineChannel
-    from ._models_py3 import LineChannelProperties
-    from ._models_py3 import LineRegistration
-    from ._models_py3 import MsTeamsChannel
-    from ._models_py3 import MsTeamsChannelProperties
-    from ._models_py3 import OperationDisplayInfo
-    from ._models_py3 import OperationEntity
-    from ._models_py3 import OperationEntityListResult
-    from ._models_py3 import Resource
-    from ._models_py3 import ServiceProvider
-    from ._models_py3 import ServiceProviderParameter
-    from ._models_py3 import ServiceProviderProperties
-    from ._models_py3 import ServiceProviderResponseList
-    from ._models_py3 import SiteInfo
-    from ._models_py3 import Sku
-    from ._models_py3 import SkypeChannel
-    from ._models_py3 import SkypeChannelProperties
-    from ._models_py3 import SlackChannel
-    from ._models_py3 import SlackChannelProperties
-    from ._models_py3 import SmsChannel
-    from ._models_py3 import SmsChannelProperties
-    from ._models_py3 import TelegramChannel
-    from ._models_py3 import TelegramChannelProperties
-    from ._models_py3 import WebChatChannel
-    from ._models_py3 import WebChatChannelProperties
-    from ._models_py3 import WebChatSite
-except (SyntaxError, ImportError):
-    from ._models import AlexaChannel  # type: ignore
-    from ._models import AlexaChannelProperties  # type: ignore
-    from ._models import Bot  # type: ignore
-    from ._models import BotChannel  # type: ignore
-    from ._models import BotProperties  # type: ignore
-    from ._models import BotResponseList  # type: ignore
-    from ._models import Channel  # type: ignore
-    from ._models import ChannelResponseList  # type: ignore
-    from ._models import CheckNameAvailabilityRequestBody  # type: ignore
-    from ._models import CheckNameAvailabilityResponseBody  # type: ignore
-    from ._models import ConnectionItemName  # type: ignore
-    from ._models import ConnectionSetting  # type: ignore
-    from ._models import ConnectionSettingParameter  # type: ignore
-    from ._models import ConnectionSettingProperties  # type: ignore
-    from ._models import ConnectionSettingResponseList  # type: ignore
-    from ._models import DirectLineChannel  # type: ignore
-    from ._models import DirectLineChannelProperties  # type: ignore
-    from ._models import DirectLineSite  # type: ignore
-    from ._models import DirectLineSpeechChannel  # type: ignore
-    from ._models import DirectLineSpeechChannelProperties  # type: ignore
-    from ._models import EmailChannel  # type: ignore
-    from ._models import EmailChannelProperties  # type: ignore
-    from ._models import Error  # type: ignore
-    from ._models import ErrorBody  # type: ignore
-    from ._models import FacebookChannel  # type: ignore
-    from ._models import FacebookChannelProperties  # type: ignore
-    from ._models import FacebookPage  # type: ignore
-    from ._models import HostSettingsResponse  # type: ignore
-    from ._models import KikChannel  # type: ignore
-    from ._models import KikChannelProperties  # type: ignore
-    from ._models import LineChannel  # type: ignore
-    from ._models import LineChannelProperties  # type: ignore
-    from ._models import LineRegistration  # type: ignore
-    from ._models import MsTeamsChannel  # type: ignore
-    from ._models import MsTeamsChannelProperties  # type: ignore
-    from ._models import OperationDisplayInfo  # type: ignore
-    from ._models import OperationEntity  # type: ignore
-    from ._models import OperationEntityListResult  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ServiceProvider  # type: ignore
-    from ._models import ServiceProviderParameter  # type: ignore
-    from ._models import ServiceProviderProperties  # type: ignore
-    from ._models import ServiceProviderResponseList  # type: ignore
-    from ._models import SiteInfo  # type: ignore
-    from ._models import Sku  # type: ignore
-    from ._models import SkypeChannel  # type: ignore
-    from ._models import SkypeChannelProperties  # type: ignore
-    from ._models import SlackChannel  # type: ignore
-    from ._models import SlackChannelProperties  # type: ignore
-    from ._models import SmsChannel  # type: ignore
-    from ._models import SmsChannelProperties  # type: ignore
-    from ._models import TelegramChannel  # type: ignore
-    from ._models import TelegramChannelProperties  # type: ignore
-    from ._models import WebChatChannel  # type: ignore
-    from ._models import WebChatChannelProperties  # type: ignore
-    from ._models import WebChatSite  # type: ignore
+from ._models_py3 import AlexaChannel
+from ._models_py3 import AlexaChannelProperties
+from ._models_py3 import Bot
+from ._models_py3 import BotChannel
+from ._models_py3 import BotProperties
+from ._models_py3 import BotResponseList
+from ._models_py3 import Channel
+from ._models_py3 import ChannelResponseList
+from ._models_py3 import ChannelSettings
+from ._models_py3 import CheckNameAvailabilityRequestBody
+from ._models_py3 import CheckNameAvailabilityResponseBody
+from ._models_py3 import ConnectionItemName
+from ._models_py3 import ConnectionSetting
+from ._models_py3 import ConnectionSettingParameter
+from ._models_py3 import ConnectionSettingProperties
+from ._models_py3 import ConnectionSettingResponseList
+from ._models_py3 import DirectLineChannel
+from ._models_py3 import DirectLineChannelProperties
+from ._models_py3 import DirectLineSite
+from ._models_py3 import DirectLineSpeechChannel
+from ._models_py3 import DirectLineSpeechChannelProperties
+from ._models_py3 import EmailChannel
+from ._models_py3 import EmailChannelProperties
+from ._models_py3 import Error
+from ._models_py3 import ErrorBody
+from ._models_py3 import FacebookChannel
+from ._models_py3 import FacebookChannelProperties
+from ._models_py3 import FacebookPage
+from ._models_py3 import HostSettingsResponse
+from ._models_py3 import KikChannel
+from ._models_py3 import KikChannelProperties
+from ._models_py3 import LineChannel
+from ._models_py3 import LineChannelProperties
+from ._models_py3 import LineRegistration
+from ._models_py3 import ListChannelWithKeysResponse
+from ._models_py3 import MsTeamsChannel
+from ._models_py3 import MsTeamsChannelProperties
+from ._models_py3 import OperationDisplayInfo
+from ._models_py3 import OperationEntity
+from ._models_py3 import OperationEntityListResult
+from ._models_py3 import OperationResultsDescription
+from ._models_py3 import PrivateEndpoint
+from ._models_py3 import PrivateEndpointConnection
+from ._models_py3 import PrivateEndpointConnectionListResult
+from ._models_py3 import PrivateLinkResource
+from ._models_py3 import PrivateLinkResourceBase
+from ._models_py3 import PrivateLinkResourceListResult
+from ._models_py3 import PrivateLinkServiceConnectionState
+from ._models_py3 import Resource
+from ._models_py3 import ServiceProvider
+from ._models_py3 import ServiceProviderParameter
+from ._models_py3 import ServiceProviderParameterMetadata
+from ._models_py3 import ServiceProviderParameterMetadataConstraints
+from ._models_py3 import ServiceProviderProperties
+from ._models_py3 import ServiceProviderResponseList
+from ._models_py3 import Site
+from ._models_py3 import SiteInfo
+from ._models_py3 import Sku
+from ._models_py3 import SkypeChannel
+from ._models_py3 import SkypeChannelProperties
+from ._models_py3 import SlackChannel
+from ._models_py3 import SlackChannelProperties
+from ._models_py3 import SmsChannel
+from ._models_py3 import SmsChannelProperties
+from ._models_py3 import TelegramChannel
+from ._models_py3 import TelegramChannelProperties
+from ._models_py3 import WebChatChannel
+from ._models_py3 import WebChatChannelProperties
+from ._models_py3 import WebChatSite
+
 
 from ._azure_bot_service_enums import (
     ChannelName,
     Key,
     Kind,
+    MsaAppType,
+    OperationResultStatus,
+    PrivateEndpointConnectionProvisioningState,
+    PrivateEndpointServiceConnectionStatus,
+    PublicNetworkAccess,
     RegenerateKeysChannelName,
     SkuName,
     SkuTier,
@@ -139,6 +100,7 @@ __all__ = [
     'BotResponseList',
     'Channel',
     'ChannelResponseList',
+    'ChannelSettings',
     'CheckNameAvailabilityRequestBody',
     'CheckNameAvailabilityResponseBody',
     'ConnectionItemName',
@@ -164,16 +126,28 @@ __all__ = [
     'LineChannel',
     'LineChannelProperties',
     'LineRegistration',
+    'ListChannelWithKeysResponse',
     'MsTeamsChannel',
     'MsTeamsChannelProperties',
     'OperationDisplayInfo',
     'OperationEntity',
     'OperationEntityListResult',
+    'OperationResultsDescription',
+    'PrivateEndpoint',
+    'PrivateEndpointConnection',
+    'PrivateEndpointConnectionListResult',
+    'PrivateLinkResource',
+    'PrivateLinkResourceBase',
+    'PrivateLinkResourceListResult',
+    'PrivateLinkServiceConnectionState',
     'Resource',
     'ServiceProvider',
     'ServiceProviderParameter',
+    'ServiceProviderParameterMetadata',
+    'ServiceProviderParameterMetadataConstraints',
     'ServiceProviderProperties',
     'ServiceProviderResponseList',
+    'Site',
     'SiteInfo',
     'Sku',
     'SkypeChannel',
@@ -190,6 +164,11 @@ __all__ = [
     'ChannelName',
     'Key',
     'Kind',
+    'MsaAppType',
+    'OperationResultStatus',
+    'PrivateEndpointConnectionProvisioningState',
+    'PrivateEndpointServiceConnectionStatus',
+    'PublicNetworkAccess',
     'RegenerateKeysChannelName',
     'SkuName',
     'SkuTier',

@@ -34,6 +34,13 @@ def get_user_agent():
     return user_agent
 
 
+def get_user_agent_async():
+    os_name = safe_user_agent_header(platform.platform())
+    python_version = safe_user_agent_header(platform.python_version())
+    user_agent = "azsdk-python-cosmos-async/{} Python/{} ({})".format(VERSION, python_version, os_name)
+    return user_agent
+
+
 def safe_user_agent_header(s):
     if s is None:
         s = "unknown"

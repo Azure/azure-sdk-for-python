@@ -86,6 +86,7 @@ class CommunicationRelayClient(object):
     @distributed_trace
     def get_relay_configuration(
             self,
+            *,
             user=None, # type: CommunicationUserIdentifier
             route_type=None, # type: Optional[Union[str, "RouteType"]]
             **kwargs # type: Any

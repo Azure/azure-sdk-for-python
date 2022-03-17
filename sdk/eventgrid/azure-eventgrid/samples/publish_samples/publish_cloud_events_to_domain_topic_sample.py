@@ -11,8 +11,8 @@ DESCRIPTION:
 USAGE:
     python publish_cloud_events_to_domain_topic_sample.py
     Set the environment variables with your own values before running the sample:
-    1) DOMAIN_ACCESS_KEY - The access key of your eventgrid account.
-    2) DOMAIN_TOPIC_HOSTNAME - The topic hostname. Typically it exists in the format
+    1) EVENTGRID_CLOUD_EVENT_DOMAIN_KEY - The access key of your eventgrid account.
+    2) EVENTGRID_CLOUD_EVENT_DOMAIN_ENDPOINT - The topic hostname. Typically it exists in the format
     "https://<YOUR-TOPIC-NAME>.<REGION-NAME>.eventgrid.azure.net/api/events".
 """
 import sys
@@ -24,8 +24,8 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.messaging import CloudEvent
 from azure.eventgrid import EventGridPublisherClient
 
-domain_key = os.environ["DOMAIN_ACCESS_KEY"]
-domain_endpoint = os.environ["DOMAIN_TOPIC_HOSTNAME"]
+domain_key = os.environ["EVENTGRID_CLOUD_EVENT_DOMAIN_KEY"]
+domain_endpoint = os.environ["EVENTGRID_CLOUD_EVENT_DOMAIN_ENDPOINT"]
 
 
 # authenticate client

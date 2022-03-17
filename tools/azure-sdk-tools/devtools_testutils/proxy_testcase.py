@@ -9,7 +9,6 @@ import requests
 import six
 import sys
 from typing import TYPE_CHECKING
-import pdb
 
 try:
     # py3
@@ -21,7 +20,7 @@ except:
 import pytest
 import subprocess
 
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.pipeline.policies import ContentDecodePolicy
 # the functions we patch
 from azure.core.pipeline.transport import RequestsTransport
@@ -58,11 +57,21 @@ def get_recording_id():
 def get_test_id():
     # type: () -> str
     # pytest sets the current running test in an environment variable
+    # the path to the test can depend on the environment, so we can't assume this is the path from the repo root
     setting_value = os.getenv("PYTEST_CURRENT_TEST")
-
     path_to_test = os.path.normpath(setting_value.split(" ")[0])
-    path_components = path_to_test.split(os.sep)
+    full_path_to_test = os.path.abspath(path_to_test)
 
+    # walk up to the repo root by looking for "sdk" directory or root of file system
+    path_components = []
+    head, tail = os.path.split(full_path_to_test)
+    while tail != "sdk" and tail != "":
+        path_components.append(tail)
+        head, tail = os.path.split(head)
+
+    # reverse path_components to construct components of path from repo root: [sdk, ..., tests, {test}]
+    path_components.append("sdk")
+    path_components.reverse()
     for idx, val in enumerate(path_components):
         if val.startswith("test"):
             path_components.insert(idx + 1, "recordings")
@@ -78,25 +87,31 @@ def start_record_or_playback(test_id):
     This returns a tuple, (a, b), where a is the recording ID of the test and b is the `variables` dictionary that maps
     test variables to values. If no variable dictionary was stored when the test was recorded, b is an empty dictionary.
     """
-    head_commit = subprocess.check_output(["git", "rev-parse", "HEAD"])
-    current_sha = head_commit.decode("utf-8").strip()
     variables = {}  # this stores a dictionary of test variable values that could have been stored with a recording
 
     if is_live():
         result = requests.post(
             RECORDING_START_URL,
-            headers={"x-recording-file": test_id, "x-recording-sha": current_sha},
+            json={"x-recording-file": test_id},
         )
+        if result.status_code != 200:
+            message = six.ensure_str(result._content)
+            raise HttpResponseError(message=message)
         recording_id = result.headers["x-recording-id"]
+
     else:
         result = requests.post(
             PLAYBACK_START_URL,
-            headers={"x-recording-file": test_id, "x-recording-sha": current_sha},
+            json={"x-recording-file": test_id},
         )
+        if result.status_code != 200:
+            message = six.ensure_str(result._content)
+            raise HttpResponseError(message=message)
+
         try:
             recording_id = result.headers["x-recording-id"]
-        except KeyError:
-            raise ValueError("No recording file found for {}".format(test_id))
+        except KeyError as ex:
+            six.raise_from(ValueError("No recording file found for {}".format(test_id)), ex)
         if result.text:
             try:
                 variables = result.json()
@@ -121,12 +136,12 @@ def stop_record_or_playback(test_id, recording_id, test_output):
                 "x-recording-save": "true",
                 "Content-Type": "application/json"
             },
-            json=test_output
+            json=test_output or {}  # tests don't record successfully unless test_output is a dictionary
         )
     else:
         requests.post(
             PLAYBACK_STOP_URL,
-            headers={"x-recording-file": test_id, "x-recording-id": recording_id},
+            headers={"x-recording-id": recording_id},
         )
 
 
@@ -179,7 +194,18 @@ def recorded_by_proxy(test_func):
 
         def combined_call(*args, **kwargs):
             adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
-            return original_transport_func(*adjusted_args, **adjusted_kwargs)
+            result = original_transport_func(*adjusted_args, **adjusted_kwargs)
+
+            # make the x-recording-upstream-base-uri the URL of the request
+            # this makes the request look like it was made to the original endpoint instead of to the proxy
+            # without this, things like LROPollers can get broken by polling the wrong endpoint
+            parsed_result = url_parse.urlparse(result.request.url)
+            upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
+            upstream_uri_dict = {"scheme": upstream_uri.scheme, "netloc": upstream_uri.netloc}
+            original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+
+            result.request.url = original_target
+            return result
 
         RequestsTransport.send = combined_call
 
@@ -198,8 +224,9 @@ def recorded_by_proxy(test_func):
                 test_output = test_func(*args, **trimmed_kwargs)
         except ResourceNotFoundError as error:
             error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
-            error_with_message = ResourceNotFoundError(message=error_body["Message"], response=error.response)
-            raise error_with_message
+            message = error_body.get("message") or error_body.get("Message")
+            error_with_message = ResourceNotFoundError(message=message, response=error.response)
+            six.raise_from(error_with_message, error)
         finally:
             RequestsTransport.send = original_transport_func
             stop_record_or_playback(test_id, recording_id, test_output)

@@ -37,6 +37,7 @@ MINIMUM_VERSION_SUPPORTED_OVERRIDE = {
     "azure-core": "1.11.0",
     "requests": "2.19.0",
     "six": "1.12.0",
+    "cryptography": "3.3.2"
 }
 
 MAXIMUM_VERSION_SUPPORTED_OVERRIDE = {"cryptography": "4.0.0"}

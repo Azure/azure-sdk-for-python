@@ -3,10 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse # type: ignore
+from urllib.parse import urlparse
 
 # pylint: disable=unused-import,ungrouped-imports
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union

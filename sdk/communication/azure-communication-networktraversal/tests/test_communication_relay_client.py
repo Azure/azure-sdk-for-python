@@ -47,7 +47,7 @@ class CommunicationRelayClientTest(CommunicationTestCase):
         )
 
         print('Getting relay config:\n')
-        config = relay_client.get_relay_configuration(user)
+        config = relay_client.get_relay_configuration(user=user)
         
         print(config.ice_servers)
 
@@ -107,7 +107,7 @@ class CommunicationRelayClientTest(CommunicationTestCase):
         )
 
         print('Getting relay config with route type nearest:\n')
-        config = relay_client.get_relay_configuration(user, RouteType.NEAREST)
+        config = relay_client.get_relay_configuration(user=user, route_type=RouteType.NEAREST)
 
         for iceServer in config.ice_servers:
             assert iceServer.username is not None
@@ -139,7 +139,7 @@ class CommunicationRelayClientTest(CommunicationTestCase):
         )
 
         print('Getting relay config with route type nearest:\n')
-        config = relay_client.get_relay_configuration(user, RouteType.ANY)
+        config = relay_client.get_relay_configuration(user=user, route_type=RouteType.ANY)
 
         for iceServer in config.ice_servers:
             assert iceServer.username is not None

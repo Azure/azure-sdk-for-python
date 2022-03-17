@@ -31,26 +31,29 @@
 #  peer_express_route_circuit_connections: 2/2
 
 import unittest
+import pytest
 
 from azure.core.exceptions import HttpResponseError
 import azure.mgmt.network
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = 'eastus'
 
-class MgmtNetworkTest(AzureMgmtTestCase):
 
-    def setUp(self):
-        super(MgmtNetworkTest, self).setUp()
+@pytest.mark.live_test_only
+class TestMgmtNetwork(AzureMgmtRecordedTestCase):
+
+    def setup_method(self, method):
         self.mgmt_client = self.create_mgmt_client(
             azure.mgmt.network.NetworkManagementClient
         )
 
     @unittest.skip('skip test')
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_network(self, resource_group):
 
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         CIRCUIT_NAME = "myCircuit"
         CIRCUIT_NAME_2 = "myCircuit2"
@@ -195,7 +198,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
         # result = result.result()
 
         # These commands won't succeed because circuit creation requires a manual step from the service.
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
           # /ExpressRouteCircuitConnections/put/ExpressRouteCircuitConnectionCreate[put]
           BODY = {
             "express_route_circuit_peering": {
@@ -216,7 +219,7 @@ class MgmtNetworkTest(AzureMgmtTestCase):
 
         # TODO: # cannot create it, so this test will fail due to resource is not found.
         # /PeerExpressRouteCircuitConnections/get/PeerExpressRouteCircuitConnectionGet[get]
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             result = self.mgmt_client.peer_express_route_circuit_connections.get(resource_group_name=RESOURCE_GROUP, circuit_name=CIRCUIT_NAME_2, peering_name=PEERING_NAME, connection_name=CONNECTION_NAME)
 
         # /ExpressRouteCircuitConnections/get/ExpressRouteCircuitConnectionGet[get]

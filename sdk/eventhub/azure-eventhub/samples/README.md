@@ -11,7 +11,7 @@ urlFragment: eventhub-samples
 # Azure Event Hubs client library for Python Samples
 
 These are code samples that show common scenario operations with the Azure Event Hubs client library.
-Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/sync_samples) and [async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/async_samples) of samples are provided, async samples require Python 3.6 or later.
+Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/sync_samples) and [async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/async_samples) of samples are provided.
 
 - [client_creation.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/sync_samples/client_creation.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples/async_samples/client_creation_async.py)) - Examples to create EventHubProducerClient and EventHubConsumerClient:
     - From a connection string
@@ -81,7 +81,7 @@ Both [sync version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/
     - Receive messages and parse the body according to the body type.
 
 ## Prerequisites
-- Python 2.7, 3.6 or later.
+- Python 3.6 or later.
 - **Microsoft Azure Subscription:**  To use Azure services, including Azure Event Hubs, you'll need a subscription.
 If you do not have an existing Azure account, you may sign up for a free trial or use your MSDN subscriber benefits when you [create an account](https://account.windowsazure.com/Home/Index).
 
@@ -120,5 +120,5 @@ pip install azure-eventhub-checkpointstoreblob-aio  # async version
 
 ## Next steps
 
-Check out the [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-eventhub/latest/azure.eventhub.html) to learn more about
+Check out the [API reference documentation](https://docs.microsoft.com/python/api/overview/azure/eventhub-readme) to learn more about
 what you can do with the Azure Event Hubs client library.

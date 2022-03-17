@@ -23,10 +23,9 @@ import unittest
 import pytest
 import requests
 import datetime
-import six
 import json
 import uuid
-from six.moves.urllib.parse import quote as urllib_quote
+from urllib.parse import quote as urllib_quote
 import azure.cosmos.auth as auth
 import azure.cosmos.partition_key as partition_key
 import azure.cosmos.cosmos_client as cosmos_client
@@ -75,9 +74,7 @@ class PartitionKeyTests(unittest.TestCase):
                                   verify=False)
 
         data = response.content
-        if not six.PY2:
-            # python 3 compatible: convert data from byte to unicode string
-            data = data.decode('utf-8')
+        data = data.decode('utf-8')
         data = json.loads(data)
         cls.created_collection_id = data['id']
 
@@ -99,9 +96,7 @@ class PartitionKeyTests(unittest.TestCase):
                                   verify=False)
 
         data = response.content
-        if not six.PY2:
-            # python 3 compatible: convert data from byte to unicode string
-            data = data.decode('utf-8')
+        data = data.decode('utf-8')
         data = json.loads(data)
         cls.created_document = data
 

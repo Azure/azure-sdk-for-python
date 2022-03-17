@@ -13,12 +13,11 @@
 import unittest
 
 import azure.mgmt.resource
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
-class MgmtResourceLinksTest(AzureMgmtTestCase):
+class TestMgmtResourceLinks(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(MgmtResourceLinksTest, self).setUp()
+    def setup_method(self, method):
         self.client = self.create_mgmt_client(
             azure.mgmt.resource.ManagementLinkClient
         )
@@ -27,6 +26,7 @@ class MgmtResourceLinksTest(AzureMgmtTestCase):
         )
 
     @RandomNameResourceGroupPreparer()
+    @recorded_by_proxy
     def test_links(self, resource_group, location):
         resource_name = self.get_resource_name("pytestavset")
         if not self.is_playback():
@@ -56,7 +56,7 @@ class MgmtResourceLinksTest(AzureMgmtTestCase):
             self.result_id = resource_group.id + "/providers/Microsoft.Compute/availabilitySets/" + resource_name
             self.result_id_2 = resource_group.id + "/providers/Microsoft.Compute/availabilitySets/" + resource_name + "2"
 
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         link = self.client.resource_links.create_or_update(
             # resource_group.id + '/providers/Microsoft.Resources/links/mylink',
             self.result_id + '/providers/Microsoft.Resources/links/myLink',
@@ -68,26 +68,27 @@ class MgmtResourceLinksTest(AzureMgmtTestCase):
                 }
             }
         )
-        self.assertEqual(link.name, 'myLink')
+        assert link.name == 'myLink'
     
         if not self.is_playback():
             import time
             time.sleep(10)
 
         link = self.client.resource_links.get(link.id)
-        self.assertEqual(link.name, 'myLink')
+        assert link.name == 'myLink'
 
         links = list(self.client.resource_links.list_at_subscription())
-        self.assertTrue(any(link.name=='myLink' for link in links))
+        assert any(link.name=='myLink' for link in links)
 
         links = list(self.client.resource_links.list_at_source_scope(self.result_id))
-        self.assertTrue(any(link.name=='myLink' for link in links))
+        assert any(link.name=='myLink' for link in links)
 
         links = list(self.client.resource_links.list_at_source_scope(self.result_id, 'atScope()'))
-        self.assertTrue(any(link.name=='myLink' for link in links))
+        assert any(link.name=='myLink' for link in links)
 
         self.client.resource_links.delete(link.id)
 
+    @recorded_by_proxy
     def test_operations(self):
         self.client.operations.list()
 

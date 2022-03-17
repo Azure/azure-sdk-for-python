@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -18,23 +18,22 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
-# fmt: off
+_SERIALIZER.client_side_validation = False
 
 def build_get_git_hub_access_token_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    client_request_id: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-    client_request_id = kwargs.pop('client_request_id', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
@@ -57,10 +56,11 @@ def build_get_git_hub_access_token_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
-# fmt: on
 class WorkspaceGitRepoManagementOperations(object):
     """WorkspaceGitRepoManagementOperations operations.
 
@@ -86,11 +86,10 @@ class WorkspaceGitRepoManagementOperations(object):
     @distributed_trace
     def get_git_hub_access_token(
         self,
-        git_hub_access_token_request,  # type: "_models.GitHubAccessTokenRequest"
-        client_request_id=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.GitHubAccessTokenResponse"
+        git_hub_access_token_request: "_models.GitHubAccessTokenRequest",
+        client_request_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> "_models.GitHubAccessTokenResponse":
         """Get the GitHub access token.
 
         :param git_hub_access_token_request:
@@ -115,12 +114,12 @@ class WorkspaceGitRepoManagementOperations(object):
         api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        json = self._serialize.body(git_hub_access_token_request, 'GitHubAccessTokenRequest')
+        _json = self._serialize.body(git_hub_access_token_request, 'GitHubAccessTokenRequest')
 
         request = build_get_git_hub_access_token_request(
             api_version=api_version,
             content_type=content_type,
-            json=json,
+            json=_json,
             client_request_id=client_request_id,
             template_url=self.get_git_hub_access_token.metadata['url'],
         )

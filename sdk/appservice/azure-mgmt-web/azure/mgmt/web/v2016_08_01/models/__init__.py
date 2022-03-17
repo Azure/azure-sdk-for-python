@@ -6,274 +6,140 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import ApiDefinitionInfo
-    from ._models_py3 import ApplicationLogsConfig
-    from ._models_py3 import AutoHealActions
-    from ._models_py3 import AutoHealCustomAction
-    from ._models_py3 import AutoHealRules
-    from ._models_py3 import AutoHealTriggers
-    from ._models_py3 import AzureBlobStorageApplicationLogsConfig
-    from ._models_py3 import AzureBlobStorageHttpLogsConfig
-    from ._models_py3 import AzureTableStorageApplicationLogsConfig
-    from ._models_py3 import BackupItem
-    from ._models_py3 import BackupItemCollection
-    from ._models_py3 import BackupRequest
-    from ._models_py3 import BackupSchedule
-    from ._models_py3 import CloningInfo
-    from ._models_py3 import ConnStringInfo
-    from ._models_py3 import ConnStringValueTypePair
-    from ._models_py3 import ConnectionStringDictionary
-    from ._models_py3 import ContinuousWebJob
-    from ._models_py3 import ContinuousWebJobCollection
-    from ._models_py3 import CorsSettings
-    from ._models_py3 import CsmPublishingProfileOptions
-    from ._models_py3 import CsmSlotEntity
-    from ._models_py3 import CsmUsageQuota
-    from ._models_py3 import CsmUsageQuotaCollection
-    from ._models_py3 import CustomHostnameAnalysisResult
-    from ._models_py3 import DatabaseBackupSetting
-    from ._models_py3 import Deployment
-    from ._models_py3 import DeploymentCollection
-    from ._models_py3 import EnabledConfig
-    from ._models_py3 import ErrorEntity
-    from ._models_py3 import Experiments
-    from ._models_py3 import FileSystemApplicationLogsConfig
-    from ._models_py3 import FileSystemHttpLogsConfig
-    from ._models_py3 import FunctionEnvelope
-    from ._models_py3 import FunctionEnvelopeCollection
-    from ._models_py3 import FunctionSecrets
-    from ._models_py3 import HandlerMapping
-    from ._models_py3 import HostNameBinding
-    from ._models_py3 import HostNameBindingCollection
-    from ._models_py3 import HostNameSslState
-    from ._models_py3 import HostingEnvironmentProfile
-    from ._models_py3 import HttpLogsConfig
-    from ._models_py3 import HybridConnection
-    from ._models_py3 import HybridConnectionKey
-    from ._models_py3 import Identifier
-    from ._models_py3 import IdentifierCollection
-    from ._models_py3 import IpSecurityRestriction
-    from ._models_py3 import LocalizableString
-    from ._models_py3 import MSDeploy
-    from ._models_py3 import MSDeployLog
-    from ._models_py3 import MSDeployLogEntry
-    from ._models_py3 import MSDeployStatus
-    from ._models_py3 import ManagedServiceIdentity
-    from ._models_py3 import MigrateMySqlRequest
-    from ._models_py3 import MigrateMySqlStatus
-    from ._models_py3 import NameValuePair
-    from ._models_py3 import NetworkFeatures
-    from ._models_py3 import Operation
-    from ._models_py3 import PerfMonCounterCollection
-    from ._models_py3 import PerfMonResponse
-    from ._models_py3 import PerfMonSample
-    from ._models_py3 import PerfMonSet
-    from ._models_py3 import PremierAddOn
-    from ._models_py3 import ProcessInfo
-    from ._models_py3 import ProcessInfoCollection
-    from ._models_py3 import ProcessModuleInfo
-    from ._models_py3 import ProcessModuleInfoCollection
-    from ._models_py3 import ProcessThreadInfo
-    from ._models_py3 import ProcessThreadInfoCollection
-    from ._models_py3 import ProxyOnlyResource
-    from ._models_py3 import PublicCertificate
-    from ._models_py3 import PublicCertificateCollection
-    from ._models_py3 import PushSettings
-    from ._models_py3 import RampUpRule
-    from ._models_py3 import RelayServiceConnectionEntity
-    from ._models_py3 import RequestsBasedTrigger
-    from ._models_py3 import Resource
-    from ._models_py3 import ResourceMetric
-    from ._models_py3 import ResourceMetricAvailability
-    from ._models_py3 import ResourceMetricCollection
-    from ._models_py3 import ResourceMetricDefinition
-    from ._models_py3 import ResourceMetricDefinitionCollection
-    from ._models_py3 import ResourceMetricName
-    from ._models_py3 import ResourceMetricProperty
-    from ._models_py3 import ResourceMetricValue
-    from ._models_py3 import RestoreRequest
-    from ._models_py3 import RestoreResponse
-    from ._models_py3 import Site
-    from ._models_py3 import SiteAuthSettings
-    from ._models_py3 import SiteCloneability
-    from ._models_py3 import SiteCloneabilityCriterion
-    from ._models_py3 import SiteConfig
-    from ._models_py3 import SiteConfigResource
-    from ._models_py3 import SiteConfigResourceCollection
-    from ._models_py3 import SiteConfigurationSnapshotInfo
-    from ._models_py3 import SiteConfigurationSnapshotInfoCollection
-    from ._models_py3 import SiteExtensionInfo
-    from ._models_py3 import SiteExtensionInfoCollection
-    from ._models_py3 import SiteInstance
-    from ._models_py3 import SiteLimits
-    from ._models_py3 import SiteLogsConfig
-    from ._models_py3 import SiteMachineKey
-    from ._models_py3 import SitePatchResource
-    from ._models_py3 import SitePhpErrorLogFlag
-    from ._models_py3 import SiteSourceControl
-    from ._models_py3 import SlotConfigNamesResource
-    from ._models_py3 import SlotDifference
-    from ._models_py3 import SlotDifferenceCollection
-    from ._models_py3 import SlotSwapStatus
-    from ._models_py3 import SlowRequestsBasedTrigger
-    from ._models_py3 import Snapshot
-    from ._models_py3 import SnapshotCollection
-    from ._models_py3 import SnapshotRecoveryRequest
-    from ._models_py3 import SnapshotRecoveryTarget
-    from ._models_py3 import StatusCodesBasedTrigger
-    from ._models_py3 import StorageMigrationOptions
-    from ._models_py3 import StorageMigrationResponse
-    from ._models_py3 import StringDictionary
-    from ._models_py3 import TriggeredJobHistory
-    from ._models_py3 import TriggeredJobHistoryCollection
-    from ._models_py3 import TriggeredJobRun
-    from ._models_py3 import TriggeredWebJob
-    from ._models_py3 import TriggeredWebJobCollection
-    from ._models_py3 import User
-    from ._models_py3 import VirtualApplication
-    from ._models_py3 import VirtualDirectory
-    from ._models_py3 import VnetGateway
-    from ._models_py3 import VnetInfo
-    from ._models_py3 import VnetRoute
-    from ._models_py3 import WebAppCollection
-    from ._models_py3 import WebAppInstanceCollection
-    from ._models_py3 import WebJob
-    from ._models_py3 import WebJobCollection
-except (SyntaxError, ImportError):
-    from ._models import ApiDefinitionInfo  # type: ignore
-    from ._models import ApplicationLogsConfig  # type: ignore
-    from ._models import AutoHealActions  # type: ignore
-    from ._models import AutoHealCustomAction  # type: ignore
-    from ._models import AutoHealRules  # type: ignore
-    from ._models import AutoHealTriggers  # type: ignore
-    from ._models import AzureBlobStorageApplicationLogsConfig  # type: ignore
-    from ._models import AzureBlobStorageHttpLogsConfig  # type: ignore
-    from ._models import AzureTableStorageApplicationLogsConfig  # type: ignore
-    from ._models import BackupItem  # type: ignore
-    from ._models import BackupItemCollection  # type: ignore
-    from ._models import BackupRequest  # type: ignore
-    from ._models import BackupSchedule  # type: ignore
-    from ._models import CloningInfo  # type: ignore
-    from ._models import ConnStringInfo  # type: ignore
-    from ._models import ConnStringValueTypePair  # type: ignore
-    from ._models import ConnectionStringDictionary  # type: ignore
-    from ._models import ContinuousWebJob  # type: ignore
-    from ._models import ContinuousWebJobCollection  # type: ignore
-    from ._models import CorsSettings  # type: ignore
-    from ._models import CsmPublishingProfileOptions  # type: ignore
-    from ._models import CsmSlotEntity  # type: ignore
-    from ._models import CsmUsageQuota  # type: ignore
-    from ._models import CsmUsageQuotaCollection  # type: ignore
-    from ._models import CustomHostnameAnalysisResult  # type: ignore
-    from ._models import DatabaseBackupSetting  # type: ignore
-    from ._models import Deployment  # type: ignore
-    from ._models import DeploymentCollection  # type: ignore
-    from ._models import EnabledConfig  # type: ignore
-    from ._models import ErrorEntity  # type: ignore
-    from ._models import Experiments  # type: ignore
-    from ._models import FileSystemApplicationLogsConfig  # type: ignore
-    from ._models import FileSystemHttpLogsConfig  # type: ignore
-    from ._models import FunctionEnvelope  # type: ignore
-    from ._models import FunctionEnvelopeCollection  # type: ignore
-    from ._models import FunctionSecrets  # type: ignore
-    from ._models import HandlerMapping  # type: ignore
-    from ._models import HostNameBinding  # type: ignore
-    from ._models import HostNameBindingCollection  # type: ignore
-    from ._models import HostNameSslState  # type: ignore
-    from ._models import HostingEnvironmentProfile  # type: ignore
-    from ._models import HttpLogsConfig  # type: ignore
-    from ._models import HybridConnection  # type: ignore
-    from ._models import HybridConnectionKey  # type: ignore
-    from ._models import Identifier  # type: ignore
-    from ._models import IdentifierCollection  # type: ignore
-    from ._models import IpSecurityRestriction  # type: ignore
-    from ._models import LocalizableString  # type: ignore
-    from ._models import MSDeploy  # type: ignore
-    from ._models import MSDeployLog  # type: ignore
-    from ._models import MSDeployLogEntry  # type: ignore
-    from ._models import MSDeployStatus  # type: ignore
-    from ._models import ManagedServiceIdentity  # type: ignore
-    from ._models import MigrateMySqlRequest  # type: ignore
-    from ._models import MigrateMySqlStatus  # type: ignore
-    from ._models import NameValuePair  # type: ignore
-    from ._models import NetworkFeatures  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import PerfMonCounterCollection  # type: ignore
-    from ._models import PerfMonResponse  # type: ignore
-    from ._models import PerfMonSample  # type: ignore
-    from ._models import PerfMonSet  # type: ignore
-    from ._models import PremierAddOn  # type: ignore
-    from ._models import ProcessInfo  # type: ignore
-    from ._models import ProcessInfoCollection  # type: ignore
-    from ._models import ProcessModuleInfo  # type: ignore
-    from ._models import ProcessModuleInfoCollection  # type: ignore
-    from ._models import ProcessThreadInfo  # type: ignore
-    from ._models import ProcessThreadInfoCollection  # type: ignore
-    from ._models import ProxyOnlyResource  # type: ignore
-    from ._models import PublicCertificate  # type: ignore
-    from ._models import PublicCertificateCollection  # type: ignore
-    from ._models import PushSettings  # type: ignore
-    from ._models import RampUpRule  # type: ignore
-    from ._models import RelayServiceConnectionEntity  # type: ignore
-    from ._models import RequestsBasedTrigger  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ResourceMetric  # type: ignore
-    from ._models import ResourceMetricAvailability  # type: ignore
-    from ._models import ResourceMetricCollection  # type: ignore
-    from ._models import ResourceMetricDefinition  # type: ignore
-    from ._models import ResourceMetricDefinitionCollection  # type: ignore
-    from ._models import ResourceMetricName  # type: ignore
-    from ._models import ResourceMetricProperty  # type: ignore
-    from ._models import ResourceMetricValue  # type: ignore
-    from ._models import RestoreRequest  # type: ignore
-    from ._models import RestoreResponse  # type: ignore
-    from ._models import Site  # type: ignore
-    from ._models import SiteAuthSettings  # type: ignore
-    from ._models import SiteCloneability  # type: ignore
-    from ._models import SiteCloneabilityCriterion  # type: ignore
-    from ._models import SiteConfig  # type: ignore
-    from ._models import SiteConfigResource  # type: ignore
-    from ._models import SiteConfigResourceCollection  # type: ignore
-    from ._models import SiteConfigurationSnapshotInfo  # type: ignore
-    from ._models import SiteConfigurationSnapshotInfoCollection  # type: ignore
-    from ._models import SiteExtensionInfo  # type: ignore
-    from ._models import SiteExtensionInfoCollection  # type: ignore
-    from ._models import SiteInstance  # type: ignore
-    from ._models import SiteLimits  # type: ignore
-    from ._models import SiteLogsConfig  # type: ignore
-    from ._models import SiteMachineKey  # type: ignore
-    from ._models import SitePatchResource  # type: ignore
-    from ._models import SitePhpErrorLogFlag  # type: ignore
-    from ._models import SiteSourceControl  # type: ignore
-    from ._models import SlotConfigNamesResource  # type: ignore
-    from ._models import SlotDifference  # type: ignore
-    from ._models import SlotDifferenceCollection  # type: ignore
-    from ._models import SlotSwapStatus  # type: ignore
-    from ._models import SlowRequestsBasedTrigger  # type: ignore
-    from ._models import Snapshot  # type: ignore
-    from ._models import SnapshotCollection  # type: ignore
-    from ._models import SnapshotRecoveryRequest  # type: ignore
-    from ._models import SnapshotRecoveryTarget  # type: ignore
-    from ._models import StatusCodesBasedTrigger  # type: ignore
-    from ._models import StorageMigrationOptions  # type: ignore
-    from ._models import StorageMigrationResponse  # type: ignore
-    from ._models import StringDictionary  # type: ignore
-    from ._models import TriggeredJobHistory  # type: ignore
-    from ._models import TriggeredJobHistoryCollection  # type: ignore
-    from ._models import TriggeredJobRun  # type: ignore
-    from ._models import TriggeredWebJob  # type: ignore
-    from ._models import TriggeredWebJobCollection  # type: ignore
-    from ._models import User  # type: ignore
-    from ._models import VirtualApplication  # type: ignore
-    from ._models import VirtualDirectory  # type: ignore
-    from ._models import VnetGateway  # type: ignore
-    from ._models import VnetInfo  # type: ignore
-    from ._models import VnetRoute  # type: ignore
-    from ._models import WebAppCollection  # type: ignore
-    from ._models import WebAppInstanceCollection  # type: ignore
-    from ._models import WebJob  # type: ignore
-    from ._models import WebJobCollection  # type: ignore
+from ._models_py3 import ApiDefinitionInfo
+from ._models_py3 import ApplicationLogsConfig
+from ._models_py3 import AutoHealActions
+from ._models_py3 import AutoHealCustomAction
+from ._models_py3 import AutoHealRules
+from ._models_py3 import AutoHealTriggers
+from ._models_py3 import AzureBlobStorageApplicationLogsConfig
+from ._models_py3 import AzureBlobStorageHttpLogsConfig
+from ._models_py3 import AzureTableStorageApplicationLogsConfig
+from ._models_py3 import BackupItem
+from ._models_py3 import BackupItemCollection
+from ._models_py3 import BackupRequest
+from ._models_py3 import BackupSchedule
+from ._models_py3 import CloningInfo
+from ._models_py3 import ConnStringInfo
+from ._models_py3 import ConnStringValueTypePair
+from ._models_py3 import ConnectionStringDictionary
+from ._models_py3 import ContinuousWebJob
+from ._models_py3 import ContinuousWebJobCollection
+from ._models_py3 import CorsSettings
+from ._models_py3 import CsmPublishingProfileOptions
+from ._models_py3 import CsmSlotEntity
+from ._models_py3 import CsmUsageQuota
+from ._models_py3 import CsmUsageQuotaCollection
+from ._models_py3 import CustomHostnameAnalysisResult
+from ._models_py3 import DatabaseBackupSetting
+from ._models_py3 import Deployment
+from ._models_py3 import DeploymentCollection
+from ._models_py3 import EnabledConfig
+from ._models_py3 import ErrorEntity
+from ._models_py3 import Experiments
+from ._models_py3 import FileSystemApplicationLogsConfig
+from ._models_py3 import FileSystemHttpLogsConfig
+from ._models_py3 import FunctionEnvelope
+from ._models_py3 import FunctionEnvelopeCollection
+from ._models_py3 import FunctionSecrets
+from ._models_py3 import HandlerMapping
+from ._models_py3 import HostNameBinding
+from ._models_py3 import HostNameBindingCollection
+from ._models_py3 import HostNameSslState
+from ._models_py3 import HostingEnvironmentProfile
+from ._models_py3 import HttpLogsConfig
+from ._models_py3 import HybridConnection
+from ._models_py3 import HybridConnectionKey
+from ._models_py3 import Identifier
+from ._models_py3 import IdentifierCollection
+from ._models_py3 import IpSecurityRestriction
+from ._models_py3 import LocalizableString
+from ._models_py3 import MSDeploy
+from ._models_py3 import MSDeployLog
+from ._models_py3 import MSDeployLogEntry
+from ._models_py3 import MSDeployStatus
+from ._models_py3 import ManagedServiceIdentity
+from ._models_py3 import MigrateMySqlRequest
+from ._models_py3 import MigrateMySqlStatus
+from ._models_py3 import NameValuePair
+from ._models_py3 import NetworkFeatures
+from ._models_py3 import Operation
+from ._models_py3 import PerfMonCounterCollection
+from ._models_py3 import PerfMonResponse
+from ._models_py3 import PerfMonSample
+from ._models_py3 import PerfMonSet
+from ._models_py3 import PremierAddOn
+from ._models_py3 import ProcessInfo
+from ._models_py3 import ProcessInfoCollection
+from ._models_py3 import ProcessModuleInfo
+from ._models_py3 import ProcessModuleInfoCollection
+from ._models_py3 import ProcessThreadInfo
+from ._models_py3 import ProcessThreadInfoCollection
+from ._models_py3 import ProxyOnlyResource
+from ._models_py3 import PublicCertificate
+from ._models_py3 import PublicCertificateCollection
+from ._models_py3 import PushSettings
+from ._models_py3 import RampUpRule
+from ._models_py3 import RelayServiceConnectionEntity
+from ._models_py3 import RequestsBasedTrigger
+from ._models_py3 import Resource
+from ._models_py3 import ResourceMetric
+from ._models_py3 import ResourceMetricAvailability
+from ._models_py3 import ResourceMetricCollection
+from ._models_py3 import ResourceMetricDefinition
+from ._models_py3 import ResourceMetricDefinitionCollection
+from ._models_py3 import ResourceMetricName
+from ._models_py3 import ResourceMetricProperty
+from ._models_py3 import ResourceMetricValue
+from ._models_py3 import RestoreRequest
+from ._models_py3 import RestoreResponse
+from ._models_py3 import Site
+from ._models_py3 import SiteAuthSettings
+from ._models_py3 import SiteCloneability
+from ._models_py3 import SiteCloneabilityCriterion
+from ._models_py3 import SiteConfig
+from ._models_py3 import SiteConfigResource
+from ._models_py3 import SiteConfigResourceCollection
+from ._models_py3 import SiteConfigurationSnapshotInfo
+from ._models_py3 import SiteConfigurationSnapshotInfoCollection
+from ._models_py3 import SiteExtensionInfo
+from ._models_py3 import SiteExtensionInfoCollection
+from ._models_py3 import SiteInstance
+from ._models_py3 import SiteLimits
+from ._models_py3 import SiteLogsConfig
+from ._models_py3 import SiteMachineKey
+from ._models_py3 import SitePatchResource
+from ._models_py3 import SitePhpErrorLogFlag
+from ._models_py3 import SiteSourceControl
+from ._models_py3 import SlotConfigNamesResource
+from ._models_py3 import SlotDifference
+from ._models_py3 import SlotDifferenceCollection
+from ._models_py3 import SlotSwapStatus
+from ._models_py3 import SlowRequestsBasedTrigger
+from ._models_py3 import Snapshot
+from ._models_py3 import SnapshotCollection
+from ._models_py3 import SnapshotRecoveryRequest
+from ._models_py3 import SnapshotRecoveryTarget
+from ._models_py3 import StatusCodesBasedTrigger
+from ._models_py3 import StorageMigrationOptions
+from ._models_py3 import StorageMigrationResponse
+from ._models_py3 import StringDictionary
+from ._models_py3 import TriggeredJobHistory
+from ._models_py3 import TriggeredJobHistoryCollection
+from ._models_py3 import TriggeredJobRun
+from ._models_py3 import TriggeredWebJob
+from ._models_py3 import TriggeredWebJobCollection
+from ._models_py3 import User
+from ._models_py3 import VirtualApplication
+from ._models_py3 import VirtualDirectory
+from ._models_py3 import VnetGateway
+from ._models_py3 import VnetInfo
+from ._models_py3 import VnetRoute
+from ._models_py3 import WebAppCollection
+from ._models_py3 import WebAppInstanceCollection
+from ._models_py3 import WebJob
+from ._models_py3 import WebJobCollection
+
 
 from ._web_site_management_client_enums import (
     AutoHealActionType,

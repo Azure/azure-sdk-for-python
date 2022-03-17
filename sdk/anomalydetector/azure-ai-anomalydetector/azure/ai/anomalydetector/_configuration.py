@@ -30,6 +30,8 @@ class AnomalyDetectorClientConfiguration(Configuration):
     :type credential: ~azure.core.credentials.AzureKeyCredential
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus2.api.cognitive.microsoft.com).
     :type endpoint: str
+    :keyword api_version: Anomaly Detector API version (for example, v1.0). The default value is "v1.1-preview.1". Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -39,14 +41,17 @@ class AnomalyDetectorClientConfiguration(Configuration):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
+        super(AnomalyDetectorClientConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop('api_version', "v1.1-preview.1")  # type: str
+
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        super(AnomalyDetectorClientConfiguration, self).__init__(**kwargs)
 
         self.credential = credential
         self.endpoint = endpoint
+        self.api_version = api_version
         kwargs.setdefault('sdk_moniker', 'ai-anomalydetector/{}'.format(VERSION))
         self._configure(**kwargs)
 
@@ -65,4 +70,4 @@ class AnomalyDetectorClientConfiguration(Configuration):
         self.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get('authentication_policy')
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.AzureKeyCredentialPolicy(self.credential, 'Ocp-Apim-Subscription-Key', **kwargs)
+            self.authentication_policy = policies.AzureKeyCredentialPolicy(self.credential, "Ocp-Apim-Subscription-Key", **kwargs)

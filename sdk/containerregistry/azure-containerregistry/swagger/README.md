@@ -32,6 +32,24 @@ directive:
 See the [AutoRest samples](https://github.com/Azure/autorest/tree/master/Samples/3b-custom-transformations)
 for more about how we're customizing things.
 
+### Rename the enum "TagOrderBy" to "ArtifactTagOrder"
+``` yaml
+directive:
+  from: swagger-document
+  where: $.definitions.TagOrderBy
+  transform: >
+    $['x-ms-enum']["name"] = "ArtifactTagOrder"
+```
+
+### Rename the enum "ManifestOrderBy" to "ArtifactManifestOrder"
+``` yaml
+directive:
+  from: swagger-document
+  where: $.definitions.ManifestOrderBy
+  transform: >
+    $['x-ms-enum']["name"] = "ArtifactManifestOrder"
+```
+
 ### Remove response for "ContainerRegistry_DeleteRepository" operation
 
 so that the generate code doesn't return a response for the delete repository operation.

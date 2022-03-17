@@ -11,17 +11,16 @@ import unittest
 
 import azure.mgmt.monitor.aio
 import azure.mgmt.monitor.models
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 from _aio_testcase import AzureMgmtAsyncTestCase
 
 
 AZURE_LOCATION = 'eastus'
 
-class MgmtMonitorClientTest(AzureMgmtAsyncTestCase):
+class TestMgmtMonitorClient(AzureMgmtAsyncTestCase):
 
-    def setUp(self):
-        super(MgmtMonitorClientTest, self).setUp()
+    def setup_method(self, method):
         self.mgmt_client = self.create_mgmt_aio_client(
             azure.mgmt.monitor.aio.MonitorManagementClient
         )
@@ -284,8 +283,9 @@ class MgmtMonitorClientTest(AzureMgmtAsyncTestCase):
 
     @pytest.mark.skip("https://github.com/Azure/azure-sdk-for-python/issues/19389")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_monitor_diagnostic_settings(self, resource_group):
-        SUBSCRIPTION_ID = self.settings.SUBSCRIPTION_ID
+        SUBSCRIPTION_ID = self.get_settings_value("SUBSCRIPTION_ID")
         RESOURCE_GROUP = resource_group.name
         # RESOURCE_URI = "subscriptions/{}/resourcegroups/{}".format(SUBSCRIPTION_ID, RESOURCE_GROUP)
         STORAGE_ACCOUNT_NAME = self.get_resource_name("storageaccountxx")

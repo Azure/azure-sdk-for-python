@@ -4,15 +4,16 @@
 # --------------------------------------------------------------------------------------------
 
 from azure_devtools.perfstress_tests import BatchPerfTest
+import random
 
 class MockReceiver():
     def receive(self, min_messages=1, max_messages=5):
-        for i in range(min_messages, max_messages):
-            yield 1
+        for i in range(random.randint(min_messages, max_messages)):
+            yield i
 
 class AsyncMockReceiver():
     async def receive(self, min_messages=1, max_messages=5):
-        for i in range(min_messages, max_messages):
+        for i in range(random.randint(min_messages, max_messages)):
             yield i
 
 
