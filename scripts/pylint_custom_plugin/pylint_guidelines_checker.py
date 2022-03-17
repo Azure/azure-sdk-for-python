@@ -1761,7 +1761,7 @@ class CheckEnum(BaseChecker):
             #Python3 format declares CaseInsensitiveEnumMeta as a metaclass in enum classes
             if node.declared_metaclass():
                 if node.declared_metaclass().name:
-                    if node.declared_metaclass().name == "CaseInsensitiveEnumMeta" or node.declared_metaclass().name == "_CaseInsensitiveEnumMeta":
+                    if node.declared_metaclass().name == "CaseInsensitiveEnumMeta":   # or node.declared_metaclass().name == "_CaseInsensitiveEnumMeta":
                         case_insensitive_meta = True
                         enum_class = True
             if not case_insensitive_meta:
