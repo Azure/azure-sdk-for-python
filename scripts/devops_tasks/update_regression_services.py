@@ -56,8 +56,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    deps = find_package_dependency
-
     if args.service:
         service_dir = os.path.join("sdk", args.service)
         target_dir = os.path.join(root_dir, service_dir)
@@ -85,9 +83,13 @@ if __name__ == "__main__":
         print("The json file {} cannot be loaded.".format(args.json))
         exit(1)
 
-    settings = json.loads(settings_json)
-    settings["matrix"]["DependentService"] = list(service_list)
-    json_result = json.dumps(settings)
+    if len(service_list) > 0: 
+        settings = json.loads(settings_json)
+        settings["matrix"]["DependentService"] = list(service_list)
+        json_result = json.dumps(settings)
 
-    with open(args.json, "w") as f:
-        f.write(json_result)
+        with open(args.json, "w") as f:
+            f.write(json_result)
+    else:
+        with open(args.json, "w") as f:
+            f.write("{}")
