@@ -82,7 +82,8 @@ def all_files(path: str, files: List[str]):
 
 def checkout_azure_default_branch():
     usr = 'Azure'
-    branch = 'main'
+    # branch = 'main'
+    branch = 'test-resources-2022-03-17'
     print_exec(f'git remote add {usr} https://github.com/{usr}/azure-sdk-for-python.git')
     print_check(f'git fetch {usr} {branch}')
     print_check(f'git checkout {usr}/{branch}')
