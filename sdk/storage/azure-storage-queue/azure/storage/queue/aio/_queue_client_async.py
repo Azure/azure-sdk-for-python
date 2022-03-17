@@ -25,7 +25,7 @@ except ImportError:
     from urlparse import urlparse  # type: ignore
     from urllib2 import quote, unquote  # type: ignore
 
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -153,6 +153,34 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             )
         except HttpResponseError as error:
             process_storage_error(error)
+
+    @distributed_trace_async
+    async def create_queue_if_not_exists(self, **kwargs):
+        # type: (Any) -> None
+        """Creates a new queue in the storage account.
+
+        If a queue with the same name already exists, it is not changed.
+
+        :keyword dict(str,str) metadata:
+            A dict containing name-value pairs to associate with the queue as
+            metadata. Note that metadata names preserve the case with which they
+            were created, but are case-insensitive when set or read.
+        :keyword int timeout:
+            The server timeout, expressed in seconds.
+            
+            .. versionadded:: 12.10.01
+            
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises: StorageErrorException
+        """
+        try:
+            return await self.create_queue(**kwargs)
+        except HttpResponseError as error:
+            try: 
+                process_storage_error(error)
+            except ResourceExistsError:
+                return None
 
     @distributed_trace_async
     async def delete_queue(self, **kwargs):

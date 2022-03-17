@@ -82,6 +82,29 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
 
     @QueuePreparer()
     @AsyncStorageTestCase.await_prepared_test
+    async def test_create_queue_if_not_exists_without_existing_container(self, storage_account_name, storage_account_key):
+        # Action
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = self._get_queue_reference(qsc)
+        created = await queue_client.create_queue_if_not_exists()
+
+        # Asserts
+        self.assertTrue(created)
+
+    @QueuePreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_create_queue_if_not_exists_with_existing_container(self, storage_account_name, storage_account_key):
+        # Action
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = self._get_queue_reference(qsc)
+        await queue_client.create_queue()
+        created = await queue_client.create_queue_if_not_exists()
+
+        # Asserts
+        self.assertIsNone(created)
+
+    @QueuePreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_create_queue_fail_on_exist(self, storage_account_name, storage_account_key):
         # Action
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
