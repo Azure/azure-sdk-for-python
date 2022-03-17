@@ -48,7 +48,7 @@ from azure.servicebus.exceptions import (
     MessageSizeExceededError,
     OperationTimeoutError
 )
-from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer, AzureTestCase
+from devtools_testutils import AzureMgmtTestCase, AzureTestCase
 from sb_env_loader import ServiceBusPreparer
 from utilities import get_logger, print_message, sleep_until_expired
 from mocks_async import MockReceivedMessage, MockReceiver
@@ -627,9 +627,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @ServiceBusPreparer()
     async def test_async_queue_by_servicebus_client_session_fail(self, servicebus_connection_str, servicebus_queue_name, **kwargs):
         async with ServiceBusClient.from_connection_string(
             servicebus_connection_str, logging_enable=False) as sb_client:
@@ -731,9 +729,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT5S')
+    @ServiceBusPreparer()
     async def test_async_queue_by_queue_client_conn_str_receive_handler_with_autolockrenew(self, servicebus_connection_str, servicebus_queue_name, **kwargs):
         async with ServiceBusClient.from_connection_string(
             servicebus_connection_str, logging_enable=False) as sb_client:
@@ -785,9 +781,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT5S')
+    @ServiceBusPreparer()
     async def test_async_queue_by_queue_client_conn_str_receive_handler_with_auto_autolockrenew(self, servicebus_connection_str, servicebus_queue_name, **kwargs):
         async with ServiceBusClient.from_connection_string(
             servicebus_connection_str, logging_enable=False) as sb_client:
@@ -885,9 +879,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_duplicate_detection=True, dead_lettering_on_message_expiration=True)
+    @ServiceBusPreparer()
     async def test_async_queue_message_duplicate_detection(self, servicebus_connection_str, servicebus_queue_name, **kwargs):
         async with ServiceBusClient.from_connection_string(
             servicebus_connection_str, logging_enable=False) as sb_client:
@@ -1458,9 +1450,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT5M')
+    @ServiceBusPreparer()
     async def test_queue_receive_keep_conn_alive_async(self, servicebus_connection_str, servicebus_queue_name, **kwargs):
         async with ServiceBusClient.from_connection_string(
                 servicebus_connection_str, logging_enable=False) as sb_client:
@@ -1567,9 +1557,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @ServiceBusPreparer()
     async def test_async_queue_send_timeout(self, servicebus_connection_str, servicebus_queue_name, **kwargs):
         async def _hack_amqp_sender_run_async(cls):
             await asyncio.sleep(6)  # sleep until timeout
@@ -1593,9 +1581,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @ServiceBusPreparer()
     async def test_async_queue_mgmt_operation_timeout(self, servicebus_connection_str, servicebus_queue_name, **kwargs):
         async def hack_mgmt_execute_async(self, operation, op_type, message, timeout=0):
             start_time = self._counter.get_current_ms()
@@ -1630,9 +1616,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', lock_duration='PT5S')
+    @ServiceBusPreparer()
     async def test_async_queue_operation_negative(self, servicebus_connection_str, servicebus_queue_name, **kwargs):
         def _hack_amqp_message_complete(cls):
             raise RuntimeError()

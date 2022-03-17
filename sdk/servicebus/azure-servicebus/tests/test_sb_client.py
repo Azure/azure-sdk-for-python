@@ -130,7 +130,7 @@ class ServiceBusClientTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @@ServiceBusPreparer()
+    @ServiceBusPreparer()
     def test_sb_client_incorrect_queue_conn_str(self, servicebus_queue_authorization_rule_connection_string, servicebus_queue_name, wrong_queue, **kwargs):
         
         client = ServiceBusClient.from_connection_string(servicebus_queue_authorization_rule_connection_string)
