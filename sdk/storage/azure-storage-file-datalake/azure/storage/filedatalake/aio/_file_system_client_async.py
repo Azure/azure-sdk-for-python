@@ -11,7 +11,7 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.tracing.decorator import distributed_trace
 
 from azure.core.pipeline import AsyncPipeline
@@ -208,6 +208,33 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         return await self._container_client.create_container(metadata=metadata,
                                                              public_access=public_access,
                                                              **kwargs)
+
+    @distributed_trace_async
+    async def create_file_system_if_not_exists(self, **kwargs):
+        # type: (Any) -> None
+        """Creates a new file system under the specified account.
+
+        If the file system with the same name already exists, it is not changed. 
+
+        :keyword Dict(str,str) metadata:
+            A dict with name-value pairs to associate with the
+            file system as metadata. Example: `{'Category':'test'}`
+        :keyword public_access:
+            To specify whether data in the file system may be accessed publicly and the level of access.
+        :type public_access: ~azure.storage.filedatalake.PublicAccess
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        
+            .. versionadded:: 12.10.01
+        :rtype: None
+        """
+        try:
+            return await self.create_file_system(**kwargs)
+        except HttpResponseError as error:
+            try:
+                process_storage_error(error)
+            except ResourceExistsError:
+                return None
 
     @distributed_trace_async
     async def exists(self, **kwargs):

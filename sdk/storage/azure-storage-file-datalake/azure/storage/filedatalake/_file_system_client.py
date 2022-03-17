@@ -266,7 +266,7 @@ class FileSystemClient(StorageAccountHostsMixin):
                                                        **kwargs)
 
     def create_file_system_if_not_exists(self, **kwargs):
-        # type: (...) ->  Dict[str, Union[str, datetime]]
+        # type: (Any) -> None
         """Creates a new file system under the specified account.
 
         If the file system with the same name already exists, it is not changed. 

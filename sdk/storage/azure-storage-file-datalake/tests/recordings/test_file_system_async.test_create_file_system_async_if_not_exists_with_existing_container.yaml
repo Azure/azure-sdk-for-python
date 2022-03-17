@@ -1,0 +1,82 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-dfs/12.6.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
+      x-ms-date:
+      - Thu, 17 Mar 2022 19:32:39 GMT
+      x-ms-version:
+      - '2020-10-02'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/filesystema0cc2566?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 17 Mar 2022 19:32:38 GMT
+      etag: '"0x8DA084CE5C3213C"'
+      last-modified: Thu, 17 Mar 2022 19:32:39 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2020-10-02'
+    status:
+      code: 201
+      message: Created
+    url: https://vincenttrancanary.blob.core.windows.net/filesystema0cc2566?restype=container
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-dfs/12.6.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
+      x-ms-date:
+      - Thu, 17 Mar 2022 19:32:40 GMT
+      x-ms-version:
+      - '2020-10-02'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/filesystema0cc2566?restype=container
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
+        specified container already exists.\nRequestId:5555bbac-401e-0057-6535-3a74f1000000\nTime:2022-03-17T19:32:39.2383276Z</Message></Error>"
+    headers:
+      content-length: '230'
+      content-type: application/xml
+      date: Thu, 17 Mar 2022 19:32:38 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: ContainerAlreadyExists
+      x-ms-version: '2020-10-02'
+    status:
+      code: 409
+      message: The specified container already exists.
+    url: https://vincenttrancanary.blob.core.windows.net/filesystema0cc2566?restype=container
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-dfs/12.6.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
+      x-ms-date:
+      - Thu, 17 Mar 2022 19:32:40 GMT
+      x-ms-version:
+      - '2020-10-02'
+    method: DELETE
+    uri: https://storagename.blob.core.windows.net/filesystema0cc2566?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 17 Mar 2022 19:32:38 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2020-10-02'
+    status:
+      code: 202
+      message: Accepted
+    url: https://vincenttrancanary.blob.core.windows.net/filesystema0cc2566?restype=container
+version: 1
