@@ -58,11 +58,11 @@ def sample_analyze_orchestration_app():
     top_intent = result.prediction.top_intent
     print("\ttop intent: {}".format(top_intent))
 
-    top_intent_object = result.prediction.intents[0]
+    top_intent_object = result.prediction.intents[top_intent]
     print("\tconfidence score: {}\n".format(top_intent_object.confidence_score))
 
     print("view result:")
-    print("\tresult: {}\n".format(top_intent_object))
+    print("\tresult: {}\n".format(top_intent_object.result))
     # [END analyze_orchestration_app]
 
 if __name__ == '__main__':

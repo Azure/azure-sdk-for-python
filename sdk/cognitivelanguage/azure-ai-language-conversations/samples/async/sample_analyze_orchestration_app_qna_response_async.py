@@ -61,12 +61,13 @@ async def sample_analyze_orchestration_app_qna_response_async():
         top_intent = result.prediction.top_intent
         print("\ttop intent: {}".format(top_intent))
 
-        top_intent_object = result.prediction.intents[0]
+        top_intent_object = result.prediction.intents[top_intent]
         print("\tconfidence score: {}\n".format(top_intent_object.confidence_score))
 
         print("view qna result:")
-        qna_result = result.prediction.intents[0]
-        print("\tanswer: {}\n".format(qna_result))
+        qna_result = result.prediction.intents[top_intent].result
+        for answer in qna_result.answers:
+            print("\tanswer: {}\n".format(answer.answer))
     # [END analyze_orchestration_app_qna_response_async]
 
 
