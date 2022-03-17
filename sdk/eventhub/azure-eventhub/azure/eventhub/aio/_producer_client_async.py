@@ -12,7 +12,7 @@ from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
 from ..exceptions import ConnectError, EventHubError
 from ..amqp import AmqpAnnotatedMessage
-from ._client_base_async import ClientBaseAsync
+from ._client_base_async import ClientBaseAsync, EventHubSharedKeyCredential
 from ._producer_async import EventHubProducer
 from .._constants import ALL_PARTITIONS
 from .._common import EventDataBatch, EventData
@@ -91,7 +91,7 @@ class EventHubProducerClient(ClientBaseAsync):
         fully_qualified_namespace: str,
         eventhub_name: str,
         credential: Union[
-            "AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential
+            "AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential, EventHubSharedKeyCredential
         ],
         **kwargs
     ) -> None:

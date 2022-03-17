@@ -145,7 +145,7 @@ class ClientBaseAsync(ClientBase):
         fully_qualified_namespace: str,
         eventhub_name: str,
         credential: Union[
-            "AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential
+            "AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential, EventHubSharedKeyCredential
         ],
         **kwargs: Any
     ) -> None:

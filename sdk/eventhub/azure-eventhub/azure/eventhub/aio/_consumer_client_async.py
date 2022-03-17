@@ -22,7 +22,7 @@ from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
 from ._eventprocessor.event_processor import EventProcessor
 from ._consumer_async import EventHubConsumer
-from ._client_base_async import ClientBaseAsync
+from ._client_base_async import ClientBaseAsync, EventHubSharedKeyCredential
 from .._constants import ALL_PARTITIONS
 from .._eventprocessor.common import LoadBalancingStrategy
 
@@ -147,7 +147,9 @@ class EventHubConsumerClient(ClientBaseAsync):
         fully_qualified_namespace: str,
         eventhub_name: str,
         consumer_group: str,
-        credential: Union["AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential],
+        credential: Union[
+            "AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential, EventHubSharedKeyCredential
+        ],
         **kwargs
     ) -> None:
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)

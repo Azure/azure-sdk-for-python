@@ -264,9 +264,15 @@ class EventhubAzureSasTokenCredential(object):
         return AccessToken(signature, expiry)
 
 
+if TYPE_CHECKING:
+    CredentialTypes = Union[
+        AzureSasCredential, TokenCredential, AzureNamedKeyCredential, EventHubSharedKeyCredential
+    ]
+
+
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, fully_qualified_namespace, eventhub_name, credential, **kwargs):
-        # type: (str, str, Union[AzureSasCredential, TokenCredential, AzureNamedKeyCredential], Any) -> None
+        # type: (str, str, CredentialTypes, Any) -> None
         self.eventhub_name = eventhub_name
         if not eventhub_name:
             raise ValueError("The eventhub name can not be None or empty.")
