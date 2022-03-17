@@ -161,7 +161,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
 
         If a queue with the same name already exists, it is not changed.
 
-        :keyword dict(str,str) metadata:
+        :keyword Dict(str,str) metadata:
             A dict containing name-value pairs to associate with the queue as
             metadata. Note that metadata names preserve the case with which they
             were created, but are case-insensitive when set or read.

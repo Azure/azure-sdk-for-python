@@ -238,7 +238,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         """Creates a new Share under the account. If a share with the
         same name already exists, it is not changed.
 
-        :keyword dict(str,str) metadata:
+        :keyword Dict(str,str) metadata:
             Name-value pairs associated with the share as metadata.
         :keyword int quota:
             The quota to be allotted.

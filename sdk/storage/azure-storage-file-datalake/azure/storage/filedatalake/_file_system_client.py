@@ -271,10 +271,9 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         If the file system with the same name already exists, it is not changed. 
 
-        :keyword metadata:
+        :keyword Dict(str,str) metadata:
             A dict with name-value pairs to associate with the
             file system as metadata. Example: `{'Category':'test'}`
-        :type metadata: dict(str, str)
         :keyword public_access:
             To specify whether data in the file system may be accessed publicly and the level of access.
         :type public_access: ~azure.storage.filedatalake.PublicAccess
