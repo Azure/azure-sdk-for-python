@@ -134,7 +134,8 @@ class AutoLockRenewer:
                             max_lock_renewal_duration
                         )
                     )
-                if (renewable.locked_until_utc - utc_now()) <= datetime.timedelta(
+                remaining_time = renewable.locked_until_utc - utc_now()
+                if remaining_time <= datetime.timedelta(
                     seconds=renew_period
                 ):
                     _log.debug(
@@ -147,6 +148,9 @@ class AutoLockRenewer:
                     except AttributeError:
                         # Renewable is a message
                         await receiver.renew_message_lock(renewable)  # type: ignore
+                    finally:
+                        # Update next renew_period_override after renewing
+                        renew_period_override = min(remaining_time/2, self._renew_period)
                 await asyncio.sleep(self._sleep_time)
             clean_shutdown = not renewable._lock_expired
         except AutoLockRenewTimeout as e:
