@@ -6,13 +6,12 @@ class SomeClient():
     """
     :param str endpoint: Something.
     :param credential: Something.
-    :type credential: :class:`~azure.core.credentials.AzureKeyCredential` or
-        :class:`~azure.core.credentials.TokenCredential`
+    :type credential: : Something
     :keyword api_version:
         The API version of the service to use for requests. It defaults to API version v2.1.
         Setting to an older version may result in reduced feature compatibility. To use the
         latest supported API version and features, instantiate a DocumentAnalysisClient instead.
-    :paramtype api_version: str or ~azure.ai.formrecognizer.FormRecognizerApiVersion
+    :paramtype api_version: str 
     
     """
 
