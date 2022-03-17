@@ -2575,7 +2575,7 @@ class TestCheckDocstringAdmonitionNewline(pylint.testutils.CheckerTestCase):
 class TestCheckEnum(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.CheckEnum
 
-    def test_enum(self):
+    def test_enum_capitalized(self):
         function_node = astroid.extract_node(
             """
             class MyBadEnum(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)): 
@@ -2590,7 +2590,7 @@ class TestCheckEnum(pylint.testutils.CheckerTestCase):
                 ):
                     self.checker.visit_classdef(function_node)
     
-    def test_ignore_other(self):
+    def test_ignore_other_class(self):
         function_node = astroid.extract_node(
             """
                class SomeClient(object):
@@ -2618,3 +2618,10 @@ class TestCheckEnum(pylint.testutils.CheckerTestCase):
                 self.checker.visit_classdef(function_node)
                 
 
+    def test_enum_file(self):
+        file = open("./test_files/test_enum_checker.py")
+        node = astroid.parse(file.read())
+        file.close()
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(node)
