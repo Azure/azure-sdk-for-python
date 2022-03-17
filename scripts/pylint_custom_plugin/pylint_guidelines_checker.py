@@ -1783,7 +1783,7 @@ class CheckEnum(BaseChecker):
                 for nod in node.body:
                     if isinstance(nod, astroid.Assign):
                         # An Enum is an assign statement
-                        for x in list(nod.targets[0].name):
+                        for x in nod.targets[0].name:
                             if x.islower():
                                 # if the name has any lowercase letters
                                 self.add_message(
