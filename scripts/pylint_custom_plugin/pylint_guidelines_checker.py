@@ -1757,13 +1757,14 @@ class CheckEnum(BaseChecker):
         try:
             enum_class = False
             case_insensitive_meta = False
-            # Want to check the bases of the function to see if it includes an Enum
-            # If it uses the CaseInsensitiveMeta it embeds the Enum base in further
+            
+            #Python3 format declares CaseInsensitiveEnumMeta as a metaclass in enum classes
             if node.declared_metaclass():
                 if node.declared_metaclass().name ==  "CaseInsensitiveEnumMeta":
                     case_insensitive_meta = True
                     enum_class = True
             for base in node.bases:
+                # Python2 format uses CaseInsensitiveEnumMeta as a base of the classDef node
                 if isinstance(base,astroid.Call):
                     for arg in base.args:
                          if arg.name == "CaseInsensitiveEnumMeta":
@@ -1774,11 +1775,11 @@ class CheckEnum(BaseChecker):
                     enum_class = True
                
                     
-            # If it is an enum class, make sure enums are capitalized
+            # If it is an enum class, make sure all enums in the class are capitalized
             if enum_class:
                 for nod in node.body:
                     if isinstance(nod, astroid.Assign):
-                        #an Enum is an assign statement
+                        # An Enum is an assign statement
                         for x in nod.targets[0].name:
                             if x.islower():
                                 # if the name has any lowercase letters
