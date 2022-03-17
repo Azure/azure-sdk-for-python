@@ -1760,19 +1760,22 @@ class CheckEnum(BaseChecker):
             
             #Python3 format declares CaseInsensitiveEnumMeta as a metaclass in enum classes
             if node.declared_metaclass():
-                if node.declared_metaclass().name ==  "CaseInsensitiveEnumMeta":
-                    case_insensitive_meta = True
-                    enum_class = True
-            for base in node.bases:
-                # Python2 format uses CaseInsensitiveEnumMeta as a base of the classDef node
-                if isinstance(base,astroid.Call):
-                    for arg in base.args:
-                         if arg.name == "CaseInsensitiveEnumMeta":
-                            case_insensitive_meta = True
-                            enum_class = True
-                            break
-                elif base.name == "Enum":
-                    enum_class = True
+                if node.declared_metaclass().name:
+                    if node.declared_metaclass().name == "CaseInsensitiveEnumMeta" or node.declared_metaclass().name == "_CaseInsensitiveEnumMeta":
+                        case_insensitive_meta = True
+                        enum_class = True
+            if not case_insensitive_meta:
+                for base in node.bases:
+                    # Python2 format uses CaseInsensitiveEnumMeta as a base of the classDef node
+                    if isinstance(base, astroid.Call):
+                        for arg in base.args:
+                            if arg.name:
+                                if arg.name == "CaseInsensitiveEnumMeta":
+                                    case_insensitive_meta = True
+                                    enum_class = True
+                                    break
+                    elif base.name == "Enum":
+                        enum_class = True
                
                     
             # If it is an enum class, make sure all enums in the class are capitalized
@@ -1780,7 +1783,7 @@ class CheckEnum(BaseChecker):
                 for nod in node.body:
                     if isinstance(nod, astroid.Assign):
                         # An Enum is an assign statement
-                        for x in nod.targets[0].name:
+                        for x in list(nod.targets[0].name):
                             if x.islower():
                                 # if the name has any lowercase letters
                                 self.add_message(
