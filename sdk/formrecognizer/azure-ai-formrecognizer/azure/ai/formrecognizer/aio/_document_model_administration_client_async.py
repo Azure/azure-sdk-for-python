@@ -107,13 +107,16 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         """Build a custom model.
 
         The request must include a `source` parameter that is an
-        externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI).
+        externally accessible Azure storage blob container URI (preferably a Shared Access Signature URI). Note that
+        a container URI (without SAS) is accepted only when the container is public or has a managed identity
+        configured, see more about configuring managed identities to work with Form Recognizer here:
+        https://docs.microsoft.com/azure/applied-ai-services/form-recognizer/managed-identities.
         Models are built using documents that are of the following content type - 'application/pdf',
         'image/jpeg', 'image/png', 'image/tiff', or 'image/bmp'. Other types of content in the container is ignored.
 
         :param str source: An Azure Storage blob container's SAS URI. A container URI (without SAS)
-            can be used if the container is public. For more information on setting up a training data set, see:
-            https://aka.ms/azsdk/formrecognizer/buildtrainingset
+            can be used if the container is public or has a managed identity configured. For more information on
+            setting up a training data set, see: https://aka.ms/azsdk/formrecognizer/buildtrainingset.
         :param build_mode: The custom model build mode. Possible values include: "template", "neural".
             For more information about build modes, see: https://aka.ms/azsdk/formrecognizer/buildmode.
         :type build_mode: str or :class:`~azure.ai.formrecognizer.DocumentBuildMode`
@@ -186,7 +189,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         )
 
     @distributed_trace_async
-    async def begin_create_composed_model(self, model_ids, **kwargs):
+    async def begin_create_composed_model(self, component_model_ids, **kwargs):
         # type: (List[str], Any) -> AsyncDocumentModelAdministrationLROPoller[DocumentModel]
         """Creates a composed model from a collection of existing models.
 
@@ -194,7 +197,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         submitted to be analyzed with a composed model ID, a classification step is first performed to
         route it to the correct custom model.
 
-        :param list[str] model_ids: List of model IDs to use in the composed model.
+        :param list[str] component_model_ids: List of model IDs to use in the composed model.
         :keyword str model_id: A unique ID for your composed model.
             If not specified, a model ID will be created for you.
         :keyword str description: An optional description to add to the model.
@@ -248,9 +251,9 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
                 tags=tags,
                 component_models=[
                     self._generated_models.ComponentModelInfo(model_id=model_id)
-                    for model_id in model_ids
+                    for model_id in component_model_ids
                 ]
-                if model_ids
+                if component_model_ids
                 else [],
             ),
             cls=kwargs.pop("cls", _compose_callback),
@@ -268,7 +271,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         """Generate authorization for copying a custom model into the target Form Recognizer resource.
 
         This should be called by the target resource (where the model will be copied to)
-        and the output can be passed as the `target` parameter into :func:`~begin_copy_model()`.
+        and the output can be passed as the `target` parameter into :func:`~begin_copy_model_to()`.
 
         :keyword str model_id: A unique ID for your copied model.
             If not specified, a model ID will be created for you.
@@ -300,7 +303,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         return target
 
     @distributed_trace_async
-    async def begin_copy_model(
+    async def begin_copy_model_to(
         self, model_id: str, target: dict, **kwargs: Any
     ) -> AsyncDocumentModelAdministrationLROPoller[DocumentModel]:
         """Copy a model stored in this resource (the source) to the user specified
@@ -322,9 +325,9 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_copy_model_async.py
-                :start-after: [START begin_copy_model_async]
-                :end-before: [END begin_copy_model_async]
+            .. literalinclude:: ../samples/v3.2-beta/async_samples/sample_copy_model_to_async.py
+                :start-after: [START begin_copy_model_to_async]
+                :end-before: [END begin_copy_model_to_async]
                 :language: python
                 :dedent: 4
                 :caption: Copy a model from the source resource to the target resource

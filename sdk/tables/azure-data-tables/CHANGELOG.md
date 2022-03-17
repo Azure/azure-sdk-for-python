@@ -1,8 +1,9 @@
 # Release History
 
-## 12.2.1 (2022-03-08)
+## 12.3.0 (2022-03-10)
 
 ### Bugs Fixed
+* Validation of the table name has been removed from the constructor of the TableClient. Instead individual APIs will validate the table name and raise a ValueError only if the service rejects the request due to the table name not being valid (#23106)
 * Fixed hard-coded URL scheme in batch requests (#21953)
 * Improved documentation for query formatting in `query_entities` APIs (#23235)
 * Removed unsecure debug logging

@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Added check on `content` from msal response    ([#23483](https://github.com/Azure/azure-sdk-for-python/issues/23483))
+
 ### Other Changes
 
 ## 1.9.0b1 (2022-03-08)
