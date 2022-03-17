@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import warnings
 from enum import Enum
 from typing import TYPE_CHECKING, Dict, Any, List
 
@@ -199,6 +200,12 @@ class RepositoryProperties(object):
             can_write=self.can_write,
             can_list=self.can_list,
         )
+        
+    def __getattr__(self, name):
+        if name == "last_udpated_on":
+            warnings.warn("The property name with a typo called 'last_udpated_on' has been deprecated", DeprecationWarning)
+            return self.last_updated_on
+        return super().__getattr__(self, name)
 
     @property
     def created_on(self):
