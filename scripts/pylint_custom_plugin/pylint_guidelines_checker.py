@@ -1756,8 +1756,11 @@ class CheckApiVersion(BaseChecker):
                                 kwargs_found = node.doc.split("keyword")
                                 if "api_version" in " ".join(kwargs_found[1::]):
                                     api_version = True
+                            if func.doc:
+                                kwargs_found = func.doc.split("keyword")
+                                if "api_version" in " ".join(kwargs_found[1::]):
+                                    api_version = True
                             if not api_version:
-                                
                                 self.add_message(
                                     msgid="api-version-not-keyword", node=node, confidence=None
                                 )   
