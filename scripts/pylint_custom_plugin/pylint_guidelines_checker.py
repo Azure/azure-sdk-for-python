@@ -1755,20 +1755,13 @@ class CheckNamingMismatchGeneratedCode(BaseChecker):
 
                 for nod in node.body:
                     if isinstance(nod, astroid.Assign):
-                        for model in nod.value.elts:
-                            if model.value in aliased:
-                                self.add_message(
-                                    msgid="naming-mismatch", node=model, confidence=None
-                                )
-                # for nod in node.body:
-                #     if isinstance(nod, astroid.Assign):
-                #         if nod.targets[0].as_string() == "__all__":
-                #             for models in nod.assigned_stmts():
-                #                 for model_name in models.elts:
-                #                     if model_name.value in aliased:
-                #                         self.add_message(
-                #                             msgid="naming-mismatch", node=model_name, confidence=None
-                #                         )
+                        if nod.targets[0].as_string() == "__all__":
+                            for models in nod.assigned_stmts():
+                                for model_name in models.elts:
+                                    if model_name.value in aliased:
+                                        self.add_message(
+                                            msgid="naming-mismatch", node=model_name, confidence=None
+                                        )
     
         except Exception:
                 logger.debug("Pylint custom checker failed to check if model is aliased.")
