@@ -88,6 +88,10 @@ class StorageShareTest(AsyncStorageTestCase):
             pass
         return share_client
 
+    async def _create_share_if_not_exists(self, prefix=TEST_SHARE_PREFIX, **kwargs):
+        share_client = self._get_share_reference(prefix)
+        return await share_client.create_share_if_not_exists(**kwargs)
+
     # --Test cases for shares -----------------------------------------
     @FileSharePreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -100,6 +104,33 @@ class StorageShareTest(AsyncStorageTestCase):
 
         # Assert
         self.assertTrue(created)
+        await self._delete_shares(share.share_name)
+
+    @FileSharePreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_create_share_if_not_exists_without_existing_share(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        share = self._get_share_reference()
+
+        # Act
+        created = await self._create_share_if_not_exists()
+
+        # Assert
+        self.assertTrue(created)
+        await self._delete_shares(share.share_name)
+
+    @FileSharePreparer()
+    @AsyncStorageTestCase.await_prepared_test
+    async def test_create_share_if_not_exists_with_existing_share(self, storage_account_name, storage_account_key):
+        self._setup(storage_account_name, storage_account_key)
+        share = self._get_share_reference()
+
+        # Act
+        await self._create_share()
+        created = await self._create_share_if_not_exists()
+
+        # Assert
+        self.assertIsNone(created)
         await self._delete_shares(share.share_name)
 
     @FileSharePreparer()

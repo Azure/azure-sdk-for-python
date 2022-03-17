@@ -400,7 +400,7 @@ class ShareClient(StorageAccountHostsMixin):
         :rtype: None
         """
         try:
-            return self.create_share()
+            return self.create_share(**kwargs)
         except HttpResponseError as error:
             try:
                 process_storage_error(error)

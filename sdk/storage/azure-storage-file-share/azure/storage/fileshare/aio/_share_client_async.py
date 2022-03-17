@@ -8,7 +8,7 @@ from typing import ( # pylint: disable=unused-import
     Optional, Union, Dict, Any, Iterable, TYPE_CHECKING
 )
 
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline import AsyncPipeline
@@ -231,6 +231,42 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
+
+    @distributed_trace_async
+    async def create_share_if_not_exists(self, **kwargs):
+        # type: (Any) -> None
+        """Creates a new Share under the account. If a share with the
+        same name already exists, it is not changed.
+
+        :keyword dict(str,str) metadata:
+            Name-value pairs associated with the share as metadata.
+        :keyword int quota:
+            The quota to be allotted.
+        :keyword access_tier:
+            Specifies the access tier of the share.
+            Possible values: 'TransactionOptimized', 'Hot', 'Cool'
+        :keyword access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
+
+            .. versionadded:: 12.10.01
+
+        :keyword int timeout:
+            The timeout parameter is expressed in seconds.
+        :keyword protocols:
+            Protocols to enable on the share. Only one protocol can be enabled on the share.
+        :keyword protocols: str or ~azure.storage.fileshare.ShareProtocols
+        :keyword root_squash:
+            Root squash to set on the share.
+            Only valid for NFS shares. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'.
+        :keyword root_squash: str or ~azure.storage.fileshare.ShareRootSquash
+        :rtype: None
+        """
+        try:
+            return await self.create_share(**kwargs)
+        except HttpResponseError as error:
+            try:
+                process_storage_error(error)
+            except ResourceExistsError:
+                return None
 
     @distributed_trace_async
     async def create_snapshot( # type: ignore
