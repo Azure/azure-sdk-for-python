@@ -25,37 +25,8 @@
 # --------------------------------------------------------------------------
 from azure.core.exceptions import AzureError
 
-class SchemaParseError(AzureError):
-    """Error parsing a JSON schema.
-    :param str message: The message object stringified as 'message' attribute
-    :keyword error: The original exception, if any
-
-    :ivar str message: A stringified version of the message parameter
-    :ivar inner_exception: The exception passed with the 'error' kwarg
-    :vartype inner_exception: Exception
-    :ivar exc_type: The exc_type from sys.exc_info()
-    :ivar exc_value: The exc_value from sys.exc_info()
-    :ivar exc_traceback: The exc_traceback from sys.exc_info()
-    :ivar exc_msg: A string formatting of message parameter, exc_type and exc_value
-    """
-
-
-class SchemaEncodeError(AzureError):
-    """Error encoding a JSON schema.
-    :param str message: The message object stringified as 'message' attribute
-    :keyword error: The original exception, if any
-
-    :ivar str message: A stringified version of the message parameter
-    :ivar inner_exception: The exception passed with the 'error' kwarg
-    :vartype inner_exception: Exception
-    :ivar exc_type: The exc_type from sys.exc_info()
-    :ivar exc_value: The exc_value from sys.exc_info()
-    :ivar exc_traceback: The exc_traceback from sys.exc_info()
-    :ivar exc_msg: A string formatting of message parameter, exc_type and exc_value
-    """
-
-class SchemaDecodeError(AzureError):
-    """Error decoding a JSON schema.
+class AvroEncodeError(AzureError):
+    """Error during parsing schema, encoding data, or decoding data.
     :param str message: The message object stringified as 'message' attribute
     :keyword error: The original exception, if any
 

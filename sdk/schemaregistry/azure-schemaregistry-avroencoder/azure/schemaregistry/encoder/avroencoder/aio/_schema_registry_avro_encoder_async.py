@@ -37,9 +37,7 @@ from .._constants import (  # pylint: disable=import-error
 from .._message_protocol import MessageType, MessageContent  # pylint: disable=import-error
 from .._apache_avro_encoder import ApacheAvroObjectEncoder as AvroObjectEncoder  # pylint: disable=import-error
 from ..exceptions import (  # pylint: disable=import-error
-    SchemaParseError,
-    SchemaEncodeError,
-    SchemaDecodeError,
+    AvroEncodeError,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -157,10 +155,8 @@ class AvroEncoder(object):
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: Dict[str, Any]
         :rtype: MessageType or MessageContent
-        :raises ~azure.schemaregistry.encoder.avroencoder.exceptions.SchemaParseError:
-            Indicates an issue with parsing schema.
-        :raises ~azure.schemaregistry.encoder.avroencoder.exceptions.SchemaEncodeError:
-            Indicates an issue with encoding content for provided schema.
+        :raises ~azure.schemaregistry.encoder.avroencoder.exceptions.AvroEncodeError:
+            Indicates an issue with parsing schema or encoding value.
         """
 
         raw_input_schema = schema
@@ -168,7 +164,7 @@ class AvroEncoder(object):
         try:
             schema_fullname = self._avro_encoder.get_schema_fullname(raw_input_schema)
         except Exception as e:  # pylint:disable=broad-except
-            SchemaParseError(
+            AvroEncodeError(
                 f"Cannot parse schema: {raw_input_schema}", error=e
             ).raise_with_traceback()
 
@@ -184,10 +180,9 @@ class AvroEncoder(object):
         try:
             content_bytes = self._avro_encoder.encode(content, raw_input_schema)
         except Exception as e:  # pylint:disable=broad-except
-            SchemaEncodeError(
-                "Cannot encode value '{}' for schema: {}".format(
-                    content, raw_input_schema
-                ),
+            AvroEncodeError(
+                f"Cannot encode value '{content}' for the following schema with schema ID {schema_id}:"
+                f"{raw_input_schema}",
                 error=e,
             ).raise_with_traceback()
 
@@ -205,7 +200,7 @@ class AvroEncoder(object):
                 try:
                     return message_type(payload, content_type, **kwargs)
                 except TypeError as e:
-                    SchemaEncodeError(
+                    AvroEncodeError(
                         f"""The content model {str(message_type)} is not a Callable that takes `content`
                             and `content_type` or a subtype of the MessageType protocol.
                             If using an Azure SDK model class, please check the README.md for the full list
@@ -250,10 +245,8 @@ class AvroEncoder(object):
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
         :paramtype request_options: Dict[str, Any]
         :rtype: Dict[str, Any]
-        :raises ~azure.schemaregistry.encoder.avroencoder.exceptions.SchemaParseError:
-            Indicates an issue with parsing schema.
-        :raises ~azure.schemaregistry.encoder.avroencoder.exceptions.SchemaDecodeError:
-            Indicates an issue with decoding value.
+        :raises ~azure.schemaregistry.encoder.avroencoder.exceptions.AvroEncodeError:
+            Indicates an issue with parsing schema or decoding value.
         """
 
         try:
@@ -265,7 +258,7 @@ class AvroEncoder(object):
                 content = message["content"]
                 content_type = message["content_type"]
             except (KeyError, TypeError):
-                SchemaDecodeError(
+                AvroEncodeError(
                     f"""The content model {str(message)} is not a subtype of the MessageType protocol or type
                         MessageContent.  If using an Azure SDK model class, please check the README.md
                         for the full list of supported Azure SDK models and their corresponding versions."""
@@ -288,11 +281,12 @@ class AvroEncoder(object):
             dict_value = self._avro_encoder.decode(content, schema_definition, readers_schema=readers_schema)
         except Exception as e:  # pylint:disable=broad-except
             error_message = (
-                f"Cannot decode value '{content}' for schema: {schema_definition}\nand readers schema: {readers_schema}"
+                f"Cannot decode value '{content}' for the following schema with schema ID {schema_id}:"
+                f"{schema_definition}\nand readers schema: {readers_schema}"
                 if readers_schema
                 else f"Cannot decode value '{content}' for schema: {schema_definition}"
             )
-            SchemaDecodeError(
+            AvroEncodeError(
                 error_message,
                 error=e,
             ).raise_with_traceback()
