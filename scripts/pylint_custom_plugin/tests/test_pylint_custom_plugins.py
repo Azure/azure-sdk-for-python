@@ -2335,7 +2335,7 @@ class TestClientMethodNamesDoNotUseDoubleUnderscorePrefix(pylint.testutils.Check
             self.checker.visit_asyncfunctiondef(func_node_b)
 
     def test_guidelines_link_active(self):
-        url = "https://azure.github.io/azure-sdk/python_design.html#packaging"
+        url = "https://azure.github.io/azure-sdk/python_implementation.html#public-vs-private"
         config = Configuration()
         client = PipelineClient(url, config=config)
         request = client.get(url)
