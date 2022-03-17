@@ -75,7 +75,7 @@ class StorageQueueTest(StorageTestCase):
         # Action
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
-        created = queue_client.create_queue_if_not_exists()
+        created = queue_client.create_if_not_exists()
 
         # Asserts
         self.assertTrue(created)
@@ -86,7 +86,7 @@ class StorageQueueTest(StorageTestCase):
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
-        created = queue_client.create_queue_if_not_exists()
+        created = queue_client.create_if_not_exists()
 
         # Asserts
         self.assertIsNone(created)

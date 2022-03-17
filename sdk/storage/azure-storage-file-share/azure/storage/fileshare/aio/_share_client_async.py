@@ -233,7 +233,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def create_share_if_not_exists(self, **kwargs):
+    async def create_if_not_exists(self, **kwargs):
         # type: (Any) -> None
         """Creates a new Share under the account. If a share with the
         same name already exists, it is not changed.

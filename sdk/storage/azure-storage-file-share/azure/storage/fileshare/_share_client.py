@@ -372,7 +372,7 @@ class ShareClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def create_share_if_not_exists(self, **kwargs):
+    def create_if_not_exists(self, **kwargs):
         # type: (Any) -> None
         """Creates a new Share under the account. If a share with the
         same name already exists, it is not changed.

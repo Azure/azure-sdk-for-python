@@ -86,7 +86,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         # Action
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         queue_client = self._get_queue_reference(qsc)
-        created = await queue_client.create_queue_if_not_exists()
+        created = await queue_client.create_if_not_exists()
 
         # Asserts
         self.assertTrue(created)
@@ -98,7 +98,7 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         queue_client = self._get_queue_reference(qsc)
         await queue_client.create_queue()
-        created = await queue_client.create_queue_if_not_exists()
+        created = await queue_client.create_if_not_exists()
 
         # Asserts
         self.assertIsNone(created)

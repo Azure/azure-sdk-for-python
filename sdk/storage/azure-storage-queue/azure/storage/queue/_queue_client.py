@@ -243,7 +243,7 @@ class QueueClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def create_queue_if_not_exists(self, **kwargs):
+    def create_if_not_exists(self, **kwargs):
         # type: (Any) -> None
         """Creates a new queue in the storage account.
 

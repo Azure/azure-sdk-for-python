@@ -265,7 +265,7 @@ class FileSystemClient(StorageAccountHostsMixin):
                                                        public_access=public_access,
                                                        **kwargs)
 
-    def create_file_system_if_not_exists(self, **kwargs):
+    def create_if_not_exists(self, **kwargs):
         # type: (Any) -> None
         """Creates a new file system under the specified account.
 

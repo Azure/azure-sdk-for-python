@@ -65,9 +65,9 @@ class StorageShareTest(StorageTestCase):
             pass
         return share_client
 
-    def _create_share_if_not_exists(self, prefix=TEST_SHARE_PREFIX, **kwargs):
+    def _create_if_not_exists(self, prefix=TEST_SHARE_PREFIX, **kwargs):
         share_client = self._get_share_reference(prefix)
-        return share_client.create_share_if_not_exists(**kwargs)
+        return share_client.create_if_not_exists(**kwargs)
     
     def _delete_shares(self, prefix=TEST_SHARE_PREFIX):
         for l in self.fsc.list_shares(include_snapshots=True):
@@ -104,7 +104,7 @@ class StorageShareTest(StorageTestCase):
         share = self._get_share_reference()
 
         # Act
-        created = self._create_share_if_not_exists()
+        created = self._create_if_not_exists()
 
         # Assert
         self.assertTrue(created)
@@ -117,7 +117,7 @@ class StorageShareTest(StorageTestCase):
 
         # Act
         self._create_share()
-        created = self._create_share_if_not_exists()
+        created = self._create_if_not_exists()
 
         # Assert
         self.assertIsNone(created)

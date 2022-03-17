@@ -88,10 +88,6 @@ class StorageShareTest(AsyncStorageTestCase):
             pass
         return share_client
 
-    async def _create_share_if_not_exists(self, prefix=TEST_SHARE_PREFIX, **kwargs):
-        share_client = self._get_share_reference(prefix)
-        return await share_client.create_share_if_not_exists(**kwargs)
-
     # --Test cases for shares -----------------------------------------
     @FileSharePreparer()
     @AsyncStorageTestCase.await_prepared_test
@@ -113,7 +109,7 @@ class StorageShareTest(AsyncStorageTestCase):
         share = self._get_share_reference()
 
         # Act
-        created = await share.create_share_if_not_exists()
+        created = await share.create_if_not_exists()
 
         # Assert
         self.assertTrue(created)
@@ -127,7 +123,7 @@ class StorageShareTest(AsyncStorageTestCase):
 
         # Act
         await share.create_share()
-        created = await share.create_share_if_not_exists()
+        created = await share.create_if_not_exists()
 
         # Assert
         self.assertIsNone(created)
