@@ -11,7 +11,7 @@ autorest --v3 --python
 
 ```yaml
 require: https://github.com/Azure/azure-rest-api-specs/blob/14732a2d9802c98cb8fea52800853874529c5f8e/specification/mediaservices/data-plane/readme.md
-output-folder: ../azure/media/analyticsedge/
+output-folder: ../azure/media/analyticsedge/_generated
 namespace: azure.media.analyticsedge
 no-namespace-folders: true
 license-header: MICROSOFT_MIT_NO_VERSION
