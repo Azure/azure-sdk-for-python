@@ -184,7 +184,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             Specifies the default encryption scope to set on the container and use for
             all future writes.
 
-            .. versionadded:: 12.10.01
+            .. versionadded:: 12.2.0
 
         :paramtype container_encryption_scope: dict or ~azure.storage.blob.ContainerEncryptionScope
         :keyword int timeout:

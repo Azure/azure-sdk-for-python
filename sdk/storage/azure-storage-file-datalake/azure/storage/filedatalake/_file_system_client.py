@@ -279,8 +279,6 @@ class FileSystemClient(StorageAccountHostsMixin):
         :type public_access: ~azure.storage.filedatalake.PublicAccess
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        
-            .. versionadded:: 12.10.01
         :rtype: None
         """
         try:

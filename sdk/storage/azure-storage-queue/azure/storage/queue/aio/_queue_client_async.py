@@ -167,9 +167,6 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
             were created, but are case-insensitive when set or read.
         :keyword int timeout:
             The server timeout, expressed in seconds.
-            
-            .. versionadded:: 12.10.01
-            
         :return: None or the result of cls(response)
         :rtype: None
         :raises: StorageErrorException

@@ -386,7 +386,7 @@ class ShareClient(StorageAccountHostsMixin):
             Possible values: 'TransactionOptimized', 'Hot', 'Cool'
         :keyword access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
 
-            .. versionadded:: 12.10.01
+            .. versionadded:: 12.4.0
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
