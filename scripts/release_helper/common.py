@@ -180,7 +180,8 @@ class IssueProcess:
         self.issue_package.labels_name.add(label)
 
     def update_assignee(self, assignee_to_del: str, assignee_to_add: str) -> None:
-        self.issue_package.issue.remove_from_assignees(assignee_to_del)
+        if self.assignee:
+            self.issue_package.issue.remove_from_assignees(assignee_to_del)
         self.issue_package.issue.add_to_assignees(assignee_to_add)
         self.assignee = assignee_to_add
 
