@@ -9,7 +9,6 @@ Pylint custom checkers for SDK guidelines: C4717 - C4744
 
 import logging
 import astroid
-from jinja2 import ChoiceLoader
 from pylint.checkers import BaseChecker
 from pylint.interfaces import IAstroidChecker
 logger = logging.getLogger(__name__)
