@@ -1765,8 +1765,8 @@ class CheckEnum(BaseChecker):
                         case_insensitive_meta = True
                         enum_class = True
             if not case_insensitive_meta:
+                # Python2 format uses CaseInsensitiveEnumMeta as a base of the classDef node
                 for base in node.bases:
-                    # Python2 format uses CaseInsensitiveEnumMeta as a base of the classDef node
                     if isinstance(base, astroid.Call):
                         for arg in base.args:
                             if arg.name:
