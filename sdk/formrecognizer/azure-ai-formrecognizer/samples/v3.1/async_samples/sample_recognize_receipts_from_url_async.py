@@ -35,6 +35,7 @@ class RecognizeReceiptsFromURLSampleAsync(object):
         # [START recognize_receipts_from_url_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
+        from azure.core.exceptions import HttpResponseError
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
@@ -43,7 +44,23 @@ class RecognizeReceiptsFromURLSampleAsync(object):
             endpoint=endpoint, credential=AzureKeyCredential(key)
         ) as form_recognizer_client:
             url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png"
-            poller = await form_recognizer_client.begin_recognize_receipts_from_url(receipt_url=url)
+            
+            # The test is unstable in China cloud, we try to set the number of retries in the code to increase stability
+            retry_times = 0
+            while retry_times != 5 :
+                try:
+                    # Begin recognize receipts from url, this sample test is unstable in China cloud.(We are testing sovereign cloud test)
+                    # Increasing the number of retries in the code until there is a better solution
+                    poller = await form_recognizer_client.begin_recognize_receipts_from_url(receipt_url=url)
+                except HttpResponseError as e:
+                    retry_times += 1
+                    # Print the known unstable errors
+                    print(e.message)
+                    continue
+                else:
+                    break
+
+            print("--------Retry times: {}--------".format(retry_times))   
             receipts = await poller.result()
 
             for idx, receipt in enumerate(receipts):

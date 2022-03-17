@@ -19,6 +19,7 @@ from azure.ai.formrecognizer import (
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
+import os
 
 
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
@@ -34,7 +35,9 @@ class TestManagement(FormRecognizerTest):
     def test_active_directory_auth(self):
         token = self.generate_oauth_token()
         endpoint = self.get_oauth_endpoint()
-        client = DocumentModelAdministrationClient(endpoint, token)
+        form_recognizer_endpoint_suffix = os.environ.get("FORMRECOGNIZER_ENDPOINT_SUFFIX",".cognitiveservices.azure.com")
+        credential_scopes = ["https://{}/.default".format(form_recognizer_endpoint_suffix[1:])]
+        client = DocumentModelAdministrationClient(endpoint, token, credential_scopes=credential_scopes)
         info = client.get_account_info()
         assert info
 

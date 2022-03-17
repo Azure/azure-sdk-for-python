@@ -11,7 +11,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import set_bodiless_matcher
 from azure.core.exceptions import HttpResponseError
 from azure.ai.formrecognizer.aio import FormTrainingClient
-from preparers import FormRecognizerPreparer
+from preparers import FormRecognizerPreparer, is_public_cloud
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 
@@ -100,6 +100,10 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
     @recorded_by_proxy_async
     async def test_copy_model_fail_v21(self, client, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
         set_bodiless_matcher()
+
+        if (not is_public_cloud() and self.is_live):
+            pytest.skip("This test is skipped in usgov/china region. Follow up with service team.")
+        
         async with client:
             poller = await client.begin_training(formrecognizer_storage_container_sas_url_v2, use_training_labels=False)
             model = await poller.result()

@@ -31,6 +31,7 @@ def analyze_receipts_from_url():
     # [START analyze_receipts_from_url]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer import DocumentAnalysisClient
+    from azure.core.exceptions import HttpResponseError
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
@@ -39,9 +40,24 @@ def analyze_receipts_from_url():
         endpoint=endpoint, credential=AzureKeyCredential(key)
     )
     url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png"
-    poller = document_analysis_client.begin_analyze_document_from_url(
-        "prebuilt-receipt", document_url=url
-    )
+
+    # The test is unstable in China cloud, we try to set the number of retries in the code to increase stability
+    retry_times = 0
+    while retry_times != 5 :
+        try:
+            # Begin analyze document from url, this sample test is unstable in China cloud.(We are testing sovereign cloud test)
+            # Increasing the number of retries in the code until there is a better solution
+            poller = document_analysis_client.begin_analyze_document_from_url(
+                "prebuilt-receipt", document_url=url
+            )
+        except HttpResponseError as e:
+            retry_times += 1
+            # Print the known unstable errors
+            print(e.message)
+            continue
+        else:
+            break
+    print("--------Retry times: {}--------".format(retry_times))
     receipts = poller.result()
 
     for idx, receipt in enumerate(receipts.documents):

@@ -42,13 +42,29 @@ class AuthenticationSampleAsync(object):
         # [START create_fr_client_with_key_async]
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
+        from azure.core.exceptions import HttpResponseError
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
         form_recognizer_client = FormRecognizerClient(endpoint, AzureKeyCredential(key))
         # [END create_fr_client_with_key_async]
         async with form_recognizer_client:
-            poller = await form_recognizer_client.begin_recognize_content_from_url(self.url)
+
+            # The test is unstable in China cloud, we try to set the number of retries in the code to increase stability
+            retry_times = 0
+            while retry_times != 10 :
+                try:
+                    # Begin recognize content from url, this sample test is unstable in China cloud.(We are testing sovereign cloud test)
+                    # Increasing the number of retries in the code until there is a better solution
+                    poller = await form_recognizer_client.begin_recognize_content_from_url(self.url)
+                except HttpResponseError as e:
+                    retry_times += 1
+                    # Print the known unstable errors
+                    print(e.message)
+                    continue
+                else:
+                    break
+            print("--------Retry times: {}--------".format(retry_times))
             result = await poller.result()
 
     async def authentication_with_azure_active_directory_form_recognizer_client_async(self):
@@ -58,14 +74,32 @@ class AuthenticationSampleAsync(object):
         """
         from azure.ai.formrecognizer.aio import FormRecognizerClient
         from azure.identity.aio import DefaultAzureCredential
+        from azure.core.exceptions import HttpResponseError
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         credential = DefaultAzureCredential()
 
-        form_recognizer_client = FormRecognizerClient(endpoint, credential)
+        form_recognizer_endpoint_suffix = os.environ.get("FORMRECOGNIZER_ENDPOINT_SUFFIX",".cognitiveservices.azure.com")
+        credential_scopes = ["https://{}/.default".format(form_recognizer_endpoint_suffix[1:])]
+        form_recognizer_client = FormRecognizerClient(endpoint, credential, credential_scopes=credential_scopes)
         # [END create_fr_client_with_aad_async]
         async with form_recognizer_client:
-            poller = await form_recognizer_client.begin_recognize_content_from_url(self.url)
+
+            # The test is unstable in China cloud, we try to set the number of retries in the code to increase stability
+            retry_times = 0
+            while retry_times != 5 :
+                try:
+                    # Begin recognize content from url, this sample test is unstable in China cloud.(We are testing sovereign cloud test)
+                    # Increasing the number of retries in the code until there is a better solution
+                    poller = await form_recognizer_client.begin_recognize_content_from_url(self.url)
+                except HttpResponseError as e:
+                    retry_times += 1
+                    # Print the known unstable errors
+                    print(e.message)
+                    continue
+                else:
+                    break
+            print("--------Retry times: {}--------".format(retry_times))
             result = await poller.result()
 
     async def authentication_with_api_key_credential_form_training_client_async(self):
@@ -91,7 +125,9 @@ class AuthenticationSampleAsync(object):
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         credential = DefaultAzureCredential()
 
-        form_training_client = FormTrainingClient(endpoint, credential)
+        form_recognizer_endpoint_suffix = os.environ.get("FORMRECOGNIZER_ENDPOINT_SUFFIX",".cognitiveservices.azure.com")
+        credential_scopes = ["https://{}/.default".format(form_recognizer_endpoint_suffix[1:])]
+        form_training_client = FormTrainingClient(endpoint, credential, credential_scopes=credential_scopes)
         # [END create_ft_client_with_aad_async]
         async with form_training_client:
             properties = await form_training_client.get_account_properties()
