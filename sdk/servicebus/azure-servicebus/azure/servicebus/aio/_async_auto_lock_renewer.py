@@ -150,7 +150,7 @@ class AutoLockRenewer:
                         await receiver.renew_message_lock(renewable)  # type: ignore
                     finally:
                         # Update next renew_period_override after renewing
-                        renew_period_override = min(remaining_time/2, self._renew_period)
+                        renew_period = min(remaining_time.total_seconds()/2, self._renew_period)
                 await asyncio.sleep(self._sleep_time)
             clean_shutdown = not renewable._lock_expired
         except AutoLockRenewTimeout as e:
