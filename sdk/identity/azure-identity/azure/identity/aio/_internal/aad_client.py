@@ -78,7 +78,11 @@ class AadClient(AadClientBase):
         refresh_token: str,
         **kwargs: "Any"
     ) -> "AccessToken":
-        request = self._get_refresh_token_on_behalf_of_request(scopes, refresh_token, client_credential, **kwargs)
+        request = self._get_refresh_token_on_behalf_of_request(
+            scopes,
+            client_credential=client_credential,
+            refresh_token=refresh_token,
+            **kwargs)
         return await self._run_pipeline(request, **kwargs)
 
     async def obtain_token_on_behalf_of(
