@@ -8,7 +8,7 @@ import datetime
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import HttpResponseError
-from azure.communication.rooms import RoomsClient, RoomRequest, RoomParticipant
+from azure.communication.rooms import RoomsClient, RoomParticipant
 from unittest_helpers import mock_response
 
 from unittest.mock import Mock, patch
@@ -25,7 +25,6 @@ class TestRoomsClient(unittest.TestCase):
         room_id = "999126454"
         valid_from = datetime.datetime(2022, 2, 25, 4, 34, 0)
         valid_until = datetime.datetime(2022, 4, 25, 4, 34, 0)
-        room_request = RoomRequest(valid_from=valid_from, valid_until=valid_until) 
         raised = False
         participants = {}
         participants["8:acs:abcd"] = {}
@@ -45,7 +44,7 @@ class TestRoomsClient(unittest.TestCase):
         rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
         response = None
         try:
-            response = rooms_client.create_room(room_request=room_request)
+            response = rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, participants=participants)
         except:
             raised = True
             raise
@@ -60,7 +59,6 @@ class TestRoomsClient(unittest.TestCase):
         room_id = "999126454"
         valid_from = datetime.datetime(2022, 2, 25, 4, 34, 0)
         valid_until = datetime.datetime(2022, 4, 25, 4, 34, 0)
-        room_request = RoomRequest(valid_from=valid_from, valid_until=valid_until) 
         raised = False
 
         def mock_send(*_, **__):
@@ -77,7 +75,7 @@ class TestRoomsClient(unittest.TestCase):
         rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
         response = None
         try:
-            response = rooms_client.update_room(room_id=room_id, room_request=room_request)
+            response = rooms_client.update_room(room_id=room_id, valid_from=valid_from, valid_until=valid_until) 
         except:
             raised = True
             raise
@@ -90,7 +88,6 @@ class TestRoomsClient(unittest.TestCase):
     
     def test_delete_room_raises_error(self):
         room_id = "999126454"
-        raised = False
         def mock_send(*_, **__):
             return mock_response(status_code=404, json_payload={"msg": "some error"})
         rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
@@ -101,7 +98,6 @@ class TestRoomsClient(unittest.TestCase):
         room_id = "999126454"
         valid_from = datetime.datetime(2022, 2, 25, 4, 34, 0)
         valid_until = datetime.datetime(2022, 4, 25, 4, 34, 0)
-        room_request = RoomRequest(valid_from=valid_from, valid_until=valid_until) 
         raised = False
 
         def mock_send(*_, **__):
@@ -130,7 +126,6 @@ class TestRoomsClient(unittest.TestCase):
 
     def test_get_room_raises_error(self):
         room_id = "999126454"
-        raised = False
         def mock_send(*_, **__):
             return mock_response(status_code=404, json_payload={"msg": "some error"})
         rooms_client = RoomsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))

@@ -6,12 +6,13 @@
 from typing import TYPE_CHECKING
 
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.communication.rooms._models import RoomRequest, CommunicationRoom
+from azure.communication.rooms._models import CommunicationRoom
 from .._generated.aio._azure_communication_rooms_service import AzureCommunicationRoomsService
 from .._shared.utils import parse_connection_str, get_authentication_policy
 from .._version import SDK_MONIKER
 from .._generated.models import (
     CreateRoomRequest,
+    UpdateRoomRequest
 )
 
 if TYPE_CHECKING:
@@ -80,24 +81,31 @@ class RoomsClient(object):
     @distributed_trace_async
     async def create_room(
         self,
-        room_request=None, # type: RoomRequest
+        valid_from=None, # type: Optional[datetime]
+        valid_until=None, # type: Optional[datetime]
+        participants=None, # type: Optional[Dict[str, Any]]
         **kwargs
     ):
         # type: (...) -> CommunicationRoom
         """Create a new room.
 
-        :param room_request: Room to be created. If it is not specified,
-         room will be created with 180 days of validity
-        :type room_request: RoomRequest
+        :param valid_from: The timestamp from when the room is open for joining. The timestamp is in
+         RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
+        :type valid_from: ~datetime
+        :param valid_until: The timestamp from when the room can no longer be joined. The timestamp
+         is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
+        :type valid_until: ~datetime
+        :keyword participants: (Optional) Collection of identities invited to the room.
+        :paramtype participants: dict[str, any]
         :returns: Created room.
         :rtype: ~azure.communication.rooms.CommunicationRoom
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        create_room_request = None
-        if room_request is not None:
-            create_room_request = room_request.to_create_room_request()
-        else:
-            create_room_request = CreateRoomRequest()
+        create_room_request = CreateRoomRequest(
+            valid_from=valid_from,
+            valid_until=valid_until,
+            participants=participants
+        )
         create_room_response = await self._rooms_service_client.rooms.create_room(
             create_room_request=create_room_request, **kwargs)
         return CommunicationRoom.from_create_room_response(create_room_response)
@@ -124,7 +132,8 @@ class RoomsClient(object):
     async def update_room(
         self,
         room_id,
-        room_request=None, # type: RoomRequest
+        valid_from=None, # type: Optional[datetime]
+        valid_until=None, # type: Optional[datetime]
         **kwargs
     ):
         # type: (...) -> CommunicationRoom
@@ -132,16 +141,21 @@ class RoomsClient(object):
 
         :param room_id: Required. Id of room to be updated
         :type room_id: str
-        :param room_request: Required. Room with new attributes
-        :type room_request: RoomRequest
+        :param valid_from: The timestamp from when the room is open for joining. The timestamp is in
+         RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
+        :type valid_from: ~datetime
+        :param valid_until: The timestamp from when the room can no longer be joined. The timestamp
+         is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
+        :type valid_until: ~datetime
         :returns: Updated room.
         :rtype: ~azure.communication.rooms.CommunicationRoom
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         """
-        update_room_request = None
-        if room_request is not None:
-            update_room_request = room_request.to_update_room_request()
+        update_room_request = UpdateRoomRequest(
+            valid_from=valid_from,
+            valid_until=valid_until
+        )
         update_room_response = await self._rooms_service_client.rooms.update_room(
             room_id=room_id, update_room_request=update_room_request, **kwargs)
         return CommunicationRoom.from_update_room_response(update_room_response)
@@ -164,6 +178,78 @@ class RoomsClient(object):
         """
         get_room_response = await self._rooms_service_client.rooms.get_room(room_id=room_id, **kwargs)
         return CommunicationRoom.from_get_room_response(get_room_response)
+
+    @distributed_trace_async
+    async def add_participants(
+        self,
+        room_id, # type: str
+        participants, # type: Dict[str, Any]
+        **kwargs
+    ):
+        # type: (...) -> CommunicationRoom
+        """Add participants to a room
+        :param room_id: Required. Id of room to be updated
+        :type room_id: str
+        :param participants: Required. Collection of identities invited to the room.
+        :paramtype participants: dict[str, any]
+        :returns: Updated room.
+        :rtype: ~azure.communication.rooms.CommunicationRoom
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        update_room_request = UpdateRoomRequest(
+            participants=participants
+        )
+        update_room_response = await self._rooms_service_client.rooms.update_room(
+            room_id=room_id, update_room_request=update_room_request, **kwargs)
+        return CommunicationRoom.from_update_room_response(update_room_response)
+
+    @distributed_trace_async
+    async def remove_participants(
+        self,
+        room_id, # type: str
+        participants, # type: Dict[str, Any]
+        **kwargs
+    ):
+        # type: (...) -> CommunicationRoom
+        """Remove participants from a room
+        :param room_id: Required. Id of room to be updated
+        :type room_id: str
+        :param participants: Required. Collection of identities invited to the room.
+        :paramtype participants: dict[str, any]
+        :returns: Updated room.
+        :rtype: ~azure.communication.rooms.CommunicationRoom
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        # set participants object to None
+        for identity in participants.keys():
+            participants[identity] = None
+        update_room_request = UpdateRoomRequest(
+            participants=participants
+        )
+        update_room_response = await self._rooms_service_client.rooms.update_room(
+            room_id=room_id, update_room_request=update_room_request, **kwargs)
+        return CommunicationRoom.from_update_room_response(update_room_response)
+
+    @distributed_trace_async
+    async def remove_all_participants(
+        self,
+        room_id, # type: str
+        **kwargs
+    ):
+        # type: (...) -> CommunicationRoom
+        """Remove all participants from a room
+        :param room_id: Required. Id of room to be updated
+        :type room_id: str
+        :returns: Updated room.
+        :rtype: ~azure.communication.rooms.CommunicationRoom
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        """
+        update_room_request = UpdateRoomRequest(
+            participants={}
+        )
+        update_room_response = await self._rooms_service_client.rooms.update_room(
+            room_id=room_id, update_room_request=update_room_request, **kwargs)
+        return CommunicationRoom.from_update_room_response(update_room_response)
 
     async def __aenter__(self) -> "RoomsClient":
         await self._rooms_service_client.__aenter__()

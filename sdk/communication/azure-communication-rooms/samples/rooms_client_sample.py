@@ -32,7 +32,6 @@ from dateutil.relativedelta import relativedelta
 from azure.core.exceptions import HttpResponseError
 from azure.communication.rooms import (
     RoomsClient,
-    RoomRequest,
     RoomParticipant
 )
 from azure.communication.rooms._shared.models import(
@@ -41,7 +40,7 @@ from azure.communication.rooms._shared.models import(
 
 sys.path.append("..")
 
-class CreateRoomSample(object):
+class RoomsSample(object):
     
     def setUp(self):
         self.connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
@@ -57,17 +56,11 @@ class CreateRoomSample(object):
         valid_from =  datetime.now()
         valid_until = valid_from + relativedelta(months=+4)
         participants = {}
-        
-        # participant can be added by directly providing them while creating a room request
-        participants["PARTICIPANT MRI"] = RoomParticipant()
-        
-        room_request = RoomRequest(valid_from=valid_from, valid_until=valid_until, participants=participants)
-        
-        # participant can also be added using add_participant in RoomRequest obj
-        user = CommunicationUserIdentifier("PARTICIPANT_MRI")
-        room_request.add_participant(user)
+
+        participants["8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_be3a83c1-f5d9-49ee-a427-0e9b917c062e"] = RoomParticipant()
+
         try:
-            create_room_response = self.rooms_client.create_room(room_request=room_request)
+            create_room_response = self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, participants=participants)
             self.printRoom(response=create_room_response)
 
             # all created room to a list
@@ -80,7 +73,7 @@ class CreateRoomSample(object):
         rooms_client = RoomsClient.from_connection_string(self.connection_string)
 
         try:
-            create_room_response = rooms_client.create_room(room_request=None)
+            create_room_response = rooms_client.create_room()
             self.printRoom(response=create_room_response)
             # all created room to a list
             self.rooms.append(create_room_response.id)
@@ -92,27 +85,25 @@ class CreateRoomSample(object):
         # set attributes you want to change
         valid_from =  datetime.now()
         valid_until = valid_from + relativedelta(months=+1,days=+20)
-        participants = {}
-        participants["PARTICIPANT_MRI1"] = RoomParticipant()
-        participants["PARTICIPANT_MRI2"] = RoomParticipant()
-        room_request = RoomRequest(valid_from=valid_from, valid_until=valid_until, participants=participants)
-        # to remove a participant
-        #   a) user = CommunicationUserIdentifier("PARTICIPANT_MRI")
-        #      room_request.remove_participant(user) or,
-        #   b) participants["PARTICIPANT_MRI"] = None
         
         try:
-            update_room_response = self.rooms_client.update_room(room_id=room_id, room_request=room_request)
+            update_room_response = self.rooms_client.update_room(room_id=room_id, valid_from=valid_from, valid_until=valid_until)
+            self.printRoom(response=update_room_response)
+        except HttpResponseError as ex:
+            print(ex)
+
+    def add_participants(self, room_id):
+        participants = {}
+        participants["8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_be3a83c1-f5d9-49ee-a427-0e9b917c062f"] = RoomParticipant()
+        try:
+            update_room_response = self.rooms_client.add_participants(room_id=room_id, participants=participants)
             self.printRoom(response=update_room_response)
         except HttpResponseError as ex:
             print(ex)
 
     def clear_all_participants(self, room_id):
-        room_request = RoomRequest()
-        room_request.remove_all_participants()
-
         try:
-            update_room_response = self.rooms_client.update_room(room_id=room_id, room_request=room_request)
+            update_room_response = self.rooms_client.remove_all_participants(room_id=room_id)
             self.printRoom(response=update_room_response)
         except HttpResponseError as ex:
             print(ex)
@@ -139,13 +130,14 @@ class CreateRoomSample(object):
         print("participants: ", response.participants)
 
 if __name__ == '__main__':
-    sample = CreateRoomSample()
+    sample = RoomsSample()
     sample.setUp()
     sample.create_single_room()
     sample.create_single_room_with_default_attributes()
     if len(sample.rooms) > 0:
         sample.get_room(room_id=sample.rooms[0] )
         sample.update_single_room(room_id=sample.rooms[0])
+        sample.add_participants(room_id=sample.rooms[0])
         sample.clear_all_participants(room_id=sample.rooms[0])
         sample.get_room(room_id=sample.rooms[0] )
     sample.tearDown()

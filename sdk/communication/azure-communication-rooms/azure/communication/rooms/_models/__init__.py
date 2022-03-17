@@ -6,10 +6,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models_py3 import RoomRequest, CommunicationRoom, RoomParticipant
+from ._models_py3 import CommunicationRoom, RoomParticipant
 
 __all__ = [
-    'RoomRequest',
     "CommunicationRoom",
     "RoomParticipant"
 ]
