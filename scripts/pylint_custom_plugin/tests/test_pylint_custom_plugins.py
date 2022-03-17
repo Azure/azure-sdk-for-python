@@ -2604,6 +2604,14 @@ class TestCheckApiVersion(pylint.testutils.CheckerTestCase):
                     pass
             """
         )
-
+    
         with self.assertNoMessages():
             self.checker.visit_classdef(class_node)
+    
+    def test_api_version_keyword_and_param(self):
+        file = open("./test_files/test_api_version_checker.py")
+        node = astroid.parse(file.read())
+        file.close()
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(node)
