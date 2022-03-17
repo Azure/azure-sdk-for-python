@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.6.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
       x-ms-date:
-      - Wed, 16 Mar 2022 22:19:40 GMT
+      - Thu, 17 Mar 2022 23:07:22 GMT
       x-ms-version:
       - '2020-10-02'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 16 Mar 2022 22:19:39 GMT
+      - Thu, 17 Mar 2022 23:07:21 GMT
       etag:
-      - '"0x8DA079B105BBDC6"'
+      - '"0x8DA086AE4939C90"'
       last-modified:
-      - Wed, 16 Mar 2022 22:19:40 GMT
+      - Thu, 17 Mar 2022 23:07:22 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -51,7 +51,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.6.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
       x-ms-date:
-      - Wed, 16 Mar 2022 22:19:41 GMT
+      - Thu, 17 Mar 2022 23:07:23 GMT
       x-ms-version:
       - '2020-10-02'
     method: PUT
@@ -59,14 +59,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
-        specified container already exists.\nRequestId:e478a9c2-001e-0024-0a83-392c62000000\nTime:2022-03-16T22:19:40.2899168Z</Message></Error>"
+        specified container already exists.\nRequestId:357338ac-e01e-005e-1353-3a3122000000\nTime:2022-03-17T23:07:22.1550768Z</Message></Error>"
     headers:
       content-length:
       - '230'
       content-type:
       - application/xml
       date:
-      - Wed, 16 Mar 2022 22:19:39 GMT
+      - Thu, 17 Mar 2022 23:07:21 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -90,7 +90,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-dfs/12.6.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
       x-ms-date:
-      - Wed, 16 Mar 2022 22:19:41 GMT
+      - Thu, 17 Mar 2022 23:07:23 GMT
       x-ms-version:
       - '2020-10-02'
     method: DELETE
@@ -102,7 +102,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 16 Mar 2022 22:19:39 GMT
+      - Thu, 17 Mar 2022 23:07:21 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:

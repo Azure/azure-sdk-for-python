@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.7.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
       x-ms-date:
-      - Thu, 17 Mar 2022 00:09:04 GMT
+      - Thu, 17 Mar 2022 23:04:44 GMT
       x-ms-version:
       - '2021-04-10'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 17 Mar 2022 00:09:03 GMT
+      - Thu, 17 Mar 2022 23:04:42 GMT
       etag:
-      - '"0x8DA07AA58C4D407"'
+      - '"0x8DA086A86142E20"'
       last-modified:
-      - Thu, 17 Mar 2022 00:09:04 GMT
+      - Thu, 17 Mar 2022 23:04:43 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -49,7 +49,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.7.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
       x-ms-date:
-      - Thu, 17 Mar 2022 00:09:04 GMT
+      - Thu, 17 Mar 2022 23:04:44 GMT
       x-ms-version:
       - '2021-04-10'
     method: GET
@@ -58,14 +58,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
         ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>share729d1af2</Name><Properties><Last-Modified>Thu,
-        17 Mar 2022 00:09:04 GMT</Last-Modified><Etag>\"0x8DA07AA58C4D407\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Thu,
-        17 Mar 2022 00:09:04 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share></Shares><NextMarker
+        17 Mar 2022 23:04:43 GMT</Last-Modified><Etag>\"0x8DA086A86142E20\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Thu,
+        17 Mar 2022 23:04:43 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share></Shares><NextMarker
         /></EnumerationResults>"
     headers:
       content-type:
       - application/xml
       date:
-      - Thu, 17 Mar 2022 00:09:03 GMT
+      - Thu, 17 Mar 2022 23:04:42 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -89,7 +89,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.7.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
       x-ms-date:
-      - Thu, 17 Mar 2022 00:09:05 GMT
+      - Thu, 17 Mar 2022 23:04:44 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -103,7 +103,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 17 Mar 2022 00:09:03 GMT
+      - Thu, 17 Mar 2022 23:04:43 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
