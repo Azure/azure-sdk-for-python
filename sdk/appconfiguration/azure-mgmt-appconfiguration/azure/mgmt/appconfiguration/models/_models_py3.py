@@ -431,6 +431,9 @@ class ConfigurationStoreUpdateParameters(msrest.serialization.Model):
      networks while private endpoint is enabled. Possible values include: "Enabled", "Disabled".
     :vartype public_network_access: str or
      ~app_configuration_management_client.models.PublicNetworkAccess
+    :ivar enable_purge_protection: Property specifying whether protection against purge is enabled
+     for this configuration store.
+    :vartype enable_purge_protection: bool
     """
 
     _attribute_map = {
@@ -440,6 +443,7 @@ class ConfigurationStoreUpdateParameters(msrest.serialization.Model):
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
         'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'enable_purge_protection': {'key': 'properties.enablePurgeProtection', 'type': 'bool'},
     }
 
     def __init__(
@@ -451,6 +455,7 @@ class ConfigurationStoreUpdateParameters(msrest.serialization.Model):
         encryption: Optional["EncryptionProperties"] = None,
         disable_local_auth: Optional[bool] = None,
         public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
+        enable_purge_protection: Optional[bool] = None,
         **kwargs
     ):
         """
@@ -468,6 +473,9 @@ class ConfigurationStoreUpdateParameters(msrest.serialization.Model):
          networks while private endpoint is enabled. Possible values include: "Enabled", "Disabled".
         :paramtype public_network_access: str or
          ~app_configuration_management_client.models.PublicNetworkAccess
+        :keyword enable_purge_protection: Property specifying whether protection against purge is
+         enabled for this configuration store.
+        :paramtype enable_purge_protection: bool
         """
         super(ConfigurationStoreUpdateParameters, self).__init__(**kwargs)
         self.identity = identity
@@ -476,6 +484,7 @@ class ConfigurationStoreUpdateParameters(msrest.serialization.Model):
         self.encryption = encryption
         self.disable_local_auth = disable_local_auth
         self.public_network_access = public_network_access
+        self.enable_purge_protection = enable_purge_protection
 
 
 class DeletedConfigurationStore(msrest.serialization.Model):

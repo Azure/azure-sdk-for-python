@@ -19,6 +19,9 @@ FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTraini
 
 class TestCustomForms(FormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     @recorded_by_proxy
@@ -79,9 +82,9 @@ class TestCustomForms(FormRecognizerTest):
         model = poller.result()
 
         with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
-        poller = fr_client.begin_recognize_custom_forms(model.model_id, myfile, content_type=FormContentType.IMAGE_JPEG)
+        poller = fr_client.begin_recognize_custom_forms(model.model_id, my_file, content_type=FormContentType.IMAGE_JPEG)
         form = poller.result()
 
         assert form[0].form_type ==  "custom:labeled"
@@ -101,11 +104,11 @@ class TestCustomForms(FormRecognizerTest):
         model = poller.result()
 
         with open(self.multipage_invoice_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         poller = fr_client.begin_recognize_custom_forms(
             model.model_id,
-            myfile,
+            my_file,
             content_type=FormContentType.APPLICATION_PDF
         )
         forms = poller.result()
@@ -133,11 +136,11 @@ class TestCustomForms(FormRecognizerTest):
             responses.append(form)
 
         with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         poller = fr_client.begin_recognize_custom_forms(
             model.model_id,
-            myfile,
+            my_file,
             include_field_elements=True,
             cls=callback
         )
@@ -188,11 +191,11 @@ class TestCustomForms(FormRecognizerTest):
             responses.append(form)
 
         with open(self.multipage_invoice_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         poller = fr_client.begin_recognize_custom_forms(
             model.model_id,
-            myfile,
+            my_file,
             include_field_elements=True,
             cls=callback
         )
@@ -223,10 +226,10 @@ class TestCustomForms(FormRecognizerTest):
         model = poller.result()
 
         with open(self.form_jpg, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
         initial_poller = fr_client.begin_recognize_custom_forms(
             model.model_id,
-            myfile
+            my_file
         )
         cont_token = initial_poller.continuation_token()
         poller = fr_client.begin_recognize_custom_forms(
@@ -258,11 +261,11 @@ class TestCustomForms(FormRecognizerTest):
             responses.append(form)
 
         with open(self.multipage_vendor_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         poller = fr_client.begin_recognize_custom_forms(
             model.model_id,
-            myfile,
+            my_file,
             include_field_elements=True,
             cls=callback
         )
@@ -300,11 +303,11 @@ class TestCustomForms(FormRecognizerTest):
             responses.append(form)
 
         with open(self.multipage_vendor_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
 
         poller = fr_client.begin_recognize_custom_forms(
             model.model_id,
-            myfile,
+            my_file,
             include_field_elements=True,
             cls=callback
         )

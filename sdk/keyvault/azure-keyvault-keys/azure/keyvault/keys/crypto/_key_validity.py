@@ -36,4 +36,4 @@ def raise_if_time_invalid(not_before, expires_on):
     if not_before and not_before > now:
         raise ValueError("This client's key is not useable until {} (UTC)".format(not_before))
     if expires_on and expires_on <= now:
-        raise ValueError("This client's key expires_onired at {} (UTC)".format(expires_on))
+        raise ValueError("This client's key expired at {} (UTC)".format(expires_on))
