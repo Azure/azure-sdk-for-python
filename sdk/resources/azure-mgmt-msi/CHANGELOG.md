@@ -1,5 +1,11 @@
 # Release History
 
+## 6.0.0b2 (2022-03-17)
+
+**Features**
+
+  - Added operation UserAssignedIdentitiesOperations.list_associated_resources
+
 ## 6.0.0b1 (2021-05-19)
 
 This is beta preview version.
