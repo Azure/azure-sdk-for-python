@@ -10,10 +10,12 @@ from ._web_pub_sub_service_client import WebPubSubServiceClient
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['WebPubSubServiceClient']
 
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
+__all__ = ["WebPubSubServiceClient"]
+__all__.extend([p for p in _patch_all if p not in __all__])
+
+_patch_sdk()
