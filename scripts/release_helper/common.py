@@ -46,7 +46,7 @@ class IssueProcess:
                  assignee_candidates: Set[str], language_owner: Set[str]):
         self.issue_package = issue_package
         self.request_repo_dict = request_repo_dict
-        self.assignee = assignee.login if (assignee := issue_package.issue.assignee) else ''
+        self.assignee = issue_package.issue.assignee.login if issue_package.issue.assignee else ''
         self.owner = issue_package.issue.user.login
         self.assignee_candidates = assignee_candidates
         self.language_owner = language_owner
