@@ -634,14 +634,14 @@ class LibraryOperations:
         api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
         content_type = kwargs.pop('content_type', "application/octet-stream")  # type: Optional[str]
 
-        content = content
+        _content = content
 
         request = build_append_request(
             library_name=library_name,
             comp=comp,
             api_version=api_version,
             content_type=content_type,
-            content=content,
+            content=_content,
             blob_condition_append_position=blob_condition_append_position,
             template_url=self.append.metadata['url'],
         )

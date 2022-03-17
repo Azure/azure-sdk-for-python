@@ -1039,6 +1039,12 @@ class CloudJob(Model):
      -1000 to 1000, with -1000 being the lowest priority and 1000 being the
      highest priority. The default value is 0.
     :type priority: int
+    :param allow_task_preemption: Whether Tasks in this job can be preempted
+     by other high priority jobs. If the value is set to True, other high
+     priority jobs submitted to the system will take precedence and will be
+     able requeue tasks from this job. You can update a job's
+     allowTaskPreemption after it has been created using the update job API.
+    :type allow_task_preemption: bool
     :param max_parallel_tasks: The maximum number of tasks that can be
      executed in parallel for the job. The value of maxParallelTasks must be -1
      or greater than 0 if specified. If not specified, the default value is -1,
@@ -1106,6 +1112,7 @@ class CloudJob(Model):
         'previous_state': {'key': 'previousState', 'type': 'JobState'},
         'previous_state_transition_time': {'key': 'previousStateTransitionTime', 'type': 'iso-8601'},
         'priority': {'key': 'priority', 'type': 'int'},
+        'allow_task_preemption': {'key': 'allowTaskPreemption', 'type': 'bool'},
         'max_parallel_tasks': {'key': 'maxParallelTasks', 'type': 'int'},
         'constraints': {'key': 'constraints', 'type': 'JobConstraints'},
         'job_manager_task': {'key': 'jobManagerTask', 'type': 'JobManagerTask'},
@@ -1135,6 +1142,7 @@ class CloudJob(Model):
         self.previous_state = kwargs.get('previous_state', None)
         self.previous_state_transition_time = kwargs.get('previous_state_transition_time', None)
         self.priority = kwargs.get('priority', None)
+        self.allow_task_preemption = kwargs.get('allow_task_preemption', None)
         self.max_parallel_tasks = kwargs.get('max_parallel_tasks', -1)
         self.constraints = kwargs.get('constraints', None)
         self.job_manager_task = kwargs.get('job_manager_task', None)
@@ -1186,7 +1194,9 @@ class CloudJobSchedule(Model):
     :param previous_state_transition_time: This property is not present if the
      Job Schedule is in its initial active state.
     :type previous_state_transition_time: datetime
-    :param schedule: The schedule according to which Jobs will be created.
+    :param schedule: The schedule according to which Jobs will be created. All
+     times are fixed respective to UTC and are not impacted by daylight saving
+     time.
     :type schedule: ~azure.batch.models.Schedule
     :param job_specification: The details of the Jobs to be created on this
      schedule.
@@ -1302,14 +1312,14 @@ class CloudPool(Model):
     :param current_dedicated_nodes: The number of dedicated Compute Nodes
      currently in the Pool.
     :type current_dedicated_nodes: int
-    :param current_low_priority_nodes: The number of low-priority Compute
-     Nodes currently in the Pool. low-priority Compute Nodes which have been
-     preempted are included in this count.
+    :param current_low_priority_nodes: The number of Spot/Low-priority Compute
+     Nodes currently in the Pool. Spot/Low-priority Compute Nodes which have
+     been preempted are included in this count.
     :type current_low_priority_nodes: int
     :param target_dedicated_nodes: The desired number of dedicated Compute
      Nodes in the Pool.
     :type target_dedicated_nodes: int
-    :param target_low_priority_nodes: The desired number of low-priority
+    :param target_low_priority_nodes: The desired number of Spot/Low-priority
      Compute Nodes in the Pool.
     :type target_low_priority_nodes: int
     :param enable_auto_scale: Whether the Pool size should automatically
@@ -1723,7 +1733,7 @@ class ComputeNode(Model):
     :type id: str
     :param url:
     :type url: str
-    :param state: The low-priority Compute Node has been preempted. Tasks
+    :param state: The Spot/Low-priority Compute Node has been preempted. Tasks
      which were running on the Compute Node when it was preempted will be
      rescheduled when another Compute Node becomes available. Possible values
      include: 'idle', 'rebooting', 'reimaging', 'running', 'unusable',
@@ -1794,7 +1804,7 @@ class ComputeNode(Model):
     :param errors:
     :type errors: list[~azure.batch.models.ComputeNodeError]
     :param is_dedicated: Whether this Compute Node is a dedicated Compute
-     Node. If false, the Compute Node is a low-priority Compute Node.
+     Node. If false, the Compute Node is a Spot/Low-priority Compute Node.
     :type is_dedicated: bool
     :param endpoint_configuration: The endpoint configuration for the Compute
      Node.
@@ -3308,6 +3318,32 @@ class FileProperties(Model):
         self.file_mode = kwargs.get('file_mode', None)
 
 
+class HttpHeader(Model):
+    """An HTTP header name-value pair.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required.
+    :type name: str
+    :param value:
+    :type value: str
+    """
+
+    _validation = {
+        'name': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(HttpHeader, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)
+
+
 class ImageInformation(Model):
     """A reference to the Azure Virtual Machines Marketplace Image and additional
     information about the Image.
@@ -3627,6 +3663,12 @@ class JobAddParameter(Model):
      once. You can update a job's maxParallelTasks after it has been created
      using the update job API. Default value: -1 .
     :type max_parallel_tasks: int
+    :param allow_task_preemption: Whether Tasks in this job can be preempted
+     by other high priority jobs. If the value is set to True, other high
+     priority jobs submitted to the system will take precedence and will be
+     able requeue tasks from this job. You can update a job's
+     allowTaskPreemption after it has been created using the update job API.
+    :type allow_task_preemption: bool
     :param constraints: The execution constraints for the Job.
     :type constraints: ~azure.batch.models.JobConstraints
     :param job_manager_task: Details of a Job Manager Task to be launched when
@@ -3701,6 +3743,7 @@ class JobAddParameter(Model):
         'display_name': {'key': 'displayName', 'type': 'str'},
         'priority': {'key': 'priority', 'type': 'int'},
         'max_parallel_tasks': {'key': 'maxParallelTasks', 'type': 'int'},
+        'allow_task_preemption': {'key': 'allowTaskPreemption', 'type': 'bool'},
         'constraints': {'key': 'constraints', 'type': 'JobConstraints'},
         'job_manager_task': {'key': 'jobManagerTask', 'type': 'JobManagerTask'},
         'job_preparation_task': {'key': 'jobPreparationTask', 'type': 'JobPreparationTask'},
@@ -3720,6 +3763,7 @@ class JobAddParameter(Model):
         self.display_name = kwargs.get('display_name', None)
         self.priority = kwargs.get('priority', None)
         self.max_parallel_tasks = kwargs.get('max_parallel_tasks', -1)
+        self.allow_task_preemption = kwargs.get('allow_task_preemption', None)
         self.constraints = kwargs.get('constraints', None)
         self.job_manager_task = kwargs.get('job_manager_task', None)
         self.job_preparation_task = kwargs.get('job_preparation_task', None)
@@ -4450,7 +4494,7 @@ class JobManagerTask(Model):
     :type authentication_token_settings:
      ~azure.batch.models.AuthenticationTokenSettings
     :param allow_low_priority_node: Whether the Job Manager Task may run on a
-     low-priority Compute Node. The default value is true.
+     Spot/Low-priority Compute Node. The default value is true.
     :type allow_low_priority_node: bool
     """
 
@@ -4612,6 +4656,12 @@ class JobPatchParameter(Model):
      once. You can update a job's maxParallelTasks after it has been created
      using the update job API.
     :type max_parallel_tasks: int
+    :param allow_task_preemption: Whether Tasks in this job can be preempted
+     by other high priority jobs. If the value is set to True, other high
+     priority jobs submitted to the system will take precedence and will be
+     able requeue tasks from this job. You can update a job's
+     allowTaskPreemption after it has been created using the update job API.
+    :type allow_task_preemption: bool
     :param on_all_tasks_complete: The action the Batch service should take
      when all Tasks in the Job are in the completed state. If omitted, the
      completion behavior is left unchanged. You may not change the value from
@@ -4640,6 +4690,7 @@ class JobPatchParameter(Model):
     _attribute_map = {
         'priority': {'key': 'priority', 'type': 'int'},
         'max_parallel_tasks': {'key': 'maxParallelTasks', 'type': 'int'},
+        'allow_task_preemption': {'key': 'allowTaskPreemption', 'type': 'bool'},
         'on_all_tasks_complete': {'key': 'onAllTasksComplete', 'type': 'OnAllTasksComplete'},
         'constraints': {'key': 'constraints', 'type': 'JobConstraints'},
         'pool_info': {'key': 'poolInfo', 'type': 'PoolInformation'},
@@ -4650,6 +4701,7 @@ class JobPatchParameter(Model):
         super(JobPatchParameter, self).__init__(**kwargs)
         self.priority = kwargs.get('priority', None)
         self.max_parallel_tasks = kwargs.get('max_parallel_tasks', None)
+        self.allow_task_preemption = kwargs.get('allow_task_preemption', None)
         self.on_all_tasks_complete = kwargs.get('on_all_tasks_complete', None)
         self.constraints = kwargs.get('constraints', None)
         self.pool_info = kwargs.get('pool_info', None)
@@ -5132,7 +5184,8 @@ class JobScheduleAddParameter(Model):
      any Unicode characters up to a maximum length of 1024.
     :type display_name: str
     :param schedule: Required. The schedule according to which Jobs will be
-     created.
+     created. All times are fixed respective to UTC and are not impacted by
+     daylight saving time.
     :type schedule: ~azure.batch.models.Schedule
     :param job_specification: Required. The details of the Jobs to be created
      on this schedule.
@@ -5626,8 +5679,10 @@ class JobSchedulePatchOptions(Model):
 class JobSchedulePatchParameter(Model):
     """The set of changes to be made to a Job Schedule.
 
-    :param schedule: The schedule according to which Jobs will be created. If
-     you do not specify this element, the existing schedule is left unchanged.
+    :param schedule: The schedule according to which Jobs will be created. All
+     times are fixed respective to UTC and are not impacted by daylight saving
+     time. If you do not specify this element, the existing schedule is left
+     unchanged.
     :type schedule: ~azure.batch.models.Schedule
     :param job_specification: The details of the Jobs to be created on this
      schedule. Updates affect only Jobs that are started after the update has
@@ -5882,8 +5937,10 @@ class JobScheduleUpdateParameter(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param schedule: Required. The schedule according to which Jobs will be
-     created. If you do not specify this element, it is equivalent to passing
-     the default schedule: that is, a single Job scheduled to run immediately.
+     created. All times are fixed respective to UTC and are not impacted by
+     daylight saving time. If you do not specify this element, it is equivalent
+     to passing the default schedule: that is, a single Job scheduled to run
+     immediately.
     :type schedule: ~azure.batch.models.Schedule
     :param job_specification: Required. Details of the Jobs to be created on
      this schedule. Updates affect only Jobs that are started after the update
@@ -5960,6 +6017,12 @@ class JobSpecification(Model):
      can update a Job's priority after it has been created using by using the
      update Job API.
     :type priority: int
+    :param allow_task_preemption: Whether Tasks in this job can be preempted
+     by other high priority jobs. If the value is set to True, other high
+     priority jobs submitted to the system will take precedence and will be
+     able requeue tasks from this job. You can update a job's
+     allowTaskPreemption after it has been created using the update job API.
+    :type allow_task_preemption: bool
     :param max_parallel_tasks: The maximum number of tasks that can be
      executed in parallel for the job. The value of maxParallelTasks must be -1
      or greater than 0 if specified. If not specified, the default value is -1,
@@ -6036,6 +6099,7 @@ class JobSpecification(Model):
 
     _attribute_map = {
         'priority': {'key': 'priority', 'type': 'int'},
+        'allow_task_preemption': {'key': 'allowTaskPreemption', 'type': 'bool'},
         'max_parallel_tasks': {'key': 'maxParallelTasks', 'type': 'int'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'uses_task_dependencies': {'key': 'usesTaskDependencies', 'type': 'bool'},
@@ -6054,6 +6118,7 @@ class JobSpecification(Model):
     def __init__(self, **kwargs):
         super(JobSpecification, self).__init__(**kwargs)
         self.priority = kwargs.get('priority', None)
+        self.allow_task_preemption = kwargs.get('allow_task_preemption', None)
         self.max_parallel_tasks = kwargs.get('max_parallel_tasks', -1)
         self.display_name = kwargs.get('display_name', None)
         self.uses_task_dependencies = kwargs.get('uses_task_dependencies', None)
@@ -6320,6 +6385,19 @@ class JobUpdateParameter(Model):
      -1000 to 1000, with -1000 being the lowest priority and 1000 being the
      highest priority. If omitted, it is set to the default value 0.
     :type priority: int
+    :param max_parallel_tasks: The maximum number of tasks that can be
+     executed in parallel for the job. The value of maxParallelTasks must be -1
+     or greater than 0 if specified. If not specified, the default value is -1,
+     which means there's no limit to the number of tasks that can be run at
+     once. You can update a job's maxParallelTasks after it has been created
+     using the update job API. Default value: -1 .
+    :type max_parallel_tasks: int
+    :param allow_task_preemption: Whether Tasks in this job can be preempted
+     by other high priority jobs. If the value is set to True, other high
+     priority jobs submitted to the system will take precedence and will be
+     able requeue tasks from this job. You can update a job's
+     allowTaskPreemption after it has been created using the update job API.
+    :type allow_task_preemption: bool
     :param constraints: The execution constraints for the Job. If omitted, the
      constraints are cleared.
     :type constraints: ~azure.batch.models.JobConstraints
@@ -6356,6 +6434,8 @@ class JobUpdateParameter(Model):
 
     _attribute_map = {
         'priority': {'key': 'priority', 'type': 'int'},
+        'max_parallel_tasks': {'key': 'maxParallelTasks', 'type': 'int'},
+        'allow_task_preemption': {'key': 'allowTaskPreemption', 'type': 'bool'},
         'constraints': {'key': 'constraints', 'type': 'JobConstraints'},
         'pool_info': {'key': 'poolInfo', 'type': 'PoolInformation'},
         'metadata': {'key': 'metadata', 'type': '[MetadataItem]'},
@@ -6365,6 +6445,8 @@ class JobUpdateParameter(Model):
     def __init__(self, **kwargs):
         super(JobUpdateParameter, self).__init__(**kwargs)
         self.priority = kwargs.get('priority', None)
+        self.max_parallel_tasks = kwargs.get('max_parallel_tasks', -1)
+        self.allow_task_preemption = kwargs.get('allow_task_preemption', None)
         self.constraints = kwargs.get('constraints', None)
         self.pool_info = kwargs.get('pool_info', None)
         self.metadata = kwargs.get('metadata', None)
@@ -7108,6 +7190,11 @@ class OutputFileBlobContainerDestination(Model):
      use to access Azure Blob Storage specified by containerUrl. The identity
      must have write access to the Azure Blob Storage container
     :type identity_reference: ~azure.batch.models.ComputeNodeIdentityReference
+    :param upload_headers: These headers will be specified when uploading
+     files to Azure Storage. For more information, see [Request Headers (All
+     Blob
+     Types)](https://docs.microsoft.com/rest/api/storageservices/put-blob#request-headers-all-blob-types).
+    :type upload_headers: list[~azure.batch.models.HttpHeader]
     """
 
     _validation = {
@@ -7118,6 +7205,7 @@ class OutputFileBlobContainerDestination(Model):
         'path': {'key': 'path', 'type': 'str'},
         'container_url': {'key': 'containerUrl', 'type': 'str'},
         'identity_reference': {'key': 'identityReference', 'type': 'ComputeNodeIdentityReference'},
+        'upload_headers': {'key': 'uploadHeaders', 'type': '[HttpHeader]'},
     }
 
     def __init__(self, **kwargs):
@@ -7125,6 +7213,7 @@ class OutputFileBlobContainerDestination(Model):
         self.path = kwargs.get('path', None)
         self.container_url = kwargs.get('container_url', None)
         self.identity_reference = kwargs.get('identity_reference', None)
+        self.upload_headers = kwargs.get('upload_headers', None)
 
 
 class OutputFileDestination(Model):
@@ -7255,7 +7344,7 @@ class PoolAddParameter(Model):
      is set to true. If enableAutoScale is set to false, then you must set
      either targetDedicatedNodes, targetLowPriorityNodes, or both.
     :type target_dedicated_nodes: int
-    :param target_low_priority_nodes: The desired number of low-priority
+    :param target_low_priority_nodes: The desired number of Spot/Low-priority
      Compute Nodes in the Pool. This property must not be specified if
      enableAutoScale is set to true. If enableAutoScale is set to false, then
      you must set either targetDedicatedNodes, targetLowPriorityNodes, or both.
@@ -7979,7 +8068,7 @@ class PoolNodeCounts(Model):
     :type pool_id: str
     :param dedicated: The number of dedicated Compute Nodes in each state.
     :type dedicated: ~azure.batch.models.NodeCounts
-    :param low_priority: The number of low-priority Compute Nodes in each
+    :param low_priority: The number of Spot/Low-priority Compute Nodes in each
      state.
     :type low_priority: ~azure.batch.models.NodeCounts
     """
@@ -8240,7 +8329,7 @@ class PoolResizeParameter(Model):
     :param target_dedicated_nodes: The desired number of dedicated Compute
      Nodes in the Pool.
     :type target_dedicated_nodes: int
-    :param target_low_priority_nodes: The desired number of low-priority
+    :param target_low_priority_nodes: The desired number of Spot/Low-priority
      Compute Nodes in the Pool.
     :type target_low_priority_nodes: int
     :param resize_timeout: The default value is 15 minutes. The minimum value
@@ -8320,7 +8409,7 @@ class PoolSpecification(Model):
      is set to true. If enableAutoScale is set to false, then you must set
      either targetDedicatedNodes, targetLowPriorityNodes, or both.
     :type target_dedicated_nodes: int
-    :param target_low_priority_nodes: The desired number of low-priority
+    :param target_low_priority_nodes: The desired number of Spot/Low-priority
      Compute Nodes in the Pool. This property must not be specified if
      enableAutoScale is set to true. If enableAutoScale is set to false, then
      you must set either targetDedicatedNodes, targetLowPriorityNodes, or both.
@@ -8695,8 +8784,8 @@ class PublicIPAddressConfiguration(Model):
      'batchManaged', 'userManaged', 'noPublicIPAddresses'
     :type provision: str or ~azure.batch.models.IPAddressProvisioningType
     :param ip_address_ids: The number of IPs specified here limits the maximum
-     size of the Pool - 100 dedicated nodes or 100 low-priority nodes can be
-     allocated for each public IP. For example, a pool needing 250 dedicated
+     size of the Pool - 100 dedicated nodes or 100 Spot/Low-priority nodes can
+     be allocated for each public IP. For example, a pool needing 250 dedicated
      VMs would need at least 3 public IPs specified. Each element of this
      collection is of the form:
      /subscriptions/{subscription}/resourceGroups/{group}/providers/Microsoft.Network/publicIPAddresses/{ip}.
@@ -8923,7 +9012,8 @@ class ResourceStatistics(Model):
 
 
 class Schedule(Model):
-    """The schedule according to which Jobs will be created.
+    """The schedule according to which Jobs will be created. All times are fixed
+    respective to UTC and are not impacted by daylight saving time.
 
     :param do_not_run_until: If you do not specify a doNotRunUntil time, the
      schedule becomes ready to create Jobs immediately.
@@ -9873,7 +9963,7 @@ class TaskExecutionInformation(Model):
     :param last_requeue_time: This property is set only if the requeueCount is
      nonzero.
     :type last_requeue_time: datetime
-    :param result: The result of the Task execution. If the value is 'failure',
+    :param result: The result of the Task execution. If the value is 'failed',
      then the details of the failure can be found in the failureInfo property.
      Possible values include: 'success', 'failure'
     :type result: str or ~azure.batch.models.TaskExecutionResult

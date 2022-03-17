@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fix `delete_by_guids` to get rid of bad request error #22487
+
 ### Other Changes
 
 ## 1.0.0b2 (2021-09-29)

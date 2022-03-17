@@ -19,7 +19,7 @@ USAGE:
     python sample_get_elements_with_spans_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
+    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
 """
 
@@ -58,6 +58,7 @@ async def get_elements_with_spans_async():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
+            "..",
             "..",
             "..",
             "..",

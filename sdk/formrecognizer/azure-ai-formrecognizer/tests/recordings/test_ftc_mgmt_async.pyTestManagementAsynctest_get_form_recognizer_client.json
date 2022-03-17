@@ -1,0 +1,411 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models?op=summary",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "d13f16aa-5eed-11ec-a3e4-c8348e073d30"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "20b69da4-f0d2-45e8-b4b8-8f6741e652b4",
+        "Content-Length": "85",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Dec 2021 04:00:05 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "144"
+      },
+      "ResponseBody": {
+        "summary": {
+          "count": 2241,
+          "limit": 20000,
+          "lastUpdatedDateTime": "2021-12-17T04:00:05Z"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/prebuilt/receipt/analyze?includeTextDetails=false",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "33",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "d1710182-5eed-11ec-b7d7-c8348e073d30"
+      },
+      "RequestBody": {
+        "source": "https://blob_sas_url"
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "4649ebb9-bbe7-4bf9-8c5d-4214db7ad9bd",
+        "Content-Length": "0",
+        "Date": "Fri, 17 Dec 2021 04:00:05 GMT",
+        "Operation-Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/prebuilt/receipt/analyzeResults/4649ebb9-bbe7-4bf9-8c5d-4214db7ad9bd",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "675"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/prebuilt/receipt/analyzeResults/4649ebb9-bbe7-4bf9-8c5d-4214db7ad9bd",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "d1710182-5eed-11ec-b7d7-c8348e073d30"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "c245920e-2e1e-456d-8ce5-761e88e054e6",
+        "Content-Length": "2836",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Dec 2021 04:00:10 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "19"
+      },
+      "ResponseBody": {
+        "status": "succeeded",
+        "createdDateTime": "2021-12-17T04:00:06Z",
+        "lastUpdatedDateTime": "2021-12-17T04:00:08Z",
+        "analyzeResult": {
+          "version": "2.1.0",
+          "readResults": [
+            {
+              "page": 1,
+              "angle": 0.1273,
+              "width": 1688,
+              "height": 3000,
+              "unit": "pixel"
+            }
+          ],
+          "documentResults": [
+            {
+              "docType": "prebuilt:receipt",
+              "pageRange": [
+                1,
+                1
+              ],
+              "fields": {
+                "Items": {
+                  "type": "array",
+                  "valueArray": [
+                    {
+                      "type": "object",
+                      "valueObject": {
+                        "Name": {
+                          "type": "string",
+                          "valueString": "Cappuccino",
+                          "text": "Cappuccino",
+                          "boundingBox": [
+                            304,
+                            1585,
+                            658,
+                            1598,
+                            657,
+                            1688,
+                            302,
+                            1679
+                          ],
+                          "page": 1,
+                          "confidence": 0.558
+                        },
+                        "Quantity": {
+                          "type": "number",
+                          "valueNumber": 1,
+                          "text": "1",
+                          "boundingBox": [
+                            244,
+                            1581,
+                            286,
+                            1584,
+                            283,
+                            1678,
+                            241,
+                            1675
+                          ],
+                          "page": 1,
+                          "confidence": 0.936
+                        },
+                        "TotalPrice": {
+                          "type": "number",
+                          "valueNumber": 2.2,
+                          "text": "$2.20",
+                          "boundingBox": [
+                            1106,
+                            1579,
+                            1260,
+                            1574,
+                            1263,
+                            1656,
+                            1108,
+                            1662
+                          ],
+                          "page": 1,
+                          "confidence": 0.972
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "valueObject": {
+                        "Name": {
+                          "type": "string",
+                          "valueString": "BACON \u0026 EGGS",
+                          "text": "BACON \u0026 EGGS",
+                          "boundingBox": [
+                            293,
+                            1839,
+                            737,
+                            1839,
+                            737,
+                            1924,
+                            293,
+                            1924
+                          ],
+                          "page": 1,
+                          "confidence": 0.906
+                        },
+                        "Quantity": {
+                          "type": "number",
+                          "valueNumber": 1,
+                          "text": "1",
+                          "boundingBox": [
+                            227,
+                            1839,
+                            275,
+                            1839,
+                            275,
+                            1924,
+                            226,
+                            1924
+                          ],
+                          "page": 1,
+                          "confidence": 0.936
+                        },
+                        "TotalPrice": {
+                          "type": "number",
+                          "valueNumber": 9.5,
+                          "text": "$9.5",
+                          "boundingBox": [
+                            1134,
+                            1948,
+                            1252,
+                            1948,
+                            1252,
+                            2041,
+                            1134,
+                            2041
+                          ],
+                          "page": 1,
+                          "confidence": 0.977
+                        }
+                      }
+                    }
+                  ]
+                },
+                "MerchantAddress": {
+                  "type": "string",
+                  "valueString": "123 Main Street Redmond, WA 98052",
+                  "text": "123 Main Street Redmond, WA 98052",
+                  "boundingBox": [
+                    298.6,
+                    675.8,
+                    844.8,
+                    782.2,
+                    810.6,
+                    957.9,
+                    264.4,
+                    851.5
+                  ],
+                  "page": 1,
+                  "confidence": 0.974
+                },
+                "MerchantName": {
+                  "type": "string",
+                  "valueString": "Contoso",
+                  "text": "Contoso",
+                  "boundingBox": [
+                    308,
+                    570,
+                    515,
+                    627,
+                    500,
+                    685,
+                    290,
+                    634
+                  ],
+                  "page": 1,
+                  "confidence": 0.974
+                },
+                "MerchantPhoneNumber": {
+                  "type": "phoneNumber",
+                  "valuePhoneNumber": "\u002B19876543210",
+                  "text": "987-654-3210",
+                  "boundingBox": [
+                    274,
+                    1000,
+                    651,
+                    1049,
+                    643,
+                    1125,
+                    268,
+                    1076
+                  ],
+                  "page": 1,
+                  "confidence": 0.987
+                },
+                "ReceiptType": {
+                  "type": "string",
+                  "valueString": "Itemized",
+                  "confidence": 0.99
+                },
+                "Subtotal": {
+                  "type": "number",
+                  "valueNumber": 11.7,
+                  "text": "$ 11.70",
+                  "boundingBox": [
+                    1082,
+                    2225.1,
+                    1307.1,
+                    2228,
+                    1306,
+                    2315.4,
+                    1080.9,
+                    2312.5
+                  ],
+                  "page": 1,
+                  "confidence": 0.967
+                },
+                "Tax": {
+                  "type": "number",
+                  "valueNumber": 1.17,
+                  "text": "$ 1.17",
+                  "boundingBox": [
+                    1125,
+                    2352.1,
+                    1307.4,
+                    2361,
+                    1303,
+                    2452.9,
+                    1120.6,
+                    2444
+                  ],
+                  "page": 1,
+                  "confidence": 0.985
+                },
+                "Tip": {
+                  "type": "number",
+                  "valueNumber": 1.63,
+                  "text": "$ 1.63",
+                  "boundingBox": [
+                    1034,
+                    2481.7,
+                    1268.6,
+                    2488,
+                    1266,
+                    2583.5,
+                    1031.5,
+                    2577.2
+                  ],
+                  "page": 1,
+                  "confidence": 0.941
+                },
+                "Total": {
+                  "type": "number",
+                  "valueNumber": 14.5,
+                  "text": "$14.50",
+                  "boundingBox": [
+                    1033,
+                    2623,
+                    1374,
+                    2641,
+                    1368,
+                    2757,
+                    1027,
+                    2740
+                  ],
+                  "page": 1,
+                  "confidence": 0.978
+                },
+                "TransactionDate": {
+                  "type": "date",
+                  "valueDate": "2019-06-10",
+                  "text": "6/10/2019",
+                  "boundingBox": [
+                    259,
+                    1224,
+                    514,
+                    1247,
+                    509,
+                    1331,
+                    255,
+                    1312
+                  ],
+                  "page": 1,
+                  "confidence": 0.987
+                },
+                "TransactionTime": {
+                  "type": "time",
+                  "valueTime": "13:59:00",
+                  "text": "13:59",
+                  "boundingBox": [
+                    531,
+                    1248,
+                    681,
+                    1262,
+                    675,
+                    1341,
+                    526,
+                    1333
+                  ],
+                  "page": 1,
+                  "confidence": 0.985
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/custom/models?op=summary",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "d4f93ec0-5eed-11ec-81c5-c8348e073d30"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "a47d6be4-3cf1-4018-9e88-e384fc88edfa",
+        "Content-Length": "85",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Dec 2021 04:00:10 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "154"
+      },
+      "ResponseBody": {
+        "summary": {
+          "count": 2241,
+          "limit": 20000,
+          "lastUpdatedDateTime": "2021-12-17T04:00:11Z"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

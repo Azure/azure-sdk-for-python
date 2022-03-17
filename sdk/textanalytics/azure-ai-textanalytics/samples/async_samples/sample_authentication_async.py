@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -54,8 +52,8 @@ async def sample_authentication_with_api_key_credential_async():
     async with text_analytics_client:
         result = await text_analytics_client.detect_language(doc)
 
-    print("Language detected: {}".format(result[0].primary_language.name))
-    print("Confidence score: {}".format(result[0].primary_language.confidence_score))
+    print(f"Language detected: {result[0].primary_language.name}")
+    print(f"Confidence score: {result[0].primary_language.confidence_score}")
 
 
 async def sample_authentication_with_azure_active_directory_async():
@@ -82,8 +80,8 @@ async def sample_authentication_with_azure_active_directory_async():
     async with text_analytics_client:
         result = await text_analytics_client.detect_language(doc)
 
-    print("Language detected: {}".format(result[0].primary_language.name))
-    print("Confidence score: {}".format(result[0].primary_language.confidence_score))
+    print(f"Language detected: {result[0].primary_language.name}")
+    print(f"Confidence score: {result[0].primary_language.confidence_score}")
 
 
 async def main():

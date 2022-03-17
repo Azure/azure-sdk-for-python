@@ -6,39 +6,24 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
+from enum import Enum
 from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AppServiceCertificateOrderPatchResourcePropertiesAppServiceCertificateNotRenewableReasonsItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AppServiceCertificateOrderPatchResourcePropertiesAppServiceCertificateNotRenewableReasonsItem(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     REGISTRATION_STATUS_NOT_SUPPORTED_FOR_RENEWAL = "RegistrationStatusNotSupportedForRenewal"
     EXPIRATION_NOT_IN_RENEWAL_TIME_RANGE = "ExpirationNotInRenewalTimeRange"
     SUBSCRIPTION_NOT_ACTIVE = "SubscriptionNotActive"
 
-class AppServiceCertificateOrderPropertiesAppServiceCertificateNotRenewableReasonsItem(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AppServiceCertificateOrderPropertiesAppServiceCertificateNotRenewableReasonsItem(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     REGISTRATION_STATUS_NOT_SUPPORTED_FOR_RENEWAL = "RegistrationStatusNotSupportedForRenewal"
     EXPIRATION_NOT_IN_RENEWAL_TIME_RANGE = "ExpirationNotInRenewalTimeRange"
     SUBSCRIPTION_NOT_ACTIVE = "SubscriptionNotActive"
 
-class CertificateOrderActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CertificateOrderActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Action type.
     """
 
@@ -57,7 +42,7 @@ class CertificateOrderActionType(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     FRAUD_DOCUMENTATION_REQUIRED = "FraudDocumentationRequired"
     UNKNOWN = "Unknown"
 
-class CertificateOrderStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CertificateOrderStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Current order status.
     """
 
@@ -72,14 +57,14 @@ class CertificateOrderStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     EXPIRED = "Expired"
     NOT_SUBMITTED = "NotSubmitted"
 
-class CertificateProductType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CertificateProductType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Certificate product type.
     """
 
     STANDARD_DOMAIN_VALIDATED_SSL = "StandardDomainValidatedSsl"
     STANDARD_DOMAIN_VALIDATED_WILD_CARD_SSL = "StandardDomainValidatedWildCardSsl"
 
-class KeyVaultSecretStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class KeyVaultSecretStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Status of the Key Vault secret.
     """
 
@@ -95,7 +80,7 @@ class KeyVaultSecretStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     EXTERNAL_PRIVATE_KEY = "ExternalPrivateKey"
     UNKNOWN = "Unknown"
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Status of certificate order.
     """
 

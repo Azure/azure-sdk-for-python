@@ -4,6 +4,8 @@
 # ------------------------------------
 import asyncio
 
+import pytest
+
 from _shared.test_case_async import KeyVaultTestCase
 from _test_case import AdministrationTestCase, backup_client_setup, get_decorator
 
@@ -18,6 +20,9 @@ class TestExamplesTests(AdministrationTestCase, KeyVaultTestCase):
     @all_api_versions()
     @backup_client_setup
     async def test_example_backup_and_restore(self, client):
+        if self.is_live:
+            pytest.skip("SAS token failures are causing sev2 alerts for service team")
+
         backup_client = client
         container_uri = self.container_uri
         sas_token = self.sas_token
@@ -53,6 +58,9 @@ class TestExamplesTests(AdministrationTestCase, KeyVaultTestCase):
     @all_api_versions()
     @backup_client_setup
     async def test_example_selective_key_restore(self, client):
+        if self.is_live:
+            pytest.skip("SAS token failures are causing sev2 alerts for service team")
+
         # create a key to selectively restore
         key_client = self.create_key_client(self.managed_hsm_url, is_async=True)
         key_name = self.get_resource_name("selective-restore-test-key")

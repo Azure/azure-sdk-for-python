@@ -1,6 +1,6 @@
 # Release History
 
-## 0.10.1 (Unreleased)
+## 0.12.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,22 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 0.12.0 (2022-03-07)
+
+### Features Added
+
+- re-generated based on tag package-artifacts-composite-v3
+
+## 0.11.0 (2022-01-11)
+
+### Features Added
+
+- Added `MetastoreOperations`
+
+### Other Changes
+
+- Python 2.7 and 3.6 are no longer supported. Please use Python version 3.7 or later.
 
 ## 0.10.0 (2021-11-09)
 

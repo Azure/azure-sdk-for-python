@@ -1158,7 +1158,7 @@ class SqlRuleFilter(object):
     :param sql_expression: The SQL expression. e.g. MyProperty='ABC'
     :type sql_expression: str
     :param parameters: Sets the value of the sql expression parameters if any.
-    :type parameters: dict[str, Union[str, int, float, bool, datetime, timedelta]]
+    :type parameters: Dict[str, Union[str, int, float, bool, datetime, timedelta]]
     """
 
     def __init__(self, sql_expression=None, parameters=None):
@@ -1236,7 +1236,7 @@ class SqlRuleAction(object):
     :param sql_expression: SQL expression. e.g. MyProperty='ABC'
     :type sql_expression: str
     :param parameters: Sets the value of the sql expression parameters if any.
-    :type parameters: dict[str, Union[str, int, float, bool, datetime, timedelta]]
+    :type parameters: Dict[str, Union[str, int, float, bool, datetime, timedelta]]
     :type requires_preprocessing: bool
     """
 

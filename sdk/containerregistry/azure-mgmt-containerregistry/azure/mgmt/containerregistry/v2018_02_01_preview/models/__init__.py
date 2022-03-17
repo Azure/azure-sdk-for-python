@@ -6,72 +6,39 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import BaseImageDependency
-    from ._models_py3 import Build
-    from ._models_py3 import BuildArgument
-    from ._models_py3 import BuildArgumentList
-    from ._models_py3 import BuildFilter
-    from ._models_py3 import BuildGetLogResult
-    from ._models_py3 import BuildListResult
-    from ._models_py3 import BuildStep
-    from ._models_py3 import BuildStepList
-    from ._models_py3 import BuildStepProperties
-    from ._models_py3 import BuildStepPropertiesUpdateParameters
-    from ._models_py3 import BuildStepUpdateParameters
-    from ._models_py3 import BuildTask
-    from ._models_py3 import BuildTaskBuildRequest
-    from ._models_py3 import BuildTaskFilter
-    from ._models_py3 import BuildTaskListResult
-    from ._models_py3 import BuildTaskUpdateParameters
-    from ._models_py3 import BuildUpdateParameters
-    from ._models_py3 import DockerBuildStep
-    from ._models_py3 import DockerBuildStepUpdateParameters
-    from ._models_py3 import GitCommitTrigger
-    from ._models_py3 import ImageDescriptor
-    from ._models_py3 import ImageUpdateTrigger
-    from ._models_py3 import PlatformProperties
-    from ._models_py3 import ProxyResource
-    from ._models_py3 import QueueBuildRequest
-    from ._models_py3 import QuickBuildRequest
-    from ._models_py3 import Resource
-    from ._models_py3 import SourceControlAuthInfo
-    from ._models_py3 import SourceRepositoryProperties
-    from ._models_py3 import SourceRepositoryUpdateParameters
-    from ._models_py3 import SourceUploadDefinition
-except (SyntaxError, ImportError):
-    from ._models import BaseImageDependency  # type: ignore
-    from ._models import Build  # type: ignore
-    from ._models import BuildArgument  # type: ignore
-    from ._models import BuildArgumentList  # type: ignore
-    from ._models import BuildFilter  # type: ignore
-    from ._models import BuildGetLogResult  # type: ignore
-    from ._models import BuildListResult  # type: ignore
-    from ._models import BuildStep  # type: ignore
-    from ._models import BuildStepList  # type: ignore
-    from ._models import BuildStepProperties  # type: ignore
-    from ._models import BuildStepPropertiesUpdateParameters  # type: ignore
-    from ._models import BuildStepUpdateParameters  # type: ignore
-    from ._models import BuildTask  # type: ignore
-    from ._models import BuildTaskBuildRequest  # type: ignore
-    from ._models import BuildTaskFilter  # type: ignore
-    from ._models import BuildTaskListResult  # type: ignore
-    from ._models import BuildTaskUpdateParameters  # type: ignore
-    from ._models import BuildUpdateParameters  # type: ignore
-    from ._models import DockerBuildStep  # type: ignore
-    from ._models import DockerBuildStepUpdateParameters  # type: ignore
-    from ._models import GitCommitTrigger  # type: ignore
-    from ._models import ImageDescriptor  # type: ignore
-    from ._models import ImageUpdateTrigger  # type: ignore
-    from ._models import PlatformProperties  # type: ignore
-    from ._models import ProxyResource  # type: ignore
-    from ._models import QueueBuildRequest  # type: ignore
-    from ._models import QuickBuildRequest  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import SourceControlAuthInfo  # type: ignore
-    from ._models import SourceRepositoryProperties  # type: ignore
-    from ._models import SourceRepositoryUpdateParameters  # type: ignore
-    from ._models import SourceUploadDefinition  # type: ignore
+from ._models_py3 import BaseImageDependency
+from ._models_py3 import Build
+from ._models_py3 import BuildArgument
+from ._models_py3 import BuildArgumentList
+from ._models_py3 import BuildFilter
+from ._models_py3 import BuildGetLogResult
+from ._models_py3 import BuildListResult
+from ._models_py3 import BuildStep
+from ._models_py3 import BuildStepList
+from ._models_py3 import BuildStepProperties
+from ._models_py3 import BuildStepPropertiesUpdateParameters
+from ._models_py3 import BuildStepUpdateParameters
+from ._models_py3 import BuildTask
+from ._models_py3 import BuildTaskBuildRequest
+from ._models_py3 import BuildTaskFilter
+from ._models_py3 import BuildTaskListResult
+from ._models_py3 import BuildTaskUpdateParameters
+from ._models_py3 import BuildUpdateParameters
+from ._models_py3 import DockerBuildStep
+from ._models_py3 import DockerBuildStepUpdateParameters
+from ._models_py3 import GitCommitTrigger
+from ._models_py3 import ImageDescriptor
+from ._models_py3 import ImageUpdateTrigger
+from ._models_py3 import PlatformProperties
+from ._models_py3 import ProxyResource
+from ._models_py3 import QueueBuildRequest
+from ._models_py3 import QuickBuildRequest
+from ._models_py3 import Resource
+from ._models_py3 import SourceControlAuthInfo
+from ._models_py3 import SourceRepositoryProperties
+from ._models_py3 import SourceRepositoryUpdateParameters
+from ._models_py3 import SourceUploadDefinition
+
 
 from ._container_registry_management_client_enums import (
     BaseImageDependencyType,

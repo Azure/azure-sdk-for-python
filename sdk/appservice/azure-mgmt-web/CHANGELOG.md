@@ -1,5 +1,31 @@
 # Release History
 
+## 6.1.0 (2022-01-24)
+
+**Features**
+
+  - Added operation WebAppsOperations.create_one_deploy_operation
+  - Added operation WebAppsOperations.get_one_deploy_status
+
+## 6.0.0 (2022-01-10)
+
+**Features**
+
+  - Added operation DomainsOperations.transfer_out
+  - Added operation WebAppsOperations.get_auth_settings_v2_without_secrets
+  - Added operation WebSiteManagementClientOperationsMixin.list_custom_host_name_sites
+  - Added operation group ContainerAppsOperations
+  - Added operation group ContainerAppsRevisionsOperations
+  - Model KubeEnvironment has a new parameter container_apps_configuration
+  - Model KubeEnvironment has a new parameter environment_type
+  - Model KubeEnvironmentPatchResource has a new parameter container_apps_configuration
+  - Model StaticSiteARMResource has a new parameter enterprise_grade_cdn_status
+  - Model StaticSitePatchResource has a new parameter enterprise_grade_cdn_status
+
+**Breaking changes**
+
+  - Removed operation WebSiteManagementClientOperationsMixin.generate_github_access_token_for_appservice_cli_async
+
 ## 5.0.0 (2021-09-08)
 
 **Features**

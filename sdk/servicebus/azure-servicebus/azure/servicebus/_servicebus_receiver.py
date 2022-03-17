@@ -6,7 +6,9 @@ import time
 import logging
 import functools
 import uuid
-from typing import Any, List, TYPE_CHECKING, Optional, Dict, Iterator, Union
+import datetime
+import warnings
+from typing import Any, List, Optional, Dict, Iterator, Union, TYPE_CHECKING, cast
 
 import six
 
@@ -52,10 +54,13 @@ from ._common.receiver_mixins import ReceiverMixin
 from ._common.utils import utc_from_timestamp
 from ._servicebus_session import ServiceBusSession
 
-
 if TYPE_CHECKING:
-    import datetime
-    from azure.core.credentials import TokenCredential, AzureSasCredential, AzureNamedKeyCredential
+    from ._common.auto_lock_renewer import AutoLockRenewer
+    from azure.core.credentials import (
+        TokenCredential,
+        AzureSasCredential,
+        AzureNamedKeyCredential,
+    )
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -104,7 +109,7 @@ class ServiceBusReceiver(
     :keyword transport_type: The type of transport protocol that will be used for communicating with
      the Service Bus service. Default is `TransportType.Amqp`.
     :paramtype transport_type: ~azure.servicebus.TransportType
-    :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+    :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
@@ -120,19 +125,37 @@ class ServiceBusReceiver(
      (if provided) within its request to the service.
     """
 
-    def __init__(self, fully_qualified_namespace, credential, **kwargs):
-        # type: (str, Union[TokenCredential, AzureSasCredential, AzureNamedKeyCredential], Any) -> None
+    def __init__(
+        self,
+        fully_qualified_namespace: str,
+        credential: Union["TokenCredential", "AzureSasCredential", "AzureNamedKeyCredential"],
+        *,
+        queue_name: Optional[str] = None,
+        topic_name: Optional[str] = None,
+        subscription_name: Optional[str] = None,
+        receive_mode: Union[
+            ServiceBusReceiveMode, str
+        ] = ServiceBusReceiveMode.PEEK_LOCK,
+        max_wait_time: Optional[float] = None,
+        auto_lock_renewer: Optional["AutoLockRenewer"] = None,
+        prefetch_count: int = 0,
+        **kwargs: Any
+    ) -> None:
         self._message_iter = None  # type: Optional[Iterator[ServiceBusReceivedMessage]]
         if kwargs.get("entity_name"):
             super(ServiceBusReceiver, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,
+                queue_name=queue_name,
+                topic_name=topic_name,
+                subscription_name=subscription_name,
+                receive_mode=receive_mode,
+                max_wait_time=max_wait_time,
+                auto_lock_renewer=auto_lock_renewer,
+                prefetch_count=prefetch_count,
                 **kwargs
             )
         else:
-            queue_name = kwargs.get("queue_name")  # type: Optional[str]
-            topic_name = kwargs.get("topic_name")  # type: Optional[str]
-            subscription_name = kwargs.get("subscription_name")
             if queue_name and topic_name:
                 raise ValueError(
                     "Queue/Topic name can not be specified simultaneously."
@@ -151,10 +174,26 @@ class ServiceBusReceiver(
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,
                 entity_name=entity_name,
+                queue_name=queue_name,
+                topic_name=topic_name,
+                subscription_name=subscription_name,
+                receive_mode=receive_mode,
+                max_wait_time=max_wait_time,
+                auto_lock_renewer=auto_lock_renewer,
+                prefetch_count=prefetch_count,
                 **kwargs
             )
 
-        self._populate_attributes(**kwargs)
+        self._populate_attributes(
+            queue_name=queue_name,
+            topic_name=topic_name,
+            subscription_name=subscription_name,
+            receive_mode=receive_mode,
+            max_wait_time=max_wait_time,
+            auto_lock_renewer=auto_lock_renewer,
+            prefetch_count=prefetch_count,
+            **kwargs
+        )
         self._session = (
             None if self._session_id is None else ServiceBusSession(self._session_id, self)
         )
@@ -245,7 +284,7 @@ class ServiceBusReceiver(
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Service Bus service. Default is `TransportType.Amqp`.
         :paramtype transport_type: ~azure.servicebus.TransportType
-        :keyword dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
+        :keyword Dict http_proxy: HTTP proxy settings. This must be a dictionary with the following
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
         :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
@@ -558,8 +597,11 @@ class ServiceBusReceiver(
             raise ValueError("The max_wait_time must be greater than 0.")
         return self._iter_contextual_wrapper(max_wait_time)
 
-    def receive_messages(self, max_message_count=1, max_wait_time=None):
-        # type: (Optional[int], Optional[float]) -> List[ServiceBusReceivedMessage]
+    def receive_messages(
+        self,
+        max_message_count: Optional[int] = 1,
+        max_wait_time: Optional[float] = None,
+    ) -> List[ServiceBusReceivedMessage]:
         """Receive a batch of messages at once.
 
         This approach is optimal if you wish to process multiple messages simultaneously, or
@@ -615,8 +657,13 @@ class ServiceBusReceiver(
                     self._auto_lock_renewer.register(self, message)
             return messages
 
-    def receive_deferred_messages(self, sequence_numbers, **kwargs):
-        # type: (Union[int,List[int]], Any) -> List[ServiceBusReceivedMessage]
+    def receive_deferred_messages(
+        self,
+        sequence_numbers: Union[int, List[int]],
+        *,
+        timeout: Optional[float] = None,
+        **kwargs: Any
+    ) -> List[ServiceBusReceivedMessage]:
         """Receive messages that have previously been deferred.
 
         When receiving deferred messages from a partitioned entity, all of the supplied
@@ -638,12 +685,14 @@ class ServiceBusReceiver(
                 :caption: Receive deferred messages from ServiceBus.
 
         """
+        if kwargs:
+            warnings.warn(f"Unsupported keyword args: {kwargs}")
         self._check_live()
-        timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
         if isinstance(sequence_numbers, six.integer_types):
             sequence_numbers = [sequence_numbers]
+        sequence_numbers = cast(List[int], sequence_numbers)
         if len(sequence_numbers) == 0:
             return []  # no-op on empty list.
         self._open()
@@ -685,8 +734,14 @@ class ServiceBusReceiver(
                     self._auto_lock_renewer.register(self, message)
             return messages
 
-    def peek_messages(self, max_message_count=1, **kwargs):
-        # type: (int, Any) -> List[ServiceBusReceivedMessage]
+    def peek_messages(
+        self,
+        max_message_count: int = 1,
+        *,
+        sequence_number: int = 0,
+        timeout: Optional[float] = None,
+        **kwargs: Any
+    ) -> List[ServiceBusReceivedMessage]:
         """Browse messages currently pending in the queue.
 
         Peeked messages are not removed from queue, nor are they locked. They cannot be completed,
@@ -710,9 +765,9 @@ class ServiceBusReceiver(
                 :caption: Look at pending messages in the queue.
 
         """
+        if kwargs:
+            warnings.warn(f"Unsupported keyword args: {kwargs}")
         self._check_live()
-        sequence_number = kwargs.pop("sequence_number", 0)
-        timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
         if not sequence_number:
@@ -737,7 +792,7 @@ class ServiceBusReceiver(
         ):
             return messages
 
-    def complete_message(self, message):
+    def complete_message(self, message: ServiceBusReceivedMessage) -> None:
         """Complete the message.
 
         This removes the message from the queue.
@@ -761,7 +816,7 @@ class ServiceBusReceiver(
         """
         self._settle_message_with_retry(message, MESSAGE_COMPLETE)
 
-    def abandon_message(self, message):
+    def abandon_message(self, message: ServiceBusReceivedMessage) -> None:
         """Abandon the message.
 
         This message will be returned to the queue and made available to be received again.
@@ -785,7 +840,7 @@ class ServiceBusReceiver(
         """
         self._settle_message_with_retry(message, MESSAGE_ABANDON)
 
-    def defer_message(self, message):
+    def defer_message(self, message: ServiceBusReceivedMessage) -> None:
         """Defers the message.
 
         This message will remain in the queue but must be requested
@@ -810,7 +865,12 @@ class ServiceBusReceiver(
         """
         self._settle_message_with_retry(message, MESSAGE_DEFER)
 
-    def dead_letter_message(self, message, reason=None, error_description=None):
+    def dead_letter_message(
+        self,
+        message: ServiceBusReceivedMessage,
+        reason: Optional[str] = None,
+        error_description: Optional[str] = None
+    ) -> None:
         """Move the message to the Dead Letter queue.
 
         The Dead Letter queue is a sub-queue that can be
@@ -843,8 +903,13 @@ class ServiceBusReceiver(
             dead_letter_error_description=error_description,
         )
 
-    def renew_message_lock(self, message, **kwargs):
-        # type: (ServiceBusReceivedMessage, Any) -> datetime.datetime
+    def renew_message_lock(
+        self,
+        message: ServiceBusReceivedMessage,
+        *,
+        timeout: Optional[float] = None,
+        **kwargs: Any
+    ) -> datetime.datetime:
         # pylint: disable=protected-access,no-member
         """Renew the message lock.
 
@@ -877,6 +942,8 @@ class ServiceBusReceiver(
                 :caption: Renew the lock on a received message.
 
         """
+        if kwargs:
+            warnings.warn(f"Unsupported keyword args: {kwargs}")
         # type: ignore
         try:
             if self.session:
@@ -892,7 +959,6 @@ class ServiceBusReceiver(
         if not token:
             raise ValueError("Unable to renew lock - no lock token found.")
 
-        timeout = kwargs.pop("timeout", None)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
 

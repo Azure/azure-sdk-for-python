@@ -61,15 +61,14 @@ To create a pipeline topology you need to define sources and sinks.
 user_name_param = ParameterDeclaration(name="rtspUserName",type="String",default="testusername")
 password_param = ParameterDeclaration(name="rtspPassword",type="SecretString",default="testpassword")
 url_param = ParameterDeclaration(name="rtspUrl",type="String",default="rtsp://www.sample.com")
-hub_param = ParameterDeclaration(name="hubSinkOutputName",type="String")
 
 #Source and Sink
 source = RtspSource(name="rtspSource", endpoint=UnsecuredEndpoint(url="${rtspUrl}",credentials=UsernamePasswordCredentials(username="${rtspUserName}",password="${rtspPassword}")))
 node = NodeInput(node_name="rtspSource")
-sink = IotHubMessageSink("msgSink", nodeInput, "${hubSinkOutputName}")
-
+sink = VideoSink(name="videoSink", inputs=[node], video_name="video", local_media_cache_path="/var/lib/videoanalyzer/tmp/", local_media_cache_maximum_size_mi_b="1024");
+    
 pipeline_topology_properties = PipelineTopologyProperties()
-pipeline_topology_properties.parameters = [user_name_param, password_param, url_param, hub_param]
+pipeline_topology_properties.parameters = [user_name_param, password_param, url_param]
 pipeline_topology_properties.sources = [source]
 pipeline_topology_properties.sinks = [sink]
 pipeline_topology = PipelineTopology(name=pipeline_topology_name,properties=pipeline_topology_properties)
@@ -144,7 +143,7 @@ additional questions or comments.
 [doc_pipelines]: https://go.microsoft.com/fwlink/?linkid=2162396
 [package]: https://aka.ms/ava/sdk/client/python
 [source]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/videoanalyzer
-[samples]: https://github.com/Azure-Samples/video-analyzer-iot-edge-python
+[samples]: https://go.microsoft.com/fwlink/?linkid=2162278
 [doc_product]: https://go.microsoft.com/fwlink/?linkid=2162396
 [doc_direct_methods]: https://go.microsoft.com/fwlink/?linkid=2162396
 [iot-device-sdk]: https://pypi.org/project/azure-iot-device/

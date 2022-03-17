@@ -6,8 +6,9 @@
 # pylint:disable=specify-parameter-names-in-call
 # pylint:disable=too-many-lines
 import functools
+import datetime
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any, Union, cast, Mapping
+from typing import Any, Union, cast, Mapping, Optional, List, TYPE_CHECKING
 from xml.etree.ElementTree import ElementTree
 
 from azure.core.async_paging import AsyncItemPaged
@@ -62,6 +63,7 @@ from ...management import _constants as constants
 from ...management._api_version import DEFAULT_VERSION
 from ._shared_key_policy_async import AsyncServiceBusSharedKeyCredentialPolicy
 from ...management._models import (
+    AuthorizationRule,
     QueueRuntimeProperties,
     QueueProperties,
     TopicProperties,
@@ -71,6 +73,9 @@ from ...management._models import (
     RuleProperties,
     NamespaceProperties,
     TrueRuleFilter,
+    CorrelationRuleFilter,
+    SqlRuleFilter,
+    SqlRuleAction,
 )
 from ...management._xml_workaround_policy import ServiceBusXMLWorkaroundPolicy
 from ...management._handle_response_error import _handle_response_error
@@ -86,9 +91,7 @@ from ...management._utils import (
 )
 
 if TYPE_CHECKING:
-    from azure.core.credentials_async import (
-        AsyncTokenCredential,
-    )  # pylint:disable=ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
@@ -106,11 +109,13 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         self,
         fully_qualified_namespace: str,
         credential: "AsyncTokenCredential",
+        *,
+        api_version: str = DEFAULT_VERSION,
         **kwargs: Any
     ) -> None:
 
         self.fully_qualified_namespace = fully_qualified_namespace
-        self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
+        self._api_version = api_version
         self._credential = credential
         self._endpoint = "https://" + fully_qualified_namespace
         self._config = ServiceBusManagementClientConfiguration(self._endpoint, **kwargs)
@@ -163,10 +168,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             element = cast(
                 ElementTree,
                 await self._impl.entity.get(
-                    entity_name,
-                    enrich=enrich,
-                    api_version=self._api_version,
-                    **kwargs
+                    entity_name, enrich=enrich, api_version=self._api_version, **kwargs
                 ),
             )
         return element
@@ -237,7 +239,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
     @classmethod
     def from_connection_string(
-        cls, conn_str: str, **kwargs: Any
+        cls, conn_str: str, *, api_version: str = DEFAULT_VERSION, **kwargs: Any
     ) -> "ServiceBusAdministrationClient":
         """Create a client from connection string.
 
@@ -261,7 +263,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             credential = ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key)  # type: ignore
         if "//" in endpoint:
             endpoint = endpoint[endpoint.index("//") + 2 :]
-        return cls(endpoint, credential, **kwargs)  # type: ignore
+        return cls(endpoint, credential, api_version=api_version, **kwargs)  # type: ignore
 
     async def get_queue(self, queue_name: str, **kwargs) -> QueueProperties:
         """Get the properties of a queue.
@@ -295,7 +297,31 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return runtime_properties
 
-    async def create_queue(self, queue_name: str, **kwargs) -> QueueProperties:
+    async def create_queue(  # pylint: disable=too-many-locals
+        self,
+        queue_name: str,
+        *,
+        authorization_rules: Optional[List[AuthorizationRule]] = None,
+        auto_delete_on_idle: Optional[Union[datetime.timedelta, str]] = None,
+        dead_lettering_on_message_expiration: Optional[bool] = None,
+        default_message_time_to_live: Optional[Union[datetime.timedelta, str]] = None,
+        duplicate_detection_history_time_window: Optional[
+            Union[datetime.timedelta, str]
+        ] = None,
+        enable_batched_operations: Optional[bool] = None,
+        enable_express: Optional[bool] = None,
+        enable_partitioning: Optional[bool] = None,
+        lock_duration: Optional[Union[datetime.timedelta, str]] = None,
+        max_delivery_count: Optional[int] = None,
+        max_size_in_megabytes: Optional[int] = None,
+        requires_duplicate_detection: Optional[bool] = None,
+        requires_session: Optional[bool] = None,
+        forward_to: Optional[str] = None,
+        user_metadata: Optional[str] = None,
+        forward_dead_lettered_messages_to: Optional[str] = None,
+        max_message_size_in_kilobytes: Optional[int] = None,
+        **kwargs: Any
+    ) -> QueueProperties:
         """Create a queue.
 
         :param queue_name: Name of the queue.
@@ -362,43 +388,35 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :rtype: ~azure.servicebus.management.QueueProperties
         """
         forward_to = _normalize_entity_path_to_full_path_if_needed(
-            kwargs.pop("forward_to", None), self.fully_qualified_namespace
+            forward_to, self.fully_qualified_namespace
         )
         forward_dead_lettered_messages_to = (
             _normalize_entity_path_to_full_path_if_needed(
-                kwargs.pop("forward_dead_lettered_messages_to", None),
+                forward_dead_lettered_messages_to,
                 self.fully_qualified_namespace,
             )
         )
         queue = QueueProperties(
             queue_name,
-            authorization_rules=kwargs.pop("authorization_rules", None),
-            auto_delete_on_idle=kwargs.pop("auto_delete_on_idle", None),
-            dead_lettering_on_message_expiration=kwargs.pop(
-                "dead_lettering_on_message_expiration", None
-            ),
-            default_message_time_to_live=kwargs.pop(
-                "default_message_time_to_live", None
-            ),
-            duplicate_detection_history_time_window=kwargs.pop(
-                "duplicate_detection_history_time_window", None
-            ),
+            authorization_rules=authorization_rules,
+            auto_delete_on_idle=auto_delete_on_idle,
+            dead_lettering_on_message_expiration=dead_lettering_on_message_expiration,
+            default_message_time_to_live=default_message_time_to_live,
+            duplicate_detection_history_time_window=duplicate_detection_history_time_window,
             availability_status=None,
-            enable_batched_operations=kwargs.pop("enable_batched_operations", None),
-            enable_express=kwargs.pop("enable_express", None),
-            enable_partitioning=kwargs.pop("enable_partitioning", None),
-            lock_duration=kwargs.pop("lock_duration", None),
-            max_delivery_count=kwargs.pop("max_delivery_count", None),
-            max_size_in_megabytes=kwargs.pop("max_size_in_megabytes", None),
-            requires_duplicate_detection=kwargs.pop(
-                "requires_duplicate_detection", None
-            ),
-            requires_session=kwargs.pop("requires_session", None),
+            enable_batched_operations=enable_batched_operations,
+            enable_express=enable_express,
+            enable_partitioning=enable_partitioning,
+            lock_duration=lock_duration,
+            max_delivery_count=max_delivery_count,
+            max_size_in_megabytes=max_size_in_megabytes,
+            requires_duplicate_detection=requires_duplicate_detection,
+            requires_session=requires_session,
             status=kwargs.pop("status", None),
             forward_to=forward_to,
             forward_dead_lettered_messages_to=forward_dead_lettered_messages_to,
-            user_metadata=kwargs.pop("user_metadata", None),
-            max_message_size_in_kilobytes=kwargs.pop("max_message_size_in_kilobytes", None)
+            user_metadata=user_metadata,
+            max_message_size_in_kilobytes=max_message_size_in_kilobytes,
         )
         to_create = queue._to_internal_entity(self.fully_qualified_namespace)
         create_entity_body = CreateQueueBody(
@@ -560,7 +578,30 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return topic_description
 
-    async def create_topic(self, topic_name: str, **kwargs) -> TopicProperties:
+    async def create_topic(
+        self,
+        topic_name: str,
+        *,
+        default_message_time_to_live: Optional[Union[datetime.timedelta, str]] = None,
+        max_size_in_megabytes: Optional[
+            int
+        ] = None,
+        requires_duplicate_detection: Optional[bool] = None,
+        duplicate_detection_history_time_window: Optional[
+            Union[datetime.timedelta, str]
+        ] = None,
+        enable_batched_operations: Optional[bool] = None,
+        size_in_bytes: Optional[int] = None,
+        filtering_messages_before_publishing: Optional[bool] = None,
+        authorization_rules: Optional[List[AuthorizationRule]] = None,
+        support_ordering: Optional[bool] = None,
+        auto_delete_on_idle: Optional[Union[datetime.timedelta, str]] = None,
+        enable_partitioning: Optional[bool] = None,
+        enable_express: Optional[bool] = None,
+        user_metadata: Optional[str] = None,
+        max_message_size_in_kilobytes: Optional[int] = None,
+        **kwargs: Any
+    ) -> TopicProperties:
         """Create a topic.
 
         :param topic_name: Name of the topic.
@@ -572,7 +613,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :paramtype default_message_time_to_live: Union[~datetime.timedelta, str]
         :keyword max_size_in_megabytes: The maximum size of the topic in megabytes, which is the size of
          memory allocated for the topic.
-        :paramtype max_size_in_megabytes: long
+        :paramtype max_size_in_megabytes: int
         :keyword requires_duplicate_detection: A value indicating if this topic requires duplicate
          detection.
         :paramtype requires_duplicate_detection: bool
@@ -615,27 +656,24 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         topic = TopicProperties(
             topic_name,
-            default_message_time_to_live=kwargs.pop(
-                "default_message_time_to_live", None
-            ),
-            max_size_in_megabytes=kwargs.pop("max_size_in_megabytes", None),
-            requires_duplicate_detection=kwargs.pop(
-                "requires_duplicate_detection", None
-            ),
-            duplicate_detection_history_time_window=kwargs.pop(
-                "duplicate_detection_history_time_window", None
-            ),
-            enable_batched_operations=kwargs.pop("enable_batched_operations", None),
-            size_in_bytes=kwargs.pop("size_in_bytes", None),
-            authorization_rules=kwargs.pop("authorization_rules", None),
+            default_message_time_to_live=default_message_time_to_live,
+            max_size_in_megabytes=max_size_in_megabytes,
+            requires_duplicate_detection=requires_duplicate_detection,
+            # TODO: ask why default of 10 mins isn't followed below,
+            duplicate_detection_history_time_window=duplicate_detection_history_time_window,
+            enable_batched_operations=enable_batched_operations,
+            size_in_bytes=size_in_bytes,
+            authorization_rules=authorization_rules,
+            filtering_messages_before_publishing=filtering_messages_before_publishing,
             status=kwargs.pop("status", None),
-            support_ordering=kwargs.pop("support_ordering", None),
-            auto_delete_on_idle=kwargs.pop("auto_delete_on_idle", None),
-            enable_partitioning=kwargs.pop("enable_partitioning", None),
+            support_ordering=support_ordering,
+            auto_delete_on_idle=auto_delete_on_idle,
+            enable_partitioning=enable_partitioning,
             availability_status=None,
-            enable_express=kwargs.pop("enable_express", None),
-            user_metadata=kwargs.pop("user_metadata", None),
-            max_message_size_in_kilobytes=kwargs.pop("max_message_size_in_kilobytes", None)
+            enable_express=enable_express,
+            user_metadata=user_metadata,
+            max_message_size_in_kilobytes=max_message_size_in_kilobytes,
+            **kwargs
         )
         to_create = topic._to_internal_entity()
 
@@ -808,7 +846,22 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return subscription
 
     async def create_subscription(
-        self, topic_name: str, subscription_name: str, **kwargs
+        self,
+        topic_name: str,
+        subscription_name: str,
+        *,
+        lock_duration: Optional[Union[datetime.timedelta, str]] = None,
+        requires_session: Optional[bool] = None,
+        default_message_time_to_live: Optional[Union[datetime.timedelta, str]] = None,
+        dead_lettering_on_message_expiration: Optional[bool] = None,
+        dead_lettering_on_filter_evaluation_exceptions: Optional[bool] = None,
+        max_delivery_count: Optional[int] = None,
+        enable_batched_operations: Optional[bool] = None,
+        forward_to: Optional[str] = None,
+        user_metadata: Optional[str] = None,
+        forward_dead_lettered_messages_to: Optional[str] = None,
+        auto_delete_on_idle: Optional[Union[datetime.timedelta, str]] = None,
+        **kwargs: Any
     ) -> SubscriptionProperties:
         """Create a topic subscription.
 
@@ -859,35 +912,29 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         # pylint:disable=protected-access
         _validate_entity_name_type(topic_name, display_name="topic_name")
         forward_to = _normalize_entity_path_to_full_path_if_needed(
-            kwargs.pop("forward_to", None), self.fully_qualified_namespace
+            forward_to, self.fully_qualified_namespace
         )
         forward_dead_lettered_messages_to = (
             _normalize_entity_path_to_full_path_if_needed(
-                kwargs.pop("forward_dead_lettered_messages_to", None),
+                forward_dead_lettered_messages_to,
                 self.fully_qualified_namespace,
             )
         )
 
         subscription = SubscriptionProperties(
             subscription_name,
-            lock_duration=kwargs.pop("lock_duration", None),
-            requires_session=kwargs.pop("requires_session", None),
-            default_message_time_to_live=kwargs.pop(
-                "default_message_time_to_live", None
-            ),
-            dead_lettering_on_message_expiration=kwargs.pop(
-                "dead_lettering_on_message_expiration", None
-            ),
-            dead_lettering_on_filter_evaluation_exceptions=kwargs.pop(
-                "dead_lettering_on_filter_evaluation_exceptions", None
-            ),
-            max_delivery_count=kwargs.pop("max_delivery_count", None),
-            enable_batched_operations=kwargs.pop("enable_batched_operations", None),
+            lock_duration=lock_duration,
+            requires_session=requires_session,
+            default_message_time_to_live=default_message_time_to_live,
+            dead_lettering_on_message_expiration=dead_lettering_on_message_expiration,
+            dead_lettering_on_filter_evaluation_exceptions=dead_lettering_on_filter_evaluation_exceptions,
+            max_delivery_count=max_delivery_count,
+            enable_batched_operations=enable_batched_operations,
             status=kwargs.pop("status", None),
             forward_to=forward_to,
-            user_metadata=kwargs.pop("user_metadata", None),
+            user_metadata=user_metadata,
             forward_dead_lettered_messages_to=forward_dead_lettered_messages_to,
-            auto_delete_on_idle=kwargs.pop("auto_delete_on_idle", None),
+            auto_delete_on_idle=auto_delete_on_idle,
             availability_status=None,
         )
         to_create = subscription._to_internal_entity(self.fully_qualified_namespace)  # type: ignore
@@ -940,8 +987,12 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         _validate_entity_name_type(topic_name, display_name="topic_name")
         # we should not mutate the input, making a copy first for update
-        subscription = deepcopy(create_properties_from_dict_if_needed(subscription, SubscriptionProperties))
-        to_update = subscription._to_internal_entity(self.fully_qualified_namespace, kwargs)
+        subscription = deepcopy(
+            create_properties_from_dict_if_needed(subscription, SubscriptionProperties)
+        )
+        to_update = subscription._to_internal_entity(
+            self.fully_qualified_namespace, kwargs
+        )
 
         create_entity_body = CreateSubscriptionBody(
             content=CreateSubscriptionBodyContent(
@@ -1062,7 +1113,16 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return rule_description
 
     async def create_rule(
-        self, topic_name: str, subscription_name: str, rule_name: str, **kwargs
+        self,
+        topic_name: str,
+        subscription_name: str,
+        rule_name: str,
+        *,
+        filter: Union[  # pylint: disable=redefined-builtin
+            CorrelationRuleFilter, SqlRuleFilter
+        ]=TrueRuleFilter(),
+        action: Optional[SqlRuleAction] = None,
+        **kwargs: Any
     ) -> RuleProperties:
         """Create a rule for a topic subscription.
 
@@ -1084,8 +1144,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         rule = RuleProperties(
             rule_name,
-            filter=kwargs.pop("filter", TrueRuleFilter()),
-            action=kwargs.pop("action", None),
+            filter=filter,
+            action=action,
             created_at_utc=None,
         )
         to_create = rule._to_internal_entity()

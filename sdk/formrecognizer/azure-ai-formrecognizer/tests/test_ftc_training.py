@@ -6,6 +6,7 @@
 
 import pytest
 import functools
+from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.core.exceptions import HttpResponseError
 from azure.ai.formrecognizer._models import CustomFormModel
 from azure.ai.formrecognizer import FormTrainingClient
@@ -17,10 +18,15 @@ FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTraini
 
 class TestTraining(FormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
-    def test_training_with_labels_v2(self, client, formrecognizer_storage_container_sas_url_v2):
-
+    @recorded_by_proxy
+    def test_training_with_labels_v2(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
+        set_bodiless_matcher()
+        
         poller = client.begin_training(training_files_url=formrecognizer_storage_container_sas_url_v2, use_training_labels=True)
         model = poller.result()
 
@@ -46,8 +52,10 @@ class TestTraining(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
-    def test_training_multipage_with_labels_v2(self, client, formrecognizer_multipage_storage_container_sas_url_v2):
-
+    @recorded_by_proxy
+    def test_training_multipage_with_labels_v2(self, client, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+        set_bodiless_matcher()
+        
         poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=True)
         model = poller.result()
 
@@ -71,8 +79,10 @@ class TestTraining(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
-    def test_training_without_labels_v2(self, client, formrecognizer_storage_container_sas_url_v2):
-
+    @recorded_by_proxy
+    def test_training_without_labels_v2(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
+        set_bodiless_matcher()
+        
         poller = client.begin_training(training_files_url=formrecognizer_storage_container_sas_url_v2, use_training_labels=True)
         model = poller.result()
 
@@ -98,8 +108,10 @@ class TestTraining(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
-    def test_training_multipage_without_labels_v2(self, client, formrecognizer_multipage_storage_container_sas_url_v2):
-
+    @recorded_by_proxy
+    def test_training_multipage_without_labels_v2(self, client, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+        set_bodiless_matcher()
+        
         poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=True)
         model = poller.result()
 
@@ -122,8 +134,10 @@ class TestTraining(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
-    def test_training_with_files_filter_v2(self, client, formrecognizer_storage_container_sas_url_v2):
-
+    @recorded_by_proxy
+    def test_training_with_files_filter_v2(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
+        set_bodiless_matcher()
+        
         poller = client.begin_training(training_files_url=formrecognizer_storage_container_sas_url_v2, use_training_labels=False, include_subfolders=True)
         model = poller.result()
         assert len(model.training_documents) == 6
@@ -142,8 +156,10 @@ class TestTraining(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
-    def test_training_with_labels_v21(self, client, formrecognizer_storage_container_sas_url_v2):
-
+    @recorded_by_proxy
+    def test_training_with_labels_v21(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
+        set_bodiless_matcher()
+        
         poller = client.begin_training(training_files_url=formrecognizer_storage_container_sas_url_v2, use_training_labels=True, model_name="my labeled model")
         model = poller.result()
 
@@ -170,8 +186,10 @@ class TestTraining(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
-    def test_training_multipage_with_labels_v21(self, client, formrecognizer_multipage_storage_container_sas_url_v2):
-
+    @recorded_by_proxy
+    def test_training_multipage_with_labels_v21(self, client, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+        set_bodiless_matcher()
+        
         poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=True)
         model = poller.result()
 
@@ -194,8 +212,10 @@ class TestTraining(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
-    def test_training_without_labels_v21(self, client, formrecognizer_storage_container_sas_url_v2):
-
+    @recorded_by_proxy
+    def test_training_without_labels_v21(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
+        set_bodiless_matcher()
+        
         poller = client.begin_training(training_files_url=formrecognizer_storage_container_sas_url_v2, use_training_labels=True, model_name="my labeled model")
         model = poller.result()
 
@@ -222,8 +242,10 @@ class TestTraining(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
-    def test_training_multipage_without_labels_v21(self, client, formrecognizer_multipage_storage_container_sas_url_v2):
-
+    @recorded_by_proxy
+    def test_training_multipage_without_labels_v21(self, client, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+        set_bodiless_matcher()
+        
         poller = client.begin_training(formrecognizer_multipage_storage_container_sas_url_v2, use_training_labels=True)
         model = poller.result()
 
@@ -246,8 +268,10 @@ class TestTraining(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
-    def test_training_with_files_filter_v21(self, client, formrecognizer_storage_container_sas_url_v2):
-
+    @recorded_by_proxy
+    def test_training_with_files_filter_v21(self, client, formrecognizer_storage_container_sas_url_v2, **kwargs):
+        set_bodiless_matcher()
+        
         poller = client.begin_training(training_files_url=formrecognizer_storage_container_sas_url_v2, use_training_labels=False, include_subfolders=True)
         model = poller.result()
         assert len(model.training_documents) == 6
@@ -266,7 +290,8 @@ class TestTraining(FormRecognizerTest):
 
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.0"})
-    def test_training_with_model_name_bad_api_version(self, client):
+    def test_training_with_model_name_bad_api_version(self, **kwargs):
+        client = kwargs.pop("client")
         with pytest.raises(ValueError) as excinfo:
             poller = client.begin_training(training_files_url="url", use_training_labels=True, model_name="not supported in v2.0")
             result = poller.result()

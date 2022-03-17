@@ -26,10 +26,10 @@ class ComponentsResource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -54,6 +54,12 @@ class ComponentsResource(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(ComponentsResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -75,31 +81,31 @@ class ApplicationInsightsComponent(ComponentsResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param kind: Required. The kind of application that this component refers to, used to customize
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar kind: Required. The kind of application that this component refers to, used to customize
      UI. This value is a freeform string, values should typically be one of the following: web, ios,
      other, store, java, phone.
-    :type kind: str
+    :vartype kind: str
     :ivar application_id: The unique ID of your application. This field mirrors the 'Name' field
      and cannot be changed.
     :vartype application_id: str
     :ivar app_id: Application Insights Unique ID for your Application.
     :vartype app_id: str
-    :param application_type: Type of application being monitored. Possible values include: "web",
+    :ivar application_type: Type of application being monitored. Possible values include: "web",
      "other". Default value: "web".
-    :type application_type: str or
+    :vartype application_type: str or
      ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.ApplicationType
-    :param flow_type: Used by the Application Insights system to determine what kind of flow this
+    :ivar flow_type: Used by the Application Insights system to determine what kind of flow this
      component was created by. This is to be set to 'Bluefield' when creating/updating a component
      via the REST API. Possible values include: "Bluefield". Default value: "Bluefield".
-    :type flow_type: str or ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.FlowType
-    :param request_source: Describes what tool created this Application Insights component.
+    :vartype flow_type: str or ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.FlowType
+    :ivar request_source: Describes what tool created this Application Insights component.
      Customers using this API should set this to the default 'rest'. Possible values include:
      "rest". Default value: "rest".
-    :type request_source: str or
+    :vartype request_source: str or
      ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.RequestSource
     :ivar instrumentation_key: Application Insights Instrumentation key. A read-only value that
      applications can use to identify the destination for all telemetry sent to Azure Application
@@ -110,9 +116,9 @@ class ApplicationInsightsComponent(ComponentsResource):
     :vartype creation_date: ~datetime.datetime
     :ivar tenant_id: Azure Tenant Id.
     :vartype tenant_id: str
-    :param hockey_app_id: The unique application ID created when a new application is added to
+    :ivar hockey_app_id: The unique application ID created when a new application is added to
      HockeyApp, used for communications with HockeyApp.
-    :type hockey_app_id: str
+    :vartype hockey_app_id: str
     :ivar hockey_app_token: Token used to authenticate communications with between Application
      Insights and HockeyApp.
     :vartype hockey_app_token: str
@@ -120,32 +126,32 @@ class ApplicationInsightsComponent(ComponentsResource):
      provisioned within the resource group it is defined. Users cannot change this value but are
      able to read from it. Values will include Succeeded, Deploying, Canceled, and Failed.
     :vartype provisioning_state: str
-    :param sampling_percentage: Percentage of the data produced by the application being monitored
+    :ivar sampling_percentage: Percentage of the data produced by the application being monitored
      that is being sampled for Application Insights telemetry.
-    :type sampling_percentage: float
+    :vartype sampling_percentage: float
     :ivar connection_string: Application Insights component connection string.
     :vartype connection_string: str
-    :param retention_in_days: Retention period in days.
-    :type retention_in_days: int
-    :param disable_ip_masking: Disable IP masking.
-    :type disable_ip_masking: bool
-    :param immediate_purge_data_on30_days: Purge data immediately after 30 days.
-    :type immediate_purge_data_on30_days: bool
+    :ivar retention_in_days: Retention period in days.
+    :vartype retention_in_days: int
+    :ivar disable_ip_masking: Disable IP masking.
+    :vartype disable_ip_masking: bool
+    :ivar immediate_purge_data_on30_days: Purge data immediately after 30 days.
+    :vartype immediate_purge_data_on30_days: bool
     :ivar private_link_scoped_resources: List of linked private link scope resources.
     :vartype private_link_scoped_resources:
      list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.PrivateLinkScopedResource]
-    :param public_network_access_for_ingestion: The network access type for accessing Application
+    :ivar public_network_access_for_ingestion: The network access type for accessing Application
      Insights ingestion. Possible values include: "Enabled", "Disabled". Default value: "Enabled".
-    :type public_network_access_for_ingestion: str or
+    :vartype public_network_access_for_ingestion: str or
      ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.PublicNetworkAccessType
-    :param public_network_access_for_query: The network access type for accessing Application
+    :ivar public_network_access_for_query: The network access type for accessing Application
      Insights query. Possible values include: "Enabled", "Disabled". Default value: "Enabled".
-    :type public_network_access_for_query: str or
+    :vartype public_network_access_for_query: str or
      ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.PublicNetworkAccessType
-    :param ingestion_mode: Indicates the flow of the ingestion. Possible values include:
+    :ivar ingestion_mode: Indicates the flow of the ingestion. Possible values include:
      "ApplicationInsights", "ApplicationInsightsWithDiagnosticSettings", "LogAnalytics". Default
      value: "ApplicationInsights".
-    :type ingestion_mode: str or
+    :vartype ingestion_mode: str or
      ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.IngestionMode
     """
 
@@ -214,6 +220,55 @@ class ApplicationInsightsComponent(ComponentsResource):
         ingestion_mode: Optional[Union[str, "IngestionMode"]] = "ApplicationInsights",
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword kind: Required. The kind of application that this component refers to, used to
+         customize UI. This value is a freeform string, values should typically be one of the following:
+         web, ios, other, store, java, phone.
+        :paramtype kind: str
+        :keyword application_type: Type of application being monitored. Possible values include: "web",
+         "other". Default value: "web".
+        :paramtype application_type: str or
+         ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.ApplicationType
+        :keyword flow_type: Used by the Application Insights system to determine what kind of flow this
+         component was created by. This is to be set to 'Bluefield' when creating/updating a component
+         via the REST API. Possible values include: "Bluefield". Default value: "Bluefield".
+        :paramtype flow_type: str or
+         ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.FlowType
+        :keyword request_source: Describes what tool created this Application Insights component.
+         Customers using this API should set this to the default 'rest'. Possible values include:
+         "rest". Default value: "rest".
+        :paramtype request_source: str or
+         ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.RequestSource
+        :keyword hockey_app_id: The unique application ID created when a new application is added to
+         HockeyApp, used for communications with HockeyApp.
+        :paramtype hockey_app_id: str
+        :keyword sampling_percentage: Percentage of the data produced by the application being
+         monitored that is being sampled for Application Insights telemetry.
+        :paramtype sampling_percentage: float
+        :keyword retention_in_days: Retention period in days.
+        :paramtype retention_in_days: int
+        :keyword disable_ip_masking: Disable IP masking.
+        :paramtype disable_ip_masking: bool
+        :keyword immediate_purge_data_on30_days: Purge data immediately after 30 days.
+        :paramtype immediate_purge_data_on30_days: bool
+        :keyword public_network_access_for_ingestion: The network access type for accessing Application
+         Insights ingestion. Possible values include: "Enabled", "Disabled". Default value: "Enabled".
+        :paramtype public_network_access_for_ingestion: str or
+         ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.PublicNetworkAccessType
+        :keyword public_network_access_for_query: The network access type for accessing Application
+         Insights query. Possible values include: "Enabled", "Disabled". Default value: "Enabled".
+        :paramtype public_network_access_for_query: str or
+         ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.PublicNetworkAccessType
+        :keyword ingestion_mode: Indicates the flow of the ingestion. Possible values include:
+         "ApplicationInsights", "ApplicationInsightsWithDiagnosticSettings", "LogAnalytics". Default
+         value: "ApplicationInsights".
+        :paramtype ingestion_mode: str or
+         ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.IngestionMode
+        """
         super(ApplicationInsightsComponent, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.application_id = None
@@ -243,12 +298,12 @@ class ApplicationInsightsComponentListResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. List of Application Insights component definitions.
-    :type value:
+    :ivar value: Required. List of Application Insights component definitions.
+    :vartype value:
      list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.ApplicationInsightsComponent]
-    :param next_link: The URI to get the next set of Application Insights component definitions if
+    :ivar next_link: The URI to get the next set of Application Insights component definitions if
      too many components where returned in the result set.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _validation = {
@@ -267,6 +322,14 @@ class ApplicationInsightsComponentListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Required. List of Application Insights component definitions.
+        :paramtype value:
+         list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.ApplicationInsightsComponent]
+        :keyword next_link: The URI to get the next set of Application Insights component definitions
+         if too many components where returned in the result set.
+        :paramtype next_link: str
+        """
         super(ApplicationInsightsComponentListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -279,26 +342,26 @@ class ApplicationInsightsComponentProactiveDetectionConfiguration(msrest.seriali
 
     :ivar id: Azure resource Id.
     :vartype id: str
-    :param name: Azure resource name.
-    :type name: str
+    :ivar name: Azure resource name.
+    :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Resource location.
-    :type location: str
+    :ivar location: Resource location.
+    :vartype location: str
     :ivar name_properties_name: The rule name.
     :vartype name_properties_name: str
-    :param enabled: A flag that indicates whether this rule is enabled by the user.
-    :type enabled: bool
-    :param send_emails_to_subscription_owners: A flag that indicated whether notifications on this
+    :ivar enabled: A flag that indicates whether this rule is enabled by the user.
+    :vartype enabled: bool
+    :ivar send_emails_to_subscription_owners: A flag that indicated whether notifications on this
      rule should be sent to subscription owners.
-    :type send_emails_to_subscription_owners: bool
-    :param custom_emails: Custom email addresses for this rule notifications.
-    :type custom_emails: list[str]
+    :vartype send_emails_to_subscription_owners: bool
+    :ivar custom_emails: Custom email addresses for this rule notifications.
+    :vartype custom_emails: list[str]
     :ivar last_updated_time: The last time this rule was updated.
     :vartype last_updated_time: str
-    :param rule_definitions: Static definitions of the ProactiveDetection configuration rule (same
+    :ivar rule_definitions: Static definitions of the ProactiveDetection configuration rule (same
      values for all components).
-    :type rule_definitions:
+    :vartype rule_definitions:
      ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleDefinitions
     """
 
@@ -333,6 +396,23 @@ class ApplicationInsightsComponentProactiveDetectionConfiguration(msrest.seriali
         rule_definitions: Optional["ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleDefinitions"] = None,
         **kwargs
     ):
+        """
+        :keyword name: Azure resource name.
+        :paramtype name: str
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword enabled: A flag that indicates whether this rule is enabled by the user.
+        :paramtype enabled: bool
+        :keyword send_emails_to_subscription_owners: A flag that indicated whether notifications on
+         this rule should be sent to subscription owners.
+        :paramtype send_emails_to_subscription_owners: bool
+        :keyword custom_emails: Custom email addresses for this rule notifications.
+        :paramtype custom_emails: list[str]
+        :keyword rule_definitions: Static definitions of the ProactiveDetection configuration rule
+         (same values for all components).
+        :paramtype rule_definitions:
+         ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleDefinitions
+        """
         super(ApplicationInsightsComponentProactiveDetectionConfiguration, self).__init__(**kwargs)
         self.id = None
         self.name = name
@@ -349,23 +429,23 @@ class ApplicationInsightsComponentProactiveDetectionConfiguration(msrest.seriali
 class ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleDefinitions(msrest.serialization.Model):
     """Static definitions of the ProactiveDetection configuration rule (same values for all components).
 
-    :param name: The rule name.
-    :type name: str
-    :param display_name: The rule name as it is displayed in UI.
-    :type display_name: str
-    :param description: The rule description.
-    :type description: str
-    :param help_url: URL which displays additional info about the proactive detection rule.
-    :type help_url: str
-    :param is_hidden: A flag indicating whether the rule is hidden (from the UI).
-    :type is_hidden: bool
-    :param is_enabled_by_default: A flag indicating whether the rule is enabled by default.
-    :type is_enabled_by_default: bool
-    :param is_in_preview: A flag indicating whether the rule is in preview.
-    :type is_in_preview: bool
-    :param supports_email_notifications: A flag indicating whether email notifications are
-     supported for detections for this rule.
-    :type supports_email_notifications: bool
+    :ivar name: The rule name.
+    :vartype name: str
+    :ivar display_name: The rule name as it is displayed in UI.
+    :vartype display_name: str
+    :ivar description: The rule description.
+    :vartype description: str
+    :ivar help_url: URL which displays additional info about the proactive detection rule.
+    :vartype help_url: str
+    :ivar is_hidden: A flag indicating whether the rule is hidden (from the UI).
+    :vartype is_hidden: bool
+    :ivar is_enabled_by_default: A flag indicating whether the rule is enabled by default.
+    :vartype is_enabled_by_default: bool
+    :ivar is_in_preview: A flag indicating whether the rule is in preview.
+    :vartype is_in_preview: bool
+    :ivar supports_email_notifications: A flag indicating whether email notifications are supported
+     for detections for this rule.
+    :vartype supports_email_notifications: bool
     """
 
     _attribute_map = {
@@ -392,6 +472,25 @@ class ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleD
         supports_email_notifications: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword name: The rule name.
+        :paramtype name: str
+        :keyword display_name: The rule name as it is displayed in UI.
+        :paramtype display_name: str
+        :keyword description: The rule description.
+        :paramtype description: str
+        :keyword help_url: URL which displays additional info about the proactive detection rule.
+        :paramtype help_url: str
+        :keyword is_hidden: A flag indicating whether the rule is hidden (from the UI).
+        :paramtype is_hidden: bool
+        :keyword is_enabled_by_default: A flag indicating whether the rule is enabled by default.
+        :paramtype is_enabled_by_default: bool
+        :keyword is_in_preview: A flag indicating whether the rule is in preview.
+        :paramtype is_in_preview: bool
+        :keyword supports_email_notifications: A flag indicating whether email notifications are
+         supported for detections for this rule.
+        :paramtype supports_email_notifications: bool
+        """
         super(ApplicationInsightsComponentProactiveDetectionConfigurationPropertiesRuleDefinitions, self).__init__(**kwargs)
         self.name = name
         self.display_name = display_name
@@ -408,11 +507,11 @@ class ComponentPurgeBody(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param table: Required. Table from which to purge data.
-    :type table: str
-    :param filters: Required. The set of columns and filters (queries) to run over them to purge
-     the resulting data.
-    :type filters:
+    :ivar table: Required. Table from which to purge data.
+    :vartype table: str
+    :ivar filters: Required. The set of columns and filters (queries) to run over them to purge the
+     resulting data.
+    :vartype filters:
      list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.ComponentPurgeBodyFilters]
     """
 
@@ -433,6 +532,14 @@ class ComponentPurgeBody(msrest.serialization.Model):
         filters: List["ComponentPurgeBodyFilters"],
         **kwargs
     ):
+        """
+        :keyword table: Required. Table from which to purge data.
+        :paramtype table: str
+        :keyword filters: Required. The set of columns and filters (queries) to run over them to purge
+         the resulting data.
+        :paramtype filters:
+         list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.ComponentPurgeBodyFilters]
+        """
         super(ComponentPurgeBody, self).__init__(**kwargs)
         self.table = table
         self.filters = filters
@@ -441,18 +548,18 @@ class ComponentPurgeBody(msrest.serialization.Model):
 class ComponentPurgeBodyFilters(msrest.serialization.Model):
     """User-defined filters to return data which will be purged from the table.
 
-    :param column: The column of the table over which the given query should run.
-    :type column: str
-    :param operator: A query operator to evaluate over the provided column and value(s). Supported
+    :ivar column: The column of the table over which the given query should run.
+    :vartype column: str
+    :ivar operator: A query operator to evaluate over the provided column and value(s). Supported
      operators are ==, =~, in, in~, >, >=, <, <=, between, and have the same behavior as they would
      in a KQL query.
-    :type operator: str
-    :param value: the value for the operator to function over. This can be a number (e.g., > 100),
-     a string (timestamp >= '2017-09-01') or array of values.
-    :type value: any
-    :param key: When filtering over custom dimensions, this key will be used as the name of the
+    :vartype operator: str
+    :ivar value: the value for the operator to function over. This can be a number (e.g., > 100), a
+     string (timestamp >= '2017-09-01') or array of values.
+    :vartype value: any
+    :ivar key: When filtering over custom dimensions, this key will be used as the name of the
      custom dimension.
-    :type key: str
+    :vartype key: str
     """
 
     _attribute_map = {
@@ -471,6 +578,20 @@ class ComponentPurgeBodyFilters(msrest.serialization.Model):
         key: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword column: The column of the table over which the given query should run.
+        :paramtype column: str
+        :keyword operator: A query operator to evaluate over the provided column and value(s).
+         Supported operators are ==, =~, in, in~, >, >=, <, <=, between, and have the same behavior as
+         they would in a KQL query.
+        :paramtype operator: str
+        :keyword value: the value for the operator to function over. This can be a number (e.g., >
+         100), a string (timestamp >= '2017-09-01') or array of values.
+        :paramtype value: any
+        :keyword key: When filtering over custom dimensions, this key will be used as the name of the
+         custom dimension.
+        :paramtype key: str
+        """
         super(ComponentPurgeBodyFilters, self).__init__(**kwargs)
         self.column = column
         self.operator = operator
@@ -483,9 +604,9 @@ class ComponentPurgeResponse(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param operation_id: Required. Id to use when querying for status for a particular purge
+    :ivar operation_id: Required. Id to use when querying for status for a particular purge
      operation.
-    :type operation_id: str
+    :vartype operation_id: str
     """
 
     _validation = {
@@ -502,6 +623,11 @@ class ComponentPurgeResponse(msrest.serialization.Model):
         operation_id: str,
         **kwargs
     ):
+        """
+        :keyword operation_id: Required. Id to use when querying for status for a particular purge
+         operation.
+        :paramtype operation_id: str
+        """
         super(ComponentPurgeResponse, self).__init__(**kwargs)
         self.operation_id = operation_id
 
@@ -511,9 +637,9 @@ class ComponentPurgeStatusResponse(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param status: Required. Status of the operation represented by the requested Id. Possible
+    :ivar status: Required. Status of the operation represented by the requested Id. Possible
      values include: "pending", "completed".
-    :type status: str or ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.PurgeState
+    :vartype status: str or ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.PurgeState
     """
 
     _validation = {
@@ -530,6 +656,11 @@ class ComponentPurgeStatusResponse(msrest.serialization.Model):
         status: Union[str, "PurgeState"],
         **kwargs
     ):
+        """
+        :keyword status: Required. Status of the operation represented by the requested Id. Possible
+         values include: "pending", "completed".
+        :paramtype status: str or ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.PurgeState
+        """
         super(ComponentPurgeStatusResponse, self).__init__(**kwargs)
         self.status = status
 
@@ -537,10 +668,10 @@ class ComponentPurgeStatusResponse(msrest.serialization.Model):
 class HeaderField(msrest.serialization.Model):
     """A header to add to the WebTest.
 
-    :param header_field_name: The name of the header.
-    :type header_field_name: str
-    :param header_field_value: The value of the header.
-    :type header_field_value: str
+    :ivar header_field_name: The name of the header.
+    :vartype header_field_name: str
+    :ivar header_field_value: The value of the header.
+    :vartype header_field_value: str
     """
 
     _attribute_map = {
@@ -555,6 +686,12 @@ class HeaderField(msrest.serialization.Model):
         header_field_value: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword header_field_name: The name of the header.
+        :paramtype header_field_name: str
+        :keyword header_field_value: The value of the header.
+        :paramtype header_field_value: str
+        """
         super(HeaderField, self).__init__(**kwargs)
         self.header_field_name = header_field_name
         self.header_field_value = header_field_value
@@ -563,14 +700,14 @@ class HeaderField(msrest.serialization.Model):
 class Operation(msrest.serialization.Model):
     """Represents an operation returned by the GetOperations request.
 
-    :param name: Name of the operation.
-    :type name: str
-    :param display: Display name of the operation.
-    :type display: ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.OperationInfo
-    :param origin: Origin of the operation.
-    :type origin: str
-    :param properties: Properties of the operation.
-    :type properties: any
+    :ivar name: Name of the operation.
+    :vartype name: str
+    :ivar display: Display name of the operation.
+    :vartype display: ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.OperationInfo
+    :ivar origin: Origin of the operation.
+    :vartype origin: str
+    :ivar properties: Properties of the operation.
+    :vartype properties: any
     """
 
     _attribute_map = {
@@ -589,6 +726,16 @@ class Operation(msrest.serialization.Model):
         properties: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword name: Name of the operation.
+        :paramtype name: str
+        :keyword display: Display name of the operation.
+        :paramtype display: ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.OperationInfo
+        :keyword origin: Origin of the operation.
+        :paramtype origin: str
+        :keyword properties: Properties of the operation.
+        :paramtype properties: any
+        """
         super(Operation, self).__init__(**kwargs)
         self.name = name
         self.display = display
@@ -599,14 +746,14 @@ class Operation(msrest.serialization.Model):
 class OperationInfo(msrest.serialization.Model):
     """Information about an operation.
 
-    :param provider: Name of the provider.
-    :type provider: str
-    :param resource: Name of the resource type.
-    :type resource: str
-    :param operation: Name of the operation.
-    :type operation: str
-    :param description: Description of the operation.
-    :type description: str
+    :ivar provider: Name of the provider.
+    :vartype provider: str
+    :ivar resource: Name of the resource type.
+    :vartype resource: str
+    :ivar operation: Name of the operation.
+    :vartype operation: str
+    :ivar description: Description of the operation.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -625,6 +772,16 @@ class OperationInfo(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword provider: Name of the provider.
+        :paramtype provider: str
+        :keyword resource: Name of the resource type.
+        :paramtype resource: str
+        :keyword operation: Name of the operation.
+        :paramtype operation: str
+        :keyword description: Description of the operation.
+        :paramtype description: str
+        """
         super(OperationInfo, self).__init__(**kwargs)
         self.provider = provider
         self.resource = resource
@@ -635,10 +792,10 @@ class OperationInfo(msrest.serialization.Model):
 class OperationsListResult(msrest.serialization.Model):
     """Result of the List Operations operation.
 
-    :param value: A collection of operations.
-    :type value: list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.Operation]
-    :param next_link: URL to get the next set of operation list results if there are any.
-    :type next_link: str
+    :ivar value: A collection of operations.
+    :vartype value: list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.Operation]
+    :ivar next_link: URL to get the next set of operation list results if there are any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -653,6 +810,12 @@ class OperationsListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: A collection of operations.
+        :paramtype value: list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.Operation]
+        :keyword next_link: URL to get the next set of operation list results if there are any.
+        :paramtype next_link: str
+        """
         super(OperationsListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -661,10 +824,10 @@ class OperationsListResult(msrest.serialization.Model):
 class PrivateLinkScopedResource(msrest.serialization.Model):
     """The private link scope resource reference.
 
-    :param resource_id: The full resource Id of the private link scope resource.
-    :type resource_id: str
-    :param scope_id: The private link scope unique Identifier.
-    :type scope_id: str
+    :ivar resource_id: The full resource Id of the private link scope resource.
+    :vartype resource_id: str
+    :ivar scope_id: The private link scope unique Identifier.
+    :vartype scope_id: str
     """
 
     _attribute_map = {
@@ -679,6 +842,12 @@ class PrivateLinkScopedResource(msrest.serialization.Model):
         scope_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword resource_id: The full resource Id of the private link scope resource.
+        :paramtype resource_id: str
+        :keyword scope_id: The private link scope unique Identifier.
+        :paramtype scope_id: str
+        """
         super(PrivateLinkScopedResource, self).__init__(**kwargs)
         self.resource_id = resource_id
         self.scope_id = scope_id
@@ -687,8 +856,8 @@ class PrivateLinkScopedResource(msrest.serialization.Model):
 class TagsResource(msrest.serialization.Model):
     """A container holding only the Tags for a resource, allowing the user to update the tags on a WebTest instance.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -701,6 +870,10 @@ class TagsResource(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(TagsResource, self).__init__(**kwargs)
         self.tags = tags
 
@@ -718,10 +891,10 @@ class WebtestsResource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -746,6 +919,12 @@ class WebtestsResource(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(WebtestsResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -767,49 +946,49 @@ class WebTest(WebtestsResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param kind: The kind of WebTest that this web test watches. Choices are ping and multistep.
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar kind: The kind of WebTest that this web test watches. Choices are ping and multistep.
      Possible values include: "ping", "multistep". Default value: "ping".
-    :type kind: str or ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTestKind
-    :param synthetic_monitor_id: Unique ID of this WebTest. This is typically the same value as the
+    :vartype kind: str or ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTestKind
+    :ivar synthetic_monitor_id: Unique ID of this WebTest. This is typically the same value as the
      Name field.
-    :type synthetic_monitor_id: str
-    :param web_test_name: User defined name if this WebTest.
-    :type web_test_name: str
-    :param description: User defined description for this WebTest.
-    :type description: str
-    :param enabled: Is the test actively being monitored.
-    :type enabled: bool
-    :param frequency: Interval in seconds between test runs for this WebTest. Default value is 300.
-    :type frequency: int
-    :param timeout: Seconds until this WebTest will timeout and fail. Default value is 30.
-    :type timeout: int
-    :param web_test_kind: The kind of web test this is, valid choices are ping, multistep, basic,
+    :vartype synthetic_monitor_id: str
+    :ivar web_test_name: User defined name if this WebTest.
+    :vartype web_test_name: str
+    :ivar description: User defined description for this WebTest.
+    :vartype description: str
+    :ivar enabled: Is the test actively being monitored.
+    :vartype enabled: bool
+    :ivar frequency: Interval in seconds between test runs for this WebTest. Default value is 300.
+    :vartype frequency: int
+    :ivar timeout: Seconds until this WebTest will timeout and fail. Default value is 30.
+    :vartype timeout: int
+    :ivar web_test_kind: The kind of web test this is, valid choices are ping, multistep, basic,
      and standard. Possible values include: "ping", "multistep", "basic", "standard". Default value:
      "ping".
-    :type web_test_kind: str or
+    :vartype web_test_kind: str or
      ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTestKindEnum
-    :param retry_enabled: Allow for retries should this WebTest fail.
-    :type retry_enabled: bool
-    :param locations: A list of where to physically run the tests from to give global coverage for
+    :ivar retry_enabled: Allow for retries should this WebTest fail.
+    :vartype retry_enabled: bool
+    :ivar locations: A list of where to physically run the tests from to give global coverage for
      accessibility of your application.
-    :type locations:
+    :vartype locations:
      list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTestGeolocation]
-    :param configuration: An XML configuration specification for a WebTest.
-    :type configuration:
+    :ivar configuration: An XML configuration specification for a WebTest.
+    :vartype configuration:
      ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTestPropertiesConfiguration
     :ivar provisioning_state: Current state of this component, whether or not is has been
      provisioned within the resource group it is defined. Users cannot change this value but are
      able to read from it. Values will include Succeeded, Deploying, Canceled, and Failed.
     :vartype provisioning_state: str
-    :param request: The collection of request properties.
-    :type request:
+    :ivar request: The collection of request properties.
+    :vartype request:
      ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTestPropertiesRequest
-    :param validation_rules: The collection of validation rule properties.
-    :type validation_rules:
+    :ivar validation_rules: The collection of validation rule properties.
+    :vartype validation_rules:
      ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTestPropertiesValidationRules
     """
 
@@ -863,6 +1042,49 @@ class WebTest(WebtestsResource):
         validation_rules: Optional["WebTestPropertiesValidationRules"] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword kind: The kind of WebTest that this web test watches. Choices are ping and multistep.
+         Possible values include: "ping", "multistep". Default value: "ping".
+        :paramtype kind: str or ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTestKind
+        :keyword synthetic_monitor_id: Unique ID of this WebTest. This is typically the same value as
+         the Name field.
+        :paramtype synthetic_monitor_id: str
+        :keyword web_test_name: User defined name if this WebTest.
+        :paramtype web_test_name: str
+        :keyword description: User defined description for this WebTest.
+        :paramtype description: str
+        :keyword enabled: Is the test actively being monitored.
+        :paramtype enabled: bool
+        :keyword frequency: Interval in seconds between test runs for this WebTest. Default value is
+         300.
+        :paramtype frequency: int
+        :keyword timeout: Seconds until this WebTest will timeout and fail. Default value is 30.
+        :paramtype timeout: int
+        :keyword web_test_kind: The kind of web test this is, valid choices are ping, multistep, basic,
+         and standard. Possible values include: "ping", "multistep", "basic", "standard". Default value:
+         "ping".
+        :paramtype web_test_kind: str or
+         ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTestKindEnum
+        :keyword retry_enabled: Allow for retries should this WebTest fail.
+        :paramtype retry_enabled: bool
+        :keyword locations: A list of where to physically run the tests from to give global coverage
+         for accessibility of your application.
+        :paramtype locations:
+         list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTestGeolocation]
+        :keyword configuration: An XML configuration specification for a WebTest.
+        :paramtype configuration:
+         ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTestPropertiesConfiguration
+        :keyword request: The collection of request properties.
+        :paramtype request:
+         ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTestPropertiesRequest
+        :keyword validation_rules: The collection of validation rule properties.
+        :paramtype validation_rules:
+         ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTestPropertiesValidationRules
+        """
         super(WebTest, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.synthetic_monitor_id = synthetic_monitor_id
@@ -883,8 +1105,8 @@ class WebTest(WebtestsResource):
 class WebTestGeolocation(msrest.serialization.Model):
     """Geo-physical location to run a WebTest from. You must specify one or more locations for the test to run from.
 
-    :param location: Location ID for the WebTest to run from.
-    :type location: str
+    :ivar location: Location ID for the WebTest to run from.
+    :vartype location: str
     """
 
     _attribute_map = {
@@ -897,6 +1119,10 @@ class WebTestGeolocation(msrest.serialization.Model):
         location: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: Location ID for the WebTest to run from.
+        :paramtype location: str
+        """
         super(WebTestGeolocation, self).__init__(**kwargs)
         self.location = location
 
@@ -906,11 +1132,11 @@ class WebTestListResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. Set of Application Insights WebTest definitions.
-    :type value: list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTest]
-    :param next_link: The link to get the next part of the returned list of WebTest, should the
+    :ivar value: Required. Set of Application Insights WebTest definitions.
+    :vartype value: list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTest]
+    :ivar next_link: The link to get the next part of the returned list of WebTest, should the
      return set be too large for a single request. May be null.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _validation = {
@@ -929,6 +1155,13 @@ class WebTestListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Required. Set of Application Insights WebTest definitions.
+        :paramtype value: list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTest]
+        :keyword next_link: The link to get the next part of the returned list of WebTest, should the
+         return set be too large for a single request. May be null.
+        :paramtype next_link: str
+        """
         super(WebTestListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -937,8 +1170,8 @@ class WebTestListResult(msrest.serialization.Model):
 class WebTestPropertiesConfiguration(msrest.serialization.Model):
     """An XML configuration specification for a WebTest.
 
-    :param web_test: The XML specification of a WebTest to run against an application.
-    :type web_test: str
+    :ivar web_test: The XML specification of a WebTest to run against an application.
+    :vartype web_test: str
     """
 
     _attribute_map = {
@@ -951,6 +1184,10 @@ class WebTestPropertiesConfiguration(msrest.serialization.Model):
         web_test: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword web_test: The XML specification of a WebTest to run against an application.
+        :paramtype web_test: str
+        """
         super(WebTestPropertiesConfiguration, self).__init__(**kwargs)
         self.web_test = web_test
 
@@ -958,18 +1195,18 @@ class WebTestPropertiesConfiguration(msrest.serialization.Model):
 class WebTestPropertiesRequest(msrest.serialization.Model):
     """The collection of request properties.
 
-    :param request_url: Url location to test.
-    :type request_url: str
-    :param headers: List of headers and their values to add to the WebTest call.
-    :type headers: list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.HeaderField]
-    :param http_verb: Http verb to use for this web test.
-    :type http_verb: str
-    :param request_body: Base64 encoded string body to send with this web test.
-    :type request_body: str
-    :param parse_dependent_requests: Parse Dependent request for this WebTest.
-    :type parse_dependent_requests: bool
-    :param follow_redirects: Follow redirects for this web test.
-    :type follow_redirects: bool
+    :ivar request_url: Url location to test.
+    :vartype request_url: str
+    :ivar headers: List of headers and their values to add to the WebTest call.
+    :vartype headers: list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.HeaderField]
+    :ivar http_verb: Http verb to use for this web test.
+    :vartype http_verb: str
+    :ivar request_body: Base64 encoded string body to send with this web test.
+    :vartype request_body: str
+    :ivar parse_dependent_requests: Parse Dependent request for this WebTest.
+    :vartype parse_dependent_requests: bool
+    :ivar follow_redirects: Follow redirects for this web test.
+    :vartype follow_redirects: bool
     """
 
     _attribute_map = {
@@ -992,6 +1229,21 @@ class WebTestPropertiesRequest(msrest.serialization.Model):
         follow_redirects: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword request_url: Url location to test.
+        :paramtype request_url: str
+        :keyword headers: List of headers and their values to add to the WebTest call.
+        :paramtype headers:
+         list[~azure.mgmt.applicationinsights.v2018_05_01_preview.models.HeaderField]
+        :keyword http_verb: Http verb to use for this web test.
+        :paramtype http_verb: str
+        :keyword request_body: Base64 encoded string body to send with this web test.
+        :paramtype request_body: str
+        :keyword parse_dependent_requests: Parse Dependent request for this WebTest.
+        :paramtype parse_dependent_requests: bool
+        :keyword follow_redirects: Follow redirects for this web test.
+        :paramtype follow_redirects: bool
+        """
         super(WebTestPropertiesRequest, self).__init__(**kwargs)
         self.request_url = request_url
         self.headers = headers
@@ -1004,19 +1256,19 @@ class WebTestPropertiesRequest(msrest.serialization.Model):
 class WebTestPropertiesValidationRules(msrest.serialization.Model):
     """The collection of validation rule properties.
 
-    :param content_validation: The collection of content validation properties.
-    :type content_validation:
+    :ivar content_validation: The collection of content validation properties.
+    :vartype content_validation:
      ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTestPropertiesValidationRulesContentValidation
-    :param ssl_check: Checks to see if the SSL cert is still valid.
-    :type ssl_check: bool
-    :param ssl_cert_remaining_lifetime_check: A number of days to check still remain before the the
+    :ivar ssl_check: Checks to see if the SSL cert is still valid.
+    :vartype ssl_check: bool
+    :ivar ssl_cert_remaining_lifetime_check: A number of days to check still remain before the the
      existing SSL cert expires.  Value must be positive and the SSLCheck must be set to true.
-    :type ssl_cert_remaining_lifetime_check: int
-    :param expected_http_status_code: Validate that the WebTest returns the http status code
+    :vartype ssl_cert_remaining_lifetime_check: int
+    :ivar expected_http_status_code: Validate that the WebTest returns the http status code
      provided.
-    :type expected_http_status_code: int
-    :param ignore_https_status_code: When set, validation will ignore the status code.
-    :type ignore_https_status_code: bool
+    :vartype expected_http_status_code: int
+    :ivar ignore_https_status_code: When set, validation will ignore the status code.
+    :vartype ignore_https_status_code: bool
     """
 
     _attribute_map = {
@@ -1037,6 +1289,21 @@ class WebTestPropertiesValidationRules(msrest.serialization.Model):
         ignore_https_status_code: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword content_validation: The collection of content validation properties.
+        :paramtype content_validation:
+         ~azure.mgmt.applicationinsights.v2018_05_01_preview.models.WebTestPropertiesValidationRulesContentValidation
+        :keyword ssl_check: Checks to see if the SSL cert is still valid.
+        :paramtype ssl_check: bool
+        :keyword ssl_cert_remaining_lifetime_check: A number of days to check still remain before the
+         the existing SSL cert expires.  Value must be positive and the SSLCheck must be set to true.
+        :paramtype ssl_cert_remaining_lifetime_check: int
+        :keyword expected_http_status_code: Validate that the WebTest returns the http status code
+         provided.
+        :paramtype expected_http_status_code: int
+        :keyword ignore_https_status_code: When set, validation will ignore the status code.
+        :paramtype ignore_https_status_code: bool
+        """
         super(WebTestPropertiesValidationRules, self).__init__(**kwargs)
         self.content_validation = content_validation
         self.ssl_check = ssl_check
@@ -1048,14 +1315,14 @@ class WebTestPropertiesValidationRules(msrest.serialization.Model):
 class WebTestPropertiesValidationRulesContentValidation(msrest.serialization.Model):
     """The collection of content validation properties.
 
-    :param content_match: Content to look for in the return of the WebTest.  Must not be null or
+    :ivar content_match: Content to look for in the return of the WebTest.  Must not be null or
      empty.
-    :type content_match: str
-    :param ignore_case: When set, this value makes the ContentMatch validation case insensitive.
-    :type ignore_case: bool
-    :param pass_if_text_found: When true, validation will pass if there is a match for the
+    :vartype content_match: str
+    :ivar ignore_case: When set, this value makes the ContentMatch validation case insensitive.
+    :vartype ignore_case: bool
+    :ivar pass_if_text_found: When true, validation will pass if there is a match for the
      ContentMatch string.  If false, validation will fail if there is a match.
-    :type pass_if_text_found: bool
+    :vartype pass_if_text_found: bool
     """
 
     _attribute_map = {
@@ -1072,6 +1339,16 @@ class WebTestPropertiesValidationRulesContentValidation(msrest.serialization.Mod
         pass_if_text_found: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword content_match: Content to look for in the return of the WebTest.  Must not be null or
+         empty.
+        :paramtype content_match: str
+        :keyword ignore_case: When set, this value makes the ContentMatch validation case insensitive.
+        :paramtype ignore_case: bool
+        :keyword pass_if_text_found: When true, validation will pass if there is a match for the
+         ContentMatch string.  If false, validation will fail if there is a match.
+        :paramtype pass_if_text_found: bool
+        """
         super(WebTestPropertiesValidationRulesContentValidation, self).__init__(**kwargs)
         self.content_match = content_match
         self.ignore_case = ignore_case
