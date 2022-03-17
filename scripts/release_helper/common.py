@@ -310,7 +310,10 @@ class Common:
     @staticmethod
     def output_md(item: IssueProcess):
         create_date = str(date.fromtimestamp(item.issue_package.issue.created_at.timestamp()).strftime('%m-%d'))
-        target_date = str(datetime.strptime(item.target_date, "%Y-%m-%d").strftime('%m-%d'))
+        try:
+            target_date = str(datetime.strptime(item.target_date, "%Y-%m-%d").strftime('%m-%d'))
+        except:
+            target_date = str(item.target_date)
 
         return '| [#{}]({}) | {} | {} | {} | {} | {} | {} | {} |\n'.format(
             item.issue_package.issue.html_url.split('/')[-1],
