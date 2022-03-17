@@ -37,6 +37,7 @@ if TYPE_CHECKING:
     from datetime import datetime
     from .._models import (  # pylint: disable=unused-import
         ContentSettings,
+        ImmutabilityPolicy,
         PremiumPageBlobTier,
         StandardBlobTier,
         SequenceNumberAction
@@ -119,7 +120,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             snapshot=snapshot,
             credential=credential,
             **kwargs)
-        self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline)
+        self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
 
     @distributed_trace_async
@@ -242,7 +243,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
     @distributed_trace_async
     async def upload_blob(
-            self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
+            self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
             length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
@@ -806,7 +807,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
     @distributed_trace_async
     async def set_immutability_policy(self, immutability_policy, **kwargs):
-        # type: (**Any) -> Dict[str, str]
+        # type: (ImmutabilityPolicy, **Any) -> Dict[str, str]
         """The Set Immutability Policy operation sets the immutability policy on the blob.
 
         .. versionadded:: 12.10.0
@@ -1275,6 +1276,17 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string. This option is only available when `incremental_copy` is
             set to False and `requires_sync` is set to True.
+
+            .. versionadded:: 12.9.0
+
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the sync copied blob. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+
+            .. versionadded:: 12.10.0
+
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
         :rtype: dict[str, Union[str, ~datetime.datetime]]
 

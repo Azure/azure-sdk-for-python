@@ -16,27 +16,27 @@ Text Analytics is a cloud-based service that provides advanced natural language 
 
 ## _Disclaimer_
 
-_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 
 ### Prerequisites
 
-- Python 2.7, or 3.6 or later is required to use this package.
+- Python 3.6 later is required to use this package.
 - You must have an [Azure subscription][azure_subscription] and a
-  [Cognitive Services or Text Analytics resource][ta_or_cs_resource] to use this package.
+  [Cognitive Services or Language resource][ta_or_cs_resource] to use this package.
 
-#### Create a Cognitive Services or Text Analytics resource
+#### Create a Cognitive Services or Language resource
 
 Text Analytics supports both [multi-service and single-service access][multi_and_single_service].
-Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Text Analytics access only, create a Text Analytics resource.
+Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Text Analytics access only, create a Language resource.
 
 You can create the resource using
 
 **Option 1:** [Azure Portal][azure_portal_create_ta_resource]
 
 **Option 2:** [Azure CLI][azure_cli_create_ta_resource].
-Below is an example of how you can create a Text Analytics resource using the CLI:
+Below is an example of how you can create a Language resource using the CLI:
 
 ```bash
 # Create a new resource group to hold the text analytics resource -
@@ -56,7 +56,7 @@ az cognitiveservices account create \
 ```
 
 Interaction with this service begins with an instance of a [client](#textanalyticsclient "TextAnalyticsClient").
-To create a client object, you will need the cognitive services or text analytics `endpoint` to
+To create a client object, you will need the cognitive services or language `endpoint` to
 your resource and a `credential` that allows you access:
 
 ```python
@@ -64,12 +64,11 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
 credential = AzureKeyCredential("<api_key>")
-text_analytics_client = TextAnalyticsClient(endpoint="https://<region>.api.cognitive.microsoft.com/", credential=credential)
+text_analytics_client = TextAnalyticsClient(endpoint="https://<resource-name>.cognitiveservices.azure.com/", credential=credential)
 ```
 
-Note that if you create a [custom subdomain][cognitive_custom_subdomain]
-name for your resource the endpoint may look different than in the above code snippet.
-For example, `https://<my-custom-subdomain>.cognitiveservices.azure.com/`.
+Note that for some Cognitive Services resources the endpoint might look different from the above code snippet.
+For example, `https://<region>.api.cognitive.microsoft.com/`.
 
 ### Install the package
 
@@ -85,10 +84,12 @@ This table shows the relationship between SDK versions and supported API version
 
 | SDK version  | Supported API version of service  |
 | ------------ | --------------------------------- |
-| 5.2.0b2 - Latest beta release | 3.0, 3.1, 3.2-preview.2 (default) |
+| 5.2.0b3 - Latest beta release | 3.0, 3.1, 3.2-preview.2 (default) |
 | 5.1.0 - Latest GA release | 3.0, 3.1 (default) |
 | 5.0.0  | 3.0 |
 
+API version can be selected by passing the [api_version][text_analytics_client] keyword argument into the client.
+For the latest Text Analytics features, consider selecting the most recent preview API version. For production scenarios, the latest GA version is recommended. Setting to an older version may result in reduced feature compatibility.
 
 ### Authenticate the client
 
@@ -105,7 +106,7 @@ az cognitiveservices account show --name "resource-name" --resource-group "resou
 
 #### Get the API Key
 
-You can get the [API key][cognitive_authentication_api_key] from the Cognitive Services or Text Analytics resource in the [Azure Portal][azure_portal_get_endpoint].
+You can get the [API key][cognitive_authentication_api_key] from the Cognitive Services or Language resource in the [Azure Portal][azure_portal_get_endpoint].
 Alternatively, you can use [Azure CLI][azure_cli_endpoint_lookup] snippet below to get the API key of your resource.
 
 `az cognitiveservices account keys list --name "resource-name" --resource-group "resource-group-name"`
@@ -120,7 +121,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
 credential = AzureKeyCredential("<api_key>")
-text_analytics_client = TextAnalyticsClient(endpoint="https://<region>.api.cognitive.microsoft.com/", credential=credential)
+text_analytics_client = TextAnalyticsClient(endpoint="https://<resource-name>.cognitiveservices.azure.com/", credential=credential)
 ```
 
 #### Create a TextAnalyticsClient with an Azure Active Directory Credential
@@ -151,7 +152,7 @@ from azure.ai.textanalytics import TextAnalyticsClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-text_analytics_client = TextAnalyticsClient(endpoint="https://<my-custom-subdomain>.api.cognitive.microsoft.com/", credential=credential)
+text_analytics_client = TextAnalyticsClient(endpoint="https://<resource-name>.cognitiveservices.azure.com/", credential=credential)
 ```
 
 ## Key concepts
@@ -247,7 +248,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
 credential = AzureKeyCredential("<api_key>")
-endpoint="https://<region>.api.cognitive.microsoft.com/"
+endpoint="https://<resource-name>.cognitiveservices.azure.com/"
 
 text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
@@ -261,12 +262,12 @@ response = text_analytics_client.analyze_sentiment(documents, language="en")
 result = [doc for doc in response if not doc.is_error]
 
 for doc in result:
-    print("Overall sentiment: {}".format(doc.sentiment))
-    print("Scores: positive={}; neutral={}; negative={} \n".format(
-        doc.confidence_scores.positive,
-        doc.confidence_scores.neutral,
-        doc.confidence_scores.negative,
-    ))
+    print(f"Overall sentiment: {doc.sentiment}")
+    print(
+        f"Scores: positive={doc.confidence_scores.positive}; "
+        f"neutral={doc.confidence_scores.neutral}; "
+        f"negative={doc.confidence_scores.negative}\n"
+    )
 ```
 
 The returned response is a heterogeneous list of result and error objects: list[[AnalyzeSentimentResult][analyze_sentiment_result], [DocumentError][document_error]]
@@ -282,7 +283,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
 credential = AzureKeyCredential("<api_key>")
-endpoint="https://<region>.api.cognitive.microsoft.com/"
+endpoint="https://<resource-name>.cognitiveservices.azure.com/"
 
 text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
@@ -299,10 +300,10 @@ result = [doc for doc in response if not doc.is_error]
 
 for doc in result:
     for entity in doc.entities:
-        print("Entity: {}".format(entity.text))
-        print("...Category: {}".format(entity.category))
-        print("...Confidence Score: {}".format(entity.confidence_score))
-        print("...Offset: {}".format(entity.offset))
+        print(f"Entity: {entity.text}")
+        print(f"...Category: {entity.category}")
+        print(f"...Confidence Score: {entity.confidence_score}")
+        print(f"...Offset: {entity.offset}")
 ```
 
 The returned response is a heterogeneous list of result and error objects: list[[RecognizeEntitiesResult][recognize_entities_result], [DocumentError][document_error]]
@@ -321,7 +322,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
 credential = AzureKeyCredential("<api_key>")
-endpoint="https://<region>.api.cognitive.microsoft.com/"
+endpoint="https://<resource-name>.cognitiveservices.azure.com/"
 
 text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
@@ -335,14 +336,14 @@ result = [doc for doc in response if not doc.is_error]
 
 for doc in result:
     for entity in doc.entities:
-        print("Entity: {}".format(entity.name))
-        print("...URL: {}".format(entity.url))
-        print("...Data Source: {}".format(entity.data_source))
+        print(f"Entity: {entity.name}")
+        print(f"...URL: {entity.url}")
+        print(f"...Data Source: {entity.data_source}")
         print("...Entity matches:")
         for match in entity.matches:
-            print("......Entity match text: {}".format(match.text))
-            print("......Confidence Score: {}".format(match.confidence_score))
-            print("......Offset: {}".format(match.offset))
+            print(f"......Entity match text: {match.text}")
+            print(f"......Confidence Score: {match.confidence_score}")
+            print(f"......Offset: {match.offset}")
 ```
 
 The returned response is a heterogeneous list of result and error objects: list[[RecognizeLinkedEntitiesResult][recognize_linked_entities_result], [DocumentError][document_error]]
@@ -360,7 +361,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
 credential = AzureKeyCredential("<api_key>")
-endpoint="https://<region>.api.cognitive.microsoft.com/"
+endpoint="https://<resource-name>.cognitiveservices.azure.com/"
 
 text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
@@ -373,13 +374,13 @@ documents = [
 response = text_analytics_client.recognize_pii_entities(documents, language="en")
 result = [doc for doc in response if not doc.is_error]
 for idx, doc in enumerate(result):
-    print("Document text: {}".format(documents[idx]))
-    print("Redacted document text: {}".format(doc.redacted_text))
+    print(f"Document text: {documents[idx]}")
+    print(f"Redacted document text: {doc.redacted_text}")
     for entity in doc.entities:
-        print("...Entity: {}".format(entity.text))
-        print("......Category: {}".format(entity.category))
-        print("......Confidence Score: {}".format(entity.confidence_score))
-        print("......Offset: {}".format(entity.offset))
+        print(f"...Entity: {entity.text}")
+        print(f"......Category: {entity.category}")
+        print(f"......Confidence Score: {entity.confidence_score}")
+        print(f"......Offset: {entity.offset}")
 ```
 
 The returned response is a heterogeneous list of result and error objects: list[[RecognizePiiEntitiesResult][recognize_pii_entities_result], [DocumentError][document_error]]
@@ -397,7 +398,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
 credential = AzureKeyCredential("<api_key>")
-endpoint="https://<region>.api.cognitive.microsoft.com/"
+endpoint="https://<resource-name>.cognitiveservices.azure.com/"
 
 text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
@@ -429,7 +430,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
 credential = AzureKeyCredential("<api_key>")
-endpoint="https://<region>.api.cognitive.microsoft.com/"
+endpoint="https://<resource-name>.cognitiveservices.azure.com/"
 
 text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
@@ -446,9 +447,9 @@ response = text_analytics_client.detect_language(documents)
 result = [doc for doc in response if not doc.is_error]
 
 for doc in result:
-    print("Language detected: {}".format(doc.primary_language.name))
-    print("ISO6391 name: {}".format(doc.primary_language.iso6391_name))
-    print("Confidence score: {}\n".format(doc.primary_language.confidence_score))
+    print(f"Language detected: {doc.primary_language.name}")
+    print(f"ISO6391 name: {doc.primary_language.iso6391_name}")
+    print(f"Confidence score: {doc.primary_language.confidence_score}\n")
 ```
 
 The returned response is a heterogeneous list of result and error objects: list[[DetectLanguageResult][detect_language_result], [DocumentError][document_error]]
@@ -465,7 +466,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
 credential = AzureKeyCredential("<api_key>")
-endpoint="https://<region>.api.cognitive.microsoft.com/"
+endpoint="https://<resource-name>.cognitiveservices.azure.com/"
 
 text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
@@ -479,30 +480,30 @@ docs = [doc for doc in result if not doc.is_error]
 print("Results of Healthcare Entities Analysis:")
 for idx, doc in enumerate(docs):
     for entity in doc.entities:
-        print("Entity: {}".format(entity.text))
-        print("...Normalized Text: {}".format(entity.normalized_text))
-        print("...Category: {}".format(entity.category))
-        print("...Subcategory: {}".format(entity.subcategory))
-        print("...Offset: {}".format(entity.offset))
-        print("...Confidence score: {}".format(entity.confidence_score))
+        print(f"Entity: {entity.text}")
+        print(f"...Normalized Text: {entity.normalized_text}")
+        print(f"...Category: {entity.category}")
+        print(f"...Subcategory: {entity.subcategory}")
+        print(f"...Offset: {entity.offset}")
+        print(f"...Confidence score: {entity.confidence_score}")
         if entity.data_sources is not None:
             print("...Data Sources:")
             for data_source in entity.data_sources:
-                print("......Entity ID: {}".format(data_source.entity_id))
-                print("......Name: {}".format(data_source.name))
+                print(f"......Entity ID: {data_source.entity_id}")
+                print(f"......Name: {data_source.name}")
         if entity.assertion is not None:
             print("...Assertion:")
-            print("......Conditionality: {}".format(entity.assertion.conditionality))
-            print("......Certainty: {}".format(entity.assertion.certainty))
-            print("......Association: {}".format(entity.assertion.association))
+            print(f"......Conditionality: {entity.assertion.conditionality}")
+            print(f"......Certainty: {entity.assertion.certainty}")
+            print(f"......Association: {entity.assertion.association}")
     for relation in doc.entity_relations:
-        print("Relation of type: {} has the following roles".format(relation.relation_type))
+        print(f"Relation of type: {relation.relation_type} has the following roles")
         for role in relation.roles:
-            print("...Role '{}' with entity '{}'".format(role.name, role.entity.text))
+            print(f"...Role '{role.name}' with entity '{role.entity.text}'")
     print("------------------------------------------")
 ```
 
-Note: The Healthcare Entities Analysis service is available in API version v3.1 and up.
+Note: The Healthcare Entities Analysis service is only available in the Standard pricing tier with API versions v3.1 and up.
 
 ### Multiple Analysis
 
@@ -527,7 +528,7 @@ from azure.ai.textanalytics import (
 )
 
 credential = AzureKeyCredential("<api_key>")
-endpoint="https://<region>.api.cognitive.microsoft.com/"
+endpoint="https://<resource-name>.cognitiveservices.azure.com/"
 
 text_analytics_client = TextAnalyticsClient(endpoint, credential)
 
@@ -546,31 +547,27 @@ poller = text_analytics_client.begin_analyze_actions(
 document_results = poller.result()
 for doc, action_results in zip(documents, document_results):
     recognize_entities_result, analyze_sentiment_result = action_results
-    print("\nDocument text: {}".format(doc))
+    print(f"\nDocument text: {doc}")
     print("...Results of Recognize Entities Action:")
     if recognize_entities_result.is_error:
-        print("......Is an error with code '{}' and message '{}'".format(
-            recognize_entities_result.code, recognize_entities_result.message
-        ))
+        print(f"......Is an error with code '{recognize_entities_result.code}' "
+              f"and message '{recognize_entities_result.message}'")
     else:
         for entity in recognize_entities_result.entities:
-            print("......Entity: {}".format(entity.text))
-            print(".........Category: {}".format(entity.category))
-            print(".........Confidence Score: {}".format(entity.confidence_score))
-            print(".........Offset: {}".format(entity.offset))
+            print(f"......Entity: {entity.text}")
+            print(f".........Category: {entity.category}")
+            print(f".........Confidence Score: {entity.confidence_score}")
+            print(f".........Offset: {entity.offset}")
 
     print("...Results of Analyze Sentiment action:")
     if analyze_sentiment_result.is_error:
-        print("......Is an error with code '{}' and message '{}'".format(
-            analyze_sentiment_result.code, analyze_sentiment_result.message
-        ))
+        print(f"......Is an error with code '{analyze_sentiment_result.code}' "
+              f"and message '{analyze_sentiment_result.message}'")
     else:
-        print("......Overall sentiment: {}".format(analyze_sentiment_result.sentiment))
-        print("......Scores: positive={}; neutral={}; negative={} \n".format(
-            analyze_sentiment_result.confidence_scores.positive,
-            analyze_sentiment_result.confidence_scores.neutral,
-            analyze_sentiment_result.confidence_scores.negative,
-        ))
+        print(f"......Overall sentiment: {analyze_sentiment_result.sentiment}")
+        print(f"......Scores: positive={analyze_sentiment_result.confidence_scores.positive}; "
+              f"neutral={analyze_sentiment_result.confidence_scores.neutral}; "
+              f"negative={analyze_sentiment_result.confidence_scores.negative}\n")
     print("------------------------------------------")
 ```
 
@@ -614,7 +611,7 @@ logger.setLevel(logging.DEBUG)
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
-endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
+endpoint = "https://<resource-name>.cognitiveservices.azure.com/"
 credential = DefaultAzureCredential()
 
 # This client will log detailed information about its HTTP sessions, at DEBUG level
@@ -634,10 +631,8 @@ result = text_analytics_client.analyze_sentiment(documents, logging_enable=True)
 ### More sample code
 
 These code samples show common scenario operations with the Azure Text Analytics client library.
-The async versions of the samples (the python sample files appended with `_async`) show asynchronous operations
-with Text Analytics and require Python 3.6 or later.
 
-Authenticate the client with a Cognitive Services/Text Analytics API key or a token credential from [azure-identity][azure_identity]:
+Authenticate the client with a Cognitive Services/Language API key or a token credential from [azure-identity][azure_identity]:
 
 - [sample_authentication.py][sample_authentication] ([async version][sample_authentication_async])
 
@@ -697,7 +692,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [cognitive_authentication_aad]: https://docs.microsoft.com/azure/cognitive-services/authentication#authenticate-with-azure-active-directory
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
-[service_limits]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/concepts/data-limits?tabs=version-3
+[service_limits]: https://aka.ms/azsdk/textanalytics/data-limits
 [azure-key-credential]: https://aka.ms/azsdk-python-core-azurekeycredential
 [document_error]: https://aka.ms/azsdk-python-textanalytics-documenterror
 [detect_language_result]: https://aka.ms/azsdk-python-textanalytics-detectlanguageresult
@@ -717,15 +712,15 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [recognize_linked_entities]: https://aka.ms/azsdk-python-textanalytics-recognizelinkedentities
 [extract_key_phrases]: https://aka.ms/azsdk-python-textanalytics-extractkeyphrases
 [detect_language]: https://aka.ms/azsdk-python-textanalytics-detectlanguage
-[language_detection]: https://docs.microsoft.com/azure/cognitive-services/Text-Analytics/how-tos/text-analytics-how-to-language-detection
-[language_and_regional_support]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/language-support?tabs=language-detection
-[sentiment_analysis]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-sentiment-analysis
-[key_phrase_extraction]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-keyword-extraction
-[linked_entities_categories]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/named-entity-types?tabs=general
-[linked_entity_recognition]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-entity-linking
-[pii_entity_categories]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/named-entity-types?tabs=personal
-[named_entity_recognition]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/text-analytics-how-to-entity-linking
-[named_entity_categories]: https://docs.microsoft.com/azure/cognitive-services/text-analytics/named-entity-types?tabs=general
+[language_detection]: https://docs.microsoft.com/azure/cognitive-services/language-service/language-detection/overview
+[language_and_regional_support]: https://docs.microsoft.com/azure/cognitive-services/language-service/language-detection/language-support
+[sentiment_analysis]: https://docs.microsoft.com/azure/cognitive-services/language-service/sentiment-opinion-mining/overview
+[key_phrase_extraction]: https://docs.microsoft.com/azure/cognitive-services/language-service/key-phrase-extraction/overview
+[linked_entities_categories]: https://aka.ms/taner
+[linked_entity_recognition]: https://docs.microsoft.com/azure/cognitive-services/language-service/entity-linking/overview
+[pii_entity_categories]: https://aka.ms/tanerpii
+[named_entity_recognition]: https://docs.microsoft.com/azure/cognitive-services/language-service/named-entity-recognition/overview
+[named_entity_categories]: https://aka.ms/taner
 [azure_core_ref_docs]: https://aka.ms/azsdk-python-core-policies
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity

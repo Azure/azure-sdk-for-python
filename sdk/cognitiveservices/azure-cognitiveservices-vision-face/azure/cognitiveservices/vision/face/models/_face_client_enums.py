@@ -82,6 +82,13 @@ class MaskType(str, Enum):
     uncertain = "uncertain"
 
 
+class QualityForRecognition(str, Enum):
+
+    low = "Low"
+    medium = "Medium"
+    high = "High"
+
+
 class FindSimilarMatchMode(str, Enum):
 
     match_person = "matchPerson"
@@ -134,6 +141,7 @@ class FaceAttributeType(str, Enum):
     exposure = "exposure"
     noise = "noise"
     mask = "mask"
+    quality_for_recognition = "qualityForRecognition"
 
 
 class DetectionModel(str, Enum):

@@ -12,6 +12,7 @@ try:
     from ._models_py3 import AnalyzedTokenInfo
     from ._models_py3 import AsciiFoldingTokenFilter
     from ._models_py3 import AzureActiveDirectoryApplicationCredentials
+    from ._models_py3 import AzureMachineLearningSkill
     from ._models_py3 import BM25Similarity
     from ._models_py3 import CharFilter
     from ._models_py3 import CjkBigramTokenFilter
@@ -67,6 +68,7 @@ try:
     from ._models_py3 import LexicalNormalizer
     from ._models_py3 import LexicalTokenizer
     from ._models_py3 import LimitTokenFilter
+    from ._models_py3 import ListAliasesResult
     from ._models_py3 import ListDataSourcesResult
     from ._models_py3 import ListIndexersResult
     from ._models_py3 import ListIndexesResult
@@ -94,10 +96,12 @@ try:
     from ._models_py3 import PatternReplaceTokenFilter
     from ._models_py3 import PatternTokenizer
     from ._models_py3 import PhoneticTokenFilter
+    from ._models_py3 import PrioritizedFields
     from ._models_py3 import RequestOptions
     from ._models_py3 import ResourceCounter
     from ._models_py3 import ScoringFunction
     from ._models_py3 import ScoringProfile
+    from ._models_py3 import SearchAlias
     from ._models_py3 import SearchError
     from ._models_py3 import SearchField
     from ._models_py3 import SearchIndex
@@ -122,6 +126,9 @@ try:
     from ._models_py3 import SearchIndexerStatus
     from ._models_py3 import SearchIndexerWarning
     from ._models_py3 import SearchResourceEncryptionKey
+    from ._models_py3 import SemanticConfiguration
+    from ._models_py3 import SemanticField
+    from ._models_py3 import SemanticSettings
     from ._models_py3 import SentimentSkill
     from ._models_py3 import SentimentSkillV3
     from ._models_py3 import ServiceCounters
@@ -158,6 +165,7 @@ except (SyntaxError, ImportError):
     from ._models import AnalyzedTokenInfo  # type: ignore
     from ._models import AsciiFoldingTokenFilter  # type: ignore
     from ._models import AzureActiveDirectoryApplicationCredentials  # type: ignore
+    from ._models import AzureMachineLearningSkill  # type: ignore
     from ._models import BM25Similarity  # type: ignore
     from ._models import CharFilter  # type: ignore
     from ._models import CjkBigramTokenFilter  # type: ignore
@@ -213,6 +221,7 @@ except (SyntaxError, ImportError):
     from ._models import LexicalNormalizer  # type: ignore
     from ._models import LexicalTokenizer  # type: ignore
     from ._models import LimitTokenFilter  # type: ignore
+    from ._models import ListAliasesResult  # type: ignore
     from ._models import ListDataSourcesResult  # type: ignore
     from ._models import ListIndexersResult  # type: ignore
     from ._models import ListIndexesResult  # type: ignore
@@ -240,10 +249,12 @@ except (SyntaxError, ImportError):
     from ._models import PatternReplaceTokenFilter  # type: ignore
     from ._models import PatternTokenizer  # type: ignore
     from ._models import PhoneticTokenFilter  # type: ignore
+    from ._models import PrioritizedFields  # type: ignore
     from ._models import RequestOptions  # type: ignore
     from ._models import ResourceCounter  # type: ignore
     from ._models import ScoringFunction  # type: ignore
     from ._models import ScoringProfile  # type: ignore
+    from ._models import SearchAlias  # type: ignore
     from ._models import SearchError  # type: ignore
     from ._models import SearchField  # type: ignore
     from ._models import SearchIndex  # type: ignore
@@ -268,6 +279,9 @@ except (SyntaxError, ImportError):
     from ._models import SearchIndexerStatus  # type: ignore
     from ._models import SearchIndexerWarning  # type: ignore
     from ._models import SearchResourceEncryptionKey  # type: ignore
+    from ._models import SemanticConfiguration  # type: ignore
+    from ._models import SemanticField  # type: ignore
+    from ._models import SemanticSettings  # type: ignore
     from ._models import SentimentSkill  # type: ignore
     from ._models import SentimentSkillV3  # type: ignore
     from ._models import ServiceCounters  # type: ignore
@@ -350,6 +364,7 @@ __all__ = [
     'AnalyzedTokenInfo',
     'AsciiFoldingTokenFilter',
     'AzureActiveDirectoryApplicationCredentials',
+    'AzureMachineLearningSkill',
     'BM25Similarity',
     'CharFilter',
     'CjkBigramTokenFilter',
@@ -405,6 +420,7 @@ __all__ = [
     'LexicalNormalizer',
     'LexicalTokenizer',
     'LimitTokenFilter',
+    'ListAliasesResult',
     'ListDataSourcesResult',
     'ListIndexersResult',
     'ListIndexesResult',
@@ -432,10 +448,12 @@ __all__ = [
     'PatternReplaceTokenFilter',
     'PatternTokenizer',
     'PhoneticTokenFilter',
+    'PrioritizedFields',
     'RequestOptions',
     'ResourceCounter',
     'ScoringFunction',
     'ScoringProfile',
+    'SearchAlias',
     'SearchError',
     'SearchField',
     'SearchIndex',
@@ -460,6 +478,9 @@ __all__ = [
     'SearchIndexerStatus',
     'SearchIndexerWarning',
     'SearchResourceEncryptionKey',
+    'SemanticConfiguration',
+    'SemanticField',
+    'SemanticSettings',
     'SentimentSkill',
     'SentimentSkillV3',
     'ServiceCounters',

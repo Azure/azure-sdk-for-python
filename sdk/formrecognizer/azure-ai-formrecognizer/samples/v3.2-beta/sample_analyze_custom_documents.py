@@ -22,7 +22,7 @@ USAGE:
     python sample_analyze_custom_documents.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
+    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
     3) CUSTOM_BUILT_MODEL_ID - the ID of your custom built model
         -OR-
@@ -105,7 +105,7 @@ if __name__ == "__main__":
     if os.getenv("CONTAINER_SAS_URL"):
 
         from azure.core.credentials import AzureKeyCredential
-        from azure.ai.formrecognizer import DocumentModelAdministrationClient
+        from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentBuildMode
 
         endpoint = os.getenv("AZURE_FORM_RECOGNIZER_ENDPOINT")
         key = os.getenv("AZURE_FORM_RECOGNIZER_KEY")
@@ -117,7 +117,7 @@ if __name__ == "__main__":
             endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         model = document_model_admin_client.begin_build_model(
-            os.getenv("CONTAINER_SAS_URL")
+            os.getenv("CONTAINER_SAS_URL"), DocumentBuildMode.TEMPLATE
         ).result()
         model_id = model.model_id
 

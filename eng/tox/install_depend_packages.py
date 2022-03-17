@@ -9,11 +9,11 @@
 import argparse
 import os
 import sys
-from subprocess import check_call
 import logging
-from packaging.specifiers import SpecifierSet
-from pkg_resources import Requirement, parse_version
 import re
+from subprocess import check_call
+from pkg_resources import parse_version
+from tox_helper_tasks import parse_req
 
 from pypi_tools.pypi import PyPIClient
 
@@ -37,9 +37,10 @@ MINIMUM_VERSION_SUPPORTED_OVERRIDE = {
     "azure-core": "1.11.0",
     "requests": "2.19.0",
     "six": "1.12.0",
+    "cryptography": "3.3.2"
 }
 
-MAXIMUM_VERSION_SUPPORTED_OVERRIDE = {"cryptography": "3.4.8"}
+MAXIMUM_VERSION_SUPPORTED_OVERRIDE = {"cryptography": "4.0.0"}
 
 
 def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
@@ -76,13 +77,6 @@ def find_released_packages(setup_py_path, dependency_type):
     # Get available version on PyPI for each required package
     avlble_packages = [x for x in map(lambda x: process_requirement(x, dependency_type), requires) if x]
     return avlble_packages
-
-
-def parse_req(req):
-    req_object = Requirement.parse(req.split(";")[0])
-    pkg_name = req_object.key
-    spec = SpecifierSet(str(req_object).replace(pkg_name, ""))
-    return pkg_name, spec
 
 
 def process_requirement(req, dependency_type):
@@ -133,10 +127,10 @@ def process_requirement(req, dependency_type):
 
 def check_req_against_exclusion(req, req_to_exclude):
     """
-    This function evaluates a requirement from a dev_requirements file against a file name. Returns True 
+    This function evaluates a requirement from a dev_requirements file against a file name. Returns True
     if the requirement is for the same package listed in "req_to_exclude". False otherwise.
 
-    :param req: An incoming "req" looks like a requirement that appears in a dev_requirements file. EG: [ "../../../tools/azure-devtools", 
+    :param req: An incoming "req" looks like a requirement that appears in a dev_requirements file. EG: [ "../../../tools/azure-devtools",
         "https://docsupport.blob.core.windows.net/repackaged/cffi-1.14.6-cp310-cp310-win_amd64.whl; sys_platform=='win32' and python_version >= '3.10'",
         "msrestazure>=0.4.11", "pytest" ]
 

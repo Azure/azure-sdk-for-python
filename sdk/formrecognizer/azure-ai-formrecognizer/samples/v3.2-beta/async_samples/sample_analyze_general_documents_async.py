@@ -17,7 +17,7 @@ USAGE:
     python sample_analyze_general_documents_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Cognitive Services resource.
+    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
 """
 
@@ -101,20 +101,22 @@ async def analyze_general_documents():
         )
 
         for line_idx, line in enumerate(page.lines):
+            words = line.get_words()
             print(
-                "Line # {} has text content '{}' within bounding box '{}'".format(
+                "...Line # {} has {} words and text '{}' within bounding box '{}'".format(
                     line_idx,
+                    len(words),
                     line.content,
                     format_bounding_box(line.bounding_box),
                 )
             )
 
-        for word in page.words:
-            print(
-                "...Word '{}' has a confidence of {}".format(
-                    word.content, word.confidence
+            for word in words:
+                print(
+                    "......Word '{}' has a confidence of {}".format(
+                        word.content, word.confidence
+                    )
                 )
-            )
 
         for selection_mark in page.selection_marks:
             print(
@@ -161,5 +163,4 @@ async def main():
     await analyze_general_documents()
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

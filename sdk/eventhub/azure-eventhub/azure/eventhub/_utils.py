@@ -10,7 +10,7 @@ import platform
 import datetime
 import calendar
 import logging
-from typing import TYPE_CHECKING, Type, Optional, Dict, Union, Any, Iterable, Tuple, List, Mapping
+from typing import TYPE_CHECKING, Type, Optional, Dict, Union, Any, Iterable, Tuple, Mapping
 
 import six
 
@@ -172,9 +172,10 @@ def trace_message(event, parent_span=None):
 
 
 def get_event_links(events):
+    # pylint:disable=isinstance-second-argument-not-valid-type
     trace_events = (
         events if isinstance(events, Iterable) else (events,)
-    )  # pylint:disable=isinstance-second-argument-not-valid-type
+    )
     links = []
     try:
         for event in trace_events:  # type: ignore
@@ -296,6 +297,7 @@ def transform_outbound_single_message(message, message_type):
 
 def decode_with_recurse(data, encoding="UTF-8"):
     # type: (Any, str) -> Any
+    # pylint:disable=isinstance-second-argument-not-valid-type
     """
     If data is of a compatible type, iterates through nested structure and decodes all binary
         strings with provided encoding.
@@ -309,14 +311,14 @@ def decode_with_recurse(data, encoding="UTF-8"):
         return data
     if isinstance(data, six.binary_type):
         return data.decode(encoding)
-    if isinstance(data, Mapping):
+    if isinstance(data, Mapping): # pylint:disable=isinstance-second-argument-not-valid-type
         decoded_mapping = {}
-        for k,v in data.items():
+        for k, v in data.items():
             decoded_key = decode_with_recurse(k, encoding)
             decoded_val = decode_with_recurse(v, encoding)
             decoded_mapping[decoded_key] = decoded_val
         return decoded_mapping
-    if isinstance(data, Iterable):
+    if isinstance(data, Iterable): # pylint:disable=isinstance-second-argument-not-valid-type
         decoded_list = []
         for d in data:
             decoded_list.append(decode_with_recurse(d, encoding))

@@ -15,10 +15,10 @@ import msrest.serialization
 class ErrorResponse(msrest.serialization.Model):
     """Describes the format of Error response.
 
-    :param code: Error code.
-    :type code: str
-    :param message: Error message indicating why the operation failed.
-    :type message: str
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message indicating why the operation failed.
+    :vartype message: str
     """
 
     _attribute_map = {
@@ -33,6 +33,12 @@ class ErrorResponse(msrest.serialization.Model):
         message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword code: Error code.
+        :paramtype code: str
+        :keyword message: Error message indicating why the operation failed.
+        :paramtype message: str
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -49,8 +55,8 @@ class ManagementGroupProxyOnlyResource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Location of the resource.
-    :type location: str
+    :ivar location: Location of the resource.
+    :vartype location: str
     """
 
     _validation = {
@@ -72,6 +78,10 @@ class ManagementGroupProxyOnlyResource(msrest.serialization.Model):
         location: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: Location of the resource.
+        :paramtype location: str
+        """
         super(ManagementGroupProxyOnlyResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -90,27 +100,26 @@ class ManagementGroupDiagnosticSettingsResource(ManagementGroupProxyOnlyResource
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Location of the resource.
-    :type location: str
-    :param storage_account_id: The resource ID of the storage account to which you would like to
+    :ivar location: Location of the resource.
+    :vartype location: str
+    :ivar storage_account_id: The resource ID of the storage account to which you would like to
      send Diagnostic Logs.
-    :type storage_account_id: str
-    :param service_bus_rule_id: The service bus rule Id of the diagnostic setting. This is here to
+    :vartype storage_account_id: str
+    :ivar service_bus_rule_id: The service bus rule Id of the diagnostic setting. This is here to
      maintain backwards compatibility.
-    :type service_bus_rule_id: str
-    :param event_hub_authorization_rule_id: The resource Id for the event hub authorization rule.
-    :type event_hub_authorization_rule_id: str
-    :param event_hub_name: The name of the event hub. If none is specified, the default event hub
+    :vartype service_bus_rule_id: str
+    :ivar event_hub_authorization_rule_id: The resource Id for the event hub authorization rule.
+    :vartype event_hub_authorization_rule_id: str
+    :ivar event_hub_name: The name of the event hub. If none is specified, the default event hub
      will be selected.
-    :type event_hub_name: str
-    :param logs: The list of logs settings.
-    :type logs: list[~$(python-base-
-     namespace).v2020_01_01_preview.models.ManagementGroupLogSettings]
-    :param workspace_id: The full ARM resource ID of the Log Analytics workspace to which you would
+    :vartype event_hub_name: str
+    :ivar logs: The list of logs settings.
+    :vartype logs:
+     list[~$(python-base-namespace).v2020_01_01_preview.models.ManagementGroupLogSettings]
+    :ivar workspace_id: The full ARM resource ID of the Log Analytics workspace to which you would
      like to send Diagnostic Logs. Example:
-     /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-
-     integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
-    :type workspace_id: str
+     /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
+    :vartype workspace_id: str
     """
 
     _validation = {
@@ -144,6 +153,28 @@ class ManagementGroupDiagnosticSettingsResource(ManagementGroupProxyOnlyResource
         workspace_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword location: Location of the resource.
+        :paramtype location: str
+        :keyword storage_account_id: The resource ID of the storage account to which you would like to
+         send Diagnostic Logs.
+        :paramtype storage_account_id: str
+        :keyword service_bus_rule_id: The service bus rule Id of the diagnostic setting. This is here
+         to maintain backwards compatibility.
+        :paramtype service_bus_rule_id: str
+        :keyword event_hub_authorization_rule_id: The resource Id for the event hub authorization rule.
+        :paramtype event_hub_authorization_rule_id: str
+        :keyword event_hub_name: The name of the event hub. If none is specified, the default event hub
+         will be selected.
+        :paramtype event_hub_name: str
+        :keyword logs: The list of logs settings.
+        :paramtype logs:
+         list[~$(python-base-namespace).v2020_01_01_preview.models.ManagementGroupLogSettings]
+        :keyword workspace_id: The full ARM resource ID of the Log Analytics workspace to which you
+         would like to send Diagnostic Logs. Example:
+         /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
+        :paramtype workspace_id: str
+        """
         super(ManagementGroupDiagnosticSettingsResource, self).__init__(location=location, **kwargs)
         self.storage_account_id = storage_account_id
         self.service_bus_rule_id = service_bus_rule_id
@@ -156,9 +187,9 @@ class ManagementGroupDiagnosticSettingsResource(ManagementGroupProxyOnlyResource
 class ManagementGroupDiagnosticSettingsResourceCollection(msrest.serialization.Model):
     """Represents a collection of management group diagnostic settings resources.
 
-    :param value: The collection of management group diagnostic settings resources.
-    :type value: list[~$(python-base-
-     namespace).v2020_01_01_preview.models.ManagementGroupDiagnosticSettingsResource]
+    :ivar value: The collection of management group diagnostic settings resources.
+    :vartype value:
+     list[~$(python-base-namespace).v2020_01_01_preview.models.ManagementGroupDiagnosticSettingsResource]
     """
 
     _attribute_map = {
@@ -171,6 +202,11 @@ class ManagementGroupDiagnosticSettingsResourceCollection(msrest.serialization.M
         value: Optional[List["ManagementGroupDiagnosticSettingsResource"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: The collection of management group diagnostic settings resources.
+        :paramtype value:
+         list[~$(python-base-namespace).v2020_01_01_preview.models.ManagementGroupDiagnosticSettingsResource]
+        """
         super(ManagementGroupDiagnosticSettingsResourceCollection, self).__init__(**kwargs)
         self.value = value
 
@@ -180,11 +216,11 @@ class ManagementGroupLogSettings(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param category: Required. Name of a Management Group Diagnostic Log category for a resource
+    :ivar category: Required. Name of a Management Group Diagnostic Log category for a resource
      type this setting is applied to.
-    :type category: str
-    :param enabled: Required. a value indicating whether this log is enabled.
-    :type enabled: bool
+    :vartype category: str
+    :ivar enabled: Required. a value indicating whether this log is enabled.
+    :vartype enabled: bool
     """
 
     _validation = {
@@ -204,6 +240,13 @@ class ManagementGroupLogSettings(msrest.serialization.Model):
         enabled: bool,
         **kwargs
     ):
+        """
+        :keyword category: Required. Name of a Management Group Diagnostic Log category for a resource
+         type this setting is applied to.
+        :paramtype category: str
+        :keyword enabled: Required. a value indicating whether this log is enabled.
+        :paramtype enabled: bool
+        """
         super(ManagementGroupLogSettings, self).__init__(**kwargs)
         self.category = category
         self.enabled = enabled

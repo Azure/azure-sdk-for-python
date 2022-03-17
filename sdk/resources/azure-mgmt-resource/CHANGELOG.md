@@ -1,5 +1,14 @@
 # Release History
 
+## 20.1.0 (2022-01-25)
+
+**Features**
+
+  - Added operation SubscriptionsOperations.check_zone_peers
+  - Added operation group PrivateLinkAssociationOperations
+  - Added operation group ResourceManagementPrivateLinkOperations
+  - Model ProviderResourceType has a new parameter zone_mappings
+
 ## 20.0.0 (2021-09-03)
 
 **Features**

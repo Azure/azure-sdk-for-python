@@ -232,6 +232,20 @@ class StorageContainerTest(StorageTestCase):
         self.assertIsNotNone(containers[0].immutable_storage_with_versioning_enabled)
 
     @BlobPreparer()
+    def test_list_system_containers(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+
+        # Act
+        containers = list(bsc.list_containers(include_system=True))
+
+        # Assert
+        found = False
+        for container in containers:
+            if container.name == "$logs":
+                found = True
+        self.assertEqual(found, True)
+
+    @BlobPreparer()
     def test_list_containers_with_prefix(self, storage_account_name, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = self._create_container(bsc)
@@ -922,6 +936,22 @@ class StorageContainerTest(StorageTestCase):
                          'application/octet-stream')
         self.assertIsNotNone(blobs[0].creation_time)
 
+    @pytest.mark.skipif(sys.version_info < (3, 0), reason="quote and unquote behave differently on py2 for recordings")
+    @BlobPreparer()
+    def test_list_encoded_blobs(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        blob_name = "dir1/dir2/file\uFFFF.blob"
+        container = self._create_container(bsc, prefix="cont1")
+        data = b'hello world'
+        bc = container.get_blob_client(blob_name)
+        bc.upload_blob(data)
+        props = bc.get_blob_properties()
+
+        # Act
+        blobs = list(container.list_blobs())
+        self.assertEqual(blobs[0].name, blob_name)
+        self.assertEqual(props.name, blob_name)
+
     @pytest.mark.playback_test_only
     @BlobPreparer()
     def test_list_blobs_with_object_replication_policy(self, storage_account_name, storage_account_key):
@@ -1171,6 +1201,70 @@ class StorageContainerTest(StorageTestCase):
         self.assertNamedItemInContainer(resp, 'a/')
         self.assertNamedItemInContainer(resp, 'b/')
         self.assertNamedItemInContainer(resp, 'blob4')
+
+    @BlobPreparer()
+    def test_find_blobs_by_tags(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
+
+        data = b'hello world'
+        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+        other_tags = {'tag1' : 'other'}
+        filter_expression = "tag1='firsttag' and tag2='secondtag'"
+
+        container.get_blob_client('blob1').upload_blob(data, tags=tags)
+        container.get_blob_client('blob2').upload_blob(data, tags=tags)
+        container.get_blob_client('blob3').upload_blob(data, tags=tags)
+        container.get_blob_client('blob4').upload_blob(data, tags=other_tags)
+
+        if self.is_live:
+            sleep(10)
+
+        # Act
+        blob_pages = container.find_blobs_by_tags(filter_expression, results_per_page=2).by_page()
+        first_page = next(blob_pages)
+        items_on_page1 = list(first_page)
+        second_page = next(blob_pages)
+        items_on_page2 = list(second_page)
+
+        # Assert
+        self.assertEqual(2, len(items_on_page1))
+        self.assertEqual(1, len(items_on_page2))
+        self.assertEqual(len(items_on_page2[0]['tags']), 2)
+        self.assertEqual(items_on_page2[0]['tags']['tag1'], 'firsttag')
+        self.assertEqual(items_on_page2[0]['tags']['tag2'], 'secondtag')
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_find_blobs_by_tags_container_sas(self, storage_account_name, storage_account_key):
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        container = self._create_container(bsc)
+
+        data = b'hello world'
+        tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+        filter_expression = "tag1='firsttag' and tag2='secondtag'"
+
+        container.get_blob_client('blob1').upload_blob(data, tags=tags)
+        container.get_blob_client('blob2').upload_blob(data, tags=tags)
+
+        if self.is_live:
+            sleep(10)
+
+        # Act
+        sas_token = generate_container_sas(
+            container.account_name,
+            container.container_name,
+            account_key=storage_account_key,
+            permission=ContainerSasPermissions(filter_by_tags=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)
+        )
+        container = ContainerClient.from_container_url(container.url, credential=sas_token)
+
+        blobs = list(container.find_blobs_by_tags(filter_expression))
+
+        # Assert
+        self.assertIsNotNone(blobs)
+        self.assertEqual(2, len(blobs))
 
     def test_batch_delete_empty_blob_list(self):
         container_client = ContainerClient("https://mystorageaccount.blob.core.windows.net", "container")

@@ -8,7 +8,7 @@ schema identifiers rather than full schemas.
 
 ## _Disclaimer_
 
-_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+_Azure SDK Python packages support for Python 2.7 has ended on 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 
@@ -24,7 +24,7 @@ pip install azure-schemaregistry
 To use this package, you must have:
 * Azure subscription - [Create a free account][azure_sub]
 * [Azure Schema Registry][schemaregistry_service]
-* Python 2.7, 3.6 or later - [Install Python][python]
+* Python 3.6 or later - [Install Python][python]
 
 ### Authenticate the client
 
@@ -39,7 +39,7 @@ Interaction with Schema Registry starts with an instance of SchemaRegistryClient
 pip install azure-identity
 ```
 
-* Additionally, to use the async API supported on Python 3.6+, you must first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/):
+* Additionally, to use the async API,  you must first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/):
 
 ```Bash
 pip install aiohttp
@@ -88,7 +88,7 @@ fully_qualified_namespace = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPAC
 group_name = os.environ['SCHEMA_REGISTRY_GROUP']
 name = "your-schema-name"
 format = "Avro"
-schema_definition = """
+definition = """
 {"namespace": "example.avro",
  "type": "record",
  "name": "User",
@@ -102,7 +102,7 @@ schema_definition = """
 
 schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=fully_qualified_namespace, credential=token_credential)
 with schema_registry_client:
-    schema_properties = schema_registry_client.register_schema(group_name, name, schema_definition, format)
+    schema_properties = schema_registry_client.register_schema(group_name, name, definition, format)
     id = schema_properties.id
 ```
 
@@ -118,12 +118,13 @@ from azure.schemaregistry import SchemaRegistryClient
 
 token_credential = DefaultAzureCredential()
 fully_qualified_namespace = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPACE']
-id = 'your-schema-id'
+schema_id = 'your-schema-id'
 
 schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=fully_qualified_namespace, credential=token_credential)
 with schema_registry_client:
-    schema = schema_registry_client.get_schema(id)
-    schema_definition = schema.schema_definition
+    schema = schema_registry_client.get_schema(schema_id)
+    definition = schema.definition
+    properties = schema.properties
 ```
 
 ### Get the id of a schema
@@ -141,7 +142,7 @@ fully_qualified_namespace = os.environ['SCHEMA_REGISTRY_FULLY_QUALIFIED_NAMESPAC
 group_name = os.environ['SCHEMA_REGISTRY_GROUP']
 name = "your-schema-name"
 format = "Avro"
-schema_definition = """
+definition = """
 {"namespace": "example.avro",
  "type": "record",
  "name": "User",
@@ -155,7 +156,7 @@ schema_definition = """
 
 schema_registry_client = SchemaRegistryClient(fully_qualified_namespace=fully_qualified_namespace, credential=token_credential)
 with schema_registry_client:
-    schema_properties = schema_registry_client.register_schema(group_name, name, schema_definition, format)
+    schema_properties = schema_registry_client.register_schema(group_name, name, definition, format)
     id = schema_properties.id
 ```
 
@@ -195,7 +196,7 @@ schema_registry_client = SchemaRegistryClient("your_fully_qualified_namespace", 
 Similarly, `logging_enable` can enable detailed logging for a single operation,
 even when it isn't enabled for the client:
 ```py
-schema_registry_client.get_schema(id, logging_enable=True)
+schema_registry_client.get_schema(schema_id, logging_enable=True)
 ```
 
 ## Next steps

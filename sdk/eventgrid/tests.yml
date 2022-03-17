@@ -5,6 +5,7 @@ stages:
     parameters:
       ServiceDirectory: eventgrid
       BuildTargetingString: azure-eventgrid*
+      TestProxy: true
       MatrixReplace:
         - TestSamples=.*/true
       EnvVars:

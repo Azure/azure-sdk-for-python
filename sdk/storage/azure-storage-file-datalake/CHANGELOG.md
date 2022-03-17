@@ -1,5 +1,53 @@
 # Release History
 
+## 12.6.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 12.6.0 (2022-03-08)
+
+This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
+
+### Stable release of preview features
+- Added support for service version 2021-02-12.
+- Account level SAS tokens now supports two new permissions:
+    - `permanent_delete`
+    - `set_immutability_policy`
+- Added support for listing system file systems with list_file_systems().
+
+### Bugs Fixed
+- Update `azure-core` dependency to avoid inconsistent dependencies from being installed.
+- Added all missing Service SAS permissions.
+
+### Other Changes
+- Temporarily removed the preview `delete_files()` method on `FileSystemClient`. This feature will be added back
+in a future release.
+
+## 12.6.0b2 (2021-12-13)
+
+### Features Added
+- Added support for service version 2021-02-12.
+- Added support for listing system file systems with list_file_systems().
+
+### Bugs Fixed
+- Connection string SAS now works as expected.
+
+## 12.6.0b1 (2021-11-08)
+**New features**
+- Added support for batch deleting files using the `delete_files()` method from a `FileSystemClient`
+- Account level SAS tokens now support two new permissions:
+    - `permanent_delete`
+    - `set_immutability_policy`
+**Fixes**
+- `FileSystemProperties` was not subscriptable. Now it is both subscriptable and attributes can also be accessed directly (#20772) 
+- Datalake Client Typing annotation issues have been resolved (#19906)
+
 ## 12.5.0 (2021-09-15)
 **Stable release of preview features**
 - Added support for service version 2020-10-02 (STG78)

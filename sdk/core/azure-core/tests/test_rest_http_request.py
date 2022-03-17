@@ -255,6 +255,17 @@ def test_data_str_input():
     assert len(request.headers) == 1
     assert request.headers['Content-Type'] == 'application/x-www-form-urlencoded'
 
+def test_content_str_input():
+    requests = [
+        HttpRequest("POST", "/fake", content="hello, world!"),
+        HttpRequest("POST", "/fake", content=u"hello, world!"),
+    ]
+    for request in requests:
+        assert len(request.headers) == 2
+        assert request.headers["Content-Type"] == "text/plain"
+        assert request.headers["Content-Length"] == "13"
+        assert request.content == "hello, world!"
+
 @pytest.mark.parametrize(("value"), (object(), {"key": "value"}))
 def test_multipart_invalid_value(value):
 
@@ -344,7 +355,7 @@ def test_request_policies_chain(port):
             # modify header to know we entered this callback
             request.http_request.headers = {
                 "x-ms-date": "Thu, 14 Jun 2018 16:46:54 GMT",
-                "Authorization": "SharedKey account:G4jjBXA7LI/RnWKIOQ8i9xH4p76pAQ+4Fs4R1VxasaE=",
+                "Authorization": "SharedKey account:G4jjBXA7LI/RnWKIOQ8i9xH4p76pAQ+4Fs4R1VxasaE=", # fake key suppressed in credscan
                 "Content-Length": "0",
             }
 
@@ -356,7 +367,7 @@ def test_request_policies_chain(port):
             expected = (
                 b'DELETE http://localhost:5000/container0/blob0 HTTP/1.1\r\n'
                 b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
-                b'Authorization: SharedKey account:G4jjBXA7LI/RnWKIOQ8i9xH4p76pAQ+4Fs4R1VxasaE=\r\n'
+                b'Authorization: SharedKey account:G4jjBXA7LI/RnWKIOQ8i9xH4p76pAQ+4Fs4R1VxasaE=\r\n' # fake key suppressed in credscan
                 b'Content-Length: 0\r\n'
                 b'\r\n'
             )
@@ -417,6 +428,32 @@ def test_per_call_policies_old_then_new(port):
     # work
     assert "I entered the policies!" in str(ex.value)
 
+def test_json_file_valid():
+    json_bytes = bytearray('{"more": "cowbell"}', encoding='utf-8')
+    with io.BytesIO(json_bytes) as json_file:
+        request = HttpRequest("PUT", "/fake", json=json_file)
+        assert request.headers == {"Content-Type": "application/json"}
+        assert request.content == json_file
+        assert not request.content.closed
+        assert request.content.read() == b'{"more": "cowbell"}'
+
+def test_json_file_invalid():
+    json_bytes = bytearray('{"more": "cowbell" i am not valid', encoding='utf-8')
+    with io.BytesIO(json_bytes) as json_file:
+        request = HttpRequest("PUT", "/fake", json=json_file)
+        assert request.headers == {"Content-Type": "application/json"}
+        assert request.content == json_file
+        assert not request.content.closed
+        assert request.content.read() == b'{"more": "cowbell" i am not valid'
+
+def test_json_file_content_type_input():
+    json_bytes = bytearray('{"more": "cowbell"}', encoding='utf-8')
+    with io.BytesIO(json_bytes) as json_file:
+        request = HttpRequest("PUT", "/fake", json=json_file, headers={"Content-Type": "application/json-special"})
+        assert request.headers == {"Content-Type": "application/json-special"}
+        assert request.content == json_file
+        assert not request.content.closed
+        assert request.content.read() == b'{"more": "cowbell"}'
 
 # NOTE: For files, we don't allow list of tuples yet, just dict. Will uncomment when we add this capability
 # def test_multipart_multiple_files_single_input_content():

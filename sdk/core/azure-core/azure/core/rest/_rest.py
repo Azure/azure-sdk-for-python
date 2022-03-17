@@ -28,7 +28,7 @@ import copy
 
 from typing import TYPE_CHECKING
 
-from ..utils._utils import _case_insensitive_dict
+from ..utils._utils import case_insensitive_dict
 from ._helpers import (
     set_content_body,
     set_json_body,
@@ -60,9 +60,7 @@ except AttributeError:  # Python 2.7, abc exists, but not ABC
 ################################## CLASSES ######################################
 
 class HttpRequest(HttpRequestBackcompatMixin):
-    """Provisional object that represents an HTTP request.
-
-    **This object is provisional**, meaning it may be changed in a future release.
+    """HTTP request.
 
     It should be passed to your client's `send_request` method.
 
@@ -113,7 +111,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
             files=kwargs.pop("files", None),
             json=kwargs.pop("json", None),
         )
-        self.headers = _case_insensitive_dict(default_headers)
+        self.headers = case_insensitive_dict(default_headers)
         self.headers.update(kwargs.pop("headers", {}))
 
         if kwargs:
@@ -321,9 +319,8 @@ class _HttpResponseBase(ABC):
 
 
 class HttpResponse(_HttpResponseBase):
-    """**Provisional** abstract base class for HTTP responses.
+    """Abstract base class for HTTP responses.
 
-    **This object is provisional**, meaning it may be changed in a future release.
     Use this abstract base class to create your own transport responses.
 
     Responses implementing this ABC are returned from your client's `send_request` method
@@ -361,8 +358,8 @@ class HttpResponse(_HttpResponseBase):
         """
 
     @abc.abstractmethod
-    def iter_raw(self):
-        # type: () -> Iterator[bytes]
+    def iter_raw(self, **kwargs):
+        # type: (Any) -> Iterator[bytes]
         """Iterates over the response's bytes. Will not decompress in the process.
 
         :return: An iterator of bytes from the response
@@ -370,8 +367,8 @@ class HttpResponse(_HttpResponseBase):
         """
 
     @abc.abstractmethod
-    def iter_bytes(self):
-        # type: () -> Iterator[bytes]
+    def iter_bytes(self, **kwargs):
+        # type: (Any) -> Iterator[bytes]
         """Iterates over the response's bytes. Will decompress in the process.
 
         :return: An iterator of bytes from the response

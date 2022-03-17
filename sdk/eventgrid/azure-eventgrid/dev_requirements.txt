@@ -4,4 +4,5 @@
 -e ../../identity/azure-identity
 -e ../azure-mgmt-eventgrid
 azure-storage-queue
-aiohttp>=3.0; python_version >= '3.5'
+cloudevents<=2.0.0; python_version >= "3.6"
+aiohttp>=3.0

@@ -6,26 +6,37 @@ from json_delta import diff
 _LOGGER = logging.getLogger(__name__)
 
 
+def _build_md(content, title, buffer):
+    buffer.append(title)
+    buffer.append("")
+    for item in content:
+        buffer.append("  - " + item)
+    buffer.append("")
+
+
 class ChangeLog:
     def __init__(self, old_report, new_report):
         self.features = []
         self.breaking_changes = []
+        self.optional_features = []
         self._old_report = old_report
         self._new_report = new_report
 
+    def sort(self):
+        self.features.sort()
+        self.breaking_changes.sort()
+        self.optional_features.sort()
+
     def build_md(self):
+        self.sort()
         buffer = []
         if self.features:
-            buffer.append("**Features**")
-            buffer.append("")
-            for feature in self.features:
-                buffer.append("  - " + feature)
-            buffer.append("")
+            _build_md(self.features, "**Features**", buffer)
         if self.breaking_changes:
-            buffer.append("**Breaking changes**")
-            buffer.append("")
-            for breaking_change in self.breaking_changes:
-                buffer.append("  - " + breaking_change)
+            _build_md(self.breaking_changes, "**Breaking changes**", buffer)
+        if not (self.features or self.breaking_changes) and self.optional_features:
+            _build_md(self.optional_features, "**Features**", buffer)
+
         return "\n".join(buffer).strip()
 
     @staticmethod
@@ -81,10 +92,10 @@ class ChangeLog:
             return
         model_name, *remaining_path = remaining_path
         if not remaining_path:
-            # A new model or a model deletion is not very interesting by itself
-            # since it usually means that there is a new operation
-            #
-            # We might miss some discrimanator new sub-classes however
+            # If only model removal, it is not features, and not enough to be breaking changes, either.  So put it
+            # aside temporarily(https://github.com/Azure/azure-sdk-for-python/pull/22139#discussion_r770187333).
+            if not is_deletion:
+                self.optional_features.append(_MODEL_ADD.format(model_name))
             return
 
         # That's a model signature change
@@ -128,6 +139,7 @@ class ChangeLog:
 _ADD_OPERATION_GROUP = "Added operation group {}"
 _ADD_OPERATION = "Added operation {}.{}"
 _MODEL_PARAM_ADD = "Model {} has a new parameter {}"
+_MODEL_ADD = "Added model {}"
 
 ## Breaking Changes
 _REMOVE_OPERATION_GROUP = "Removed operation group {}"

@@ -9,8 +9,9 @@
 from copy import deepcopy
 from typing import TYPE_CHECKING
 
-from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
+
+from azure.core import PipelineClient
 
 from . import models
 from ._configuration import SearchClientConfiguration
@@ -31,6 +32,9 @@ class SearchClient(object):
     :type endpoint: str
     :param index_name: The name of the index.
     :type index_name: str
+    :keyword api_version: Api Version. The default value is "2021-04-30-Preview". Note that
+     overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -41,7 +45,7 @@ class SearchClient(object):
     ):
         # type: (...) -> None
         _base_url = '{endpoint}/indexes(\'{indexName}\')'
-        self._config = SearchClientConfiguration(endpoint, index_name, **kwargs)
+        self._config = SearchClientConfiguration(endpoint=endpoint, index_name=index_name, **kwargs)
         self._client = PipelineClient(base_url=_base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}

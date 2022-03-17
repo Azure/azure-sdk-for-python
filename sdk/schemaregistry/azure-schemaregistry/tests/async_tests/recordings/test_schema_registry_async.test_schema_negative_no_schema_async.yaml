@@ -3,49 +3,51 @@ interactions:
     body: null
     headers:
       Accept:
-      - text/plain; charset=utf-8
+      - application/json; serialization=Avro
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/a?api-version=2020-09-01-preview
+    uri: https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/a?api-version=2021-10
   response:
     body:
-      string: '{"Code":400,"Detail":"SubCode=40000, UnknownType:The request is invalid.
-        [MGResponseHttpError=BadRequest]. TrackingId:dbfa19f5-29c4-4278-a562-7abb97e16e07_G27,
-        SystemTracker:swathip-test-eventhubs.servicebus.windows.net:$schemagroups\/getSchemaById\/a,
-        Timestamp:2021-09-29T16:52:41"}'
+      string: '{"error":{"code":"InvalidRequest","message":"SubCode=40000, UnknownType:The
+        request is invalid. [MGResponseHttpError=BadRequest]. TrackingId:3cf9d0ba-3904-457b-867a-c113f1e4aac7_G40,
+        SystemTracker:swathip-test-eh-westus.servicebus.windows.net:$schemaGroups\/$schemas\/a,
+        Timestamp:2022-02-25T20:19:14"}}'
     headers:
       content-type: application/json
-      date: Wed, 29 Sep 2021 16:52:41 GMT
+      date: Fri, 25 Feb 2022 20:19:14 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
+      x-ms-error-code: InvalidRequest
     status:
       code: 400
       message: Bad Request
-    url: https://swathip-test-eventhubs.servicebus.windows.net/$schemagroups/getSchemaById/a?api-version=2020-09-01-preview
+    url: https://swathip-test-eh-westus.servicebus.windows.net/$schemaGroups/$schemas/a?api-version=2021-10
 - request:
     body: null
     headers:
       Accept:
-      - text/plain; charset=utf-8
+      - application/json; serialization=Avro
       User-Agent:
-      - azsdk-python-azureschemaregistry/1.0.0b3 Python/3.9.0 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azureschemaregistry/1.0.0 Python/3.9.0 (Windows-10-10.0.22000-SP0)
     method: GET
-    uri: https://fake_resource.servicebus.windows.net/$schemagroups/getSchemaById/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2020-09-01-preview
+    uri: https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2021-10
   response:
     body:
-      string: '{"Code":404,"Detail":"Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does
-        not exist. TrackingId:87072604-c61d-4dce-bd60-077162e0aa78_G27, SystemTracker:swathip-test-eventhubs.servicebus.windows.net:$schemagroups\/getSchemaById\/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
-        Timestamp:2021-09-29T16:52:41"}'
+      string: '{"error":{"code":"ItemNotFound","message":"Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+        does not exist. TrackingId:4595411b-59ad-47d6-acf5-8cb4e439f738_G40, SystemTracker:swathip-test-eh-westus.servicebus.windows.net:$schemaGroups\/$schemas\/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
+        Timestamp:2022-02-25T20:19:15"}}'
     headers:
       content-type: application/json
-      date: Wed, 29 Sep 2021 16:52:41 GMT
+      date: Fri, 25 Feb 2022 20:19:14 GMT
       server: Microsoft-HTTPAPI/2.0
       strict-transport-security: max-age=31536000
       transfer-encoding: chunked
+      x-ms-error-code: ItemNotFound
     status:
       code: 404
       message: Not Found
-    url: https://swathip-test-eventhubs.servicebus.windows.net/$schemagroups/getSchemaById/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2020-09-01-preview
+    url: https://swathip-test-eh-westus.servicebus.windows.net/$schemaGroups/$schemas/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2021-10
 version: 1

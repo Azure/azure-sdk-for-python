@@ -72,6 +72,7 @@ class MetricsAdvisorClient(object):
         try:
             if not endpoint.lower().startswith("http"):
                 endpoint = "https://" + endpoint
+            endpoint = endpoint.rstrip("/")
         except AttributeError:
             raise ValueError("Base URL must be a string.")
 
@@ -422,7 +423,7 @@ class MetricsAdvisorClient(object):
 
     @overload
     def list_anomalies(
-        self, alert_configuration_id: str, alert_id: str, **kwargs: Any
+        self, *, alert_configuration_id: str, alert_id: str, **kwargs: Any
     ) -> AsyncItemPaged[DataPointAnomaly]:
         """Query anomalies under a specific alert.
 
@@ -448,6 +449,7 @@ class MetricsAdvisorClient(object):
     @overload
     def list_anomalies(
         self,
+        *,
         detection_configuration_id: str,
         start_time: Union[str, datetime.datetime],
         end_time: Union[str, datetime.datetime],
@@ -590,7 +592,7 @@ class MetricsAdvisorClient(object):
 
     @overload
     def list_incidents(
-        self, alert_configuration_id: str, alert_id: str, **kwargs: Any
+        self, *, alert_configuration_id: str, alert_id: str, **kwargs: Any
     ) -> AsyncItemPaged[AnomalyIncident]:
 
         """Query incidents under a specific alert.
@@ -617,6 +619,7 @@ class MetricsAdvisorClient(object):
     @overload
     def list_incidents(
         self,
+        *,
         detection_configuration_id: str,
         start_time: Union[str, datetime.datetime],
         end_time: Union[str, datetime.datetime],

@@ -69,7 +69,7 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.14.0",
         'azure-eventhub<6.0.0,>=5.0.0',
-        'msrest>=0.5.0',
+        'msrest>=0.6.21',
         'azure-eventhub<6.0.0,>=5.0.0',
     ],
     extras_require={

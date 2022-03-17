@@ -25,10 +25,10 @@ class PrivateLinkScopesResource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -53,6 +53,12 @@ class PrivateLinkScopesResource(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(PrivateLinkScopesResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -74,17 +80,17 @@ class AzureMonitorPrivateLinkScope(PrivateLinkScopesResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     :ivar provisioning_state: Current state of this PrivateLinkScope: whether or not is has been
      provisioned within the resource group it is defined. Users cannot change this value but are
      able to read from it. Values will include Provisioning ,Succeeded, Canceled and Failed.
     :vartype provisioning_state: str
     :ivar private_endpoint_connections: List of private endpoint connections.
-    :vartype private_endpoint_connections: list[~$(python-base-
-     namespace).v2019_10_17.models.PrivateEndpointConnection]
+    :vartype private_endpoint_connections:
+     list[~$(python-base-namespace).v2019_10_17.models.PrivateEndpointConnection]
     """
 
     _validation = {
@@ -113,6 +119,12 @@ class AzureMonitorPrivateLinkScope(PrivateLinkScopesResource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(AzureMonitorPrivateLinkScope, self).__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
         self.private_endpoint_connections = None
@@ -123,11 +135,11 @@ class AzureMonitorPrivateLinkScopeListResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. List of Azure Monitor PrivateLinkScope definitions.
-    :type value: list[~$(python-base-namespace).v2019_10_17.models.AzureMonitorPrivateLinkScope]
-    :param next_link: The URI to get the next set of Azure Monitor PrivateLinkScope definitions if
+    :ivar value: Required. List of Azure Monitor PrivateLinkScope definitions.
+    :vartype value: list[~$(python-base-namespace).v2019_10_17.models.AzureMonitorPrivateLinkScope]
+    :ivar next_link: The URI to get the next set of Azure Monitor PrivateLinkScope definitions if
      too many PrivateLinkScopes where returned in the result set.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _validation = {
@@ -146,6 +158,14 @@ class AzureMonitorPrivateLinkScopeListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Required. List of Azure Monitor PrivateLinkScope definitions.
+        :paramtype value:
+         list[~$(python-base-namespace).v2019_10_17.models.AzureMonitorPrivateLinkScope]
+        :keyword next_link: The URI to get the next set of Azure Monitor PrivateLinkScope definitions
+         if too many PrivateLinkScopes where returned in the result set.
+        :paramtype next_link: str
+        """
         super(AzureMonitorPrivateLinkScopeListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -159,7 +179,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {
@@ -176,6 +196,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -184,10 +206,10 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Describes the format of Error response.
 
-    :param code: Error code.
-    :type code: str
-    :param message: Error message indicating why the operation failed.
-    :type message: str
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message indicating why the operation failed.
+    :vartype message: str
     """
 
     _attribute_map = {
@@ -202,6 +224,12 @@ class ErrorResponse(msrest.serialization.Model):
         message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword code: Error code.
+        :paramtype code: str
+        :keyword message: Error message indicating why the operation failed.
+        :paramtype message: str
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -212,15 +240,15 @@ class ErrorResponseCommon(ErrorResponse):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param code: Error code.
-    :type code: str
-    :param message: Error message indicating why the operation failed.
-    :type message: str
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message indicating why the operation failed.
+    :vartype message: str
     :ivar details: The error details.
     :vartype details: list[~$(python-base-namespace).v2019_10_17.models.ErrorResponseCommon]
     :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~$(python-base-
-     namespace).v2019_10_17.models.ErrorAdditionalInfo]
+    :vartype additional_info:
+     list[~$(python-base-namespace).v2019_10_17.models.ErrorAdditionalInfo]
     """
 
     _validation = {
@@ -242,6 +270,12 @@ class ErrorResponseCommon(ErrorResponse):
         message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword code: Error code.
+        :paramtype code: str
+        :keyword message: Error message indicating why the operation failed.
+        :paramtype message: str
+        """
         super(ErrorResponseCommon, self).__init__(code=code, message=message, **kwargs)
         self.details = None
         self.additional_info = None
@@ -250,18 +284,18 @@ class ErrorResponseCommon(ErrorResponse):
 class OperationStatus(msrest.serialization.Model):
     """The status of operation.
 
-    :param id: The operation Id.
-    :type id: str
-    :param name: The operation name.
-    :type name: str
-    :param start_time: Start time of the job in standard ISO8601 format.
-    :type start_time: ~datetime.datetime
-    :param end_time: End time of the job in standard ISO8601 format.
-    :type end_time: ~datetime.datetime
-    :param status: The status of the operation.
-    :type status: str
-    :param error: The error detail of the operation if any.
-    :type error: ~$(python-base-namespace).v2019_10_17.models.ErrorResponseCommon
+    :ivar id: The operation Id.
+    :vartype id: str
+    :ivar name: The operation name.
+    :vartype name: str
+    :ivar start_time: Start time of the job in standard ISO8601 format.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: End time of the job in standard ISO8601 format.
+    :vartype end_time: ~datetime.datetime
+    :ivar status: The status of the operation.
+    :vartype status: str
+    :ivar error: The error detail of the operation if any.
+    :vartype error: ~$(python-base-namespace).v2019_10_17.models.ErrorResponseCommon
     """
 
     _attribute_map = {
@@ -284,6 +318,20 @@ class OperationStatus(msrest.serialization.Model):
         error: Optional["ErrorResponseCommon"] = None,
         **kwargs
     ):
+        """
+        :keyword id: The operation Id.
+        :paramtype id: str
+        :keyword name: The operation name.
+        :paramtype name: str
+        :keyword start_time: Start time of the job in standard ISO8601 format.
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: End time of the job in standard ISO8601 format.
+        :paramtype end_time: ~datetime.datetime
+        :keyword status: The status of the operation.
+        :paramtype status: str
+        :keyword error: The error detail of the operation if any.
+        :paramtype error: ~$(python-base-namespace).v2019_10_17.models.ErrorResponseCommon
+        """
         super(OperationStatus, self).__init__(**kwargs)
         self.id = id
         self.name = name
@@ -322,6 +370,8 @@ class ProxyResource(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ProxyResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -339,12 +389,12 @@ class PrivateEndpointConnection(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param private_endpoint: Private endpoint which the connection belongs to.
-    :type private_endpoint: ~$(python-base-namespace).v2019_10_17.models.PrivateEndpointProperty
-    :param private_link_service_connection_state: Connection state of the private endpoint
+    :ivar private_endpoint: Private endpoint which the connection belongs to.
+    :vartype private_endpoint: ~$(python-base-namespace).v2019_10_17.models.PrivateEndpointProperty
+    :ivar private_link_service_connection_state: Connection state of the private endpoint
      connection.
-    :type private_link_service_connection_state: ~$(python-base-
-     namespace).v2019_10_17.models.PrivateLinkServiceConnectionStateProperty
+    :vartype private_link_service_connection_state:
+     ~$(python-base-namespace).v2019_10_17.models.PrivateLinkServiceConnectionStateProperty
     :ivar provisioning_state: State of the private endpoint connection.
     :vartype provisioning_state: str
     """
@@ -372,6 +422,15 @@ class PrivateEndpointConnection(ProxyResource):
         private_link_service_connection_state: Optional["PrivateLinkServiceConnectionStateProperty"] = None,
         **kwargs
     ):
+        """
+        :keyword private_endpoint: Private endpoint which the connection belongs to.
+        :paramtype private_endpoint:
+         ~$(python-base-namespace).v2019_10_17.models.PrivateEndpointProperty
+        :keyword private_link_service_connection_state: Connection state of the private endpoint
+         connection.
+        :paramtype private_link_service_connection_state:
+         ~$(python-base-namespace).v2019_10_17.models.PrivateLinkServiceConnectionStateProperty
+        """
         super(PrivateEndpointConnection, self).__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
@@ -403,6 +462,8 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -411,8 +472,8 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
 class PrivateEndpointProperty(msrest.serialization.Model):
     """Private endpoint which the connection belongs to.
 
-    :param id: Resource id of the private endpoint.
-    :type id: str
+    :ivar id: Resource id of the private endpoint.
+    :vartype id: str
     """
 
     _attribute_map = {
@@ -425,6 +486,10 @@ class PrivateEndpointProperty(msrest.serialization.Model):
         id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword id: Resource id of the private endpoint.
+        :paramtype id: str
+        """
         super(PrivateEndpointProperty, self).__init__(**kwargs)
         self.id = id
 
@@ -466,6 +531,8 @@ class PrivateLinkResource(ProxyResource):
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateLinkResource, self).__init__(**kwargs)
         self.group_id = None
         self.required_members = None
@@ -496,6 +563,8 @@ class PrivateLinkResourceListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(PrivateLinkResourceListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -508,10 +577,10 @@ class PrivateLinkServiceConnectionStateProperty(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param status: Required. The private link service connection status.
-    :type status: str
-    :param description: Required. The private link service connection description.
-    :type description: str
+    :ivar status: Required. The private link service connection status.
+    :vartype status: str
+    :ivar description: Required. The private link service connection description.
+    :vartype description: str
     :ivar actions_required: The actions required for private link service connection.
     :vartype actions_required: str
     """
@@ -535,6 +604,12 @@ class PrivateLinkServiceConnectionStateProperty(msrest.serialization.Model):
         description: str,
         **kwargs
     ):
+        """
+        :keyword status: Required. The private link service connection status.
+        :paramtype status: str
+        :keyword description: Required. The private link service connection description.
+        :paramtype description: str
+        """
         super(PrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
         self.status = status
         self.description = description
@@ -552,8 +627,8 @@ class ScopedResource(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param linked_resource_id: The resource id of the scoped Azure monitor resource.
-    :type linked_resource_id: str
+    :ivar linked_resource_id: The resource id of the scoped Azure monitor resource.
+    :vartype linked_resource_id: str
     :ivar provisioning_state: State of the private endpoint connection.
     :vartype provisioning_state: str
     """
@@ -579,6 +654,10 @@ class ScopedResource(ProxyResource):
         linked_resource_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword linked_resource_id: The resource id of the scoped Azure monitor resource.
+        :paramtype linked_resource_id: str
+        """
         super(ScopedResource, self).__init__(**kwargs)
         self.linked_resource_id = linked_resource_id
         self.provisioning_state = None
@@ -609,6 +688,8 @@ class ScopedResourceListResult(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ScopedResourceListResult, self).__init__(**kwargs)
         self.value = None
         self.next_link = None
@@ -617,8 +698,8 @@ class ScopedResourceListResult(msrest.serialization.Model):
 class TagsResource(msrest.serialization.Model):
     """A container holding only the Tags for a resource, allowing the user to update the tags on a PrivateLinkScope instance.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -631,5 +712,9 @@ class TagsResource(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(TagsResource, self).__init__(**kwargs)
         self.tags = tags

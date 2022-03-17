@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-import logging
 import os
 import os.path
 import six
@@ -14,16 +13,16 @@ from typing import TYPE_CHECKING
 
 from dotenv import load_dotenv, find_dotenv
 
-from azure_devtools.scenario_tests import AzureTestError
-from azure_devtools.scenario_tests.config import TestConfig
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 
 from . import mgmt_settings_fake as fake_settings
 from .azure_testcase import _is_autorest_v3, get_resource_name, get_qualified_method_name
+from .helpers import is_live
+from .sanitizers import add_general_regex_sanitizer
 
 try:
     # Try to import the AsyncFakeCredential, if we cannot assume it is Python 2
-    from .fake_async_credential import AsyncFakeCredential
+    from .fake_credentials_async import AsyncFakeCredential
 except SyntaxError:
     pass
 
@@ -34,31 +33,30 @@ if TYPE_CHECKING:
 load_dotenv(find_dotenv())
 
 
-def is_live():
-    """A module version of is_live, that could be used in pytest marker."""
-    if not hasattr(is_live, "_cache"):
-        is_live._cache = TestConfig().record_mode
-    return is_live._cache
+def _sanitize_token(token, fake_token):
+    add_general_regex_sanitizer(value=fake_token, regex=token)
+    url_safe_token = token.replace("/", u"%2F")
+    add_general_regex_sanitizer(value=fake_token, regex=url_safe_token)
+    async_token = token.replace(u"%3A", ":")
+    add_general_regex_sanitizer(value=fake_token, regex=async_token)
 
 
 class AzureRecordedTestCase(object):
+    """Test class for use by data-plane tests that use the azure-sdk-tools test proxy.
+
+    For more details and usage examples, refer to
+    https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
+    """
+
     @property
     def settings(self):
         if self.is_live:
-            if self._real_settings:
-                return self._real_settings
-            else:
-                raise AzureTestError("Need a mgmt_settings_real.py file to run tests live.")
+            return os.environ
         else:
-            return self._fake_settings
+            return fake_settings
 
     def _load_settings(self):
-        try:
-            from . import mgmt_settings_real as real_settings
-
-            return fake_settings, real_settings
-        except ImportError:
-            return fake_settings, None
+        return fake_settings, os.environ
 
     @property
     def is_live(self):
@@ -84,14 +82,7 @@ class AzureRecordedTestCase(object):
     def get_settings_value(self, key):
         key_value = os.environ.get("AZURE_" + key, None)
 
-        if key_value and self._real_settings and getattr(self._real_settings, key) != key_value:
-            raise ValueError(
-                "You have both AZURE_{key} env variable and mgmt_settings_real.py for {key} to different values".format(
-                    key=key
-                )
-            )
-
-        if not key_value:
+        if not key_value or self.is_playback():
             try:
                 key_value = getattr(self.settings, key)
             except Exception as ex:
@@ -99,9 +90,9 @@ class AzureRecordedTestCase(object):
         return key_value
 
     def get_credential(self, client_class, **kwargs):
-        tenant_id = os.environ.get("AZURE_TENANT_ID", getattr(self._real_settings, "TENANT_ID", None))
-        client_id = os.environ.get("AZURE_CLIENT_ID", getattr(self._real_settings, "CLIENT_ID", None))
-        secret = os.environ.get("AZURE_CLIENT_SECRET", getattr(self._real_settings, "CLIENT_SECRET", None))
+        tenant_id = os.environ.get("AZURE_TENANT_ID", getattr(os.environ, "TENANT_ID", None))
+        client_id = os.environ.get("AZURE_CLIENT_ID", getattr(os.environ, "CLIENT_ID", None))
+        secret = os.environ.get("AZURE_CLIENT_SECRET", getattr(os.environ, "CLIENT_SECRET", None))
         is_async = kwargs.pop("is_async", False)
 
         if tenant_id and client_id and secret and self.is_live:
@@ -156,17 +147,6 @@ class AzureRecordedTestCase(object):
                 client.config.long_running_operation_timeout = 0
             client.config.enable_http_logger = True
         return client
-
-    def create_basic_client(self, client_class, **kwargs):
-        """ DO NOT USE ME ANYMORE."""
-        logger = logging.getLogger()
-        logger.warning(
-            "'create_basic_client' will be deprecated in the future. It is recommended that you use \
-                'get_credential' and 'create_client_from_credential' to create your client."
-        )
-
-        credentials = self.get_credential(client_class)
-        return self.create_client_from_credential(client_class, credentials, **kwargs)
 
     def create_random_name(self, name):
         unique_test_name = os.getenv("PYTEST_CURRENT_TEST").encode("utf-8")
@@ -225,6 +205,7 @@ class AzureRecordedTestCase(object):
         token = sas_func(*sas_func_pos_args, **kwargs)
 
         fake_token = self._create_fake_token(token, fake_value)
+        _sanitize_token(token, fake_token)
 
         if self.is_live:
             return token

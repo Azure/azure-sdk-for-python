@@ -33,28 +33,23 @@ class SetImageProperties(object):
         load_dotenv(find_dotenv())
 
     def set_image_properties(self):
-        # Create a new ContainerRegistryClient
-        account_url = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+        # Instantiate an instance of ContainerRegistryClient
         audience = "https://management.azure.com"
-        credential = DefaultAzureCredential()
-        client = ContainerRegistryClient(account_url, credential, audience=audience)
+        endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
 
-        # [START update_manifest_properties]
-        # Set permissions on the v1 image's "latest" tag
-        client.update_manifest_properties(
-            "library/hello-world",
-            "latest",
-            can_write=False,
-            can_delete=False
-        )
-        # [END update_manifest_properties]
-        # After this update, if someone were to push an update to `myacr.azurecr.io\hello-world:v1`, it would fail.
-        # It's worth noting that if this image also had another tag, such as `latest`, and that tag did not have
-        # permissions set to prevent reads or deletes, the image could still be overwritten. For example,
-        # if someone were to push an update to `<registry endpoint>\hello-world:latest`
-        # (which references the same image), it would succeed.
-
-        client.close()
+        with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience=audience) as client:
+            # Set permissions on the v1 image's "latest" tag
+            client.update_manifest_properties(
+                "library/hello-world",
+                "latest",
+                can_write=False,
+                can_delete=False
+            )
+            # After this update, if someone were to push an update to `myacr.azurecr.io\hello-world:v1`, it would fail.
+            # It's worth noting that if this image also had another tag, such as `latest`, and that tag did not have
+            # permissions set to prevent reads or deletes, the image could still be overwritten. For example,
+            # if someone were to push an update to `<registry endpoint>\hello-world:latest`
+            # (which references the same image), it would succeed.
 
 
 if __name__ == "__main__":

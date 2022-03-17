@@ -6,58 +6,32 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import AppServiceCertificate
-    from ._models_py3 import AppServiceCertificateCollection
-    from ._models_py3 import AppServiceCertificateOrder
-    from ._models_py3 import AppServiceCertificateOrderCollection
-    from ._models_py3 import AppServiceCertificateOrderPatchResource
-    from ._models_py3 import AppServiceCertificatePatchResource
-    from ._models_py3 import AppServiceCertificateResource
-    from ._models_py3 import CertificateDetails
-    from ._models_py3 import CertificateEmail
-    from ._models_py3 import CertificateOrderAction
-    from ._models_py3 import CsmOperationCollection
-    from ._models_py3 import CsmOperationDescription
-    from ._models_py3 import CsmOperationDescriptionProperties
-    from ._models_py3 import CsmOperationDisplay
-    from ._models_py3 import Dimension
-    from ._models_py3 import MetricAvailability
-    from ._models_py3 import MetricSpecification
-    from ._models_py3 import NameIdentifier
-    from ._models_py3 import ProxyOnlyResource
-    from ._models_py3 import ReissueCertificateOrderRequest
-    from ._models_py3 import RenewCertificateOrderRequest
-    from ._models_py3 import Resource
-    from ._models_py3 import ServiceSpecification
-    from ._models_py3 import SiteSeal
-    from ._models_py3 import SiteSealRequest
-except (SyntaxError, ImportError):
-    from ._models import AppServiceCertificate  # type: ignore
-    from ._models import AppServiceCertificateCollection  # type: ignore
-    from ._models import AppServiceCertificateOrder  # type: ignore
-    from ._models import AppServiceCertificateOrderCollection  # type: ignore
-    from ._models import AppServiceCertificateOrderPatchResource  # type: ignore
-    from ._models import AppServiceCertificatePatchResource  # type: ignore
-    from ._models import AppServiceCertificateResource  # type: ignore
-    from ._models import CertificateDetails  # type: ignore
-    from ._models import CertificateEmail  # type: ignore
-    from ._models import CertificateOrderAction  # type: ignore
-    from ._models import CsmOperationCollection  # type: ignore
-    from ._models import CsmOperationDescription  # type: ignore
-    from ._models import CsmOperationDescriptionProperties  # type: ignore
-    from ._models import CsmOperationDisplay  # type: ignore
-    from ._models import Dimension  # type: ignore
-    from ._models import MetricAvailability  # type: ignore
-    from ._models import MetricSpecification  # type: ignore
-    from ._models import NameIdentifier  # type: ignore
-    from ._models import ProxyOnlyResource  # type: ignore
-    from ._models import ReissueCertificateOrderRequest  # type: ignore
-    from ._models import RenewCertificateOrderRequest  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ServiceSpecification  # type: ignore
-    from ._models import SiteSeal  # type: ignore
-    from ._models import SiteSealRequest  # type: ignore
+from ._models_py3 import AppServiceCertificate
+from ._models_py3 import AppServiceCertificateCollection
+from ._models_py3 import AppServiceCertificateOrder
+from ._models_py3 import AppServiceCertificateOrderCollection
+from ._models_py3 import AppServiceCertificateOrderPatchResource
+from ._models_py3 import AppServiceCertificatePatchResource
+from ._models_py3 import AppServiceCertificateResource
+from ._models_py3 import CertificateDetails
+from ._models_py3 import CertificateEmail
+from ._models_py3 import CertificateOrderAction
+from ._models_py3 import CsmOperationCollection
+from ._models_py3 import CsmOperationDescription
+from ._models_py3 import CsmOperationDescriptionProperties
+from ._models_py3 import CsmOperationDisplay
+from ._models_py3 import Dimension
+from ._models_py3 import MetricAvailability
+from ._models_py3 import MetricSpecification
+from ._models_py3 import NameIdentifier
+from ._models_py3 import ProxyOnlyResource
+from ._models_py3 import ReissueCertificateOrderRequest
+from ._models_py3 import RenewCertificateOrderRequest
+from ._models_py3 import Resource
+from ._models_py3 import ServiceSpecification
+from ._models_py3 import SiteSeal
+from ._models_py3 import SiteSealRequest
+
 
 from ._web_site_management_client_enums import (
     AppServiceCertificateOrderPatchResourcePropertiesAppServiceCertificateNotRenewableReasonsItem,

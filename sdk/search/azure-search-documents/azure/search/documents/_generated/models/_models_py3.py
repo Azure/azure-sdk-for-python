@@ -22,7 +22,7 @@ class AnswerResult(msrest.serialization.Model):
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :vartype additional_properties: dict[str, any]
-    :ivar score: The score value represents how relevant the answer is to the the query relative to
+    :ivar score: The score value represents how relevant the answer is to the query relative to
      other answers returned for the query.
     :vartype score: float
     :ivar key: The key of the document the answer was extracted from.
@@ -772,11 +772,21 @@ class SearchOptions(msrest.serialization.Model):
     :ivar scoring_profile: The name of a scoring profile to evaluate match scores for matching
      documents in order to sort the results.
     :vartype scoring_profile: str
+    :ivar semantic_configuration: The name of the semantic configuration that lists which fields
+     should be used for semantic ranking, captions, highlights, and answers.
+    :vartype semantic_configuration: str
     :ivar search_fields: The list of field names to which to scope the full-text search. When using
      fielded search (fieldName:searchExpression) in a full Lucene query, the field names of each
      fielded search expression take precedence over any field names listed in this parameter.
     :vartype search_fields: list[str]
-    :ivar query_language: The language of the query. Possible values include: "none", "en-us".
+    :ivar query_language: The language of the query. Possible values include: "none", "en-us",
+     "en-gb", "en-in", "en-ca", "en-au", "fr-fr", "fr-ca", "de-de", "es-es", "es-mx", "zh-cn",
+     "zh-tw", "pt-br", "pt-pt", "it-it", "ja-jp", "ko-kr", "ru-ru", "cs-cz", "nl-be", "nl-nl",
+     "hu-hu", "pl-pl", "sv-se", "tr-tr", "hi-in", "ar-sa", "ar-eg", "ar-ma", "ar-kw", "ar-jo",
+     "da-dk", "no-no", "bg-bg", "hr-hr", "hr-ba", "ms-my", "ms-bn", "sl-sl", "ta-in", "vi-vn",
+     "el-gr", "ro-ro", "is-is", "id-id", "th-th", "lt-lt", "uk-ua", "lv-lv", "et-ee", "ca-es",
+     "fi-fi", "sr-ba", "sr-me", "sr-rs", "sk-sk", "nb-no", "hy-am", "bn-in", "eu-es", "gl-es",
+     "gu-in", "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae", "pa-in", "te-in", "ur-pk".
     :vartype query_language: str or ~azure.search.documents.models.QueryLanguage
     :ivar speller: Improve search recall by spell-correcting individual search query terms.
      Possible values include: "none", "lexicon".
@@ -835,6 +845,7 @@ class SearchOptions(msrest.serialization.Model):
         'query_type': {'key': 'queryType', 'type': 'str'},
         'scoring_parameters': {'key': 'ScoringParameters', 'type': '[str]'},
         'scoring_profile': {'key': 'scoringProfile', 'type': 'str'},
+        'semantic_configuration': {'key': 'semanticConfiguration', 'type': 'str'},
         'search_fields': {'key': 'searchFields', 'type': '[str]'},
         'query_language': {'key': 'queryLanguage', 'type': 'str'},
         'speller': {'key': 'speller', 'type': 'str'},
@@ -863,6 +874,7 @@ class SearchOptions(msrest.serialization.Model):
         query_type: Optional[Union[str, "QueryType"]] = None,
         scoring_parameters: Optional[List[str]] = None,
         scoring_profile: Optional[str] = None,
+        semantic_configuration: Optional[str] = None,
         search_fields: Optional[List[str]] = None,
         query_language: Optional[Union[str, "QueryLanguage"]] = None,
         speller: Optional[Union[str, "Speller"]] = None,
@@ -921,11 +933,21 @@ class SearchOptions(msrest.serialization.Model):
         :keyword scoring_profile: The name of a scoring profile to evaluate match scores for matching
          documents in order to sort the results.
         :paramtype scoring_profile: str
+        :keyword semantic_configuration: The name of the semantic configuration that lists which fields
+         should be used for semantic ranking, captions, highlights, and answers.
+        :paramtype semantic_configuration: str
         :keyword search_fields: The list of field names to which to scope the full-text search. When
          using fielded search (fieldName:searchExpression) in a full Lucene query, the field names of
          each fielded search expression take precedence over any field names listed in this parameter.
         :paramtype search_fields: list[str]
-        :keyword query_language: The language of the query. Possible values include: "none", "en-us".
+        :keyword query_language: The language of the query. Possible values include: "none", "en-us",
+         "en-gb", "en-in", "en-ca", "en-au", "fr-fr", "fr-ca", "de-de", "es-es", "es-mx", "zh-cn",
+         "zh-tw", "pt-br", "pt-pt", "it-it", "ja-jp", "ko-kr", "ru-ru", "cs-cz", "nl-be", "nl-nl",
+         "hu-hu", "pl-pl", "sv-se", "tr-tr", "hi-in", "ar-sa", "ar-eg", "ar-ma", "ar-kw", "ar-jo",
+         "da-dk", "no-no", "bg-bg", "hr-hr", "hr-ba", "ms-my", "ms-bn", "sl-sl", "ta-in", "vi-vn",
+         "el-gr", "ro-ro", "is-is", "id-id", "th-th", "lt-lt", "uk-ua", "lv-lv", "et-ee", "ca-es",
+         "fi-fi", "sr-ba", "sr-me", "sr-rs", "sk-sk", "nb-no", "hy-am", "bn-in", "eu-es", "gl-es",
+         "gu-in", "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae", "pa-in", "te-in", "ur-pk".
         :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
         :keyword speller: Improve search recall by spell-correcting individual search query terms.
          Possible values include: "none", "lexicon".
@@ -983,6 +1005,7 @@ class SearchOptions(msrest.serialization.Model):
         self.query_type = query_type
         self.scoring_parameters = scoring_parameters
         self.scoring_profile = scoring_profile
+        self.semantic_configuration = semantic_configuration
         self.search_fields = search_fields
         self.query_language = query_language
         self.speller = speller
@@ -1055,6 +1078,9 @@ class SearchRequest(msrest.serialization.Model):
     :ivar scoring_profile: The name of a scoring profile to evaluate match scores for matching
      documents in order to sort the results.
     :vartype scoring_profile: str
+    :ivar semantic_configuration: The name of a semantic configuration that will be used when
+     processing documents for queries of type semantic.
+    :vartype semantic_configuration: str
     :ivar search_text: A full-text search query expression; Use "*" or omit this parameter to match
      all documents.
     :vartype search_text: str
@@ -1067,7 +1093,14 @@ class SearchRequest(msrest.serialization.Model):
      matched in order to count the document as a match. Possible values include: "any", "all".
     :vartype search_mode: str or ~azure.search.documents.models.SearchMode
     :ivar query_language: A value that specifies the language of the search query. Possible values
-     include: "none", "en-us".
+     include: "none", "en-us", "en-gb", "en-in", "en-ca", "en-au", "fr-fr", "fr-ca", "de-de",
+     "es-es", "es-mx", "zh-cn", "zh-tw", "pt-br", "pt-pt", "it-it", "ja-jp", "ko-kr", "ru-ru",
+     "cs-cz", "nl-be", "nl-nl", "hu-hu", "pl-pl", "sv-se", "tr-tr", "hi-in", "ar-sa", "ar-eg",
+     "ar-ma", "ar-kw", "ar-jo", "da-dk", "no-no", "bg-bg", "hr-hr", "hr-ba", "ms-my", "ms-bn",
+     "sl-sl", "ta-in", "vi-vn", "el-gr", "ro-ro", "is-is", "id-id", "th-th", "lt-lt", "uk-ua",
+     "lv-lv", "et-ee", "ca-es", "fi-fi", "sr-ba", "sr-me", "sr-rs", "sk-sk", "nb-no", "hy-am",
+     "bn-in", "eu-es", "gl-es", "gu-in", "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae",
+     "pa-in", "te-in", "ur-pk".
     :vartype query_language: str or ~azure.search.documents.models.QueryLanguage
     :ivar speller: A value that specified the type of the speller to use to spell-correct
      individual search query terms. Possible values include: "none", "lexicon".
@@ -1108,6 +1141,7 @@ class SearchRequest(msrest.serialization.Model):
         'session_id': {'key': 'sessionId', 'type': 'str'},
         'scoring_parameters': {'key': 'scoringParameters', 'type': '[str]'},
         'scoring_profile': {'key': 'scoringProfile', 'type': 'str'},
+        'semantic_configuration': {'key': 'semanticConfiguration', 'type': 'str'},
         'search_text': {'key': 'search', 'type': 'str'},
         'search_fields': {'key': 'searchFields', 'type': 'str'},
         'search_mode': {'key': 'searchMode', 'type': 'str'},
@@ -1137,6 +1171,7 @@ class SearchRequest(msrest.serialization.Model):
         session_id: Optional[str] = None,
         scoring_parameters: Optional[List[str]] = None,
         scoring_profile: Optional[str] = None,
+        semantic_configuration: Optional[str] = None,
         search_text: Optional[str] = None,
         search_fields: Optional[str] = None,
         search_mode: Optional[Union[str, "SearchMode"]] = None,
@@ -1207,6 +1242,9 @@ class SearchRequest(msrest.serialization.Model):
         :keyword scoring_profile: The name of a scoring profile to evaluate match scores for matching
          documents in order to sort the results.
         :paramtype scoring_profile: str
+        :keyword semantic_configuration: The name of a semantic configuration that will be used when
+         processing documents for queries of type semantic.
+        :paramtype semantic_configuration: str
         :keyword search_text: A full-text search query expression; Use "*" or omit this parameter to
          match all documents.
         :paramtype search_text: str
@@ -1219,7 +1257,14 @@ class SearchRequest(msrest.serialization.Model):
          matched in order to count the document as a match. Possible values include: "any", "all".
         :paramtype search_mode: str or ~azure.search.documents.models.SearchMode
         :keyword query_language: A value that specifies the language of the search query. Possible
-         values include: "none", "en-us".
+         values include: "none", "en-us", "en-gb", "en-in", "en-ca", "en-au", "fr-fr", "fr-ca", "de-de",
+         "es-es", "es-mx", "zh-cn", "zh-tw", "pt-br", "pt-pt", "it-it", "ja-jp", "ko-kr", "ru-ru",
+         "cs-cz", "nl-be", "nl-nl", "hu-hu", "pl-pl", "sv-se", "tr-tr", "hi-in", "ar-sa", "ar-eg",
+         "ar-ma", "ar-kw", "ar-jo", "da-dk", "no-no", "bg-bg", "hr-hr", "hr-ba", "ms-my", "ms-bn",
+         "sl-sl", "ta-in", "vi-vn", "el-gr", "ro-ro", "is-is", "id-id", "th-th", "lt-lt", "uk-ua",
+         "lv-lv", "et-ee", "ca-es", "fi-fi", "sr-ba", "sr-me", "sr-rs", "sk-sk", "nb-no", "hy-am",
+         "bn-in", "eu-es", "gl-es", "gu-in", "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae",
+         "pa-in", "te-in", "ur-pk".
         :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
         :keyword speller: A value that specified the type of the speller to use to spell-correct
          individual search query terms. Possible values include: "none", "lexicon".
@@ -1259,6 +1304,7 @@ class SearchRequest(msrest.serialization.Model):
         self.session_id = session_id
         self.scoring_parameters = scoring_parameters
         self.scoring_profile = scoring_profile
+        self.semantic_configuration = semantic_configuration
         self.search_text = search_text
         self.search_fields = search_fields
         self.search_mode = search_mode

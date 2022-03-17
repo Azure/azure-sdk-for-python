@@ -8,6 +8,8 @@ parameters:
   DevFeedName: 'public/azure-sdk-for-python'
   TargetDocRepoOwner: ''
   TargetDocRepoName: ''
+  PackageSourceOverride: "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+  DocValidationImageId: "azuresdkimages.azurecr.io/pyrefautocr:latest"
 
 stages:
   - ${{if and(in(variables['Build.Reason'], 'Manual', ''), eq(variables['System.TeamProject'], 'internal'))}}:
@@ -87,7 +89,7 @@ stages:
                       - task: TwineAuthenticate@1
                         displayName: 'Authenticate to registry: pypi.org'
                         inputs:
-                          pythonUploadServiceConnection: 'pypi.org - azure-sdk'
+                          pythonUploadServiceConnection: 'PyPI Upload (azure-sdk token)'
 
                       - task: TwineAuthenticate@0
                         displayName: 'Authenticate to feed: ${{parameters.DevFeedName}}'
@@ -162,6 +164,7 @@ stages:
                               SkipDefaultCheckout: true
                               Paths:
                                 - sdk/**/*.md
+                                - .github/CODEOWNERS
                           - download: current
                           - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
                             parameters:
@@ -174,7 +177,8 @@ stages:
                               SparseCheckoutPaths:
                                 - docs-ref-services/
                                 - metadata/
-
+                              PackageSourceOverride: ${{parameters.PackageSourceOverride}}
+                              DocValidationImageId: ${{parameters.DocValidationImageId}}
           - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
             - deployment: UpdatePackageVersion
               displayName: "Update Package Version"
@@ -270,6 +274,7 @@ stages:
             SkipDefaultCheckout: true 
             Paths:
               - sdk/**/*.md
+              - .github/CODEOWNERS
         - download: current
         - pwsh: |
             Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/
@@ -289,3 +294,5 @@ stages:
             SparseCheckoutPaths:
               - docs-ref-services/
               - metadata/
+            PackageSourceOverride: ${{parameters.PackageSourceOverride}}
+            DocValidationImageId: ${{parameters.DocValidationImageId}}

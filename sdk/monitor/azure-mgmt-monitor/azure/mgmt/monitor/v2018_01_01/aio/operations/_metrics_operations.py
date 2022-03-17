@@ -6,16 +6,20 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
+import functools
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.core.pipeline.transport import AsyncHttpResponse
+from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-
+from ..._vendor import _convert_request
+from ...operations._metrics_operations import build_list_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -41,6 +45,7 @@ class MetricsOperations:
         self._deserialize = deserializer
         self._config = config
 
+    @distributed_trace_async
     async def list(
         self,
         resource_uri: str,
@@ -53,7 +58,7 @@ class MetricsOperations:
         filter: Optional[str] = None,
         result_type: Optional[Union[str, "_models.ResultType"]] = None,
         metricnamespace: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.Response":
         """**Lists the metric values for a resource**.
 
@@ -64,7 +69,9 @@ class MetricsOperations:
         :type timespan: str
         :param interval: The interval (i.e. timegrain) of the query.
         :type interval: ~datetime.timedelta
-        :param metricnames: The names of the metrics (comma separated) to retrieve.
+        :param metricnames: The names of the metrics (comma separated) to retrieve. Special case: If a
+         metricname itself has a comma in it then use %2 to indicate it. Eg: 'Metric,Name1' should be
+         **'Metric%2Name1'**.
         :type metricnames: str
         :param aggregation: The list of aggregation types (comma separated) to retrieve.
         :type aggregation: str
@@ -76,15 +83,18 @@ class MetricsOperations:
          Only one order can be specified.
          Examples: sum asc.
         :type orderby: str
-        :param filter: The **$filter** is used to reduce the set of metric data
-         returned.:code:`<br>`Example::code:`<br>`Metric contains metadata A, B and C.:code:`<br>`-
-         Return all time series of C where A = a1 and B = b1 or b2:code:`<br>`\ **$filter=A eq ‘a1’ and
-         B eq ‘b1’ or B eq ‘b2’ and C eq ‘*’**\ :code:`<br>`- Invalid variant::code:`<br>`\ **$filter=A
-         eq ‘a1’ and B eq ‘b1’ and C eq ‘*’ or B = ‘b2’**\ :code:`<br>`This is invalid because the
-         logical or operator cannot separate two different metadata names.:code:`<br>`- Return all time
-         series where A = a1, B = b1 and C = c1::code:`<br>`\ **$filter=A eq ‘a1’ and B eq ‘b1’ and C eq
-         ‘c1’**\ :code:`<br>`- Return all time series where A = a1:code:`<br>`\ **$filter=A eq ‘a1’ and
-         B eq ‘\ *’ and C eq ‘*\ ’**.
+        :param filter: The **$filter** is used to reduce the set of metric data returned. Example:
+         Metric contains metadata A, B and C. - Return all time series of C where A = a1 and B = b1 or
+         b2 **$filter=A eq 'a1' and B eq 'b1' or B eq 'b2' and C eq '*'** - Invalid variant: **$filter=A
+         eq 'a1' and B eq 'b1' and C eq '*' or B = 'b2'** This is invalid because the logical or
+         operator cannot separate two different metadata names. - Return all time series where A = a1, B
+         = b1 and C = c1: **$filter=A eq 'a1' and B eq 'b1' and C eq 'c1'** - Return all time series
+         where A = a1 **$filter=A eq 'a1' and B eq '\ *' and C eq '*\ '**. Special case: When dimension
+         name or dimension value uses round brackets. Eg: When dimension name is **dim (test) 1**
+         Instead of using $filter= "dim (test) 1 eq '\ *' " use **$filter= "dim %2528test%2529 1 eq '*\
+         ' "\ ** When dimension name is **\ dim (test) 3\ ** and dimension value is **\ dim3 (test) val\
+         ** Instead of using $filter= "dim (test) 3 eq 'dim3 (test) val' " use **\ $filter= "dim
+         %2528test%2529 3 eq 'dim3 %2528test%2529 val' "**.
         :type filter: str
         :param result_type: Reduces the set of data collected. The syntax allowed depends on the
          operation. See the operation's description for details.
@@ -101,49 +111,30 @@ class MetricsOperations:
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-01-01"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.list.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_list_request(
+            resource_uri=resource_uri,
+            timespan=timespan,
+            interval=interval,
+            metricnames=metricnames,
+            aggregation=aggregation,
+            top=top,
+            orderby=orderby,
+            filter=filter,
+            result_type=result_type,
+            metricnamespace=metricnamespace,
+            template_url=self.list.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        if timespan is not None:
-            query_parameters['timespan'] = self._serialize.query("timespan", timespan, 'str')
-        if interval is not None:
-            query_parameters['interval'] = self._serialize.query("interval", interval, 'duration')
-        if metricnames is not None:
-            query_parameters['metricnames'] = self._serialize.query("metricnames", metricnames, 'str')
-        if aggregation is not None:
-            query_parameters['aggregation'] = self._serialize.query("aggregation", aggregation, 'str')
-        if top is not None:
-            query_parameters['top'] = self._serialize.query("top", top, 'int')
-        if orderby is not None:
-            query_parameters['orderby'] = self._serialize.query("orderby", orderby, 'str')
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-        if result_type is not None:
-            query_parameters['resultType'] = self._serialize.query("result_type", result_type, 'str')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        if metricnamespace is not None:
-            query_parameters['metricnamespace'] = self._serialize.query("metricnamespace", metricnamespace, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('Response', pipeline_response)
@@ -152,4 +143,6 @@ class MetricsOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    list.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/metrics'}  # type: ignore
+
+    list.metadata = {'url': '/{resourceUri}/providers/Microsoft.Insights/metrics'}  # type: ignore
+

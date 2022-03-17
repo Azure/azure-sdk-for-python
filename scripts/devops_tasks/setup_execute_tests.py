@@ -284,6 +284,13 @@ if __name__ == "__main__":
         choices=['Build', "Docs", "Regression", "Omit_management"]
     )
 
+    parser.add_argument(
+        "-d",
+        "--dest-dir",
+        dest="dest_dir",
+        help="Location to generate any output files(if any). For e.g. apiview stub file",
+    )
+
 
     args = parser.parse_args()
 

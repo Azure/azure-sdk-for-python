@@ -1,10 +1,46 @@
 # Release History
 
-## 7.4.0 (Unreleased)
+## 7.6.1 (Unreleased)
 
 ### Features Added
 
-- Added support to create and update queues and topics of large message size to `ServiceBusAdministrationClient`. This feature is only available for Service Bus of Premium Tier.
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 7.6.0 (2022-02-10)
+
+### Features Added
+
+- Introduce `ServiceBusMessageState` enum that can assume the values of `active`, `scheduled` or `deferred`.
+- Add `state` property in `ServiceBusReceivedMessage`.
+
+## 7.5.0 (2022-01-12)
+
+This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
+
+### Features Added
+
+- Added support for fixed (linear) retry backoff:
+  - Sync/async `ServiceBusClient` constructors and `from_connection_string` take `retry_mode` as a keyword argument.
+- Added new enum class `ServiceBusSessionFilter`, which is the type of existing `NEXT_AVAILABLE_SESSION` value.
+
+### Bugs Fixed
+
+- Fixed bug that when setting `ServiceBusMessage.time_to_live` with value being `datetime.timedelta`, `total_seconds` should be respected (PR #21869, thanks @jyggen).
+
+### Other Changes
+
+- Improved token refresh timing to prevent potentially blocking main flow when the token is about to get expired soon.
+- Updated uAMQP dependency to 1.5.1.
+
+## 7.4.0 (2021-11-09)
+
+### Features Added
+
+- GA the support to create and update queues and topics of large message size to `ServiceBusAdministrationClient`. This feature is only available for Service Bus of Premium Tier.
   - Methods`create_queue`, `create_topic`, `update_queue`, `update_topic` on `ServiceBusAdministrationClient` now take a new keyword argument `max_message_size_in_kilobytes`.
   - `QueueProperties` and `TopicProperties` now have a new instance variable `max_message_size_in_kilobytes`.
 - The constructor of`ServiceBusAdministrationClient` as well as `ServiceBusAdministrationClient.from_connection_string` now take keyword argument `api_version` to configure the Service Bus API version. Supported service versions are "2021-05" and "2017-04".

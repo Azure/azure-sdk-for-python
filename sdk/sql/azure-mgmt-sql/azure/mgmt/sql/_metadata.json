@@ -1,17 +1,17 @@
 {
     "chosen_version": "",
-    "total_api_version_list": ["2014-04-01", "2020-11-01-preview", "2021-02-01-preview"],
+    "total_api_version_list": ["2014-04-01", "2020-11-01-preview", "2021-02-01-preview", "2021-05-01-preview", "2021-08-01-preview"],
     "client": {
         "name": "SqlManagementClient",
         "filename": "_sql_management_client",
         "description": "The Azure SQL Database management API provides a RESTful set of web services that interact with Azure SQL Database services to manage your databases. The API enables you to create, retrieve, update, and delete databases.",
-        "base_url": "\u0027https://management.azure.com\u0027",
-        "custom_base_url": null,
+        "host_value": "\"https://management.azure.com\"",
+        "parameterized_host_template": null,
         "azure_arm": true,
         "has_lro_operations": true,
         "client_side_validation": false,
-        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"SqlManagementClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"HttpRequest\", \"HttpResponse\"]}}}",
-        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"SqlManagementClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}, \"azurecore\": {\"azure.core.pipeline.transport\": [\"AsyncHttpResponse\", \"HttpRequest\"]}}}"
+        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"SqlManagementClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
+        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"], \"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"msrest\": [\"Deserializer\", \"Serializer\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"SqlManagementClientConfiguration\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
     },
     "global_parameters": {
         "sync": {
@@ -54,7 +54,7 @@
                     "required": false
                 },
                 "base_url": {
-                    "signature": "base_url=None,  # type: Optional[str]",
+                    "signature": "base_url=\"https://management.azure.com\",  # type: str",
                     "description": "Service URL",
                     "docstring_type": "str",
                     "required": false
@@ -74,7 +74,7 @@
                     "required": false
                 },
                 "base_url": {
-                    "signature": "base_url: Optional[str] = None,",
+                    "signature": "base_url: str = \"https://management.azure.com\",",
                     "description": "Service URL",
                     "docstring_type": "str",
                     "required": false
@@ -91,15 +91,13 @@
     "config": {
         "credential": true,
         "credential_scopes": ["https://management.azure.com/.default"],
-        "credential_default_policy_type": "BearerTokenCredentialPolicy",
-        "credential_default_policy_type_has_async_version": true,
-        "credential_key_header_name": null,
-        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
-        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
+        "credential_call_sync": "ARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "credential_call_async": "AsyncARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMChallengeAuthenticationPolicy\", \"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
         "recoverable_databases": "RecoverableDatabasesOperations",
-        "server_connection_policies": "ServerConnectionPoliciesOperations",
         "data_masking_policies": "DataMaskingPoliciesOperations",
         "data_masking_rules": "DataMaskingRulesOperations",
         "geo_backup_policies": "GeoBackupPoliciesOperations",
@@ -110,8 +108,6 @@
         "service_objectives": "ServiceObjectivesOperations",
         "elastic_pool_activities": "ElasticPoolActivitiesOperations",
         "elastic_pool_database_activities": "ElasticPoolDatabaseActivitiesOperations",
-        "transparent_data_encryptions": "TransparentDataEncryptionsOperations",
-        "transparent_data_encryption_activities": "TransparentDataEncryptionActivitiesOperations",
         "server_usages": "ServerUsagesOperations",
         "extended_database_blob_auditing_policies": "ExtendedDatabaseBlobAuditingPoliciesOperations",
         "extended_server_blob_auditing_policies": "ExtendedServerBlobAuditingPoliciesOperations",
@@ -145,8 +141,6 @@
         "job_target_groups": "JobTargetGroupsOperations",
         "job_versions": "JobVersionsOperations",
         "capabilities": "CapabilitiesOperations",
-        "long_term_retention_backups": "LongTermRetentionBackupsOperations",
-        "long_term_retention_managed_instance_backups": "LongTermRetentionManagedInstanceBackupsOperations",
         "long_term_retention_policies": "LongTermRetentionPoliciesOperations",
         "maintenance_window_options": "MaintenanceWindowOptionsOperations",
         "maintenance_windows": "MaintenanceWindowsOperations",
@@ -173,13 +167,11 @@
         "managed_instance_operations": "ManagedInstanceOperationsOperations",
         "managed_instance_private_endpoint_connections": "ManagedInstancePrivateEndpointConnectionsOperations",
         "managed_instance_private_link_resources": "ManagedInstancePrivateLinkResourcesOperations",
-        "managed_instances": "ManagedInstancesOperations",
         "managed_instance_tde_certificates": "ManagedInstanceTdeCertificatesOperations",
         "managed_instance_vulnerability_assessments": "ManagedInstanceVulnerabilityAssessmentsOperations",
         "managed_restorable_dropped_database_backup_short_term_retention_policies": "ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations",
         "managed_server_security_alert_policies": "ManagedServerSecurityAlertPoliciesOperations",
         "operations": "Operations",
-        "operations_health": "OperationsHealthOperations",
         "private_endpoint_connections": "PrivateEndpointConnectionsOperations",
         "private_link_resources": "PrivateLinkResourcesOperations",
         "recoverable_managed_databases": "RecoverableManagedDatabasesOperations",
@@ -208,15 +200,23 @@
         "virtual_network_rules": "VirtualNetworkRulesOperations",
         "workload_classifiers": "WorkloadClassifiersOperations",
         "workload_groups": "WorkloadGroupsOperations",
+        "transparent_data_encryptions": "TransparentDataEncryptionsOperations",
         "backup_short_term_retention_policies": "BackupShortTermRetentionPoliciesOperations",
         "database_extensions": "DatabaseExtensionsOperations",
         "database_operations": "DatabaseOperationsOperations",
         "database_usages": "DatabaseUsagesOperations",
         "ledger_digest_uploads": "LedgerDigestUploadsOperations",
         "outbound_firewall_rules": "OutboundFirewallRulesOperations",
+        "servers": "ServersOperations",
+        "usages": "UsagesOperations",
+        "long_term_retention_backups": "LongTermRetentionBackupsOperations",
+        "long_term_retention_managed_instance_backups": "LongTermRetentionManagedInstanceBackupsOperations",
+        "managed_instances": "ManagedInstancesOperations",
         "restorable_dropped_databases": "RestorableDroppedDatabasesOperations",
         "restorable_dropped_managed_databases": "RestorableDroppedManagedDatabasesOperations",
-        "servers": "ServersOperations",
-        "usages": "UsagesOperations"
+        "server_connection_policies": "ServerConnectionPoliciesOperations",
+        "distributed_availability_groups": "DistributedAvailabilityGroupsOperations",
+        "server_trust_certificates": "ServerTrustCertificatesOperations",
+        "ipv6_firewall_rules": "IPv6FirewallRulesOperations"
     }
 }

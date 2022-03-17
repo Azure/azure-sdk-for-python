@@ -25,7 +25,6 @@
 from typing import Any, List, Dict, Union, cast, Iterable, Optional
 
 import warnings
-import six
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
@@ -87,7 +86,7 @@ class DatabaseProxy(object):
     @staticmethod
     def _get_container_id(container_or_id):
         # type: (Union[str, ContainerProxy, Dict[str, Any]]) -> str
-        if isinstance(container_or_id, six.string_types):
+        if isinstance(container_or_id, str):
             return container_or_id
         try:
             return cast("ContainerProxy", container_or_id).id
@@ -101,7 +100,7 @@ class DatabaseProxy(object):
 
     def _get_user_link(self, user_or_id):
         # type: (Union[UserProxy, str, Dict[str, Any]]) -> str
-        if isinstance(user_or_id, six.string_types):
+        if isinstance(user_or_id, str):
             return u"{}/users/{}".format(self.database_link, user_or_id)
         try:
             return cast("UserProxy", user_or_id).user_link

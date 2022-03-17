@@ -1,0 +1,229 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/sentiment?stringIndexType=UnicodeCodePoint",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "240",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "c871ae90-5d10-11ec-94d1-b831b58100e8"
+      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I will go to the park.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022The restaurant had really good food.\u0022, \u0022language\u0022: \u0022en\u0022}]}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "de28477b-a890-4dde-9a5f-7e0f5666a922",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
+        "Date": "Tue, 14 Dec 2021 19:05:20 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "210"
+      },
+      "ResponseBody": {
+        "documents": [
+          {
+            "id": "1",
+            "sentiment": "neutral",
+            "confidenceScores": {
+              "positive": 0.09,
+              "neutral": 0.9,
+              "negative": 0.01
+            },
+            "sentences": [
+              {
+                "sentiment": "neutral",
+                "confidenceScores": {
+                  "positive": 0.09,
+                  "neutral": 0.9,
+                  "negative": 0.01
+                },
+                "offset": 0,
+                "length": 22,
+                "text": "I will go to the park."
+              }
+            ],
+            "warnings": []
+          },
+          {
+            "id": "2",
+            "sentiment": "negative",
+            "confidenceScores": {
+              "positive": 0.01,
+              "neutral": 0.45,
+              "negative": 0.54
+            },
+            "sentences": [
+              {
+                "sentiment": "negative",
+                "confidenceScores": {
+                  "positive": 0.01,
+                  "neutral": 0.45,
+                  "negative": 0.54
+                },
+                "offset": 0,
+                "length": 38,
+                "text": "I did not like the hotel we stayed at."
+              }
+            ],
+            "warnings": []
+          },
+          {
+            "id": "3",
+            "sentiment": "positive",
+            "confidenceScores": {
+              "positive": 1.0,
+              "neutral": 0.0,
+              "negative": 0.0
+            },
+            "sentences": [
+              {
+                "sentiment": "positive",
+                "confidenceScores": {
+                  "positive": 1.0,
+                  "neutral": 0.0,
+                  "negative": 0.0
+                },
+                "offset": 0,
+                "length": 36,
+                "text": "The restaurant had really good food."
+              }
+            ],
+            "warnings": []
+          }
+        ],
+        "errors": [],
+        "modelVersion": "2020-04-01"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/sentiment?stringIndexType=UnicodeCodePoint",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "240",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "c8a4db41-5d10-11ec-bf46-b831b58100e8"
+      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I will go to the park.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022The restaurant had really good food.\u0022, \u0022language\u0022: \u0022en\u0022}]}",
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "apim-request-id": "a88167f4-4d43-4cfb-afae-bea67c0c3a57",
+        "Content-Length": "224",
+        "Content-Type": "application/json",
+        "Date": "Tue, 14 Dec 2021 19:05:20 GMT"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "401",
+          "message": "Access denied due to invalid subscription key or wrong API endpoint. Make sure to provide a valid key for an active subscription and use a correct regional API endpoint for your resource."
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.2-preview.2/sentiment?stringIndexType=UnicodeCodePoint",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json, text/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "240",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "c8aa9cc1-5d10-11ec-a5e5-b831b58100e8"
+      },
+      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022I will go to the park.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022I did not like the hotel we stayed at.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022The restaurant had really good food.\u0022, \u0022language\u0022: \u0022en\u0022}]}",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "53d05f03-8f53-4d3b-a512-0a3ff7ce85a4",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
+        "Date": "Tue, 14 Dec 2021 19:05:20 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "141"
+      },
+      "ResponseBody": {
+        "documents": [
+          {
+            "id": "1",
+            "sentiment": "neutral",
+            "confidenceScores": {
+              "positive": 0.09,
+              "neutral": 0.9,
+              "negative": 0.01
+            },
+            "sentences": [
+              {
+                "sentiment": "neutral",
+                "confidenceScores": {
+                  "positive": 0.09,
+                  "neutral": 0.9,
+                  "negative": 0.01
+                },
+                "offset": 0,
+                "length": 22,
+                "text": "I will go to the park."
+              }
+            ],
+            "warnings": []
+          },
+          {
+            "id": "2",
+            "sentiment": "negative",
+            "confidenceScores": {
+              "positive": 0.01,
+              "neutral": 0.45,
+              "negative": 0.54
+            },
+            "sentences": [
+              {
+                "sentiment": "negative",
+                "confidenceScores": {
+                  "positive": 0.01,
+                  "neutral": 0.45,
+                  "negative": 0.54
+                },
+                "offset": 0,
+                "length": 38,
+                "text": "I did not like the hotel we stayed at."
+              }
+            ],
+            "warnings": []
+          },
+          {
+            "id": "3",
+            "sentiment": "positive",
+            "confidenceScores": {
+              "positive": 1.0,
+              "neutral": 0.0,
+              "negative": 0.0
+            },
+            "sentences": [
+              {
+                "sentiment": "positive",
+                "confidenceScores": {
+                  "positive": 1.0,
+                  "neutral": 0.0,
+                  "negative": 0.0
+                },
+                "offset": 0,
+                "length": 36,
+                "text": "The restaurant had really good food."
+              }
+            ],
+            "warnings": []
+          }
+        ],
+        "errors": [],
+        "modelVersion": "2020-04-01"
+      }
+    }
+  ],
+  "Variables": {}
+}

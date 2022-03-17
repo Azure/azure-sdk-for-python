@@ -30,8 +30,20 @@ class AppSku(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     """The name of the SKU.
     """
 
-    F1 = "F1"
-    S1 = "S1"
     ST0 = "ST0"
     ST1 = "ST1"
     ST2 = "ST2"
+
+class AppState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """The current state of the application.
+    """
+
+    CREATED = "created"
+    SUSPENDED = "suspended"
+
+class SystemAssignedServiceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    """Type of managed service identity (either system assigned, or none).
+    """
+
+    NONE = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"

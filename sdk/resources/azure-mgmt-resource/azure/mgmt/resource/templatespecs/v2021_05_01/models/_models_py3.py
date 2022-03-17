@@ -49,6 +49,8 @@ class AzureResourceBase(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(AzureResourceBase, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -81,6 +83,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -124,6 +128,8 @@ class ErrorResponse(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -137,10 +143,10 @@ class LinkedTemplateArtifact(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param path: Required. A filesystem safe relative path of the artifact.
-    :type path: str
-    :param template: Required. The Azure Resource Manager template.
-    :type template: any
+    :ivar path: Required. A filesystem safe relative path of the artifact.
+    :vartype path: str
+    :ivar template: Required. The Azure Resource Manager template.
+    :vartype template: any
     """
 
     _validation = {
@@ -160,6 +166,12 @@ class LinkedTemplateArtifact(msrest.serialization.Model):
         template: Any,
         **kwargs
     ):
+        """
+        :keyword path: Required. A filesystem safe relative path of the artifact.
+        :paramtype path: str
+        :keyword template: Required. The Azure Resource Manager template.
+        :paramtype template: any
+        """
         super(LinkedTemplateArtifact, self).__init__(**kwargs)
         self.path = path
         self.template = template
@@ -168,22 +180,22 @@ class LinkedTemplateArtifact(msrest.serialization.Model):
 class SystemData(msrest.serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+     "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or
      ~azure.mgmt.resource.templatespecs.v2021_05_01.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
      values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or
+    :vartype last_modified_by_type: str or
      ~azure.mgmt.resource.templatespecs.v2021_05_01.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
@@ -206,6 +218,24 @@ class SystemData(msrest.serialization.Model):
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Possible values
+         include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype created_by_type: str or
+         ~azure.mgmt.resource.templatespecs.v2021_05_01.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
+         values include: "User", "Application", "ManagedIdentity", "Key".
+        :paramtype last_modified_by_type: str or
+         ~azure.mgmt.resource.templatespecs.v2021_05_01.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
         super(SystemData, self).__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
@@ -231,18 +261,18 @@ class TemplateSpec(AzureResourceBase):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.resource.templatespecs.v2021_05_01.models.SystemData
-    :param location: Required. The location of the Template Spec. It cannot be changed after
+    :ivar location: Required. The location of the Template Spec. It cannot be changed after
      Template Spec creation. It must be one of the supported Azure locations.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param description: Template Spec description.
-    :type description: str
-    :param display_name: Template Spec display name.
-    :type display_name: str
-    :param metadata: The Template Spec metadata. Metadata is an open-ended object and is typically
-     a collection of key-value pairs.
-    :type metadata: any
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar description: Template Spec description.
+    :vartype description: str
+    :ivar display_name: Template Spec display name.
+    :vartype display_name: str
+    :ivar metadata: The Template Spec metadata. Metadata is an open-ended object and is typically a
+     collection of key-value pairs.
+    :vartype metadata: any
     :ivar versions: High-level information about the versions within this Template Spec. The keys
      are the version names. Only populated if the $expand query parameter is set to 'versions'.
     :vartype versions: dict[str,
@@ -283,6 +313,20 @@ class TemplateSpec(AzureResourceBase):
         metadata: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. The location of the Template Spec. It cannot be changed after
+         Template Spec creation. It must be one of the supported Azure locations.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword description: Template Spec description.
+        :paramtype description: str
+        :keyword display_name: Template Spec display name.
+        :paramtype display_name: str
+        :keyword metadata: The Template Spec metadata. Metadata is an open-ended object and is
+         typically a collection of key-value pairs.
+        :paramtype metadata: any
+        """
         super(TemplateSpec, self).__init__(**kwargs)
         self.location = location
         self.tags = tags
@@ -295,9 +339,9 @@ class TemplateSpec(AzureResourceBase):
 class TemplateSpecsError(msrest.serialization.Model):
     """Template Specs error response.
 
-    :param error: Common error response for all Azure Resource Manager APIs to return error details
+    :ivar error: Common error response for all Azure Resource Manager APIs to return error details
      for failed operations. (This also follows the OData error response format.).
-    :type error: ~azure.mgmt.resource.templatespecs.v2021_05_01.models.ErrorResponse
+    :vartype error: ~azure.mgmt.resource.templatespecs.v2021_05_01.models.ErrorResponse
     """
 
     _attribute_map = {
@@ -310,6 +354,11 @@ class TemplateSpecsError(msrest.serialization.Model):
         error: Optional["ErrorResponse"] = None,
         **kwargs
     ):
+        """
+        :keyword error: Common error response for all Azure Resource Manager APIs to return error
+         details for failed operations. (This also follows the OData error response format.).
+        :paramtype error: ~azure.mgmt.resource.templatespecs.v2021_05_01.models.ErrorResponse
+        """
         super(TemplateSpecsError, self).__init__(**kwargs)
         self.error = error
 
@@ -319,8 +368,8 @@ class TemplateSpecsListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: An array of Template Specs.
-    :type value: list[~azure.mgmt.resource.templatespecs.v2021_05_01.models.TemplateSpec]
+    :ivar value: An array of Template Specs.
+    :vartype value: list[~azure.mgmt.resource.templatespecs.v2021_05_01.models.TemplateSpec]
     :ivar next_link: The URL to use for getting the next set of results.
     :vartype next_link: str
     """
@@ -340,6 +389,10 @@ class TemplateSpecsListResult(msrest.serialization.Model):
         value: Optional[List["TemplateSpec"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: An array of Template Specs.
+        :paramtype value: list[~azure.mgmt.resource.templatespecs.v2021_05_01.models.TemplateSpec]
+        """
         super(TemplateSpecsListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -359,8 +412,8 @@ class TemplateSpecUpdateModel(AzureResourceBase):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.resource.templatespecs.v2021_05_01.models.SystemData
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -384,6 +437,10 @@ class TemplateSpecUpdateModel(AzureResourceBase):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(TemplateSpecUpdateModel, self).__init__(**kwargs)
         self.tags = tags
 
@@ -404,23 +461,23 @@ class TemplateSpecVersion(AzureResourceBase):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.resource.templatespecs.v2021_05_01.models.SystemData
-    :param location: Required. The location of the Template Spec Version. It must match the
-     location of the parent Template Spec.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param description: Template Spec version description.
-    :type description: str
-    :param linked_templates: An array of linked template artifacts.
-    :type linked_templates:
+    :ivar location: Required. The location of the Template Spec Version. It must match the location
+     of the parent Template Spec.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar description: Template Spec version description.
+    :vartype description: str
+    :ivar linked_templates: An array of linked template artifacts.
+    :vartype linked_templates:
      list[~azure.mgmt.resource.templatespecs.v2021_05_01.models.LinkedTemplateArtifact]
-    :param metadata: The version metadata. Metadata is an open-ended object and is typically a
+    :ivar metadata: The version metadata. Metadata is an open-ended object and is typically a
      collection of key-value pairs.
-    :type metadata: any
-    :param main_template: The main Azure Resource Manager template content.
-    :type main_template: any
-    :param ui_form_definition: The Azure Resource Manager template UI definition content.
-    :type ui_form_definition: any
+    :vartype metadata: any
+    :ivar main_template: The main Azure Resource Manager template content.
+    :vartype main_template: any
+    :ivar ui_form_definition: The Azure Resource Manager template UI definition content.
+    :vartype ui_form_definition: any
     """
 
     _validation = {
@@ -458,6 +515,25 @@ class TemplateSpecVersion(AzureResourceBase):
         ui_form_definition: Optional[Any] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. The location of the Template Spec Version. It must match the
+         location of the parent Template Spec.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword description: Template Spec version description.
+        :paramtype description: str
+        :keyword linked_templates: An array of linked template artifacts.
+        :paramtype linked_templates:
+         list[~azure.mgmt.resource.templatespecs.v2021_05_01.models.LinkedTemplateArtifact]
+        :keyword metadata: The version metadata. Metadata is an open-ended object and is typically a
+         collection of key-value pairs.
+        :paramtype metadata: any
+        :keyword main_template: The main Azure Resource Manager template content.
+        :paramtype main_template: any
+        :keyword ui_form_definition: The Azure Resource Manager template UI definition content.
+        :paramtype ui_form_definition: any
+        """
         super(TemplateSpecVersion, self).__init__(**kwargs)
         self.location = location
         self.tags = tags
@@ -497,6 +573,8 @@ class TemplateSpecVersionInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(TemplateSpecVersionInfo, self).__init__(**kwargs)
         self.description = None
         self.time_created = None
@@ -508,8 +586,8 @@ class TemplateSpecVersionsListResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: An array of Template Spec versions.
-    :type value: list[~azure.mgmt.resource.templatespecs.v2021_05_01.models.TemplateSpecVersion]
+    :ivar value: An array of Template Spec versions.
+    :vartype value: list[~azure.mgmt.resource.templatespecs.v2021_05_01.models.TemplateSpecVersion]
     :ivar next_link: The URL to use for getting the next set of results.
     :vartype next_link: str
     """
@@ -529,6 +607,11 @@ class TemplateSpecVersionsListResult(msrest.serialization.Model):
         value: Optional[List["TemplateSpecVersion"]] = None,
         **kwargs
     ):
+        """
+        :keyword value: An array of Template Spec versions.
+        :paramtype value:
+         list[~azure.mgmt.resource.templatespecs.v2021_05_01.models.TemplateSpecVersion]
+        """
         super(TemplateSpecVersionsListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = None
@@ -548,8 +631,8 @@ class TemplateSpecVersionUpdateModel(AzureResourceBase):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.resource.templatespecs.v2021_05_01.models.SystemData
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -573,5 +656,9 @@ class TemplateSpecVersionUpdateModel(AzureResourceBase):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(TemplateSpecVersionUpdateModel, self).__init__(**kwargs)
         self.tags = tags

@@ -6,157 +6,96 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import Amount
-    from ._models_py3 import Balance
-    from ._models_py3 import BalancePropertiesAdjustmentDetailsItem
-    from ._models_py3 import BalancePropertiesNewPurchasesDetailsItem
-    from ._models_py3 import Budget
-    from ._models_py3 import BudgetComparisonExpression
-    from ._models_py3 import BudgetFilter
-    from ._models_py3 import BudgetFilterProperties
-    from ._models_py3 import BudgetTimePeriod
-    from ._models_py3 import BudgetsListResult
-    from ._models_py3 import ChargeSummary
-    from ._models_py3 import ChargesListResult
-    from ._models_py3 import CreditBalanceSummary
-    from ._models_py3 import CreditSummary
-    from ._models_py3 import CurrentSpend
-    from ._models_py3 import ErrorDetails
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import EventSummary
-    from ._models_py3 import Events
-    from ._models_py3 import Forecast
-    from ._models_py3 import ForecastPropertiesConfidenceLevelsItem
-    from ._models_py3 import ForecastsListResult
-    from ._models_py3 import LegacyChargeSummary
-    from ._models_py3 import LegacyReservationRecommendation
-    from ._models_py3 import LegacyReservationTransaction
-    from ._models_py3 import LegacyUsageDetail
-    from ._models_py3 import LotSummary
-    from ._models_py3 import Lots
-    from ._models_py3 import ManagementGroupAggregatedCostResult
-    from ._models_py3 import Marketplace
-    from ._models_py3 import MarketplacesListResult
-    from ._models_py3 import MeterDetails
-    from ._models_py3 import MeterDetailsResponse
-    from ._models_py3 import ModernChargeSummary
-    from ._models_py3 import ModernReservationRecommendation
-    from ._models_py3 import ModernReservationTransaction
-    from ._models_py3 import ModernReservationTransactionsListResult
-    from ._models_py3 import ModernUsageDetail
-    from ._models_py3 import Notification
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import PriceSheetProperties
-    from ._models_py3 import PriceSheetResult
-    from ._models_py3 import ProxyResource
-    from ._models_py3 import ReservationDetail
-    from ._models_py3 import ReservationDetailsListResult
-    from ._models_py3 import ReservationRecommendation
-    from ._models_py3 import ReservationRecommendationDetailsCalculatedSavingsProperties
-    from ._models_py3 import ReservationRecommendationDetailsModel
-    from ._models_py3 import ReservationRecommendationDetailsResourceProperties
-    from ._models_py3 import ReservationRecommendationDetailsSavingsProperties
-    from ._models_py3 import ReservationRecommendationDetailsUsageProperties
-    from ._models_py3 import ReservationRecommendationsListResult
-    from ._models_py3 import ReservationSummariesListResult
-    from ._models_py3 import ReservationSummary
-    from ._models_py3 import ReservationTransaction
-    from ._models_py3 import ReservationTransactionResource
-    from ._models_py3 import ReservationTransactionsListResult
-    from ._models_py3 import Resource
-    from ._models_py3 import ResourceAttributes
-    from ._models_py3 import SkuProperty
-    from ._models_py3 import Tag
-    from ._models_py3 import TagsResult
-    from ._models_py3 import UsageDetail
-    from ._models_py3 import UsageDetailsListResult
-except (SyntaxError, ImportError):
-    from ._models import Amount  # type: ignore
-    from ._models import Balance  # type: ignore
-    from ._models import BalancePropertiesAdjustmentDetailsItem  # type: ignore
-    from ._models import BalancePropertiesNewPurchasesDetailsItem  # type: ignore
-    from ._models import Budget  # type: ignore
-    from ._models import BudgetComparisonExpression  # type: ignore
-    from ._models import BudgetFilter  # type: ignore
-    from ._models import BudgetFilterProperties  # type: ignore
-    from ._models import BudgetTimePeriod  # type: ignore
-    from ._models import BudgetsListResult  # type: ignore
-    from ._models import ChargeSummary  # type: ignore
-    from ._models import ChargesListResult  # type: ignore
-    from ._models import CreditBalanceSummary  # type: ignore
-    from ._models import CreditSummary  # type: ignore
-    from ._models import CurrentSpend  # type: ignore
-    from ._models import ErrorDetails  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import EventSummary  # type: ignore
-    from ._models import Events  # type: ignore
-    from ._models import Forecast  # type: ignore
-    from ._models import ForecastPropertiesConfidenceLevelsItem  # type: ignore
-    from ._models import ForecastsListResult  # type: ignore
-    from ._models import LegacyChargeSummary  # type: ignore
-    from ._models import LegacyReservationRecommendation  # type: ignore
-    from ._models import LegacyReservationTransaction  # type: ignore
-    from ._models import LegacyUsageDetail  # type: ignore
-    from ._models import LotSummary  # type: ignore
-    from ._models import Lots  # type: ignore
-    from ._models import ManagementGroupAggregatedCostResult  # type: ignore
-    from ._models import Marketplace  # type: ignore
-    from ._models import MarketplacesListResult  # type: ignore
-    from ._models import MeterDetails  # type: ignore
-    from ._models import MeterDetailsResponse  # type: ignore
-    from ._models import ModernChargeSummary  # type: ignore
-    from ._models import ModernReservationRecommendation  # type: ignore
-    from ._models import ModernReservationTransaction  # type: ignore
-    from ._models import ModernReservationTransactionsListResult  # type: ignore
-    from ._models import ModernUsageDetail  # type: ignore
-    from ._models import Notification  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import PriceSheetProperties  # type: ignore
-    from ._models import PriceSheetResult  # type: ignore
-    from ._models import ProxyResource  # type: ignore
-    from ._models import ReservationDetail  # type: ignore
-    from ._models import ReservationDetailsListResult  # type: ignore
-    from ._models import ReservationRecommendation  # type: ignore
-    from ._models import ReservationRecommendationDetailsCalculatedSavingsProperties  # type: ignore
-    from ._models import ReservationRecommendationDetailsModel  # type: ignore
-    from ._models import ReservationRecommendationDetailsResourceProperties  # type: ignore
-    from ._models import ReservationRecommendationDetailsSavingsProperties  # type: ignore
-    from ._models import ReservationRecommendationDetailsUsageProperties  # type: ignore
-    from ._models import ReservationRecommendationsListResult  # type: ignore
-    from ._models import ReservationSummariesListResult  # type: ignore
-    from ._models import ReservationSummary  # type: ignore
-    from ._models import ReservationTransaction  # type: ignore
-    from ._models import ReservationTransactionResource  # type: ignore
-    from ._models import ReservationTransactionsListResult  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ResourceAttributes  # type: ignore
-    from ._models import SkuProperty  # type: ignore
-    from ._models import Tag  # type: ignore
-    from ._models import TagsResult  # type: ignore
-    from ._models import UsageDetail  # type: ignore
-    from ._models import UsageDetailsListResult  # type: ignore
+from ._models_py3 import Amount
+from ._models_py3 import AmountWithExchangeRate
+from ._models_py3 import Balance
+from ._models_py3 import BalancePropertiesAdjustmentDetailsItem
+from ._models_py3 import BalancePropertiesNewPurchasesDetailsItem
+from ._models_py3 import Budget
+from ._models_py3 import BudgetComparisonExpression
+from ._models_py3 import BudgetFilter
+from ._models_py3 import BudgetFilterProperties
+from ._models_py3 import BudgetTimePeriod
+from ._models_py3 import BudgetsListResult
+from ._models_py3 import ChargeSummary
+from ._models_py3 import ChargesListResult
+from ._models_py3 import CreditBalanceSummary
+from ._models_py3 import CreditSummary
+from ._models_py3 import CurrentSpend
+from ._models_py3 import DownloadProperties
+from ._models_py3 import ErrorDetails
+from ._models_py3 import ErrorResponse
+from ._models_py3 import EventSummary
+from ._models_py3 import Events
+from ._models_py3 import ForecastSpend
+from ._models_py3 import HighCasedErrorDetails
+from ._models_py3 import HighCasedErrorResponse
+from ._models_py3 import LegacyChargeSummary
+from ._models_py3 import LegacyReservationRecommendation
+from ._models_py3 import LegacyReservationRecommendationProperties
+from ._models_py3 import LegacyReservationTransaction
+from ._models_py3 import LegacySharedScopeReservationRecommendationProperties
+from ._models_py3 import LegacySingleScopeReservationRecommendationProperties
+from ._models_py3 import LegacyUsageDetail
+from ._models_py3 import LotSummary
+from ._models_py3 import Lots
+from ._models_py3 import ManagementGroupAggregatedCostResult
+from ._models_py3 import Marketplace
+from ._models_py3 import MarketplacesListResult
+from ._models_py3 import MeterDetails
+from ._models_py3 import MeterDetailsResponse
+from ._models_py3 import ModernChargeSummary
+from ._models_py3 import ModernReservationRecommendation
+from ._models_py3 import ModernReservationTransaction
+from ._models_py3 import ModernReservationTransactionsListResult
+from ._models_py3 import ModernUsageDetail
+from ._models_py3 import Notification
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import PriceSheetProperties
+from ._models_py3 import PriceSheetResult
+from ._models_py3 import ProxyResource
+from ._models_py3 import Reseller
+from ._models_py3 import ReservationDetail
+from ._models_py3 import ReservationDetailsListResult
+from ._models_py3 import ReservationRecommendation
+from ._models_py3 import ReservationRecommendationDetailsCalculatedSavingsProperties
+from ._models_py3 import ReservationRecommendationDetailsModel
+from ._models_py3 import ReservationRecommendationDetailsResourceProperties
+from ._models_py3 import ReservationRecommendationDetailsSavingsProperties
+from ._models_py3 import ReservationRecommendationDetailsUsageProperties
+from ._models_py3 import ReservationRecommendationsListResult
+from ._models_py3 import ReservationSummariesListResult
+from ._models_py3 import ReservationSummary
+from ._models_py3 import ReservationTransaction
+from ._models_py3 import ReservationTransactionResource
+from ._models_py3 import ReservationTransactionsListResult
+from ._models_py3 import Resource
+from ._models_py3 import ResourceAttributes
+from ._models_py3 import SkuProperty
+from ._models_py3 import Tag
+from ._models_py3 import TagsResult
+from ._models_py3 import UsageDetail
+from ._models_py3 import UsageDetailsListResult
+
 
 from ._consumption_management_client_enums import (
     BillingFrequency,
-    Bound,
     BudgetOperatorType,
     CategoryType,
     ChargeSummaryKind,
-    ChargeType,
+    CultureCode,
     Datagrain,
     EventType,
-    Grain,
     LookBackPeriod,
     LotSource,
     Metrictype,
     OperatorType,
+    PricingModelType,
     ReservationRecommendationKind,
     Scope,
+    Status,
     Term,
     ThresholdType,
     TimeGrainType,
@@ -165,6 +104,7 @@ from ._consumption_management_client_enums import (
 
 __all__ = [
     'Amount',
+    'AmountWithExchangeRate',
     'Balance',
     'BalancePropertiesAdjustmentDetailsItem',
     'BalancePropertiesNewPurchasesDetailsItem',
@@ -179,16 +119,20 @@ __all__ = [
     'CreditBalanceSummary',
     'CreditSummary',
     'CurrentSpend',
+    'DownloadProperties',
     'ErrorDetails',
     'ErrorResponse',
     'EventSummary',
     'Events',
-    'Forecast',
-    'ForecastPropertiesConfidenceLevelsItem',
-    'ForecastsListResult',
+    'ForecastSpend',
+    'HighCasedErrorDetails',
+    'HighCasedErrorResponse',
     'LegacyChargeSummary',
     'LegacyReservationRecommendation',
+    'LegacyReservationRecommendationProperties',
     'LegacyReservationTransaction',
+    'LegacySharedScopeReservationRecommendationProperties',
+    'LegacySingleScopeReservationRecommendationProperties',
     'LegacyUsageDetail',
     'LotSummary',
     'Lots',
@@ -209,6 +153,7 @@ __all__ = [
     'PriceSheetProperties',
     'PriceSheetResult',
     'ProxyResource',
+    'Reseller',
     'ReservationDetail',
     'ReservationDetailsListResult',
     'ReservationRecommendation',
@@ -231,20 +176,20 @@ __all__ = [
     'UsageDetail',
     'UsageDetailsListResult',
     'BillingFrequency',
-    'Bound',
     'BudgetOperatorType',
     'CategoryType',
     'ChargeSummaryKind',
-    'ChargeType',
+    'CultureCode',
     'Datagrain',
     'EventType',
-    'Grain',
     'LookBackPeriod',
     'LotSource',
     'Metrictype',
     'OperatorType',
+    'PricingModelType',
     'ReservationRecommendationKind',
     'Scope',
+    'Status',
     'Term',
     'ThresholdType',
     'TimeGrainType',

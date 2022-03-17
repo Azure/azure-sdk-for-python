@@ -23,6 +23,9 @@ class BackupClientTests(AdministrationTestCase, KeyVaultTestCase):
     @all_api_versions()
     @backup_client_setup
     def test_full_backup_and_restore(self, client):
+        if self.is_live:
+            pytest.skip("SAS token failures are causing sev2 alerts for service team")
+
         # backup the vault
         backup_poller = client.begin_backup(self.container_uri, self.sas_token)
         backup_operation = backup_poller.result()
@@ -67,6 +70,9 @@ class BackupClientTests(AdministrationTestCase, KeyVaultTestCase):
     @all_api_versions()
     @backup_client_setup
     def test_selective_key_restore(self, client):
+        if self.is_live:
+            pytest.skip("SAS token failures are causing sev2 alerts for service team")
+
         # create a key to selectively restore
         key_client = self.create_key_client(self.managed_hsm_url)
         key_name = self.get_resource_name("selective-restore-test-key")
@@ -116,6 +122,7 @@ class BackupClientTests(AdministrationTestCase, KeyVaultTestCase):
         # rehydrate a poller with a continuation token of a completed operation
         late_rehydrated = client.begin_backup(self.container_uri, self.sas_token, continuation_token=token)
         assert late_rehydrated.status() == "Succeeded"
+        late_rehydrated.wait()
 
         # restore the backup
         restore_poller = client.begin_restore(backup_operation.folder_url, self.sas_token)

@@ -1,6 +1,6 @@
 # Release History
 
-## 1.7.1 (Unreleased)
+## 1.9.0b2 (Unreleased)
 
 ### Features Added
 
@@ -8,7 +8,46 @@
 
 ### Bugs Fixed
 
+- Added check on `content` from msal response    ([#23483](https://github.com/Azure/azure-sdk-for-python/issues/23483))
+
 ### Other Changes
+
+## 1.9.0b1 (2022-03-08)
+
+### Features Added
+
+- Added `validate_authority` support for msal client  ([#22625](https://github.com/Azure/azure-sdk-for-python/issues/22625))
+- Added `resource_id` support for user-assigned managed identity  ([#22329](https://github.com/Azure/azure-sdk-for-python/issues/22329))
+- Added `ClientAssertionCredential` support  ([#22328](https://github.com/Azure/azure-sdk-for-python/issues/22328))
+- Updated App service API version to "2019-08-01" ([#23034](https://github.com/Azure/azure-sdk-for-python/issues/23034))
+
+## 1.8.0 (2022-03-01)
+
+### Bugs Fixed
+
+- Handle injected "tenant_id" and "claims" ([#23138](https://github.com/Azure/azure-sdk-for-python/issues/23138))
+  
+  "tenant_id" argument in get_token() method is only supported by:
+
+  - `AuthorizationCodeCredential`
+  - `AzureCliCredential`
+  - `AzurePowerShellCredential`
+  - `InteractiveBrowserCredential`
+  - `DeviceCodeCredential`
+  - `EnvironmentCredential`
+  - `UsernamePasswordCredential`
+
+   it is ignored by other types of credentials.
+
+### Other Changes
+
+- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+
+## 1.7.1 (2021-11-09)
+
+### Bugs Fixed
+
+- Fix multi-tenant auth using async AadClient ([#21289](https://github.com/Azure/azure-sdk-for-python/issues/21289))
 
 ## 1.7.0 (2021-10-14)
 

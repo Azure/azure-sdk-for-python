@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
@@ -18,7 +18,7 @@ interactions:
       connection: keep-alive
       content-length: '196'
       content-type: application/json; charset=utf-8
-      date: Mon, 30 Aug 2021 20:38:38 GMT
+      date: Thu, 18 Nov 2021 21:47:32 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -27,84 +27,87 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://yalinlitests.azurecr.io/acr/v1/_catalog
+    url: https://yallacrtests.azurecr.io/acr/v1/_catalog
 - request:
     body:
       access_token: REDACTED
-      grant_type: access_token
-      service: yalinlitests.azurecr.io
+      grant_type: !!python/object/apply:azure.containerregistry._generated.models._container_registry_enums.PostContentSchemaGrantType
+      - access_token
+      service: yallacrtests.azurecr.io
     headers:
       Accept:
       - application/json
+      Content-Type:
+      - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/exchange
+    uri: https://fake_url.azurecr.io/oauth2/exchange?api-version=2021-07-01
   response:
     body:
       string: '{"refresh_token": "REDACTED"}'
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 30 Aug 2021 20:38:38 GMT
+      date: Thu, 18 Nov 2021 21:47:32 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.65'
+      x-ms-ratelimit-remaining-calls-per-second: '166.583333'
     status:
       code: 200
       message: OK
-    url: https://yalinlitests.azurecr.io/oauth2/exchange
+    url: https://yallacrtests.azurecr.io/oauth2/exchange?api-version=2021-07-01
 - request:
     body:
       grant_type: refresh_token
       refresh_token: REDACTED
       scope: registry:catalog:*
-      service: yalinlitests.azurecr.io
+      service: yallacrtests.azurecr.io
     headers:
       Accept:
       - application/json
+      Content-Type:
+      - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://fake_url.azurecr.io/oauth2/token
+    uri: https://fake_url.azurecr.io/oauth2/token?api-version=2021-07-01
   response:
     body:
       string: '{"access_token": "REDACTED"}'
     headers:
       connection: keep-alive
       content-type: application/json; charset=utf-8
-      date: Mon, 30 Aug 2021 20:38:38 GMT
+      date: Thu, 18 Nov 2021 21:47:32 GMT
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
       transfer-encoding: chunked
-      x-ms-ratelimit-remaining-calls-per-second: '166.633333'
+      x-ms-ratelimit-remaining-calls-per-second: '166.4'
     status:
       code: 200
       message: OK
-    url: https://yalinlitests.azurecr.io/oauth2/token
+    url: https://yallacrtests.azurecr.io/oauth2/token?api-version=2021-07-01
 - request:
     body: null
     headers:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-azure-containerregistry/1.0.0b6 Python/3.6.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-azure-containerregistry/1.0.0b7 Python/3.9.2 (Windows-10-10.0.22000-SP0)
     method: GET
     uri: https://fake_url.azurecr.io/acr/v1/_catalog
   response:
     body:
       string: '{"repositories": ["library/alpine", "library/busybox", "library/hello-world",
-        "repo26ab150f", "repo27741d6f", "repo2b381dc2", "repo2bef19cb", "repo3dc21571",
-        "repo41a21dd2", "repo45431dd7", "repo60eb1a9e", "repo63d41ad4", "repo6969166d",
-        "repo7bda1b05", "repo80c61ece", "repo816516e9", "repo93d41b55", "repoaf17178c",
-        "repoaf8317b0", "repoc1b812f4", "repodf771888", "repoec051cb9", "repof94c18ea"]}'
+        "repo2b381dc2", "repo3dc21571", "repo41a21dd2", "repo63d41ad4", "repo7bda1b05",
+        "repoaf17178c", "repof94c18ea"]}'
     headers:
       access-control-expose-headers: X-Ms-Correlation-Request-Id
       connection: keep-alive
-      content-length: '376'
+      content-length: '181'
       content-type: application/json; charset=utf-8
-      date: Mon, 30 Aug 2021 20:38:38 GMT
+      date: Thu, 18 Nov 2021 21:47:32 GMT
       docker-distribution-api-version: registry/2.0
       server: openresty
       strict-transport-security: max-age=31536000; includeSubDomains
@@ -112,5 +115,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://yalinlitests.azurecr.io/acr/v1/_catalog
+    url: https://yallacrtests.azurecr.io/acr/v1/_catalog
 version: 1

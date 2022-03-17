@@ -18,22 +18,22 @@ REGION = os.getenv('FORMRECOGNIZER_LOCATION', None)
 FormRecognizerPreparer = functools.partial(
     PowerShellPreparer,
     'formrecognizer',
-    formrecognizer_test_endpoint="https://region.api.cognitive.microsoft.com/",
+    formrecognizer_test_endpoint="https://fakeendpoint.cognitiveservices.azure.com",
     formrecognizer_test_api_key="fakeZmFrZV9hY29jdW50X2tleQ==",
-    formrecognizer_storage_container_sas_url="container_sas_url",
-    formrecognizer_testing_data_container_sas_url="container_sas_url",
-    formrecognizer_multipage_storage_container_sas_url="container_sas_url",
-    formrecognizer_multipage_storage_container_sas_url_2="container_sas_url",
-    formrecognizer_selection_mark_storage_container_sas_url="container_sas_url",
-    formrecognizer_table_variable_rows_container_sas_url="container_sas_url",
-    formrecognizer_table_fixed_rows_container_sas_url="container_sas_url",
-    formrecognizer_storage_container_sas_url_v2="container_sas_url",
-    formrecognizer_multipage_storage_container_sas_url_v2="container_sas_url",
-    formrecognizer_multipage_storage_container_sas_url_2_v2="container_sas_url",
-    formrecognizer_selection_mark_storage_container_sas_url_v2="container_sas_url",
-    formrecognizer_table_variable_rows_container_sas_url_v2="container_sas_url",
-    formrecognizer_table_fixed_rows_container_sas_url_v2="container_sas_url",
-    formrecognizer_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.CognitiveServices/accounts/frname",
+    formrecognizer_storage_container_sas_url="https://blob_sas_url",
+    formrecognizer_testing_data_container_sas_url="https://blob_sas_url",
+    formrecognizer_multipage_storage_container_sas_url="https://blob_sas_url",
+    formrecognizer_multipage_storage_container_sas_url_2="https://blob_sas_url",
+    formrecognizer_selection_mark_storage_container_sas_url="https://blob_sas_url",
+    formrecognizer_table_variable_rows_container_sas_url="https://blob_sas_url",
+    formrecognizer_table_fixed_rows_container_sas_url="https://blob_sas_url",
+    formrecognizer_storage_container_sas_url_v2="https://blob_sas_url",
+    formrecognizer_multipage_storage_container_sas_url_v2="https://blob_sas_url",
+    formrecognizer_multipage_storage_container_sas_url_2_v2="https://blob_sas_url",
+    formrecognizer_selection_mark_storage_container_sas_url_v2="https://blob_sas_url",
+    formrecognizer_table_variable_rows_container_sas_url_v2="https://blob_sas_url",
+    formrecognizer_table_fixed_rows_container_sas_url_v2="https://blob_sas_url",
+    formrecognizer_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.CognitiveServices/accounts/formrecognizername",
     formrecognizer_region="region"
 )
 
@@ -53,7 +53,7 @@ class GlobalClientPreparer(AzureMgmtPreparer):
             form_recognizer_account_key = os.environ["FORMRECOGNIZER_TEST_API_KEY"]
             polling_interval = 5
         else:
-            form_recognizer_account = "https://region.api.cognitive.microsoft.com/"
+            form_recognizer_account = "https://fakeendpoint.cognitiveservices.azure.com"
             form_recognizer_account_key = "fakeZmFrZV9hY29jdW50X2tleQ=="
             polling_interval = 0
 

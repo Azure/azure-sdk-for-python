@@ -5,9 +5,9 @@ version: 0.1.2
 appVersion: v0.2
 annotations:
   stressTest: 'true'
-  namespace: python-eventhubs-stress-test-ns
+  namespace: python
 
 dependencies:
 - name: stress-test-addons
-  version: 0.1.6
+  version: 0.1.13
   repository: https://stresstestcharts.blob.core.windows.net/helm/

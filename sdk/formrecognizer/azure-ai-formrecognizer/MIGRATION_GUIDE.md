@@ -22,7 +22,7 @@ A natural question to ask when considering whether to adopt a new version of the
 There are many benefits to using the new design of the `azure-ai-formrecognizer (3.2.x)` library. This new version of the library introduces two new clients `DocumentAnalysisClient` and the `DocumentModelAdministrationClient` with unified methods for analyzing documents and provides support for the new features added by the service in API version `2021-09-30-preview` and later.
 
 New features provided by the `DocumentAnalysisClient` include:
-- One consolidated method for analyzing document layout, a prebuilt general document model type, along with the same prebuilt models that were included previously (receipts, invoices, business cards, ID documents), and custom models.
+- One consolidated method for analyzing document layout, a prebuilt general document model type, along with the same prebuilt models that were included previously (receipts, invoices, business cards, ID documents), and custom models. ***As of 3.2.0b3, a prebuilt read model was added to read information about pages and detected languages. A prebuilt model to analyze U.S. W-2 tax documents was also added with the following model ID: `prebuilt-tax.us.w2`.***
 - Models introduced in the latest version of the library, such as `AnalyzeResult`, remove hierarchical dependencies between document elements and move them to a more top level and easily accessible position.
 - The Form Recognizer service has further improved how to define where elements are located on documents by moving towards `BoundingRegion` definitions allowing for cross-page elements.
 - Document element fields are returned with more information, such as content and spans. 
@@ -103,7 +103,7 @@ document_model_admin_client = DocumentModelAdministrationClient(
 Differences between the versions:
 - `begin_analyze_document` and `begin_analyze_document_from_url` accept a string with the desired model ID for analysis. The model ID can be any of the prebuilt model IDs or a custom model ID.
 - Along with more consolidated analysis methods in the `DocumentAnalysisClient`, the return types have also been improved and remove the hierarchical dependencies between elements. An instance of the `AnalyzeResult` model is now returned which showcases important document elements, such as key-value pairs, entities, tables, and document fields and values, among others, at the top level of the returned model. This can be contrasted with `RecognizedForm` which included more hierarchical relationships, for instance tables were an element of a `FormPage` and not a top-level element.
-- In the new version of the library, the functionality of `begin_recognize_content` has been added as a prebuilt model and can be called in library version `azure-ai-formrecognizer (3.2.x)` with `begin_analyze_document` by passing in the `prebuilt-layout` model ID. Similarly, to get general document information, such as key-value pairs, entities, and text layout, the `prebuilt-document` model ID can be used with `begin_analyze_document`.
+- In the new version of the library, the functionality of `begin_recognize_content` has been added as a prebuilt model and can be called in library version `azure-ai-formrecognizer (3.2.x)` with `begin_analyze_document` by passing in the `prebuilt-layout` model ID. Similarly, to get general document information, such as key-value pairs, entities, and text layout, the `prebuilt-document` model ID can be used with `begin_analyze_document`. ***As of 3.2.0b3, passing in the `prebuilt-read` model was added to read information about pages and detected languages.***
 - When calling `begin_analyze_document` and `begin_analyze_document_from_url` the returned type is an `AnalyzeResult` object, while the various methods used with `FormRecognizerClient` return a list of `RecognizedForm`.
 - The `pages` keyword argument is a string with library version `azure-ai-formrecognizer (3.2.x)`. In `azure-ai-formrecognizer (3.1.x)`, `pages` was a list of strings.
 - The `include_field_elements` keyword argument is not supported with the `DocumentAnalysisClient`, text details are automatically included with API version `2021-09-30-preview` and later.
@@ -595,7 +595,7 @@ print("-----------------------------------")
 ### Training a custom model
 
 Differences between the versions:
-- Files for building a new model for version `3.2.x` can be created using the labeling tool found [here][fr_labeling_tool].
+- Files for building a new model for version `3.2.x` can be created using [Form Recognizer Studio][fr_labeling_tool].
 - In version `3.1.x` the `use_training_labels` keyword argument was used to indicate whether to use labeled data when creating the custom model.
 - In version `3.2.x` the `use_training_labels` keyword argument is not supported since training must be carried out with labeled training documents. Additionally train without labels is now replaced with the prebuilt model `prebuilt-document` which extracts entities, key-value pairs, and layout from a document. 
 
@@ -636,10 +636,12 @@ for doc in model.training_documents:
 ```
 
 Train a custom model with `3.2.x`:
+***As of 3.2.0b3, `begin_build_model()` has a required `build_mode` parameter. See https://aka.ms/azsdk/formrecognizer/buildmode for more information about build modes.***
+
 ```python
 document_model_admin_client = DocumentModelAdministrationClient(endpoint, AzureKeyCredential(key))
 poller = document_model_admin_client.begin_build_model(
-    container_sas_url, model_id="my-model-id", description="my model description"
+    container_sas_url, "template", model_id="my-model-id", description="my model description"
 )
 model = poller.result()
 
@@ -666,4 +668,4 @@ For additional samples please take a look at the [Form Recognizer Samples][sampl
 
 [readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/README.md
 [samples_readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/README.md
-[fr_labeling_tool]: https://aka.ms/azsdk/formrecognizer/labelingtool
+[fr_labeling_tool]: https://aka.ms/azsdk/formrecognizer/formrecognizerstudio

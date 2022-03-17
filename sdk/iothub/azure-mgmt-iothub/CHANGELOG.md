@@ -1,5 +1,12 @@
 # Release History
 
+## 2.2.0 (2022-01-29)
+
+**Features**
+
+  - Model IotHubDescription has a new parameter system_data
+  - Model IotHubProperties has a new parameter enable_data_residency
+
 ## 2.1.0 (2021-08-25)
 
 **Features**

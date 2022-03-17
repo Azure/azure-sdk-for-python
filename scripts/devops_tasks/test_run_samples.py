@@ -82,6 +82,8 @@ IGNORED_SAMPLES = {
         "__init__.py",
         "consume_cloud_events_from_eventhub.py",
         "consume_eventgrid_events_from_service_bus_queue.py",
+        "sample_publish_events_to_a_topic_using_sas_credential.py",
+        "sample_publish_events_to_a_topic_using_sas_credential_async.py"
     ],
     "azure-eventhub": [
         "connection_to_custom_endpoint_address.py",
@@ -124,10 +126,14 @@ IGNORED_SAMPLES = {
         "sample_list_translations_with_filters.py",
         "sample_translation_with_custom_model.py",
         "sample_translation_with_custom_model_async.py",
+        "sample_begin_translation_with_filters.py",
+        "sample_begin_translation_with_filters_async.py"
     ],
     "azure-ai-formrecognizer": [
         "sample_manage_custom_models.py",
         "sample_manage_custom_models_async.py",
+        "sample_copy_model.py",
+        "sample_copy_model_async.py",
     ],
     "azure-ai-language-questionanswering": ["sample_chat.py"],
 }

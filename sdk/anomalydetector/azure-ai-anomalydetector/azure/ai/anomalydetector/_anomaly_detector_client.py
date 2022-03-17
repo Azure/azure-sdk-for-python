@@ -6,30 +6,34 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from copy import deepcopy
 from typing import TYPE_CHECKING
 
 from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
+
+from . import models
+from ._configuration import AnomalyDetectorClientConfiguration
+from .operations import AnomalyDetectorClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any
 
     from azure.core.credentials import AzureKeyCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
-
-from ._configuration import AnomalyDetectorClientConfiguration
-from .operations import AnomalyDetectorClientOperationsMixin
-from . import models
-
+    from azure.core.rest import HttpRequest, HttpResponse
 
 class AnomalyDetectorClient(AnomalyDetectorClientOperationsMixin):
     """The Anomaly Detector API detects anomalies automatically in time series data. It supports two kinds of mode, one is for stateless using, another is for stateful using. In stateless mode, there are three functionalities. Entire Detect is for detecting the whole series with model trained by the time series, Last Detect is detecting last point with model trained by points before. ChangePoint Detect is for detecting trend changes in time series. In stateful mode, user can store time series, the stored time series will be used for detection anomalies. Under this mode, user can still use the above three functionalities by only giving a time range without preparing time series in client side. Besides the above three functionalities, stateful model also provide group based detection and labeling service. By leveraging labeling service user can provide labels for each detection result, these labels will be used for retuning or regenerating detection models. Inconsistency detection is a kind of group based detection, this detection will find inconsistency ones in a set of time series. By using anomaly detector service, business customers can discover incidents and establish a logic flow for root cause analysis.
 
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example: https://westus2.api.cognitive.microsoft.com).
+    :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
+     https://westus2.api.cognitive.microsoft.com).
     :type endpoint: str
+    :keyword api_version: Anomaly Detector API version (for example, v1.0). The default value is
+     "v1.1-preview.1". Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -39,33 +43,46 @@ class AnomalyDetectorClient(AnomalyDetectorClientOperationsMixin):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        base_url = '{Endpoint}/anomalydetector/v1.1-preview'
-        self._config = AnomalyDetectorClientConfiguration(credential, endpoint, **kwargs)
-        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
+        _base_url = '{Endpoint}/anomalydetector/{ApiVersion}'
+        self._config = AnomalyDetectorClientConfiguration(credential=credential, endpoint=endpoint, **kwargs)
+        self._client = PipelineClient(base_url=_base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
+        self._serialize.client_side_validation = False
 
 
-    def _send_request(self, http_request, **kwargs):
-        # type: (HttpRequest, Any) -> HttpResponse
+    def _send_request(
+        self,
+        request,  # type: HttpRequest
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> HttpResponse
         """Runs the network request through the client's chained policies.
 
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = client._send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
+
+        request_copy = deepcopy(request)
         path_format_arguments = {
-            'Endpoint': self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
+
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        return self._client.send_request(request_copy, **kwargs)
 
     def close(self):
         # type: () -> None

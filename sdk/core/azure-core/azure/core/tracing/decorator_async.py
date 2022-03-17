@@ -27,31 +27,31 @@
 
 import functools
 
-from typing import Awaitable, Callable, Dict, Optional, Any, TypeVar, overload
-
+from typing import Awaitable, Callable, Any, TypeVar, overload
+from typing_extensions import ParamSpec
 from .common import change_context, get_function_and_class_name
 from ..settings import settings
 
-
+P = ParamSpec("P")
 T = TypeVar("T")
 
 
 @overload
 def distributed_trace_async(
-    __func: Callable[..., Awaitable[T]]
-) -> Callable[..., Awaitable[T]]:
+    __func: Callable[P, Awaitable[T]]
+) -> Callable[P, Awaitable[T]]:
     pass
 
 
 @overload
 def distributed_trace_async(  # pylint:disable=function-redefined
-    **kwargs: Any  # pylint:disable=unused-argument
-) -> Callable[[Callable[..., Awaitable[T]]], Callable[..., Awaitable[T]]]:
+    **kwargs: Any,  # pylint:disable=unused-argument
+) -> Callable[[Callable[P, Awaitable[T]]], Callable[P, Awaitable[T]]]:
     pass
 
 
 def distributed_trace_async(  # pylint:disable=function-redefined
-    __func: Callable[..., Awaitable[T]] = None, **kwargs: Any
+    __func: Callable[P, Awaitable[T]] = None, **kwargs: Any
 ):
     """Decorator to apply to function to get traced automatically.
 
@@ -63,7 +63,7 @@ def distributed_trace_async(  # pylint:disable=function-redefined
     name_of_span = kwargs.pop("name_of_span", None)
     tracing_attributes = kwargs.pop("tracing_attributes", {})
 
-    def decorator(func: Callable[..., Awaitable[T]]) -> Callable[..., Awaitable[T]]:
+    def decorator(func: Callable[P, Awaitable[T]]) -> Callable[P, Awaitable[T]]:
         @functools.wraps(func)
         async def wrapper_use_tracer(*args: Any, **kwargs: Any) -> T:
             merge_span = kwargs.pop("merge_span", False)

@@ -1,6 +1,8 @@
 # Release History
- 
-## 4.6.1 (Unreleased)
+
+## 4.7.2 (Unreleased)
+
+- This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
 
 ### Features Added
 
@@ -9,6 +11,18 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.7.1 (2021-11-18)
+
+### Bugs Fixed
+
+- The `send` API will raise on exceptions.
+
+## 4.7.0 (2021-11-09)
+
+### Features Added
+
+- Added support for publishing native CNCF cloudevents (https://pypi.org/project/cloudevents/).
 
 ## 4.6.0 (2021-10-05)
 

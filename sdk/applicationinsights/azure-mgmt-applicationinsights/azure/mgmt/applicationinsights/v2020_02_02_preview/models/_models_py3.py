@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -27,10 +27,10 @@ class ComponentsResource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
@@ -55,6 +55,12 @@ class ComponentsResource(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(ComponentsResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -76,16 +82,16 @@ class ApplicationInsightsComponent(ComponentsResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param kind: Required. The kind of application that this component refers to, used to customize
+    :ivar location: Required. Resource location.
+    :vartype location: str
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar kind: Required. The kind of application that this component refers to, used to customize
      UI. This value is a freeform string, values should typically be one of the following: web, ios,
      other, store, java, phone.
-    :type kind: str
-    :param etag: Resource etag.
-    :type etag: str
+    :vartype kind: str
+    :ivar etag: Resource etag.
+    :vartype etag: str
     :ivar application_id: The unique ID of your application. This field mirrors the 'Name' field
      and cannot be changed.
     :vartype application_id: str
@@ -93,18 +99,18 @@ class ApplicationInsightsComponent(ComponentsResource):
     :vartype app_id: str
     :ivar name_properties_name: Application name.
     :vartype name_properties_name: str
-    :param application_type: Type of application being monitored. Possible values include: "web",
+    :ivar application_type: Type of application being monitored. Possible values include: "web",
      "other". Default value: "web".
-    :type application_type: str or
+    :vartype application_type: str or
      ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.ApplicationType
-    :param flow_type: Used by the Application Insights system to determine what kind of flow this
+    :ivar flow_type: Used by the Application Insights system to determine what kind of flow this
      component was created by. This is to be set to 'Bluefield' when creating/updating a component
      via the REST API. Possible values include: "Bluefield". Default value: "Bluefield".
-    :type flow_type: str or ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.FlowType
-    :param request_source: Describes what tool created this Application Insights component.
+    :vartype flow_type: str or ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.FlowType
+    :ivar request_source: Describes what tool created this Application Insights component.
      Customers using this API should set this to the default 'rest'. Possible values include:
      "rest". Default value: "rest".
-    :type request_source: str or
+    :vartype request_source: str or
      ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.RequestSource
     :ivar instrumentation_key: Application Insights Instrumentation key. A read-only value that
      applications can use to identify the destination for all telemetry sent to Azure Application
@@ -115,9 +121,9 @@ class ApplicationInsightsComponent(ComponentsResource):
     :vartype creation_date: ~datetime.datetime
     :ivar tenant_id: Azure Tenant Id.
     :vartype tenant_id: str
-    :param hockey_app_id: The unique application ID created when a new application is added to
+    :ivar hockey_app_id: The unique application ID created when a new application is added to
      HockeyApp, used for communications with HockeyApp.
-    :type hockey_app_id: str
+    :vartype hockey_app_id: str
     :ivar hockey_app_token: Token used to authenticate communications with between Application
      Insights and HockeyApp.
     :vartype hockey_app_token: str
@@ -125,39 +131,44 @@ class ApplicationInsightsComponent(ComponentsResource):
      provisioned within the resource group it is defined. Users cannot change this value but are
      able to read from it. Values will include Succeeded, Deploying, Canceled, and Failed.
     :vartype provisioning_state: str
-    :param sampling_percentage: Percentage of the data produced by the application being monitored
+    :ivar sampling_percentage: Percentage of the data produced by the application being monitored
      that is being sampled for Application Insights telemetry.
-    :type sampling_percentage: float
+    :vartype sampling_percentage: float
     :ivar connection_string: Application Insights component connection string.
     :vartype connection_string: str
     :ivar retention_in_days: Retention period in days.
     :vartype retention_in_days: int
-    :param disable_ip_masking: Disable IP masking.
-    :type disable_ip_masking: bool
-    :param immediate_purge_data_on30_days: Purge data immediately after 30 days.
-    :type immediate_purge_data_on30_days: bool
-    :param workspace_resource_id: Resource Id of the log analytics workspace which the data will be
+    :ivar disable_ip_masking: Disable IP masking.
+    :vartype disable_ip_masking: bool
+    :ivar immediate_purge_data_on30_days: Purge data immediately after 30 days.
+    :vartype immediate_purge_data_on30_days: bool
+    :ivar workspace_resource_id: Resource Id of the log analytics workspace which the data will be
      ingested to. This property is required to create an application with this API version.
      Applications from older versions will not have this property.
-    :type workspace_resource_id: str
+    :vartype workspace_resource_id: str
     :ivar la_migration_date: The date which the component got migrated to LA, in ISO 8601 format.
     :vartype la_migration_date: ~datetime.datetime
     :ivar private_link_scoped_resources: List of linked private link scope resources.
     :vartype private_link_scoped_resources:
      list[~azure.mgmt.applicationinsights.v2020_02_02_preview.models.PrivateLinkScopedResource]
-    :param public_network_access_for_ingestion: The network access type for accessing Application
+    :ivar public_network_access_for_ingestion: The network access type for accessing Application
      Insights ingestion. Possible values include: "Enabled", "Disabled". Default value: "Enabled".
-    :type public_network_access_for_ingestion: str or
+    :vartype public_network_access_for_ingestion: str or
      ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.PublicNetworkAccessType
-    :param public_network_access_for_query: The network access type for accessing Application
+    :ivar public_network_access_for_query: The network access type for accessing Application
      Insights query. Possible values include: "Enabled", "Disabled". Default value: "Enabled".
-    :type public_network_access_for_query: str or
+    :vartype public_network_access_for_query: str or
      ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.PublicNetworkAccessType
-    :param ingestion_mode: Indicates the flow of the ingestion. Possible values include:
+    :ivar ingestion_mode: Indicates the flow of the ingestion. Possible values include:
      "ApplicationInsights", "ApplicationInsightsWithDiagnosticSettings", "LogAnalytics". Default
      value: "LogAnalytics".
-    :type ingestion_mode: str or
+    :vartype ingestion_mode: str or
      ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.IngestionMode
+    :ivar disable_local_auth: Disable Non-AAD based Auth.
+    :vartype disable_local_auth: bool
+    :ivar force_customer_storage_for_profiler: Force users to create their own storage account for
+     profiler and debugger.
+    :vartype force_customer_storage_for_profiler: bool
     """
 
     _validation = {
@@ -211,6 +222,8 @@ class ApplicationInsightsComponent(ComponentsResource):
         'public_network_access_for_ingestion': {'key': 'properties.publicNetworkAccessForIngestion', 'type': 'str'},
         'public_network_access_for_query': {'key': 'properties.publicNetworkAccessForQuery', 'type': 'str'},
         'ingestion_mode': {'key': 'properties.IngestionMode', 'type': 'str'},
+        'disable_local_auth': {'key': 'properties.DisableLocalAuth', 'type': 'bool'},
+        'force_customer_storage_for_profiler': {'key': 'properties.ForceCustomerStorageForProfiler', 'type': 'bool'},
     }
 
     def __init__(
@@ -231,8 +244,68 @@ class ApplicationInsightsComponent(ComponentsResource):
         public_network_access_for_ingestion: Optional[Union[str, "PublicNetworkAccessType"]] = "Enabled",
         public_network_access_for_query: Optional[Union[str, "PublicNetworkAccessType"]] = "Enabled",
         ingestion_mode: Optional[Union[str, "IngestionMode"]] = "LogAnalytics",
+        disable_local_auth: Optional[bool] = None,
+        force_customer_storage_for_profiler: Optional[bool] = None,
         **kwargs
     ):
+        """
+        :keyword location: Required. Resource location.
+        :paramtype location: str
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword kind: Required. The kind of application that this component refers to, used to
+         customize UI. This value is a freeform string, values should typically be one of the following:
+         web, ios, other, store, java, phone.
+        :paramtype kind: str
+        :keyword etag: Resource etag.
+        :paramtype etag: str
+        :keyword application_type: Type of application being monitored. Possible values include: "web",
+         "other". Default value: "web".
+        :paramtype application_type: str or
+         ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.ApplicationType
+        :keyword flow_type: Used by the Application Insights system to determine what kind of flow this
+         component was created by. This is to be set to 'Bluefield' when creating/updating a component
+         via the REST API. Possible values include: "Bluefield". Default value: "Bluefield".
+        :paramtype flow_type: str or
+         ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.FlowType
+        :keyword request_source: Describes what tool created this Application Insights component.
+         Customers using this API should set this to the default 'rest'. Possible values include:
+         "rest". Default value: "rest".
+        :paramtype request_source: str or
+         ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.RequestSource
+        :keyword hockey_app_id: The unique application ID created when a new application is added to
+         HockeyApp, used for communications with HockeyApp.
+        :paramtype hockey_app_id: str
+        :keyword sampling_percentage: Percentage of the data produced by the application being
+         monitored that is being sampled for Application Insights telemetry.
+        :paramtype sampling_percentage: float
+        :keyword disable_ip_masking: Disable IP masking.
+        :paramtype disable_ip_masking: bool
+        :keyword immediate_purge_data_on30_days: Purge data immediately after 30 days.
+        :paramtype immediate_purge_data_on30_days: bool
+        :keyword workspace_resource_id: Resource Id of the log analytics workspace which the data will
+         be ingested to. This property is required to create an application with this API version.
+         Applications from older versions will not have this property.
+        :paramtype workspace_resource_id: str
+        :keyword public_network_access_for_ingestion: The network access type for accessing Application
+         Insights ingestion. Possible values include: "Enabled", "Disabled". Default value: "Enabled".
+        :paramtype public_network_access_for_ingestion: str or
+         ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.PublicNetworkAccessType
+        :keyword public_network_access_for_query: The network access type for accessing Application
+         Insights query. Possible values include: "Enabled", "Disabled". Default value: "Enabled".
+        :paramtype public_network_access_for_query: str or
+         ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.PublicNetworkAccessType
+        :keyword ingestion_mode: Indicates the flow of the ingestion. Possible values include:
+         "ApplicationInsights", "ApplicationInsightsWithDiagnosticSettings", "LogAnalytics". Default
+         value: "LogAnalytics".
+        :paramtype ingestion_mode: str or
+         ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.IngestionMode
+        :keyword disable_local_auth: Disable Non-AAD based Auth.
+        :paramtype disable_local_auth: bool
+        :keyword force_customer_storage_for_profiler: Force users to create their own storage account
+         for profiler and debugger.
+        :paramtype force_customer_storage_for_profiler: bool
+        """
         super(ApplicationInsightsComponent, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.etag = etag
@@ -259,6 +332,8 @@ class ApplicationInsightsComponent(ComponentsResource):
         self.public_network_access_for_ingestion = public_network_access_for_ingestion
         self.public_network_access_for_query = public_network_access_for_query
         self.ingestion_mode = ingestion_mode
+        self.disable_local_auth = disable_local_auth
+        self.force_customer_storage_for_profiler = force_customer_storage_for_profiler
 
 
 class ApplicationInsightsComponentListResult(msrest.serialization.Model):
@@ -266,12 +341,12 @@ class ApplicationInsightsComponentListResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. List of Application Insights component definitions.
-    :type value:
+    :ivar value: Required. List of Application Insights component definitions.
+    :vartype value:
      list[~azure.mgmt.applicationinsights.v2020_02_02_preview.models.ApplicationInsightsComponent]
-    :param next_link: The URI to get the next set of Application Insights component definitions if
+    :ivar next_link: The URI to get the next set of Application Insights component definitions if
      too many components where returned in the result set.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _validation = {
@@ -290,6 +365,14 @@ class ApplicationInsightsComponentListResult(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword value: Required. List of Application Insights component definitions.
+        :paramtype value:
+         list[~azure.mgmt.applicationinsights.v2020_02_02_preview.models.ApplicationInsightsComponent]
+        :keyword next_link: The URI to get the next set of Application Insights component definitions
+         if too many components where returned in the result set.
+        :paramtype next_link: str
+        """
         super(ApplicationInsightsComponentListResult, self).__init__(**kwargs)
         self.value = value
         self.next_link = next_link
@@ -300,11 +383,11 @@ class ComponentPurgeBody(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param table: Required. Table from which to purge data.
-    :type table: str
-    :param filters: Required. The set of columns and filters (queries) to run over them to purge
-     the resulting data.
-    :type filters:
+    :ivar table: Required. Table from which to purge data.
+    :vartype table: str
+    :ivar filters: Required. The set of columns and filters (queries) to run over them to purge the
+     resulting data.
+    :vartype filters:
      list[~azure.mgmt.applicationinsights.v2020_02_02_preview.models.ComponentPurgeBodyFilters]
     """
 
@@ -325,6 +408,14 @@ class ComponentPurgeBody(msrest.serialization.Model):
         filters: List["ComponentPurgeBodyFilters"],
         **kwargs
     ):
+        """
+        :keyword table: Required. Table from which to purge data.
+        :paramtype table: str
+        :keyword filters: Required. The set of columns and filters (queries) to run over them to purge
+         the resulting data.
+        :paramtype filters:
+         list[~azure.mgmt.applicationinsights.v2020_02_02_preview.models.ComponentPurgeBodyFilters]
+        """
         super(ComponentPurgeBody, self).__init__(**kwargs)
         self.table = table
         self.filters = filters
@@ -333,18 +424,18 @@ class ComponentPurgeBody(msrest.serialization.Model):
 class ComponentPurgeBodyFilters(msrest.serialization.Model):
     """User-defined filters to return data which will be purged from the table.
 
-    :param column: The column of the table over which the given query should run.
-    :type column: str
-    :param operator: A query operator to evaluate over the provided column and value(s). Supported
+    :ivar column: The column of the table over which the given query should run.
+    :vartype column: str
+    :ivar operator: A query operator to evaluate over the provided column and value(s). Supported
      operators are ==, =~, in, in~, >, >=, <, <=, between, and have the same behavior as they would
      in a KQL query.
-    :type operator: str
-    :param value: the value for the operator to function over. This can be a number (e.g., > 100),
-     a string (timestamp >= '2017-09-01') or array of values.
-    :type value: object
-    :param key: When filtering over custom dimensions, this key will be used as the name of the
+    :vartype operator: str
+    :ivar value: the value for the operator to function over. This can be a number (e.g., > 100), a
+     string (timestamp >= '2017-09-01') or array of values.
+    :vartype value: any
+    :ivar key: When filtering over custom dimensions, this key will be used as the name of the
      custom dimension.
-    :type key: str
+    :vartype key: str
     """
 
     _attribute_map = {
@@ -359,10 +450,24 @@ class ComponentPurgeBodyFilters(msrest.serialization.Model):
         *,
         column: Optional[str] = None,
         operator: Optional[str] = None,
-        value: Optional[object] = None,
+        value: Optional[Any] = None,
         key: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword column: The column of the table over which the given query should run.
+        :paramtype column: str
+        :keyword operator: A query operator to evaluate over the provided column and value(s).
+         Supported operators are ==, =~, in, in~, >, >=, <, <=, between, and have the same behavior as
+         they would in a KQL query.
+        :paramtype operator: str
+        :keyword value: the value for the operator to function over. This can be a number (e.g., >
+         100), a string (timestamp >= '2017-09-01') or array of values.
+        :paramtype value: any
+        :keyword key: When filtering over custom dimensions, this key will be used as the name of the
+         custom dimension.
+        :paramtype key: str
+        """
         super(ComponentPurgeBodyFilters, self).__init__(**kwargs)
         self.column = column
         self.operator = operator
@@ -375,9 +480,9 @@ class ComponentPurgeResponse(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param operation_id: Required. Id to use when querying for status for a particular purge
+    :ivar operation_id: Required. Id to use when querying for status for a particular purge
      operation.
-    :type operation_id: str
+    :vartype operation_id: str
     """
 
     _validation = {
@@ -394,6 +499,11 @@ class ComponentPurgeResponse(msrest.serialization.Model):
         operation_id: str,
         **kwargs
     ):
+        """
+        :keyword operation_id: Required. Id to use when querying for status for a particular purge
+         operation.
+        :paramtype operation_id: str
+        """
         super(ComponentPurgeResponse, self).__init__(**kwargs)
         self.operation_id = operation_id
 
@@ -403,9 +513,9 @@ class ComponentPurgeStatusResponse(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param status: Required. Status of the operation represented by the requested Id. Possible
+    :ivar status: Required. Status of the operation represented by the requested Id. Possible
      values include: "pending", "completed".
-    :type status: str or ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.PurgeState
+    :vartype status: str or ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.PurgeState
     """
 
     _validation = {
@@ -422,6 +532,11 @@ class ComponentPurgeStatusResponse(msrest.serialization.Model):
         status: Union[str, "PurgeState"],
         **kwargs
     ):
+        """
+        :keyword status: Required. Status of the operation represented by the requested Id. Possible
+         values include: "pending", "completed".
+        :paramtype status: str or ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.PurgeState
+        """
         super(ComponentPurgeStatusResponse, self).__init__(**kwargs)
         self.status = status
 
@@ -434,7 +549,7 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: any
     """
 
     _validation = {
@@ -451,6 +566,8 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorAdditionalInfo, self).__init__(**kwargs)
         self.type = None
         self.info = None
@@ -494,6 +611,8 @@ class ErrorDetail(msrest.serialization.Model):
         self,
         **kwargs
     ):
+        """
+        """
         super(ErrorDetail, self).__init__(**kwargs)
         self.code = None
         self.message = None
@@ -505,8 +624,8 @@ class ErrorDetail(msrest.serialization.Model):
 class ErrorResponse(msrest.serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.ErrorDetail
     """
 
     _attribute_map = {
@@ -519,6 +638,10 @@ class ErrorResponse(msrest.serialization.Model):
         error: Optional["ErrorDetail"] = None,
         **kwargs
     ):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.applicationinsights.v2020_02_02_preview.models.ErrorDetail
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -526,10 +649,10 @@ class ErrorResponse(msrest.serialization.Model):
 class PrivateLinkScopedResource(msrest.serialization.Model):
     """The private link scope resource reference.
 
-    :param resource_id: The full resource Id of the private link scope resource.
-    :type resource_id: str
-    :param scope_id: The private link scope unique Identifier.
-    :type scope_id: str
+    :ivar resource_id: The full resource Id of the private link scope resource.
+    :vartype resource_id: str
+    :ivar scope_id: The private link scope unique Identifier.
+    :vartype scope_id: str
     """
 
     _attribute_map = {
@@ -544,6 +667,12 @@ class PrivateLinkScopedResource(msrest.serialization.Model):
         scope_id: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword resource_id: The full resource Id of the private link scope resource.
+        :paramtype resource_id: str
+        :keyword scope_id: The private link scope unique Identifier.
+        :paramtype scope_id: str
+        """
         super(PrivateLinkScopedResource, self).__init__(**kwargs)
         self.resource_id = resource_id
         self.scope_id = scope_id
@@ -552,8 +681,8 @@ class PrivateLinkScopedResource(msrest.serialization.Model):
 class TagsResource(msrest.serialization.Model):
     """A container holding only the Tags for a resource, allowing the user to update the tags on a WebTest instance.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: A set of tags. Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -566,5 +695,9 @@ class TagsResource(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword tags: A set of tags. Resource tags.
+        :paramtype tags: dict[str, str]
+        """
         super(TagsResource, self).__init__(**kwargs)
         self.tags = tags

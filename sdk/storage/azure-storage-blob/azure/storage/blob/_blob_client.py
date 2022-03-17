@@ -16,7 +16,6 @@ try:
 except ImportError:
     from urlparse import urlparse  # type: ignore
     from urllib2 import quote, unquote  # type: ignore
-
 import six
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
@@ -65,6 +64,7 @@ if TYPE_CHECKING:
     from ._generated.models import BlockList
     from ._models import (  # pylint: disable=unused-import
         ContentSettings,
+        ImmutabilityPolicy,
         PremiumPageBlobTier,
         StandardBlobTier,
         SequenceNumberAction
@@ -177,7 +177,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
         super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
-        self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
+        self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
 
     def _format_url(self, hostname):
@@ -337,7 +337,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             process_storage_error(error)
 
     def _upload_blob_options(  # pylint:disable=too-many-statements
-            self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
+            self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
             length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
@@ -571,7 +571,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @distributed_trace
     def upload_blob(  # pylint: disable=too-many-locals
-            self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
+            self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
             length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
@@ -1408,7 +1408,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @distributed_trace
     def set_immutability_policy(self, immutability_policy, **kwargs):
-        # type: (**Any) -> Dict[str, str]
+        # type: (ImmutabilityPolicy, **Any) -> Dict[str, str]
         """The Set Immutability Policy operation sets the immutability policy on the blob.
 
         .. versionadded:: 12.10.0
@@ -1872,9 +1872,21 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         tier = kwargs.pop('premium_page_blob_tier', None) or kwargs.pop('standard_blob_tier', None)
         requires_sync = kwargs.pop('requires_sync', None)
+        encryption_scope_str = kwargs.pop('encryption_scope', None)
         source_authorization = kwargs.pop('source_authorization', None)
+
+        if not requires_sync and encryption_scope_str:
+            raise ValueError("Encryption_scope is only supported for sync copy, please specify requires_sync=True")
         if source_authorization and incremental_copy:
             raise ValueError("Source authorization tokens are not applicable for incremental copying.")
+        #
+        # TODO: refactor start_copy_from_url api in _blob_client.py. Call _generated/_blob_operations.py copy_from_url
+        #  when requires_sync=True is set.
+        #  Currently both sync copy and async copy are calling _generated/_blob_operations.py start_copy_from_url.
+        #  As sync copy diverges more from async copy, more problem will surface.
+        if encryption_scope_str:
+            headers.update({'x-ms-encryption-scope': encryption_scope_str})
+
         if requires_sync is True:
             headers['x-ms-requires-sync'] = str(requires_sync)
             if source_authorization:
@@ -2059,6 +2071,17 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string. This option is only available when `incremental_copy` is
             set to False and `requires_sync` is set to True.
+
+            .. versionadded:: 12.9.0
+
+        :keyword str encryption_scope:
+            A predefined encryption scope used to encrypt the data on the sync copied blob. An encryption
+            scope can be created using the Management API and referenced here by name. If a default
+            encryption scope has been defined at the container, this value will override it if the
+            container-level scope is configured to allow overrides. Otherwise an error will be raised.
+
+            .. versionadded:: 12.10.0
+
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
         :rtype: dict[str, Union[str, ~datetime.datetime]]
 

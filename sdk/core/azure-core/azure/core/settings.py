@@ -161,6 +161,7 @@ def convert_tracing_impl(value):
         return get_opencensus_span_if_opencensus_is_imported()
 
     if not isinstance(value, six.string_types):
+        value = cast(Type[AbstractSpan], value)
         return value
 
     value = cast(str, value)  # mypy clarity

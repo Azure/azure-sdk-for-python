@@ -6,11 +6,15 @@ It will provide TURN credentials to a user.
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication) | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/communication)
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 # Getting started
 
 ### Prerequisites
 
-- Python 2.7, or 3.6 or later is required to use this package.
+- Python 3.6 or later is required to use this package.
 - You must have an [Azure subscription](https://azure.microsoft.com/free/)
 - A deployed Communication Services resource. You can use the [Azure Portal](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource?tabs=windows&pivots=platform-azp) or the [Azure PowerShell](https://docs.microsoft.com/powershell/module/az.communication/new-azcommunicationservice) to set it up.
 
@@ -58,12 +62,48 @@ identity_client = CommunicationIdentityClient.from_connection_string(self.connec
 relay_client = CommunicationRelayClient.from_connection_string(self.connection_string)
 ```
 
-### Getting the relay configuration 
+### Getting the relay configuration providing a user
 
 ```python
 # We need a user from Identity
 user = identity_client.create_user()
-relay_configuration = relay_client.get_relay_configuration(user)
+relay_configuration = relay_client.get_relay_configuration(user=user)
+
+for iceServer in config.ice_servers:
+    assert iceServer.username is not None
+    print('Username: ' + iceServer.username)
+
+    assert iceServer.credential is not None
+    print('Credential: ' + iceServer.credential)
+    
+    assert iceServer.urls is not None
+    for url in iceServer.urls:
+        print('Url:' + url)
+```
+
+### Getting the relay configuration without providing a user
+
+```python
+relay_configuration = relay_client.get_relay_configuration()
+
+for iceServer in config.ice_servers:
+    assert iceServer.username is not None
+    print('Username: ' + iceServer.username)
+
+    assert iceServer.credential is not None
+    print('Credential: ' + iceServer.credential)
+    
+    assert iceServer.urls is not None
+    for url in iceServer.urls:
+        print('Url:' + url)
+```
+
+### Getting the relay configuration without providing a RouteType
+
+```python
+# We need a user from Identity
+user = identity_client.create_user()
+relay_configuration = relay_client.get_relay_configuration(user=user, route_type=RouteType.NEAREST)
 
 for iceServer in config.ice_servers:
     assert iceServer.username is not None

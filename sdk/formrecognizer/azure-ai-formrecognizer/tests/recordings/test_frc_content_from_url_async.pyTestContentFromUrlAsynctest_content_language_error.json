@@ -1,0 +1,36 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/v2.1/layout/analyze?language=not a language\u0026readingOrder=basic",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "33",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "84698873-5eb2-11ec-ad8d-c8348e073d30"
+      },
+      "RequestBody": {
+        "source": "https://blob_sas_url"
+      },
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "apim-request-id": "59961ca7-febf-4222-b29c-53afba84277f",
+        "Content-Length": "121",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 16 Dec 2021 20:55:34 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "2"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "NotSupportedLanguage",
+          "message": "The requested operation is not supported in the language specified."
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

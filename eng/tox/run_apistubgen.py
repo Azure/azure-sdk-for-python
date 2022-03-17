@@ -42,12 +42,19 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "-w",
-        "--work_dir",
+        "--work-dir",
         dest="work_dir",
         help="Working directory to run apistubgen",
         required=True,
     )
 
+    parser.add_argument(
+        "-o",
+        "--out-path",
+        dest="out_path",
+        help="Output directory to generate json token file"
+    )
+    
     args = parser.parse_args()
 
     # Check if a wheel is already built for current package and install from wheel when available
@@ -56,4 +63,9 @@ if __name__ == "__main__":
     if not pkg_path:
         pkg_path = args.target_package
 
-    check_call(["apistubgen", "--pkg-path", pkg_path,], cwd=args.work_dir)
+    cmds = ["apistubgen", "--pkg-path", pkg_path]
+    if args.out_path:        
+        cmds.extend(["--out-path", os.path.join(args.out_path, os.path.basename(pkg_path))])
+
+    logging.info("Running apistubgen {}.".format(cmds))
+    check_call(cmds, cwd=args.work_dir)

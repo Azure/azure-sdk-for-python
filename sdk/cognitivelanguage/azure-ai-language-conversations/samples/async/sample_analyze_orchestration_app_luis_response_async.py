@@ -30,7 +30,7 @@ async def sample_analyze_orchestration_app_luis_response_async():
     import os
     from azure.core.credentials import AzureKeyCredential
 
-    from azure.ai.language.conversations import ConversationAnalysisClient
+    from azure.ai.language.conversations.aio import ConversationAnalysisClient
     from azure.ai.language.conversations.models import ConversationAnalysisOptions
 
     # get secrets
@@ -47,7 +47,7 @@ async def sample_analyze_orchestration_app_luis_response_async():
     # analyze query
     client = ConversationAnalysisClient(conv_endpoint, AzureKeyCredential(conv_key))
     async with client:
-        result = client.analyze_conversations(
+        result = await client.analyze_conversations(
             input,
             project_name=orchestration_project,
             deployment_name='production',
@@ -61,11 +61,11 @@ async def sample_analyze_orchestration_app_luis_response_async():
         top_intent = result.prediction.top_intent
         print("\ttop intent: {}".format(top_intent))
 
-        top_intent_object = result.prediction.intents[top_intent]
+        top_intent_object = result.prediction.intents[0]
         print("\tconfidence score: {}\n".format(top_intent_object.confidence_score))
 
         print("view luis response:")
-        luis_response = result.prediction.intents[top_intent].result
+        luis_response = result.prediction.intents[0]
         print("\tluis response: {}\n".format(luis_response))
     # [END analyze_orchestration_app_luis_response_async]
 

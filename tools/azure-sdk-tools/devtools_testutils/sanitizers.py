@@ -7,9 +7,22 @@ import requests
 from typing import TYPE_CHECKING
 
 from .config import PROXY_URL
+from .helpers import is_live_and_not_recording
+from .proxy_testcase import get_recording_id
 
 if TYPE_CHECKING:
     from typing import Any, Dict
+
+
+def set_bodiless_matcher():
+    # type: () -> None
+    """Adjusts the "match" operation to EXCLUDE the body when matching a request to a recording's entries.
+
+    This method must be called during test case execution, rather than at a session, module, or class level.
+    """
+
+    x_recording_id = get_recording_id()
+    _send_matcher_request("BodilessMatcher", {"x-recording-id": x_recording_id})
 
 
 def add_body_key_sanitizer(**kwargs):
@@ -28,7 +41,7 @@ def add_body_key_sanitizer(**kwargs):
     """
 
     request_args = _get_request_args(**kwargs)
-    _send_request("BodyKeySanitizer", request_args)
+    _send_sanitizer_request("BodyKeySanitizer", request_args)
 
 
 def add_body_regex_sanitizer(**kwargs):
@@ -46,7 +59,7 @@ def add_body_regex_sanitizer(**kwargs):
     """
 
     request_args = _get_request_args(**kwargs)
-    _send_request("BodyRegexSanitizer", request_args)
+    _send_sanitizer_request("BodyRegexSanitizer", request_args)
 
 
 def add_continuation_sanitizer(**kwargs):
@@ -65,7 +78,7 @@ def add_continuation_sanitizer(**kwargs):
     """
 
     request_args = _get_request_args(**kwargs)
-    _send_request("ContinuationSanitizer", request_args)
+    _send_sanitizer_request("ContinuationSanitizer", request_args)
 
 
 def add_general_regex_sanitizer(**kwargs):
@@ -82,7 +95,7 @@ def add_general_regex_sanitizer(**kwargs):
     """
 
     request_args = _get_request_args(**kwargs)
-    _send_request("GeneralRegexSanitizer", request_args)
+    _send_sanitizer_request("GeneralRegexSanitizer", request_args)
 
 
 def add_header_regex_sanitizer(**kwargs):
@@ -102,14 +115,14 @@ def add_header_regex_sanitizer(**kwargs):
     """
 
     request_args = _get_request_args(**kwargs)
-    _send_request("HeaderRegexSanitizer", request_args)
+    _send_sanitizer_request("HeaderRegexSanitizer", request_args)
 
 
 def add_oauth_response_sanitizer():
     # type: () -> None
     """Registers a sanitizer that cleans out all request/response pairs that match an oauth regex in their URI."""
 
-    _send_request("OAuthResponseSanitizer", {})
+    _send_sanitizer_request("OAuthResponseSanitizer", {})
 
 
 def add_remove_header_sanitizer(**kwargs):
@@ -121,7 +134,7 @@ def add_remove_header_sanitizer(**kwargs):
     """
 
     request_args = _get_request_args(**kwargs)
-    _send_request("RemoveHeaderSanitizer", request_args)
+    _send_sanitizer_request("RemoveHeaderSanitizer", request_args)
 
 
 def add_request_subscription_id_sanitizer(**kwargs):
@@ -134,7 +147,7 @@ def add_request_subscription_id_sanitizer(**kwargs):
     """
 
     request_args = _get_request_args(**kwargs)
-    _send_request("ReplaceRequestSubscriptionId", request_args)
+    _send_sanitizer_request("ReplaceRequestSubscriptionId", request_args)
 
 
 def add_uri_regex_sanitizer(**kwargs):
@@ -149,7 +162,7 @@ def add_uri_regex_sanitizer(**kwargs):
     """
 
     request_args = _get_request_args(**kwargs)
-    _send_request("UriRegexSanitizer", request_args)
+    _send_sanitizer_request("UriRegexSanitizer", request_args)
 
 
 def _get_request_args(**kwargs):
@@ -157,27 +170,63 @@ def _get_request_args(**kwargs):
     """Returns a dictionary of sanitizer constructor headers"""
 
     request_args = {}
-    request_args["groupForReplace"] = kwargs.get("group_for_replace")
-    request_args["headersForRemoval"] = kwargs.get("headers")
-    request_args["jsonPath"] = kwargs.get("json_path")
-    request_args["key"] = kwargs.get("key")
-    request_args["method"] = kwargs.get("method")
-    request_args["regex"] = kwargs.get("regex")
-    request_args["resetAfterFirst"] = kwargs.get("reset_after_first")
-    request_args["value"] = kwargs.get("value")
+    if "group_for_replace" in kwargs:
+        request_args["groupForReplace"] = kwargs.get("group_for_replace")
+    if "headers" in kwargs:
+        request_args["headersForRemoval"] = kwargs.get("headers")
+    if "json_path" in kwargs:
+        request_args["jsonPath"] = kwargs.get("json_path")
+    if "key" in kwargs:
+        request_args["key"] = kwargs.get("key")
+    if "method" in kwargs:
+        request_args["method"] = kwargs.get("method")
+    if "regex" in kwargs:
+        request_args["regex"] = kwargs.get("regex")
+    if "reset_after_first" in kwargs:
+        request_args["resetAfterFirst"] = kwargs.get("reset_after_first")
+    if "value" in kwargs:
+        request_args["value"] = kwargs.get("value")
     return request_args
 
 
-def _send_request(sanitizer, parameters):
+def _send_matcher_request(matcher, headers):
     # type: (str, Dict) -> None
-    """Send a POST request to the test proxy endpoint to register the specified sanitizer.
+    """Sends a POST request to the test proxy endpoint to register the specified matcher.
+
+    If live tests are being run with recording turned off via the AZURE_SKIP_LIVE_RECORDING environment variable, no
+    request will be sent.
+
+    :param str matcher: The name of the matcher to set.
+    :param dict headers: Any matcher headers, as a dictionary.
+    """
+
+    if is_live_and_not_recording():
+        return
+
+    headers_to_send = {"x-abstraction-identifier": matcher}
+    headers_to_send.update(headers)
+    requests.post(
+        "{}/Admin/SetMatcher".format(PROXY_URL),
+        headers=headers_to_send,
+    )
+
+
+def _send_sanitizer_request(sanitizer, parameters):
+    # type: (str, Dict) -> None
+    """Sends a POST request to the test proxy endpoint to register the specified sanitizer.
+
+    If live tests are being run with recording turned off via the AZURE_SKIP_LIVE_RECORDING environment variable, no
+    request will be sent.
 
     :param str sanitizer: The name of the sanitizer to add.
     :param dict parameters: The sanitizer constructor parameters, as a dictionary.
     """
 
+    if is_live_and_not_recording():
+        return
+
     requests.post(
         "{}/Admin/AddSanitizer".format(PROXY_URL),
-        headers={"x-abstraction-identifier": sanitizer},
+        headers={"x-abstraction-identifier": sanitizer, "Content-Type": "application/json"},
         json=parameters
     )

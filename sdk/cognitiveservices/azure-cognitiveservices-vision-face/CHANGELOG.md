@@ -1,6 +1,17 @@
 # Release History
 
-## 0.5.0 (2020-03-12)
+## 0.6.0 (2021-12-02)
+
+**Features**
+
+  - Add support for Face Recognition Quality Score.
+
+**Breaking changes**
+
+  - Various operations that previously accepted an optional name parameter
+    are now required.
+
+## 0.5.0 (2021-03-12)
 
 **Features**
 

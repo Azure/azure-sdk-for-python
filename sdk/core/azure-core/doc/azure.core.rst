@@ -34,6 +34,14 @@ azure.core.credentials
    :undoc-members:
    :inherited-members:
 
+azure.core.credentials_async
+---------------------
+
+.. automodule:: azure.core.credentials_async
+   :members:
+   :undoc-members:
+   :inherited-members:
+
 azure.core.exceptions
 ---------------------
 
@@ -75,11 +83,16 @@ azure.core.serialization
 
 azure.core.rest
 -------------------
-***THIS MODULE IS PROVISIONAL***
-
-This module is ***provisional***, meaning any of the objects and methods in this module may be changed.
 
 .. automodule:: azure.core.rest
+   :members:
+   :undoc-members:
+   :inherited-members:
+
+azure.core.utils
+-------------------
+
+.. automodule:: azure.core.utils
    :members:
    :undoc-members:
    :inherited-members:

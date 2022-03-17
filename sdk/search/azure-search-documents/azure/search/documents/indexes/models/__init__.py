@@ -34,6 +34,8 @@ from ._index import (
 from . import _edm as SearchFieldDataType
 from ..._generated.models import SuggestOptions
 from .._generated.models import (
+    SearchAlias,
+    AzureMachineLearningSkill,
     AnalyzeResult,
     AnalyzedTokenInfo,
     AsciiFoldingTokenFilter,
@@ -108,6 +110,7 @@ from .._generated.models import (
     PIIDetectionSkillMaskingMode,
     PhoneticEncoder,
     PhoneticTokenFilter,
+    PrioritizedFields,
     RegexFlags,
     SearchIndexer,
     SearchIndexerCache,
@@ -124,6 +127,9 @@ from .._generated.models import (
     SearchIndexerKnowledgeStoreTableProjectionSelector,
     SearchIndexerLimits,
     SearchIndexerStatus,
+    SemanticConfiguration,
+    SemanticField,
+    SemanticSettings,
     ScoringFunction,
     ScoringFunctionAggregation,
     ScoringFunctionInterpolation,
@@ -179,6 +185,8 @@ from ._models import (
 
 
 __all__ = (
+    "SearchAlias",
+    "AzureMachineLearningSkill",
     "AnalyzeTextOptions",
     "AnalyzeResult",
     "AnalyzedTokenInfo",
@@ -260,6 +268,7 @@ __all__ = (
     "PIIDetectionSkillMaskingMode",
     "PhoneticEncoder",
     "PhoneticTokenFilter",
+    "PrioritizedFields",
     "RegexFlags",
     "ScoringFunction",
     "ScoringFunctionAggregation",
@@ -286,6 +295,9 @@ __all__ = (
     "SearchIndexerStatus",
     "SearchResourceEncryptionKey",
     "SearchableField",
+    "SemanticConfiguration",
+    "SemanticField",
+    "SemanticSettings",
     "SentimentSkill",
     "SentimentSkillLanguage",
     "SentimentSkillVersion",

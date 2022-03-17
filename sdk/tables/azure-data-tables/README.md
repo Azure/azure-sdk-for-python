@@ -8,11 +8,15 @@ Please note, this package is a replacement for [`azure-cosmosdb-tables`](https:/
 
 [Source code][source_code] | [Package (PyPI)][Tables_pypi] | [API reference documentation][Tables_ref_docs] | [Samples][Tables_samples]
 
+## _Disclaimer_
+
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
+
 ## Getting started
 The Azure Tables SDK can access an Azure Storage or CosmosDB account.
 
 ### Prerequisites
-* Python 2.7, or 3.6 or later is required to use this package.
+* Python 3.6 or later is required to use this package.
 * You must have an [Azure subscription][azure_subscription] and either
     * an [Azure Storage account][azure_storage_account] or
     * an [Azure Cosmos Account][azure_cosmos_account].
@@ -309,7 +313,7 @@ Get started with our [Table samples][tables_samples].
 Several Azure Tables Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Tables.
 
 ### Common Scenarios
-These code samples show common scenario operations with the Azure Tables client library. The async versions of the samples (the python sample files appended with _async) show asynchronous operations with Tables and require Python 3.5 or later.
+These code samples show common scenario operations with the Azure Tables client library. The async versions of the samples (the python sample files appended with _async) show asynchronous operations with Tables and require Python 3.6 or later.
 
 * Create and delete tables: [sample_create_delete_table.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_create_delete_table.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_create_delete_table_async.py))
 * List and query tables: [sample_query_tables.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_query_tables.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_query_tables_async.py))

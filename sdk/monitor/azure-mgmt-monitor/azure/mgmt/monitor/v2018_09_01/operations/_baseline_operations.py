@@ -6,22 +6,80 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import TYPE_CHECKING
+import functools
+from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import HttpResponse
+from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator import distributed_trace
 from azure.mgmt.core.exceptions import ARMErrorFormat
+from msrest import Serializer
 
 from .. import models as _models
+from .._vendor import _convert_request, _format_url_section
+T = TypeVar('T')
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+def build_get_request(
+    resource_uri: str,
+    *,
+    metricnames: Optional[str] = None,
+    timespan: Optional[str] = None,
+    interval: Optional[datetime.timedelta] = None,
+    aggregation: Optional[str] = None,
+    sensitivities: Optional[str] = None,
+    result_type: Optional[Union[str, "_models.ResultType"]] = None,
+    metricnamespace: Optional[str] = None,
+    filter: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2018-09-01"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/{resourceUri}/providers/Microsoft.Insights/baseline')
+    path_format_arguments = {
+        "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, 'str', skip_quote=True),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    if metricnames is not None:
+        query_parameters['metricnames'] = _SERIALIZER.query("metricnames", metricnames, 'str')
+    if timespan is not None:
+        query_parameters['timespan'] = _SERIALIZER.query("timespan", timespan, 'str')
+    if interval is not None:
+        query_parameters['interval'] = _SERIALIZER.query("interval", interval, 'duration')
+    if aggregation is not None:
+        query_parameters['aggregation'] = _SERIALIZER.query("aggregation", aggregation, 'str')
+    if sensitivities is not None:
+        query_parameters['sensitivities'] = _SERIALIZER.query("sensitivities", sensitivities, 'str')
+    if result_type is not None:
+        query_parameters['resultType'] = _SERIALIZER.query("result_type", result_type, 'str')
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    if metricnamespace is not None:
+        query_parameters['metricnamespace'] = _SERIALIZER.query("metricnamespace", metricnamespace, 'str')
+    if filter is not None:
+        query_parameters['$filter'] = _SERIALIZER.query("filter", filter, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
 
 class BaselineOperations(object):
     """BaselineOperations operations.
@@ -45,20 +103,20 @@ class BaselineOperations(object):
         self._deserialize = deserializer
         self._config = config
 
+    @distributed_trace
     def get(
         self,
-        resource_uri,  # type: str
-        metricnames=None,  # type: Optional[str]
-        timespan=None,  # type: Optional[str]
-        interval=None,  # type: Optional[datetime.timedelta]
-        aggregation=None,  # type: Optional[str]
-        sensitivities=None,  # type: Optional[str]
-        result_type=None,  # type: Optional[Union[str, "_models.ResultType"]]
-        metricnamespace=None,  # type: Optional[str]
-        filter=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.BaselineResponse"
+        resource_uri: str,
+        metricnames: Optional[str] = None,
+        timespan: Optional[str] = None,
+        interval: Optional[datetime.timedelta] = None,
+        aggregation: Optional[str] = None,
+        sensitivities: Optional[str] = None,
+        result_type: Optional[Union[str, "_models.ResultType"]] = None,
+        metricnamespace: Optional[str] = None,
+        filter: Optional[str] = None,
+        **kwargs: Any
+    ) -> "_models.BaselineResponse":
         """**Gets the baseline values for a resource**.
 
         :param resource_uri: The identifier of the resource. It has the following structure:
@@ -66,7 +124,9 @@ class BaselineOperations(object):
          For example:
          subscriptions/b368ca2f-e298-46b7-b0ab-012281956afa/resourceGroups/vms/providers/Microsoft.Compute/virtualMachines/vm1.
         :type resource_uri: str
-        :param metricnames: The names of the metrics (comma separated) to retrieve.
+        :param metricnames: The names of the metrics (comma separated) to retrieve. Special case: If a
+         metricname itself has a comma in it then use %2 to indicate it. Eg: 'Metric,Name1' should be
+         **'Metric%2Name1'**.
         :type metricnames: str
         :param timespan: The timespan of the query. It is a string with the following format
          'startDateTime_ISO/endDateTime_ISO'.
@@ -95,47 +155,29 @@ class BaselineOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2018-09-01"
-        accept = "application/json"
 
-        # Construct URL
-        url = self.get.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        
+        request = build_get_request(
+            resource_uri=resource_uri,
+            metricnames=metricnames,
+            timespan=timespan,
+            interval=interval,
+            aggregation=aggregation,
+            sensitivities=sensitivities,
+            result_type=result_type,
+            metricnamespace=metricnamespace,
+            filter=filter,
+            template_url=self.get.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        if metricnames is not None:
-            query_parameters['metricnames'] = self._serialize.query("metricnames", metricnames, 'str')
-        if timespan is not None:
-            query_parameters['timespan'] = self._serialize.query("timespan", timespan, 'str')
-        if interval is not None:
-            query_parameters['interval'] = self._serialize.query("interval", interval, 'duration')
-        if aggregation is not None:
-            query_parameters['aggregation'] = self._serialize.query("aggregation", aggregation, 'str')
-        if sensitivities is not None:
-            query_parameters['sensitivities'] = self._serialize.query("sensitivities", sensitivities, 'str')
-        if result_type is not None:
-            query_parameters['resultType'] = self._serialize.query("result_type", result_type, 'str')
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        if metricnamespace is not None:
-            query_parameters['metricnamespace'] = self._serialize.query("metricnamespace", metricnamespace, 'str')
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
-        request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize('BaselineResponse', pipeline_response)
@@ -144,4 +186,6 @@ class BaselineOperations(object):
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/baseline'}  # type: ignore
+
+    get.metadata = {'url': '/{resourceUri}/providers/Microsoft.Insights/baseline'}  # type: ignore
+

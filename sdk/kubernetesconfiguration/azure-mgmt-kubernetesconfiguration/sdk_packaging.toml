@@ -1,5 +1,5 @@
 [packaging]
 package_name = "azure-mgmt-kubernetesconfiguration"
 package_pprint_name = "Kubernetes Configuration Management"
-package_doc_id = "kubernetesconfiguration"
+package_doc_id = ""
 is_stable = true

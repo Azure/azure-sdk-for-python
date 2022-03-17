@@ -16,8 +16,9 @@ import logging
 import sys
 import glob
 import shutil
+from pkg_resources import parse_version
 
-from tox_helper_tasks import find_whl, find_sdist, get_package_details
+from tox_helper_tasks import find_whl, find_sdist, get_package_details, get_pip_list_output, parse_req
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -182,7 +183,7 @@ if __name__ == "__main__":
     os.mkdir(tmp_dl_folder)
 
     # preview version is enabled when installing dev build so pip will install dev build version from devpos feed
-    if os.getenv("SetDevVersion"):
+    if os.getenv("SetDevVersion", 'false') == 'true':
         commands_options.append("--pre")
 
     if args.cache_dir:
@@ -227,21 +228,37 @@ if __name__ == "__main__":
                         "--no-deps",
                     ]
 
-                    download_command.extend(azure_requirements)
-                    download_command.extend(commands_options)
+                    installation_additions = []
 
-                    check_call(download_command, env=dict(os.environ, PIP_EXTRA_INDEX_URL=""))
-                    additional_downloaded_reqs = [
-                        os.path.abspath(os.path.join(tmp_dl_folder, pth)) for pth in os.listdir(tmp_dl_folder)
-                    ]
+                    # only download a package if the requirement is not already met, so walk across
+                    # direct install_requires
+                    for req in azure_requirements:
+                        addition_necessary = True
+                        # get all installed packages
+                        installed_pkgs = get_pip_list_output()
 
-            commands = [
-                sys.executable,
-                "-m",
-                "pip",
-                "install",
-                built_pkg_path
-            ]
+                        # parse the specifier
+                        req_name, req_specifier = parse_req(req)
+
+                        # if we have the package already present...
+                        if req_name in installed_pkgs:
+                            # ...do we need to install the new version? if the existing specifier matches, we're fine
+                            if installed_pkgs[req_name] in req_specifier:
+                                addition_necessary = False
+
+                        if addition_necessary:
+                            installation_additions.append(req)
+
+                    if installation_additions:
+                        download_command.extend(installation_additions)
+                        download_command.extend(commands_options)
+
+                        check_call(download_command, env=dict(os.environ, PIP_EXTRA_INDEX_URL=""))
+                        additional_downloaded_reqs = [
+                            os.path.abspath(os.path.join(tmp_dl_folder, pth)) for pth in os.listdir(tmp_dl_folder)
+                        ]
+
+            commands = [sys.executable, "-m", "pip", "install", built_pkg_path]
 
             commands.extend(additional_downloaded_reqs)
             commands.extend(commands_options)

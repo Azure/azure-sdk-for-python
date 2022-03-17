@@ -1,5 +1,35 @@
 # Release History
 
+## 17.0.0 (2022-02-21)
+
+**Features**
+
+  - Model AgentPool has a new parameter capacity_reservation_group_id
+  - Model AgentPool has a new parameter host_group_id
+  - Model AgentPool has a new parameter message_of_the_day
+  - Model ManagedCluster has a new parameter current_kubernetes_version
+  - Model ManagedCluster has a new parameter enable_namespace_resources
+  - Model ManagedCluster has a new parameter oidc_issuer_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter capacity_reservation_group_id
+  - Model ManagedClusterAgentPoolProfile has a new parameter host_group_id
+  - Model ManagedClusterAgentPoolProfile has a new parameter message_of_the_day
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter capacity_reservation_group_id
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter host_group_id
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter message_of_the_day
+
+**Breaking changes**
+
+  - Operation ManagedClustersOperations.list_cluster_admin_credentials has a new signature
+
+## 16.4.0 (2021-11-25)
+
+**Features**
+
+  - Model ContainerServiceNetworkProfile has a new parameter service_cidrs
+  - Model ContainerServiceNetworkProfile has a new parameter pod_cidrs
+  - Model ContainerServiceNetworkProfile has a new parameter ip_families
+  - Model ManagedClusterLoadBalancerProfileManagedOutboundIPs has a new parameter count_ipv6
+
 ## 16.3.0 (2021-10-18)
 
 **Features**
