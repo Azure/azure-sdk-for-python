@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.2.0 Python/3.7.4 (Windows-10-10.0.22523-SP0)
       x-ms-date:
-      - Thu, 17 Mar 2022 20:37:20 GMT
+      - Thu, 17 Mar 2022 23:16:43 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -24,8 +24,8 @@ interactions:
         2021-10-31-preview, 2021-11-01, 2022-06-01
       content-length: '101'
       content-type: application/json; charset=utf-8
-      date: Thu, 17 Mar 2022 20:37:20 GMT
-      ms-cv: kyHccFRaY0uq6ODsBlNp+w.0
+      date: Thu, 17 Mar 2022 23:16:43 GMT
+      ms-cv: zEfOo1v6Y0ebtt/FipHPQw.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
@@ -46,7 +46,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-networktraversal/1.1.0-beta.1 Python/3.7.4 (Windows-10-10.0.22523-SP0)
       x-ms-date:
-      - Thu, 17 Mar 2022 20:37:20 GMT
+      - Thu, 17 Mar 2022 23:16:43 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -54,18 +54,18 @@ interactions:
   response:
     body:
       string: '{"iceServers": [{"routeType": "any", "urls": ["turn.skype.com", "turn:turn.azure.com:3478"],
-        "username": "sanitized", "credential": "sanitized"}], "expiresOn": "2022-03-19T20:37:20.9981276+00:00"}'
+        "username": "sanitized", "credential": "sanitized"}], "expiresOn": "2022-03-19T23:16:43.6239606+00:00"}'
     headers:
       api-supported-versions: 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview,
         2022-03-01-preview
       content-length: '305'
       content-type: application/json; charset=utf-8
-      date: Thu, 17 Mar 2022 20:37:20 GMT
-      ms-cv: nht8myLvf06Q075Alz7Wew.0
+      date: Thu, 17 Mar 2022 23:16:43 GMT
+      ms-cv: 5DXkwzX5vUmL+/bVV/eQ5g.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 28ms
+      x-processing-time: 22ms
     status:
       code: 200
       message: OK

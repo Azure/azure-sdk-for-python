@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-networktraversal/1.1.0-beta.1 Python/3.7.4 (Windows-10-10.0.22523-SP0)
       x-ms-date:
-      - Thu, 17 Mar 2022 20:37:21 GMT
+      - Thu, 17 Mar 2022 23:16:43 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -21,15 +21,15 @@ interactions:
       string: '{"iceServers": [{"routeType": "any", "urls": ["turn.skype.com", "turn:turn.azure.com:3478"],
         "username": "sanitized", "credential": "sanitized"}, {"routeType": "nearest",
         "urls": ["stun:13.107.17.41:3478", "turn:13.107.17.41:3478"], "username":
-        "BQAANiIW9vIB2DvRZtEpLEp+1Yc6zLumhExrLAGxTloAAAAMARCsgNlqhd5IsZldo6P6NifIZv127DtruYvwDxexPd+fXtyqwmk=",
-        "credential": "zLKVz6AIw6wRNwwVwY2RBhuF2h8="}], "expiresOn": "2022-03-19T20:37:21.3673339+00:00"}'
+        "BQAANmXbVIQB2Dvn4GPjd0TVakl1Y32r+HExWsLfwz4AAAAMARCsgNlqhd5IsZldo6P6NifIZ8bYg6l6RfzB81lN3+BjPhGEBSs=",
+        "credential": "Kt9B8h+UH7iYTa6FEBVlj/F4EJ4="}], "expiresOn": "2022-03-19T23:16:43.9836958+00:00"}'
     headers:
       api-supported-versions: 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview,
         2022-03-01-preview
       content-length: '546'
       content-type: application/json; charset=utf-8
-      date: Thu, 17 Mar 2022 20:37:20 GMT
-      ms-cv: TyCvyS6Lxkm8JfQZkAko3A.0
+      date: Thu, 17 Mar 2022 23:16:43 GMT
+      ms-cv: YsBFO5wI/0uSScqX7ye2FQ.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
