@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 - Added check on `content` from msal response    ([#23483](https://github.com/Azure/azure-sdk-for-python/issues/23483))
+- Fixed the issue that async OBO credential does not refresh correctly.    ([#21981](https://github.com/Azure/azure-sdk-for-python/issues/21981))
 
 ### Other Changes
 
