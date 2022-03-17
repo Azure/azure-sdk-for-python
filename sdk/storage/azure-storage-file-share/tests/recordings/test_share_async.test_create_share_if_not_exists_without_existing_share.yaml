@@ -7,7 +7,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.7.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
       x-ms-date:
-      - Thu, 17 Mar 2022 00:21:49 GMT
+      - Thu, 17 Mar 2022 18:47:22 GMT
       x-ms-version:
       - '2021-04-10'
     method: PUT
@@ -17,46 +17,13 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 17 Mar 2022 00:21:48 GMT
-      etag: '"0x8DA07AC20723527"'
-      last-modified: Thu, 17 Mar 2022 00:21:48 GMT
+      date: Thu, 17 Mar 2022 18:47:21 GMT
+      etag: '"0x8DA08469212253C"'
+      last-modified: Thu, 17 Mar 2022 18:47:21 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2021-04-10'
     status:
       code: 201
       message: Created
     url: https://vincenttrancanary.file.core.windows.net/share1d4e1d6f?restype=share
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      User-Agent:
-      - azsdk-python-storage-file-share/12.7.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
-      x-ms-date:
-      - Thu, 17 Mar 2022 00:21:49 GMT
-      x-ms-version:
-      - '2021-04-10'
-    method: GET
-    uri: https://storagename.file.core.windows.net/?comp=list&include=snapshots
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>AuthenticationFailed</Code><Message>Server
-        failed to authenticate the request. Make sure the value of Authorization header
-        is formed correctly including the signature.\nRequestId:b0810fce-901a-008f-2c94-3953a8000000\nTime:2022-03-17T00:21:48.7101100Z</Message><AuthenticationErrorDetail>The
-        MAC signature found in the HTTP request '3iJeC2lnbevM1REfo0ALbqeycb9Ck28CrBHxfwpKkBA='
-        is not the same as any computed signature. Server used following string to
-        sign: 'GET\n\n\n\n\n\n\n\n\n\n\n\nx-ms-client-request-id:3cb3ff16-a588-11ec-939b-4851c58829e3\nx-ms-date:Thu,
-        17 Mar 2022 00:21:49 GMT\nx-ms-version:2021-04-10\n/storagename//\ncomp:list\ninclude:snapshots'.</AuthenticationErrorDetail></Error>"
-    headers:
-      content-length: '737'
-      content-type: application/xml
-      date: Thu, 17 Mar 2022 00:21:48 GMT
-      server: Microsoft-HTTPAPI/2.0
-      x-ms-error-code: AuthenticationFailed
-    status:
-      code: 403
-      message: Server failed to authenticate the request. Make sure the value of Authorization
-        header is formed correctly including the signature.
-    url: https://vincenttrancanary.file.core.windows.net//?comp=list&include=snapshots
 version: 1
