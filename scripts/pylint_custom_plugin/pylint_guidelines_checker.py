@@ -1758,10 +1758,10 @@ class CheckEnum(BaseChecker):
             enum_class = False
             case_insensitive_meta = False
             
-            #Python3 format declares CaseInsensitiveEnumMeta as a metaclass in enum classes
+            # Python3 format declares CaseInsensitiveEnumMeta as a metaclass in enum classes
             if node.declared_metaclass():
                 if node.declared_metaclass().name:
-                    if node.declared_metaclass().name == "CaseInsensitiveEnumMeta":   # or node.declared_metaclass().name == "_CaseInsensitiveEnumMeta":
+                    if node.declared_metaclass().name == "CaseInsensitiveEnumMeta": 
                         case_insensitive_meta = True
                         enum_class = True
             if not case_insensitive_meta:
@@ -1769,11 +1769,10 @@ class CheckEnum(BaseChecker):
                 for base in node.bases:
                     if isinstance(base, astroid.Call):
                         for arg in base.args:
-                            if arg.name:
-                                if arg.name == "CaseInsensitiveEnumMeta":
-                                    case_insensitive_meta = True
-                                    enum_class = True
-                                    break
+                            if arg.name == "CaseInsensitiveEnumMeta":
+                                case_insensitive_meta = True
+                                enum_class = True
+                                break
                     elif base.name == "Enum":
                         enum_class = True
                
