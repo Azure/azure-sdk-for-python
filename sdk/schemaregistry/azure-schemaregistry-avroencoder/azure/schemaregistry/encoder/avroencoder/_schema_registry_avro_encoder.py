@@ -176,8 +176,8 @@ class AvroEncoder(object):
         schema_id = self._get_schema_id(schema_fullname, raw_input_schema, **request_options)
         new_cache_misses = self._get_schema_id.cache_info().misses  # pylint: disable=no-value-for-parameter
         if new_cache_misses > cache_misses:
-            cache_size = self._get_schema_id.cache_info().currsize  # pylint: disable=no-value-for-parameter
-            _LOGGER.info("New entry has been added to schema ID cache. Cache size: %s", str(cache_size))
+            cache_info = self._get_schema_id.cache_info()   # pylint: disable=no-value-for-parameter
+            _LOGGER.info("New entry has been added to schema ID cache. Cache info: %s", str(cache_info))
 
         content_type = f"{AVRO_MIME_TYPE}+{schema_id}"
 
@@ -267,8 +267,8 @@ class AvroEncoder(object):
         schema_definition = self._get_schema(schema_id, **request_options)
         new_cache_misses = self._get_schema.cache_info().misses # pylint: disable=no-value-for-parameter
         if new_cache_misses > cache_misses:
-            cache_size = self._get_schema.cache_info().currsize  # pylint: disable=no-value-for-parameter
-            _LOGGER.info("New entry has been added to schema cache. Cache size: %s", str(cache_size))
+            cache_info = self._get_schema.cache_info()  # pylint: disable=no-value-for-parameter
+            _LOGGER.info("New entry has been added to schema cache. Cache info: %s", str(cache_info))
 
         try:
             dict_value = self._avro_encoder.decode(
