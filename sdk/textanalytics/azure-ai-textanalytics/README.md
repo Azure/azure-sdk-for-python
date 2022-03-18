@@ -84,7 +84,7 @@ This table shows the relationship between SDK versions and supported API version
 
 | SDK version  | Supported API version of service  |
 | ------------ | --------------------------------- |
-| 5.2.0b2 - Latest beta release | 3.0, 3.1, 3.2-preview.2 (default) |
+| 5.2.0b3 - Latest beta release | 3.0, 3.1, 3.2-preview.2 (default) |
 | 5.1.0 - Latest GA release | 3.0, 3.1 (default) |
 | 5.0.0  | 3.0 |
 
