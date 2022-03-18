@@ -173,7 +173,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         """
         try:
             return await self.create_queue(**kwargs)
-        except HttpResponseError:
+        except ResourceExistsError:
             return None
 
     @distributed_trace_async

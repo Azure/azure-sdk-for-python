@@ -11,9 +11,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file-share/12.7.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
+      - azsdk-python-storage-file-share/12.7.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Fri, 18 Mar 2022 00:27:12 GMT
+      - Fri, 18 Mar 2022 18:57:08 GMT
       x-ms-version:
       - '2021-04-10'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 18 Mar 2022 00:27:11 GMT
+      - Fri, 18 Mar 2022 18:57:06 GMT
       etag:
-      - '"0x8DA08760B86889B"'
+      - '"0x8DA0911192C0325"'
       last-modified:
-      - Fri, 18 Mar 2022 00:27:11 GMT
+      - Fri, 18 Mar 2022 18:57:06 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -47,9 +47,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file-share/12.7.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
+      - azsdk-python-storage-file-share/12.7.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Fri, 18 Mar 2022 00:27:12 GMT
+      - Fri, 18 Mar 2022 18:57:08 GMT
       x-ms-version:
       - '2021-04-10'
     method: GET
@@ -58,14 +58,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
         ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>share729d1af2</Name><Properties><Last-Modified>Fri,
-        18 Mar 2022 00:27:11 GMT</Last-Modified><Etag>\"0x8DA08760B86889B\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Fri,
-        18 Mar 2022 00:27:11 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share></Shares><NextMarker
+        18 Mar 2022 18:57:06 GMT</Last-Modified><Etag>\"0x8DA0911192C0325\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Fri,
+        18 Mar 2022 18:57:06 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share></Shares><NextMarker
         /></EnumerationResults>"
     headers:
       content-type:
       - application/xml
       date:
-      - Fri, 18 Mar 2022 00:27:11 GMT
+      - Fri, 18 Mar 2022 18:57:06 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -87,9 +87,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file-share/12.7.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
+      - azsdk-python-storage-file-share/12.7.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Fri, 18 Mar 2022 00:27:12 GMT
+      - Fri, 18 Mar 2022 18:57:08 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -103,7 +103,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 18 Mar 2022 00:27:11 GMT
+      - Fri, 18 Mar 2022 18:57:06 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:

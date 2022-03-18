@@ -193,7 +193,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         """
         try:
             return await self.create_container(**kwargs)
-        except HttpResponseError:
+        except ResourceExistsError:
             return None
 
     @distributed_trace_async

@@ -5,9 +5,9 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-file-share/12.7.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
+      - azsdk-python-storage-file-share/12.7.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Fri, 18 Mar 2022 00:29:47 GMT
+      - Fri, 18 Mar 2022 19:03:01 GMT
       x-ms-version:
       - '2021-04-10'
     method: PUT
@@ -17,9 +17,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 18 Mar 2022 00:29:47 GMT
-      etag: '"0x8DA087668A7C801"'
-      last-modified: Fri, 18 Mar 2022 00:29:48 GMT
+      date: Fri, 18 Mar 2022 19:02:58 GMT
+      etag: '"0x8DA0911EBA356EC"'
+      last-modified: Fri, 18 Mar 2022 19:02:59 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2021-04-10'
     status:

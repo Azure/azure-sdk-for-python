@@ -5,9 +5,9 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-dfs/12.6.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
+      - azsdk-python-storage-dfs/12.6.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Fri, 18 Mar 2022 00:37:13 GMT
+      - Fri, 18 Mar 2022 19:03:26 GMT
       x-ms-version:
       - '2020-10-02'
     method: PUT
@@ -17,9 +17,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 18 Mar 2022 00:37:12 GMT
-      etag: '"0x8DA087771D65942"'
-      last-modified: Fri, 18 Mar 2022 00:37:13 GMT
+      date: Fri, 18 Mar 2022 19:03:24 GMT
+      etag: '"0x8DA0911FA9D0F61"'
+      last-modified: Fri, 18 Mar 2022 19:03:25 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2020-10-02'
     status:
@@ -32,9 +32,9 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-dfs/12.6.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
+      - azsdk-python-storage-dfs/12.6.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Fri, 18 Mar 2022 00:37:13 GMT
+      - Fri, 18 Mar 2022 19:03:26 GMT
       x-ms-version:
       - '2020-10-02'
     method: PUT
@@ -42,11 +42,11 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
-        specified container already exists.\nRequestId:b2f72f71-301e-0000-1460-3adac2000000\nTime:2022-03-18T00:37:13.1189411Z</Message></Error>"
+        specified container already exists.\nRequestId:05890fdf-301e-003f-6ffa-3a1261000000\nTime:2022-03-18T19:03:25.0847129Z</Message></Error>"
     headers:
       content-length: '230'
       content-type: application/xml
-      date: Fri, 18 Mar 2022 00:37:12 GMT
+      date: Fri, 18 Mar 2022 19:03:24 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ContainerAlreadyExists
       x-ms-version: '2020-10-02'
@@ -60,9 +60,9 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-dfs/12.6.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
+      - azsdk-python-storage-dfs/12.6.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Fri, 18 Mar 2022 00:37:14 GMT
+      - Fri, 18 Mar 2022 19:03:26 GMT
       x-ms-version:
       - '2020-10-02'
     method: DELETE
@@ -72,7 +72,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 18 Mar 2022 00:37:13 GMT
+      date: Fri, 18 Mar 2022 19:03:24 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2020-10-02'
     status:

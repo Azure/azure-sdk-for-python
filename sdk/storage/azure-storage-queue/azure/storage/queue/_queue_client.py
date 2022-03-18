@@ -261,7 +261,7 @@ class QueueClient(StorageAccountHostsMixin):
         """
         try:
             return self.create_queue(**kwargs)
-        except ResourceExistsError as error:
+        except ResourceExistsError:
             return None
 
     @distributed_trace

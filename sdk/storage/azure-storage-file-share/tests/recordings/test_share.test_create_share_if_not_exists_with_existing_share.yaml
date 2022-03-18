@@ -11,9 +11,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file-share/12.7.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
+      - azsdk-python-storage-file-share/12.7.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Fri, 18 Mar 2022 00:27:17 GMT
+      - Fri, 18 Mar 2022 18:57:14 GMT
       x-ms-version:
       - '2021-04-10'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 18 Mar 2022 00:27:16 GMT
+      - Fri, 18 Mar 2022 18:57:11 GMT
       etag:
-      - '"0x8DA08760EB2CA06"'
+      - '"0x8DA09111CCCB674"'
       last-modified:
-      - Fri, 18 Mar 2022 00:27:17 GMT
+      - Fri, 18 Mar 2022 18:57:12 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -49,9 +49,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file-share/12.7.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
+      - azsdk-python-storage-file-share/12.7.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Fri, 18 Mar 2022 00:27:18 GMT
+      - Fri, 18 Mar 2022 18:57:14 GMT
       x-ms-version:
       - '2021-04-10'
     method: PUT
@@ -59,14 +59,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The
-        specified share already exists.\nRequestId:d3465a9b-a01a-0012-535e-3aa112000000\nTime:2022-03-18T00:27:17.2877339Z</Message></Error>"
+        specified share already exists.\nRequestId:ccd303b7-501a-0016-12f9-3a2c15000000\nTime:2022-03-18T18:57:12.9408162Z</Message></Error>"
     headers:
       content-length:
       - '222'
       content-type:
       - application/xml
       date:
-      - Fri, 18 Mar 2022 00:27:17 GMT
+      - Fri, 18 Mar 2022 18:57:11 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -86,9 +86,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file-share/12.7.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
+      - azsdk-python-storage-file-share/12.7.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Fri, 18 Mar 2022 00:27:18 GMT
+      - Fri, 18 Mar 2022 18:57:14 GMT
       x-ms-version:
       - '2021-04-10'
     method: GET
@@ -97,14 +97,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
         ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>share21b0199a</Name><Properties><Last-Modified>Fri,
-        18 Mar 2022 00:27:17 GMT</Last-Modified><Etag>\"0x8DA08760EB2CA06\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Fri,
-        18 Mar 2022 00:27:17 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share></Shares><NextMarker
+        18 Mar 2022 18:57:12 GMT</Last-Modified><Etag>\"0x8DA09111CCCB674\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Fri,
+        18 Mar 2022 18:57:12 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share></Shares><NextMarker
         /></EnumerationResults>"
     headers:
       content-type:
       - application/xml
       date:
-      - Fri, 18 Mar 2022 00:27:17 GMT
+      - Fri, 18 Mar 2022 18:57:12 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -126,9 +126,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file-share/12.7.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
+      - azsdk-python-storage-file-share/12.7.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Fri, 18 Mar 2022 00:27:18 GMT
+      - Fri, 18 Mar 2022 18:57:14 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -142,7 +142,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 18 Mar 2022 00:27:17 GMT
+      - Fri, 18 Mar 2022 18:57:12 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:

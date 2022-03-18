@@ -262,7 +262,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         """
         try:
             return await self.create_share(**kwargs)
-        except HttpResponseError:
+        except ResourceExistsError:
             return None
 
     @distributed_trace_async
