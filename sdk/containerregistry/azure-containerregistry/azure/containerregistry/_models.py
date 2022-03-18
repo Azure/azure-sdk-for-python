@@ -200,12 +200,14 @@ class RepositoryProperties(object):
             can_write=self.can_write,
             can_list=self.can_list,
         )
-        
+
     def __getattr__(self, name):
         if name == "last_udpated_on":
-            warnings.warn("The property name with a typo called 'last_udpated_on' has been deprecated and will be retired in future versions", DeprecationWarning)
+            warnings.warn(
+                "The property name with a typo called 'last_udpated_on' has been deprecated and will be retired in future versions", # pylint: disable=line-too-long
+                DeprecationWarning)
             return self.last_updated_on
-        return super().__getattr__(self, name)
+        return super().__getattr__(self, name) # pylint: disable=no-member
 
     @property
     def created_on(self):
