@@ -1755,48 +1755,53 @@ class CheckEnum(BaseChecker):
         :return: None
         """
         try:
-            enum_class = False
-            case_insensitive_meta = False
-            
-            # Python3 format declares CaseInsensitiveEnumMeta as a metaclass in enum classes
-            if node.declared_metaclass():
-                if node.declared_metaclass().name:
-                    if node.declared_metaclass().name == "CaseInsensitiveEnumMeta": 
-                        case_insensitive_meta = True
-                        enum_class = True
-            if not case_insensitive_meta:
-                # Python2 format uses CaseInsensitiveEnumMeta as a base of the classDef node
-                for base in node.bases:
-                    if isinstance(base, astroid.Call):
-                        for arg in base.args:
-                            if arg.name == "CaseInsensitiveEnumMeta":
-                                case_insensitive_meta = True
-                                enum_class = True
-                                break
-                    elif base.name == "Enum":
-                        enum_class = True
-               
-                    
-            # If it is an enum class, make sure all enums in the class are capitalized
-            if enum_class:
-                for nod in node.body:
-                    if isinstance(nod, astroid.Assign):
-                        # An Enum is an assign statement
-                        for x in nod.targets[0].name:
-                            if x.islower():
-                                # if the name has any lowercase letters
-                                self.add_message(
-                                        "enum-must-be-uppercase", node=nod.targets[0], confidence=None
-                                    )
-                                break
-                if not case_insensitive_meta:
-                    self.add_message(
-                        "enum-must-inherit-case-insensitive-enum-meta", node=node, confidence=None
-                    )
-                    
+            self._inherit_case_insensitive(node)
+            self._enum_uppercase(node)                 
         except Exception:
             logger.debug("Pylint custom checker failed to check enum.")
             pass
+    
+    def _inherit_case_insensitive(self, node):
+        case_insensitive_meta = False
+        enum_class = False
+
+        # Python3 format declares CaseInsensitiveEnumMeta as a metaclass in enum classes
+        if node.declared_metaclass():
+            if node.declared_metaclass().name == "CaseInsensitiveEnumMeta":
+                case_insensitive_meta = True
+        if not case_insensitive_meta:
+            # Python2 format uses CaseInsensitiveEnumMeta as a base of the classDef node
+            for base in node.bases:
+                if isinstance(base, astroid.Call):
+                    for arg in base.args:
+                        if arg.name == "CaseInsensitiveEnumMeta":
+                            case_insensitive_meta = True
+                            break
+                if base.name == "Enum":
+                    # Make sure that we are looking at an Enum class
+                    enum_class = True
+        if not case_insensitive_meta and enum_class:
+            self.add_message(
+                        "enum-must-inherit-case-insensitive-enum-meta", node=node, confidence=None
+                    )
+                    
+    def _enum_uppercase(self, node):
+        enum_class = False
+
+        for base in node.bases:
+            if base.name == "Enum":
+                enum_class = True
+
+        # If it is an enum class, make sure all enums in the class are capitalized
+        if enum_class:
+            for nod in node.body:
+                if isinstance(nod, astroid.Assign):
+                    # An Enum is an assign statement
+                    if not nod.targets[0].name.isupper():
+                        # if the name has any lowercase letters
+                        self.add_message(
+                            "enum-must-be-uppercase", node=nod.targets[0], confidence=None
+                        )
 
 
 class CheckNamingMismatchGeneratedCode(BaseChecker):
