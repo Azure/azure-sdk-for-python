@@ -203,7 +203,7 @@ class RepositoryProperties(object):
         
     def __getattr__(self, name):
         if name == "last_udpated_on":
-            warnings.warn("The property name with a typo called 'last_udpated_on' has been deprecated", DeprecationWarning)
+            warnings.warn("The property name with a typo called 'last_udpated_on' has been deprecated and will be retired in future versions", DeprecationWarning)
             return self.last_updated_on
         return super().__getattr__(self, name)
 
