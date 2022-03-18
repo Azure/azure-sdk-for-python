@@ -187,7 +187,6 @@ jobs:
           CondaArtifacts: ${{ parameters.CondaArtifacts}}
           TestProxy: ${{ parameters.TestProxy }}
 
-  # - ${{ if or(eq(variables.Run.Regression, 'true'), and(eq(variables.Build.Reason, 'Schedule'), eq(variables.System.TeamProject,'internal'))) }}:
   - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
     parameters:
       JobTemplatePath: /eng/pipelines/templates/jobs/regression.yml
