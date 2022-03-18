@@ -2686,7 +2686,7 @@ class TestCheckApiVersion(pylint.testutils.CheckerTestCase):
             """
             class SomeClient(object):
                 '''
-                   : param str something
+                   :param str something: something
                 '''
                 def __init__(self, something, **kwargs):
                     pass
@@ -2695,7 +2695,7 @@ class TestCheckApiVersion(pylint.testutils.CheckerTestCase):
 
         with self.assertAddsMessages(
                 pylint.testutils.Message(
-                    msg_id="api-version-not-keyword", node=class_node
+                    msg_id="client-accepts-api-version-keyword", node=class_node
                 )
         ):
             self.checker.visit_classdef(class_node)
@@ -2705,8 +2705,8 @@ class TestCheckApiVersion(pylint.testutils.CheckerTestCase):
             """
             class SomeClient(object):
                 '''
-                   : param str something
-                   : keyword str api_version
+                   :param str something: something 
+                   :keyword str api_version: api_version
                 '''
                 def __init__(self, something, **kwargs):
                     pass
@@ -2742,7 +2742,7 @@ class TestCheckApiVersion(pylint.testutils.CheckerTestCase):
 
         with self.assertAddsMessages(
                 pylint.testutils.Message(
-                    msg_id="api-version-not-keyword", node=node.body[0]
+                    msg_id="client-accepts-api-version-keyword", node=node.body[0]
                 )
         ):
             self.checker.visit_classdef(node.body[0])

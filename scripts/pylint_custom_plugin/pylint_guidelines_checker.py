@@ -1712,14 +1712,15 @@ class CheckApiVersion(BaseChecker):
     priority = -1
     msgs = {
         "C4748": (
-            "Check api version",
-            "api-version-not-keyword",
-            "Acceot a keyword argument called api_version.",
+            "The client constructor needs to take in an optional keyword-only api_version argument"
+            "https://azure.github.io/azure-sdk/python_design.html#specifying-the-service-version",
+            "client-accepts-api-version-keyword",
+            "Accept a keyword argument called api_version.",
         ),
     }
     options = (
         (
-            "ignore-api-version-incorrect",
+            "ignore-client-accepts-api-version-keyword",
             {
                 "default": False,
                 "type": "yn",
@@ -1742,9 +1743,6 @@ class CheckApiVersion(BaseChecker):
         :return: None
         """
 
-        #Need to take into account python 2 versus version 3 of python
-        # Do accept an optional api_version kwargs
-
         try:
             api_version = False
             
@@ -1762,7 +1760,7 @@ class CheckApiVersion(BaseChecker):
                                     api_version = True
                             if not api_version:
                                 self.add_message(
-                                    msgid="api-version-not-keyword", node=node, confidence=None
+                                    msgid="client-accepts-api-version-keyword", node=node, confidence=None
                                 )   
                             
 
@@ -1770,7 +1768,7 @@ class CheckApiVersion(BaseChecker):
                                 
       
         except AttributeError:
-            logger.debug("Pylint custom checker failed to check if client uses connection string param in constructor.")
+            logger.debug("Pylint custom checker failed to check if client takes in an optional keyword-only api_version argument.")
             pass                                                                                    
 
 
