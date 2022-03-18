@@ -7,8 +7,7 @@ import requests
 from typing import TYPE_CHECKING
 
 from .config import PROXY_URL
-from .helpers import is_live_and_not_recording
-from .proxy_testcase import get_recording_id
+from .helpers import get_recording_id, is_live_and_not_recording
 
 if TYPE_CHECKING:
     from typing import Any, Dict, Optional
