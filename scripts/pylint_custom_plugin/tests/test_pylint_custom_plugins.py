@@ -2681,8 +2681,19 @@ class TestCheckNamingMismatchGeneratedCode(pylint.testutils.CheckerTestCase):
 class TestCheckEnum(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.CheckEnum
 
+    def test_ignore_not_enum_class(self):
+        class_node = astroid.extract_node(
+            """
+               class SomeClient(object):
+                    my_list = []
+            """
+        )
+
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)
+
     def test_enum_capitalized(self):
-        function_node = astroid.extract_node(
+        class_node = astroid.extract_node(
             """
             class MyBadEnum(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)): 
                 One = "one"
@@ -2691,25 +2702,13 @@ class TestCheckEnum(pylint.testutils.CheckerTestCase):
 
         with self.assertAddsMessages(
                         pylint.testutils.Message(
-                            msg_id="enum-must-be-uppercase", node=function_node.body[0].targets[0]
+                            msg_id="enum-must-be-uppercase", node=class_node.body[0].targets[0]
                         )
                 ):
-                    self.checker.visit_classdef(function_node)
+                    self.checker.visit_classdef(class_node)
     
-    def test_ignore_not_enum_class(self):
-        function_node = astroid.extract_node(
-            """
-               class SomeClient(object):
-                    my_list = []
-            """
-        )
-
-
-        with self.assertNoMessages():
-            self.checker.visit_classdef(function_node)
-
     def test_not_inheriting_case_insensitive(self):
-        function_node = astroid.extract_node(
+        class_node = astroid.extract_node(
             """
             class MyGoodEnum(str, Enum): 
                 ONE = "one"
@@ -2718,33 +2717,41 @@ class TestCheckEnum(pylint.testutils.CheckerTestCase):
 
         with self.assertAddsMessages(
                 pylint.testutils.Message(
-                    msg_id="enum-must-inherit-case-insensitive-enum-meta", node=function_node
+                    msg_id="enum-must-inherit-case-insensitive-enum-meta", node=class_node
                     )
                 ):
-                self.checker.visit_classdef(function_node)
-                
+                self.checker.visit_classdef(class_node)
 
-    def test_enum_file_with_no_errors(self):
-        file = open("./test_files/test_enum_checker.py")
+    def test_inheriting_case_insensitive_python_three(self):
+        class_node = astroid.extract_node(
+            """
+            class MyGoodEnum(str, Enum, metaclass = CaseInsensitiveEnumMeta): 
+                ONE = "one"
+            """
+        )     
+        with self.assertNoMessages():
+            self.checker.visit_classdef(class_node)   
+
+    def test_enum_file_acceptable(self):
+        file = open("./test_files/enum_checker_acceptable.py")
         node = astroid.parse(file.read())
         file.close()
 
         with self.assertNoMessages():
             self.checker.visit_classdef(node.body[0])        
     
-    def test_enum_file_both_errors(self):
-        file = open("./test_files/test_enum_check_both_errors.py")
+    def test_enum_file_violation(self):
+        file = open("./test_files/enum_checker_violation.py")
         node = astroid.parse(file.read())
         file.close()
 
         with self.assertAddsMessages(
                 pylint.testutils.Message(
-                    msg_id="enum-must-be-uppercase", node=node.body[0].body[0].targets[0]
-                    ),
-                pylint.testutils.Message(
                     msg_id="enum-must-inherit-case-insensitive-enum-meta", node=node.body[0]
-                )
-                
+                ),
+                pylint.testutils.Message(
+                    msg_id="enum-must-be-uppercase", node=node.body[0].body[0].targets[0]
+                    )
                 ):
 
             self.checker.visit_classdef(node.body[0])    

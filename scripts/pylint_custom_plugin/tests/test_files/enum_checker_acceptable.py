@@ -1,5 +1,7 @@
 # Test file for enum checker
 
 
-class EnumPython(str, Enum):
-    One = "one"
+class EnumPython2(CaseInsensitiveEnumMeta(str, Enum)):
+    ONE = "one"
+    TWO = "two"
+    
