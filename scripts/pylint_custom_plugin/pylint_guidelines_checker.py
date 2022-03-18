@@ -1756,7 +1756,8 @@ class CheckEnum(BaseChecker):
         """
         try:
             self._inherit_case_insensitive(node)
-            self._enum_uppercase(node)                 
+            self._enum_uppercase(node)   
+
         except Exception:
             logger.debug("Pylint custom checker failed to check enum.")
             pass
@@ -1769,6 +1770,7 @@ class CheckEnum(BaseChecker):
         if node.declared_metaclass():
             if node.declared_metaclass().name == "CaseInsensitiveEnumMeta":
                 case_insensitive_meta = True
+                enum_class = True
         if not case_insensitive_meta:
             # Python2 format uses CaseInsensitiveEnumMeta as a base of the classDef node
             for base in node.bases:
@@ -1776,8 +1778,9 @@ class CheckEnum(BaseChecker):
                     for arg in base.args:
                         if arg.name == "CaseInsensitiveEnumMeta":
                             case_insensitive_meta = True
+                            enum_class = True
                             break
-                if base.name == "Enum":
+                elif base.name == "Enum":
                     # Make sure that we are looking at an Enum class
                     enum_class = True
         if not case_insensitive_meta and enum_class:
@@ -1789,7 +1792,12 @@ class CheckEnum(BaseChecker):
         enum_class = False
 
         for base in node.bases:
-            if base.name == "Enum":
+            if isinstance(base, astroid.Call):
+                for arg in base.args:
+                    if arg.name == "CaseInsensitiveEnumMeta":
+                        enum_class = True
+                        break
+            elif base.name == "Enum":
                 enum_class = True
 
         # If it is an enum class, make sure all enums in the class are capitalized
