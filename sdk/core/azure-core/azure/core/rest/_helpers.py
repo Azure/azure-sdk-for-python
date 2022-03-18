@@ -27,10 +27,6 @@ import copy
 import codecs
 import cgi
 from json import dumps
-try:
-    import collections.abc as collections
-except ImportError:
-    import collections  # type: ignore
 from typing import (
     Optional,
     Union,
@@ -42,6 +38,7 @@ from typing import (
     Dict,
     Iterable,
     MutableMapping,
+    AsyncIterable
 )
 import xml.etree.ElementTree as ET
 import six
@@ -68,9 +65,7 @@ PrimitiveData = Optional[Union[str, int, float, bool]]
 ParamsType = Mapping[str, Union[PrimitiveData, Sequence[PrimitiveData]]]
 
 FileContent = Union[str, bytes, IO[str], IO[bytes]]
-FileType = Union[
-    Tuple[Optional[str], FileContent],
-]
+FileType = Tuple[Optional[str], FileContent]
 
 FilesType = Union[
     Mapping[str, FileType],
@@ -78,6 +73,7 @@ FilesType = Union[
 ]
 
 ContentTypeBase = Union[str, bytes, Iterable[bytes]]
+ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 
 ########################### HELPER SECTION #################################
 
@@ -127,9 +123,8 @@ def set_xml_body(content):
         headers["Content-Length"] = str(len(body))
     return headers, body
 
-def _shared_set_content_body(content):
-    # type: (Any) -> Tuple[MutableMapping[str, str], Optional[ContentTypeBase]]
-    headers = {}  # type: MutableMapping[str, str]
+def set_content_body(content: Any) -> Tuple[MutableMapping[str, str], Optional[ContentTypeBase]]:
+    headers: MutableMapping[str, str] = {}
 
     if isinstance(content, ET.Element):
         # XML body
@@ -142,17 +137,11 @@ def _shared_set_content_body(content):
         if body:
             headers["Content-Length"] = str(len(body))
         return headers, body
-    if isinstance(content, collections.Iterable):
-        return {}, content
-    return headers, None
-
-def set_content_body(content):
-    headers, body = _shared_set_content_body(content)
-    if body is not None:
-        return headers, body
+    if any(hasattr(content, attr) for attr in ["read", "__iter__", "__aiter__"]):
+        return headers, content
     raise TypeError(
         "Unexpected type for 'content': '{}'. ".format(type(content)) +
-        "We expect 'content' to either be str, bytes, or an Iterable"
+        "We expect 'content' to either be str, bytes, a open file-like object or an iterable/asynciterable."
     )
 
 def set_json_body(json):

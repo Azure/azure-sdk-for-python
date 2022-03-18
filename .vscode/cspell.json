@@ -371,6 +371,12 @@
       ]
     },
     {
+      "filename": "sdk/containerregistry/azure-containerregistry/**",
+      "words": [
+        "udpated"
+      ]
+    },
+    {
       "filename": "sdk/formrecognizer/azure-ai-formrecognizer/tests/*.py",
       "words": [
         "WDLABCD"
