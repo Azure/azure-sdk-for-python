@@ -20,7 +20,7 @@ KeyVaultSecretsPreparer = functools.partial(EnvironmentVariableLoader, "keyvault
 
 class AsyncSecretsTestCaseClientPrepaper(AzureRecordedTestCase):
     def __init__(self, **kwargs) -> None:
-        self.azure_keyvault_url = os.getenv("AZURE_KEYVAULT_URL", "https://vaultname.vault.azure.net")
+        self.azure_keyvault_url = os.getenv("AZURE_KEYVAULT_URL", "https://vaultname.vault.azure.net") if is_live() else "https://vaultname.vault.azure.net"
         self.is_async = kwargs.pop("is_async", False)
         self.is_logging_enabled = kwargs.pop("logging_enable", True)
 
