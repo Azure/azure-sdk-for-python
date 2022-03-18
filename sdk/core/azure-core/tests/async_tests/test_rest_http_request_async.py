@@ -6,6 +6,8 @@
 
 # NOTE: These tests are heavily inspired from the httpx test suite: https://github.com/encode/httpx/tree/master/tests
 # Thank you httpx for your wonderful tests!
+import io
+import os
 import pytest
 from azure.core.rest import HttpRequest
 import collections.abc
