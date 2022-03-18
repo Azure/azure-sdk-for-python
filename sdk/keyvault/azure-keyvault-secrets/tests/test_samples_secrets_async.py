@@ -14,6 +14,8 @@ from _test_case import get_decorator
 from _async_test_case import AsyncSecretsTestCaseClientPrepaper
 
 from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import is_live
+from devtools_testutils.sanitizers import set_custom_default_matcher
 
 all_api_versions = get_decorator()
 SecretsPreparer = functools.partial(AsyncSecretsTestCaseClientPrepaper, is_async=True)
@@ -113,6 +115,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @SecretsPreparer()
     @recorded_by_proxy_async
     async def test_example_secret_list_operations(self, client, **kwargs):
+        set_custom_default_matcher(excluded_headers="Authorization")
         secret_client = client
         async with secret_client:
             for i in range(7):

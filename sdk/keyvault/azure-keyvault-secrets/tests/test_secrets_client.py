@@ -18,7 +18,8 @@ from azure.keyvault.secrets._shared.client_base import DEFAULT_VERSION
 from _shared.test_case import KeyVaultTestCase
 from _test_case import get_decorator, SecretsTestCaseClientPrepaper
 
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, is_live
+from devtools_testutils.sanitizers import set_custom_default_matcher
 import pytest
 
 all_api_versions = get_decorator()
@@ -73,6 +74,7 @@ class TestSecretClient(KeyVaultTestCase):
     @SecretsPreparer()
     @recorded_by_proxy
     def test_secret_crud_operations(self, client, **kwargs):
+        set_custom_default_matcher(excluded_headers="Authorization")
         secret_name = self.get_resource_name("crud-secret")
         secret_value = "crud_secret_value"
 
@@ -145,6 +147,7 @@ class TestSecretClient(KeyVaultTestCase):
     @SecretsPreparer()
     @recorded_by_proxy
     def test_secret_list(self, client, **kwargs):
+        set_custom_default_matcher(excluded_headers="Authorization")
         max_secrets = list_test_size
         expected = {}
 
@@ -167,6 +170,7 @@ class TestSecretClient(KeyVaultTestCase):
     @SecretsPreparer()
     @recorded_by_proxy
     def test_list_versions(self, client, **kwargs):
+        set_custom_default_matcher(excluded_headers="Authorization")
         secret_name = self.get_resource_name("secVer")
         secret_value = "secVal"
 
@@ -197,7 +201,7 @@ class TestSecretClient(KeyVaultTestCase):
     @recorded_by_proxy
     def test_list_deleted_secrets(self, client, **kwargs):
         expected = {}
-
+        set_custom_default_matcher(excluded_headers="Authorization")
         # create secrets
         for i in range(list_test_size):
             secret_name = self.get_resource_name("secret{}".format(i))
@@ -224,6 +228,7 @@ class TestSecretClient(KeyVaultTestCase):
     @SecretsPreparer()
     @recorded_by_proxy
     def test_backup_restore(self, client, **kwargs):
+        set_custom_default_matcher(excluded_headers="Authorization")
         secret_name = self.get_resource_name("secbak")
         secret_value = "secVal"
 
@@ -252,6 +257,7 @@ class TestSecretClient(KeyVaultTestCase):
     @SecretsPreparer()
     @recorded_by_proxy
     def test_recover(self, client, **kwargs):
+        set_custom_default_matcher(excluded_headers="Authorization")
         secrets = {}
 
         # create secrets to recover
@@ -284,6 +290,7 @@ class TestSecretClient(KeyVaultTestCase):
     @SecretsPreparer()
     @recorded_by_proxy
     def test_purge(self, client, **kwargs):
+        set_custom_default_matcher(excluded_headers="Authorization")
         secrets = {}
 
         # create secrets to purge
@@ -343,9 +350,10 @@ class TestSecretClient(KeyVaultTestCase):
                         pass
 
         mock_handler.close()
-        assert False, "Expected request body wasn't logged"
         HttpChallengeCache.clear()
         assert len(HttpChallengeCache._cache) == 0
+        assert False, "Expected request body wasn't logged"
+        
 
     @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
     @SecretsPreparer(logging_enable = False)

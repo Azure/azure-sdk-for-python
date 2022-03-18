@@ -135,6 +135,7 @@ class TestKeyVaultSecret(KeyVaultTestCase):
     @SecretsPreparer()
     @recorded_by_proxy_async
     async def test_secret_list(self, client, **kwargs):
+        
         max_secrets = list_test_size
         expected = {}
 
@@ -314,7 +315,6 @@ class TestKeyVaultSecret(KeyVaultTestCase):
     @recorded_by_proxy_async
     async def test_logging_enabled(self, client, **kwargs):
         mock_handler = MockHandler()
-        #kwargs.update({'logging_enable': True})
         logger = logging.getLogger("azure")
         logger.addHandler(mock_handler)
         logger.setLevel(logging.DEBUG)
@@ -327,7 +327,11 @@ class TestKeyVaultSecret(KeyVaultTestCase):
             for message in mock_handler.messages:
                 if message.levelname == "DEBUG" and message.funcName == "on_request":
                     # parts of the request are logged on new lines in a single message
-                    request_sections = message.message.split("/n")
+                    if "'/n" in message.message:
+                        request_sections = message.message.split("/n")
+                    else:
+                        request_sections = message.message.split("\n")
+                    
                     for section in request_sections:
                         try:
                             # the body of the request should be JSON
@@ -341,7 +345,7 @@ class TestKeyVaultSecret(KeyVaultTestCase):
 
             mock_handler.close()
             assert False, "Expected request body wasn't logged"
-        return dict()
+            return dict()
 
     @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("api_version",all_api_versions, ids=all_api_versions)
@@ -349,7 +353,6 @@ class TestKeyVaultSecret(KeyVaultTestCase):
     @recorded_by_proxy_async
     async def test_logging_disabled(self, client, **kwargs):
         mock_handler = MockHandler()
-        #kwargs.update({'logging_enable': False})
         logger = logging.getLogger("azure")
         logger.addHandler(mock_handler)
         logger.setLevel(logging.DEBUG)
@@ -362,7 +365,10 @@ class TestKeyVaultSecret(KeyVaultTestCase):
             for message in mock_handler.messages:
                 if message.levelname == "DEBUG" and message.funcName == "on_request":
                     # parts of the request are logged on new lines in a single message
-                    request_sections = message.message.split("/n")
+                    if "'/n" in message.message:
+                        request_sections = message.message.split("/n")
+                    else:
+                        request_sections = message.message.split("\n")
                     for section in request_sections:
                         try:
                             # the body of the request should be JSON
