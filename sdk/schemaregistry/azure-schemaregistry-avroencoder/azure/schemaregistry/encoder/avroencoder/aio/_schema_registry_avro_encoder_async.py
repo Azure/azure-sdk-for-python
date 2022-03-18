@@ -209,17 +209,6 @@ class AvroEncoder(object):
 
         return {"content": payload, "content_type": content_type}
 
-    def _convert_preamble_format(self, content, content_type):  # pylint: disable=no-self-use
-        record_format_identifier = b"\0\0\0\0"
-        if content[0:RECORD_FORMAT_IDENTIFIER_LENGTH] == record_format_identifier:
-            schema_id = content[
-                SCHEMA_ID_START_INDEX : (SCHEMA_ID_START_INDEX + SCHEMA_ID_LENGTH)
-            ].decode("utf-8")
-            content_type = f"{AVRO_MIME_TYPE}+{schema_id}"
-            content = content[CONTENT_START_INDEX:]
-
-        return content, content_type
-
     async def decode(
         self,
         message: Union[MessageType, MessageContent],
@@ -232,8 +221,6 @@ class AvroEncoder(object):
         Decode bytes content using schema ID in the content type field. `message` must be one of the following:
             1) A object of subtype of the MessageType protocol.
             2) A dict {"content": ..., "content_type": ...}, where "content" is bytes and "content_type" is string.
-            3) If using to decode content that was serialized with the AvroSerializer, a dict
-                {"content": ..., "content_type": None}, where "content" is bytes and "content_type" is None.
         Content must follow format of associated Avro RecordSchema:
         https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
 
@@ -264,10 +251,10 @@ class AvroEncoder(object):
                         for the full list of supported Azure SDK models and their corresponding versions."""
                 ).raise_with_traceback()
 
-        # include in first preview for back compatibility
-        content, content_type = self._convert_preamble_format(content, content_type)
-
-        schema_id = content_type.split("+")[1]
+        try:
+            schema_id = content_type.split("+")[1]
+        except AttributeError:
+            raise AvroEncodeError("Content type was not in the expected format of MIME type + schema ID.")
 
         cache_misses = self._get_schema.cache_info().misses # pylint: disable=no-value-for-parameter disable=no-member
         request_options = request_options or {}
