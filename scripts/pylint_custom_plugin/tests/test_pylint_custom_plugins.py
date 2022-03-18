@@ -2696,7 +2696,7 @@ class TestCheckEnum(pylint.testutils.CheckerTestCase):
                 ):
                     self.checker.visit_classdef(function_node)
     
-    def test_ignore_other_class(self):
+    def test_ignore_not_enum_class(self):
         function_node = astroid.extract_node(
             """
                class SomeClient(object):
@@ -2724,7 +2724,7 @@ class TestCheckEnum(pylint.testutils.CheckerTestCase):
                 self.checker.visit_classdef(function_node)
                 
 
-    def test_enum_file(self):
+    def test_enum_file_with_no_errors(self):
         file = open("./test_files/test_enum_checker.py")
         node = astroid.parse(file.read())
         file.close()
