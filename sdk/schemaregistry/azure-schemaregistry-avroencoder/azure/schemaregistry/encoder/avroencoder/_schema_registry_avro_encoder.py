@@ -188,6 +188,7 @@ class AvroEncoder(object):
                 f"Cannot encode value '{content}' for the following schema with schema ID {schema_id}:"
                 f"{raw_input_schema}",
                 error=e,
+                details={"schema_id": f"{schema_id}"},
             ).raise_with_traceback()
 
         stream = BytesIO()
@@ -283,5 +284,6 @@ class AvroEncoder(object):
             AvroEncodeError(
                 error_message,
                 error=e,
+                details={"schema_id": f"{schema_id}", "schema_definition": f"{schema_definition}"},
             ).raise_with_traceback()
         return dict_value

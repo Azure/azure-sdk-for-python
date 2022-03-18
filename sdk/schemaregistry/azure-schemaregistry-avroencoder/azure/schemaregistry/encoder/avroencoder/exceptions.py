@@ -37,4 +37,8 @@ class AvroEncodeError(AzureError):
     :ivar exc_value: The exc_value from sys.exc_info()
     :ivar exc_traceback: The exc_traceback from sys.exc_info()
     :ivar exc_msg: A string formatting of message parameter, exc_type and exc_value
+    :ivar details: The error details, which may include information related to the schema.
     """
+    def __init__(self, message, *args, **kwargs):
+        self.details = kwargs.pop("details", {})
+        super().__init__(message, *args, **kwargs)

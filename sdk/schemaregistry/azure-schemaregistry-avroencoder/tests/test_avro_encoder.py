@@ -101,6 +101,12 @@ class TestAvroEncoder(AzureRecordedTestCase):
         content_type = encoded_message_content["content_type"]
         encoded_content = encoded_message_content["content"]
 
+        # wrong data type
+        dict_content_bad = {"name": u"Ben", "favorite_number": 7, "favorite_color": 7}
+        with pytest.raises(AvroEncodeError) as e:
+            encoded_message_content = sr_avro_encoder.encode(dict_content_bad, schema=schema_str)
+        assert "schema_id" in e.value.details
+
         assert content_type.split("+")[0] == 'avro/binary'
         schema_id = sr_client.get_schema_properties(schemaregistry_group, schema.fullname, str(schema), "Avro").id
         assert content_type.split("+")[1] == schema_id
@@ -212,8 +218,10 @@ class TestAvroEncoder(AzureRecordedTestCase):
 
         # readers_schema with changed name results in error
         readers_schema_change_name = """{"namespace":"fakeexample.avro","type":"record","name":"fake_user","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
-        with pytest.raises(AvroEncodeError):
+        with pytest.raises(AvroEncodeError) as e:
             decoded_content = sr_avro_encoder.decode(encoded_content_dict, readers_schema=readers_schema_change_name)
+        assert "schema_id" in e.value.details
+        assert "schema_definition" in e.value.details
     
     @SchemaRegistryEnvironmentVariableLoader()
     @recorded_by_proxy
