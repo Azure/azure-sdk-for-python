@@ -261,11 +261,8 @@ class QueueClient(StorageAccountHostsMixin):
         """
         try:
             return self.create_queue(**kwargs)
-        except HttpResponseError as error:
-            try: 
-                process_storage_error(error)
-            except ResourceExistsError:
-                return None
+        except ResourceExistsError as error:
+            return None
 
     @distributed_trace
     def delete_queue(self, **kwargs):

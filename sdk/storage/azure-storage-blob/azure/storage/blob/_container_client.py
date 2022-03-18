@@ -328,11 +328,8 @@ class ContainerClient(StorageAccountHostsMixin):    # pylint: disable=too-many-p
         """
         try:
             return self.create_container(**kwargs)
-        except HttpResponseError as error:
-            try:
-                process_storage_error(error)
-            except ResourceExistsError:
-                return None
+        except ResourceExistsError:
+            return None
 
     @distributed_trace
     def _rename_container(self, new_name, **kwargs):

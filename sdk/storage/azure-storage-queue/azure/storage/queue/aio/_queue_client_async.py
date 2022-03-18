@@ -173,11 +173,8 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         """
         try:
             return await self.create_queue(**kwargs)
-        except HttpResponseError as error:
-            try: 
-                process_storage_error(error)
-            except ResourceExistsError:
-                return None
+        except HttpResponseError:
+            return None
 
     @distributed_trace_async
     async def delete_queue(self, **kwargs):

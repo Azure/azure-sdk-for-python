@@ -283,11 +283,8 @@ class FileSystemClient(StorageAccountHostsMixin):
         """
         try:
             return self.create_file_system(**kwargs)
-        except HttpResponseError as error:
-            try:
-                process_storage_error(error)
-            except ResourceExistsError:
-                return None
+        except HttpResponseError:
+            return None
 
 
     def exists(self, **kwargs):

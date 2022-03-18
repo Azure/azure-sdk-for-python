@@ -7,7 +7,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.7.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
       x-ms-date:
-      - Thu, 17 Mar 2022 23:45:31 GMT
+      - Fri, 18 Mar 2022 00:29:53 GMT
       x-ms-version:
       - '2021-04-10'
     method: PUT
@@ -17,9 +17,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 17 Mar 2022 23:45:30 GMT
-      etag: '"0x8DA087038A8E03D"'
-      last-modified: Thu, 17 Mar 2022 23:45:30 GMT
+      date: Fri, 18 Mar 2022 00:29:52 GMT
+      etag: '"0x8DA08766B875D85"'
+      last-modified: Fri, 18 Mar 2022 00:29:52 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2021-04-10'
     status:
@@ -34,7 +34,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.7.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
       x-ms-date:
-      - Thu, 17 Mar 2022 23:45:31 GMT
+      - Fri, 18 Mar 2022 00:29:53 GMT
       x-ms-version:
       - '2021-04-10'
     method: PUT
@@ -42,11 +42,11 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The
-        specified share already exists.\nRequestId:4abfd065-a01a-0084-5059-3aa8c3000000\nTime:2022-03-17T23:45:30.6947034Z</Message></Error>"
+        specified share already exists.\nRequestId:9f4663f6-f01a-0020-745f-3aa165000000\nTime:2022-03-18T00:29:53.0232643Z</Message></Error>"
     headers:
       content-length: '222'
       content-type: application/xml
-      date: Thu, 17 Mar 2022 23:45:30 GMT
+      date: Fri, 18 Mar 2022 00:29:52 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ShareAlreadyExists
       x-ms-version: '2021-04-10'

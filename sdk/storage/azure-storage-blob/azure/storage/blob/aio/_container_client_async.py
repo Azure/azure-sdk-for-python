@@ -193,11 +193,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         """
         try:
             return await self.create_container(**kwargs)
-        except HttpResponseError as error:
-            try:
-                process_storage_error(error)
-            except ResourceExistsError:
-                return None
+        except HttpResponseError:
+            return None
 
     @distributed_trace_async
     async def _rename_container(self, new_name, **kwargs):

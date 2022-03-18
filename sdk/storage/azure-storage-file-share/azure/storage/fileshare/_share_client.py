@@ -401,12 +401,9 @@ class ShareClient(StorageAccountHostsMixin):
         """
         try:
             return self.create_share(**kwargs)
-        except HttpResponseError as error:
-            try:
-                process_storage_error(error)
-            except ResourceExistsError:
-                return None
-
+        except ResourceExistsError:
+            return None
+            
     @distributed_trace
     def create_snapshot( # type: ignore
             self,

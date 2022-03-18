@@ -262,11 +262,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         """
         try:
             return await self.create_share(**kwargs)
-        except HttpResponseError as error:
-            try:
-                process_storage_error(error)
-            except ResourceExistsError:
-                return None
+        except HttpResponseError:
+            return None
 
     @distributed_trace_async
     async def create_snapshot( # type: ignore

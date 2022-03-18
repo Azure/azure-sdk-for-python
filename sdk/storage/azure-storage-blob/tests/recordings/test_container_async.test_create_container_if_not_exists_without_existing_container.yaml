@@ -7,7 +7,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.10.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
       x-ms-date:
-      - Thu, 17 Mar 2022 23:43:58 GMT
+      - Fri, 18 Mar 2022 00:29:17 GMT
       x-ms-version:
       - '2021-04-10'
     method: PUT
@@ -17,9 +17,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 17 Mar 2022 23:43:57 GMT
-      etag: '"0x8DA087001675E36"'
-      last-modified: Thu, 17 Mar 2022 23:43:57 GMT
+      date: Fri, 18 Mar 2022 00:29:16 GMT
+      etag: '"0x8DA087655EEEDCB"'
+      last-modified: Fri, 18 Mar 2022 00:29:16 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2021-04-10'
     status:

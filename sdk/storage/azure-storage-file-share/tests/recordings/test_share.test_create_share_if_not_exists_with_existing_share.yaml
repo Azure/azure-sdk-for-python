@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.7.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
       x-ms-date:
-      - Thu, 17 Mar 2022 23:42:29 GMT
+      - Fri, 18 Mar 2022 00:27:17 GMT
       x-ms-version:
       - '2021-04-10'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 17 Mar 2022 23:42:28 GMT
+      - Fri, 18 Mar 2022 00:27:16 GMT
       etag:
-      - '"0x8DA086FCC104FE3"'
+      - '"0x8DA08760EB2CA06"'
       last-modified:
-      - Thu, 17 Mar 2022 23:42:28 GMT
+      - Fri, 18 Mar 2022 00:27:17 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -51,7 +51,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.7.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
       x-ms-date:
-      - Thu, 17 Mar 2022 23:42:29 GMT
+      - Fri, 18 Mar 2022 00:27:18 GMT
       x-ms-version:
       - '2021-04-10'
     method: PUT
@@ -59,14 +59,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The
-        specified share already exists.\nRequestId:45bac56e-001a-0056-7158-3a2b2d000000\nTime:2022-03-17T23:42:28.5269128Z</Message></Error>"
+        specified share already exists.\nRequestId:d3465a9b-a01a-0012-535e-3aa112000000\nTime:2022-03-18T00:27:17.2877339Z</Message></Error>"
     headers:
       content-length:
       - '222'
       content-type:
       - application/xml
       date:
-      - Thu, 17 Mar 2022 23:42:28 GMT
+      - Fri, 18 Mar 2022 00:27:17 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -88,7 +88,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.7.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
       x-ms-date:
-      - Thu, 17 Mar 2022 23:42:29 GMT
+      - Fri, 18 Mar 2022 00:27:18 GMT
       x-ms-version:
       - '2021-04-10'
     method: GET
@@ -96,15 +96,15 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>share21b0199a</Name><Properties><Last-Modified>Thu,
-        17 Mar 2022 23:42:28 GMT</Last-Modified><Etag>\"0x8DA086FCC104FE3\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Thu,
-        17 Mar 2022 23:42:28 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share></Shares><NextMarker
+        ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Shares><Share><Name>share21b0199a</Name><Properties><Last-Modified>Fri,
+        18 Mar 2022 00:27:17 GMT</Last-Modified><Etag>\"0x8DA08760EB2CA06\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><Quota>5120</Quota><AccessTier>TransactionOptimized</AccessTier><AccessTierChangeTime>Fri,
+        18 Mar 2022 00:27:17 GMT</AccessTierChangeTime><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride></Properties></Share></Shares><NextMarker
         /></EnumerationResults>"
     headers:
       content-type:
       - application/xml
       date:
-      - Thu, 17 Mar 2022 23:42:28 GMT
+      - Fri, 18 Mar 2022 00:27:17 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -128,7 +128,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file-share/12.7.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
       x-ms-date:
-      - Thu, 17 Mar 2022 23:42:29 GMT
+      - Fri, 18 Mar 2022 00:27:18 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -142,7 +142,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 17 Mar 2022 23:42:28 GMT
+      - Fri, 18 Mar 2022 00:27:17 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
