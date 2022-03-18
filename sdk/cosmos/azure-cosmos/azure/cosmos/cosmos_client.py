@@ -25,6 +25,7 @@
 from typing import Any, Dict, Optional, Union, cast, Iterable, List  # pylint: disable=unused-import
 
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
+from azure.identity import ClientSecretCredential
 
 from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options
@@ -60,10 +61,12 @@ def _build_auth(credential):
         auth['resourceTokens'] = credential  # type: ignore
     elif hasattr(credential, '__iter__'):
         auth['permissionFeed'] = credential
+    elif hasattr(credential, 'get_token'):
+        auth['clientSecretCredential'] = credential
     else:
         raise TypeError(
-            "Unrecognized credential type. Please supply the master key as str, "
-            "or a dictionary or resource tokens, or a list of permissions.")
+            "Unrecognized credential type. Please supply the master key as a string "
+            "or a dictionary, or resource tokens, or a list of permissions, or a ClientSecretCredential.")
     return auth
 
 

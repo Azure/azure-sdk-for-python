@@ -31,7 +31,7 @@ from . import http_constants
 
 
 def GetAuthorizationHeader(
-    cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers
+        cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers
 ):
     """Gets the authorization header.
 
@@ -58,6 +58,8 @@ def GetAuthorizationHeader(
         return __GetAuthorizationTokenUsingResourceTokens(
             cosmos_client_connection.resource_tokens, path, resource_id_or_fullname
         )
+    # if cosmos_client_connection.aad_credentials:
+    #     return __get_aad_token(cosmos_client_connection.aad_credentials, cosmos_client_connection.url_connection)
 
     return None
 
@@ -138,9 +140,17 @@ def __GetAuthorizationTokenUsingResourceTokens(resource_tokens, path, resource_i
 
         # Get the last resource id or resource name from the path and get it's token from resource_tokens
         for i in range(len(path_parts), 1, -1):
-            segment = path_parts[i-1]
+            segment = path_parts[i - 1]
             sub_path = "/".join(path_parts[:i])
             if not segment in resource_types and sub_path in resource_tokens:
                 return resource_tokens[sub_path]
 
     return None
+
+
+# def __get_aad_token(aad_credentials, url):
+#     auth_prefix = "type=aad&ver=1.0&sig="
+#     scope = url.replace(":443", "") + ".default"
+#     aad_token = aad_credentials.get_token(scope)  # Returns an AccessToken object
+#     auth_token = auth_prefix + aad_token.token
+#     return auth_token

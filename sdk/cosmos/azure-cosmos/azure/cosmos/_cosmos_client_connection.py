@@ -41,7 +41,8 @@ from azure.core.pipeline.policies import (  # type: ignore
     CustomHookPolicy,
     DistributedTracingPolicy,
     HttpLoggingPolicy,
-    ProxyPolicy)
+    ProxyPolicy,
+    BearerTokenCredentialPolicy)
 
 from . import _base as base
 from . import documents
@@ -116,9 +117,11 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         self.master_key = None
         self.resource_tokens = None
+        self.aad_credentials = None
         if auth is not None:
             self.master_key = auth.get("masterKey")
             self.resource_tokens = auth.get("resourceTokens")
+            self.aad_credentials = auth.get("clientSecretCredential")
 
             if auth.get("permissionFeed"):
                 self.resource_tokens = {}
@@ -187,6 +190,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             HttpLoggingPolicy(**kwargs),
         ]
 
+        # if self.aad_credentials:
+        #     scopes = base.create_scope_from_url(self.url_connection)
+        #     policies.append(BearerTokenCredentialPolicy(self.aad_credentials, scopes))
+
         transport = kwargs.pop("transport", None)
         self.pipeline_client = PipelineClient(base_url=url_connection, transport=transport, policies=policies)
 
@@ -217,6 +224,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :type consistency_level: Optional[str]
         :rtype: None
         """
+        if database_account is None:
+            print("DATABASE ACCOUNT IS NONE")
+            consistency_level = documents.ConsistencyLevel.Session
         if consistency_level is None:
             # Set to default level present in account
             user_consistency_policy = database_account.ConsistencyPolicy
@@ -2041,6 +2051,13 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         initial_headers = dict(self.default_headers)
         headers = base.GetHeaders(self, initial_headers, "get", "", "", "", {})  # path  # id  # type
+
+        if self.aad_credentials:
+            auth_prefix = "type=aad&ver=1.0&sig="
+            scope = self.url_connection.replace(":443", "") + ".default"
+            aad_token = self.aad_credentials.get_token(scope)  # Returns an AccessToken object
+            auth_token = auth_prefix + aad_token.token
+            headers[http_constants.HttpHeaders.Authorization] = auth_token
 
         request_params = _request_object.RequestObject("databaseaccount", documents._OperationType.Read, url_connection)
         result, self.last_response_headers = self.__Get("", request_params, headers, **kwargs)
