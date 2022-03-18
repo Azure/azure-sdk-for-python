@@ -2729,4 +2729,22 @@ class TestCheckEnum(pylint.testutils.CheckerTestCase):
         node = astroid.parse(file.read())
         file.close()
 
-        self.checker.visit_classdef(node)        
+        with self.assertNoMessages():
+            self.checker.visit_classdef(node.body[0])        
+    
+    def test_enum_file_both_errors(self):
+        file = open("./test_files/test_enum_check_both_errors.py")
+        node = astroid.parse(file.read())
+        file.close()
+
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="enum-must-be-uppercase", node=node.body[0].body[0].targets[0]
+                    ),
+                pylint.testutils.Message(
+                    msg_id="enum-must-inherit-case-insensitive-enum-meta", node=node.body[0]
+                )
+                
+                ):
+
+            self.checker.visit_classdef(node.body[0])    
