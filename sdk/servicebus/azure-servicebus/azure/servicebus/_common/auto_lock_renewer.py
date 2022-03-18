@@ -187,7 +187,7 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
         on_lock_renew_failure=None,
         renew_period_override=None,
     ):
-        # pylint: disable=protected-access
+        # pylint: disable=protected-access,too-many-nested-blocks
         error = None
         clean_shutdown = False  # Only trigger the on_lock_renew_failure if halting was not expected (shutdown, etc)
         renew_period = renew_period_override or self._renew_period

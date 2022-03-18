@@ -114,7 +114,7 @@ class AutoLockRenewer:
         on_lock_renew_failure: Optional[AsyncLockRenewFailureCallback] = None,
         renew_period_override: float = None,
     ) -> None:
-        # pylint: disable=protected-access
+        # pylint: disable=protected-access,too-many-nested-blocks
         _log.debug(
             "Running async lock auto-renew for %r seconds", max_lock_renewal_duration
         )
