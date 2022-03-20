@@ -371,9 +371,9 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
                 :caption: Append data to the file.
         """
         options = self._append_data_options(
-            data,
-            offset,
-            self.scheme,
+            data=data,
+            offset=offset,
+            scheme=self.scheme,
             length=length,
             **kwargs)
         try:

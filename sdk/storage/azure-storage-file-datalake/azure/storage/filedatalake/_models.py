@@ -766,8 +766,6 @@ class CustomerProvidedEncryptionKey(BlobCustomerProvidedEncryptionKey):
     :ivar str algorithm:
         Specifies the algorithm to use when encrypting data using the given key. Must be AES256.
     """
-    def __init__(self, key_value, key_hash):
-        super().__init__(key_value, key_hash)
 
 
 class QuickQueryDialect(str, Enum):
