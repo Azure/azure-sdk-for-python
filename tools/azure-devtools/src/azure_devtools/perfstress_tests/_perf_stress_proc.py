@@ -20,7 +20,7 @@ def run_process(index, args, module, test_name, num_tests, test_stages, results,
     """
     test_module = module[0].load_module(module[1])
     test_class = getattr(test_module, test_name)  
-    value = asyncio.run(_start_tests(index, test_class, num_tests, args, index == 0, test_stages, results, status))
+    value = asyncio.run(_start_tests(index, test_class, num_tests, args, test_stages, results, status))
     return value
 
 
@@ -36,18 +36,17 @@ def _synchronize(stages, ignore_error=False):
         if not ignore_error:
             raise
 
-async def _start_tests(index, test_class, num_tests, args, do_setup, test_stages, results, status):
+async def _start_tests(index, test_class, num_tests, args, test_stages, results, status):
     """Create test classes, run setup, tests and cleanup."""
     # Create all parallel tests with a global unique index value
     with _PerfTestBase._global_parallel_index_lock:
         _PerfTestBase._global_parallel_index = index
         tests = [test_class(args) for _ in range(num_tests)]
     try:
-        # Only the child process with index=0 will run the global setup.
-        if do_setup:
-            await tests[0].global_setup()
+        # Run the global setup once per process.
+        await tests[0].global_setup()
 
-        # Waiting till all processes are ready to start "Setup". This allows one child
+        # Waiting till all processes are ready to start "Setup". This allows each child
         # process to setup any global resources before the rest of setup is run.
         _synchronize(test_stages["Setup"])
         await asyncio.gather(*[test.setup() for test in tests])
@@ -89,7 +88,8 @@ async def _start_tests(index, test_class, num_tests, args, do_setup, test_stages
 
             # Waiting till all processes have completed the cleanup stages.
             _synchronize(test_stages["Finished"], ignore_error=True)
-            if do_setup and not args.no_cleanup:
+            if not args.no_cleanup:
+                # Run global cleanup once per process.
                 await tests[0].global_cleanup()
         except Exception as e:
             # Tests were unable to clean up, maybe due to earlier failure state.
