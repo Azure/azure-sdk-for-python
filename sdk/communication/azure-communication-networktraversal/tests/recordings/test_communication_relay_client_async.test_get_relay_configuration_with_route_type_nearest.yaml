@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.2.0 Python/3.7.4 (Windows-10-10.0.22523-SP0)
       x-ms-date:
-      - Thu, 17 Mar 2022 23:16:43 GMT
+      - Mon, 21 Mar 2022 17:48:25 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -24,12 +24,12 @@ interactions:
         2021-10-31-preview, 2021-11-01, 2022-06-01
       content-length: '101'
       content-type: application/json; charset=utf-8
-      date: Thu, 17 Mar 2022 23:16:42 GMT
-      ms-cv: qs2uDq7u5UKS6Ik/SlVlqQ.0
+      date: Mon, 21 Mar 2022 17:48:25 GMT
+      ms-cv: Z6C5YsRHM0S6ZfX0nESw6A.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 28ms
+      x-processing-time: 25ms
     status:
       code: 201
       message: Created
@@ -46,7 +46,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-networktraversal/1.1.0-beta.1 Python/3.7.4 (Windows-10-10.0.22523-SP0)
       x-ms-date:
-      - Thu, 17 Mar 2022 23:16:43 GMT
+      - Mon, 21 Mar 2022 17:48:25 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -55,18 +55,18 @@ interactions:
     body:
       string: '{"iceServers": [{"routeType": "nearest", "urls": ["turn.skype.com",
         "turn:13.107.17.41:3478"], "username": "sanitized", "credential": "sanitized"}],
-        "expiresOn": "2022-03-19T23:16:43.7939693+00:00"}'
+        "expiresOn": "2022-03-23T17:48:25.8482332+00:00"}'
     headers:
       api-supported-versions: 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview,
         2022-03-01-preview
       content-length: '305'
       content-type: application/json; charset=utf-8
-      date: Thu, 17 Mar 2022 23:16:43 GMT
-      ms-cv: PhWhllLVM0iB+Io2fVpR4w.0
+      date: Mon, 21 Mar 2022 17:48:25 GMT
+      ms-cv: pgus/ODdA0K92UbemSFbfQ.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 23ms
+      x-processing-time: 22ms
     status:
       code: 200
       message: OK

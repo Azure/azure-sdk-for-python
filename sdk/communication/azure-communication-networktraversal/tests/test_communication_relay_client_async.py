@@ -18,8 +18,7 @@ from _shared.communication_service_preparer import CommunicationPreparer
 from _shared.utils import get_http_logging_policy
 from _shared.utils import parse_connection_str
 from azure.identity.aio import DefaultAzureCredential
-from datetime import datetime, timedelta
-from pytz import timezone
+from datetime import datetime, timedelta, timezone
 
 class FakeTokenCredential(object):
     def __init__(self):
@@ -174,9 +173,11 @@ class CommunicationRelayClientTestAsync(AsyncCommunicationTestCase):
         )
 
         expiry_time = 100
-        # Make the request time to be time zome aware
-        request_time = datetime.now(timezone('UTC'))+ timedelta(seconds=100)
         
+        # Make the request time to be time zome aware
+        request_time = datetime.now()+ timedelta(seconds=expiry_time)
+        request_time = request_time.replace(tzinfo=timezone.utc)
+
         async with networkTraversalClient:
             print('Getting relay config with nearest type:\n')
             config = await networkTraversalClient.get_relay_configuration(ttl=expiry_time)
