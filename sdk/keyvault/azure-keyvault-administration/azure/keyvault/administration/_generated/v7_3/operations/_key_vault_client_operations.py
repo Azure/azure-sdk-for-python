@@ -35,7 +35,7 @@ def build_full_backup_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "7.2")  # type: str
+    api_version = kwargs.pop('api_version', "7.3")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -66,7 +66,7 @@ def build_full_backup_status_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "7.2")  # type: str
+    api_version = kwargs.pop('api_version', "7.3")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -98,7 +98,7 @@ def build_full_restore_operation_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "7.2")  # type: str
+    api_version = kwargs.pop('api_version', "7.3")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -129,7 +129,7 @@ def build_restore_status_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "7.2")  # type: str
+    api_version = kwargs.pop('api_version', "7.3")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -162,7 +162,7 @@ def build_selective_key_restore_operation_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "7.2")  # type: str
+    api_version = kwargs.pop('api_version', "7.3")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -208,7 +208,7 @@ class KeyVaultClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "7.2")  # type: str
+        api_version = kwargs.pop('api_version', "7.3")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         if azure_storage_blob_container_uri is not None:
@@ -269,7 +269,7 @@ class KeyVaultClientOperationsMixin(object):
         :param azure_storage_blob_container_uri: Azure blob shared access signature token pointing to a
          valid Azure blob container where full backup needs to be stored. This token needs to be valid
          for at least next 24 hours from the time of making this call. Default value is None.
-        :type azure_storage_blob_container_uri: ~azure.keyvault.v7_2.models.SASTokenParameter
+        :type azure_storage_blob_container_uri: ~azure.keyvault.v7_3.models.SASTokenParameter
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -280,10 +280,10 @@ class KeyVaultClientOperationsMixin(object):
          Retry-After header is present.
         :return: An instance of LROPoller that returns either FullBackupOperation or the result of
          cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.v7_2.models.FullBackupOperation]
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.v7_3.models.FullBackupOperation]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "7.2")  # type: str
+        api_version = kwargs.pop('api_version', "7.3")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FullBackupOperation"]
@@ -349,7 +349,7 @@ class KeyVaultClientOperationsMixin(object):
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FullBackupOperation, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.FullBackupOperation
+        :rtype: ~azure.keyvault.v7_3.models.FullBackupOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FullBackupOperation"]
@@ -358,7 +358,7 @@ class KeyVaultClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "7.2")  # type: str
+        api_version = kwargs.pop('api_version', "7.3")  # type: str
 
         
         request = build_full_backup_status_request(
@@ -407,7 +407,7 @@ class KeyVaultClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "7.2")  # type: str
+        api_version = kwargs.pop('api_version', "7.3")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         if restore_blob_details is not None:
@@ -467,7 +467,7 @@ class KeyVaultClientOperationsMixin(object):
         :type vault_base_url: str
         :param restore_blob_details: The Azure blob SAS token pointing to a folder where the previous
          successful full backup was stored. Default value is None.
-        :type restore_blob_details: ~azure.keyvault.v7_2.models.RestoreOperationParameters
+        :type restore_blob_details: ~azure.keyvault.v7_3.models.RestoreOperationParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -478,10 +478,10 @@ class KeyVaultClientOperationsMixin(object):
          Retry-After header is present.
         :return: An instance of LROPoller that returns either RestoreOperation or the result of
          cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.v7_2.models.RestoreOperation]
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.v7_3.models.RestoreOperation]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "7.2")  # type: str
+        api_version = kwargs.pop('api_version', "7.3")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RestoreOperation"]
@@ -547,7 +547,7 @@ class KeyVaultClientOperationsMixin(object):
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RestoreOperation, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.RestoreOperation
+        :rtype: ~azure.keyvault.v7_3.models.RestoreOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RestoreOperation"]
@@ -556,7 +556,7 @@ class KeyVaultClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "7.2")  # type: str
+        api_version = kwargs.pop('api_version', "7.3")  # type: str
 
         
         request = build_restore_status_request(
@@ -606,7 +606,7 @@ class KeyVaultClientOperationsMixin(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "7.2")  # type: str
+        api_version = kwargs.pop('api_version', "7.3")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         if restore_blob_details is not None:
@@ -670,7 +670,7 @@ class KeyVaultClientOperationsMixin(object):
         :type key_name: str
         :param restore_blob_details: The Azure blob SAS token pointing to a folder where the previous
          successful full backup was stored. Default value is None.
-        :type restore_blob_details: ~azure.keyvault.v7_2.models.SelectiveKeyRestoreOperationParameters
+        :type restore_blob_details: ~azure.keyvault.v7_3.models.SelectiveKeyRestoreOperationParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -681,10 +681,10 @@ class KeyVaultClientOperationsMixin(object):
          Retry-After header is present.
         :return: An instance of LROPoller that returns either SelectiveKeyRestoreOperation or the
          result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.v7_2.models.SelectiveKeyRestoreOperation]
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.v7_3.models.SelectiveKeyRestoreOperation]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "7.2")  # type: str
+        api_version = kwargs.pop('api_version', "7.3")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.SelectiveKeyRestoreOperation"]

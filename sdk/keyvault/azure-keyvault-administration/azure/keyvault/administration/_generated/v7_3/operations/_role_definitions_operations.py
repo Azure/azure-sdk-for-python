@@ -36,7 +36,7 @@ def build_delete_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "7.2")  # type: str
+    api_version = kwargs.pop('api_version', "7.3")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -71,7 +71,7 @@ def build_create_or_update_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "7.2")  # type: str
+    api_version = kwargs.pop('api_version', "7.3")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -109,7 +109,7 @@ def build_get_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "7.2")  # type: str
+    api_version = kwargs.pop('api_version', "7.3")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -143,7 +143,7 @@ def build_list_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "7.2")  # type: str
+    api_version = kwargs.pop('api_version', "7.3")  # type: str
     filter = kwargs.pop('filter', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -180,7 +180,7 @@ class RoleDefinitionsOperations(object):
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.keyvault.v7_2.KeyVaultClient`'s
+        :class:`~azure.keyvault.v7_3.KeyVaultClient`'s
         :attr:`role_definitions` attribute.
     """
 
@@ -213,7 +213,7 @@ class RoleDefinitionsOperations(object):
         :type role_definition_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RoleDefinition, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.RoleDefinition
+        :rtype: ~azure.keyvault.v7_3.models.RoleDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleDefinition"]
@@ -222,7 +222,7 @@ class RoleDefinitionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "7.2")  # type: str
+        api_version = kwargs.pop('api_version', "7.3")  # type: str
 
         
         request = build_delete_request(
@@ -280,10 +280,10 @@ class RoleDefinitionsOperations(object):
          valid GUID.
         :type role_definition_name: str
         :param parameters: Parameters for the role definition.
-        :type parameters: ~azure.keyvault.v7_2.models.RoleDefinitionCreateParameters
+        :type parameters: ~azure.keyvault.v7_3.models.RoleDefinitionCreateParameters
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RoleDefinition, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.RoleDefinition
+        :rtype: ~azure.keyvault.v7_3.models.RoleDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleDefinition"]
@@ -292,7 +292,7 @@ class RoleDefinitionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "7.2")  # type: str
+        api_version = kwargs.pop('api_version', "7.3")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(parameters, 'RoleDefinitionCreateParameters')
@@ -352,7 +352,7 @@ class RoleDefinitionsOperations(object):
         :type role_definition_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RoleDefinition, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_2.models.RoleDefinition
+        :rtype: ~azure.keyvault.v7_3.models.RoleDefinition
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleDefinition"]
@@ -361,7 +361,7 @@ class RoleDefinitionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "7.2")  # type: str
+        api_version = kwargs.pop('api_version', "7.3")  # type: str
 
         
         request = build_get_request(
@@ -419,10 +419,10 @@ class RoleDefinitionsOperations(object):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RoleDefinitionListResult or the result of
          cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_2.models.RoleDefinitionListResult]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_3.models.RoleDefinitionListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "7.2")  # type: str
+        api_version = kwargs.pop('api_version', "7.3")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.RoleDefinitionListResult"]
         error_map = {

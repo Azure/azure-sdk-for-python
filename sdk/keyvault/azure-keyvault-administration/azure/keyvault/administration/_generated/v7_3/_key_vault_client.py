@@ -28,10 +28,10 @@ class KeyVaultClient(KeyVaultClientOperationsMixin):
     Vault service.
 
     :ivar role_definitions: RoleDefinitionsOperations operations
-    :vartype role_definitions: azure.keyvault.v7_2.operations.RoleDefinitionsOperations
+    :vartype role_definitions: azure.keyvault.v7_3.operations.RoleDefinitionsOperations
     :ivar role_assignments: RoleAssignmentsOperations operations
-    :vartype role_assignments: azure.keyvault.v7_2.operations.RoleAssignmentsOperations
-    :keyword api_version: Api Version. Default value is "7.2". Note that overriding this default
+    :vartype role_assignments: azure.keyvault.v7_3.operations.RoleAssignmentsOperations
+    :keyword api_version: Api Version. Default value is "7.3". Note that overriding this default
      value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
