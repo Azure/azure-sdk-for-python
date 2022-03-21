@@ -1,6 +1,6 @@
 import pytest
 from azure.mgmt.resource import ResourceManagementClient
-from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, set_bodiless_matcher
+from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, set_custom_default_matcher
 from azure.mgmt.netapp.models import Backup
 from test_account import delete_account
 from test_volume import delete_volume, delete_pool
@@ -18,7 +18,10 @@ class TestNetAppAccountBackup(AzureMgmtRecordedTestCase):
     # Note that when tests are run in live mode it is best to run one test at a time.
     @recorded_by_proxy
     def test_list_account_backups(self):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         create_backup(self.client, backup_name=TEST_BACKUP_1, live=self.is_live)
         create_backup(self.client, backup_name=TEST_BACKUP_2, backup_only=True, live=self.is_live)
 
@@ -47,7 +50,10 @@ class TestNetAppAccountBackup(AzureMgmtRecordedTestCase):
 
     @recorded_by_proxy
     def test_get_account_backups(self):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         create_backup(self.client, backup_name=TEST_BACKUP_1, live=self.is_live)
 
         account_backup = self.client.account_backups.get(TEST_RG, TEST_ACC_1, TEST_BACKUP_1)
@@ -60,7 +66,10 @@ class TestNetAppAccountBackup(AzureMgmtRecordedTestCase):
 
     @recorded_by_proxy
     def test_delete_account_backups(self):
-        set_bodiless_matcher()
+        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
+        set_custom_default_matcher(
+            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
+        )
         create_backup(self.client, backup_name=TEST_BACKUP_1, live=self.is_live)
 
         account_backup_list = self.client.account_backups.list(TEST_RG, TEST_ACC_1)
