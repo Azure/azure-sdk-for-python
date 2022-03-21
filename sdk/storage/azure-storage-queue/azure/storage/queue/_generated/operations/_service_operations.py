@@ -17,7 +17,7 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 
 from .. import models as _models
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -30,7 +30,6 @@ _SERIALIZER.client_side_validation = False
 # fmt: off
 
 def build_set_properties_request(
-    url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -43,12 +42,7 @@ def build_set_properties_request(
 
     accept = "application/xml"
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/")
-    path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url = kwargs.pop("template_url", "/")
 
     # Construct parameters
     _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -76,7 +70,6 @@ def build_set_properties_request(
 
 
 def build_get_properties_request(
-    url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -88,12 +81,7 @@ def build_get_properties_request(
 
     accept = "application/xml"
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/")
-    path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url = kwargs.pop("template_url", "/")
 
     # Construct parameters
     _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -119,7 +107,6 @@ def build_get_properties_request(
 
 
 def build_get_statistics_request(
-    url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -131,12 +118,7 @@ def build_get_statistics_request(
 
     accept = "application/xml"
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/")
-    path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url = kwargs.pop("template_url", "/")
 
     # Construct parameters
     _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -162,7 +144,6 @@ def build_get_statistics_request(
 
 
 def build_list_queues_segment_request(
-    url,  # type: str
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
@@ -177,12 +158,7 @@ def build_list_queues_segment_request(
 
     accept = "application/xml"
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/")
-    path_format_arguments = {
-        "url": _SERIALIZER.url("url", url, 'str', skip_quote=True),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url = kwargs.pop("template_url", "/")
 
     # Construct parameters
     _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
@@ -280,7 +256,6 @@ class ServiceOperations(object):
         _content = self._serialize.body(storage_service_properties, 'StorageServiceProperties', is_xml=True)
 
         request = build_set_properties_request(
-            url=self._config.url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -313,7 +288,7 @@ class ServiceOperations(object):
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_properties.metadata = {'url': "{url}/"}  # type: ignore
+    set_properties.metadata = {'url': "/"}  # type: ignore
 
 
     @distributed_trace
@@ -357,7 +332,6 @@ class ServiceOperations(object):
 
         
         request = build_get_properties_request(
-            url=self._config.url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -391,7 +365,7 @@ class ServiceOperations(object):
 
         return deserialized
 
-    get_properties.metadata = {'url': "{url}/"}  # type: ignore
+    get_properties.metadata = {'url': "/"}  # type: ignore
 
 
     @distributed_trace
@@ -436,7 +410,6 @@ class ServiceOperations(object):
 
         
         request = build_get_statistics_request(
-            url=self._config.url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -471,7 +444,7 @@ class ServiceOperations(object):
 
         return deserialized
 
-    get_statistics.metadata = {'url': "{url}/"}  # type: ignore
+    get_statistics.metadata = {'url': "/"}  # type: ignore
 
 
     @distributed_trace
@@ -534,7 +507,6 @@ class ServiceOperations(object):
 
         
         request = build_list_queues_segment_request(
-            url=self._config.url,
             comp=comp,
             version=self._config.version,
             prefix=prefix,
@@ -572,5 +544,5 @@ class ServiceOperations(object):
 
         return deserialized
 
-    list_queues_segment.metadata = {'url': "{url}/"}  # type: ignore
+    list_queues_segment.metadata = {'url': "/"}  # type: ignore
 
