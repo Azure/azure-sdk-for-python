@@ -1,3 +1,4 @@
+# coding=utf-8
 # --------------------------------------------------------------------------
 #
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -23,28 +24,8 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import collections.abc
-from typing import (
-    AsyncIterable,
-    Dict,
-    Iterable,
-    Tuple,
-    Union,
-    MutableMapping,
-)
 
-from ._helpers import _shared_set_content_body
-ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
-
-def set_content_body(content: ContentType) -> Tuple[
-    MutableMapping[str, str], ContentType
-]:
-    headers, body = _shared_set_content_body(content)
-    if body is not None:
-        return headers, body
-    if isinstance(content, collections.abc.AsyncIterable):
-        return {}, content
-    raise TypeError(
-        "Unexpected type for 'content': '{}'. ".format(type(content)) +
-        "We expect 'content' to either be str, bytes, or an Iterable / AsyncIterable"
-    )
+# This file is used for handwritten extensions to the generated code. Example:
+# https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_code/how-to-patch-sdk-code.md
+def patch_sdk():
+    pass
