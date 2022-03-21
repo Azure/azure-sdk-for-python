@@ -1,6 +1,7 @@
 import json
 import logging
 import os.path
+import traceback
 from pathlib import Path
 import shutil
 import subprocess
@@ -126,7 +127,7 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
         process = subprocess.Popen(
             cmd_line,
             stderr=subprocess.STDOUT,
-            stdout=subprocess.STDOUT,
+            stdout=subprocess.PIPE,
             universal_newlines=True,
             cwd=cwd,
             shell=shell,
@@ -147,6 +148,7 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
             raise subprocess.CalledProcessError(process.returncode, cmd_line, output)
         return output
     except Exception as err:
+        _LOGGER.error(traceback.format_exc(limit=99, chain=process.stderr))
         _LOGGER.error(err)
         raise
     else:
