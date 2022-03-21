@@ -32,7 +32,7 @@ This guide walks through the setup necessary to run mypy, a static type checker,
 
 ## Intro to typing in Python
 
-Python is a dynamically typed (or sometimes called "duck typed") language. This means that type checking is done at runtime and types are allowed to change.
+Python is a dynamically typed (or sometimes called "duck typed") language. This means that the interpreter only checks types as code runs and types are allowed to change.
 This is different from more statically typed languages, like Java, where you will have you declare types in code and check them at compile time.
 However, with PEP 484, type hints were introduced to Python which makes it possible to do the static type checking of Python code.
 Type hints can be written into Python code to indicate the type of a variable, argument, return type, etc. There are tools available to perform static type checking using type hints, like mypy. Note that type hints have no effect on the code at runtime and are not enforced by the interpreter.
@@ -75,7 +75,7 @@ def download_blob_from_url(
 
 A fully annotated signature includes type annotations for all parameters and the return type. The type of a parameter should follow 
 the `:` syntax and a default argument can be supplied like in the `credential` parameter above. A return type follows the function def with
-an arrow, its type, and then `:`.
+an arrow `->`, its type, and then `:`.
 
 Note that since Python 3.6, it is also possible to add type annotations to variables. The syntax follows the same as function arguments: 
 
@@ -97,11 +97,12 @@ Typing is always optional and this is a good thing! Pushing to achieve full cove
 So, in practice, what should you aim to type?
 
 1) Add type hints to publicly exposed APIs in the client library. Type hints get shipped with our client libraries and provide benefit to our users.
-   To ensure that type hints do get shipped in your library, follow the steps below or use the `template` library when creating a new package.
-       a) add an empty `py.typed` file to the base of your package
-       b) include the `py.typed` file in the MANIFEST.in
+   To ensure that type hints do get shipped in your library and can be checked by a static type checker, follow the steps per [PEP 561](https://mypy.readthedocs.io/en/stable/installed_packages.html#creating-pep-561-compatible-packages) below:
+
+       a) add an empty `py.typed` file to your package directory. E.g. `.../sdk/azure-core/azure/core/py.typed`
+       b) include the `py.typed` file in the MANIFEST.in ([example](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/MANIFEST.in))
    
-2) Add type hints anywhere in the src code where unit tests are worth writing. Consider typing/mypy as "free" tests for your library so focusing typing on
+2) Add type hints anywhere in the source code where unit tests are worth writing. Consider typing/mypy as "free" tests for your library so focusing typing on
 high density/important areas of the code helps in detecting bugs.
 
 ### Types usable in annotations
@@ -256,7 +257,7 @@ Python's typing docs for Optional explain that
 
 > Optional[X] is equivalent to X | None (or Union[X, None])
 
-This means that Optional should only be used when an argument can be either something _or_ None. For example, Optional usage is appropriate here:
+This is somewhat confusingly named. This means that `Optional` should only be used when an argument can be either something _or_ None. For example, `Optional` usage is appropriate here:
 
 ```python
 from typing import Optional
@@ -279,9 +280,9 @@ def tree(kind: str = "oak"):
 There are a few things to consider when typing collections in Python.
 
 1) "Be conservative in what you send, be liberal in what you accept." - The Robustness Principle 
-In other words, we should try to be specific in what we say we return - it's more helpful to specify concrete types which a user can reason about easily than abstract types.
-We should also aim to be lenient in the types we accept as a parameter because this allows for more flexibility for the caller, 
-e.g. accepting an `Iterable` where appropriate allows for more possible types to passed (list, tuple, dict, etc.) than specifying a `List`.
+
+    In other words, we should try to be specific in what we say we return - it's more helpful to specify concrete types which a user can reason about easily than abstract types.
+    We should also aim to be lenient in the types we accept as a parameter because this allows for more flexibility for the caller, e.g. accepting an `Iterable` where appropriate allows for more possible types to passed (list, tuple, dict, etc.) than just specifying a `List`.
 
 2) It can be more useful to consider the set of supported operations as the defining characteristic of a type.
    Prefer structural subtyping over nominal typing as this is what supports duck typing in Python.
@@ -291,9 +292,7 @@ e.g. accepting an `Iterable` where appropriate allows for more possible types to
 Syntax for mapping types follows: MappingType[KeyType, ValueType].
 For example, typing.Dict[str, str] says that the type is a dictionary with string keys and string values.
 
-For parameter types, consider using `typing.Mapping` or `typing.MutableMapping`. If the function accepting the mapping type does
-not need to mutate the mapping, `typing.Mapping` provides more flexibility than `typing.MutableMapping` (which implements methods
-like `pop`, `update`, `clear`).
+For parameter types, consider using `typing.Mapping` or `typing.MutableMapping`. If the function accepting the mapping type does not need to mutate the mapping, `typing.Mapping` provides more flexibility than `typing.MutableMapping` (which implements methods like `pop`, `update`, `clear`).
 
 For example, 
 
@@ -315,26 +314,22 @@ The [typing.List](https://docs.python.org/3/library/typing.html#typing.List) doc
 
 > Useful for annotating return types. To annotate arguments it is preferred to use an abstract collection type such as Sequence or Iterable
 
-For iterable parameter types, consider using `typing.Sequence` or `typing.MutableSequence` or even plain `Iterable` depending on what needs the function
-has for the collection type.
+For iterable parameter types, consider using `typing.Sequence` or `typing.MutableSequence` or even plain `Iterable` depending on the needs the function has for the collection type.
 
-In determining whether to use, for example, `Sequence` or `Iterable` as a parameter type, it's important to understand the supported operations of each and
-how much flexibility we can give the caller. A good reference for the set of supported operations for generic collections 
-is found here: https://docs.python.org/3/library/collections.abc.html#collections-abstract-base-classes
+In determining whether to use, for example, `Sequence` or `Iterable` as a parameter type, it's important to understand the supported operations of each and how much flexibility we can give the caller. A good reference table for the set of supported operations for generic collections is found here: https://docs.python.org/3/library/collections.abc.html#collections-abstract-base-classes
 For example, `Iterable` input is flexible in that it can accept a generator as input, whereas `Sequence` is not -- it must provide the ability to call `len()`.
 
 #### Tuples
 
-Special mention for `Tuple` since there are a few ways to type annotate with a tuple.
-`typing.Tuple` syntax follows:
+Special mention for `typing.Tuple` since there are a few ways to type annotate with a tuple.
 
-`Tuple[str, int, float]` for a tuple defined for item, quantity, price:
+Syntax for a tuple may look like: `Tuple[str, int, float]` for which holds an item, quantity, price:
 
-item = ("pencil", 1, 0.99)
+`item = ("pencil", 1, 0.99)`
 
 If the tuple has an arbitrary amount of same type arguments, you can use `...` syntax:
 
-Tuple[str, ...]
+`Tuple[str, ...]`
 
 `typing.NamedTuple` can also be used as a factory for tuple subclasses:
 
@@ -348,16 +343,14 @@ class Point(NamedTuple):
 def bounding_box(points: List[Point]) -> None: ...
 ```
 
-Note that `Point` is consistent with Tuple[float, float], but not vice versa. In other words, you can't pass a vanilla
-Tuple[float, float] into the `bounding_box` function above, but if it were annotated as `points: Tuple[float, float]`, a `Point`
-would be permissible.
+Note that `Point` is consistent with `Tuple[float, float]`, but not vice versa. In other words, you can't pass a vanilla Tuple[float, float] into the `bounding_box` function above, but if it were annotated as `points: Tuple[float, float]`, a `Point` would be permissible.
 
 ### Passing a function or a class as a parameter or return type
 
 `typing.Callable` can be used to annotate callback parameters or functions returned by higher-order functions.
 Syntax as follows:
 
-Callable[[ParamType1, ParamType2, ...], ReturnType]
+`Callable[[ParamType1, ParamType2, ...], ReturnType]`
 
 The argument list must be a list of types (or ...) and a single type for the return type.
 
@@ -434,10 +427,7 @@ def begin_operation(*args, **kwargs) -> None:
     ...
 ```
 
-Here, let's assume that *args accepts an arbitrary number of positional parameters which must be of type `str`. 
-Let's also assume that **kwargs accepts operation-specific keyword arguments, including any azure-core specific 
-keyword arguments. In this case, we can narrow the type for *args to `str`. For **kwargs, due to the complexity 
-of the type, we will leave it as `Any`. Typed this looks like:
+Here, let's assume that *args accepts an arbitrary number of positional parameters which must be of type `str`. Let's also assume that **kwargs accepts operation-specific keyword arguments, including any azure-core specific keyword arguments. In this case, we can narrow the type for *args to `str`. For **kwargs, due to the complexity of the type, we will leave it as `Any`. Typed this looks like:
 
 ```python
 from typing import Any
@@ -459,8 +449,7 @@ main.py:4: note: Revealed local types are:
 main.py:4: note:     args: builtins.tuple[builtins.str]
 main.py:4: note:     kwargs: builtins.dict[builtins.str, Any]]"
 
-Mypy correctly infers *args as a tuple[str] and **kwargs as a dict[str, Any] so we do not need to type these as such in the code.
-If *args accepts more than just `str`, a Union[] type or `Any` can be used depending on how complex the type is.
+Mypy correctly infers *args as a tuple[str] and **kwargs as a dict[str, Any] so we do not need to type these as such in the code. If *args accepts more than just `str`, a Union[] type or `Any` can be used depending on how complex the type is.
 
 ### Use AnyStr when your parameter accepts both str and bytes
 
@@ -478,10 +467,9 @@ AnyStr = TypeVar('AnyStr', bytes, str)
 
 ### cast
 
-Sometimes `mypy` will be unable to infer a type and may raise a false positive error. Using `typing.cast` is a way to tell `mypy` what
-the type of something is and is generally favored over using a `# type: ignore` comment.
+Sometimes `mypy` will be unable to infer a type and may raise a false positive error. Using `typing.cast` is a way to tell `mypy` what the type of something is and is generally favored over using a `# type: ignore`.
 
-The below snippet shows an example of how mypy might need a little help to understand the parameter type specified in a union:
+The below snippet shows an example of how `mypy` might need a little help to understand the parameter type specified in a union:
 
 ```python
 from typing import Union, List, Optional, Any, cast
@@ -495,8 +483,7 @@ def receive_deferred_messages(
     sequence_numbers = cast(List[int], sequence_numbers)  # mypy clarity
 ```
 
-If you are using cast often, however, it might be an indication that the code should be otherwise written or refactored.
-Note that mypy casts are only used by the type checker and do not perform a runtime type check.
+If you are using cast often, however, it might be an indication that the code should be otherwise written or refactored. Note that `typing.cast` is only used by the type checker and does not have affect code at runtime.
 
 ### Use forward references when the type is not defined yet
 
@@ -531,7 +518,7 @@ class TreeHouse:
 
 `mypy` recognizes this syntax and will understand the type as `TreeHouse`. 
 
-Another situation where forward references can be useful is when a type hint is used before a type is defined in a file.
+Another situation where forward references can be useful is when a type hint is used before a type is defined in a file. Here, `TreeHouse` gets defiend after `Yurt`, but `Yurt` uses it in a type hint:
 
 ```python
 class Yurt:
@@ -595,8 +582,7 @@ Note that we also had to change Baz to a forward reference since it will not be 
 
 ### Use TypeVar for generic type hinting
 
-`TypeVar` is a generic type which can be bound to a specific type with each usage. Common usage might be to have the parameter
-type reflected on the result type:
+`TypeVar` is a generic type which can be bound to a specific type with each usage. Common usage might be to have the parameter type reflected on the result type:
 
 ```python
 from typing import Sequence, TypeVar
@@ -624,8 +610,7 @@ There are also arguments available to set the upper boundary or variance in a `T
 
 ### Use typing.Protocol for structural subtyping
 
-PEP 544 introduced the `Protocol` type. The `Protocol` type helps Python support _structural subtyping_ or "static duck typing".
-In other words, when looking at whether two types are compatible, the actual structure and capabilities are more important than the name of type.
+PEP 544 introduced the `Protocol` type. The `Protocol` type helps Python support _structural subtyping_ or "static duck typing". In other words, when looking at whether two types are compatible, the actual structure and capabilities are more important than the name of type.
 
 A `Protocol` type can be defined by one or more methods, and a type checker will verify that those methods are implemented where a protocol type is specified.
 
@@ -670,8 +655,7 @@ Found 1 error in 1 file (checked 1 source file)
 ```
 
 Any type that is consistent with, or implements all the methods defined by the SupportsFly protocol, is acceptable to pass into ascend().
-A difference between Protocols and abstract classes - Protocols work at typing time while abc work at runtime.
-A class does not need to _inherit_ from Protocol like an abc, the type checker will simply enforce its usage at typing time.
+A difference between Protocols and abstract classes (abc) - Protocols work at typing time while abc work at runtime. A class does not need to _inherit_ from Protocol like an abc, the type checker will simply enforce its usage at typing time.
 
 A common Python SDK Protocol type we use is [azure.core.credentials.TokenCredential](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/azure/core/credentials.py).
 TokenCredential requires that a type implements the `get_token` method for it to be consistent with the Protocol.
@@ -680,8 +664,7 @@ See more on Protocols in the [reference documentation](https://docs.python.org/3
 
 ### Use typing.overload to overload a function
 
-`typing.overload` allows for annotating different combinations of arguments for a function. This is useful when the return type
-might depend on the type or types of parameters.
+`typing.overload` allows for annotating different combinations of arguments for a function. This is useful when the return type might depend on the type or types of parameters.
 
 Consider a function which takes in different input types which then inform the output type:
 
@@ -766,14 +749,10 @@ main.py:39: note: Revealed type is "builtins.str"
 
 ## How to ignore mypy errors
 
-A mypy error can be ignored by placing a `# type: ignore` comment on the offending line. Generally, we do not want to 
-ignore mypy errors if we can, but sometimes it is not possible to fix the error, e.g. there might be bug in mypy or 
-python as a language is just acting more expressive than the type system allows.
-If you must ignore a mypy error, it is recommended that you explain your reasoning in the ignore comment / include a 
-link to the bug or issue so someone reading the code later may resolve it.
+A mypy error can be ignored by placing a `# type: ignore` comment on the offending line. Generally, we do not want to ignore mypy errors if we can, but sometimes it is not possible to fix the error, e.g. there might be bug in mypy or python as a language is just acting more expressive than the type system allows.
+If you must ignore a mypy error, it is recommended that you explain your reasoning in the ignore comment / include a link to the bug or issue so someone reading the code later may resolve it.
 
-Note that it is possible to be specific in the mypy error to ignore, instead of globally turning off type checking on 
-that line. Syntax for this involves putting the specific mypy error code in brackets of the ignore comment:
+Note that it is possible to be specific in the mypy error to ignore, instead of globally turning off type checking on that line. Syntax for this involves putting the specific mypy error code in brackets of the ignore comment:
 
 ```python
 ignore_me: int = 5  # type: ignore[misc]
@@ -786,9 +765,7 @@ More information about ignoring mypy errors can be found in the official [mypy d
 
 ## How to opt out of mypy type checking
 
-All client libraries in the Python SDK repo are automatically opted in to running mypy (TODO not yet). If there is a 
-reason why a particular library should not run mypy, it is possible to add that library to a block list to prevent
-mypy from running checks.
+All client libraries in the Python SDK repo are automatically opted in to running mypy (TODO not yet). If there is a reason why a particular library should not run mypy, it is possible to add that library to a block list to prevent mypy from running checks.
 
 1) Place the package name on this block list: <url>
 2) Open an issue tracking that <library-name> should be opted in to running mypy
