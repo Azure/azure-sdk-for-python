@@ -1747,19 +1747,20 @@ class CheckApiVersion(BaseChecker):
             api_version = False
             
             if node.name.endswith("Client") and node.name not in self.ignore_clients:
-                for func in node.body:
-                    if node.doc:
-                        if ":keyword api_version" in node.doc or ":keyword str api_version" in node.doc:
-                            api_version = True
-                    if isinstance(func, astroid.FunctionDef):
-                        if func.name == '__init__':
-                            if func.doc: 
-                                if ":keyword api_version" in func.doc or ":keyword str api_version" in func.doc:
-                                    api_version = True
-                            if not api_version:
-                                self.add_message(
-                                    msgid="client-accepts-api-version-keyword", node=node, confidence=None
-                                )   
+                if node.doc:
+                    if ":keyword api_version" in node.doc or ":keyword str api_version" in node.doc:
+                        api_version = True
+                if not api_version:    
+                    for func in node.body:
+                        if isinstance(func, astroid.FunctionDef):
+                            if func.name == '__init__':
+                                if func.doc: 
+                                    if ":keyword api_version" in func.doc or ":keyword str api_version" in func.doc:
+                                        api_version = True
+                                if not api_version:
+                                    self.add_message(
+                                        msgid="client-accepts-api-version-keyword", node=node, confidence=None
+                                    )   
     
       
         except AttributeError:
