@@ -79,6 +79,7 @@ jobs:
           filePath: eng/common/scripts/Update-DocsMsPackages.ps1
           arguments: -DocRepoLocation $(DocRepoLocation) -PackageSourceOverride "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
         displayName: Update Docs Onboarding for Daily branch
+
       - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
         parameters:
           BaseRepoBranch: $(DailyDocsBranchName)
@@ -88,6 +89,15 @@ jobs:
           TargetRepoOwner: $(DocRepoOwner)
           WorkingDirectory: $(DocRepoLocation)
           ScriptDirectory: $(Build.SourcesDirectory)/eng/common/scripts
+
+      - task: Powershell@2
+        inputs:
+          pwsh: true
+          filePath: eng/common/scripts/Update-DocsMsToc.ps1
+          arguments: >-
+            -DocRepoLocation $(DocRepoLocation)
+            -OutputLocation $(DocRepoLocation)/docs-ref-mapping/reference-unified.yml
+        displayName: Generate ToC
 
       - task: PowerShell@2
         displayName: Queue Docs CI build
