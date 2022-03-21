@@ -144,7 +144,7 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
             # print necessary error info
             for i in range(len(output_buffer)):
                 _LOGGER.error(f"[Autorest11] {output_buffer[i]}")
-                print(f"[Autorest22] {output_buffer[i]}")
+                # print(f"[Autorest22] {output_buffer[i]}")
             raise subprocess.CalledProcessError(process.returncode, cmd_line, output)
         return output
     except Exception as err:
