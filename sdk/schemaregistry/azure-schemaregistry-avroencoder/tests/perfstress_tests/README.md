@@ -42,8 +42,8 @@ The options are available for all SR perf tests:
 - `--schema-size=150` Number of bytes each schema contains, rounded down to nearest multiple of 50. Default is 150.
 - `--num-values` Number of values to encode/decode with given schema. Default is 1.
 
-### T2 Tests
-The tests currently written for the T2 SDK:
+### Tests
+The tests currently written for the SDK:
 - `EncodeContentTest` Encodes `num-values` number of content with a single schema of size `schema-size` per run. First encode call should take longer than rest, as schema ID is cached after first call.
 - `DecodeContentTest` Decodes `num-values` number of encoded content with schema of size `schema-size` per run. First decode call should take longer than rest, as schema is cached after first call.
 
