@@ -42,7 +42,7 @@ if TYPE_CHECKING:
     from ._models import ShareProperties, AccessPolicy
 
 
-class ShareClient(StorageAccountHostsMixin):
+class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-methods
     """A client to interact with a specific share, although that share may not yet exist.
 
     For operations relating to a specific directory or file in this share, the clients for
@@ -403,7 +403,7 @@ class ShareClient(StorageAccountHostsMixin):
             return self.create_share(**kwargs)
         except ResourceExistsError:
             return None
-            
+
     @distributed_trace
     def create_snapshot( # type: ignore
             self,

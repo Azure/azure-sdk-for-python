@@ -214,7 +214,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         # type: (Any) -> None
         """Creates a new file system under the specified account.
 
-        If the file system with the same name already exists, it is not changed. 
+        If the file system with the same name already exists, it is not changed.
 
         :keyword Dict(str,str) metadata:
             A dict with name-value pairs to associate with the
@@ -230,7 +230,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             return await self.create_file_system(**kwargs)
         except ResourceExistsError:
             return None
-            
+
     @distributed_trace_async
     async def exists(self, **kwargs):
         # type: (**Any) -> bool

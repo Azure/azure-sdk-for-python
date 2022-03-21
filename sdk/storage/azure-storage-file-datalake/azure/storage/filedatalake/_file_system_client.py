@@ -3,8 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=too-many-lines
 import functools
-from importlib.resources import Resource
 from typing import Optional, Any, Union, TypeVar
 
 try:
@@ -269,7 +269,7 @@ class FileSystemClient(StorageAccountHostsMixin):
         # type: (Any) -> None
         """Creates a new file system under the specified account.
 
-        If the file system with the same name already exists, it is not changed. 
+        If the file system with the same name already exists, it is not changed.
 
         :keyword Dict(str,str) metadata:
             A dict with name-value pairs to associate with the
