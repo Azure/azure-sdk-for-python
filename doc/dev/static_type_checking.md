@@ -35,7 +35,7 @@ This guide walks through the setup necessary to run mypy, a static type checker,
 Python is a dynamically typed (or sometimes called "duck typed") language. This means that the interpreter only checks types as code runs and types are allowed to change.
 This is different from more statically typed languages, like Java, where you will have you declare types in code and check them at compile time.
 However, with [PEP 484](https://peps.python.org/pep-0484/), type hints were introduced to Python which makes it possible to do the static type checking of Python code.
-Type hints can be written into Python code to indicate the type of a variable, argument, return type, etc. There are tools available to perform static type checking using type hints, like mypy. Note that type hints have no effect on the code at runtime and are not enforced by the interpreter.
+Type hints can be written into Python code to indicate the type of a variable, argument, return type, etc. There are tools available to perform static type checking using type hints, like [mypy](https://mypy.readthedocs.io/en/stable/). Note that type hints have no effect on the code at runtime and are not enforced by the interpreter.
 
 There are some key benefits to using and checking type hints in Python code:
 1) type hints checked by a static type checker can help developers find bugs in Python code (type hints can be thought of as "free" unit tests, although they do not replace a thorough test suite).
@@ -159,7 +159,7 @@ If you don't want to use `tox` you can also install and run `mypy` on its own:
 
 Note that you may see different errors if running a different version of `mypy` than the one in CI.
 
-If specific configuration of mypy is needed for your library, use a mypy.ini file at the package level:
+If specific configuration of mypy is needed for your library, use a `mypy.ini` file at the package level:
 
 `.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics/mypy.ini`
 
@@ -336,7 +336,7 @@ class Point(NamedTuple):
 def bounding_box(points: List[Point]) -> None: ...
 ```
 
-Note that `Point` is consistent with `Tuple[float, float]`, but not vice versa. In other words, you can't pass a vanilla Tuple[float, float] into the `bounding_box` function above, but if it were annotated as `points: Tuple[float, float]`, a `Point` would be permissible.
+Note that `Point` is consistent with `Tuple[float, float]`, but not vice versa. In other words, you can't pass a vanilla `Tuple[float, float]` into the `bounding_box` function above, but if it were annotated as `points: Tuple[float, float]`, a `Point` would be permissible.
 
 ### Passing a function or a class as a parameter or return type
 
@@ -393,7 +393,7 @@ Found 2 errors in 1 file (checked 1 source file)
 
 ### Use typing.TypeAlias when creating a type alias
 
-With PEP 613, `typing.TypeAlias` was introduced to make type aliases more obvious to the type checker.
+With [PEP 613](https://peps.python.org/pep-0613/), `typing.TypeAlias` was introduced to make type aliases more obvious to the type checker.
 
 ```python
 # from typing import TypeAlias Python >=3.10
@@ -418,7 +418,7 @@ def begin_operation(*args, **kwargs) -> None:
     ...
 ```
 
-Here, let's assume that *args accepts an arbitrary number of positional parameters which must be of type `str`. Let's also assume that **kwargs accepts operation-specific keyword arguments, including any azure-core specific keyword arguments. In this case, we can narrow the type for *args to `str`. For **kwargs, due to the complexity of the type, we will leave it as `Any`. Typed this looks like:
+Here, let's assume that `*args` accepts an arbitrary number of positional parameters which must be of type `str`. Let's also assume that `**kwargs` accepts operation-specific keyword arguments, including any `azure-core` specific keyword arguments. In this case, we can narrow the type for `*args` to `str`. For `**kwargs`, due to the complexity of the type, we will leave it as `Any`. Typed this looks like:
 
 ```python
 from typing import Any
@@ -436,11 +436,13 @@ def begin_operation(*args: str, **kwargs: Any) -> None:
     reveal_locals()
 ```
 
+```cmd
 main.py:4: note: Revealed local types are:
 main.py:4: note:     args: builtins.tuple[builtins.str]
 main.py:4: note:     kwargs: builtins.dict[builtins.str, Any]]"
+```
 
-Mypy correctly infers *args as a tuple[str] and **kwargs as a dict[str, Any] so we do not need to type these as such in the code. If *args accepts more than just `str`, a Union[] type or `Any` can be used depending on how complex the type is.
+`mypy` correctly infers `*args` as a `tuple[str]` and `**kwargs` as a `dict[str, Any]` so we do not need to type these as such in the code. If `*args` accepts more than just `str`, a `Union[]` type or `Any` can be used depending on how complex the type is.
 
 ### Use AnyStr when your parameter accepts both str and bytes
 
@@ -452,11 +454,11 @@ from typing import TypeVar
 AnyStr = TypeVar('AnyStr', bytes, str)
 ```
 
-`AnyStr` can be used in many functions that accept either bytes or str, and return values of the given type.
+`AnyStr` can be used in functions which accept or return both bytes and str.
 
 > Note: The `TypeVar` is a generic type which restricts `AnyStr` to `bytes` or `str`. More information on [TypeVar]()
 
-### cast
+### Use typing.cast to help mypy understand a type
 
 Sometimes `mypy` will be unable to infer a type and may raise a false positive error. Using `typing.cast` is a way to tell `mypy` what the type of something is and is generally favored over using a `# type: ignore`.
 
@@ -509,7 +511,7 @@ class TreeHouse:
 
 `mypy` recognizes this syntax and will understand the type as `TreeHouse`. 
 
-Another situation where forward references can be useful is when a type hint is used before a type is defined. Here, `TreeHouse` gets defiend after `Yurt`, but `Yurt` uses it in a type hint so it must be a forward reference:
+Another situation where forward references can be useful is when a type hint is used before a type is defined in a file. Here, `TreeHouse` gets defiend after `Yurt`, but `Yurt` uses it in a type hint so it must be a forward reference:
 
 ```python
 class Yurt:
@@ -553,7 +555,7 @@ Here `a` imports from `b` and `b` imports from `a`, causing a circular import at
 
 `ImportError: cannot import name 'Baz' from partially initialized module 'b' (most likely due to a circular import)`
 
-Since TYPE_CHECKING is only `True` when running the type checker, we can add our imports under a TYPE_CHECKING block to fix this issue in a.py:
+Since `TYPE_CHECKING` is only `True` when running the type checker, we can add our imports under a TYPE_CHECKING block to fix this issue in a.py:
 
 a.py
 ```python
@@ -584,7 +586,7 @@ def pick(p: Sequence[T]) -> T:
   return random_pick(p)
 ```
 
-This leaves the type open for the caller to pass a Sequence[int], Sequence[float], Sequence[str], etc. and promises to return the same type passed in.
+This leaves the type open for the caller to pass a `Sequence[int]`, `Sequence[float]`, `Sequence[str]`, etc. and promises to return the same `T` type passed in.
 
 You can restrict a `TypeVar` to several specific types by adding the types as positional arguments:
 
@@ -597,15 +599,17 @@ def pick(p: Sequence[T]) -> T:
   return random_pick(p)
 ```
 
+Here the type checker will only expect types of `int` or `str` for `T`.
+
 There are also arguments available to set the upper boundary or variance in a `TypeVar` -- please see the [reference docs](https://docs.python.org/3/library/typing.html#typing.TypeVar) for more information.
 
 ### Use typing.Protocol for structural subtyping
 
-[PEP 544](https://peps.python.org/pep-0544/) introduced the `Protocol` type. The `Protocol` type helps Python support _structural subtyping_ or "static duck typing". In other words, when looking at whether two types are compatible, the actual structure and capabilities are more important than the name of type.
+[PEP 544](https://peps.python.org/pep-0544/) introduced the `Protocol` type. The `Protocol` type helps Python support _structural subtyping_ or "static duck typing". In other words, when looking at whether two types are compatible, the actual structure and capabilities are more important than the _name_ of type.
 
-A `Protocol` type can be defined by one or more methods, and a type checker will verify that those methods are implemented where a protocol type is specified.
+A `Protocol` type can be defined by one or more methods, and a type checker will check that those methods are implemented where a protocol type is specified.
 
-Below we create a `SupportsFly` protocol class which expects a `fly()` method on compatible types being passed into `ascend()`.
+Below we create a `SupportsFly` protocol class which expects a `fly()` method on all compatible types being passed into `ascend()`.
 
 ```python
 # from typing import Protocol  # Python >=3.8
@@ -759,5 +763,5 @@ More information about ignoring mypy errors can be found in the official [mypy d
 
 All client libraries in the Python SDK repo are automatically opted in to running mypy (TODO not yet). If there is a reason why a particular library should not run mypy, it is possible to add that library to a block list to prevent mypy from running checks.
 
-1) Place the package name on this block list: <url>
-2) Open an issue tracking that <library-name> should be opted in to running mypy
+1) Place the package name on this block list: TODO
+2) Open an issue tracking that "library-name" should be opted in to running mypy
