@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.2.0 Python/3.7.4 (Windows-10-10.0.22523-SP0)
       x-ms-date:
-      - Mon, 21 Mar 2022 17:48:24 GMT
+      - Mon, 21 Mar 2022 21:06:47 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -32,9 +32,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 21 Mar 2022 17:48:23 GMT
+      - Mon, 21 Mar 2022 21:06:46 GMT
       ms-cv:
-      - lZgbvDWiwUmTlzAyHNSN+A.0
+      - gfl1igIF3keD+6ICazWwnQ.0
       request-context:
       - appId=
       strict-transport-security:
@@ -42,7 +42,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 23ms
+      - 26ms
     status:
       code: 201
       message: Created
@@ -60,9 +60,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-networktraversal/1.1.0-beta.1 Python/3.7.4 (Windows-10-10.0.22523-SP0)
+      - azsdk-python-communication-networktraversal/1.1.0b1 Python/3.7.4 (Windows-10-10.0.22523-SP0)
       x-ms-date:
-      - Mon, 21 Mar 2022 17:48:24 GMT
+      - Mon, 21 Mar 2022 21:06:47 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -70,7 +70,7 @@ interactions:
   response:
     body:
       string: '{"iceServers": [{"routeType": "any", "urls": ["turn.skype.com", "turn:turn.azure.com:3478"],
-        "username": "sanitized", "credential": "sanitized"}], "expiresOn": "2022-03-23T17:48:24.6756795+00:00"}'
+        "username": "sanitized", "credential": "sanitized"}], "expiresOn": "2022-03-23T21:06:47.7478789+00:00"}'
     headers:
       api-supported-versions:
       - 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview, 2022-03-01-preview
@@ -79,9 +79,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 21 Mar 2022 17:48:24 GMT
+      - Mon, 21 Mar 2022 21:06:47 GMT
       ms-cv:
-      - UNppRFZPAUOdbfMZw5eZRg.0
+      - VKemT47YIEabH6gjHMZ93A.0
       request-context:
       - appId=
       strict-transport-security:

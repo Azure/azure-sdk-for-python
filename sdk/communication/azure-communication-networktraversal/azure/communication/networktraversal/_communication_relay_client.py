@@ -103,9 +103,9 @@ class CommunicationRelayClient(object):
         """
         if user is None:
             return self._network_traversal_service_client.communication_network_traversal.issue_relay_configuration(
-                user=None, route_type=route_type, ttl=ttl, **kwargs)
+                route_type=route_type, ttl=ttl, **kwargs)
         return self._network_traversal_service_client.communication_network_traversal.issue_relay_configuration(
-            user=user.properties['id'],
+            id=user.properties['id'],
             route_type=route_type,
             ttl=ttl,
             **kwargs)

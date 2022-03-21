@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.2.0 Python/3.7.4 (Windows-10-10.0.22523-SP0)
       x-ms-date:
-      - Mon, 21 Mar 2022 17:48:25 GMT
+      - Mon, 21 Mar 2022 21:06:48 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -24,12 +24,12 @@ interactions:
         2021-10-31-preview, 2021-11-01, 2022-06-01
       content-length: '101'
       content-type: application/json; charset=utf-8
-      date: Mon, 21 Mar 2022 17:48:24 GMT
-      ms-cv: UmZHP2wJBk6523iMh99j7A.0
+      date: Mon, 21 Mar 2022 21:06:47 GMT
+      ms-cv: TIOyuzVhnU+PQTRUOsnLjg.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 19ms
+      x-processing-time: 26ms
     status:
       code: 201
       message: Created
@@ -44,9 +44,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-networktraversal/1.1.0-beta.1 Python/3.7.4 (Windows-10-10.0.22523-SP0)
+      - azsdk-python-communication-networktraversal/1.1.0b1 Python/3.7.4 (Windows-10-10.0.22523-SP0)
       x-ms-date:
-      - Mon, 21 Mar 2022 17:48:25 GMT
+      - Mon, 21 Mar 2022 21:06:48 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -56,15 +56,15 @@ interactions:
       string: '{"iceServers": [{"routeType": "any", "urls": ["turn.skype.com", "turn:turn.azure.com:3478"],
         "username": "sanitized", "credential": "sanitized"}, {"routeType": "nearest",
         "urls": ["stun:13.107.17.41:3478", "turn:13.107.17.41:3478"], "username":
-        "BQAASDJLY9oB2D7eAFnDZgQislAq7Nzor9wUmh90oBEAAAAMARCsgNlqhd5IsZldo6P6NifIAhAAAAAQTXnPpdaKCEgiAGTzSEzHcpJihzG9T2GJQSw5WU56NB4=",
-        "credential": "RLEOFuz3ostzQqUi9eadUh5x2Wc="}], "expiresOn": "2022-03-23T17:48:25.4910013+00:00"}'
+        "BQAASOkFJkMB2D75sJVQCH4RqZhUaBRR+fN4DgJE2VwAAAAMARCsgNlqhd5IsZldo6P6NifIAhAAAAAQTi9vq5nGWToNAGl0tvfhdpmD79fV1wfwU0P+hXtABgE=",
+        "credential": "dRHxDqtQSV/y5KlfbdAehgiY0AQ="}], "expiresOn": "2022-03-23T21:06:48.4662729+00:00"}'
     headers:
       api-supported-versions: 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview,
         2022-03-01-preview
       content-length: '594'
       content-type: application/json; charset=utf-8
-      date: Mon, 21 Mar 2022 17:48:24 GMT
-      ms-cv: Kt8SmtNRSUWw6Ri7Kf06/A.0
+      date: Mon, 21 Mar 2022 21:06:47 GMT
+      ms-cv: rO6SC6FasUCQC+fd2hLWtg.0
       request-context: appId=
       strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
