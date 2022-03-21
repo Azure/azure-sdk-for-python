@@ -5,31 +5,31 @@ contains some general typing tips and guidance as it relates to common types/pat
 
 ### Table of contents
 
-- [Intro to typing in Python]()
-- [Typing a client library]()
-- [Types usable in annotations]()
-- [Install and run mypy on your client library code]()
-- [Typing tips and guidance for the Python SDK]()
-    - [Debug mypy with reveal_type() and reveal_locals()]()
-    - [Use typing.Any sparingly]()
-    - [Use typing.Union when accepting more than one type]()
-    - [Use typing.Optional when a parameter default is None]()
-    - [Typing for collections]()
-        - [Mapping types]()
-        - [List]()
-        - [Tuple]()
-    - [Passing a function or a class as a parameter or return type]()
-    - [Typing variadic arguments - *args and **kwargs]()
-    - [Use forward references when the type is not defined yet]()
-    - [Use typing.overload to overload a function]()
-    - [Use typing.cast to help mypy understand a type]()
-    - [Use typing.Protocol for structural subtyping]()
-    - [Use TypeVar for generic type hinting]()
-    - [Use AnyStr when your parameter accepts both str and bytes]()
-    - [Use typing.TypeAlias when creating a type alias]()
-    - [Use TYPE_CHECKING to avoid circular imports]()
-- [How to ignore a mypy typing error]()
-- [How to opt out of mypy type checking]()
+- [Intro to typing in Python](TODO)
+- [Typing a client library](TODO)
+- [Types usable in annotations](TODO)
+- [Install and run mypy on your client library code](TODO)
+- [Typing tips and guidance for the Python SDK](TODO)
+    - [Debug mypy with reveal_type() and reveal_locals()](TODO)
+    - [Use typing.Any sparingly](TODO)
+    - [Use typing.Union when accepting more than one type](TODO)
+    - [Use typing.Optional when a parameter default is None](TODO)
+    - [Typing for collections](TODO)
+        - [Mapping types](TODO)
+        - [List](TODO)
+        - [Tuple](TODO)
+    - [Passing a function or a class as a parameter or return type](TODO)
+    - [Typing variadic arguments - *args and **kwargs](TODO)
+    - [Use forward references when the type is not defined yet](TODO)
+    - [Use typing.overload to overload a function](TODO)
+    - [Use typing.cast to help mypy understand a type](TODO)
+    - [Use typing.Protocol for structural subtyping](TODO)
+    - [Use TypeVar for generic type hinting](TODO)
+    - [Use AnyStr when your parameter accepts both str and bytes](TODO)
+    - [Use typing.TypeAlias when creating a type alias](TODO)
+    - [Use TYPE_CHECKING to avoid circular imports](TODO)
+- [How to ignore a mypy typing error](TODO)
+- [How to opt out of mypy type checking](TODO)
 
 ## Intro to typing in Python
 
@@ -127,9 +127,11 @@ or impossible given the expressiveness of Python as a language. So, in practice,
 Almost anything can be used as a type in annotations.
 
 1) Basic types like `int`, `str`, `bytes`, `float`, `bool`
-2) Classes or abstract base classes - whether user-defined, from the standard library like [collections]()
-   or [collections.abc](), or external packages
-3) Types from the [typing]() or [typing_extensions]() modules
+2) Classes or abstract base classes - whether user-defined, from the standard library
+   like [collections](https://docs.python.org/3/library/collections.html)
+   or [collections.abc](https://docs.python.org/3/library/collections.abc.html), or external packages
+3) Types from the [typing](https://docs.python.org/3/library/typing.html)
+   or [typing_extensions](https://github.com/python/typing/tree/master/typing_extensions) modules
 4) Built-in generic types, like `list` or `dict`*.
    > *Note: Support for generic types was not added until Python 3.9 (or 3.7+ with `from __future__ import annotations` import). This lets you pass in generic `list[str]` as a type hint rather than `typing.List[str]`.
 
@@ -279,7 +281,7 @@ Tips:
 A `Union` requires at least two types and is more useful with types that are not consistent with each other. For
 example, usage of `Union[int, float]` is not necessary since `int` is consistent with `float` -- just use `float`. It's
 also recommended trying to avoid having functions return `Union` types as it causes the user to need to understand/parse
-through the return value before acting on it. Sometimes this can be resolved by using an [overload]().
+through the return value before acting on it. Sometimes this can be resolved by using an [overload](TODO).
 
 ### Use typing.Optional when a parameter default is None
 
@@ -527,7 +529,7 @@ AnyStr = TypeVar('AnyStr', bytes, str)
 
 `AnyStr` can be used in functions which accept or return both bytes and str.
 
-> Note: The `TypeVar` is a generic type which restricts `AnyStr` to `bytes` or `str`. More information on [TypeVar]()
+> Note: The `TypeVar` is a generic type which restricts `AnyStr` to `bytes` or `str`. More information on [TypeVar](https://docs.python.org/3/library/typing.html#typing.TypeVar)
 
 ### Use typing.cast to help mypy understand a type
 
