@@ -1748,24 +1748,19 @@ class CheckApiVersion(BaseChecker):
             
             if node.name.endswith("Client") and node.name not in self.ignore_clients:
                 for func in node.body:
-                    if isinstance(func,astroid.FunctionDef):
+                    if node.doc:
+                        if ":keyword api_version" in node.doc or ":keyword str api_version" in node.doc:
+                            api_version = True
+                    if isinstance(func, astroid.FunctionDef):
                         if func.name == '__init__':
-                            if node.doc:
-                                kwargs_found = node.doc.split("keyword")
-                                if "api_version" in " ".join(kwargs_found[1::]):
-                                    api_version = True
-                            if func.doc:
-                                kwargs_found = func.doc.split("keyword")
-                                if "api_version" in " ".join(kwargs_found[1::]):
+                            if func.doc: 
+                                if ":keyword api_version" in func.doc or ":keyword str api_version" in func.doc:
                                     api_version = True
                             if not api_version:
                                 self.add_message(
                                     msgid="client-accepts-api-version-keyword", node=node, confidence=None
                                 )   
-                            
-
-                              
-                                
+    
       
         except AttributeError:
             logger.debug("Pylint custom checker failed to check if client takes in an optional keyword-only api_version argument.")
