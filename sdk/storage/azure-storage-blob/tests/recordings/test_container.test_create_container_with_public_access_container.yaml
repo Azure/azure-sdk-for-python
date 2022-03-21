@@ -3,7 +3,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/xml
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -11,13 +11,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.10.1 Python/3.10.2 (Windows-10-10.0.18363-SP0)
+      - azsdk-python-storage-blob/12.0.0b5 Python/3.6.3 (Windows-10-10.0.18362-SP0)
       x-ms-blob-public-access:
       - container
       x-ms-date:
-      - Tue, 15 Mar 2022 23:56:44 GMT
+      - Fri, 25 Oct 2019 17:58:39 GMT
       x-ms-version:
-      - '2021-04-10'
+      - '2019-02-02'
     method: PUT
     uri: https://storagename.blob.core.windows.net/container70e51ab2?restype=container
   response:
@@ -27,15 +27,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 15 Mar 2022 23:56:44 GMT
+      - Fri, 25 Oct 2019 17:58:38 GMT
       etag:
-      - '"0x8DA06DF75F91C95"'
+      - '"0x8D75974F7129DD8"'
       last-modified:
-      - Tue, 15 Mar 2022 23:56:45 GMT
+      - Fri, 25 Oct 2019 17:58:39 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2021-04-10'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
