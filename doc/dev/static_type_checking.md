@@ -200,10 +200,12 @@ def print_things(thing: Union[int, List[int]]) -> None:
 
 Running mypy on the above reveals the types that mypy sees:
 
-> main.py:5: note: Revealed type is "builtins.int"
-> main.py:8: note: Revealed type is "Union[builtins.int, builtins.list[builtins.int]]"
-> main.py:9: error: Item "int" of "Union[int, List[int]]" has no attribute "__iter__" (not iterable)
-> Found 1 error in 1 file (checked 1 source file)
+```cmd
+main.py:5: note: Revealed type is "builtins.int"
+main.py:8: note: Revealed type is "Union[builtins.int, builtins.list[builtins.int]]"
+main.py:9: error: Item "int" of "Union[int, List[int]]" has no attribute "__iter__" (not iterable)
+Found 1 error in 1 file (checked 1 source file)
+```
 
 These debugging functions don't need to be imported from anywhere and are only recognized by mypy - therefore you will need to remove them from code before runtime.
 
@@ -398,11 +400,12 @@ create_duck(Duck)  # OK
 ```
 
 Running mypy shows the expected (and unexpected) output:
- 
+
+```cmd
 main.py:15: error: Argument 1 to "create_duck" has incompatible type "Duck"; expected "Type[Duck]"
 main.py:17: error: Argument 1 to "make_quack" has incompatible type "Type[Duck]"; expected "Duck"
 Found 2 errors in 1 file (checked 1 source file)
-
+```
 
 ### Use typing.TypeAlias when creating a type alias
 
@@ -413,7 +416,6 @@ With PEP 613, `typing.TypeAlias` was introduced to make type aliases more obviou
 from typing_extensions import TypeAlias
 
 CredentialTypes: TypeAlias = Union[AzureKeyCredential, TokenCredential]
-
 ```
 
 This removes ambiguity for the type checker and indicates this isn't a normal variable assignment.
@@ -509,7 +511,7 @@ class TreeHouse:
         return cls()
 ```
 
-```text
+```cmd
     class TreeHouse:
   File "testing_mypy.py", line 12, in TreeHouse
     def build(cls) -> TreeHouse:
@@ -662,8 +664,10 @@ ascend(p)  # Mypy complains below
 
 Running mypy shows expected output:
 
-`main.py:23: error: Argument 1 to "ascend" has incompatible type "Penguin"; expected "SupportsFly"
-Found 1 error in 1 file (checked 1 source file)`
+```cmd
+main.py:23: error: Argument 1 to "ascend" has incompatible type "Penguin"; expected "SupportsFly"
+Found 1 error in 1 file (checked 1 source file)
+```
 
 Any type that is consistent with, or implements all the methods defined by the SupportsFly protocol, is acceptable to pass into ascend().
 A difference between Protocols and abstract classes - Protocols work at typing time while abc work at runtime.
@@ -755,9 +759,10 @@ text_result = analyze_text("my text")
 reveal_type(text_result)
 ```
 
-`main.py:36: note: Revealed type is "__main__.LanguageDetectionResult"`
-`main.py:39: note: Revealed type is "builtins.str"`
-
+```cmd
+main.py:36: note: Revealed type is "__main__.LanguageDetectionResult"
+main.py:39: note: Revealed type is "builtins.str"
+```
 
 ## How to ignore mypy errors
 
