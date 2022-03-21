@@ -5,6 +5,9 @@
 ### Features Added
 - Added support for `create_if_not_exists()` for `FileShareClient`
 
+### Bugs Fixed
+- Updated `create_share()` docstring to have the correct return-type of `None`
+
 ## 12.7.0 (2022-03-08)
 
 This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
