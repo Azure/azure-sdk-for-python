@@ -97,9 +97,9 @@ Typing is always optional and this is a good thing! Pushing to achieve full cove
 So, in practice, what should you aim to type?
 
 1) Add type hints to publicly exposed APIs in the client library. Type hints get shipped with our client libraries and provide benefit to our users.
-To ensure that type hints do get shipped in your library, follow the steps below or use the `template` library when creating a new package.
-   a) add an empty `py.typed` file to the base of your package
-   b) include the `py.typed` file in the MANIFEST.in
+   To ensure that type hints do get shipped in your library, follow the steps below or use the `template` library when creating a new package.
+       a) add an empty `py.typed` file to the base of your package
+       b) include the `py.typed` file in the MANIFEST.in
    
 2) Add type hints anywhere in the src code where unit tests are worth writing. Consider typing/mypy as "free" tests for your library so focusing typing on
 high density/important areas of the code helps in detecting bugs.
