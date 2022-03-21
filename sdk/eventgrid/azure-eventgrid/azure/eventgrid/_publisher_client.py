@@ -194,7 +194,6 @@ class EventGridPublisherClient(object):
         if not isinstance(events, list):
             events = cast(ListEventType, [events])
         content_type = kwargs.pop("content_type", "application/json; charset=utf-8")
-        channel_name = kwargs.pop('channel_name', None)
         if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
             try:
                 events = [
@@ -211,7 +210,7 @@ class EventGridPublisherClient(object):
             for event in events:
                 _eventgrid_data_typecheck(event)
         response = self._client.send_request(  # pylint: disable=protected-access
-            _build_request(self._endpoint, content_type, events, channel_name), **kwargs
+            _build_request(self._endpoint, content_type, events, **kwargs), **kwargs
         )
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         if response.status_code != 200:
