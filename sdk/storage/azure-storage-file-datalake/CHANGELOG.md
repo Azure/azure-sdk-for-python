@@ -3,16 +3,7 @@
 ## 12.6.1 (Unreleased)
 
 ### Features Added
-- Added support for `create_if_not_exists()` for the following clients:
-  - `BlobContainerClient`
-  - `FileShareClient`
-  - `QueueClient`
-  - `FileSystemClient` (datalake)
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added support for `create_if_not_exists()` for `FileSystemClient`
 
 ## 12.6.0 (2022-03-08)
 

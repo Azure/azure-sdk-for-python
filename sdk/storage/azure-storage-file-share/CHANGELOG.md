@@ -3,12 +3,7 @@
 ## 12.7.1 (Unreleased)
 
 ### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added support for `create_if_not_exists()` for `FileShareClient`
 
 ## 12.7.0 (2022-03-08)
 
