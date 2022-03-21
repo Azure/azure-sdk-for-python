@@ -23,7 +23,7 @@ import six
 from azure.core.credentials import (
     AccessToken,
     AzureSasCredential,
-    AzureNamedKeyCredential
+    AzureNamedKeyCredential,
 )
 from azure.core.utils import parse_connection_string as core_parse_connection_string
 from azure.core.pipeline.policies import RetryMode
@@ -42,8 +42,6 @@ from ._constants import (
     MGMT_STATUS_DESC,
 )
 
-#if TYPE_CHECKING:
-#from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple("_Address", "hostname path")
