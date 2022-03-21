@@ -31,11 +31,11 @@ The following code samples show common scenarios with the Azure Monitor Query cl
 
 ## _Disclaimer_
 
-_Azure SDK Python packages support for Python 2.7 is ending 01 January 2022. For more information and questions, refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_.
+_Azure SDK Python packages support for Python 2.7 has ended on 01 January 2022. For more information and questions, refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_.
 
 ## Prerequisites
 
-- Python 2.7, or 3.6 or later
+- Python  3.6 or later
 - An [Azure subscription][azure_subscription]
 - To query Logs, you need an [Azure Log Analytics workspace][azure_monitor_create_using_portal].
 - To query Metrics, you need an Azure resource of any kind (Storage Account, Key Vault, Cosmos DB, etc.).

@@ -8,7 +8,7 @@ import datetime
 import functools
 import logging
 import warnings
-from typing import Any, List, Optional, AsyncIterator, Union, Callable, TYPE_CHECKING
+from typing import Any, List, Optional, AsyncIterator, Union, Callable, TYPE_CHECKING, cast
 
 import six
 
@@ -678,6 +678,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             raise ValueError("The timeout must be greater than 0.")
         if isinstance(sequence_numbers, six.integer_types):
             sequence_numbers = [sequence_numbers]
+        sequence_numbers = cast(List[int], sequence_numbers)
         if len(sequence_numbers) == 0:
             return []  # no-op on empty list.
         await self._open()

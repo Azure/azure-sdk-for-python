@@ -88,9 +88,10 @@ class AadClient(AadClientBase):
         return build_async_pipeline(**kwargs)
 
     async def _run_pipeline(self, request: "HttpRequest", **kwargs: "Any") -> "AccessToken":
-        # remove tenant_id kwarg that could have been passed from credential's get_token method
+        # remove tenant_id and claims kwarg that could have been passed from credential's get_token method
         # tenant_id is already part of `request` at this point
         kwargs.pop("tenant_id", None)
+        kwargs.pop("claims", None)
         now = int(time.time())
         response = await self._pipeline.run(request, retry_on_methods=self._POST, **kwargs)
         return self._process_response(response, now)

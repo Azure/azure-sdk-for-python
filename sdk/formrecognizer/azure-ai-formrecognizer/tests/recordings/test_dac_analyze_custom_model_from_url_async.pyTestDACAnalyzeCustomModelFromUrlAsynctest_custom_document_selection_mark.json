@@ -1,147 +1,146 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels:build?api-version=2021-09-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels:build?api-version=2022-01-30-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "108",
+        "Content-Length": "131",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "59c8145e-5ec8-11ec-bc97-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "bff5ad62-7f0a-11ec-85e3-c8348e073d30"
       },
       "RequestBody": {
-        "modelId": "7d2e4f59-449a-41dc-8223-61f3ba2de993",
+        "modelId": "98a2419a-85cc-4334-a241-2379bcaaabc1",
+        "buildMode": "template",
         "azureBlobSource": {
           "containerUrl": "https://blob_sas_url"
         }
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "5ff3adf4-0bdd-4dea-889f-8744a19fb4fb",
+        "apim-request-id": "9c76e92b-02e7-40dd-b323-ea34a9789429",
         "Content-Length": "0",
-        "Date": "Thu, 16 Dec 2021 23:31:55 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/operations/31526670487_5ff3adf4-0bdd-4dea-889f-8744a19fb4fb?api-version=2021-09-30-preview",
+        "Date": "Thu, 27 Jan 2022 00:47:51 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/operations/31523123531_9c76e92b-02e7-40dd-b323-ea34a9789429?api-version=2022-01-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "2791"
+        "x-envoy-upstream-service-time": "2989"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/operations/31526670487_5ff3adf4-0bdd-4dea-889f-8744a19fb4fb?api-version=2021-09-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/operations/31523123531_9c76e92b-02e7-40dd-b323-ea34a9789429?api-version=2022-01-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "59c8145e-5ec8-11ec-bc97-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "bff5ad62-7f0a-11ec-85e3-c8348e073d30"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "1feabea4-636f-4433-84e8-10ff63deb949",
+        "apim-request-id": "6853f1d7-3d6b-4e16-ac14-edb41b8ae761",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Dec 2021 23:32:00 GMT",
+        "Date": "Thu, 27 Jan 2022 00:47:56 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "42"
+        "x-envoy-upstream-service-time": "83"
       },
-      "ResponseBody": [
-        "{\n",
-        "  \u0022operationId\u0022: \u002231526670487_5ff3adf4-0bdd-4dea-889f-8744a19fb4fb\u0022,\n",
-        "  \u0022kind\u0022: \u0022documentModelBuild\u0022,\n",
-        "  \u0022status\u0022: \u0022succeeded\u0022,\n",
-        "  \u0022createdDateTime\u0022: \u00222021-12-16T23:31:52Z\u0022,\n",
-        "  \u0022lastUpdatedDateTime\u0022: \u00222021-12-16T23:31:57Z\u0022,\n",
-        "  \u0022resourceLocation\u0022: \u0022https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/7d2e4f59-449a-41dc-8223-61f3ba2de993?api-version=2021-09-30-preview\u0022,\n",
-        "  \u0022percentCompleted\u0022: 100,\n",
-        "  \u0022result\u0022: {\n",
-        "    \u0022docTypes\u0022: {\n",
-        "      \u00227d2e4f59-449a-41dc-8223-61f3ba2de993\u0022: {\n",
-        "        \u0022fieldSchema\u0022: {\n",
-        "          \u0022VISA_SELECTION_MARK\u0022: {\n",
-        "            \u0022type\u0022: \u0022selectionMark\u0022\n",
-        "          },\n",
-        "          \u0022AMEX_SELECTION_MARK\u0022: {\n",
-        "            \u0022type\u0022: \u0022selectionMark\u0022\n",
-        "          },\n",
-        "          \u0022MASTERCARD_SELECTION_MARK\u0022: {\n",
-        "            \u0022type\u0022: \u0022selectionMark\u0022\n",
-        "          }\n",
-        "        },\n",
-        "        \u0022technique\u0022: \u0022fixedTemplate-2021-07-30\u0022,\n",
-        "        \u0022modelType\u0022: \u0022form\u0022,\n",
-        "        \u0022fieldConfidence\u0022: {\n",
-        "          \u0022AMEX_SELECTION_MARK\u0022: 0.95,\n",
-        "          \u0022MASTERCARD_SELECTION_MARK\u0022: 0.95,\n",
-        "          \u0022VISA_SELECTION_MARK\u0022: 0.95\n",
-        "        }\n",
-        "      }\n",
-        "    },\n",
-        "    \u0022modelId\u0022: \u00227d2e4f59-449a-41dc-8223-61f3ba2de993\u0022,\n",
-        "    \u0022createdDateTime\u0022: \u00222021-12-16T23:31:57Z\u0022\n",
-        "  }\n",
-        "}"
-      ]
+      "ResponseBody": {
+        "operationId": "31523123531_9c76e92b-02e7-40dd-b323-ea34a9789429",
+        "kind": "documentModelBuild",
+        "status": "succeeded",
+        "createdDateTime": "2022-01-27T00:47:49Z",
+        "lastUpdatedDateTime": "2022-01-27T00:47:53Z",
+        "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/98a2419a-85cc-4334-a241-2379bcaaabc1?api-version=2022-01-30-preview",
+        "percentCompleted": 100,
+        "result": {
+          "docTypes": {
+            "98a2419a-85cc-4334-a241-2379bcaaabc1": {
+              "fieldSchema": {
+                "VISA_SELECTION_MARK": {
+                  "type": "selectionMark"
+                },
+                "AMEX_SELECTION_MARK": {
+                  "type": "selectionMark"
+                },
+                "MASTERCARD_SELECTION_MARK": {
+                  "type": "selectionMark"
+                }
+              },
+              "buildMode": "template",
+              "fieldConfidence": {
+                "AMEX_SELECTION_MARK": 0.95,
+                "MASTERCARD_SELECTION_MARK": 0.95,
+                "VISA_SELECTION_MARK": 0.95
+              }
+            }
+          },
+          "modelId": "98a2419a-85cc-4334-a241-2379bcaaabc1",
+          "createdDateTime": "2022-01-27T00:47:53Z",
+          "apiVersion": "2022-01-30-preview"
+        }
+      }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/7d2e4f59-449a-41dc-8223-61f3ba2de993:analyze?stringIndexType=unicodeCodePoint\u0026api-version=2021-09-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/98a2419a-85cc-4334-a241-2379bcaaabc1:analyze?stringIndexType=unicodeCodePoint\u0026api-version=2022-01-30-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "36",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "5f22a55b-5ec8-11ec-b4af-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "c534f473-7f0a-11ec-bd30-c8348e073d30"
       },
       "RequestBody": {
         "urlSource": "https://blob_sas_url"
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "8482b53f-0af9-42ab-9308-0718ee527816",
+        "apim-request-id": "3920d31d-eebb-4c9a-b7af-f2521303d723",
         "Content-Length": "0",
-        "Date": "Thu, 16 Dec 2021 23:32:02 GMT",
-        "Operation-Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/7d2e4f59-449a-41dc-8223-61f3ba2de993/analyzeResults/8482b53f-0af9-42ab-9308-0718ee527816?api-version=2021-09-30-preview",
+        "Date": "Thu, 27 Jan 2022 00:47:57 GMT",
+        "Operation-Location": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/98a2419a-85cc-4334-a241-2379bcaaabc1/analyzeResults/3920d31d-eebb-4c9a-b7af-f2521303d723?api-version=2022-01-30-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "1209"
+        "x-envoy-upstream-service-time": "1155"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/7d2e4f59-449a-41dc-8223-61f3ba2de993/analyzeResults/8482b53f-0af9-42ab-9308-0718ee527816?api-version=2021-09-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/98a2419a-85cc-4334-a241-2379bcaaabc1/analyzeResults/3920d31d-eebb-4c9a-b7af-f2521303d723?api-version=2022-01-30-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "5f22a55b-5ec8-11ec-b4af-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.9.1 (Windows-10-10.0.19041-SP0)",
+        "x-ms-client-request-id": "c534f473-7f0a-11ec-bd30-c8348e073d30"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "3ec15bf6-74d7-4835-87a6-c60ccf74d36d",
+        "apim-request-id": "c99918af-3a67-45bf-bd55-8da7e9a1299c",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Dec 2021 23:32:07 GMT",
+        "Date": "Thu, 27 Jan 2022 00:48:03 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "388"
+        "x-envoy-upstream-service-time": "478"
       },
       "ResponseBody": {
         "status": "succeeded",
-        "createdDateTime": "2021-12-16T23:32:01Z",
-        "lastUpdatedDateTime": "2021-12-16T23:32:06Z",
+        "createdDateTime": "2022-01-27T00:47:57Z",
+        "lastUpdatedDateTime": "2022-01-27T00:48:02Z",
         "analyzeResult": {
-          "apiVersion": "2021-09-30-preview",
-          "modelId": "7d2e4f59-449a-41dc-8223-61f3ba2de993",
+          "apiVersion": "2022-01-30-preview",
+          "modelId": "98a2419a-85cc-4334-a241-2379bcaaabc1",
           "stringIndexType": "unicodeCodePoint",
-          "content": "STATE OF CALIFORNIA: CONTOSO\nBUREAU OF INSURANCE\n124 Main Street Palo Alto CA 842325\n(650)768-2322\nAUTHORIZATION OF CREDIT CARD PAYMENT\nFees owed to this Department may be paid by the use of a credit card. If you wish to pay your fee(s)\nwith your credit card, please complete this form and send it with your paperwork. Payment through\ncredit cards will not be processed without this authorization form. Please print or type clearly.\nName (company/individual for whom payment is being made) (Please Include License # and SSN/FEIN):\nContoso Insurance 54353T7A, 36-1222985\nPurpose of Payment:\nBalance on Account\nCard Type: \u2751Visa\n\u2751x AMEX\n\u2751Master Card\nI authorize Contoso Department of Professional and Financial Regulation, Bureau of Insurance\nto charge my: Visa\n4872876432425423\n____________________________\nExpiration date:\n09\n/\n21\nin the amount of: $__________________\n(Card number \u2013 Please print clearly)\n263.00\nSignature: ___________________________________________\n(must be signed by authorized person to validate)\n08\n23\n2018\n______\nForm is available on our website: www.contoso.com/insurance You may fax the form to:\n650-768-2322 or e-mail to: insurance@contoso.com\nOFFICES LOCATED AT 24 Main Street Palo Alto CA 842325\nwww.contoso.com/insurance\nContoso\nCONTOSO BANK\nName of Cardholder:\nContact persons phone #, if questions with this\nJohn Singer\nform. Telephone #: (\n425\n)\n779 3479\n-\nEmail Address:\njohnsinger@hotmail.com\nMailing Address:\n472 SE 74th ST\nCity:\nLakewood\nState:\nWA\nZip Code:\n98712\nJohn Singer\n:unselected:\n:selected:\n:unselected:",
+          "content": "STATE OF CALIFORNIA: CONTOSO\nBUREAU OF INSURANCE\n124 Main Street Palo Alto CA 842325\n(650)768-2322\nAUTHORIZATION OF CREDIT CARD PAYMENT\nFees owed to this Department may be paid by the use of a credit card. If you wish to pay your fee(s)\nwith your credit card, please complete this form and send it with your paperwork. Payment through\ncredit cards will not be processed without this authorization form. Please print or type clearly.\nName (company/individual for whom payment is being made) (Please Include License # and SSN/FEIN):\nContoso Insurance 54353T7A, 36-1222985\nPurpose of Payment:\nBalance on Account\nCard Type: \u2751Visa\n\u2751x AMEX\n\u2751Master Card\nI authorize Contoso Department of Professional and Financial Regulation, Bureau of Insurance\nto charge my: Visa\n4872876432425423\n____________________________\nExpiration date:\n09\n/\n21\nin the amount of: $__________________\n(Card number \u2013 Please print clearly)\n263.00\nSignature: ___________________________________________\n(must be signed by authorized person to validate)\n08\n23\n2018\n______\nForm is available on our website: www.contoso.com/insurance You may fax the form to:\n650-768-2322 or e-mail to: insurance@contoso.com\nOFFICES LOCATED AT 24 Main Street Palo Alto CA 842325\nwww.contoso.com/insurance\ncontoso\nCONTOSO BANK\nName of Cardholder:\nContact persons phone #, if questions with this\nJohn Singer\nform. Telephone #: (\n425\n)\n779 3479\n-\nEmail Address:\njohnsinger@hotmail.com\nMailing Address:\n472 SE 74th ST\nCity:\nLakewood\nState:\nWA\nZip Code:\n98712\nJohn Singer\n:unselected:\n:selected:\n:unselected:",
           "pages": [
             {
               "pageNumber": 1,
@@ -3427,18 +3426,18 @@
                   }
                 },
                 {
-                  "content": "Contoso",
+                  "content": "contoso",
                   "boundingBox": [
-                    0.5683,
-                    0.7066,
-                    2.3399,
-                    0.8212,
-                    2.3303,
-                    1.1936,
-                    0.5921,
-                    1.3034
+                    0.6733,
+                    0.8498,
+                    2.2492,
+                    0.826,
+                    2.2348,
+                    1.1793,
+                    0.6733,
+                    1.1793
                   ],
-                  "confidence": 0.977,
+                  "confidence": 0.98,
                   "span": {
                     "offset": 1249,
                     "length": 7
@@ -3447,16 +3446,16 @@
                 {
                   "content": "CONTOSO",
                   "boundingBox": [
-                    3.357,
-                    3.0317,
-                    4.4124,
+                    3.3857,
                     3.0269,
-                    4.4124,
-                    3.2274,
-                    3.3618,
+                    4.4171,
+                    3.0269,
+                    4.4171,
+                    3.2322,
+                    3.3857,
                     3.2322
                   ],
-                  "confidence": 0.993,
+                  "confidence": 0.994,
                   "span": {
                     "offset": 1257,
                     "length": 7
@@ -3465,16 +3464,16 @@
                 {
                   "content": "BANK",
                   "boundingBox": [
-                    4.5222,
+                    4.5413,
                     3.0269,
-                    5.1287,
-                    3.0317,
-                    5.1239,
-                    3.2274,
-                    4.5174,
-                    3.2274
+                    5.1334,
+                    3.0269,
+                    5.1382,
+                    3.2227,
+                    4.5461,
+                    3.2322
                   ],
-                  "confidence": 0.991,
+                  "confidence": 0.994,
                   "span": {
                     "offset": 1265,
                     "length": 4
@@ -4167,16 +4166,16 @@
                 {
                   "content": "John",
                   "boundingBox": [
-                    1.891,
-                    8.2595,
-                    2.4115,
-                    8.2786,
-                    2.4115,
-                    8.5412,
-                    1.891,
-                    8.5556
+                    1.9579,
+                    8.2691,
+                    2.4593,
+                    8.2643,
+                    2.4593,
+                    8.5508,
+                    1.9626,
+                    8.5651
                   ],
-                  "confidence": 0.898,
+                  "confidence": 0.817,
                   "span": {
                     "offset": 1499,
                     "length": 4
@@ -4185,16 +4184,16 @@
                 {
                   "content": "Singer",
                   "boundingBox": [
-                    2.464,
-                    8.2834,
-                    3.2138,
+                    2.5691,
+                    8.2691,
+                    3.2424,
                     8.3025,
-                    3.2138,
-                    8.5317,
-                    2.464,
-                    8.5412
+                    3.2281,
+                    8.5412,
+                    2.5643,
+                    8.546
                   ],
-                  "confidence": 0.993,
+                  "confidence": 0.983,
                   "span": {
                     "offset": 1504,
                     "length": 6
@@ -4943,16 +4942,16 @@
                   ]
                 },
                 {
-                  "content": "Contoso",
+                  "content": "contoso",
                   "boundingBox": [
-                    0.5301,
-                    0.697,
-                    2.3829,
-                    0.7018,
-                    2.3829,
-                    1.3034,
-                    0.5301,
-                    1.2986
+                    0.6685,
+                    0.8355,
+                    2.3685,
+                    0.8212,
+                    2.3733,
+                    1.1745,
+                    0.6685,
+                    1.1793
                   ],
                   "spans": [
                     {
@@ -4964,13 +4963,13 @@
                 {
                   "content": "CONTOSO BANK",
                   "boundingBox": [
-                    3.3522,
-                    3.0269,
-                    5.186,
-                    3.0269,
-                    5.186,
+                    3.3857,
+                    3.0221,
+                    5.1764,
+                    3.0221,
+                    5.1764,
                     3.2274,
-                    3.3522,
+                    3.3857,
                     3.2274
                   ],
                   "spans": [
@@ -5325,14 +5324,14 @@
                 {
                   "content": "John Singer",
                   "boundingBox": [
-                    1.8862,
+                    1.8719,
                     8.2595,
-                    3.2329,
-                    8.2691,
-                    3.2329,
-                    8.5556,
-                    1.8862,
-                    8.5508
+                    3.2376,
+                    8.2595,
+                    3.2376,
+                    8.5603,
+                    1.8719,
+                    8.5603
                   ],
                   "spans": [
                     {
@@ -5365,7 +5364,7 @@
           ],
           "documents": [
             {
-              "docType": "7d2e4f59-449a-41dc-8223-61f3ba2de993:7d2e4f59-449a-41dc-8223-61f3ba2de993",
+              "docType": "98a2419a-85cc-4334-a241-2379bcaaabc1:98a2419a-85cc-4334-a241-2379bcaaabc1",
               "boundingRegions": [
                 {
                   "pageNumber": 1,
@@ -5382,6 +5381,33 @@
                 }
               ],
               "fields": {
+                "VISA_SELECTION_MARK": {
+                  "type": "selectionMark",
+                  "valueSelectionMark": "unselected",
+                  "content": "unselected",
+                  "boundingRegions": [
+                    {
+                      "pageNumber": 1,
+                      "boundingBox": [
+                        1.615,
+                        5.43,
+                        1.7750000000000001,
+                        5.43,
+                        1.7750000000000001,
+                        5.595,
+                        1.615,
+                        5.595
+                      ]
+                    }
+                  ],
+                  "confidence": 0.95,
+                  "spans": [
+                    {
+                      "offset": 1511,
+                      "length": 12
+                    }
+                  ]
+                },
                 "MASTERCARD_SELECTION_MARK": {
                   "type": "selectionMark",
                   "valueSelectionMark": "unselected",
@@ -5433,33 +5459,6 @@
                     {
                       "offset": 1524,
                       "length": 10
-                    }
-                  ]
-                },
-                "VISA_SELECTION_MARK": {
-                  "type": "selectionMark",
-                  "valueSelectionMark": "unselected",
-                  "content": "unselected",
-                  "boundingRegions": [
-                    {
-                      "pageNumber": 1,
-                      "boundingBox": [
-                        1.615,
-                        5.43,
-                        1.7750000000000001,
-                        5.43,
-                        1.7750000000000001,
-                        5.595,
-                        1.615,
-                        5.595
-                      ]
-                    }
-                  ],
-                  "confidence": 0.95,
-                  "spans": [
-                    {
-                      "offset": 1511,
-                      "length": 12
                     }
                   ]
                 }

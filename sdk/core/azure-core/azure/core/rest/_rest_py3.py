@@ -35,7 +35,7 @@ from typing import (
     MutableMapping,
 )
 
-from ..utils._utils import _case_insensitive_dict
+from ..utils._utils import case_insensitive_dict
 
 from ._helpers import (
     ParamsType,
@@ -45,8 +45,8 @@ from ._helpers import (
     set_urlencoded_body,
     _format_parameters_helper,
     HttpRequestBackcompatMixin,
+    set_content_body,
 )
-from ._helpers_py3 import set_content_body
 
 ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 
@@ -113,7 +113,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
             files=files,
             json=json,
         )
-        self.headers = _case_insensitive_dict(default_headers)
+        self.headers = case_insensitive_dict(default_headers)
         self.headers.update(headers or {})
 
         if kwargs:

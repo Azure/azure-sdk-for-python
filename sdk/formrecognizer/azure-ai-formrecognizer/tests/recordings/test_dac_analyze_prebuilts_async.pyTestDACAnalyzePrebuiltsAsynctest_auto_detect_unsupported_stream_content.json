@@ -1,26 +1,27 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-receipt:analyze?stringIndexType=unicodeCodePoint\u0026api-version=2021-09-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-receipt:analyze?stringIndexType=unicodeCodePoint\u0026api-version=2022-01-30-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "1911",
+        "Content-Length": "1824",
         "Content-Type": "application/octet-stream",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b3 Python/3.8.5 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "68146ea0-5ecc-11ec-87e0-c8348e073d30"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "723e2d0d-901a-11ec-8eef-b831b58100e8"
       },
-      "RequestBody": "DQojIGNvZGluZzogdXRmLTgNCiMgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KIyBDb3B5cmlnaHQgKGMpIE1pY3Jvc29mdCBDb3Jwb3JhdGlvbi4gQWxsIHJpZ2h0cyByZXNlcnZlZC4NCiMgTGljZW5zZWQgdW5kZXIgdGhlIE1JVCBMaWNlbnNlLiBTZWUgTGljZW5zZS50eHQgaW4gdGhlIHByb2plY3Qgcm9vdCBmb3INCiMgbGljZW5zZSBpbmZvcm1hdGlvbi4NCiMgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCg0KaW1wb3J0IHB5dGVzdA0KaW1wb3J0IHN5cw0KZnJvbSBkZXZ0b29sc190ZXN0dXRpbHMgaW1wb3J0IGFkZF9yZW1vdmVfaGVhZGVyX3Nhbml0aXplciwgYWRkX2dlbmVyYWxfcmVnZXhfc2FuaXRpemVyLCBhZGRfb2F1dGhfcmVzcG9uc2Vfc2FuaXRpemVyLCBhZGRfYm9keV9rZXlfc2FuaXRpemVyLCB0ZXN0X3Byb3h5DQoNCiMgSWdub3JlIGFzeW5jIHRlc3RzIGZvciBQeXRob24gPCAzLjYNCmNvbGxlY3RfaWdub3JlX2dsb2IgPSBbXQ0KaWYgc3lzLnZlcnNpb25faW5mbyA8ICgzLCA2KToNCiAgICBjb2xsZWN0X2lnbm9yZV9nbG9iLmFwcGVuZCgiKl9hc3luYy5weSIpDQoNCiMgYXV0b3VzZT1UcnVlIHdpbGwgdHJpZ2dlciB0aGlzIGZpeHR1cmUgb24gZWFjaCBweXRlc3QgcnVuLCBldmVuIGlmIGl0J3Mgbm90IGV4cGxpY2l0bHkgdXNlZCBieSBhIHRlc3QgbWV0aG9kDQojIEBweXRlc3QuZml4dHVyZShzY29wZT0ic2Vzc2lvbiIsIGF1dG91c2U9VHJ1ZSkNCiMgZGVmIHN0YXJ0X3Byb3h5KHRlc3RfcHJveHkpOg0KIyAgICAgcmV0dXJuDQoNCkBweXRlc3QuZml4dHVyZShzY29wZT0ic2Vzc2lvbiIsIGF1dG91c2U9VHJ1ZSkNCmRlZiBhZGRfc2FuaXRpemVycyh0ZXN0X3Byb3h5KToNCiAgICBhZGRfcmVtb3ZlX2hlYWRlcl9zYW5pdGl6ZXIoaGVhZGVycz0iT2NwLUFwaW0tU3Vic2NyaXB0aW9uLUtleSIpDQogICAgYWRkX2dlbmVyYWxfcmVnZXhfc2FuaXRpemVyKA0KICAgICAgICB2YWx1ZT0iZmFrZWVuZHBvaW50IiwNCiAgICAgICAgcmVnZXg9Iig/PD1cXC9cXC8pW2Etei1dKyg/PVxcLmNvZ25pdGl2ZXNlcnZpY2VzXFwuYXp1cmVcXC5jb20pIg0KICAgICkNCiAgICBhZGRfb2F1dGhfcmVzcG9uc2Vfc2FuaXRpemVyKCkNCiAgICBhZGRfYm9keV9rZXlfc2FuaXRpemVyKA0KICAgICAgICBqc29uX3BhdGg9InVybFNvdXJjZSIsDQogICAgICAgIHZhbHVlPSJibG9iX3Nhc191cmwiLA0KICAgICAgICByZWdleD0iKD88PVxcL1xcLylbYS16LV0rKD89XFwuYmxvYlxcLmNvcmVcXC53aW5kb3dzXFwubmV0KSguKikkIiwNCiAgICApDQogICAgYWRkX2JvZHlfa2V5X3Nhbml0aXplcigNCiAgICAgICAganNvbl9wYXRoPSJhenVyZUJsb2JTb3VyY2UuY29udGFpbmVyVXJsIiwNCiAgICAgICAgdmFsdWU9ImJsb2Jfc2FzX3VybCIsDQogICAgICAgIHJlZ2V4PSIoPzw9XFwvXFwvKVthLXotXSsoPz1cXC5ibG9iXFwuY29yZVxcLndpbmRvd3NcXC5uZXQpKC4qKSQiLA0KICAgICkNCiAgICBhZGRfYm9keV9rZXlfc2FuaXRpemVyKA0KICAgICAgICBqc29uX3BhdGg9InNvdXJjZSIsDQogICAgICAgIHZhbHVlPSJibG9iX3Nhc191cmwiLA0KICAgICAgICByZWdleD0iKD88PVxcL1xcLylbYS16LV0rKD89XFwuYmxvYlxcLmNvcmVcXC53aW5kb3dzXFwubmV0KSguKikkIiwNCiAgICApDQogICAgYWRkX2JvZHlfa2V5X3Nhbml0aXplcigNCiAgICAgICAganNvbl9wYXRoPSJhY2Nlc3NUb2tlbiIsDQogICAgICAgIHZhbHVlPSJyZWRhY3RlZCIsDQogICAgICAgIGdyb3VwX2Zvcl9yZXBsYWNlPSIoXCJhY2Nlc3NUb2tlblwiOiBcIihbMC05YS16LV0qKVwiKSIsDQogICAgKQ0K",
+      "RequestBody": "DQojIGNvZGluZzogdXRmLTgNCiMgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KIyBDb3B5cmlnaHQgKGMpIE1pY3Jvc29mdCBDb3Jwb3JhdGlvbi4gQWxsIHJpZ2h0cyByZXNlcnZlZC4NCiMgTGljZW5zZWQgdW5kZXIgdGhlIE1JVCBMaWNlbnNlLiBTZWUgTGljZW5zZS50eHQgaW4gdGhlIHByb2plY3Qgcm9vdCBmb3INCiMgbGljZW5zZSBpbmZvcm1hdGlvbi4NCiMgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCg0KaW1wb3J0IHB5dGVzdA0KaW1wb3J0IHN5cw0KZnJvbSBkZXZ0b29sc190ZXN0dXRpbHMgaW1wb3J0IGFkZF9yZW1vdmVfaGVhZGVyX3Nhbml0aXplciwgYWRkX2dlbmVyYWxfcmVnZXhfc2FuaXRpemVyLCBhZGRfb2F1dGhfcmVzcG9uc2Vfc2FuaXRpemVyLCBhZGRfYm9keV9rZXlfc2FuaXRpemVyLCB0ZXN0X3Byb3h5DQoNCiMgSWdub3JlIGFzeW5jIHRlc3RzIGZvciBQeXRob24gPCAzLjYNCmNvbGxlY3RfaWdub3JlX2dsb2IgPSBbXQ0KaWYgc3lzLnZlcnNpb25faW5mbyA8ICgzLCA2KToNCiAgICBjb2xsZWN0X2lnbm9yZV9nbG9iLmFwcGVuZCgiKl9hc3luYy5weSIpDQoNCkBweXRlc3QuZml4dHVyZShzY29wZT0ic2Vzc2lvbiIsIGF1dG91c2U9VHJ1ZSkNCmRlZiBhZGRfc2FuaXRpemVycyh0ZXN0X3Byb3h5KToNCiAgICBhZGRfcmVtb3ZlX2hlYWRlcl9zYW5pdGl6ZXIoaGVhZGVycz0iT2NwLUFwaW0tU3Vic2NyaXB0aW9uLUtleSIpDQogICAgYWRkX2dlbmVyYWxfcmVnZXhfc2FuaXRpemVyKA0KICAgICAgICB2YWx1ZT0iZmFrZWVuZHBvaW50IiwNCiAgICAgICAgcmVnZXg9Iig/PD1cXC9cXC8pW2Etei1dKyg/PVxcLmNvZ25pdGl2ZXNlcnZpY2VzXFwuYXp1cmVcXC5jb20pIg0KICAgICkNCiAgICBhZGRfb2F1dGhfcmVzcG9uc2Vfc2FuaXRpemVyKCkNCiAgICBhZGRfYm9keV9rZXlfc2FuaXRpemVyKA0KICAgICAgICBqc29uX3BhdGg9InVybFNvdXJjZSIsDQogICAgICAgIHZhbHVlPSJibG9iX3Nhc191cmwiLA0KICAgICAgICByZWdleD0iKD88PVxcL1xcLylbYS16LV0rKD89XFwuYmxvYlxcLmNvcmVcXC53aW5kb3dzXFwubmV0KSguKikkIiwNCiAgICApDQogICAgYWRkX2JvZHlfa2V5X3Nhbml0aXplcigNCiAgICAgICAganNvbl9wYXRoPSJhenVyZUJsb2JTb3VyY2UuY29udGFpbmVyVXJsIiwNCiAgICAgICAgdmFsdWU9ImJsb2Jfc2FzX3VybCIsDQogICAgICAgIHJlZ2V4PSIoPzw9XFwvXFwvKVthLXotXSsoPz1cXC5ibG9iXFwuY29yZVxcLndpbmRvd3NcXC5uZXQpKC4qKSQiLA0KICAgICkNCiAgICBhZGRfYm9keV9rZXlfc2FuaXRpemVyKA0KICAgICAgICBqc29uX3BhdGg9InNvdXJjZSIsDQogICAgICAgIHZhbHVlPSJibG9iX3Nhc191cmwiLA0KICAgICAgICByZWdleD0iKD88PVxcL1xcLylbYS16LV0rKD89XFwuYmxvYlxcLmNvcmVcXC53aW5kb3dzXFwubmV0KSguKikkIiwNCiAgICApDQogICAgYWRkX2JvZHlfa2V5X3Nhbml0aXplcigNCiAgICAgICAganNvbl9wYXRoPSJhY2Nlc3NUb2tlbiIsDQogICAgICAgIHZhbHVlPSJyZWRhY3RlZCIsDQogICAgICAgIHJlZ2V4PSIoWzAtOWEtZi1dezM2fSkiLA0KICAgICkNCiAgICANCiAgICBhZGRfYm9keV9rZXlfc2FuaXRpemVyKA0KICAgICAgICBqc29uX3BhdGg9ImNvcHlBdXRob3JpemF0aW9uLmFjY2Vzc1Rva2VuIiwNCiAgICAgICAgdmFsdWU9InJlZGFjdGVkIiwNCiAgICAgICAgcmVnZXg9IihbMC05YS1mLV17MzZ9KSIsDQogICAgKQ0K",
       "StatusCode": 400,
       "ResponseHeaders": {
-        "apim-request-id": "7ef9bc85-e0df-4ab1-b511-dd6cd82fd97e",
+        "apim-request-id": "e07c09af-c9de-4644-aadd-aeccf232b30b",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Dec 2021 00:00:54 GMT",
+        "Date": "Thu, 17 Feb 2022 17:52:59 GMT",
+        "Server": "istio-envoy",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "10"
+        "x-envoy-upstream-service-time": "8"
       },
       "ResponseBody": {
         "error": {

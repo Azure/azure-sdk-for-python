@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -21,26 +21,21 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_get_request(
-    vault_name,  # type: str
-    resource_group_name,  # type: str
-    subscription_id,  # type: str
-    policy_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-10-01"
+    vault_name: str,
+    resource_group_name: str,
+    subscription_id: str,
+    policy_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupPolicies/{policyName}')
@@ -71,16 +66,18 @@ def build_get_request(
 
 
 def build_create_or_update_request(
-    vault_name,  # type: str
-    resource_group_name,  # type: str
-    subscription_id,  # type: str
-    policy_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    vault_name: str,
+    resource_group_name: str,
+    subscription_id: str,
+    policy_name: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
-    api_version = "2021-10-01"
+    api_version = "2021-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupPolicies/{policyName}')
@@ -108,19 +105,20 @@ def build_create_or_update_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_delete_request_initial(
-    vault_name,  # type: str
-    resource_group_name,  # type: str
-    subscription_id,  # type: str
-    policy_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
-    api_version = "2021-10-01"
+    vault_name: str,
+    resource_group_name: str,
+    subscription_id: str,
+    policy_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2021-12-01"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupPolicies/{policyName}')
@@ -149,7 +147,6 @@ def build_delete_request_initial(
         **kwargs
     )
 
-# fmt: on
 class ProtectionPoliciesOperations(object):
     """ProtectionPoliciesOperations operations.
 
@@ -175,12 +172,11 @@ class ProtectionPoliciesOperations(object):
     @distributed_trace
     def get(
         self,
-        vault_name,  # type: str
-        resource_group_name,  # type: str
-        policy_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.ProtectionPolicyResource"
+        vault_name: str,
+        resource_group_name: str,
+        policy_name: str,
+        **kwargs: Any
+    ) -> "_models.ProtectionPolicyResource":
         """Provides the details of the backup policies associated to Recovery Services Vault. This is an
         asynchronous
         operation. Status of the operation can be fetched using GetPolicyOperationResult API.
@@ -234,13 +230,12 @@ class ProtectionPoliciesOperations(object):
     @distributed_trace
     def create_or_update(
         self,
-        vault_name,  # type: str
-        resource_group_name,  # type: str
-        policy_name,  # type: str
-        parameters,  # type: "_models.ProtectionPolicyResource"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional["_models.ProtectionPolicyResource"]
+        vault_name: str,
+        resource_group_name: str,
+        policy_name: str,
+        parameters: "_models.ProtectionPolicyResource",
+        **kwargs: Any
+    ) -> Optional["_models.ProtectionPolicyResource"]:
         """Creates or modifies a backup policy. This is an asynchronous operation. Status of the operation
         can be fetched
         using GetPolicyOperationResult API.
@@ -303,12 +298,11 @@ class ProtectionPoliciesOperations(object):
 
     def _delete_initial(
         self,
-        vault_name,  # type: str
-        resource_group_name,  # type: str
-        policy_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        vault_name: str,
+        resource_group_name: str,
+        policy_name: str,
+        **kwargs: Any
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -342,12 +336,11 @@ class ProtectionPoliciesOperations(object):
     @distributed_trace
     def begin_delete(
         self,
-        vault_name,  # type: str
-        resource_group_name,  # type: str
-        policy_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        vault_name: str,
+        resource_group_name: str,
+        policy_name: str,
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Deletes specified backup policy from your Recovery Services Vault. This is an asynchronous
         operation. Status of the
         operation can be fetched using GetProtectionPolicyOperationResult API.

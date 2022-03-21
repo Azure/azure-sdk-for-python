@@ -20,16 +20,16 @@ class AnalyzeOperationResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param status: Required. Operation status. Possible values include: "notStarted", "running",
+    :ivar status: Required. Operation status. Possible values include: "notStarted", "running",
      "succeeded", "failed".
-    :type status: str or ~azure.ai.formrecognizer.v2_0.models.OperationStatus
-    :param created_date_time: Required. Date and time (UTC) when the analyze operation was
+    :vartype status: str or ~azure.ai.formrecognizer.v2_0.models.OperationStatus
+    :ivar created_date_time: Required. Date and time (UTC) when the analyze operation was
      submitted.
-    :type created_date_time: ~datetime.datetime
-    :param last_updated_date_time: Required. Date and time (UTC) when the status was last updated.
-    :type last_updated_date_time: ~datetime.datetime
-    :param analyze_result: Results of the analyze operation.
-    :type analyze_result: ~azure.ai.formrecognizer.v2_0.models.AnalyzeResult
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_updated_date_time: Required. Date and time (UTC) when the status was last updated.
+    :vartype last_updated_date_time: ~datetime.datetime
+    :ivar analyze_result: Results of the analyze operation.
+    :vartype analyze_result: ~azure.ai.formrecognizer.v2_0.models.AnalyzeResult
     """
 
     _validation = {
@@ -54,6 +54,19 @@ class AnalyzeOperationResult(msrest.serialization.Model):
         analyze_result: Optional["AnalyzeResult"] = None,
         **kwargs
     ):
+        """
+        :keyword status: Required. Operation status. Possible values include: "notStarted", "running",
+         "succeeded", "failed".
+        :paramtype status: str or ~azure.ai.formrecognizer.v2_0.models.OperationStatus
+        :keyword created_date_time: Required. Date and time (UTC) when the analyze operation was
+         submitted.
+        :paramtype created_date_time: ~datetime.datetime
+        :keyword last_updated_date_time: Required. Date and time (UTC) when the status was last
+         updated.
+        :paramtype last_updated_date_time: ~datetime.datetime
+        :keyword analyze_result: Results of the analyze operation.
+        :paramtype analyze_result: ~azure.ai.formrecognizer.v2_0.models.AnalyzeResult
+        """
         super(AnalyzeOperationResult, self).__init__(**kwargs)
         self.status = status
         self.created_date_time = created_date_time
@@ -66,16 +79,16 @@ class AnalyzeResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: Required. Version of schema used for this result.
-    :type version: str
-    :param read_results: Required. Text extracted from the input.
-    :type read_results: list[~azure.ai.formrecognizer.v2_0.models.ReadResult]
-    :param page_results: Page-level information extracted from the input.
-    :type page_results: list[~azure.ai.formrecognizer.v2_0.models.PageResult]
-    :param document_results: Document-level information extracted from the input.
-    :type document_results: list[~azure.ai.formrecognizer.v2_0.models.DocumentResult]
-    :param errors: List of errors reported during the analyze operation.
-    :type errors: list[~azure.ai.formrecognizer.v2_0.models.ErrorInformation]
+    :ivar version: Required. Version of schema used for this result.
+    :vartype version: str
+    :ivar read_results: Required. Text extracted from the input.
+    :vartype read_results: list[~azure.ai.formrecognizer.v2_0.models.ReadResult]
+    :ivar page_results: Page-level information extracted from the input.
+    :vartype page_results: list[~azure.ai.formrecognizer.v2_0.models.PageResult]
+    :ivar document_results: Document-level information extracted from the input.
+    :vartype document_results: list[~azure.ai.formrecognizer.v2_0.models.DocumentResult]
+    :ivar errors: List of errors reported during the analyze operation.
+    :vartype errors: list[~azure.ai.formrecognizer.v2_0.models.ErrorInformation]
     """
 
     _validation = {
@@ -101,6 +114,18 @@ class AnalyzeResult(msrest.serialization.Model):
         errors: Optional[List["ErrorInformation"]] = None,
         **kwargs
     ):
+        """
+        :keyword version: Required. Version of schema used for this result.
+        :paramtype version: str
+        :keyword read_results: Required. Text extracted from the input.
+        :paramtype read_results: list[~azure.ai.formrecognizer.v2_0.models.ReadResult]
+        :keyword page_results: Page-level information extracted from the input.
+        :paramtype page_results: list[~azure.ai.formrecognizer.v2_0.models.PageResult]
+        :keyword document_results: Document-level information extracted from the input.
+        :paramtype document_results: list[~azure.ai.formrecognizer.v2_0.models.DocumentResult]
+        :keyword errors: List of errors reported during the analyze operation.
+        :paramtype errors: list[~azure.ai.formrecognizer.v2_0.models.ErrorInformation]
+        """
         super(AnalyzeResult, self).__init__(**kwargs)
         self.version = version
         self.read_results = read_results
@@ -114,13 +139,13 @@ class CopyAuthorizationResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param model_id: Required. Model identifier.
-    :type model_id: str
-    :param access_token: Required. Token claim used to authorize the request.
-    :type access_token: str
-    :param expiration_date_time_ticks: Required. The time when the access token expires. The date
-     is represented as the number of seconds from 1970-01-01T0:0:0Z UTC until the expiration time.
-    :type expiration_date_time_ticks: long
+    :ivar model_id: Required. Model identifier.
+    :vartype model_id: str
+    :ivar access_token: Required. Token claim used to authorize the request.
+    :vartype access_token: str
+    :ivar expiration_date_time_ticks: Required. The time when the access token expires. The date is
+     represented as the number of seconds from 1970-01-01T0:0:0Z UTC until the expiration time.
+    :vartype expiration_date_time_ticks: long
     """
 
     _validation = {
@@ -143,6 +168,15 @@ class CopyAuthorizationResult(msrest.serialization.Model):
         expiration_date_time_ticks: int,
         **kwargs
     ):
+        """
+        :keyword model_id: Required. Model identifier.
+        :paramtype model_id: str
+        :keyword access_token: Required. Token claim used to authorize the request.
+        :paramtype access_token: str
+        :keyword expiration_date_time_ticks: Required. The time when the access token expires. The date
+         is represented as the number of seconds from 1970-01-01T0:0:0Z UTC until the expiration time.
+        :paramtype expiration_date_time_ticks: long
+        """
         super(CopyAuthorizationResult, self).__init__(**kwargs)
         self.model_id = model_id
         self.access_token = access_token
@@ -154,15 +188,15 @@ class CopyOperationResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param status: Required. Operation status. Possible values include: "notStarted", "running",
+    :ivar status: Required. Operation status. Possible values include: "notStarted", "running",
      "succeeded", "failed".
-    :type status: str or ~azure.ai.formrecognizer.v2_0.models.OperationStatus
-    :param created_date_time: Required. Date and time (UTC) when the copy operation was submitted.
-    :type created_date_time: ~datetime.datetime
-    :param last_updated_date_time: Required. Date and time (UTC) when the status was last updated.
-    :type last_updated_date_time: ~datetime.datetime
-    :param copy_result: Results of the copy operation.
-    :type copy_result: ~azure.ai.formrecognizer.v2_0.models.CopyResult
+    :vartype status: str or ~azure.ai.formrecognizer.v2_0.models.OperationStatus
+    :ivar created_date_time: Required. Date and time (UTC) when the copy operation was submitted.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_updated_date_time: Required. Date and time (UTC) when the status was last updated.
+    :vartype last_updated_date_time: ~datetime.datetime
+    :ivar copy_result: Results of the copy operation.
+    :vartype copy_result: ~azure.ai.formrecognizer.v2_0.models.CopyResult
     """
 
     _validation = {
@@ -187,6 +221,19 @@ class CopyOperationResult(msrest.serialization.Model):
         copy_result: Optional["CopyResult"] = None,
         **kwargs
     ):
+        """
+        :keyword status: Required. Operation status. Possible values include: "notStarted", "running",
+         "succeeded", "failed".
+        :paramtype status: str or ~azure.ai.formrecognizer.v2_0.models.OperationStatus
+        :keyword created_date_time: Required. Date and time (UTC) when the copy operation was
+         submitted.
+        :paramtype created_date_time: ~datetime.datetime
+        :keyword last_updated_date_time: Required. Date and time (UTC) when the status was last
+         updated.
+        :paramtype last_updated_date_time: ~datetime.datetime
+        :keyword copy_result: Results of the copy operation.
+        :paramtype copy_result: ~azure.ai.formrecognizer.v2_0.models.CopyResult
+        """
         super(CopyOperationResult, self).__init__(**kwargs)
         self.status = status
         self.created_date_time = created_date_time
@@ -199,14 +246,14 @@ class CopyRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param target_resource_id: Required. Azure Resource Id of the target Form Recognizer resource
+    :ivar target_resource_id: Required. Azure Resource Id of the target Form Recognizer resource
      where the model is copied to.
-    :type target_resource_id: str
-    :param target_resource_region: Required. Location of the target Azure resource. A valid Azure
+    :vartype target_resource_id: str
+    :ivar target_resource_region: Required. Location of the target Azure resource. A valid Azure
      region name supported by Cognitive Services.
-    :type target_resource_region: str
-    :param copy_authorization: Required. Entity that encodes claims to authorize the copy request.
-    :type copy_authorization: ~azure.ai.formrecognizer.v2_0.models.CopyAuthorizationResult
+    :vartype target_resource_region: str
+    :ivar copy_authorization: Required. Entity that encodes claims to authorize the copy request.
+    :vartype copy_authorization: ~azure.ai.formrecognizer.v2_0.models.CopyAuthorizationResult
     """
 
     _validation = {
@@ -229,6 +276,17 @@ class CopyRequest(msrest.serialization.Model):
         copy_authorization: "CopyAuthorizationResult",
         **kwargs
     ):
+        """
+        :keyword target_resource_id: Required. Azure Resource Id of the target Form Recognizer resource
+         where the model is copied to.
+        :paramtype target_resource_id: str
+        :keyword target_resource_region: Required. Location of the target Azure resource. A valid Azure
+         region name supported by Cognitive Services.
+        :paramtype target_resource_region: str
+        :keyword copy_authorization: Required. Entity that encodes claims to authorize the copy
+         request.
+        :paramtype copy_authorization: ~azure.ai.formrecognizer.v2_0.models.CopyAuthorizationResult
+        """
         super(CopyRequest, self).__init__(**kwargs)
         self.target_resource_id = target_resource_id
         self.target_resource_region = target_resource_region
@@ -240,10 +298,10 @@ class CopyResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param model_id: Required. Identifier of the target model.
-    :type model_id: str
-    :param errors: Errors returned during the copy operation.
-    :type errors: list[~azure.ai.formrecognizer.v2_0.models.ErrorInformation]
+    :ivar model_id: Required. Identifier of the target model.
+    :vartype model_id: str
+    :ivar errors: Errors returned during the copy operation.
+    :vartype errors: list[~azure.ai.formrecognizer.v2_0.models.ErrorInformation]
     """
 
     _validation = {
@@ -262,6 +320,12 @@ class CopyResult(msrest.serialization.Model):
         errors: Optional[List["ErrorInformation"]] = None,
         **kwargs
     ):
+        """
+        :keyword model_id: Required. Identifier of the target model.
+        :paramtype model_id: str
+        :keyword errors: Errors returned during the copy operation.
+        :paramtype errors: list[~azure.ai.formrecognizer.v2_0.models.ErrorInformation]
+        """
         super(CopyResult, self).__init__(**kwargs)
         self.model_id = model_id
         self.errors = errors
@@ -272,12 +336,12 @@ class DataTable(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param rows: Required. Number of rows.
-    :type rows: int
-    :param columns: Required. Number of columns.
-    :type columns: int
-    :param cells: Required. List of cells contained in the table.
-    :type cells: list[~azure.ai.formrecognizer.v2_0.models.DataTableCell]
+    :ivar rows: Required. Number of rows.
+    :vartype rows: int
+    :ivar columns: Required. Number of columns.
+    :vartype columns: int
+    :ivar cells: Required. List of cells contained in the table.
+    :vartype cells: list[~azure.ai.formrecognizer.v2_0.models.DataTableCell]
     """
 
     _validation = {
@@ -300,6 +364,14 @@ class DataTable(msrest.serialization.Model):
         cells: List["DataTableCell"],
         **kwargs
     ):
+        """
+        :keyword rows: Required. Number of rows.
+        :paramtype rows: int
+        :keyword columns: Required. Number of columns.
+        :paramtype columns: int
+        :keyword cells: Required. List of cells contained in the table.
+        :paramtype cells: list[~azure.ai.formrecognizer.v2_0.models.DataTableCell]
+        """
         super(DataTable, self).__init__(**kwargs)
         self.rows = rows
         self.columns = columns
@@ -311,27 +383,27 @@ class DataTableCell(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param row_index: Required. Row index of the cell.
-    :type row_index: int
-    :param column_index: Required. Column index of the cell.
-    :type column_index: int
-    :param row_span: Number of rows spanned by this cell.
-    :type row_span: int
-    :param column_span: Number of columns spanned by this cell.
-    :type column_span: int
-    :param text: Required. Text content of the cell.
-    :type text: str
-    :param bounding_box: Required. Bounding box of the cell.
-    :type bounding_box: list[float]
-    :param confidence: Required. Confidence value.
-    :type confidence: float
-    :param elements: When includeTextDetails is set to true, a list of references to the text
+    :ivar row_index: Required. Row index of the cell.
+    :vartype row_index: int
+    :ivar column_index: Required. Column index of the cell.
+    :vartype column_index: int
+    :ivar row_span: Number of rows spanned by this cell.
+    :vartype row_span: int
+    :ivar column_span: Number of columns spanned by this cell.
+    :vartype column_span: int
+    :ivar text: Required. Text content of the cell.
+    :vartype text: str
+    :ivar bounding_box: Required. Bounding box of the cell.
+    :vartype bounding_box: list[float]
+    :ivar confidence: Required. Confidence value.
+    :vartype confidence: float
+    :ivar elements: When includeTextDetails is set to true, a list of references to the text
      elements constituting this table cell.
-    :type elements: list[str]
-    :param is_header: Is the current cell a header cell?.
-    :type is_header: bool
-    :param is_footer: Is the current cell a footer cell?.
-    :type is_footer: bool
+    :vartype elements: list[str]
+    :ivar is_header: Is the current cell a header cell?.
+    :vartype is_header: bool
+    :ivar is_footer: Is the current cell a footer cell?.
+    :vartype is_footer: bool
     """
 
     _validation = {
@@ -372,6 +444,29 @@ class DataTableCell(msrest.serialization.Model):
         is_footer: Optional[bool] = False,
         **kwargs
     ):
+        """
+        :keyword row_index: Required. Row index of the cell.
+        :paramtype row_index: int
+        :keyword column_index: Required. Column index of the cell.
+        :paramtype column_index: int
+        :keyword row_span: Number of rows spanned by this cell.
+        :paramtype row_span: int
+        :keyword column_span: Number of columns spanned by this cell.
+        :paramtype column_span: int
+        :keyword text: Required. Text content of the cell.
+        :paramtype text: str
+        :keyword bounding_box: Required. Bounding box of the cell.
+        :paramtype bounding_box: list[float]
+        :keyword confidence: Required. Confidence value.
+        :paramtype confidence: float
+        :keyword elements: When includeTextDetails is set to true, a list of references to the text
+         elements constituting this table cell.
+        :paramtype elements: list[str]
+        :keyword is_header: Is the current cell a header cell?.
+        :paramtype is_header: bool
+        :keyword is_footer: Is the current cell a footer cell?.
+        :paramtype is_footer: bool
+        """
         super(DataTableCell, self).__init__(**kwargs)
         self.row_index = row_index
         self.column_index = column_index
@@ -390,12 +485,12 @@ class DocumentResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param doc_type: Required. Document type.
-    :type doc_type: str
-    :param page_range: Required. First and last page number where the document is found.
-    :type page_range: list[int]
-    :param fields: Required. Dictionary of named field values.
-    :type fields: dict[str, ~azure.ai.formrecognizer.v2_0.models.FieldValue]
+    :ivar doc_type: Required. Document type.
+    :vartype doc_type: str
+    :ivar page_range: Required. First and last page number where the document is found.
+    :vartype page_range: list[int]
+    :ivar fields: Required. Dictionary of named field values.
+    :vartype fields: dict[str, ~azure.ai.formrecognizer.v2_0.models.FieldValue]
     """
 
     _validation = {
@@ -418,6 +513,14 @@ class DocumentResult(msrest.serialization.Model):
         fields: Dict[str, "FieldValue"],
         **kwargs
     ):
+        """
+        :keyword doc_type: Required. Document type.
+        :paramtype doc_type: str
+        :keyword page_range: Required. First and last page number where the document is found.
+        :paramtype page_range: list[int]
+        :keyword fields: Required. Dictionary of named field values.
+        :paramtype fields: dict[str, ~azure.ai.formrecognizer.v2_0.models.FieldValue]
+        """
         super(DocumentResult, self).__init__(**kwargs)
         self.doc_type = doc_type
         self.page_range = page_range
@@ -429,10 +532,10 @@ class ErrorInformation(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required.
-    :type code: str
-    :param message: Required.
-    :type message: str
+    :ivar code: Required.
+    :vartype code: str
+    :ivar message: Required.
+    :vartype message: str
     """
 
     _validation = {
@@ -452,6 +555,12 @@ class ErrorInformation(msrest.serialization.Model):
         message: str,
         **kwargs
     ):
+        """
+        :keyword code: Required.
+        :paramtype code: str
+        :keyword message: Required.
+        :paramtype message: str
+        """
         super(ErrorInformation, self).__init__(**kwargs)
         self.code = code
         self.message = message
@@ -462,8 +571,8 @@ class ErrorResponse(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param error: Required.
-    :type error: ~azure.ai.formrecognizer.v2_0.models.ErrorInformation
+    :ivar error: Required.
+    :vartype error: ~azure.ai.formrecognizer.v2_0.models.ErrorInformation
     """
 
     _validation = {
@@ -480,6 +589,10 @@ class ErrorResponse(msrest.serialization.Model):
         error: "ErrorInformation",
         **kwargs
     ):
+        """
+        :keyword error: Required.
+        :paramtype error: ~azure.ai.formrecognizer.v2_0.models.ErrorInformation
+        """
         super(ErrorResponse, self).__init__(**kwargs)
         self.error = error
 
@@ -489,36 +602,36 @@ class FieldValue(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type of field value. Possible values include: "string", "date", "time",
+    :ivar type: Required. Type of field value. Possible values include: "string", "date", "time",
      "phoneNumber", "number", "integer", "array", "object".
-    :type type: str or ~azure.ai.formrecognizer.v2_0.models.FieldValueType
-    :param value_string: String value.
-    :type value_string: str
-    :param value_date: Date value.
-    :type value_date: ~datetime.date
-    :param value_time: Time value.
-    :type value_time: ~datetime.time
-    :param value_phone_number: Phone number value.
-    :type value_phone_number: str
-    :param value_number: Floating point value.
-    :type value_number: float
-    :param value_integer: Integer value.
-    :type value_integer: int
-    :param value_array: Array of field values.
-    :type value_array: list[~azure.ai.formrecognizer.v2_0.models.FieldValue]
-    :param value_object: Dictionary of named field values.
-    :type value_object: dict[str, ~azure.ai.formrecognizer.v2_0.models.FieldValue]
-    :param text: Text content of the extracted field.
-    :type text: str
-    :param bounding_box: Bounding box of the field value, if appropriate.
-    :type bounding_box: list[float]
-    :param confidence: Confidence score.
-    :type confidence: float
-    :param elements: When includeTextDetails is set to true, a list of references to the text
+    :vartype type: str or ~azure.ai.formrecognizer.v2_0.models.FieldValueType
+    :ivar value_string: String value.
+    :vartype value_string: str
+    :ivar value_date: Date value.
+    :vartype value_date: ~datetime.date
+    :ivar value_time: Time value.
+    :vartype value_time: ~datetime.time
+    :ivar value_phone_number: Phone number value.
+    :vartype value_phone_number: str
+    :ivar value_number: Floating point value.
+    :vartype value_number: float
+    :ivar value_integer: Integer value.
+    :vartype value_integer: int
+    :ivar value_array: Array of field values.
+    :vartype value_array: list[~azure.ai.formrecognizer.v2_0.models.FieldValue]
+    :ivar value_object: Dictionary of named field values.
+    :vartype value_object: dict[str, ~azure.ai.formrecognizer.v2_0.models.FieldValue]
+    :ivar text: Text content of the extracted field.
+    :vartype text: str
+    :ivar bounding_box: Bounding box of the field value, if appropriate.
+    :vartype bounding_box: list[float]
+    :ivar confidence: Confidence score.
+    :vartype confidence: float
+    :ivar elements: When includeTextDetails is set to true, a list of references to the text
      elements constituting this field.
-    :type elements: list[str]
-    :param page: The 1-based page number in the input document.
-    :type page: int
+    :vartype elements: list[str]
+    :ivar page: The 1-based page number in the input document.
+    :vartype page: int
     """
 
     _validation = {
@@ -564,6 +677,38 @@ class FieldValue(msrest.serialization.Model):
         page: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword type: Required. Type of field value. Possible values include: "string", "date",
+         "time", "phoneNumber", "number", "integer", "array", "object".
+        :paramtype type: str or ~azure.ai.formrecognizer.v2_0.models.FieldValueType
+        :keyword value_string: String value.
+        :paramtype value_string: str
+        :keyword value_date: Date value.
+        :paramtype value_date: ~datetime.date
+        :keyword value_time: Time value.
+        :paramtype value_time: ~datetime.time
+        :keyword value_phone_number: Phone number value.
+        :paramtype value_phone_number: str
+        :keyword value_number: Floating point value.
+        :paramtype value_number: float
+        :keyword value_integer: Integer value.
+        :paramtype value_integer: int
+        :keyword value_array: Array of field values.
+        :paramtype value_array: list[~azure.ai.formrecognizer.v2_0.models.FieldValue]
+        :keyword value_object: Dictionary of named field values.
+        :paramtype value_object: dict[str, ~azure.ai.formrecognizer.v2_0.models.FieldValue]
+        :keyword text: Text content of the extracted field.
+        :paramtype text: str
+        :keyword bounding_box: Bounding box of the field value, if appropriate.
+        :paramtype bounding_box: list[float]
+        :keyword confidence: Confidence score.
+        :paramtype confidence: float
+        :keyword elements: When includeTextDetails is set to true, a list of references to the text
+         elements constituting this field.
+        :paramtype elements: list[str]
+        :keyword page: The 1-based page number in the input document.
+        :paramtype page: int
+        """
         super(FieldValue, self).__init__(**kwargs)
         self.type = type
         self.value_string = value_string
@@ -586,10 +731,10 @@ class FormFieldsReport(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param field_name: Required. Training field name.
-    :type field_name: str
-    :param accuracy: Required. Estimated extraction accuracy for this field.
-    :type accuracy: float
+    :ivar field_name: Required. Training field name.
+    :vartype field_name: str
+    :ivar accuracy: Required. Estimated extraction accuracy for this field.
+    :vartype accuracy: float
     """
 
     _validation = {
@@ -609,6 +754,12 @@ class FormFieldsReport(msrest.serialization.Model):
         accuracy: float,
         **kwargs
     ):
+        """
+        :keyword field_name: Required. Training field name.
+        :paramtype field_name: str
+        :keyword accuracy: Required. Estimated extraction accuracy for this field.
+        :paramtype accuracy: float
+        """
         super(FormFieldsReport, self).__init__(**kwargs)
         self.field_name = field_name
         self.accuracy = accuracy
@@ -619,8 +770,8 @@ class KeysResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param clusters: Required. Object mapping clusterIds to a list of keys.
-    :type clusters: dict[str, list[str]]
+    :ivar clusters: Required. Object mapping clusterIds to a list of keys.
+    :vartype clusters: dict[str, list[str]]
     """
 
     _validation = {
@@ -637,6 +788,10 @@ class KeysResult(msrest.serialization.Model):
         clusters: Dict[str, List[str]],
         **kwargs
     ):
+        """
+        :keyword clusters: Required. Object mapping clusterIds to a list of keys.
+        :paramtype clusters: dict[str, list[str]]
+        """
         super(KeysResult, self).__init__(**kwargs)
         self.clusters = clusters
 
@@ -646,13 +801,13 @@ class KeyValueElement(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param text: Required. The text content of the key or value.
-    :type text: str
-    :param bounding_box: Bounding box of the key or value.
-    :type bounding_box: list[float]
-    :param elements: When includeTextDetails is set to true, a list of references to the text
+    :ivar text: Required. The text content of the key or value.
+    :vartype text: str
+    :ivar bounding_box: Bounding box of the key or value.
+    :vartype bounding_box: list[float]
+    :ivar elements: When includeTextDetails is set to true, a list of references to the text
      elements constituting this key or value.
-    :type elements: list[str]
+    :vartype elements: list[str]
     """
 
     _validation = {
@@ -674,6 +829,15 @@ class KeyValueElement(msrest.serialization.Model):
         elements: Optional[List[str]] = None,
         **kwargs
     ):
+        """
+        :keyword text: Required. The text content of the key or value.
+        :paramtype text: str
+        :keyword bounding_box: Bounding box of the key or value.
+        :paramtype bounding_box: list[float]
+        :keyword elements: When includeTextDetails is set to true, a list of references to the text
+         elements constituting this key or value.
+        :paramtype elements: list[str]
+        """
         super(KeyValueElement, self).__init__(**kwargs)
         self.text = text
         self.bounding_box = bounding_box
@@ -685,14 +849,14 @@ class KeyValuePair(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param label: A user defined label for the key/value pair entry.
-    :type label: str
-    :param key: Required. Information about the extracted key in a key-value pair.
-    :type key: ~azure.ai.formrecognizer.v2_0.models.KeyValueElement
-    :param value: Required. Information about the extracted value in a key-value pair.
-    :type value: ~azure.ai.formrecognizer.v2_0.models.KeyValueElement
-    :param confidence: Required. Confidence value.
-    :type confidence: float
+    :ivar label: A user defined label for the key/value pair entry.
+    :vartype label: str
+    :ivar key: Required. Information about the extracted key in a key-value pair.
+    :vartype key: ~azure.ai.formrecognizer.v2_0.models.KeyValueElement
+    :ivar value: Required. Information about the extracted value in a key-value pair.
+    :vartype value: ~azure.ai.formrecognizer.v2_0.models.KeyValueElement
+    :ivar confidence: Required. Confidence value.
+    :vartype confidence: float
     """
 
     _validation = {
@@ -717,6 +881,16 @@ class KeyValuePair(msrest.serialization.Model):
         label: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword label: A user defined label for the key/value pair entry.
+        :paramtype label: str
+        :keyword key: Required. Information about the extracted key in a key-value pair.
+        :paramtype key: ~azure.ai.formrecognizer.v2_0.models.KeyValueElement
+        :keyword value: Required. Information about the extracted value in a key-value pair.
+        :paramtype value: ~azure.ai.formrecognizer.v2_0.models.KeyValueElement
+        :keyword confidence: Required. Confidence value.
+        :paramtype confidence: float
+        """
         super(KeyValuePair, self).__init__(**kwargs)
         self.label = label
         self.key = key
@@ -729,12 +903,12 @@ class Model(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param model_info: Required. Basic custom model information.
-    :type model_info: ~azure.ai.formrecognizer.v2_0.models.ModelInfo
-    :param keys: Keys extracted by the custom model.
-    :type keys: ~azure.ai.formrecognizer.v2_0.models.KeysResult
-    :param train_result: Custom model training result.
-    :type train_result: ~azure.ai.formrecognizer.v2_0.models.TrainResult
+    :ivar model_info: Required. Basic custom model information.
+    :vartype model_info: ~azure.ai.formrecognizer.v2_0.models.ModelInfo
+    :ivar keys: Keys extracted by the custom model.
+    :vartype keys: ~azure.ai.formrecognizer.v2_0.models.KeysResult
+    :ivar train_result: Custom model training result.
+    :vartype train_result: ~azure.ai.formrecognizer.v2_0.models.TrainResult
     """
 
     _validation = {
@@ -755,6 +929,14 @@ class Model(msrest.serialization.Model):
         train_result: Optional["TrainResult"] = None,
         **kwargs
     ):
+        """
+        :keyword model_info: Required. Basic custom model information.
+        :paramtype model_info: ~azure.ai.formrecognizer.v2_0.models.ModelInfo
+        :keyword keys: Keys extracted by the custom model.
+        :paramtype keys: ~azure.ai.formrecognizer.v2_0.models.KeysResult
+        :keyword train_result: Custom model training result.
+        :paramtype train_result: ~azure.ai.formrecognizer.v2_0.models.TrainResult
+        """
         super(Model, self).__init__(**kwargs)
         self.model_info = model_info
         self.keys = keys
@@ -766,15 +948,15 @@ class ModelInfo(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param model_id: Required. Model identifier.
-    :type model_id: str
-    :param status: Required. Status of the model. Possible values include: "creating", "ready",
+    :ivar model_id: Required. Model identifier.
+    :vartype model_id: str
+    :ivar status: Required. Status of the model. Possible values include: "creating", "ready",
      "invalid".
-    :type status: str or ~azure.ai.formrecognizer.v2_0.models.ModelStatus
-    :param created_date_time: Required. Date and time (UTC) when the model was created.
-    :type created_date_time: ~datetime.datetime
-    :param last_updated_date_time: Required. Date and time (UTC) when the status was last updated.
-    :type last_updated_date_time: ~datetime.datetime
+    :vartype status: str or ~azure.ai.formrecognizer.v2_0.models.ModelStatus
+    :ivar created_date_time: Required. Date and time (UTC) when the model was created.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_updated_date_time: Required. Date and time (UTC) when the status was last updated.
+    :vartype last_updated_date_time: ~datetime.datetime
     """
 
     _validation = {
@@ -800,6 +982,18 @@ class ModelInfo(msrest.serialization.Model):
         last_updated_date_time: datetime.datetime,
         **kwargs
     ):
+        """
+        :keyword model_id: Required. Model identifier.
+        :paramtype model_id: str
+        :keyword status: Required. Status of the model. Possible values include: "creating", "ready",
+         "invalid".
+        :paramtype status: str or ~azure.ai.formrecognizer.v2_0.models.ModelStatus
+        :keyword created_date_time: Required. Date and time (UTC) when the model was created.
+        :paramtype created_date_time: ~datetime.datetime
+        :keyword last_updated_date_time: Required. Date and time (UTC) when the status was last
+         updated.
+        :paramtype last_updated_date_time: ~datetime.datetime
+        """
         super(ModelInfo, self).__init__(**kwargs)
         self.model_id = model_id
         self.status = status
@@ -810,12 +1004,12 @@ class ModelInfo(msrest.serialization.Model):
 class Models(msrest.serialization.Model):
     """Response to the list custom models operation.
 
-    :param summary: Summary of all trained custom models.
-    :type summary: ~azure.ai.formrecognizer.v2_0.models.ModelsSummary
-    :param model_list: Collection of trained custom models.
-    :type model_list: list[~azure.ai.formrecognizer.v2_0.models.ModelInfo]
-    :param next_link: Link to the next page of custom models.
-    :type next_link: str
+    :ivar summary: Summary of all trained custom models.
+    :vartype summary: ~azure.ai.formrecognizer.v2_0.models.ModelsSummary
+    :ivar model_list: Collection of trained custom models.
+    :vartype model_list: list[~azure.ai.formrecognizer.v2_0.models.ModelInfo]
+    :ivar next_link: Link to the next page of custom models.
+    :vartype next_link: str
     """
 
     _attribute_map = {
@@ -832,6 +1026,14 @@ class Models(msrest.serialization.Model):
         next_link: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword summary: Summary of all trained custom models.
+        :paramtype summary: ~azure.ai.formrecognizer.v2_0.models.ModelsSummary
+        :keyword model_list: Collection of trained custom models.
+        :paramtype model_list: list[~azure.ai.formrecognizer.v2_0.models.ModelInfo]
+        :keyword next_link: Link to the next page of custom models.
+        :paramtype next_link: str
+        """
         super(Models, self).__init__(**kwargs)
         self.summary = summary
         self.model_list = model_list
@@ -843,12 +1045,12 @@ class ModelsSummary(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param count: Required. Current count of trained custom models.
-    :type count: int
-    :param limit: Required. Max number of models that can be trained for this account.
-    :type limit: int
-    :param last_updated_date_time: Required. Date and time (UTC) when the summary was last updated.
-    :type last_updated_date_time: ~datetime.datetime
+    :ivar count: Required. Current count of trained custom models.
+    :vartype count: int
+    :ivar limit: Required. Max number of models that can be trained for this account.
+    :vartype limit: int
+    :ivar last_updated_date_time: Required. Date and time (UTC) when the summary was last updated.
+    :vartype last_updated_date_time: ~datetime.datetime
     """
 
     _validation = {
@@ -871,6 +1073,15 @@ class ModelsSummary(msrest.serialization.Model):
         last_updated_date_time: datetime.datetime,
         **kwargs
     ):
+        """
+        :keyword count: Required. Current count of trained custom models.
+        :paramtype count: int
+        :keyword limit: Required. Max number of models that can be trained for this account.
+        :paramtype limit: int
+        :keyword last_updated_date_time: Required. Date and time (UTC) when the summary was last
+         updated.
+        :paramtype last_updated_date_time: ~datetime.datetime
+        """
         super(ModelsSummary, self).__init__(**kwargs)
         self.count = count
         self.limit = limit
@@ -882,14 +1093,14 @@ class PageResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param page: Required. Page number.
-    :type page: int
-    :param cluster_id: Cluster identifier.
-    :type cluster_id: int
-    :param key_value_pairs: List of key-value pairs extracted from the page.
-    :type key_value_pairs: list[~azure.ai.formrecognizer.v2_0.models.KeyValuePair]
-    :param tables: List of data tables extracted from the page.
-    :type tables: list[~azure.ai.formrecognizer.v2_0.models.DataTable]
+    :ivar page: Required. Page number.
+    :vartype page: int
+    :ivar cluster_id: Cluster identifier.
+    :vartype cluster_id: int
+    :ivar key_value_pairs: List of key-value pairs extracted from the page.
+    :vartype key_value_pairs: list[~azure.ai.formrecognizer.v2_0.models.KeyValuePair]
+    :ivar tables: List of data tables extracted from the page.
+    :vartype tables: list[~azure.ai.formrecognizer.v2_0.models.DataTable]
     """
 
     _validation = {
@@ -913,6 +1124,16 @@ class PageResult(msrest.serialization.Model):
         tables: Optional[List["DataTable"]] = None,
         **kwargs
     ):
+        """
+        :keyword page: Required. Page number.
+        :paramtype page: int
+        :keyword cluster_id: Cluster identifier.
+        :paramtype cluster_id: int
+        :keyword key_value_pairs: List of key-value pairs extracted from the page.
+        :paramtype key_value_pairs: list[~azure.ai.formrecognizer.v2_0.models.KeyValuePair]
+        :keyword tables: List of data tables extracted from the page.
+        :paramtype tables: list[~azure.ai.formrecognizer.v2_0.models.DataTable]
+        """
         super(PageResult, self).__init__(**kwargs)
         self.page = page
         self.cluster_id = cluster_id
@@ -925,28 +1146,27 @@ class ReadResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param page: Required. The 1-based page number in the input document.
-    :type page: int
-    :param angle: Required. The general orientation of the text in clockwise direction, measured in
+    :ivar page: Required. The 1-based page number in the input document.
+    :vartype page: int
+    :ivar angle: Required. The general orientation of the text in clockwise direction, measured in
      degrees between (-180, 180].
-    :type angle: float
-    :param width: Required. The width of the image/PDF in pixels/inches, respectively.
-    :type width: float
-    :param height: Required. The height of the image/PDF in pixels/inches, respectively.
-    :type height: float
-    :param unit: Required. The unit used by the width, height and boundingBox properties. For
+    :vartype angle: float
+    :ivar width: Required. The width of the image/PDF in pixels/inches, respectively.
+    :vartype width: float
+    :ivar height: Required. The height of the image/PDF in pixels/inches, respectively.
+    :vartype height: float
+    :ivar unit: Required. The unit used by the width, height and boundingBox properties. For
      images, the unit is "pixel". For PDF, the unit is "inch". Possible values include: "pixel",
      "inch".
-    :type unit: str or ~azure.ai.formrecognizer.v2_0.models.LengthUnit
-    :param language: The detected language on the page overall. Possible values include: "en",
-     "es".
-    :type language: str or ~azure.ai.formrecognizer.v2_0.models.Language
-    :param lines: When includeTextDetails is set to true, a list of recognized text lines. The
+    :vartype unit: str or ~azure.ai.formrecognizer.v2_0.models.LengthUnit
+    :ivar language: The detected language on the page overall. Possible values include: "en", "es".
+    :vartype language: str or ~azure.ai.formrecognizer.v2_0.models.Language
+    :ivar lines: When includeTextDetails is set to true, a list of recognized text lines. The
      maximum number of lines returned is 300 per page. The lines are sorted top to bottom, left to
      right, although in certain cases proximity is treated with higher priority. As the sorting
      order depends on the detected text, it may change across images and OCR version updates. Thus,
      business logic should be built upon the actual line location instead of order.
-    :type lines: list[~azure.ai.formrecognizer.v2_0.models.TextLine]
+    :vartype lines: list[~azure.ai.formrecognizer.v2_0.models.TextLine]
     """
 
     _validation = {
@@ -979,6 +1199,30 @@ class ReadResult(msrest.serialization.Model):
         lines: Optional[List["TextLine"]] = None,
         **kwargs
     ):
+        """
+        :keyword page: Required. The 1-based page number in the input document.
+        :paramtype page: int
+        :keyword angle: Required. The general orientation of the text in clockwise direction, measured
+         in degrees between (-180, 180].
+        :paramtype angle: float
+        :keyword width: Required. The width of the image/PDF in pixels/inches, respectively.
+        :paramtype width: float
+        :keyword height: Required. The height of the image/PDF in pixels/inches, respectively.
+        :paramtype height: float
+        :keyword unit: Required. The unit used by the width, height and boundingBox properties. For
+         images, the unit is "pixel". For PDF, the unit is "inch". Possible values include: "pixel",
+         "inch".
+        :paramtype unit: str or ~azure.ai.formrecognizer.v2_0.models.LengthUnit
+        :keyword language: The detected language on the page overall. Possible values include: "en",
+         "es".
+        :paramtype language: str or ~azure.ai.formrecognizer.v2_0.models.Language
+        :keyword lines: When includeTextDetails is set to true, a list of recognized text lines. The
+         maximum number of lines returned is 300 per page. The lines are sorted top to bottom, left to
+         right, although in certain cases proximity is treated with higher priority. As the sorting
+         order depends on the detected text, it may change across images and OCR version updates. Thus,
+         business logic should be built upon the actual line location instead of order.
+        :paramtype lines: list[~azure.ai.formrecognizer.v2_0.models.TextLine]
+        """
         super(ReadResult, self).__init__(**kwargs)
         self.page = page
         self.angle = angle
@@ -992,8 +1236,8 @@ class ReadResult(msrest.serialization.Model):
 class SourcePath(msrest.serialization.Model):
     """Uri or local path to source data.
 
-    :param source: File source path.
-    :type source: str
+    :ivar source: File source path.
+    :vartype source: str
     """
 
     _validation = {
@@ -1010,6 +1254,10 @@ class SourcePath(msrest.serialization.Model):
         source: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword source: File source path.
+        :paramtype source: str
+        """
         super(SourcePath, self).__init__(**kwargs)
         self.source = source
 
@@ -1019,15 +1267,15 @@ class TextLine(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param text: Required. The text content of the line.
-    :type text: str
-    :param bounding_box: Required. Bounding box of an extracted line.
-    :type bounding_box: list[float]
-    :param language: The detected language of this line, if different from the overall page
+    :ivar text: Required. The text content of the line.
+    :vartype text: str
+    :ivar bounding_box: Required. Bounding box of an extracted line.
+    :vartype bounding_box: list[float]
+    :ivar language: The detected language of this line, if different from the overall page
      language. Possible values include: "en", "es".
-    :type language: str or ~azure.ai.formrecognizer.v2_0.models.Language
-    :param words: Required. List of words in the text line.
-    :type words: list[~azure.ai.formrecognizer.v2_0.models.TextWord]
+    :vartype language: str or ~azure.ai.formrecognizer.v2_0.models.Language
+    :ivar words: Required. List of words in the text line.
+    :vartype words: list[~azure.ai.formrecognizer.v2_0.models.TextWord]
     """
 
     _validation = {
@@ -1052,6 +1300,17 @@ class TextLine(msrest.serialization.Model):
         language: Optional[Union[str, "Language"]] = None,
         **kwargs
     ):
+        """
+        :keyword text: Required. The text content of the line.
+        :paramtype text: str
+        :keyword bounding_box: Required. Bounding box of an extracted line.
+        :paramtype bounding_box: list[float]
+        :keyword language: The detected language of this line, if different from the overall page
+         language. Possible values include: "en", "es".
+        :paramtype language: str or ~azure.ai.formrecognizer.v2_0.models.Language
+        :keyword words: Required. List of words in the text line.
+        :paramtype words: list[~azure.ai.formrecognizer.v2_0.models.TextWord]
+        """
         super(TextLine, self).__init__(**kwargs)
         self.text = text
         self.bounding_box = bounding_box
@@ -1064,12 +1323,12 @@ class TextWord(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param text: Required. The text content of the word.
-    :type text: str
-    :param bounding_box: Required. Bounding box of an extracted word.
-    :type bounding_box: list[float]
-    :param confidence: Confidence value.
-    :type confidence: float
+    :ivar text: Required. The text content of the word.
+    :vartype text: str
+    :ivar bounding_box: Required. Bounding box of an extracted word.
+    :vartype bounding_box: list[float]
+    :ivar confidence: Confidence value.
+    :vartype confidence: float
     """
 
     _validation = {
@@ -1092,6 +1351,14 @@ class TextWord(msrest.serialization.Model):
         confidence: Optional[float] = None,
         **kwargs
     ):
+        """
+        :keyword text: Required. The text content of the word.
+        :paramtype text: str
+        :keyword bounding_box: Required. Bounding box of an extracted word.
+        :paramtype bounding_box: list[float]
+        :keyword confidence: Confidence value.
+        :paramtype confidence: float
+        """
         super(TextWord, self).__init__(**kwargs)
         self.text = text
         self.bounding_box = bounding_box
@@ -1103,15 +1370,15 @@ class TrainingDocumentInfo(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param document_name: Required. Training document name.
-    :type document_name: str
-    :param pages: Required. Total number of pages trained.
-    :type pages: int
-    :param errors: Required. List of errors.
-    :type errors: list[~azure.ai.formrecognizer.v2_0.models.ErrorInformation]
-    :param status: Required. Status of the training operation. Possible values include:
-     "succeeded", "partiallySucceeded", "failed".
-    :type status: str or ~azure.ai.formrecognizer.v2_0.models.TrainStatus
+    :ivar document_name: Required. Training document name.
+    :vartype document_name: str
+    :ivar pages: Required. Total number of pages trained.
+    :vartype pages: int
+    :ivar errors: Required. List of errors.
+    :vartype errors: list[~azure.ai.formrecognizer.v2_0.models.ErrorInformation]
+    :ivar status: Required. Status of the training operation. Possible values include: "succeeded",
+     "partiallySucceeded", "failed".
+    :vartype status: str or ~azure.ai.formrecognizer.v2_0.models.TrainStatus
     """
 
     _validation = {
@@ -1137,6 +1404,17 @@ class TrainingDocumentInfo(msrest.serialization.Model):
         status: Union[str, "TrainStatus"],
         **kwargs
     ):
+        """
+        :keyword document_name: Required. Training document name.
+        :paramtype document_name: str
+        :keyword pages: Required. Total number of pages trained.
+        :paramtype pages: int
+        :keyword errors: Required. List of errors.
+        :paramtype errors: list[~azure.ai.formrecognizer.v2_0.models.ErrorInformation]
+        :keyword status: Required. Status of the training operation. Possible values include:
+         "succeeded", "partiallySucceeded", "failed".
+        :paramtype status: str or ~azure.ai.formrecognizer.v2_0.models.TrainStatus
+        """
         super(TrainingDocumentInfo, self).__init__(**kwargs)
         self.document_name = document_name
         self.pages = pages
@@ -1149,12 +1427,12 @@ class TrainRequest(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param source: Required. Source path containing the training documents.
-    :type source: str
-    :param source_filter: Filter to apply to the documents in the source path for training.
-    :type source_filter: ~azure.ai.formrecognizer.v2_0.models.TrainSourceFilter
-    :param use_label_file: Use label file for training a model.
-    :type use_label_file: bool
+    :ivar source: Required. Source path containing the training documents.
+    :vartype source: str
+    :ivar source_filter: Filter to apply to the documents in the source path for training.
+    :vartype source_filter: ~azure.ai.formrecognizer.v2_0.models.TrainSourceFilter
+    :ivar use_label_file: Use label file for training a model.
+    :vartype use_label_file: bool
     """
 
     _validation = {
@@ -1175,6 +1453,14 @@ class TrainRequest(msrest.serialization.Model):
         use_label_file: Optional[bool] = False,
         **kwargs
     ):
+        """
+        :keyword source: Required. Source path containing the training documents.
+        :paramtype source: str
+        :keyword source_filter: Filter to apply to the documents in the source path for training.
+        :paramtype source_filter: ~azure.ai.formrecognizer.v2_0.models.TrainSourceFilter
+        :keyword use_label_file: Use label file for training a model.
+        :paramtype use_label_file: bool
+        """
         super(TrainRequest, self).__init__(**kwargs)
         self.source = source
         self.source_filter = source_filter
@@ -1186,16 +1472,16 @@ class TrainResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param training_documents: Required. List of the documents used to train the model and any
+    :ivar training_documents: Required. List of the documents used to train the model and any
      errors reported in each document.
-    :type training_documents: list[~azure.ai.formrecognizer.v2_0.models.TrainingDocumentInfo]
-    :param fields: List of fields used to train the model and the train operation error reported by
+    :vartype training_documents: list[~azure.ai.formrecognizer.v2_0.models.TrainingDocumentInfo]
+    :ivar fields: List of fields used to train the model and the train operation error reported by
      each.
-    :type fields: list[~azure.ai.formrecognizer.v2_0.models.FormFieldsReport]
-    :param average_model_accuracy: Average accuracy.
-    :type average_model_accuracy: float
-    :param errors: Errors returned during the training operation.
-    :type errors: list[~azure.ai.formrecognizer.v2_0.models.ErrorInformation]
+    :vartype fields: list[~azure.ai.formrecognizer.v2_0.models.FormFieldsReport]
+    :ivar average_model_accuracy: Average accuracy.
+    :vartype average_model_accuracy: float
+    :ivar errors: Errors returned during the training operation.
+    :vartype errors: list[~azure.ai.formrecognizer.v2_0.models.ErrorInformation]
     """
 
     _validation = {
@@ -1218,6 +1504,18 @@ class TrainResult(msrest.serialization.Model):
         errors: Optional[List["ErrorInformation"]] = None,
         **kwargs
     ):
+        """
+        :keyword training_documents: Required. List of the documents used to train the model and any
+         errors reported in each document.
+        :paramtype training_documents: list[~azure.ai.formrecognizer.v2_0.models.TrainingDocumentInfo]
+        :keyword fields: List of fields used to train the model and the train operation error reported
+         by each.
+        :paramtype fields: list[~azure.ai.formrecognizer.v2_0.models.FormFieldsReport]
+        :keyword average_model_accuracy: Average accuracy.
+        :paramtype average_model_accuracy: float
+        :keyword errors: Errors returned during the training operation.
+        :paramtype errors: list[~azure.ai.formrecognizer.v2_0.models.ErrorInformation]
+        """
         super(TrainResult, self).__init__(**kwargs)
         self.training_documents = training_documents
         self.fields = fields
@@ -1228,13 +1526,13 @@ class TrainResult(msrest.serialization.Model):
 class TrainSourceFilter(msrest.serialization.Model):
     """Filter to apply to the documents in the source path for training.
 
-    :param prefix: A case-sensitive prefix string to filter documents in the source path for
+    :ivar prefix: A case-sensitive prefix string to filter documents in the source path for
      training. For example, when using a Azure storage blob Uri, use the prefix to restrict sub
      folders for training.
-    :type prefix: str
-    :param include_sub_folders: A flag to indicate if sub folders within the set of prefix folders
+    :vartype prefix: str
+    :ivar include_sub_folders: A flag to indicate if sub folders within the set of prefix folders
      will also need to be included when searching for content to be preprocessed.
-    :type include_sub_folders: bool
+    :vartype include_sub_folders: bool
     """
 
     _validation = {
@@ -1253,6 +1551,15 @@ class TrainSourceFilter(msrest.serialization.Model):
         include_sub_folders: Optional[bool] = False,
         **kwargs
     ):
+        """
+        :keyword prefix: A case-sensitive prefix string to filter documents in the source path for
+         training. For example, when using a Azure storage blob Uri, use the prefix to restrict sub
+         folders for training.
+        :paramtype prefix: str
+        :keyword include_sub_folders: A flag to indicate if sub folders within the set of prefix
+         folders will also need to be included when searching for content to be preprocessed.
+        :paramtype include_sub_folders: bool
+        """
         super(TrainSourceFilter, self).__init__(**kwargs)
         self.prefix = prefix
         self.include_sub_folders = include_sub_folders

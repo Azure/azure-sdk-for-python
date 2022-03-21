@@ -110,8 +110,10 @@ class EventData(object):
 
     """
 
-    def __init__(self, body=None):
-        # type: (Union[str, bytes, List[AnyStr]]) -> None
+    def __init__(
+        self,
+        body: Optional[Union[str, bytes, List[AnyStr]]] = None,
+    ) -> None:
         self._last_enqueued_event_properties = {}  # type: Dict[str, Any]
         self._sys_properties = None  # type: Optional[Dict[bytes, Any]]
         if body is None:
@@ -179,6 +181,27 @@ class EventData(object):
             pass
         event_str += " }"
         return event_str
+
+    def __message_content__(self) -> Dict:
+        if self.body_type != AmqpMessageBodyType.DATA:
+            raise TypeError('`body_type` must be `AmqpMessageBodyType.DATA`.')
+        content = bytearray()
+        for c in self.body: # type: ignore
+            content += c   # type: ignore
+        return {"content": bytes(content), "content_type": self.content_type}
+
+    @classmethod
+    def from_message_content(cls, content: bytes, content_type: str) -> "EventData":
+        """
+        Creates an EventData object given content type and a content value to be set as body.
+
+        :param bytes content: The content value to be set as the body of the message.
+        :param str content_type: The content type to be set on the message.
+        :rtype: ~azure.eventhub.EventData
+        """
+        event_data = cls(content)
+        event_data.content_type = content_type
+        return event_data
 
     @classmethod
     def _from_message(cls, message, raw_amqp_message=None):

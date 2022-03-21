@@ -75,7 +75,7 @@ class CosmosClientTimeoutError(AzureError):
         super(CosmosClientTimeoutError, self).__init__(message, **kwargs)
 
 
-def partition_range_is_gone(e):
+def _partition_range_is_gone(e):
     if (e.status_code == http_constants.StatusCodes.GONE
             and e.sub_status == http_constants.SubStatusCodes.PARTITION_KEY_RANGE_GONE):
         return True

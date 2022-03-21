@@ -1,14 +1,13 @@
 # Release History
 
-## 1.0.0b3 (Unreleased)
-
-### Features Added
+## 1.0.0 (2022-02-04) (Deprecated)
 
 ### Breaking Changes
 
-### Bugs Fixed
+- Making parameters for get_relay_configuration keyword only
 
 ### Other Changes
+Python 2.7 is no longer supported. Please use Python version 3.6 or later.
 
 ## 1.0.0b2 (2021-11-18)
 

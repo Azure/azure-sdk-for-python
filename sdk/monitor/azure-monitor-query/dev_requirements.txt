@@ -3,4 +3,4 @@
 -e ../../core/azure-core
 -e ../../identity/azure-identity
 azure-mgmt-loganalytics
-aiohttp>=3.0; python_version >= '3.5'
+aiohttp>=3.0

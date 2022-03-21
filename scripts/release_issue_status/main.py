@@ -7,16 +7,15 @@ import traceback
 import logging
 
 from github import Github
-from azure.storage.blob import BlobClient
+from reply_generator import AUTO_ASK_FOR_CHECK, begin_reply_generate
 
-import reply_generator as rg
 from utils import update_issue_body, get_readme_and_output_folder, \
     get_python_pipelines, get_pipeline_url, auto_close_issue
 
 _NULL = ' '
 _FILE_OUT = 'release_issue_status.csv'
 _FILE_OUT_PYTHON = 'release_python_status.md'
-_PYTHON_SDK_ADMINISTRATORS = ['msyyc', 'BigCat20196']
+_PYTHON_SDK_ADMINISTRATORS = ['msyyc', 'BigCat20196', 'azure-sdk']
 _PYTHON_SDK_ASSIGNEES = ['BigCat20196', 'msyyc']
 _ASSIGNER_DICT = {'BigCat20196': os.getenv('JF_TOKEN'),
                   'msyyc': os.getenv('TOKEN')}
@@ -144,7 +143,7 @@ def _latest_comment_time(comments, delay_from_create_date):
     return delay_from_create_date if not q else int((time.time() - q[-1][0]) / 3600 / 24)
 
 
-def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python_piplines, assigner_repoes):
+def auto_reply(item, request_repo, rest_repo, duplicated_issue, python_piplines, assigner_repoes):
     logging.info("new issue number: {}".format(item.issue_object.number))
     assigner_repo = assigner_repoes[item.assignee]
     if 'auto-link' not in item.labels:
@@ -170,10 +169,8 @@ def auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python
             logging.info(e)
             raise
     try:
-        logging.info(python_piplines)
         pipeline_url = get_pipeline_url(python_piplines, output_folder)
-        rg.begin_reply_generate(item=item, rest_repo=rest_repo, readme_link=readme_link,
-                                sdk_repo=sdk_repo, pipeline_url=pipeline_url, assigner_repo=assigner_repo)
+        begin_reply_generate(item=item, rest_repo=rest_repo, readme_link=readme_link, pipeline_url=pipeline_url)
         if 'Configured' in item.labels:
             item.issue_object.remove_from_labels('Configured')
     except Exception as e:
@@ -193,7 +190,8 @@ def main():
     rest_repo = g.get_repo('Azure/azure-rest-api-specs')
     sdk_repo = g.get_repo('Azure/azure-sdk-for-python')
     label1 = request_repo.get_label('ManagementPlane')
-    open_issues = request_repo.get_issues(state='open', labels=[label1])
+    label2 = request_repo.get_label('Python')
+    open_issues = request_repo.get_issues(state='open', labels=[label1, label2])
     issue_status = []
     issue_status_python = []
     duplicated_issue = dict()
@@ -208,9 +206,13 @@ def main():
         issue.link = f'https://github.com/Azure/sdk-release-request/issues/{item.number}'
         issue.author = item.user.login
         issue.package = _extract(item.body.split('\n'), 'azure-.*')
-        issue.target_date = [x.split(':')[-1].strip() for x in item.body.split('\n') if 'Target release date' in x][0]
-        issue.days_from_target = int(
-            (time.mktime(time.strptime(issue.target_date, '%Y-%m-%d')) - time.time()) / 3600 / 24)
+        try:
+            issue.target_date = [x.split(':')[-1].strip() for x in item.body.split('\n') if 'Target release date' in x][0]
+            issue.days_from_target = int(
+                (time.mktime(time.strptime(issue.target_date, '%Y-%m-%d')) - time.time()) / 3600 / 24)
+        except Exception:
+            issue.target_date = 'fail to get.'
+            issue.days_from_target = 1000  # make a ridiculous data to remind failure when error happens
         issue.create_date = item.created_at.timestamp()
         issue.delay_from_create_date = int((time.time() - item.created_at.timestamp()) / 3600 / 24)
         issue.latest_update = item.updated_at.timestamp()
@@ -254,10 +256,11 @@ def main():
                 item.issue_object.add_to_assignees(_PYTHON_SDK_ASSIGNEES[assign_count])
                 item.assignee = item.issue_object.assignee.login
                 item.issue_object.add_to_labels('assigned')
-            try:
-                auto_reply(item, request_repo, rest_repo, sdk_repo, duplicated_issue, python_piplines, assigner_repoes)
-            except Exception as e:
-                continue
+            if AUTO_ASK_FOR_CHECK not in item.labels:
+                try:
+                    auto_reply(item, request_repo, rest_repo, duplicated_issue, python_piplines, assigner_repoes)
+                except Exception as e:
+                    continue
         elif not item.author_latest_comment in _PYTHON_SDK_ADMINISTRATORS:
             item.bot_advice = 'new comment.  <br>'
         if item.comment_num > 1 and item.language == 'Python':
@@ -296,11 +299,6 @@ def main():
     print_check('git commit -m \"update excel\"')
     print_check('git push -f origin HEAD')
 
-# upload to storage account(it is created in advance)
-#     blob = BlobClient.from_connection_string(conn_str=os.getenv('CONN_STR'), container_name=os.getenv('FILE'),
-#                                              blob_name=_FILE_OUT)
-#     with open(_FILE_OUT, 'rb') as data:
-#         blob.upload_blob(data, overwrite=True)
 
 if __name__ == '__main__':
     main()

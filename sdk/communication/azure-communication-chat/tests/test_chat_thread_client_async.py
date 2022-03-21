@@ -17,10 +17,7 @@ from azure.communication.chat._shared.models import(
 from unittest_helpers import mock_response
 from azure.core.exceptions import HttpResponseError
 
-try:
-    from unittest.mock import Mock, patch
-except ImportError:  # python < 3.3
-    from mock import Mock, patch  # type: ignore
+from unittest.mock import Mock, patch
 
 import pytest
 import time

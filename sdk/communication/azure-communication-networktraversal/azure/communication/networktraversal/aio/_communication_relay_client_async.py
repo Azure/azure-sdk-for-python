@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, Union
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._generated.aio._communication_network_traversal_client\
@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     from .._generated.models import CommunicationRelayConfiguration
     from azure.communication.identity import CommunicationUserIdentifier
+    from azure.communication.networktraversal import RouteType
 
 
 class CommunicationRelayClient:
@@ -83,8 +84,9 @@ class CommunicationRelayClient:
     @distributed_trace_async
     async def get_relay_configuration(
             self,
+            *,
             user: 'CommunicationUserIdentifier' = None,
-            route_type: 'CommunicationRelayConfigurationRequestRouteType' = None,
+            route_type: Optional[Union[str, "RouteType"]] = None,
             **kwargs # type: Any
         ) -> 'CommunicationRelayConfiguration':
         """get a Communication Relay configuration.
