@@ -11,7 +11,7 @@ class SomeClient():
         latest supported API version and features, instantiate a DocumentAnalysisClient instead.
     :paramtype api_version: str 
     :param credential: Something.
-    :type credential: : Something.
+    :type credential: : TokenCredential.
     :keyword key : Something2.
     
     
