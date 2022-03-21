@@ -7,17 +7,21 @@ logging library are tracked and telemetry is exported to application insights wi
 import os
 import logging
 
+from opentelemetry import trace
 from opentelemetry.sdk._logs import (
     LogEmitterProvider,
     OTLPHandler,
     set_log_emitter_provider,
 )
 from opentelemetry.sdk._logs.export import BatchLogProcessor
+from opentelemetry.sdk.trace import TracerProvider
 
 from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
 
+trace.set_tracer_provider(TracerProvider())
+tracer = trace.get_tracer(__name__)
 log_emitter_provider = LogEmitterProvider()
-set_log_emitter_provider(log_emitter_provider)
+set_log_emitter_provider(LogEmitterProvider())
 
 exporter = AzureMonitorLogExporter.from_connection_string(
     os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
@@ -32,4 +36,7 @@ logging.getLogger().setLevel(logging.NOTSET)
 
 logger = logging.getLogger(__name__)
 
-logger.warning("Hello World!")
+logger.info("INFO: Outside of span")
+with tracer.start_as_current_span("foo"):
+    logger.warning("WARNING: Inside of span")
+logger.error("ERROR: After span")

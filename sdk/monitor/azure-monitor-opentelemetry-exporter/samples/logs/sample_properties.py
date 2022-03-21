@@ -17,7 +17,7 @@ from opentelemetry.sdk._logs.export import BatchLogProcessor
 from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
 
 log_emitter_provider = LogEmitterProvider()
-set_log_emitter_provider(log_emitter_provider)
+set_log_emitter_provider(LogEmitterProvider())
 
 exporter = AzureMonitorLogExporter.from_connection_string(
     os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
@@ -32,4 +32,5 @@ logging.getLogger().setLevel(logging.NOTSET)
 
 logger = logging.getLogger(__name__)
 
-logger.warning("Hello World!")
+# Custom properties
+logger.debug("DEBUG: Debug with properties", extra={"debug": "true"})
