@@ -2720,8 +2720,7 @@ class TestCheckApiVersion(pylint.testutils.CheckerTestCase):
         file = open("./test_files/test_api_version_checker_good_class.py")
         node = astroid.parse(file.read())
         file.close()
-
-        
+    
         with self.assertNoMessages():
             self.checker.visit_classdef(node.body[0])
 
@@ -2736,7 +2735,7 @@ class TestCheckApiVersion(pylint.testutils.CheckerTestCase):
 
 
     def test_api_version_keyword_bad(self):
-        file = open("./test_files/test_api_checker_bad.py")
+        file = open("./test_files/test_api_version_checker_bad.py")
         node = astroid.parse(file.read())
         file.close()
 
