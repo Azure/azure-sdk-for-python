@@ -137,7 +137,7 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
         output_buffer = []
         for line in process.stdout:
             output_buffer.append(line.rstrip())
-            _LOGGER.info(f"==[autorest22]" + output_buffer[-1])
+            _LOGGER.error(f"==[autorest22]" + output_buffer[-1])
         process.wait()
         output = "\n".join(output_buffer)
         if process.returncode:
