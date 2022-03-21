@@ -179,6 +179,10 @@ if __name__ == "__main__":
     built_pkg_path = ""
     setup_py_path = os.path.join(args.target_setup, "setup.py")
     additional_downloaded_reqs = []
+
+    if not os.path.exists(args.distribution_directory):
+        os.mkdir(args.distribution_directory)
+
     tmp_dl_folder = os.path.join(args.distribution_directory, "dl")
     os.mkdir(tmp_dl_folder)
 
