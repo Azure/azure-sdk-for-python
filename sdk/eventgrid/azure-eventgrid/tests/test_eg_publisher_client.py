@@ -345,6 +345,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
                 )
         client.send(eg_event)
 
+    @pytest.mark.live_test_only
     @EventGridPreparer()
     @recorded_by_proxy
     def test_send_partner_namespace(self, variables, eventgrid_partner_namespace_endpoint, eventgrid_partner_namespace_key):
