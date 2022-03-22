@@ -5,3 +5,4 @@ class EnumPython2(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ONE = "one"
     TWO = "two"
     
+    
