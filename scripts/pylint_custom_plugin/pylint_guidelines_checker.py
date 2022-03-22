@@ -1821,7 +1821,7 @@ class CheckEnum(BaseChecker):
     def _does_not_inherit_case_insensitive(self, node):
         """Adds a pylint error message for enum class not 
         inheriting from the CaseInsensitiveEnumMeta class.
-
+        
         :param node: ast.ClassDef
         :return: None
         """
