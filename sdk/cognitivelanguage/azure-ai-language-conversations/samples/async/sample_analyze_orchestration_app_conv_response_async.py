@@ -77,7 +77,7 @@ async def sample_analyze_orchestration_app_conv_response_async():
         print("project kind: {}".format(top_intent_object.target_kind))
 
         # conversation result
-        if isinstance(top_intent_object, ConversationTargetIntentResult):
+        if top_intent_object.target_kind == "conversation":
             print("\nview conversation result:")
 
             print("\ntop intent: {}".format(top_intent_object.result.prediction.top_intent))

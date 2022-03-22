@@ -76,7 +76,7 @@ async def sample_analyze_orchestration_app_qna_response_async():
         print("confidence score: {}".format(top_intent_object.confidence))
         print("project kind: {}".format(top_intent_object.target_kind))
 
-        if isinstance(top_intent_object, QuestionAnsweringTargetIntentResult):
+        if top_intent_object.target_kind == "question_answering":
             print("\nview qna result:")
             qna_result = top_intent_object.result
             for answer in qna_result.answers:
