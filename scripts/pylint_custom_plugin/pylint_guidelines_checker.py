@@ -1780,23 +1780,14 @@ class CheckEnum(BaseChecker):
         :rtype: bool, bool
             
         """
-
-        inherits_metaclass = False
-        enum_class = False
-
         if node._metaclass:
             if node._metaclass.name == "CaseInsensitiveEnumMeta":
-                inherits_metclass = True
-                enum_class = True
-                return inherits_metaclass, enum_class
+                return True, True
         for base in node.bases:
             if isinstance(base, astroid.Call) and base.args[0].name == "CaseInsensitiveEnumMeta":
-                inherits_metclass = True
-                enum_class = True
-                return inherits_metaclass, enum_class
+                return True, True
             elif base.name == "Enum":
-                enum_class = True
-                return inherits_metaclass, enum_class
+                return False, True
                     
                     
         return False, False
