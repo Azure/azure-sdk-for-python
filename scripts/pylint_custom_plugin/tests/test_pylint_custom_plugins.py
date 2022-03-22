@@ -2707,6 +2707,21 @@ class TestCheckEnum(pylint.testutils.CheckerTestCase):
                 ):
                     self.checker.visit_classdef(class_node)
     
+    def test_enum_capitalized_inherit_meta_differently(self):
+        class_node = astroid.extract_node(
+            """
+            class MyBadEnum(str, Enum, metaclass= CaseInsensitiveEnumMeta): 
+                One = "one"
+            """
+        )
+
+        with self.assertAddsMessages(
+                        pylint.testutils.Message(
+                            msg_id="enum-must-be-uppercase", node=class_node.body[0].targets[0]
+                        )
+                ):
+                    self.checker.visit_classdef(class_node)
+    
     def test_not_inheriting_case_insensitive(self):
         class_node = astroid.extract_node(
             """
