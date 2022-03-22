@@ -2681,7 +2681,7 @@ class TestCheckNamingMismatchGeneratedCode(pylint.testutils.CheckerTestCase):
 class TestCheckEnum(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.CheckEnum
 
-    def test_ignore_not_enum_class(self):
+    def test_ignore_normal_class(self):
         class_node = astroid.extract_node(
             """
                class SomeClient(object):
@@ -2692,7 +2692,7 @@ class TestCheckEnum(pylint.testutils.CheckerTestCase):
         with self.assertNoMessages():
             self.checker.visit_classdef(class_node)
 
-    def test_enum_capitalized(self):
+    def test_enum_capitalized_violation_python_two(self):
         class_node = astroid.extract_node(
             """
             class MyBadEnum(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)): 
@@ -2707,7 +2707,7 @@ class TestCheckEnum(pylint.testutils.CheckerTestCase):
                 ):
                     self.checker.visit_classdef(class_node)
     
-    def test_enum_capitalized_inherit_meta_differently(self):
+    def test_enum_capitalized_violation_python_three(self):
         class_node = astroid.extract_node(
             """
             class MyBadEnum(str, Enum, metaclass= CaseInsensitiveEnumMeta): 
@@ -2722,7 +2722,7 @@ class TestCheckEnum(pylint.testutils.CheckerTestCase):
                 ):
                     self.checker.visit_classdef(class_node)
     
-    def test_not_inheriting_case_insensitive(self):
+    def test_inheriting_case_insensitive_violation(self):
         class_node = astroid.extract_node(
             """
             class MyGoodEnum(str, Enum): 
@@ -2737,7 +2737,7 @@ class TestCheckEnum(pylint.testutils.CheckerTestCase):
                 ):
                 self.checker.visit_classdef(class_node)
 
-    def test_inheriting_case_insensitive_python_three(self):
+    def test_acceptable_python_three(self):
         class_node = astroid.extract_node(
             """
             class MyGoodEnum(str, Enum, metaclass = CaseInsensitiveEnumMeta): 
@@ -2747,7 +2747,7 @@ class TestCheckEnum(pylint.testutils.CheckerTestCase):
         with self.assertNoMessages():
             self.checker.visit_classdef(class_node)   
 
-    def test_enum_file_acceptable(self):
+    def test_enum_file_acceptable_python_two(self):
         file = open("./test_files/enum_checker_acceptable.py")
         node = astroid.parse(file.read())
         file.close()
@@ -2755,7 +2755,7 @@ class TestCheckEnum(pylint.testutils.CheckerTestCase):
         with self.assertNoMessages():
             self.checker.visit_classdef(node.body[0])        
     
-    def test_enum_file_violation(self):
+    def test_enum_file_both_violation(self):
         file = open("./test_files/enum_checker_violation.py")
         node = astroid.parse(file.read())
         file.close()
