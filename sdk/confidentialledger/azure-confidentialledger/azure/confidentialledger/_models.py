@@ -4,18 +4,9 @@
 # ------------------------------------
 
 from collections import namedtuple
+from typing import Dict, List
 
 from ._enums import LedgerUserRole, TransactionState
-
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import
-    from typing import Dict, List
 
 
 class AppendResult(namedtuple("AppendResult", ["sub_ledger_id", "transaction_id"])):
@@ -290,10 +281,9 @@ class TransactionReceipt(object):
 
     def __init__(
         self,
-        transaction_id,
-        receipt,
-    ):
-        # type: (str, List[int]) -> None
+        transaction_id: str,
+        receipt: List[int],
+    ) -> None:
         self._transaction_id = transaction_id
         self._contents = receipt
 
