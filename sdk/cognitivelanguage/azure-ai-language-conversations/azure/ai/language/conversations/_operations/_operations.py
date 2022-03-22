@@ -62,13 +62,13 @@ class ConversationAnalysisClientOperationsMixin(object):
     @distributed_trace
     def analyze_conversation(
         self,
-        body: "_models.AnalyzeConversationTask",
+        task: "_models.AnalyzeConversationTask",
         **kwargs: Any
     ) -> "_models.AnalyzeConversationTaskResult":
         """Analyzes the input conversation utterance.
 
-        :param body: A single conversational task to execute.
-        :type body: ~azure.ai.language.conversations.models.AnalyzeConversationTask
+        :param task: A single conversational task to execute.
+        :type task: ~azure.ai.language.conversations.models.AnalyzeConversationTask
         :return: AnalyzeConversationTaskResult
         :rtype: ~azure.ai.language.conversations.models.AnalyzeConversationTaskResult
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -82,7 +82,7 @@ class ConversationAnalysisClientOperationsMixin(object):
         api_version = kwargs.pop('api_version', "2022-03-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'AnalyzeConversationTask')
+        _json = self._serialize.body(task, 'AnalyzeConversationTask')
 
         request = build_analyze_conversation_request(
             api_version=api_version,

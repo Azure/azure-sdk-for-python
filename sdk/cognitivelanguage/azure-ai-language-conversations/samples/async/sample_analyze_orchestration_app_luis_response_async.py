@@ -45,7 +45,7 @@ async def sample_analyze_orchestration_app_luis_response_async():
     async with client:
         query = "Reserve a table for 2 at the Italian restaurant"
         result = await client.analyze_conversation(
-            body={
+            task={
                 "kind": "CustomConversation",
                 "analysisInput": {
                     "conversationItem": {

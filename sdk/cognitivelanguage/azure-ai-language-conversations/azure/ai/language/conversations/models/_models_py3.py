@@ -181,7 +181,8 @@ class AnalyzeConversationResult(msrest.serialization.Model):
 
     :ivar query: Required. The conversation utterance given by the caller.
     :vartype query: str
-    :ivar detected_language: The system detected language for the query.
+    :ivar detected_language: The system detected language for the query in BCP 47 language
+     representation..
     :vartype detected_language: str
     :ivar prediction: Required. The prediction result of a conversation project.
     :vartype prediction: ~azure.ai.language.conversations.models.BasePrediction
@@ -209,7 +210,8 @@ class AnalyzeConversationResult(msrest.serialization.Model):
         """
         :keyword query: Required. The conversation utterance given by the caller.
         :paramtype query: str
-        :keyword detected_language: The system detected language for the query.
+        :keyword detected_language: The system detected language for the query in BCP 47 language
+         representation..
         :paramtype detected_language: str
         :keyword prediction: Required. The prediction result of a conversation project.
         :paramtype prediction: ~azure.ai.language.conversations.models.BasePrediction
@@ -571,7 +573,7 @@ class ConversationAnalysisOptions(msrest.serialization.Model):
 class ConversationCallingOptions(msrest.serialization.Model):
     """The option to set to call a Conversation project.
 
-    :ivar language: The language of the query.
+    :ivar language: The language of the query in BCP 47 language representation..
     :vartype language: str
     :ivar verbose: If true, the service will return more detailed information.
     :vartype verbose: bool
@@ -595,7 +597,7 @@ class ConversationCallingOptions(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword language: The language of the query.
+        :keyword language: The language of the query in BCP 47 language representation..
         :paramtype language: str
         :keyword verbose: If true, the service will return more detailed information.
         :paramtype verbose: bool
@@ -885,7 +887,8 @@ class ConversationResult(msrest.serialization.Model):
 
     :ivar query: Required. The same query given in request.
     :vartype query: str
-    :ivar detected_language: The detected language from the query.
+    :ivar detected_language: The detected language from the query in BCP 47 language
+     representation..
     :vartype detected_language: str
     :ivar prediction: Required. The predicted result for the query.
     :vartype prediction: ~azure.ai.language.conversations.models.ConversationPrediction
@@ -913,7 +916,8 @@ class ConversationResult(msrest.serialization.Model):
         """
         :keyword query: Required. The same query given in request.
         :paramtype query: str
-        :keyword detected_language: The detected language from the query.
+        :keyword detected_language: The detected language from the query in BCP 47 language
+         representation..
         :paramtype detected_language: str
         :keyword prediction: Required. The predicted result for the query.
         :paramtype prediction: ~azure.ai.language.conversations.models.ConversationPrediction

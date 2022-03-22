@@ -45,7 +45,7 @@ async def sample_analyze_orchestration_app_conv_response_async():
     async with client:
         query = "Send an email to Carol about the tomorrow's demo"
         result = await client.analyze_conversation(
-            body={
+            task={
                 "kind": "CustomConversation",
                 "analysisInput": {
                     "conversationItem": {

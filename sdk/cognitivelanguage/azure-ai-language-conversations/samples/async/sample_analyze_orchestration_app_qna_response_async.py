@@ -45,7 +45,7 @@ async def sample_analyze_orchestration_app_qna_response_async():
     async with client:
         query = "How are you?"
         result = await client.analyze_conversation(
-            body={
+            task={
                 "kind": "CustomConversation",
                 "analysisInput": {
                     "conversationItem": {

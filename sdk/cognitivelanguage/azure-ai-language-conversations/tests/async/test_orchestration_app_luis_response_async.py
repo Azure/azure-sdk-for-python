@@ -29,7 +29,7 @@ class OrchestrationAppLuisResponseAsyncTests(AsyncConversationTest):
         async with client:
             query = "Reserve a table for 2 at the Italian restaurant"
             result = await client.analyze_conversation(
-                body={
+                task={
                     "kind": "CustomConversation",
                     "analysisInput": {
                         "conversationItem": {

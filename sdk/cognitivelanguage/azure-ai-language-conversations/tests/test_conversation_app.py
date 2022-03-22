@@ -31,7 +31,7 @@ class ConversationAppTests(ConversationTest):
         with client:
             query = "Send an email to Carol about the tomorrow's demo"
             result = client.analyze_conversation(
-                body={
+                task={
                     "kind": "CustomConversation",
                     "analysisInput": {
                         "conversationItem": {

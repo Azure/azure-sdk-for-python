@@ -43,7 +43,7 @@ def sample_analyze_conversation_app():
     with client:
         query = "Send an email to Carol about the tomorrow's demo"
         result = client.analyze_conversation(
-            body={
+            task={
                 "kind": "CustomConversation",
                 "analysisInput": {
                     "conversationItem": {

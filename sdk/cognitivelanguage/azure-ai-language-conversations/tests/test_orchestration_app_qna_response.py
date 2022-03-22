@@ -31,7 +31,7 @@ class OrchestrationAppQnaResponseTests(ConversationTest):
         with client:
             query = "How are you?"
             result = client.analyze_conversation(
-                body={
+                task={
                     "kind": "CustomConversation",
                     "analysisInput": {
                         "conversationItem": {

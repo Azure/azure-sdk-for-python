@@ -29,7 +29,7 @@ class ConversationAppAsyncTests(AsyncConversationTest):
         async with client:
             query = "Send an email to Carol about the tomorrow's demo"
             result = await client.analyze_conversation(
-                body={
+                task={
                     "kind": "CustomConversation",
                     "analysisInput": {
                         "conversationItem": {

@@ -47,3 +47,13 @@ directive:
       transform: >
           $["operationId"] = "analyzeConversation";
 ```
+
+### Rename body to tasks
+
+```yaml
+directive:
+    - from: swagger-document
+      where: $["paths"]["/:analyze-conversations"]["post"]
+      transform: >
+        $["parameters"][1]["x-ms-client-name"] = "task";
+```

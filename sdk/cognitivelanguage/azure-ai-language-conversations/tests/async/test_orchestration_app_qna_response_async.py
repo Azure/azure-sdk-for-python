@@ -29,7 +29,7 @@ class OrchestrationAppQnaResponseAsyncTests(AsyncConversationTest):
         async with client:
             query = "How are you?"
             result = await client.analyze_conversation(
-                body={
+                task={
                     "kind": "CustomConversation",
                     "analysisInput": {
                         "conversationItem": {
