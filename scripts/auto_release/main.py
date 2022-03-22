@@ -124,6 +124,37 @@ def set_test_env_var():
 def start_test_proxy():
     print_check('pwsh eng/common/testproxy/docker-start-proxy.ps1 \"start\"')
 
+def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
+    try:
+        process = subprocess.Popen(
+            cmd_line,
+            stderr=subprocess.STDOUT,
+            stdout=subprocess.PIPE,
+            universal_newlines=True,
+            cwd=cwd,
+            shell=shell,
+            env=env,
+            encoding="utf-8",
+        )
+        output_buffer = []
+        for line in process.stdout:
+            output_buffer.append(line.rstrip())
+            _LOG.info(f"==[autorest22]" + output_buffer[-1])
+        process.wait()
+        output = "\n".join(output_buffer)
+        if process.returncode:
+            # print necessary error info
+            for i in range(len(output_buffer)):
+                _LOG.error(f"[Autorest11] {output_buffer[i]}")
+                # print(f"[Autorest22] {output_buffer[i]}")
+            raise subprocess.CalledProcessError(process.returncode, cmd_line, output)
+        return output
+    except Exception as err:
+        _LOG.error(err)
+        raise
+    else:
+        _LOGGER.info("Return code: %s", process.returncode)
+
 
 class CodegenTestPR:
     """
@@ -185,6 +216,14 @@ class CodegenTestPR:
 
         # generate code
         print_exec('python scripts/dev_setup.py -p azure-core')
+        cmd_line = ['/usr/local/bin/autorest', '/home/vsts/work/1/azure-rest-api-specs/specification/hdinsight/resource-manager/readme.md',
+                    '--multiapi', '--python', '--python-mode=update',
+                    '--python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk', '--python3-only', '--track2',
+                    '--use=@autorest/python@5.12.0', '--use=@autorest/modelerfour@4.19.3', '--version=3.7.2']
+
+        execute_simple_command(cmd_line)
+        print("*****************************************")
+
         print_check(f'python -m packaging_tools.auto_codegen {self.autorest_result} {self.autorest_result}')
         print_check(f'python -m packaging_tools.auto_package {self.autorest_result} {self.autorest_result}')
 
