@@ -190,7 +190,8 @@ def main():
     rest_repo = g.get_repo('Azure/azure-rest-api-specs')
     sdk_repo = g.get_repo('Azure/azure-sdk-for-python')
     label1 = request_repo.get_label('ManagementPlane')
-    open_issues = request_repo.get_issues(state='open', labels=[label1])
+    label2 = request_repo.get_label('Python')
+    open_issues = request_repo.get_issues(state='open', labels=[label1, label2])
     issue_status = []
     issue_status_python = []
     duplicated_issue = dict()
@@ -205,9 +206,13 @@ def main():
         issue.link = f'https://github.com/Azure/sdk-release-request/issues/{item.number}'
         issue.author = item.user.login
         issue.package = _extract(item.body.split('\n'), 'azure-.*')
-        issue.target_date = [x.split(':')[-1].strip() for x in item.body.split('\n') if 'Target release date' in x][0]
-        issue.days_from_target = int(
-            (time.mktime(time.strptime(issue.target_date, '%Y-%m-%d')) - time.time()) / 3600 / 24)
+        try:
+            issue.target_date = [x.split(':')[-1].strip() for x in item.body.split('\n') if 'Target release date' in x][0]
+            issue.days_from_target = int(
+                (time.mktime(time.strptime(issue.target_date, '%Y-%m-%d')) - time.time()) / 3600 / 24)
+        except Exception:
+            issue.target_date = 'fail to get.'
+            issue.days_from_target = 1000  # make a ridiculous data to remind failure when error happens
         issue.create_date = item.created_at.timestamp()
         issue.delay_from_create_date = int((time.time() - item.created_at.timestamp()) / 3600 / 24)
         issue.latest_update = item.updated_at.timestamp()

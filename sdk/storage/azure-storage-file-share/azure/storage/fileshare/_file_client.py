@@ -178,7 +178,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         self._query_str, credential = self._format_query_string(
             sas_token, credential, share_snapshot=self.snapshot)
         super(ShareFileClient, self).__init__(parsed_url, service='file-share', credential=credential, **kwargs)
-        self._client = AzureFileStorage(url=self.url, pipeline=self._pipeline)
+        self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
 
     @classmethod
@@ -834,7 +834,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         :keyword file_last_write_time:
             Last write time for the file.
         :paramtype file_last_write_time:~datetime.datetime or str
-        :keyword dict(str,str) metadata:
+        :keyword Dict[str,str] metadata:
             A name-value pair to associate with a file storage object.
         :keyword source_lease:
             Required if the source file has an active lease. Value can be a ShareLeaseClient object

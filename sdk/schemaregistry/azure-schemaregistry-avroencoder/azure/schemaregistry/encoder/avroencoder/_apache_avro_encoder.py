@@ -9,7 +9,7 @@ from io import BytesIO
 import avro
 from avro.io import DatumWriter, DatumReader, BinaryDecoder, BinaryEncoder
 
-from ._abstract_avro_encoder import AbstractAvroObjectEncoder
+from ._abstract_avro_encoder import AbstractAvroObjectEncoder   # pylint: disable=import-error
 
 ObjectType = TypeVar("ObjectType")
 
@@ -45,14 +45,14 @@ class ApacheAvroObjectEncoder(AbstractAvroObjectEncoder):
     # pylint: disable=no-self-use
     def encode(
         self,
-        data,  # type: ObjectType
+        content,  # type: ObjectType
         schema,  # type: Union[str, bytes, avro.schema.Schema]
     ) -> bytes:
         """Convert the provided value to it's binary representation and write it to the stream.
         Schema must be a Avro RecordSchema:
         https://avro.apache.org/docs/1.10.0/gettingstartedpython.html#Defining+a+schema
-        :param data: An object to encode
-        :type data: ObjectType
+        :param content: An object to encode
+        :type content: ObjectType
         :param schema: An Avro RecordSchema
         :type schema: str
         :returns: Encoded bytes
@@ -65,22 +65,22 @@ class ApacheAvroObjectEncoder(AbstractAvroObjectEncoder):
 
         stream = BytesIO()
         with stream:
-            writer.write(data, BinaryEncoder(stream))
-            encoded_data = stream.getvalue()
-        return encoded_data
+            writer.write(content, BinaryEncoder(stream))
+            encoded_content = stream.getvalue()
+        return encoded_content
 
     # pylint: disable=no-self-use
     def decode(
         self,
-        data,  # type: Union[bytes, BinaryIO]
+        content,  # type: Union[bytes, BinaryIO]
         schema,  # type:  Union[str, bytes, avro.schema.Schema]
         *,
         readers_schema=None,  # type:  Optional[Union[str, bytes, avro.schema.Schema]]
     ) -> ObjectType:
         """Read the binary representation into a specific type.
         Return type will be ignored, since the schema is deduced from the provided bytes.
-        :param data: A stream of bytes or bytes directly
-        :type data: BinaryIO or bytes
+        :param content: A stream of bytes or bytes directly
+        :type content: BinaryIO or bytes
         :param schema: An Avro RecordSchema
         :type schema: str
         :keyword readers_schema: An optional reader's schema as defined by the Apache Avro specification.
@@ -88,13 +88,13 @@ class ApacheAvroObjectEncoder(AbstractAvroObjectEncoder):
         :returns: An instantiated object
         :rtype: ObjectType
         """
-        if not hasattr(data, 'read'):
-            data = BytesIO(data)
+        if not hasattr(content, 'read'):
+            content = BytesIO(content)
 
         reader = self.get_schema_reader(schema, readers_schema)
 
-        with data:
-            bin_decoder = BinaryDecoder(data)
-            decoded_data = reader.read(bin_decoder)
+        with content:
+            bin_decoder = BinaryDecoder(content)
+            decoded_content = reader.read(bin_decoder)
 
-        return decoded_data
+        return decoded_content

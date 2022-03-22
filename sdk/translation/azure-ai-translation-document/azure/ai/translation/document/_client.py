@@ -74,14 +74,17 @@ class DocumentTranslationClient:
                 :dedent: 4
                 :caption: Creating the DocumentTranslationClient with a token credential.
         """
-        self._endpoint = endpoint
+        try:
+            self._endpoint = endpoint.rstrip("/")
+        except AttributeError:
+            raise ValueError("Parameter 'endpoint' must be a string.")
         self._credential = credential
         self._api_version = kwargs.pop("api_version", None)
 
         authentication_policy = get_authentication_policy(credential)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
         self._client = _BatchDocumentTranslationClient(
-            endpoint=endpoint,
+            endpoint=self._endpoint,
             credential=credential,  # type: ignore
             api_version=self._api_version,
             sdk_moniker=USER_AGENT,
