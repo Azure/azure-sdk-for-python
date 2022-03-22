@@ -2710,7 +2710,7 @@ class TestCheckEnum(pylint.testutils.CheckerTestCase):
     def test_enum_capitalized_violation_python_three(self):
         class_node = astroid.extract_node(
             """
-            class MyBadEnum(str, Enum, metaclass= CaseInsensitiveEnumMeta): 
+            class MyBadEnum(str, Enum, metaclass = CaseInsensitiveEnumMeta): 
                 One = "one"
             """
         )
@@ -2769,4 +2769,5 @@ class TestCheckEnum(pylint.testutils.CheckerTestCase):
                     )
                 ):
 
-            self.checker.visit_classdef(node.body[0])    
+            self.checker.visit_classdef(node.body[0]) 
+   
