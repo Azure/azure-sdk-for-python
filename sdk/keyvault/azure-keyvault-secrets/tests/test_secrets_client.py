@@ -74,7 +74,8 @@ class TestSecretClient(KeyVaultTestCase):
     @SecretsPreparer()
     @recorded_by_proxy
     def test_secret_crud_operations(self, client, **kwargs):
-        set_custom_default_matcher(excluded_headers="Authorization")
+        if not is_live():
+            set_custom_default_matcher(excluded_headers="Authorization")
         secret_name = self.get_resource_name("crud-secret")
         secret_value = "crud_secret_value"
 
@@ -147,7 +148,8 @@ class TestSecretClient(KeyVaultTestCase):
     @SecretsPreparer()
     @recorded_by_proxy
     def test_secret_list(self, client, **kwargs):
-        set_custom_default_matcher(excluded_headers="Authorization")
+        if not is_live():
+            set_custom_default_matcher(excluded_headers="Authorization")
         max_secrets = list_test_size
         expected = {}
 
@@ -170,7 +172,8 @@ class TestSecretClient(KeyVaultTestCase):
     @SecretsPreparer()
     @recorded_by_proxy
     def test_list_versions(self, client, **kwargs):
-        set_custom_default_matcher(excluded_headers="Authorization")
+        if not is_live():
+            set_custom_default_matcher(excluded_headers="Authorization")
         secret_name = self.get_resource_name("secVer")
         secret_value = "secVal"
 
@@ -201,7 +204,8 @@ class TestSecretClient(KeyVaultTestCase):
     @recorded_by_proxy
     def test_list_deleted_secrets(self, client, **kwargs):
         expected = {}
-        set_custom_default_matcher(excluded_headers="Authorization")
+        if not is_live():
+            set_custom_default_matcher(excluded_headers="Authorization")
         # create secrets
         for i in range(list_test_size):
             secret_name = self.get_resource_name("secret{}".format(i))
@@ -228,7 +232,8 @@ class TestSecretClient(KeyVaultTestCase):
     @SecretsPreparer()
     @recorded_by_proxy
     def test_backup_restore(self, client, **kwargs):
-        set_custom_default_matcher(excluded_headers="Authorization")
+        if not is_live():
+            set_custom_default_matcher(excluded_headers="Authorization")
         secret_name = self.get_resource_name("secbak")
         secret_value = "secVal"
 
@@ -257,7 +262,8 @@ class TestSecretClient(KeyVaultTestCase):
     @SecretsPreparer()
     @recorded_by_proxy
     def test_recover(self, client, **kwargs):
-        set_custom_default_matcher(excluded_headers="Authorization")
+        if not is_live():
+            set_custom_default_matcher(excluded_headers="Authorization")
         secrets = {}
 
         # create secrets to recover
@@ -290,7 +296,8 @@ class TestSecretClient(KeyVaultTestCase):
     @SecretsPreparer()
     @recorded_by_proxy
     def test_purge(self, client, **kwargs):
-        set_custom_default_matcher(excluded_headers="Authorization")
+        if not is_live():
+            set_custom_default_matcher(excluded_headers="Authorization")
         secrets = {}
 
         # create secrets to purge
