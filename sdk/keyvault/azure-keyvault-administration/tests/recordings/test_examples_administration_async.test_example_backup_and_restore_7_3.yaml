@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-administration/4.1.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/backup?api-version=7.3-preview
+    uri: https://managedhsmname.managedhsm.azure.net/backup?api-version=7.3
   response:
     body:
       string: ''
@@ -29,7 +29,7 @@ interactions:
     status:
       code: 401
       message: Unauthorized
-    url: https://mcpatinotesthsm.managedhsm.azure.net/backup?api-version=7.3-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/backup?api-version=7.3
 - request:
     body: '{"storageResourceUri": "https://storagename.blob.core.windows.net/backup",
       "token": "fake-sas"}'
@@ -43,7 +43,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-administration/4.1.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: POST
-    uri: https://managedhsmname.managedhsm.azure.net/backup?api-version=7.3-preview
+    uri: https://managedhsmname.managedhsm.azure.net/backup?api-version=7.3
   response:
     body:
       string: '{"status":"InProgress","statusDetails":null,"error":null,"startTime":1631926705,"endTime":null,"jobId":"160bcff1b48e4a6180c6349b67c3f580","azureStorageBlobContainerUri":null}'
@@ -64,7 +64,7 @@ interactions:
     status:
       code: 202
       message: ''
-    url: https://mcpatinotesthsm.managedhsm.azure.net/backup?api-version=7.3-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/backup?api-version=7.3
 - request:
     body: null
     headers:
@@ -106,7 +106,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-administration/4.1.0b2 Python/3.9.0 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://managedhsmname.managedhsm.azure.net/restore?api-version=7.3-preview
+    uri: https://managedhsmname.managedhsm.azure.net/restore?api-version=7.3
   response:
     body:
       string: '{"endTime":null,"error":null,"jobId":"464073752afd447c9a63c460465fa464","startTime":1631926720,"status":"InProgress","statusDetails":null}'
@@ -127,7 +127,7 @@ interactions:
     status:
       code: 202
       message: ''
-    url: https://mcpatinotesthsm.managedhsm.azure.net/restore?api-version=7.3-preview
+    url: https://mcpatinotesthsm.managedhsm.azure.net/restore?api-version=7.3
 - request:
     body: null
     headers:
