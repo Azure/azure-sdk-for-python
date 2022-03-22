@@ -97,7 +97,6 @@ class ServiceOperations:
             if not next_link:
                 
                 request = build_list_file_systems_request(
-                    url=self._config.url,
                     resource=resource,
                     version=self._config.version,
                     prefix=prefix,
@@ -113,7 +112,6 @@ class ServiceOperations:
             else:
                 
                 request = build_list_file_systems_request(
-                    url=self._config.url,
                     resource=resource,
                     version=self._config.version,
                     prefix=prefix,
@@ -156,4 +154,4 @@ class ServiceOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list_file_systems.metadata = {'url': "{url}/"}  # type: ignore
+    list_file_systems.metadata = {'url': "/"}  # type: ignore

@@ -46,7 +46,7 @@ class IssueProcess:
                  assignee_candidates: Set[str], language_owner: Set[str]):
         self.issue_package = issue_package
         self.request_repo_dict = request_repo_dict
-        self.assignee = issue_package.issue.assignee.login
+        self.assignee = issue_package.issue.assignee.login if issue_package.issue.assignee else ''
         self.owner = issue_package.issue.user.login
         self.assignee_candidates = assignee_candidates
         self.language_owner = language_owner
@@ -180,7 +180,8 @@ class IssueProcess:
         self.issue_package.labels_name.add(label)
 
     def update_assignee(self, assignee_to_del: str, assignee_to_add: str) -> None:
-        self.issue_package.issue.remove_from_assignees(assignee_to_del)
+        if assignee_to_del:
+            self.issue_package.issue.remove_from_assignees(assignee_to_del)
         self.issue_package.issue.add_to_assignees(assignee_to_add)
         self.assignee = assignee_to_add
 
@@ -309,7 +310,10 @@ class Common:
     @staticmethod
     def output_md(item: IssueProcess):
         create_date = str(date.fromtimestamp(item.issue_package.issue.created_at.timestamp()).strftime('%m-%d'))
-        target_date = str(datetime.strptime(item.target_date, "%Y-%m-%d").strftime('%m-%d'))
+        try:
+            target_date = str(datetime.strptime(item.target_date, "%Y-%m-%d").strftime('%m-%d'))
+        except:
+            target_date = str(item.target_date)
 
         return '| [#{}]({}) | {} | {} | {} | {} | {} | {} | {} |\n'.format(
             item.issue_package.issue.html_url.split('/')[-1],
