@@ -83,7 +83,7 @@ class AppConfigurationClientTest(AzureTestCase):
             client.add_configuration_setting(
                 ConfigurationSetting(
                     key=test_config_setting.key,
-                    lable=test_config_setting.label,
+                    label=test_config_setting.label,
                 )
             )
 
@@ -258,11 +258,11 @@ class AppConfigurationClientTest(AzureTestCase):
 
     @app_config_decorator
     def test_list_configuration_settings_reserved_chars(self, client, appconfiguration_connection_string, test_config_setting, test_config_setting_no_label):
-        resered_char_kv = ConfigurationSetting(
+        reserved_char_kv = ConfigurationSetting(
             key=KEY, label=LABEL_RESERVED_CHARS, value=TEST_VALUE
         )
-        resered_char_kv = client.add_configuration_setting(
-            resered_char_kv
+        reserved_char_kv = client.add_configuration_setting(
+            reserved_char_kv
         )
         escaped_label = re.sub(r"((?!^)\*(?!$)|\\|,)", r"\\\1", LABEL_RESERVED_CHARS)
         items = client.list_configuration_settings(

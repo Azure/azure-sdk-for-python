@@ -27,7 +27,6 @@
 
     "sdk/anomalydetector/azure-ai-anomalydetector/**",
     "sdk/applicationinsights/azure-applicationinsights/**",
-    "sdk/appconfiguration/azure-appconfiguration/**",
     "sdk/agrifood/azure-agrifood-farming/**",
     "sdk/attestation/azure-security-attestation/**",
     "sdk/batch/azure-batch/**",
@@ -132,6 +131,7 @@
     "cname",
     "conda",
     "connectedvmware",
+    "consts",
     "contoso",
     "contosodataset",
     "centralus",
@@ -141,6 +141,8 @@
     "dateutil",
     "ddos",
     "decryptor",
+    "defg",
+    "defgh",
     "delenv",
     "dependened",
     "deserialization",
@@ -160,6 +162,8 @@
     "GCCH",
     "getsizeof",
     "graphrbac",
+    "ghij",
+    "ghijk",
     "gmtime",
     "guids",
     "hanaonazure",
@@ -179,6 +183,8 @@
     "iscoroutinefunction",
     "iscsi",
     "ivar",
+    "jklm",
+    "jklmn",
     "jwks",
     "keybak",
     "kube",
@@ -303,6 +309,16 @@
     "westus"
   ],
   "overrides": [
+    {
+      "filename": "sdk/appconfiguration/azure-appconfiguration/tests/*.py",
+      "words": [
+        "aref",
+        "bababooey",
+        "blash",
+        "fakeyfakey",
+        "fkaeyjfdkal"
+      ]
+    },
     {
       "filename": "sdk/remoterendering/**",
       "words": [
