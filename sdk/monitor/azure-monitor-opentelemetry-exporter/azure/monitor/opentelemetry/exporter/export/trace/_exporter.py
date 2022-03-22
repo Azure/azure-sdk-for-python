@@ -2,11 +2,9 @@
 # Licensed under the MIT License.
 import json
 import logging
-import platform
 from typing import Sequence, Any
 from urllib.parse import urlparse
 
-from opentelemetry.semconv.resource import ResourceAttributes
 from opentelemetry.semconv.trace import DbSystemValues, SpanAttributes
 from opentelemetry.sdk.trace.export import SpanExporter, SpanExportResult
 from opentelemetry.sdk.util import ns_to_iso_str
@@ -22,19 +20,18 @@ from azure.monitor.opentelemetry.exporter._generated.models import (
 from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
-    get_trace_export_result,
 )
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 __all__ = ["AzureMonitorTraceExporter"]
 
 
 class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
-    """Azure Monitor base exporter for OpenTelemetry."""
+    """Azure Monitor Trace exporter for OpenTelemetry."""
 
     def export(self, spans: Sequence[Span], **kwargs: Any) -> SpanExportResult: # pylint: disable=unused-argument
-        """Export data
+        """Export span data
         :param spans: Open Telemetry Spans to export.
         :type spans: Sequence[~opentelemetry.trace.Span]
         :rtype: ~opentelemetry.sdk.trace.export.SpanExportResult
@@ -48,10 +45,10 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
             if result == ExportResult.SUCCESS:
                 # Try to send any cached events
                 self._transmit_from_storage()
-            return get_trace_export_result(result)
+            return _get_trace_export_result(result)
         except Exception:  # pylint: disable=broad-except
-            logger.exception("Exception occurred while exporting the data.")
-            return get_trace_export_result(ExportResult.FAILED_NOT_RETRYABLE)
+            _logger.exception("Exception occurred while exporting the data.")
+            return _get_trace_export_result(ExportResult.FAILED_NOT_RETRYABLE)
 
     def shutdown(self) -> None:
         """Shuts down the exporter.
@@ -92,21 +89,9 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
         tags=dict(_utils.azure_monitor_context),
         time=ns_to_iso_str(span.start_time),
     )
-    if span.resource and span.resource.attributes:
-        service_name = span.resource.attributes.get(ResourceAttributes.SERVICE_NAME)
-        service_namespace = span.resource.attributes.get(ResourceAttributes.SERVICE_NAMESPACE)
-        service_instance_id = span.resource.attributes.get(ResourceAttributes.SERVICE_INSTANCE_ID)
-        if service_name:
-            if service_namespace:
-                envelope.tags["ai.cloud.role"] = service_namespace + \
-                    "." + service_name
-            else:
-                envelope.tags["ai.cloud.role"] = service_name
-        if service_instance_id:
-            envelope.tags["ai.cloud.roleInstance"] = service_instance_id
-        else:
-            envelope.tags["ai.cloud.roleInstance"] = platform.node()  # hostname default
-        envelope.tags["ai.internal.nodeName"] = envelope.tags["ai.cloud.roleInstance"]
+    # pylint: disable=protected-access
+    envelope.tags.update(_utils._populate_part_a_fields(span.resource))
+
     envelope.tags["ai.operation.id"] = "{:032x}".format(span.context.trace_id)
     if SpanAttributes.ENDUSER_ID in span.attributes:
         envelope.tags["ai.user.id"] = span.attributes[SpanAttributes.ENDUSER_ID]
@@ -114,6 +99,7 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
         envelope.tags["ai.operation.parentId"] = "{:016x}".format(
             span.parent.span_id
         )
+
     # pylint: disable=too-many-nested-blocks
     if span.kind in (SpanKind.CONSUMER, SpanKind.SERVER):
         envelope.name = "Microsoft.ApplicationInsights.Request"
@@ -317,7 +303,7 @@ def _convert_span_to_envelope(span: Span) -> TelemetryItem:
                             else:
                                 target = host
                         except Exception:  # pylint: disable=broad-except
-                            logger.warning("Error while parsing hostname.")
+                            _logger.warning("Error while parsing hostname.")
                     elif target_from_url:
                         target = target_from_url
                 # data is url
@@ -443,3 +429,14 @@ def _is_sql_db(dbsystem):
         DbSystemValues.HSQLDB.value,
         DbSystemValues.H2.value,
       )
+
+
+def _get_trace_export_result(result: ExportResult) -> SpanExportResult:
+    if result == ExportResult.SUCCESS:
+        return SpanExportResult.SUCCESS
+    if result in (
+        ExportResult.FAILED_RETRYABLE,
+        ExportResult.FAILED_NOT_RETRYABLE,
+    ):
+        return SpanExportResult.FAILURE
+    return None

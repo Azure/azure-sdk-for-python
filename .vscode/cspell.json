@@ -20,6 +20,7 @@
     "*.tgz",
     "*.pfx",
     "sdk/**/azure-mgmt**/**",
+    "sdk/**/ci.yml",
     "sdk/**/azure-cognitiveservices**",
     "sdk/**/_generated/**",
     "**/*requirement*.txt",
@@ -81,9 +82,6 @@
     "sdk/metricsadvisor/azure-ai-metricsadvisor/**",
     "sdk/purview/azure-purview-catalog/**",
     "sdk/remoterendering/azure-mixedreality-remoterendering/**",
-    "sdk/schemaregistry/ci.yml",
-    "sdk/schemaregistry/azure-schemaregistry/**",
-    "sdk/schemaregistry/azure-schemaregistry-avroencoder/**",
     "sdk/servicefabric/azure-servicefabric/**",
     "sdk/search/azure-search-documents/**",
     "sdk/storage/azure-storage-blob-changefeed/**",
@@ -118,6 +116,7 @@
     "amqp",
     "apim",
     "asyncio",
+    "avroencoder",
     "azcmagent",
     "azsdk",
     "azurecr",
@@ -159,6 +158,7 @@
     "fstat",
     "gbps",
     "GCCH",
+    "getsizeof",
     "graphrbac",
     "gmtime",
     "guids",
@@ -176,6 +176,7 @@
     "ipconfigurations",
     "iqmp",
     "iscoroutine",
+    "iscoroutinefunction",
     "iscsi",
     "ivar",
     "jwks",
@@ -370,6 +371,12 @@
       ]
     },
     {
+      "filename": "sdk/containerregistry/azure-containerregistry/**",
+      "words": [
+        "udpated"
+      ]
+    },
+    {
       "filename": "sdk/formrecognizer/azure-ai-formrecognizer/tests/*.py",
       "words": [
         "WDLABCD"
@@ -382,6 +389,21 @@
         "dmac",
         "ierr",
         "mymodel"
+      ]
+    },
+    {
+      "filename": "sdk/schemaregistry/**/tests/**/*.py",
+      "words": [
+        "favo",
+        "randb"
+      ]
+    },
+    {
+      "filename": "sdk/schemaregistry/azure-schemaregistry-avroencoder/**/*.py",
+      "words": [
+        "currsize",
+        "unpartial",
+        "alru"
       ]
     }
   ],

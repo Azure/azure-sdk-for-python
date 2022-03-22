@@ -105,3 +105,32 @@ directive:
         }
     }
 ```
+
+### Remove x-ms-parameterized-host
+``` yaml
+directive:
+- from: swagger-document
+  where: $
+  transform: >
+    $["x-ms-parameterized-host"] = undefined;
+```
+
+### Add url parameter to each operation and add it to the url
+``` yaml
+directive:
+- from: swagger-document
+  where: $["x-ms-paths"]
+  transform: >
+    for (const property in $)
+    {
+        // Don't apply to service operations (where path is just '/')
+        if (property !== '/' && !property.startsWith('/?')) {
+            $[property]["parameters"].push({"$ref": "#/parameters/Url"});
+    
+            var oldName = property;
+            var newName = '{url}' + property;
+            $[newName] = $[oldName];
+            delete $[oldName];
+        }
+    }
+```
