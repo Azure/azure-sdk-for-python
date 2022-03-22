@@ -7,6 +7,8 @@ import time
 
 import pkg_resources
 
+from opentelemetry.semconv.resource import ResourceAttributes
+
 from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
 
 
@@ -71,3 +73,22 @@ class PeriodicTask(threading.Thread):
 
     def cancel(self):
         self.finished.set()
+
+def _populate_part_a_fields(resource):
+    tags = {}
+    if resource and resource.attributes:
+        service_name = resource.attributes.get(ResourceAttributes.SERVICE_NAME)
+        service_namespace = resource.attributes.get(ResourceAttributes.SERVICE_NAMESPACE)
+        service_instance_id = resource.attributes.get(ResourceAttributes.SERVICE_INSTANCE_ID)
+        if service_name:
+            if service_namespace:
+                tags["ai.cloud.role"] = service_namespace + \
+                    "." + service_name
+            else:
+                tags["ai.cloud.role"] = service_name
+        if service_instance_id:
+            tags["ai.cloud.roleInstance"] = service_instance_id
+        else:
+            tags["ai.cloud.roleInstance"] = platform.node()  # hostname default
+        tags["ai.internal.nodeName"] = tags["ai.cloud.roleInstance"]
+    return tags
