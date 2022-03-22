@@ -25,7 +25,6 @@
 from typing import Any, Dict, Optional, Union, cast, Iterable, List  # pylint: disable=unused-import
 
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
-from azure.identity import ClientSecretCredential
 
 from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options

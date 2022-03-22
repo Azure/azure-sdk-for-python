@@ -74,10 +74,12 @@ def run_sample():
     db = aad_client.get_database_client(DATABASE_ID)
     container = db.get_container_client(CONTAINER_ID)
 
-    print(container.read())
-    container.create_item(get_test_item(0))
-    print(container.read_item(item='Item_0', partition_key='Item_0'))
-    print(list(container.query_items(query='select * from c', partition_key='Item_0')))
+    print("Container info: " + str(container.read()))
+    container.create_item(get_test_item(879))
+    print("Point read result: " + str(container.read_item(item='Item_0', partition_key='Item_0')))
+    query_results = list(container.query_items(query='select * from c', partition_key='Item_0'))
+    assert len(query_results) == 1
+    print("Query result: " + str(query_results[0]))
     container.delete_item(item='Item_0', partition_key='Item_0')
 
     # Attempting to do management operations will return a 403 Forbidden exception.
