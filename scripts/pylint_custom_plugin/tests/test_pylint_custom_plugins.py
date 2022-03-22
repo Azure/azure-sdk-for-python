@@ -2678,8 +2678,8 @@ class TestCheckNamingMismatchGeneratedCode(pylint.testutils.CheckerTestCase):
         with self.assertNoMessages():
             self.checker.visit_module(node)
 
-class TestCheckApiVersion(pylint.testutils.CheckerTestCase):
-    CHECKER_CLASS = checker.CheckApiVersion
+class TestCheckAPIVersion(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.CheckAPIVersion
 
     def test_api_version_violation(self):
         class_node = astroid.extract_node(
