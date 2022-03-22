@@ -614,7 +614,7 @@ class CodegenTestPR:
 if __name__ == '__main__':
     main_logger = logging.getLogger()
     logging.basicConfig()
-    main_logger.setLevel(logging.INFO)
+    main_logger.setLevel(logging.DEBUG)
 
     instance = CodegenTestPR()
     instance.run()
