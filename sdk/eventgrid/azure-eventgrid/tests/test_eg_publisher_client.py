@@ -348,7 +348,10 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
     @pytest.mark.live_test_only
     @EventGridPreparer()
     @recorded_by_proxy
-    def test_send_partner_namespace(self, variables, eventgrid_partner_namespace_endpoint, eventgrid_partner_namespace_key):
+    def test_send_partner_namespace(self, variables):
+        eventgrid_partner_namespace_endpoint = os.environ['EVENTGRID_PARTNER_NAMESPACE_TOPIC_ENDPOINT']
+        eventgrid_partner_namespace_key = os.environ['EVENTGRID_PARTNER_NAMESPACE_TOPIC_KEY']
+        channel_name = os.environ['EVENTGRID_PARTNER_CHANNEL_NAME']
         credential = AzureKeyCredential(eventgrid_partner_namespace_key)
         client = EventGridPublisherClient(eventgrid_partner_namespace_endpoint, eventgrid_partner_namespace_key)
         cloud_event = CloudEvent(
@@ -356,4 +359,4 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
                 data = "cloudevent",
                 type="Sample.Cloud.Event"
                 )
-        client.send(cloud_event, channel_name='data-plane-sdk-pt-ch')
+        client.send(cloud_event, channel_name=channel_name)
