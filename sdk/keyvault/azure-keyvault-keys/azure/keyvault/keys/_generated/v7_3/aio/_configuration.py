@@ -13,13 +13,14 @@ from azure.core.pipeline import policies
 
 VERSION = "unknown"
 
-class KeyVaultClientConfiguration(Configuration):
+class KeyVaultClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for KeyVaultClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :keyword api_version: Api Version. The default value is "7.3-preview". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "7.3". Note that overriding this default
+     value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -28,7 +29,7 @@ class KeyVaultClientConfiguration(Configuration):
         **kwargs: Any
     ) -> None:
         super(KeyVaultClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop('api_version', "7.3-preview")  # type: str
+        api_version = kwargs.pop('api_version', "7.3")  # type: str
 
 
         self.api_version = api_version
