@@ -137,10 +137,11 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
             encoding="utf-8",
         )
         output_buffer = []
+        process.wait()
         for line in process.stdout:
             output_buffer.append(line.rstrip())
             _LOG.info(f"==[autorest22]" + output_buffer[-1])
-        process.wait()
+        # process.wait()
         output = "\n".join(output_buffer)
         if process.returncode:
             # print necessary error info
@@ -205,7 +206,7 @@ class CodegenTestPR:
         cmd_line = ['/usr/local/bin/autorest', '/home/vsts/work/1/azure-rest-api-specs/specification/hdinsight/resource-manager/readme.md',
                     '--multiapi', '--python', '--python-mode=update',
                     '--python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk', '--python3-only', '--track2',
-                    '--use=@autorest/python@5.8.1', '--use=@autorest/modelerfour@4.19.2', '--version=3.4.2']
+                    '--use=@autorest/python@5.12.0', '--use=@autorest/modelerfour@4.19.3', '--version=3.7.2']
 
         execute_simple_command(cmd_line)
         print("*****************************************")
