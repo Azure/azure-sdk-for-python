@@ -1773,7 +1773,7 @@ class CheckEnum(BaseChecker):
 
     def _check_is_enum_class(self,node):
         """Checks if a class is an enum class.
-        If it is, returns booleans for the two enum guidelines.
+        Returns booleans for the two enum guidelines.
 
         :param node: ast.ClassDef
         :return: inherits_metaclass, enum_class
@@ -1821,7 +1821,7 @@ class CheckEnum(BaseChecker):
     def _does_not_inherit_case_insensitive(self, node):
         """Adds a pylint error message for enum class not 
         inheriting from the CaseInsensitiveEnumMeta class.
-        
+
         :param node: ast.ClassDef
         :return: None
         """
