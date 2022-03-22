@@ -8,33 +8,33 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "176",
         "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": "azsdk-python-identity/1.6.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-identity/1.8.0b2 Python/3.9.2 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": "client_id=c692e7f3-fcd0-45ac-b19c-70b0c73d61b2\u0026client_secret=3afb0ec2-f0bb-4f0f-b3df-8673135beec3\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fstorage.azure.com%2F.default",
+      "RequestBody": "client_id=9211dd93-dbb5-4e68-a07f-a764436e805b\u0026client_secret=1581dba4-4942-4f9b-99eb-24b5fe641fa1\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fstorage.azure.com%2F.default",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "1318",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 18 Oct 2021 22:00:44 GMT",
+        "Date": "Tue, 22 Mar 2022 15:21:31 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=AtOpiLRl9TtBpI2WZhYBrIk-ro1yDwAAAEDl_9gOAAAA; expires=Wed, 17-Nov-2021 22:00:44 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AmkoeS6NjFNCqdL2E2RVkQiCPG-UBgAAAHbgy9kOAAAA; expires=Thu, 21-Apr-2022 15:21:31 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12158.6 - SCUS ProdSlices",
-        "x-ms-request-id": "9bc4cdb1-944b-4904-a248-914f42599200"
+        "x-ms-ests-server": "2.1.12559.10 - WUS2 ProdSlices",
+        "x-ms-request-id": "e7132d5a-88dc-44fd-a79f-5a7aad251400"
       },
       "ResponseBody": {
         "token_type": "Bearer",
         "expires_in": 86399,
         "ext_expires_in": 86399,
-        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Imwzc1EtNTBjQ0g0eEJWWkxIVEd3blNSNzY4MCIsImtpZCI6Imwzc1EtNTBjQ0g0eEJWWkxIVEd3blNSNzY4MCJ9.eyJhdWQiOiJodHRwczovL3N0b3JhZ2UuYXp1cmUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3LyIsImlhdCI6MTYzNDU5NDE0NCwibmJmIjoxNjM0NTk0MTQ0LCJleHAiOjE2MzQ2ODA4NDQsImFpbyI6IkUyWmdZT2h4dSs2Vjd5d3d1Ykp3aFdCYmdxa1FBQT09IiwiYXBwaWQiOiJjNjkyZTdmMy1mY2QwLTQ1YWMtYjE5Yy03MGIwYzczZDYxYjIiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwib2lkIjoiY2Y0MjI4N2YtNjQxYS00NGExLThmZjgtOGQzNzI1NTdmMWQxIiwicmgiOiIwLkFSb0F2NGo1Y3ZHR3IwR1JxeTE4MEJIYlJfUG5rc2JRX0t4RnNaeHdzTWM5WWJJYUFBQS4iLCJzdWIiOiJjZjQyMjg3Zi02NDFhLTQ0YTEtOGZmOC04ZDM3MjU1N2YxZDEiLCJ0aWQiOiI3MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDciLCJ1dGkiOiJzYzNFbTB1VUJFbWlTSkZQUWxtU0FBIiwidmVyIjoiMS4wIn0.i_H6VUoNdES3wM0LgL1-V6PNpZ-h-YfEp8PAjmnuMsZgyhimaEBCGybsVbTY1XFbQL15Q2uUsrndk-WrSiT6qBVhcaSFtxuRbXVM-mZ5m9yJXGafT-0nBZ7p9Y50fai1uUrXOTuibSvFlhmTinpdekHKccnYB1YQfFKKCxVVmYkQWpdauAIibAuSBBppLU1NIYRHf2MGdAIifZQ5vX3SntIT-WmVGZhKg7IvLZIP-C-0asxjXxdivaTIu_AJh0F7Q2QPqvs_W4ZTOMqi__AJuP0FUVmxJhRAW_4CfYisPbAzYrRFF_cn3xS4XlCiB4zPOb-4VWIiw6IyLr9dNYlgfw"
+        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6ImpTMVhvMU9XRGpfNTJ2YndHTmd2UU8yVnpNYyIsImtpZCI6ImpTMVhvMU9XRGpfNTJ2YndHTmd2UU8yVnpNYyJ9.eyJhdWQiOiJodHRwczovL3N0b3JhZ2UuYXp1cmUuY29tIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3LyIsImlhdCI6MTY0Nzk2MjE5MSwibmJmIjoxNjQ3OTYyMTkxLCJleHAiOjE2NDgwNDg4OTEsImFpbyI6IkUyWmdZTGh4S3V1UFJaaHlXNGVkSGR1ck5VNHZBQT09IiwiYXBwaWQiOiI5MjExZGQ5My1kYmI1LTRlNjgtYTA3Zi1hNzY0NDM2ZTgwNWIiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwib2lkIjoiYzg2ZThmZGEtYjQwYy00MzZjLTgwMTQtYjlkZTliZWIwYmFlIiwicmgiOiIwLkFRRUF2NGo1Y3ZHR3IwR1JxeTE4MEJIYlI0R21CdVRVODZoQ2tMYkNzQ2xKZXZFYUFBQS4iLCJzdWIiOiJjODZlOGZkYS1iNDBjLTQzNmMtODAxNC1iOWRlOWJlYjBiYWUiLCJ0aWQiOiI3MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDciLCJ1dGkiOiJXaTBUNTl5SV9VU25uMXA2clNVVUFBIiwidmVyIjoiMS4wIn0.Vtg5Ojy1PSwqH7IPYB7DepTDHySseNOIFTyhUobqyO8GlIo5FF18vOUkhAkOAwyYOAJa42lCQNZO0RDMe0eU5isYHlX5qL3clEmeeFAtFbTrsaJRxBY68HeNU862QWliiYzKiYfjy72lxwQBhV3qk4j-MfR43moUTBOj8E0BOsnuEnsv7snrVjlZwRYBr7UZoWPmDY2qKaTC_Xd7OVp8nf4zb7ZKVnKMd-aUYMlRgoS5z3nVgzZSew_vImqZc8lhX7XJr6h4Eu31X-fbEMAfY8t8A8l_AcmltuiId3l7pzOcCBypJO8U5P79MPY6w7u2LYFBingOlCiym_6IB8iCyg"
       }
     },
     {
@@ -44,27 +44,28 @@
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
-        "Date": "Mon, 18 Oct 2021 22:00:50 GMT",
-        "User-Agent": "azsdk-python-data-tables/12.1.1 Python/3.9.2 (Windows-10-10.0.19041-SP0)",
-        "x-ms-client-request-id": "db207209-305e-11ec-9112-5cf37093a909",
-        "x-ms-date": "Mon, 18 Oct 2021 22:00:50 GMT",
+        "Date": "Tue, 22 Mar 2022 15:21:32 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "c107a205-a9f3-11ec-8ffc-5cf37093a909",
+        "x-ms-date": "Tue, 22 Mar 2022 15:21:32 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/xml",
-        "Date": "Mon, 18 Oct 2021 22:00:43 GMT",
+        "Date": "Tue, 22 Mar 2022 15:21:31 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "Transfer-Encoding": "chunked",
-        "x-ms-client-request-id": "db207209-305e-11ec-9112-5cf37093a909",
-        "x-ms-request-id": "27528984-7002-009d-716b-c4a7c9000000",
+        "Vary": "Origin",
+        "x-ms-client-request-id": "c107a205-a9f3-11ec-8ffc-5cf37093a909",
+        "x-ms-request-id": "1dc43402-1002-0012-7000-3e4131000000",
         "x-ms-version": "2019-02-02"
       },
-      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CStorageServiceStats\u003E\u003CGeoReplication\u003E\u003CStatus\u003Elive\u003C/Status\u003E\u003CLastSyncTime\u003EMon, 18 Oct 2021 21:57:56 GMT\u003C/LastSyncTime\u003E\u003C/GeoReplication\u003E\u003C/StorageServiceStats\u003E"
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CStorageServiceStats\u003E\u003CGeoReplication\u003E\u003CStatus\u003Elive\u003C/Status\u003E\u003CLastSyncTime\u003ETue, 22 Mar 2022 15:18:34 GMT\u003C/LastSyncTime\u003E\u003C/GeoReplication\u003E\u003C/StorageServiceStats\u003E"
     }
   ],
   "Variables": {}
