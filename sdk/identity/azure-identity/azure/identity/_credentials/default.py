@@ -81,6 +81,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
+        if "tenant_id" in kwargs:
+            raise TypeError("'tenant_id' is not supported in DefaultAzureCredential.")
+
         authority = kwargs.pop("authority", None)
 
         vscode_tenant_id = kwargs.pop(

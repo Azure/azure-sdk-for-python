@@ -32,7 +32,8 @@ steps:
       versionSpec: '${{ parameters.PythonVersion }}'
 
   - script: |
-      python -m pip install pip==20.1
+      python -m pip install pip==20.3.3
+      python -m pip install wheel==0.37.0
       pip install -r eng/ci_tools.txt
       pip --version
       pip freeze
@@ -49,6 +50,8 @@ steps:
         DevFeedName: ${{ parameters.DevFeedName }}
 
   - ${{ parameters.BeforeTestSteps }}
+
+  - template: /eng/pipelines/templates/steps/seed-virtualenv-wheels.yml
 
   - task: PythonScript@0
     displayName: 'Run Tests'

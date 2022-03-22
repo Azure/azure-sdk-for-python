@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -21,21 +21,16 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_get_triggers_by_workspace_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
 
     accept = "application/json"
@@ -60,13 +55,15 @@ def build_get_triggers_by_workspace_request(
 
 
 def build_create_or_update_trigger_request_initial(
-    trigger_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    trigger_name: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    if_match: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
-    if_match = kwargs.pop('if_match', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
@@ -94,17 +91,19 @@ def build_create_or_update_trigger_request_initial(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_get_trigger_request(
-    trigger_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    trigger_name: str,
+    *,
+    if_none_match: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
-    if_none_match = kwargs.pop('if_none_match', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
@@ -135,10 +134,9 @@ def build_get_trigger_request(
 
 
 def build_delete_trigger_request_initial(
-    trigger_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    trigger_name: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
 
     accept = "application/json"
@@ -168,10 +166,9 @@ def build_delete_trigger_request_initial(
 
 
 def build_subscribe_trigger_to_events_request_initial(
-    trigger_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    trigger_name: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
 
     accept = "application/json"
@@ -201,10 +198,9 @@ def build_subscribe_trigger_to_events_request_initial(
 
 
 def build_get_event_subscription_status_request(
-    trigger_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    trigger_name: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
 
     accept = "application/json"
@@ -234,10 +230,9 @@ def build_get_event_subscription_status_request(
 
 
 def build_unsubscribe_trigger_from_events_request_initial(
-    trigger_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    trigger_name: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
 
     accept = "application/json"
@@ -267,10 +262,9 @@ def build_unsubscribe_trigger_from_events_request_initial(
 
 
 def build_start_trigger_request_initial(
-    trigger_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    trigger_name: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
 
     accept = "application/json"
@@ -300,10 +294,9 @@ def build_start_trigger_request_initial(
 
 
 def build_stop_trigger_request_initial(
-    trigger_name,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    trigger_name: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
 
     accept = "application/json"
@@ -331,7 +324,6 @@ def build_stop_trigger_request_initial(
         **kwargs
     )
 
-# fmt: on
 class TriggerOperations(object):
     """TriggerOperations operations.
 
@@ -357,9 +349,8 @@ class TriggerOperations(object):
     @distributed_trace
     def get_triggers_by_workspace(
         self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["_models.TriggerListResponse"]
+        **kwargs: Any
+    ) -> Iterable["_models.TriggerListResponse"]:
         """Lists triggers.
 
         :keyword api_version: Api Version. The default value is "2020-12-01". Note that overriding this
@@ -436,12 +427,11 @@ class TriggerOperations(object):
 
     def _create_or_update_trigger_initial(
         self,
-        trigger_name,  # type: str
-        properties,  # type: "_models.Trigger"
-        if_match=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional["_models.TriggerResource"]
+        trigger_name: str,
+        properties: "_models.Trigger",
+        if_match: Optional[str] = None,
+        **kwargs: Any
+    ) -> Optional["_models.TriggerResource"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.TriggerResource"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -490,12 +480,11 @@ class TriggerOperations(object):
     @distributed_trace
     def begin_create_or_update_trigger(
         self,
-        trigger_name,  # type: str
-        properties,  # type: "_models.Trigger"
-        if_match=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.TriggerResource"]
+        trigger_name: str,
+        properties: "_models.Trigger",
+        if_match: Optional[str] = None,
+        **kwargs: Any
+    ) -> LROPoller["_models.TriggerResource"]:
         """Creates or updates a trigger.
 
         :param trigger_name: The trigger name.
@@ -572,11 +561,10 @@ class TriggerOperations(object):
     @distributed_trace
     def get_trigger(
         self,
-        trigger_name,  # type: str
-        if_none_match=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional["_models.TriggerResource"]
+        trigger_name: str,
+        if_none_match: Optional[str] = None,
+        **kwargs: Any
+    ) -> Optional["_models.TriggerResource"]:
         """Gets a trigger.
 
         :param trigger_name: The trigger name.
@@ -635,10 +623,9 @@ class TriggerOperations(object):
 
     def _delete_trigger_initial(
         self,
-        trigger_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        trigger_name: str,
+        **kwargs: Any
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -675,10 +662,9 @@ class TriggerOperations(object):
     @distributed_trace
     def begin_delete_trigger(
         self,
-        trigger_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        trigger_name: str,
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Deletes a trigger.
 
         :param trigger_name: The trigger name.
@@ -741,10 +727,9 @@ class TriggerOperations(object):
 
     def _subscribe_trigger_to_events_initial(
         self,
-        trigger_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional["_models.TriggerSubscriptionOperationStatus"]
+        trigger_name: str,
+        **kwargs: Any
+    ) -> Optional["_models.TriggerSubscriptionOperationStatus"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.TriggerSubscriptionOperationStatus"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -787,10 +772,9 @@ class TriggerOperations(object):
     @distributed_trace
     def begin_subscribe_trigger_to_events(
         self,
-        trigger_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.TriggerSubscriptionOperationStatus"]
+        trigger_name: str,
+        **kwargs: Any
+    ) -> LROPoller["_models.TriggerSubscriptionOperationStatus"]:
         """Subscribe event trigger to events.
 
         :param trigger_name: The trigger name.
@@ -859,10 +843,9 @@ class TriggerOperations(object):
     @distributed_trace
     def get_event_subscription_status(
         self,
-        trigger_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.TriggerSubscriptionOperationStatus"
+        trigger_name: str,
+        **kwargs: Any
+    ) -> "_models.TriggerSubscriptionOperationStatus":
         """Get a trigger's event subscription status.
 
         :param trigger_name: The trigger name.
@@ -915,10 +898,9 @@ class TriggerOperations(object):
 
     def _unsubscribe_trigger_from_events_initial(
         self,
-        trigger_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Optional["_models.TriggerSubscriptionOperationStatus"]
+        trigger_name: str,
+        **kwargs: Any
+    ) -> Optional["_models.TriggerSubscriptionOperationStatus"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.TriggerSubscriptionOperationStatus"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -961,10 +943,9 @@ class TriggerOperations(object):
     @distributed_trace
     def begin_unsubscribe_trigger_from_events(
         self,
-        trigger_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.TriggerSubscriptionOperationStatus"]
+        trigger_name: str,
+        **kwargs: Any
+    ) -> LROPoller["_models.TriggerSubscriptionOperationStatus"]:
         """Unsubscribe event trigger from events.
 
         :param trigger_name: The trigger name.
@@ -1032,10 +1013,9 @@ class TriggerOperations(object):
 
     def _start_trigger_initial(
         self,
-        trigger_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        trigger_name: str,
+        **kwargs: Any
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -1072,10 +1052,9 @@ class TriggerOperations(object):
     @distributed_trace
     def begin_start_trigger(
         self,
-        trigger_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        trigger_name: str,
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Starts a trigger.
 
         :param trigger_name: The trigger name.
@@ -1138,10 +1117,9 @@ class TriggerOperations(object):
 
     def _stop_trigger_initial(
         self,
-        trigger_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        trigger_name: str,
+        **kwargs: Any
+    ) -> None:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -1178,10 +1156,9 @@ class TriggerOperations(object):
     @distributed_trace
     def begin_stop_trigger(
         self,
-        trigger_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        trigger_name: str,
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Stops a trigger.
 
         :param trigger_name: The trigger name.

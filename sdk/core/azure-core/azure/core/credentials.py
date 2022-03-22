@@ -4,41 +4,44 @@
 # license information.
 # -------------------------------------------------------------------------
 from collections import namedtuple
-from typing import TYPE_CHECKING
+from typing import Any, NamedTuple, Optional
+from typing_extensions import Protocol
 import six
 
-if TYPE_CHECKING:
-    from typing import Any, Optional, NamedTuple
-    from typing_extensions import Protocol
 
-    AccessToken = NamedTuple("AccessToken", [("token", str), ("expires_on", int)])
+class AccessToken(NamedTuple):
+    """Represents an OAuth access token."""
 
-    class TokenCredential(Protocol):
-        """Protocol for classes able to provide OAuth tokens."""
+    token: str
+    expires_on: int
 
-        def get_token(
-            self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
-        ) -> AccessToken:
-            """Request an access token for `scopes`.
-
-            :param str scopes: The type of access needed.
-
-            :keyword str claims: Additional claims required in the token, such as those returned in a resource
-                provider's claims challenge following an authorization failure.
-            :keyword str tenant_id: Optional tenant to include in the token request.
-
-            :rtype: AccessToken
-            :return: An AccessToken instance containing the token string and its expiration time in Unix time.
-            """
+AccessToken.token.__doc__ = """The token string."""
+AccessToken.expires_on.__doc__ = """The token's expiration time in Unix time."""
 
 
-else:
-    AccessToken = namedtuple("AccessToken", ["token", "expires_on"])
+class TokenCredential(Protocol):
+    """Protocol for classes able to provide OAuth tokens."""
+
+    def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
+        """Request an access token for `scopes`.
+
+        :param str scopes: The type of access needed.
+
+        :keyword str claims: Additional claims required in the token, such as those returned in a resource
+            provider's claims challenge following an authorization failure.
+        :keyword str tenant_id: Optional tenant to include in the token request.
+
+        :rtype: AccessToken
+        :return: An AccessToken instance containing the token string and its expiration time in Unix time.
+        """
+
 
 AzureNamedKey = namedtuple("AzureNamedKey", ["name", "key"])
 
 
-__all__ = ["AzureKeyCredential", "AzureSasCredential", "AccessToken", "AzureNamedKeyCredential"]
+__all__ = ["AzureKeyCredential", "AzureSasCredential", "AccessToken", "AzureNamedKeyCredential", "TokenCredential"]
 
 
 class AzureKeyCredential(object):
