@@ -1732,7 +1732,7 @@ class CheckAPIVersion(BaseChecker):
     ignore_clients = ["PipelineClient", "AsyncPipelineClient", "ARMPipelineClient", "AsyncARMPipelineClient"]
 
     def __init__(self, linter=None):
-        super(CheckApiVersion, self).__init__(linter)             
+        super(CheckAPIVersion, self).__init__(linter)             
 
     def visit_classdef(self, node):
         """Visits every class in file and checks if it is a client.
