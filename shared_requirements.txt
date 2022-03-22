@@ -291,6 +291,8 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-storagecache azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-monitor azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-labservices azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-app msrest>=0.6.21
+#override azure-mgmt-app azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-cdn msrest>=0.6.21
 #override azure-mgmt-cdn azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-digitaltwins msrest>=0.6.21
