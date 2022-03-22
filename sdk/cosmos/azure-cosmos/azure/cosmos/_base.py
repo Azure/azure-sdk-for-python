@@ -661,4 +661,5 @@ def ParsePaths(paths):
 
 
 def create_scope_from_url(url):
+    # Need a better way to do this, regex?
     return url.replace(":443", "") + ".default"

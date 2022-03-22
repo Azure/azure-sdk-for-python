@@ -76,6 +76,28 @@ KEY = os.environ['ACCOUNT_KEY']
 client = CosmosClient(URL, credential=KEY)
 ```
 
+### AAD Authentication
+
+You can also authenticate a client utilizing your service principal's AAD credentials and the azure identity package:
+```Python
+from azure.cosmos import CosmosClient
+from azure.identity import ClientSecretCredential
+
+import os
+URL = os.environ['ACCOUNT_URI']
+TENANT_ID = os.environ['TENANT_ID']
+CLIENT_ID = os.environ['CLIENT_ID']
+CLIENT_SECRET = os.environ['CLIENT_SECRET']
+
+AAD_CREDENTIALS = ClientSecretCredential(
+    tenant_id=TENANT_ID,
+    client_id=CLIENT_ID,
+    client_secret=CLIENT_SECRET)
+
+client = CosmosClient(URL, AAD_CREDENTIALS)
+```
+More information on allowed operations for AAD authenticated clients: [RBAC Permission Model](https://aka.ms/cosmos-native-rbac)
+
 ## Key concepts
 
 Once you've initialized a [CosmosClient][ref_cosmosclient], you can interact with the primary resource types in Cosmos DB:
@@ -111,7 +133,7 @@ Currently the features below are **not supported**. For alternatives options, ch
 * Change Feed: Processor
 * Change Feed: Read multiple partitions key values
 * Change Feed: Read specific time
-* Change Feed: Read from the beggining
+* Change Feed: Read from the beginning
 * Change Feed: Pull model
 * Cross-partition ORDER BY for mixed types
 * Cross partition queries do not handle partition splits (410 Gone errors)
@@ -126,10 +148,6 @@ Currently the features below are **not supported**. For alternatives options, ch
 * Get the connection string
 * Get the minimum RU/s of a container
 
-### Security Limitations:
-
-* AAD support
-
 ## Workarounds
 
 ### Bulk processing Limitation Workaround
@@ -139,10 +157,6 @@ If you want to use Python SDK to perform bulk inserts to Cosmos DB, the best alt
 ### Control Plane Limitations Workaround
 
 Typically you can use [Azure Portal](https://portal.azure.com/), [Azure Cosmos DB Resource Provider REST API](https://docs.microsoft.com/rest/api/cosmos-db-resource-provider), [Azure CLI](https://docs.microsoft.com/cli/azure/azure-cli-reference-for-cosmos-db) or [PowerShell](https://docs.microsoft.com/azure/cosmos-db/manage-with-powershell) for the control plane unsupported limitations.
-
-### AAD Support Workaround
-
-A possible workaround is to use managed identities to [programmatically](https://docs.microsoft.com/azure/cosmos-db/managed-identity-based-authentication) get the keys.
 
 ## Boolean Data Type
 
