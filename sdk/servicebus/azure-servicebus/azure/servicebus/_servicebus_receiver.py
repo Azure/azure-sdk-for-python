@@ -8,7 +8,7 @@ import functools
 import uuid
 import datetime
 import warnings
-from typing import Any, List, Optional, Dict, Iterator, Union, TYPE_CHECKING
+from typing import Any, List, Optional, Dict, Iterator, Union, TYPE_CHECKING, cast
 
 import six
 
@@ -692,6 +692,7 @@ class ServiceBusReceiver(
             raise ValueError("The timeout must be greater than 0.")
         if isinstance(sequence_numbers, six.integer_types):
             sequence_numbers = [sequence_numbers]
+        sequence_numbers = cast(List[int], sequence_numbers)
         if len(sequence_numbers) == 0:
             return []  # no-op on empty list.
         self._open()

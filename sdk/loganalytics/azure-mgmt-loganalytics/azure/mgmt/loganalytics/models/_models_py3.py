@@ -1715,8 +1715,6 @@ class PrivateLinkScopedResource(msrest.serialization.Model):
 class RestoredLogs(msrest.serialization.Model):
     """Restore parameters.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar start_restore_time: The timestamp to start the restore from (UTC).
     :vartype start_restore_time: ~datetime.datetime
     :ivar end_restore_time: The timestamp to end the restore by (UTC).
@@ -1724,10 +1722,6 @@ class RestoredLogs(msrest.serialization.Model):
     :ivar source_table: The table to restore data from.
     :vartype source_table: str
     """
-
-    _validation = {
-        'source_table': {'readonly': True},
-    }
 
     _attribute_map = {
         'start_restore_time': {'key': 'startRestoreTime', 'type': 'iso-8601'},
@@ -1740,6 +1734,7 @@ class RestoredLogs(msrest.serialization.Model):
         *,
         start_restore_time: Optional[datetime.datetime] = None,
         end_restore_time: Optional[datetime.datetime] = None,
+        source_table: Optional[str] = None,
         **kwargs
     ):
         """
@@ -1747,11 +1742,13 @@ class RestoredLogs(msrest.serialization.Model):
         :paramtype start_restore_time: ~datetime.datetime
         :keyword end_restore_time: The timestamp to end the restore by (UTC).
         :paramtype end_restore_time: ~datetime.datetime
+        :keyword source_table: The table to restore data from.
+        :paramtype source_table: str
         """
         super(RestoredLogs, self).__init__(**kwargs)
         self.start_restore_time = start_restore_time
         self.end_restore_time = end_restore_time
-        self.source_table = None
+        self.source_table = source_table
 
 
 class ResultStatistics(msrest.serialization.Model):
@@ -2228,7 +2225,7 @@ class SearchResults(msrest.serialization.Model):
 
     :ivar query: Search job query.
     :vartype query: str
-    :ivar description: Search results table's Description.
+    :ivar description: Search job Description.
     :vartype description: str
     :ivar limit: Limit the search job to return up to specified number of rows.
     :vartype limit: int
@@ -2236,7 +2233,7 @@ class SearchResults(msrest.serialization.Model):
     :vartype start_search_time: ~datetime.datetime
     :ivar end_search_time: The timestamp to end the search by (UTC).
     :vartype end_search_time: ~datetime.datetime
-    :ivar source_table: The table to search data from.
+    :ivar source_table: The table used in the search job.
     :vartype source_table: str
     """
 
@@ -2266,7 +2263,7 @@ class SearchResults(msrest.serialization.Model):
         """
         :keyword query: Search job query.
         :paramtype query: str
-        :keyword description: Search results table's Description.
+        :keyword description: Search job Description.
         :paramtype description: str
         :keyword limit: Limit the search job to return up to specified number of rows.
         :paramtype limit: int
@@ -2690,11 +2687,11 @@ class Table(ProxyResource):
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.loganalytics.models.SystemData
-    :ivar retention_in_days: The data table data retention in days, between 4 and 730. Setting this
-     property to null will default to the workspace retention.
+    :ivar retention_in_days: The table retention in days, between 4 and 730. Setting this property
+     to -1 will default to the workspace retention.
     :vartype retention_in_days: int
-    :ivar total_retention_in_days: The table data total retention in days, between 4 and 2555.
-     Setting this property to null will default to table retention.
+    :ivar total_retention_in_days: The table total retention in days, between 4 and 2555. Setting
+     this property to -1 will default to table retention.
     :vartype total_retention_in_days: int
     :ivar archive_retention_in_days: The table data archive retention in days. Calculated as
      (totalRetentionInDays-retentionInDays).
@@ -2705,7 +2702,8 @@ class Table(ProxyResource):
     :vartype restored_logs: ~azure.mgmt.loganalytics.models.RestoredLogs
     :ivar result_statistics: Search job execution statistics.
     :vartype result_statistics: ~azure.mgmt.loganalytics.models.ResultStatistics
-    :ivar plan: The table plan. Possible values include: "Basic", "Analytics".
+    :ivar plan: Instruct the system how to handle and charge the logs ingested to this table.
+     Possible values include: "Basic", "Analytics".
     :vartype plan: str or ~azure.mgmt.loganalytics.models.TablePlanEnum
     :ivar last_plan_modified_date: The timestamp that table plan was last modified (UTC).
     :vartype last_plan_modified_date: str
@@ -2759,11 +2757,11 @@ class Table(ProxyResource):
         **kwargs
     ):
         """
-        :keyword retention_in_days: The data table data retention in days, between 4 and 730. Setting
-         this property to null will default to the workspace retention.
+        :keyword retention_in_days: The table retention in days, between 4 and 730. Setting this
+         property to -1 will default to the workspace retention.
         :paramtype retention_in_days: int
-        :keyword total_retention_in_days: The table data total retention in days, between 4 and 2555.
-         Setting this property to null will default to table retention.
+        :keyword total_retention_in_days: The table total retention in days, between 4 and 2555.
+         Setting this property to -1 will default to table retention.
         :paramtype total_retention_in_days: int
         :keyword search_results: Parameters of the search job that initiated this table.
         :paramtype search_results: ~azure.mgmt.loganalytics.models.SearchResults
@@ -2771,7 +2769,8 @@ class Table(ProxyResource):
         :paramtype restored_logs: ~azure.mgmt.loganalytics.models.RestoredLogs
         :keyword result_statistics: Search job execution statistics.
         :paramtype result_statistics: ~azure.mgmt.loganalytics.models.ResultStatistics
-        :keyword plan: The table plan. Possible values include: "Basic", "Analytics".
+        :keyword plan: Instruct the system how to handle and charge the logs ingested to this table.
+         Possible values include: "Basic", "Analytics".
         :paramtype plan: str or ~azure.mgmt.loganalytics.models.TablePlanEnum
         :keyword schema: Table schema.
         :paramtype schema: ~azure.mgmt.loganalytics.models.Schema
@@ -3015,6 +3014,7 @@ class Workspace(TrackedResource):
         'type': {'readonly': True},
         'location': {'required': True},
         'system_data': {'readonly': True},
+        'provisioning_state': {'readonly': True},
         'customer_id': {'readonly': True},
         'created_date': {'readonly': True},
         'modified_date': {'readonly': True},
@@ -3050,7 +3050,6 @@ class Workspace(TrackedResource):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         e_tag: Optional[str] = None,
-        provisioning_state: Optional[Union[str, "WorkspaceEntityStatus"]] = None,
         sku: Optional["WorkspaceSku"] = None,
         retention_in_days: Optional[int] = None,
         workspace_capping: Optional["WorkspaceCapping"] = None,
@@ -3068,9 +3067,6 @@ class Workspace(TrackedResource):
         :paramtype location: str
         :keyword e_tag: The ETag of the workspace.
         :paramtype e_tag: str
-        :keyword provisioning_state: The provisioning state of the workspace. Possible values include:
-         "Creating", "Succeeded", "Failed", "Canceled", "Deleting", "ProvisioningAccount", "Updating".
-        :paramtype provisioning_state: str or ~azure.mgmt.loganalytics.models.WorkspaceEntityStatus
         :keyword sku: The SKU of the workspace.
         :paramtype sku: ~azure.mgmt.loganalytics.models.WorkspaceSku
         :keyword retention_in_days: The workspace data retention in days. Allowed values are per
@@ -3099,7 +3095,7 @@ class Workspace(TrackedResource):
         super(Workspace, self).__init__(tags=tags, location=location, **kwargs)
         self.system_data = None
         self.e_tag = e_tag
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None
         self.customer_id = None
         self.sku = sku
         self.retention_in_days = retention_in_days
@@ -3358,6 +3354,7 @@ class WorkspacePatch(AzureEntityResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'etag': {'readonly': True},
+        'provisioning_state': {'readonly': True},
         'customer_id': {'readonly': True},
         'created_date': {'readonly': True},
         'modified_date': {'readonly': True},
@@ -3389,7 +3386,6 @@ class WorkspacePatch(AzureEntityResource):
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        provisioning_state: Optional[Union[str, "WorkspaceEntityStatus"]] = None,
         sku: Optional["WorkspaceSku"] = None,
         retention_in_days: Optional[int] = None,
         workspace_capping: Optional["WorkspaceCapping"] = None,
@@ -3403,9 +3399,6 @@ class WorkspacePatch(AzureEntityResource):
         """
         :keyword tags: A set of tags. Resource tags. Optional.
         :paramtype tags: dict[str, str]
-        :keyword provisioning_state: The provisioning state of the workspace. Possible values include:
-         "Creating", "Succeeded", "Failed", "Canceled", "Deleting", "ProvisioningAccount", "Updating".
-        :paramtype provisioning_state: str or ~azure.mgmt.loganalytics.models.WorkspaceEntityStatus
         :keyword sku: The SKU of the workspace.
         :paramtype sku: ~azure.mgmt.loganalytics.models.WorkspaceSku
         :keyword retention_in_days: The workspace data retention in days. Allowed values are per
@@ -3433,7 +3426,7 @@ class WorkspacePatch(AzureEntityResource):
         """
         super(WorkspacePatch, self).__init__(**kwargs)
         self.tags = tags
-        self.provisioning_state = provisioning_state
+        self.provisioning_state = None
         self.customer_id = None
         self.sku = sku
         self.retention_in_days = retention_in_days

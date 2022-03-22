@@ -18,12 +18,12 @@ from ._azure_queue_storage_enums import *
 class AccessPolicy(msrest.serialization.Model):
     """An Access policy.
 
-    :param start: the date-time the policy is active.
-    :type start: str
-    :param expiry: the date-time the policy expires.
-    :type expiry: str
-    :param permission: the permissions for the acl policy.
-    :type permission: str
+    :ivar start: the date-time the policy is active.
+    :vartype start: str
+    :ivar expiry: the date-time the policy expires.
+    :vartype expiry: str
+    :ivar permission: the permissions for the acl policy.
+    :vartype permission: str
     """
 
     _attribute_map = {
@@ -40,6 +40,14 @@ class AccessPolicy(msrest.serialization.Model):
         permission: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword start: the date-time the policy is active.
+        :paramtype start: str
+        :keyword expiry: the date-time the policy expires.
+        :paramtype expiry: str
+        :keyword permission: the permissions for the acl policy.
+        :paramtype permission: str
+        """
         super(AccessPolicy, self).__init__(**kwargs)
         self.start = start
         self.expiry = expiry
@@ -51,24 +59,24 @@ class CorsRule(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param allowed_origins: Required. The origin domains that are permitted to make a request
+    :ivar allowed_origins: Required. The origin domains that are permitted to make a request
      against the storage service via CORS. The origin domain is the domain from which the request
      originates. Note that the origin must be an exact case-sensitive match with the origin that the
      user age sends to the service. You can also use the wildcard character '*' to allow all origin
      domains to make requests via CORS.
-    :type allowed_origins: str
-    :param allowed_methods: Required. The methods (HTTP request verbs) that the origin domain may
+    :vartype allowed_origins: str
+    :ivar allowed_methods: Required. The methods (HTTP request verbs) that the origin domain may
      use for a CORS request. (comma separated).
-    :type allowed_methods: str
-    :param allowed_headers: Required. the request headers that the origin domain may specify on the
+    :vartype allowed_methods: str
+    :ivar allowed_headers: Required. the request headers that the origin domain may specify on the
      CORS request.
-    :type allowed_headers: str
-    :param exposed_headers: Required. The response headers that may be sent in the response to the
+    :vartype allowed_headers: str
+    :ivar exposed_headers: Required. The response headers that may be sent in the response to the
      CORS request and exposed by the browser to the request issuer.
-    :type exposed_headers: str
-    :param max_age_in_seconds: Required. The maximum amount time that a browser should cache the
+    :vartype exposed_headers: str
+    :ivar max_age_in_seconds: Required. The maximum amount time that a browser should cache the
      preflight OPTIONS request.
-    :type max_age_in_seconds: int
+    :vartype max_age_in_seconds: int
     """
 
     _validation = {
@@ -97,6 +105,26 @@ class CorsRule(msrest.serialization.Model):
         max_age_in_seconds: int,
         **kwargs
     ):
+        """
+        :keyword allowed_origins: Required. The origin domains that are permitted to make a request
+         against the storage service via CORS. The origin domain is the domain from which the request
+         originates. Note that the origin must be an exact case-sensitive match with the origin that the
+         user age sends to the service. You can also use the wildcard character '*' to allow all origin
+         domains to make requests via CORS.
+        :paramtype allowed_origins: str
+        :keyword allowed_methods: Required. The methods (HTTP request verbs) that the origin domain may
+         use for a CORS request. (comma separated).
+        :paramtype allowed_methods: str
+        :keyword allowed_headers: Required. the request headers that the origin domain may specify on
+         the CORS request.
+        :paramtype allowed_headers: str
+        :keyword exposed_headers: Required. The response headers that may be sent in the response to
+         the CORS request and exposed by the browser to the request issuer.
+        :paramtype exposed_headers: str
+        :keyword max_age_in_seconds: Required. The maximum amount time that a browser should cache the
+         preflight OPTIONS request.
+        :paramtype max_age_in_seconds: int
+        """
         super(CorsRule, self).__init__(**kwargs)
         self.allowed_origins = allowed_origins
         self.allowed_methods = allowed_methods
@@ -110,23 +138,23 @@ class DequeuedMessageItem(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param message_id: Required. The Id of the Message.
-    :type message_id: str
-    :param insertion_time: Required. The time the Message was inserted into the Queue.
-    :type insertion_time: ~datetime.datetime
-    :param expiration_time: Required. The time that the Message will expire and be automatically
+    :ivar message_id: Required. The Id of the Message.
+    :vartype message_id: str
+    :ivar insertion_time: Required. The time the Message was inserted into the Queue.
+    :vartype insertion_time: ~datetime.datetime
+    :ivar expiration_time: Required. The time that the Message will expire and be automatically
      deleted.
-    :type expiration_time: ~datetime.datetime
-    :param pop_receipt: Required. This value is required to delete the Message. If deletion fails
+    :vartype expiration_time: ~datetime.datetime
+    :ivar pop_receipt: Required. This value is required to delete the Message. If deletion fails
      using this popreceipt then the message has been dequeued by another client.
-    :type pop_receipt: str
-    :param time_next_visible: Required. The time that the message will again become visible in the
+    :vartype pop_receipt: str
+    :ivar time_next_visible: Required. The time that the message will again become visible in the
      Queue.
-    :type time_next_visible: ~datetime.datetime
-    :param dequeue_count: Required. The number of times the message has been dequeued.
-    :type dequeue_count: long
-    :param message_text: Required. The content of the Message.
-    :type message_text: str
+    :vartype time_next_visible: ~datetime.datetime
+    :ivar dequeue_count: Required. The number of times the message has been dequeued.
+    :vartype dequeue_count: long
+    :ivar message_text: Required. The content of the Message.
+    :vartype message_text: str
     """
 
     _validation = {
@@ -164,6 +192,25 @@ class DequeuedMessageItem(msrest.serialization.Model):
         message_text: str,
         **kwargs
     ):
+        """
+        :keyword message_id: Required. The Id of the Message.
+        :paramtype message_id: str
+        :keyword insertion_time: Required. The time the Message was inserted into the Queue.
+        :paramtype insertion_time: ~datetime.datetime
+        :keyword expiration_time: Required. The time that the Message will expire and be automatically
+         deleted.
+        :paramtype expiration_time: ~datetime.datetime
+        :keyword pop_receipt: Required. This value is required to delete the Message. If deletion fails
+         using this popreceipt then the message has been dequeued by another client.
+        :paramtype pop_receipt: str
+        :keyword time_next_visible: Required. The time that the message will again become visible in
+         the Queue.
+        :paramtype time_next_visible: ~datetime.datetime
+        :keyword dequeue_count: Required. The number of times the message has been dequeued.
+        :paramtype dequeue_count: long
+        :keyword message_text: Required. The content of the Message.
+        :paramtype message_text: str
+        """
         super(DequeuedMessageItem, self).__init__(**kwargs)
         self.message_id = message_id
         self.insertion_time = insertion_time
@@ -179,19 +226,19 @@ class EnqueuedMessage(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param message_id: Required. The Id of the Message.
-    :type message_id: str
-    :param insertion_time: Required. The time the Message was inserted into the Queue.
-    :type insertion_time: ~datetime.datetime
-    :param expiration_time: Required. The time that the Message will expire and be automatically
+    :ivar message_id: Required. The Id of the Message.
+    :vartype message_id: str
+    :ivar insertion_time: Required. The time the Message was inserted into the Queue.
+    :vartype insertion_time: ~datetime.datetime
+    :ivar expiration_time: Required. The time that the Message will expire and be automatically
      deleted.
-    :type expiration_time: ~datetime.datetime
-    :param pop_receipt: Required. This value is required to delete the Message. If deletion fails
+    :vartype expiration_time: ~datetime.datetime
+    :ivar pop_receipt: Required. This value is required to delete the Message. If deletion fails
      using this popreceipt then the message has been dequeued by another client.
-    :type pop_receipt: str
-    :param time_next_visible: Required. The time that the message will again become visible in the
+    :vartype pop_receipt: str
+    :ivar time_next_visible: Required. The time that the message will again become visible in the
      Queue.
-    :type time_next_visible: ~datetime.datetime
+    :vartype time_next_visible: ~datetime.datetime
     """
 
     _validation = {
@@ -223,6 +270,21 @@ class EnqueuedMessage(msrest.serialization.Model):
         time_next_visible: datetime.datetime,
         **kwargs
     ):
+        """
+        :keyword message_id: Required. The Id of the Message.
+        :paramtype message_id: str
+        :keyword insertion_time: Required. The time the Message was inserted into the Queue.
+        :paramtype insertion_time: ~datetime.datetime
+        :keyword expiration_time: Required. The time that the Message will expire and be automatically
+         deleted.
+        :paramtype expiration_time: ~datetime.datetime
+        :keyword pop_receipt: Required. This value is required to delete the Message. If deletion fails
+         using this popreceipt then the message has been dequeued by another client.
+        :paramtype pop_receipt: str
+        :keyword time_next_visible: Required. The time that the message will again become visible in
+         the Queue.
+        :paramtype time_next_visible: ~datetime.datetime
+        """
         super(EnqueuedMessage, self).__init__(**kwargs)
         self.message_id = message_id
         self.insertion_time = insertion_time
@@ -236,13 +298,13 @@ class GeoReplication(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param status: Required. The status of the secondary location. Possible values include: "live",
+    :ivar status: Required. The status of the secondary location. Possible values include: "live",
      "bootstrap", "unavailable".
-    :type status: str or ~azure.storage.queue.models.GeoReplicationStatusType
-    :param last_sync_time: Required. A GMT date/time value, to the second. All primary writes
+    :vartype status: str or ~azure.storage.queue.models.GeoReplicationStatusType
+    :ivar last_sync_time: Required. A GMT date/time value, to the second. All primary writes
      preceding this value are guaranteed to be available for read operations at the secondary.
      Primary writes after this point in time may or may not be available for reads.
-    :type last_sync_time: ~datetime.datetime
+    :vartype last_sync_time: ~datetime.datetime
     """
 
     _validation = {
@@ -262,6 +324,15 @@ class GeoReplication(msrest.serialization.Model):
         last_sync_time: datetime.datetime,
         **kwargs
     ):
+        """
+        :keyword status: Required. The status of the secondary location. Possible values include:
+         "live", "bootstrap", "unavailable".
+        :paramtype status: str or ~azure.storage.queue.models.GeoReplicationStatusType
+        :keyword last_sync_time: Required. A GMT date/time value, to the second. All primary writes
+         preceding this value are guaranteed to be available for read operations at the secondary.
+         Primary writes after this point in time may or may not be available for reads.
+        :paramtype last_sync_time: ~datetime.datetime
+        """
         super(GeoReplication, self).__init__(**kwargs)
         self.status = status
         self.last_sync_time = last_sync_time
@@ -272,18 +343,18 @@ class ListQueuesSegmentResponse(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param service_endpoint: Required.
-    :type service_endpoint: str
-    :param prefix: Required.
-    :type prefix: str
-    :param marker:
-    :type marker: str
-    :param max_results: Required.
-    :type max_results: int
-    :param queue_items:
-    :type queue_items: list[~azure.storage.queue.models.QueueItem]
-    :param next_marker: Required.
-    :type next_marker: str
+    :ivar service_endpoint: Required.
+    :vartype service_endpoint: str
+    :ivar prefix: Required.
+    :vartype prefix: str
+    :ivar marker:
+    :vartype marker: str
+    :ivar max_results: Required.
+    :vartype max_results: int
+    :ivar queue_items:
+    :vartype queue_items: list[~azure.storage.queue.models.QueueItem]
+    :ivar next_marker: Required.
+    :vartype next_marker: str
     """
 
     _validation = {
@@ -316,6 +387,20 @@ class ListQueuesSegmentResponse(msrest.serialization.Model):
         queue_items: Optional[List["QueueItem"]] = None,
         **kwargs
     ):
+        """
+        :keyword service_endpoint: Required.
+        :paramtype service_endpoint: str
+        :keyword prefix: Required.
+        :paramtype prefix: str
+        :keyword marker:
+        :paramtype marker: str
+        :keyword max_results: Required.
+        :paramtype max_results: int
+        :keyword queue_items:
+        :paramtype queue_items: list[~azure.storage.queue.models.QueueItem]
+        :keyword next_marker: Required.
+        :paramtype next_marker: str
+        """
         super(ListQueuesSegmentResponse, self).__init__(**kwargs)
         self.service_endpoint = service_endpoint
         self.prefix = prefix
@@ -330,16 +415,16 @@ class Logging(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: Required. The version of Storage Analytics to configure.
-    :type version: str
-    :param delete: Required. Indicates whether all delete requests should be logged.
-    :type delete: bool
-    :param read: Required. Indicates whether all read requests should be logged.
-    :type read: bool
-    :param write: Required. Indicates whether all write requests should be logged.
-    :type write: bool
-    :param retention_policy: Required. the retention policy.
-    :type retention_policy: ~azure.storage.queue.models.RetentionPolicy
+    :ivar version: Required. The version of Storage Analytics to configure.
+    :vartype version: str
+    :ivar delete: Required. Indicates whether all delete requests should be logged.
+    :vartype delete: bool
+    :ivar read: Required. Indicates whether all read requests should be logged.
+    :vartype read: bool
+    :ivar write: Required. Indicates whether all write requests should be logged.
+    :vartype write: bool
+    :ivar retention_policy: Required. the retention policy.
+    :vartype retention_policy: ~azure.storage.queue.models.RetentionPolicy
     """
 
     _validation = {
@@ -368,6 +453,18 @@ class Logging(msrest.serialization.Model):
         retention_policy: "RetentionPolicy",
         **kwargs
     ):
+        """
+        :keyword version: Required. The version of Storage Analytics to configure.
+        :paramtype version: str
+        :keyword delete: Required. Indicates whether all delete requests should be logged.
+        :paramtype delete: bool
+        :keyword read: Required. Indicates whether all read requests should be logged.
+        :paramtype read: bool
+        :keyword write: Required. Indicates whether all write requests should be logged.
+        :paramtype write: bool
+        :keyword retention_policy: Required. the retention policy.
+        :paramtype retention_policy: ~azure.storage.queue.models.RetentionPolicy
+        """
         super(Logging, self).__init__(**kwargs)
         self.version = version
         self.delete = delete
@@ -377,19 +474,19 @@ class Logging(msrest.serialization.Model):
 
 
 class Metrics(msrest.serialization.Model):
-    """Metrics.
+    """a summary of request statistics grouped by API in hour or minute aggregates for queues.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: The version of Storage Analytics to configure.
-    :type version: str
-    :param enabled: Required. Indicates whether metrics are enabled for the Queue service.
-    :type enabled: bool
-    :param include_apis: Indicates whether metrics should generate summary statistics for called
-     API operations.
-    :type include_apis: bool
-    :param retention_policy: the retention policy.
-    :type retention_policy: ~azure.storage.queue.models.RetentionPolicy
+    :ivar version: The version of Storage Analytics to configure.
+    :vartype version: str
+    :ivar enabled: Required. Indicates whether metrics are enabled for the Queue service.
+    :vartype enabled: bool
+    :ivar include_apis: Indicates whether metrics should generate summary statistics for called API
+     operations.
+    :vartype include_apis: bool
+    :ivar retention_policy: the retention policy.
+    :vartype retention_policy: ~azure.storage.queue.models.RetentionPolicy
     """
 
     _validation = {
@@ -412,6 +509,17 @@ class Metrics(msrest.serialization.Model):
         retention_policy: Optional["RetentionPolicy"] = None,
         **kwargs
     ):
+        """
+        :keyword version: The version of Storage Analytics to configure.
+        :paramtype version: str
+        :keyword enabled: Required. Indicates whether metrics are enabled for the Queue service.
+        :paramtype enabled: bool
+        :keyword include_apis: Indicates whether metrics should generate summary statistics for called
+         API operations.
+        :paramtype include_apis: bool
+        :keyword retention_policy: the retention policy.
+        :paramtype retention_policy: ~azure.storage.queue.models.RetentionPolicy
+        """
         super(Metrics, self).__init__(**kwargs)
         self.version = version
         self.enabled = enabled
@@ -424,17 +532,17 @@ class PeekedMessageItem(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param message_id: Required. The Id of the Message.
-    :type message_id: str
-    :param insertion_time: Required. The time the Message was inserted into the Queue.
-    :type insertion_time: ~datetime.datetime
-    :param expiration_time: Required. The time that the Message will expire and be automatically
+    :ivar message_id: Required. The Id of the Message.
+    :vartype message_id: str
+    :ivar insertion_time: Required. The time the Message was inserted into the Queue.
+    :vartype insertion_time: ~datetime.datetime
+    :ivar expiration_time: Required. The time that the Message will expire and be automatically
      deleted.
-    :type expiration_time: ~datetime.datetime
-    :param dequeue_count: Required. The number of times the message has been dequeued.
-    :type dequeue_count: long
-    :param message_text: Required. The content of the Message.
-    :type message_text: str
+    :vartype expiration_time: ~datetime.datetime
+    :ivar dequeue_count: Required. The number of times the message has been dequeued.
+    :vartype dequeue_count: long
+    :ivar message_text: Required. The content of the Message.
+    :vartype message_text: str
     """
 
     _validation = {
@@ -466,6 +574,19 @@ class PeekedMessageItem(msrest.serialization.Model):
         message_text: str,
         **kwargs
     ):
+        """
+        :keyword message_id: Required. The Id of the Message.
+        :paramtype message_id: str
+        :keyword insertion_time: Required. The time the Message was inserted into the Queue.
+        :paramtype insertion_time: ~datetime.datetime
+        :keyword expiration_time: Required. The time that the Message will expire and be automatically
+         deleted.
+        :paramtype expiration_time: ~datetime.datetime
+        :keyword dequeue_count: Required. The number of times the message has been dequeued.
+        :paramtype dequeue_count: long
+        :keyword message_text: Required. The content of the Message.
+        :paramtype message_text: str
+        """
         super(PeekedMessageItem, self).__init__(**kwargs)
         self.message_id = message_id
         self.insertion_time = insertion_time
@@ -479,10 +600,10 @@ class QueueItem(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the Queue.
-    :type name: str
-    :param metadata: Dictionary of :code:`<string>`.
-    :type metadata: dict[str, str]
+    :ivar name: Required. The name of the Queue.
+    :vartype name: str
+    :ivar metadata: Dictionary of :code:`<string>`.
+    :vartype metadata: dict[str, str]
     """
 
     _validation = {
@@ -504,6 +625,12 @@ class QueueItem(msrest.serialization.Model):
         metadata: Optional[Dict[str, str]] = None,
         **kwargs
     ):
+        """
+        :keyword name: Required. The name of the Queue.
+        :paramtype name: str
+        :keyword metadata: Dictionary of :code:`<string>`.
+        :paramtype metadata: dict[str, str]
+        """
         super(QueueItem, self).__init__(**kwargs)
         self.name = name
         self.metadata = metadata
@@ -514,8 +641,8 @@ class QueueMessage(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param message_text: Required. The content of the message.
-    :type message_text: str
+    :ivar message_text: Required. The content of the message.
+    :vartype message_text: str
     """
 
     _validation = {
@@ -532,6 +659,10 @@ class QueueMessage(msrest.serialization.Model):
         message_text: str,
         **kwargs
     ):
+        """
+        :keyword message_text: Required. The content of the message.
+        :paramtype message_text: str
+        """
         super(QueueMessage, self).__init__(**kwargs)
         self.message_text = message_text
 
@@ -541,12 +672,12 @@ class RetentionPolicy(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param enabled: Required. Indicates whether a retention policy is enabled for the storage
+    :ivar enabled: Required. Indicates whether a retention policy is enabled for the storage
      service.
-    :type enabled: bool
-    :param days: Indicates the number of days that metrics or logging or soft-deleted data should
-     be retained. All data older than this value will be deleted.
-    :type days: int
+    :vartype enabled: bool
+    :ivar days: Indicates the number of days that metrics or logging or soft-deleted data should be
+     retained. All data older than this value will be deleted.
+    :vartype days: int
     """
 
     _validation = {
@@ -566,6 +697,14 @@ class RetentionPolicy(msrest.serialization.Model):
         days: Optional[int] = None,
         **kwargs
     ):
+        """
+        :keyword enabled: Required. Indicates whether a retention policy is enabled for the storage
+         service.
+        :paramtype enabled: bool
+        :keyword days: Indicates the number of days that metrics or logging or soft-deleted data should
+         be retained. All data older than this value will be deleted.
+        :paramtype days: int
+        """
         super(RetentionPolicy, self).__init__(**kwargs)
         self.enabled = enabled
         self.days = days
@@ -576,10 +715,10 @@ class SignedIdentifier(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. a unique id.
-    :type id: str
-    :param access_policy: The access policy.
-    :type access_policy: ~azure.storage.queue.models.AccessPolicy
+    :ivar id: Required. a unique id.
+    :vartype id: str
+    :ivar access_policy: The access policy.
+    :vartype access_policy: ~azure.storage.queue.models.AccessPolicy
     """
 
     _validation = {
@@ -598,6 +737,12 @@ class SignedIdentifier(msrest.serialization.Model):
         access_policy: Optional["AccessPolicy"] = None,
         **kwargs
     ):
+        """
+        :keyword id: Required. a unique id.
+        :paramtype id: str
+        :keyword access_policy: The access policy.
+        :paramtype access_policy: ~azure.storage.queue.models.AccessPolicy
+        """
         super(SignedIdentifier, self).__init__(**kwargs)
         self.id = id
         self.access_policy = access_policy
@@ -606,8 +751,8 @@ class SignedIdentifier(msrest.serialization.Model):
 class StorageError(msrest.serialization.Model):
     """StorageError.
 
-    :param message:
-    :type message: str
+    :ivar message:
+    :vartype message: str
     """
 
     _attribute_map = {
@@ -620,6 +765,10 @@ class StorageError(msrest.serialization.Model):
         message: Optional[str] = None,
         **kwargs
     ):
+        """
+        :keyword message:
+        :paramtype message: str
+        """
         super(StorageError, self).__init__(**kwargs)
         self.message = message
 
@@ -627,16 +776,16 @@ class StorageError(msrest.serialization.Model):
 class StorageServiceProperties(msrest.serialization.Model):
     """Storage Service Properties.
 
-    :param logging: Azure Analytics Logging settings.
-    :type logging: ~azure.storage.queue.models.Logging
-    :param hour_metrics: A summary of request statistics grouped by API in hourly aggregates for
+    :ivar logging: Azure Analytics Logging settings.
+    :vartype logging: ~azure.storage.queue.models.Logging
+    :ivar hour_metrics: A summary of request statistics grouped by API in hourly aggregates for
      queues.
-    :type hour_metrics: ~azure.storage.queue.models.Metrics
-    :param minute_metrics: a summary of request statistics grouped by API in minute aggregates for
+    :vartype hour_metrics: ~azure.storage.queue.models.Metrics
+    :ivar minute_metrics: a summary of request statistics grouped by API in minute aggregates for
      queues.
-    :type minute_metrics: ~azure.storage.queue.models.Metrics
-    :param cors: The set of CORS rules.
-    :type cors: list[~azure.storage.queue.models.CorsRule]
+    :vartype minute_metrics: ~azure.storage.queue.models.Metrics
+    :ivar cors: The set of CORS rules.
+    :vartype cors: list[~azure.storage.queue.models.CorsRule]
     """
 
     _attribute_map = {
@@ -655,6 +804,18 @@ class StorageServiceProperties(msrest.serialization.Model):
         cors: Optional[List["CorsRule"]] = None,
         **kwargs
     ):
+        """
+        :keyword logging: Azure Analytics Logging settings.
+        :paramtype logging: ~azure.storage.queue.models.Logging
+        :keyword hour_metrics: A summary of request statistics grouped by API in hourly aggregates for
+         queues.
+        :paramtype hour_metrics: ~azure.storage.queue.models.Metrics
+        :keyword minute_metrics: a summary of request statistics grouped by API in minute aggregates
+         for queues.
+        :paramtype minute_metrics: ~azure.storage.queue.models.Metrics
+        :keyword cors: The set of CORS rules.
+        :paramtype cors: list[~azure.storage.queue.models.CorsRule]
+        """
         super(StorageServiceProperties, self).__init__(**kwargs)
         self.logging = logging
         self.hour_metrics = hour_metrics
@@ -665,8 +826,8 @@ class StorageServiceProperties(msrest.serialization.Model):
 class StorageServiceStats(msrest.serialization.Model):
     """Stats for the storage service.
 
-    :param geo_replication: Geo-Replication information for the Secondary Storage Service.
-    :type geo_replication: ~azure.storage.queue.models.GeoReplication
+    :ivar geo_replication: Geo-Replication information for the Secondary Storage Service.
+    :vartype geo_replication: ~azure.storage.queue.models.GeoReplication
     """
 
     _attribute_map = {
@@ -679,5 +840,9 @@ class StorageServiceStats(msrest.serialization.Model):
         geo_replication: Optional["GeoReplication"] = None,
         **kwargs
     ):
+        """
+        :keyword geo_replication: Geo-Replication information for the Secondary Storage Service.
+        :paramtype geo_replication: ~azure.storage.queue.models.GeoReplication
+        """
         super(StorageServiceStats, self).__init__(**kwargs)
         self.geo_replication = geo_replication

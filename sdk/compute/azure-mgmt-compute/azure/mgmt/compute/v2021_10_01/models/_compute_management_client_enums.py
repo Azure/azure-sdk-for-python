@@ -20,6 +20,13 @@ class AggregatedReplicationState(with_metaclass(CaseInsensitiveEnumMeta, str, En
     COMPLETED = "Completed"
     FAILED = "Failed"
 
+class Architecture(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The architecture of the image. Applicable to OS disks only.
+    """
+
+    X64 = "x64"
+    ARM64 = "Arm64"
+
 class ConfidentialVMEncryptionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """confidential VM encryption types
     """

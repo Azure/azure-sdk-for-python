@@ -390,7 +390,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
     async def update_certificate_policy(
         self, certificate_name: str, policy: CertificatePolicy, **kwargs: "Any"
     ) -> CertificatePolicy:
-        """Updates the policy for a certificate. Requires certificiates/update permission.
+        """Updates the policy for a certificate. Requires certificates/update permission.
 
         Set specified members in the certificate policy. Leaves others as null.
 
@@ -652,7 +652,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
     async def get_contacts(self, **kwargs: "Any") -> List[CertificateContact]:
         # pylint:disable=unsubscriptable-object
 
-        # disabled unsubscruptable-object because of pylint bug referenced here:
+        # disabled unsubscriptable-object because of pylint bug referenced here:
         # https://github.com/PyCQA/pylint/issues/2377
         """Gets the certificate contacts for the key vault. Requires the certificates/managecontacts permission.
 
@@ -677,7 +677,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
     async def delete_contacts(self, **kwargs: "Any") -> List[CertificateContact]:
         # pylint:disable=unsubscriptable-object
 
-        # disabled unsubscruptable-object because of pylint bug referenced here:
+        # disabled unsubscriptable-object because of pylint bug referenced here:
         # https://github.com/PyCQA/pylint/issues/2377
         """Deletes the certificate contacts for the key vault. Requires the certificates/managecontacts permission.
 

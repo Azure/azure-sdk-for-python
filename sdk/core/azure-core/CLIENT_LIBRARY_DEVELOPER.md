@@ -560,6 +560,12 @@ implement additional methods. The [`azure-identity`][identity_github] package ha
 implementations that can be used for reference. For example, the [`InteractiveCredential`][interactive_cred] is used as
 a base class for multiple credentials and uses `claims` and `tenant_id` in token requests.
 
+If a `TokenCredential` implementation doesn't have a use for a keyword argument in a given scenario, the unused
+keyword argument should be removed from `kwargs` before getting passed elsewhere. The documentation for the
+implementation should mention that this keyword argument will not be used when making token requests, as well as any
+potential consequences of this. For example, if a `TokenCredential` implementation doesn't use `tenant_id`, it should
+document that fetched tokens may not authorize requests made to the specified tenant.
+
 There is also an async protocol -- the `AsyncTokenCredential` protocol -- that specifies a class with an aysnc
 `get_token` method with the same arguments. An `AsyncTokenCredential` implementation additionally needs to be a context
 manager, with `__aenter__`, `__aexit__`, and `close` methods.

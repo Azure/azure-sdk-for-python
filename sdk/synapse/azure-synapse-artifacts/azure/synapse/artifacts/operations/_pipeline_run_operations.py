@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
@@ -18,21 +18,19 @@ from msrest import Serializer
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Optional, TypeVar
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar('T')
+JSONType = Any
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
-# fmt: off
 
 def build_query_pipeline_runs_by_workspace_request(
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
@@ -55,15 +53,16 @@ def build_query_pipeline_runs_by_workspace_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_get_pipeline_run_request(
-    run_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    run_id: str,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
 
     accept = "application/json"
@@ -93,11 +92,13 @@ def build_get_pipeline_run_request(
 
 
 def build_query_activity_runs_request(
-    pipeline_name,  # type: str
-    run_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    pipeline_name: str,
+    run_id: str,
+    *,
+    json: JSONType = None,
+    content: Any = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
@@ -126,17 +127,19 @@ def build_query_activity_runs_request(
         url=url,
         params=query_parameters,
         headers=header_parameters,
+        json=json,
+        content=content,
         **kwargs
     )
 
 
 def build_cancel_pipeline_run_request(
-    run_id,  # type: str
-    **kwargs  # type: Any
-):
-    # type: (...) -> HttpRequest
+    run_id: str,
+    *,
+    is_recursive: Optional[bool] = None,
+    **kwargs: Any
+) -> HttpRequest:
     api_version = kwargs.pop('api_version', "2020-12-01")  # type: str
-    is_recursive = kwargs.pop('is_recursive', None)  # type: Optional[bool]
 
     accept = "application/json"
     # Construct URL
@@ -165,7 +168,6 @@ def build_cancel_pipeline_run_request(
         **kwargs
     )
 
-# fmt: on
 class PipelineRunOperations(object):
     """PipelineRunOperations operations.
 
@@ -191,10 +193,9 @@ class PipelineRunOperations(object):
     @distributed_trace
     def query_pipeline_runs_by_workspace(
         self,
-        filter_parameters,  # type: "_models.RunFilterParameters"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.PipelineRunsQueryResponse"
+        filter_parameters: "_models.RunFilterParameters",
+        **kwargs: Any
+    ) -> "_models.PipelineRunsQueryResponse":
         """Query pipeline runs in the workspace based on input filter conditions.
 
         :param filter_parameters: Parameters to filter the pipeline run.
@@ -251,10 +252,9 @@ class PipelineRunOperations(object):
     @distributed_trace
     def get_pipeline_run(
         self,
-        run_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.PipelineRun"
+        run_id: str,
+        **kwargs: Any
+    ) -> "_models.PipelineRun":
         """Get a pipeline run by its run ID.
 
         :param run_id: The pipeline run identifier.
@@ -308,12 +308,11 @@ class PipelineRunOperations(object):
     @distributed_trace
     def query_activity_runs(
         self,
-        pipeline_name,  # type: str
-        run_id,  # type: str
-        filter_parameters,  # type: "_models.RunFilterParameters"
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.ActivityRunsQueryResponse"
+        pipeline_name: str,
+        run_id: str,
+        filter_parameters: "_models.RunFilterParameters",
+        **kwargs: Any
+    ) -> "_models.ActivityRunsQueryResponse":
         """Query activity runs based on input filter conditions.
 
         :param pipeline_name: The pipeline name.
@@ -376,11 +375,10 @@ class PipelineRunOperations(object):
     @distributed_trace
     def cancel_pipeline_run(
         self,
-        run_id,  # type: str
-        is_recursive=None,  # type: Optional[bool]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        run_id: str,
+        is_recursive: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
         """Cancel a pipeline run by its run ID.
 
         :param run_id: The pipeline run identifier.

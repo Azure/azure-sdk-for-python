@@ -251,6 +251,7 @@ from ._models_py3 import WindowsParameters
 
 
 from ._compute_management_client_enums import (
+    ArchitectureTypes,
     AvailabilitySetSkuTypes,
     CachingTypes,
     CapacityReservationGroupInstanceViewTypes,
@@ -564,6 +565,7 @@ __all__ = [
     'WinRMListener',
     'WindowsConfiguration',
     'WindowsParameters',
+    'ArchitectureTypes',
     'AvailabilitySetSkuTypes',
     'CachingTypes',
     'CapacityReservationGroupInstanceViewTypes',

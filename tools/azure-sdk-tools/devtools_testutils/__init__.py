@@ -18,7 +18,7 @@ from .keyvault_preparer import KeyVaultPreparer
 # cSpell:disable
 from .envvariable_loader import EnvironmentVariableLoader
 PowerShellPreparer = EnvironmentVariableLoader  # Backward compat
-from .proxy_docker_startup import start_test_proxy, stop_test_proxy, test_proxy
+from .proxy_startup import start_test_proxy, stop_test_proxy, test_proxy
 from .proxy_testcase import recorded_by_proxy
 from .sanitizers import (
     add_body_key_sanitizer,
@@ -31,6 +31,7 @@ from .sanitizers import (
     add_request_subscription_id_sanitizer,
     add_uri_regex_sanitizer,
     set_bodiless_matcher,
+    set_custom_default_matcher,
 )
 from .helpers import ResponseCallback, RetryCounter
 from .fake_credentials import FakeTokenCredential
@@ -66,6 +67,7 @@ __all__ = [
     "recorded_by_proxy",
     "test_proxy",
     "set_bodiless_matcher",
+    "set_custom_default_matcher",
     "start_test_proxy",
     "stop_test_proxy",
     "ResponseCallback",
