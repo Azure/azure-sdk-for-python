@@ -16,7 +16,7 @@ from azure.ai.formrecognizer._helpers import (
     adjust_confidence,
     adjust_text_angle
 )
-from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase, set_custom_default_matcher
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
 ENABLE_LOGGER = os.getenv('ENABLE_LOGGER', "False")

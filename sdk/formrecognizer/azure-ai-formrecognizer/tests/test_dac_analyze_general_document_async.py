@@ -20,6 +20,9 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
 
+    def teardown(self):
+        self.sleep(4)
+
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -55,8 +58,6 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
 
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
-
-        return {}
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -94,8 +95,6 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
-        return {}
-
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -132,8 +131,6 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
-        return {}
-
     @pytest.mark.live_test_only
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -141,9 +138,9 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
     async def test_document_multipage_table_span_pdf(self, client, **kwargs):
 
         with open(self.multipage_table_pdf, "rb") as fd:
-            myfile = fd.read()
+            my_file = fd.read()
         async with client:
-            poller = await client.begin_analyze_document("prebuilt-document", myfile)
+            poller = await client.begin_analyze_document("prebuilt-document", my_file)
             document = await poller.result()
         assert len(document.tables) == 3
         assert document.tables[0].row_count == 30
@@ -176,5 +173,3 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
             poller = await client.begin_analyze_document("prebuilt-document", document, pages="1-2, 3")
             result = await poller.result()
             assert len(result.pages) == 3
-
-        return {}

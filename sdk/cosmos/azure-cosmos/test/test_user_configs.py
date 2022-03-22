@@ -36,6 +36,7 @@ pytestmark = pytest.mark.cosmosEmulator
 DATABASE_ID = "PythonSDKUserConfigTesters"
 CONTAINER_ID = "PythonSDKTestContainer"
 
+
 def get_test_item():
     item = {
         'id': 'Async_' + str(uuid.uuid4()),
@@ -44,8 +45,16 @@ def get_test_item():
     }
     return item
 
+
 @pytest.mark.usefixtures("teardown")
 class TestUserConfigs(unittest.TestCase):
+
+    def test_invalid_connection_retry_configuration(self):
+        try:
+            cosmos_client.CosmosClient(url=_test_config.host, credential=_test_config.masterKey,
+                                       connection_retry_policy="Invalid Policy")
+        except TypeError as e:
+            self.assertTrue(str(e).startswith('Unsupported retry policy'))
 
     def test_enable_endpoint_discovery(self):
         client_false = cosmos_client.CosmosClient(url=_test_config.host, credential=_test_config.masterKey,

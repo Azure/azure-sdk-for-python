@@ -293,6 +293,9 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     if options.get("populateQuotaInfo"):
         headers[http_constants.HttpHeaders.PopulateQuotaInfo] = options["populateQuotaInfo"]
 
+    if options.get("maxIntegratedCacheStaleness"):
+        headers[http_constants.HttpHeaders.DedicatedGatewayCacheStaleness] = options["maxIntegratedCacheStaleness"]
+
     return headers
 
 
@@ -662,3 +665,9 @@ def ParsePaths(paths):
 
 def create_scope_from_url(url):
     return url.replace(":443", "") + ".default"
+
+
+def validate_cache_staleness_value(max_integrated_cache_staleness):
+    int(max_integrated_cache_staleness)  # Will throw error if data type cant be converted to int
+    if max_integrated_cache_staleness <= 0:
+        raise ValueError("Parameter 'max_integrated_cache_staleness_in_ms' can only be a positive integer.")
