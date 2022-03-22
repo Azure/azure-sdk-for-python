@@ -8,12 +8,12 @@
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
-from .. import models as _models
+from .. import models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -36,7 +36,7 @@ class DigitalTwinModelsOperations(object):
     :param deserializer: An object model deserializer.
     """
 
-    models = _models
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
         self._client = client
@@ -47,50 +47,27 @@ class DigitalTwinModelsOperations(object):
     def add(
         self,
         models=None,  # type: Optional[List[object]]
-        digital_twin_models_add_options=None,  # type: Optional["_models.DigitalTwinModelsAddOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> List["_models.DigitalTwinsModelData"]
+        # type: (...) -> List["models.ModelData"]
         """Uploads one or more models. When any error occurs, no models are uploaded.
         Status codes:
-
-
-        * 201 Created
-        * 400 Bad Request
-
-          * DTDLParserError - The models provided are not valid DTDL.
-          * InvalidArgument - The model id is invalid.
-          * LimitExceeded - The maximum number of model ids allowed in 'dependenciesFor' has been
-        reached.
-          * ModelVersionNotSupported - The version of DTDL used is not supported.
-
-        * 409 Conflict
-
-          * ModelAlreadyExists - The model provided already exists.
+        200 (OK): Success.
+        400 (Bad Request): The request is invalid.
+        409 (Conflict): One or more of the provided models already exist.
 
         :param models: An array of models to add.
         :type models: list[object]
-        :param digital_twin_models_add_options: Parameter group.
-        :type digital_twin_models_add_options: ~azure.digitaltwins.core.models.DigitalTwinModelsAddOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: list of DigitalTwinsModelData, or the result of cls(response)
-        :rtype: list[~azure.digitaltwins.core.models.DigitalTwinsModelData]
+        :return: list of ModelData, or the result of cls(response)
+        :rtype: list[~azure.digitaltwins.core.models.ModelData]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.DigitalTwinsModelData"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        cls = kwargs.pop('cls', None)  # type: ClsType[List["models.ModelData"]]
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        
-        _traceparent = None
-        _tracestate = None
-        if digital_twin_models_add_options is not None:
-            _traceparent = digital_twin_models_add_options.traceparent
-            _tracestate = digital_twin_models_add_options.tracestate
-        api_version = "2020-10-31"
+        api_version = "2020-05-31-preview"
         content_type = kwargs.pop("content_type", "application/json")
-        accept = "application/json"
 
         # Construct URL
         url = self.add.metadata['url']  # type: ignore
@@ -101,12 +78,8 @@ class DigitalTwinModelsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if _traceparent is not None:
-            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
-        if _tracestate is not None:
-            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         if models is not None:
@@ -115,15 +88,16 @@ class DigitalTwinModelsOperations(object):
             body_content = None
         body_content_kwargs['content'] = body_content
         request = self._client.post(url, query_parameters, header_parameters, **body_content_kwargs)
+
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('[DigitalTwinsModelData]', pipeline_response)
+        deserialized = self._deserialize('[ModelData]', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -135,24 +109,14 @@ class DigitalTwinModelsOperations(object):
         self,
         dependencies_for=None,  # type: Optional[List[str]]
         include_model_definition=False,  # type: Optional[bool]
-        digital_twin_models_list_options=None,  # type: Optional["_models.DigitalTwinModelsListOptions"]
+        digital_twin_models_list_options=None,  # type: Optional["models.DigitalTwinModelsListOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Iterable["_models.PagedDigitalTwinsModelDataCollection"]
+        # type: (...) -> Iterable["models.PagedModelDataCollection"]
         """Retrieves model metadata and, optionally, model definitions.
         Status codes:
-
-
-        * 200 OK
-        * 400 Bad Request
-
-          * InvalidArgument - The model id is invalid.
-          * LimitExceeded - The maximum number of model ids allowed in 'dependenciesFor' has been
-        reached.
-
-        * 404 Not Found
-
-          * ModelNotFound - The model was not found.
+        200 (OK): Success.
+        400 (Bad Request): The request is invalid.
 
         :param dependencies_for: The set of the models which will have their dependencies retrieved. If
          omitted, all models are retrieved.
@@ -163,36 +127,25 @@ class DigitalTwinModelsOperations(object):
         :param digital_twin_models_list_options: Parameter group.
         :type digital_twin_models_list_options: ~azure.digitaltwins.core.models.DigitalTwinModelsListOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PagedDigitalTwinsModelDataCollection or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.core.models.PagedDigitalTwinsModelDataCollection]
+        :return: An iterator like instance of either PagedModelDataCollection or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.digitaltwins.core.models.PagedModelDataCollection]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PagedDigitalTwinsModelDataCollection"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.PagedModelDataCollection"]
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
         
-        _traceparent = None
-        _tracestate = None
-        _max_items_per_page = None
+        _max_item_count = None
         if digital_twin_models_list_options is not None:
-            _traceparent = digital_twin_models_list_options.traceparent
-            _tracestate = digital_twin_models_list_options.tracestate
-            _max_items_per_page = digital_twin_models_list_options.max_items_per_page
-        api_version = "2020-10-31"
-        accept = "application/json"
+            _max_item_count = digital_twin_models_list_options.max_item_count
+        api_version = "2020-05-31-preview"
 
         def prepare_request(next_link=None):
             # Construct headers
             header_parameters = {}  # type: Dict[str, Any]
-            if _traceparent is not None:
-                header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
-            if _tracestate is not None:
-                header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
-            if _max_items_per_page is not None:
-                header_parameters['max-items-per-page'] = self._serialize.header("max_items_per_page", _max_items_per_page, 'int')
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+            if _max_item_count is not None:
+                header_parameters['x-ms-max-item-count'] = self._serialize.header("max_item_count", _max_item_count, 'int')
+            header_parameters['Accept'] = 'application/json'
 
             if not next_link:
                 # Construct URL
@@ -200,7 +153,7 @@ class DigitalTwinModelsOperations(object):
                 # Construct parameters
                 query_parameters = {}  # type: Dict[str, Any]
                 if dependencies_for is not None:
-                    query_parameters['dependenciesFor'] = [self._serialize.query("dependencies_for", q, 'str') if q is not None else '' for q in dependencies_for]
+                    query_parameters['dependenciesFor'] = self._serialize.query("dependencies_for", dependencies_for, '[str]', div=',')
                 if include_model_definition is not None:
                     query_parameters['includeModelDefinition'] = self._serialize.query("include_model_definition", include_model_definition, 'bool')
                 query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
@@ -213,7 +166,7 @@ class DigitalTwinModelsOperations(object):
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('PagedDigitalTwinsModelDataCollection', pipeline_response)
+            deserialized = self._deserialize('PagedModelDataCollection', pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -226,7 +179,7 @@ class DigitalTwinModelsOperations(object):
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(_models.ErrorResponse, response)
+                error = self._deserialize(models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response, model=error)
 
@@ -241,49 +194,28 @@ class DigitalTwinModelsOperations(object):
         self,
         id,  # type: str
         include_model_definition=False,  # type: Optional[bool]
-        digital_twin_models_get_by_id_options=None,  # type: Optional["_models.DigitalTwinModelsGetByIdOptions"]
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.DigitalTwinsModelData"
+        # type: (...) -> "models.ModelData"
         """Retrieves model metadata and optionally the model definition.
         Status codes:
-
-
-        * 200 OK
-        * 400 Bad Request
-
-          * InvalidArgument - The model id is invalid.
-          * MissingArgument - The model id was not provided.
-
-        * 404 Not Found
-
-          * ModelNotFound - The model was not found.
+        200 (OK): Success.
+        404 (Not Found): There is no model with the provided id.
 
         :param id: The id for the model. The id is globally unique and case sensitive.
         :type id: str
         :param include_model_definition: When true the model definition will be returned as part of the
          result.
         :type include_model_definition: bool
-        :param digital_twin_models_get_by_id_options: Parameter group.
-        :type digital_twin_models_get_by_id_options: ~azure.digitaltwins.core.models.DigitalTwinModelsGetByIdOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DigitalTwinsModelData, or the result of cls(response)
-        :rtype: ~azure.digitaltwins.core.models.DigitalTwinsModelData
+        :return: ModelData, or the result of cls(response)
+        :rtype: ~azure.digitaltwins.core.models.ModelData
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DigitalTwinsModelData"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        cls = kwargs.pop('cls', None)  # type: ClsType["models.ModelData"]
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        
-        _traceparent = None
-        _tracestate = None
-        if digital_twin_models_get_by_id_options is not None:
-            _traceparent = digital_twin_models_get_by_id_options.traceparent
-            _tracestate = digital_twin_models_get_by_id_options.tracestate
-        api_version = "2020-10-31"
-        accept = "application/json"
+        api_version = "2020-05-31-preview"
 
         # Construct URL
         url = self.get_by_id.metadata['url']  # type: ignore
@@ -300,11 +232,7 @@ class DigitalTwinModelsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if _traceparent is not None:
-            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
-        if _tracestate is not None:
-            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        header_parameters['Accept'] = 'application/json'
 
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -312,10 +240,10 @@ class DigitalTwinModelsOperations(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize('DigitalTwinsModelData', pipeline_response)
+        deserialized = self._deserialize('ModelData', pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -327,55 +255,30 @@ class DigitalTwinModelsOperations(object):
         self,
         id,  # type: str
         update_model,  # type: List[object]
-        digital_twin_models_update_options=None,  # type: Optional["_models.DigitalTwinModelsUpdateOptions"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Updates the metadata for a model.
         Status codes:
-
-
-        * 204 No Content
-        * 400 Bad Request
-
-          * InvalidArgument - The model id is invalid.
-          * JsonPatchInvalid - The JSON Patch provided is invalid.
-          * MissingArgument - The model id was not provided.
-
-        * 404 Not Found
-
-          * ModelNotFound - The model was not found.
-
-        * 409 Conflict
-
-          * ModelReferencesNotDecommissioned - The model refers to models that are not decommissioned.
+        200 (OK): Success.
+        400 (Bad Request): The request is invalid.
+        404 (Not Found): There is no model with the provided id.
 
         :param id: The id for the model. The id is globally unique and case sensitive.
         :type id: str
         :param update_model: An update specification described by JSON Patch. Only the decommissioned
          property can be replaced.
         :type update_model: list[object]
-        :param digital_twin_models_update_options: Parameter group.
-        :type digital_twin_models_update_options: ~azure.digitaltwins.core.models.DigitalTwinModelsUpdateOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        
-        _traceparent = None
-        _tracestate = None
-        if digital_twin_models_update_options is not None:
-            _traceparent = digital_twin_models_update_options.traceparent
-            _tracestate = digital_twin_models_update_options.tracestate
-        api_version = "2020-10-31"
+        api_version = "2020-05-31-preview"
         content_type = kwargs.pop("content_type", "application/json-patch+json")
-        accept = "application/json"
 
         # Construct URL
         url = self.update.metadata['url']  # type: ignore
@@ -390,23 +293,19 @@ class DigitalTwinModelsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if _traceparent is not None:
-            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
-        if _tracestate is not None:
-            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
         header_parameters['Content-Type'] = self._serialize.header("content_type", content_type, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         body_content_kwargs = {}  # type: Dict[str, Any]
         body_content = self._serialize.body(update_model, '[object]')
         body_content_kwargs['content'] = body_content
         request = self._client.patch(url, query_parameters, header_parameters, **body_content_kwargs)
+
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -417,50 +316,27 @@ class DigitalTwinModelsOperations(object):
     def delete(
         self,
         id,  # type: str
-        digital_twin_models_delete_options=None,  # type: Optional["_models.DigitalTwinModelsDeleteOptions"]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
         """Deletes a model. A model can only be deleted if no other models reference it.
         Status codes:
-
-
-        * 204 No Content
-        * 400 Bad Request
-
-          * InvalidArgument - The model id is invalid.
-          * MissingArgument - The model id was not provided.
-
-        * 404 Not Found
-
-          * ModelNotFound - The model was not found.
-
-        * 409 Conflict
-
-          * ModelReferencesNotDeleted - The model refers to models that are not deleted.
+        204 (No Content): Success.
+        400 (Bad Request): The request is invalid.
+        404 (Not Found): There is no model with the provided id.
+        409 (Conflict): There are dependencies on the model that prevent it from being deleted.
 
         :param id: The id for the model. The id is globally unique and case sensitive.
         :type id: str
-        :param digital_twin_models_delete_options: Parameter group.
-        :type digital_twin_models_delete_options: ~azure.digitaltwins.core.models.DigitalTwinModelsDeleteOptions
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
+        error_map = {404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop('error_map', {}))
-        
-        _traceparent = None
-        _tracestate = None
-        if digital_twin_models_delete_options is not None:
-            _traceparent = digital_twin_models_delete_options.traceparent
-            _tracestate = digital_twin_models_delete_options.tracestate
-        api_version = "2020-10-31"
-        accept = "application/json"
+        api_version = "2020-05-31-preview"
 
         # Construct URL
         url = self.delete.metadata['url']  # type: ignore
@@ -475,11 +351,6 @@ class DigitalTwinModelsOperations(object):
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        if _traceparent is not None:
-            header_parameters['traceparent'] = self._serialize.header("traceparent", _traceparent, 'str')
-        if _tracestate is not None:
-            header_parameters['tracestate'] = self._serialize.header("tracestate", _tracestate, 'str')
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
 
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
@@ -487,7 +358,7 @@ class DigitalTwinModelsOperations(object):
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(_models.ErrorResponse, response)
+            error = self._deserialize(models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:

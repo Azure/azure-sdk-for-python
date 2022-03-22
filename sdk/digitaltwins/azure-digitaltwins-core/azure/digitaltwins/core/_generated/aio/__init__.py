@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_digital_twins_api import AzureDigitalTwinsAPI
+from ._azure_digital_twins_api_async import AzureDigitalTwinsAPI
 __all__ = ['AzureDigitalTwinsAPI']

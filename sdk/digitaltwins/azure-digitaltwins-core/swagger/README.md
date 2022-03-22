@@ -6,7 +6,7 @@
 ``` yaml
 use-extension:
     "@autorest/python": "5.1.0-preview.4"
-input-file: https://github.com/Azure/azure-rest-api-specs/blob/master/specification/digitaltwins/data-plane/Microsoft.DigitalTwins/stable/2020-10-31/digitaltwins.json
+input-file: https://github.com/Azure/azure-rest-api-specs/blob/master/specification/digitaltwins/data-plane/Microsoft.DigitalTwins/preview/2020-05-31-preview/digitaltwins.json
 output-folder: ../azure/digitaltwins/core/_generated
 namespace: azure.digitaltwins.core
 no-namespace-folders: true

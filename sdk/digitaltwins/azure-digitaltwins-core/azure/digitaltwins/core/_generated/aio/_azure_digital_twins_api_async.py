@@ -15,11 +15,11 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ._configuration import AzureDigitalTwinsAPIConfiguration
-from .operations import DigitalTwinModelsOperations
-from .operations import QueryOperations
-from .operations import DigitalTwinsOperations
-from .operations import EventRoutesOperations
+from ._configuration_async import AzureDigitalTwinsAPIConfiguration
+from .operations_async import DigitalTwinModelsOperations
+from .operations_async import QueryOperations
+from .operations_async import DigitalTwinsOperations
+from .operations_async import EventRoutesOperations
 from .. import models
 
 
@@ -27,16 +27,17 @@ class AzureDigitalTwinsAPI(object):
     """A service for managing and querying digital twins and digital twin models.
 
     :ivar digital_twin_models: DigitalTwinModelsOperations operations
-    :vartype digital_twin_models: azure.digitaltwins.core.aio.operations.DigitalTwinModelsOperations
+    :vartype digital_twin_models: azure.digitaltwins.core.aio.operations_async.DigitalTwinModelsOperations
     :ivar query: QueryOperations operations
-    :vartype query: azure.digitaltwins.core.aio.operations.QueryOperations
+    :vartype query: azure.digitaltwins.core.aio.operations_async.QueryOperations
     :ivar digital_twins: DigitalTwinsOperations operations
-    :vartype digital_twins: azure.digitaltwins.core.aio.operations.DigitalTwinsOperations
+    :vartype digital_twins: azure.digitaltwins.core.aio.operations_async.DigitalTwinsOperations
     :ivar event_routes: EventRoutesOperations operations
-    :vartype event_routes: azure.digitaltwins.core.aio.operations.EventRoutesOperations
+    :vartype event_routes: azure.digitaltwins.core.aio.operations_async.EventRoutesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param str base_url: Service URL
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
     def __init__(
