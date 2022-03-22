@@ -30,7 +30,7 @@ from .._shared import (
 )
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
@@ -56,7 +56,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
     def __init__(
         self,
         endpoint: str,
-        credential: Union[ConfidentialLedgerCertificateCredential, "TokenCredential"],
+        credential: Union[ConfidentialLedgerCertificateCredential, "AsyncTokenCredential"],
         ledger_certificate_path: str,
         **kwargs: Any,
     ) -> None:
@@ -356,30 +356,25 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
         if transaction_id is None:
             raise ValueError("transaction_id cannot be None")
 
-        ready = False
-        result = None
         state = None
         for _ in range(max_tries):
             result = await self._client.confidential_ledger.get_receipt(
                 transaction_id=transaction_id, **kwargs
             )
 
-            ready = result.state == ConfidentialLedgerQueryState.READY
-            if not ready:
+            if result.state is not ConfidentialLedgerQueryState.READY:
                 state = result.state
                 await asyncio.sleep(interval)
             else:
-                break
-        if not ready:
-            raise TimeoutError(
-                "After {} attempts, the query still had state {}, not {}".format(
-                    max_tries, state, ConfidentialLedgerQueryState.READY
+                return TransactionReceipt(
+                    transaction_id=result.transaction_id, receipt=result.receipt
                 )
-            )
 
-        return TransactionReceipt(
-            transaction_id=result.transaction_id, receipt=result.receipt
-        )
+        raise TimeoutError(
+            "After {} attempts, the query still had state {}, not {}".format(
+                max_tries, state, ConfidentialLedgerQueryState.READY
+            )
+        )        
 
     @distributed_trace_async
     async def get_transaction_status(

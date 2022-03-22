@@ -17,7 +17,7 @@ from .._generated._generated_ledger.v0_1_preview.aio import (
 from .._shared import ConfidentialLedgerCertificateCredential, DEFAULT_VERSION
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class AsyncConfidentialLedgerClientBase(object):
@@ -25,7 +25,7 @@ class AsyncConfidentialLedgerClientBase(object):
         self,
         *,
         endpoint: str,
-        credential: Union[ConfidentialLedgerCertificateCredential, "TokenCredential"],
+        credential: Union[ConfidentialLedgerCertificateCredential, "AsyncTokenCredential"],
         ledger_certificate_path: str,
         **kwargs: Any
     ) -> None:

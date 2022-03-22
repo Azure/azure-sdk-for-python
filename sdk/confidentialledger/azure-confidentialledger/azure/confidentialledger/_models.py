@@ -290,9 +290,10 @@ class TransactionReceipt(object):
 
     def __init__(
         self,
-        transaction_id,  # type: str
-        receipt,  # type: List[int]
+        transaction_id,
+        receipt,
     ):
+        # type: (str, List[int]) -> None
         self._transaction_id = transaction_id
         self._contents = receipt
 

@@ -362,8 +362,6 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
         interval = kwargs.pop("interval", 0.5)
         max_tries = kwargs.pop("max_tries", 6)
 
-        ready = False
-        result = None
         state = None
         for _ in range(max_tries):
             result = self._client.confidential_ledger.get_receipt(
@@ -371,21 +369,18 @@ class ConfidentialLedgerClient(ConfidentialLedgerClientBase):
                 **kwargs
             )
 
-            ready = result.state == ConfidentialLedgerQueryState.READY
-            if not ready:
+            if result.state is not ConfidentialLedgerQueryState.READY:
                 state = result.state
                 time.sleep(interval)
             else:
-                break
-        if not ready:
-            raise TimeoutError(
-                "After {0} attempts, the query still had state {1}, not {2}".format(
-                    max_tries, state, ConfidentialLedgerQueryState.READY
+                return TransactionReceipt(
+                    transaction_id=result.transaction_id, receipt=result.receipt
                 )
-            )
 
-        return TransactionReceipt(
-            transaction_id=result.transaction_id, receipt=result.receipt
+        raise TimeoutError(
+            "After {0} attempts, the query still had state {1}, not {2}".format(
+                max_tries, state, ConfidentialLedgerQueryState.READY
+            )
         )
 
     @distributed_trace
