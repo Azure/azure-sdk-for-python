@@ -12,6 +12,9 @@
 
 ### Other Changes
 
+- Removed `resource_id`, please use `identity_config` instead.
+- Renamed argument name `get_assertion` to `func` for `ClientAssertionCredential`.
+
 ## 1.9.0b1 (2022-03-08)
 
 ### Features Added
