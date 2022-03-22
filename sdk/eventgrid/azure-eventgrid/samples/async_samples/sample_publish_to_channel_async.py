@@ -27,10 +27,9 @@ endpoint = os.environ['EVENTGRID_PARTNER_NAMESPACE_TOPIC_ENDPOINT']
 
 channel_name = os.environ['EVENTGRID_PARTNER_CHANNEL_NAME']
 
-credential = AzureKeyCredential(topic_key)
-client = EventGridPublisherClient(endpoint, credential)
-
-async def send():
+async def publish():
+    credential = AzureKeyCredential(topic_key)
+    client = EventGridPublisherClient(endpoint, credential)
     await client.send([
         CloudEvent(
             type="Contoso.Items.ItemReceived",
@@ -45,4 +44,4 @@ async def send():
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(send())
+    loop.run_until_complete(publish())
