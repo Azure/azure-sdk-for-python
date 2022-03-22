@@ -50,13 +50,19 @@ class CreateAndDeployTests(QuestionAnsweringTest):
 
         # create deployable project
         project_name = "IssacNewton"
-        QnaAuthoringHelper.create_test_project(client, project_name=project_name, is_deployable=True)
+        QnaAuthoringHelper.create_test_project(
+            client,
+            project_name=project_name,
+            is_deployable=True,
+            **self.kwargs_for_polling,
+        )
 
         # test deploy
         deployment_name = "production"
         deployment_poller = client.begin_deploy_project(
             project_name=project_name,
-            deployment_name=deployment_name
+            deployment_name=deployment_name,
+            **self.kwargs_for_polling
         )
         deployment_poller.result()
 
@@ -69,7 +75,7 @@ class CreateAndDeployTests(QuestionAnsweringTest):
             if ("deploymentName" in d) and d["deploymentName"] == deployment_name:
                 deployment_found = True
         assert deployment_found
-            
+
 
 
 

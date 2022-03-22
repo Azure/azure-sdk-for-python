@@ -28,6 +28,7 @@ from ._models_py3 import Dimension
 from ._models_py3 import ExportPolicyRule
 from ._models_py3 import FilePathAvailabilityRequest
 from ._models_py3 import HourlySchedule
+from ._models_py3 import LdapSearchScopeOpt
 from ._models_py3 import LogSpecification
 from ._models_py3 import MetricSpecification
 from ._models_py3 import MonthlySchedule
@@ -56,9 +57,14 @@ from ._models_py3 import SnapshotPolicy
 from ._models_py3 import SnapshotPolicyDetails
 from ._models_py3 import SnapshotPolicyPatch
 from ._models_py3 import SnapshotPolicyVolumeList
+from ._models_py3 import SnapshotRestoreFiles
 from ._models_py3 import SnapshotsList
 from ._models_py3 import SubscriptionQuotaItem
 from ._models_py3 import SubscriptionQuotaItemList
+from ._models_py3 import SubvolumeInfo
+from ._models_py3 import SubvolumeModel
+from ._models_py3 import SubvolumePatchRequest
+from ._models_py3 import SubvolumesList
 from ._models_py3 import SystemData
 from ._models_py3 import Vault
 from ._models_py3 import VaultList
@@ -90,6 +96,7 @@ from ._net_app_management_client_enums import (
     CheckQuotaNameResourceTypes,
     ChownMode,
     CreatedByType,
+    EnableSubvolumes,
     EncryptionType,
     EndpointType,
     InAvailabilityReasonType,
@@ -127,6 +134,7 @@ __all__ = [
     'ExportPolicyRule',
     'FilePathAvailabilityRequest',
     'HourlySchedule',
+    'LdapSearchScopeOpt',
     'LogSpecification',
     'MetricSpecification',
     'MonthlySchedule',
@@ -155,9 +163,14 @@ __all__ = [
     'SnapshotPolicyDetails',
     'SnapshotPolicyPatch',
     'SnapshotPolicyVolumeList',
+    'SnapshotRestoreFiles',
     'SnapshotsList',
     'SubscriptionQuotaItem',
     'SubscriptionQuotaItemList',
+    'SubvolumeInfo',
+    'SubvolumeModel',
+    'SubvolumePatchRequest',
+    'SubvolumesList',
     'SystemData',
     'Vault',
     'VaultList',
@@ -186,6 +199,7 @@ __all__ = [
     'CheckQuotaNameResourceTypes',
     'ChownMode',
     'CreatedByType',
+    'EnableSubvolumes',
     'EncryptionType',
     'EndpointType',
     'InAvailabilityReasonType',

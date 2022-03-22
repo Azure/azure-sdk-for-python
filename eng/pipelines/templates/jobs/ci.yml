@@ -187,25 +187,36 @@ jobs:
           CondaArtifacts: ${{ parameters.CondaArtifacts}}
           TestProxy: ${{ parameters.TestProxy }}
 
-  - job: 'RunRegression'
-    condition: and(succeededOrFailed(), or(eq(variables['Run.Regression'], 'true'), and(eq(variables['Build.Reason'], 'Schedule'), eq(variables['System.TeamProject'],'internal'))))
-    displayName: 'Run Regression'
-    timeoutInMinutes: 180
-    variables:
-    - template: ../variables/globals.yml
-
-    dependsOn:
-      - 'Build'
-
-    pool:
-      name: azsdk-pool-mms-ubuntu-2004-general
-      vmImage: MMSUbuntu20.04
-
-    steps:
-    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-      parameters:
+  - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+    parameters:
+      JobTemplatePath: /eng/pipelines/templates/jobs/regression.yml
+      GenerateJobName: generate_regression_matrix
+      SparseCheckoutPaths: [ "scripts/", "sdk/" ]
+      MatrixConfigs:
+          - Name: Python_regression_envs
+            Path: eng/pipelines/templates/stages/regression-job-matrix.json
+            Selection: sparse
+            GenerateVMJobs: true
+      PreGenerationSteps:
+        - script: |
+            pip install packaging==20.4
+          displayName: 'Prep Environment'
+        - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+          parameters:
+            BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        - task: PythonScript@0
+          displayName: 'Ensure service coverage'
+          inputs:
+            scriptPath: '$(Build.SourcesDirectory)/scripts/devops_tasks/update_regression_services.py'
+            arguments: >-
+              "$(TargetingString)"
+              --service="${{ parameters.ServiceDirectory }}"
+              --json=$(Build.SourcesDirectory)/eng/pipelines/templates/stages/regression-job-matrix.json
+      CloudConfig:
+        Cloud: Public
+      DependsOn:
+        - 'Build'
+      AdditionalParameters:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
-
-    - template: ../steps/test_regression.yml
-      parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestTimeoutInMinutes: 90

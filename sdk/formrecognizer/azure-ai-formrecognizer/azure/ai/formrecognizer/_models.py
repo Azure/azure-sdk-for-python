@@ -4086,30 +4086,30 @@ class DocTypeInfo(object):
 class AccountInfo(object):
     """Info regarding models under the Form Recognizer resource.
 
-    :ivar int model_count: Number of custom models in the current resource.
-    :ivar int model_limit: Maximum number of custom models supported in the current resource.
+    :ivar int document_model_count: Number of custom models in the current resource.
+    :ivar int document_model_limit: Maximum number of custom models supported in the current resource.
     """
 
     def __init__(
         self,
         **kwargs
     ):
-        self.model_count = kwargs.get('model_count', None)
-        self.model_limit = kwargs.get('model_limit', None)
+        self.document_model_count = kwargs.get('document_model_count', None)
+        self.document_model_limit = kwargs.get('document_model_limit', None)
 
     def __repr__(self):
         return (
-            "AccountInfo(model_count={}, model_limit={})".format(
-                self.model_count,
-                self.model_limit,
+            "AccountInfo(document_model_count={}, document_model_limit={})".format(
+                self.document_model_count,
+                self.document_model_limit,
             )
         )
 
     @classmethod
     def _from_generated(cls, info):
         return cls(
-            model_count=info.count,
-            model_limit=info.limit,
+            document_model_count=info.count,
+            document_model_limit=info.limit,
         )
 
 
@@ -4121,8 +4121,8 @@ class AccountInfo(object):
         :rtype: dict
         """
         return {
-            "model_count": self.model_count,
-            "model_limit": self.model_limit,
+            "document_model_count": self.document_model_count,
+            "document_model_limit": self.document_model_limit,
         }
 
     @classmethod
@@ -4135,8 +4135,8 @@ class AccountInfo(object):
         :rtype: AccountInfo
         """
         return cls(
-            model_count=data.get("model_count", None),
-            model_limit=data.get("model_limit", None),
+            document_model_count=data.get("document_model_count", None),
+            document_model_limit=data.get("document_model_limit", None),
         )
 
 

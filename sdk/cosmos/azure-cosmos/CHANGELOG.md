@@ -1,6 +1,16 @@
 ## Release History
 
-### 4.3.0b3 (2022-03-09)
+### 4.3.0b4 (Unreleased)
+
+#### Features Added
+
+#### Breaking Changes
+
+#### Bugs Fixed
+
+#### Other Changes
+
+### 4.3.0b3 (2022-03-10)
 
 >[WARNING]
 >The default `Session` consistency bugfix will impact customers whose database accounts have a `Bounded Staleness` or `Strong`
