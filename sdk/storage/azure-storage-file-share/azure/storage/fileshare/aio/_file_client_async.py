@@ -142,7 +142,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             account_url, share_name=share_name, file_path=file_path, snapshot=snapshot,
             credential=credential, loop=loop, **kwargs
         )
-        self._client = AzureFileStorage(url=self.url, pipeline=self._pipeline, loop=loop)
+        self._client = AzureFileStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
         self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
         self._loop = loop
 
@@ -564,9 +564,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         self,
         offset=None,  # type: Optional[int]
         length=None,  # type: Optional[int]
-        **kwargs
+        **kwargs  # type: Any
     ):
-        # type: (Optional[int], Optional[int], Any) -> StorageStreamDownloader
+        # type: (...) -> StorageStreamDownloader
         """Downloads a file to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the file into
         a stream. Using chunks() returns an async iterator which allows the user to iterate over the content in chunks.

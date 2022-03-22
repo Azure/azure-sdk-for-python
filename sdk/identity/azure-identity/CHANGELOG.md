@@ -1,5 +1,21 @@
 # Release History
 
+## 1.9.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Added check on `content` from msal response    ([#23483](https://github.com/Azure/azure-sdk-for-python/issues/23483))
+- Fixed the issue that async OBO credential does not refresh correctly.    ([#21981](https://github.com/Azure/azure-sdk-for-python/issues/21981))
+
+### Other Changes
+
+- Removed `resource_id`, please use `identity_config` instead.
+- Renamed argument name `get_assertion` to `func` for `ClientAssertionCredential`.
+
 ## 1.9.0b1 (2022-03-08)
 
 ### Features Added

@@ -20,6 +20,7 @@
     "*.tgz",
     "*.pfx",
     "sdk/**/azure-mgmt**/**",
+    "sdk/**/ci.yml",
     "sdk/**/azure-cognitiveservices**",
     "sdk/**/_generated/**",
     "**/*requirement*.txt",
@@ -69,7 +70,7 @@
     "sdk/eventhub/azure-eventhub-checkpointstoreblob/**",
     "sdk/eventhub/azure-eventhub/**",
     "sdk/graphrbac/azure-graphrbac/**",
-    "sdk/formrecognizer/azure-ai-formrecognizer/**",
+    "sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_forms/**",
     "sdk/identity/azure-identity/tests/pod-identity/**",
     "sdk/identity/azure-identity/tests/managed-identity-live/service-fabric/**",
     "sdk/keyvault/azure-keyvault-certificates/tests/certs.py",
@@ -81,9 +82,6 @@
     "sdk/metricsadvisor/azure-ai-metricsadvisor/**",
     "sdk/purview/azure-purview-catalog/**",
     "sdk/remoterendering/azure-mixedreality-remoterendering/**",
-    "sdk/schemaregistry/ci.yml",
-    "sdk/schemaregistry/azure-schemaregistry/**",
-    "sdk/schemaregistry/azure-schemaregistry-avroencoder/**",
     "sdk/servicefabric/azure-servicefabric/**",
     "sdk/search/azure-search-documents/**",
     "sdk/storage/azure-storage-blob-changefeed/**",
@@ -106,8 +104,7 @@
     "eng/tox/tox.ini",
     "eng/common/docgeneration/Generate-DocIndex.ps1",
     "eng/**/*.py",
-    ".gitignore",
-    
+    ".gitignore"
   ],
   "words": [
     "aad",
@@ -119,6 +116,7 @@
     "amqp",
     "apim",
     "asyncio",
+    "avroencoder",
     "azcmagent",
     "azsdk",
     "azurecr",
@@ -160,6 +158,7 @@
     "fstat",
     "gbps",
     "GCCH",
+    "getsizeof",
     "graphrbac",
     "gmtime",
     "guids",
@@ -177,6 +176,7 @@
     "ipconfigurations",
     "iqmp",
     "iscoroutine",
+    "iscoroutinefunction",
     "iscsi",
     "ivar",
     "jwks",
@@ -191,13 +191,12 @@
     "livekvtestcertrec",
     "livekvtestgetcertperfcert",
     "livekvtestgetsecretperfsecret",
-    "livekvtestlistperfsecret",
-    "lmazuel",
-    "livekvtest",
+    "livekvtestlistperfsecret",    
     "livekvtestdecryptperfkey",
     "livekvtestgetkeyperfkey",
     "livekvtestsignperfkey",
     "livekvtestunwrapperfkey",
+    "lmazuel",
     "logz",
     "LPCWSTR",
     "Lucene",
@@ -233,6 +232,7 @@
     "plex",
     "pluggy",
     "popen",
+    "prebuilts",
     "pschema",
     "PSECRET",
     "pygobject",
@@ -368,6 +368,42 @@
         "FNNHHJT",
         "Zwiz",
         "nypg"
+      ]
+    },
+    {
+      "filename": "sdk/containerregistry/azure-containerregistry/**",
+      "words": [
+        "udpated"
+      ]
+    },
+    {
+      "filename": "sdk/formrecognizer/azure-ai-formrecognizer/tests/*.py",
+      "words": [
+        "WDLABCD"
+      ]
+    },
+    {
+      "filename": "sdk/formrecognizer/azure-ai-formrecognizer/**",
+      "words": [
+        "allinone",
+        "dmac",
+        "ierr",
+        "mymodel"
+      ]
+    },
+    {
+      "filename": "sdk/schemaregistry/**/tests/**/*.py",
+      "words": [
+        "favo",
+        "randb"
+      ]
+    },
+    {
+      "filename": "sdk/schemaregistry/azure-schemaregistry-avroencoder/**/*.py",
+      "words": [
+        "currsize",
+        "unpartial",
+        "alru"
       ]
     }
   ],

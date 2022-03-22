@@ -15,18 +15,22 @@ Azure SDK's motivation and methodology for running CredScan is documented [here]
 
 ## Check CredScan status
 
-CredScan is run each night over the entire `azure-sdk-for-python` repository as part of the
-[python - aggregate-reports][aggregate_reports] pipeline. The scan produces a list of active warnings in the "Post
-Analysis" task of the "ComplianceTools" job ([example output][credscan_output]).
+CredScan checks are integrated into CI, and files affected by a PR will be scanned as part of the "Compliance" pipeline
+job. The results of this scan can be viewed in the [CredScan result analysis][ci_scan_output] task's output.
 
-Each warning will begin with the path to the file containing a potential credential, as well as the row and column where
-the credential string begins. For example, for a potential credential that starts in row 3 and column 20 of a
-particular file:
+CredScan is also run each night over the entire `azure-sdk-for-python` repository as part of the
+[python - aggregate-reports][aggregate_reports] pipeline. The scan produces a list of active warnings in the
+[CredScan result analysis][aggregate_reports_output] task's output as part of the "ComplianceTools" job.
+
+Each warning will begin with an error code and the path to the file containing a potential credential, as well as the
+row and column where the credential string begins. For example, for a potential credential that starts in row 3 and
+column 20 of a particular file:
 ```
-##[error]sdk/{service}/{package}/{file}.py:sdk/{service}/{package}/{file}.py(3,20)
+##[error]1. Credential Scanner Error CSCAN-GENERAL0030 - File: sdk/{service}/{package}/{file}.py:sdk/{service}/{package}/{file}.py(3,20)
 ```
 
-The warning will then list an error code and description of why the potential credential was flagged.
+The warning will then list a description of why the potential credential was flagged. The code of the particular error
+will vary depending on the kind of potential credential that was discovered.
 
 ## Correct active warnings
 
@@ -76,9 +80,10 @@ section of this guide.
 
 
 [aggregate_reports]: https://dev.azure.com/azure-sdk/internal/_build?definitionId=1401&_a=summary
+[aggregate_reports_output]: https://dev.azure.com/azure-sdk/internal/_build/results?buildId=1411446&view=logs&j=9e400fad-ff47-5b38-f9dc-cae2431972da&t=8613334a-c306-55ea-63ff-80c6e8e0a0ca
 [baseline]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/python.gdnbaselines
+[ci_scan_output]: https://dev.azure.com/azure-sdk/public/_build/results?buildId=1426258&view=logs&jobId=b70e5e73-bbb6-5567-0939-8415943fadb9&j=bc67675d-56bf-581f-e0a2-208848ba68ca&t=7eee3a58-6120-518b-7fcb-7e943712aa81
 [credscan_doc]: https://aka.ms/credscan
-[credscan_output]: https://dev.azure.com/azure-sdk/internal/_build/results?buildId=1320151&view=logs&j=3b141548-98d7-5be1-7ef8-eeb08ca02972&t=41e0d8dc-42df-5fff-2417-80cd016cccdb
 [devops_doc]: https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/413/Credential-Scan-Step-in-Pipeline
 [fake_credentials]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/fake_credentials.py
 [suppression_file]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/CredScanSuppression.json
