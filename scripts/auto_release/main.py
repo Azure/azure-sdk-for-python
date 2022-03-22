@@ -201,6 +201,14 @@ class CodegenTestPR:
 
     def generate_code(self):
         checkout_azure_default_branch()
+        print_exec('python scripts/dev_setup.py -p azure-core')
+        cmd_line = ['/usr/local/bin/autorest', '/home/vsts/work/1/azure-rest-api-specs/specification/hdinsight/resource-manager/readme.md',
+                    '--multiapi', '--python', '--python-mode=update',
+                    '--python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk', '--python3-only', '--track2',
+                    '--use=@autorest/python@5.12.0', '--use=@autorest/modelerfour@4.19.3', '--version=3.7.2']
+
+        execute_simple_command(cmd_line)
+        print("*****************************************")
 
         # prepare input data
         input_data = {
@@ -215,17 +223,8 @@ class CodegenTestPR:
             json.dump(input_data, file)
 
         # generate code
-        print_exec('python scripts/dev_setup.py -p azure-core')
-        cmd_line = ['/usr/local/bin/autorest', '/home/vsts/work/1/azure-rest-api-specs/specification/hdinsight/resource-manager/readme.md',
-                    '--multiapi', '--python', '--python-mode=update',
-                    '--python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk', '--python3-only', '--track2',
-                    '--use=@autorest/python@5.12.0', '--use=@autorest/modelerfour@4.19.3', '--version=3.7.2']
-
-        execute_simple_command(cmd_line)
-        print("*****************************************")
-
-        print_check(f'python -m packaging_tools.auto_codegen {self.autorest_result} {self.autorest_result}')
-        print_check(f'python -m packaging_tools.auto_package {self.autorest_result} {self.autorest_result}')
+        # print_check(f'python -m packaging_tools.auto_codegen {self.autorest_result} {self.autorest_result}')
+        # print_check(f'python -m packaging_tools.auto_package {self.autorest_result} {self.autorest_result}')
 
     def get_package_name_with_autorest_result(self):
         generate_result = self.get_autorest_result()
