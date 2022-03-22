@@ -14,7 +14,7 @@ class SomeClient():
     :type credential: : TokenCredential.
     :keyword key : Something2.
     
-    
+     
     """
 
     def __init__(self, endpoint, credential, **kwargs):
