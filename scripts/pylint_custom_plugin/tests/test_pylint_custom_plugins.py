@@ -2681,7 +2681,7 @@ class TestCheckNamingMismatchGeneratedCode(pylint.testutils.CheckerTestCase):
 class TestCheckApiVersion(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.CheckApiVersion
 
-    def test_bad_api_version(self):
+    def test_api_version_violation(self):
         class_node = astroid.extract_node(
             """
             class SomeClient(object):
@@ -2700,7 +2700,7 @@ class TestCheckApiVersion(pylint.testutils.CheckerTestCase):
         ):
             self.checker.visit_classdef(class_node)
 
-    def test_good_api_version(self):
+    def test_api_version_acceptable(self):
         class_node = astroid.extract_node(
             """
             class SomeClient(object):
@@ -2716,16 +2716,16 @@ class TestCheckApiVersion(pylint.testutils.CheckerTestCase):
         with self.assertNoMessages():
             self.checker.visit_classdef(class_node)
     
-    def test_api_version_keyword_and_param(self):
-        file = open("./test_files/test_api_version_checker_good_class.py")
+    def test_api_version_file_class_acceptable(self):
+        file = open("./test_files/api_version_checker_acceptable_class.py")
         node = astroid.parse(file.read())
         file.close()
     
         with self.assertNoMessages():
             self.checker.visit_classdef(node.body[0])
 
-    def test_api_version_keyword_and_param(self):
-        file = open("./test_files/test_api_version_checker_good_init.py")
+    def test_api_version_file_init_acceptable(self):
+        file = open("./test_files/api_version_checker_acceptable_init.py")
         node = astroid.parse(file.read())
         file.close()
 
@@ -2734,8 +2734,8 @@ class TestCheckApiVersion(pylint.testutils.CheckerTestCase):
             self.checker.visit_classdef(node.body[0])
 
 
-    def test_api_version_keyword_bad(self):
-        file = open("./test_files/test_api_version_checker_bad.py")
+    def test_api_version_file_violation(self):
+        file = open("./test_files/api_version_checker_violation.py")
         node = astroid.parse(file.read())
         file.close()
 
