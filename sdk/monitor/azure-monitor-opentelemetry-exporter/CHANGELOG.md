@@ -3,6 +3,8 @@
 ## 1.0.0b6 (Unreleased)
 
 ### Features Added
+- Implement log exporter using experimental OT logging sdk
+    ([#23486](https://github.com/Azure/azure-sdk-for-python/pull/23486))
 
 ### Breaking Changes
 
