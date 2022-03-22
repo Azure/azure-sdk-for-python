@@ -347,4 +347,8 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
                 data = "cloudevent",
                 type="Sample.Cloud.Event"
                 )
-        await client.send(cloud_event, channel_name=channel_name)
+        def callback(request):
+            req = json.loads(request.http_request.headers)
+            assert req.get("aeg-channel-name") == channel_name
+
+        await client.send(cloud_event, channel_name=channel_name, raw_request_hook=callback)
