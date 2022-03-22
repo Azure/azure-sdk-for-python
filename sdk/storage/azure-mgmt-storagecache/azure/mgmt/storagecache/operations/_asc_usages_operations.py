@@ -6,26 +6,60 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVar
+from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
 import warnings
 
-from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
+from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.mgmt.core.exceptions import ARMErrorFormat
+from msrest import Serializer
 
-from ... import models as _models
-from ..._vendor import _convert_request
-from ...operations._usage_models_operations import build_list_request
+from .. import models as _models
+from .._vendor import _convert_request, _format_url_section
 T = TypeVar('T')
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-class UsageModelsOperations:
-    """UsageModelsOperations async operations.
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
+
+def build_list_request(
+    subscription_id: str,
+    location: str,
+    **kwargs: Any
+) -> HttpRequest:
+    api_version = "2022-01-01"
+    accept = "application/json"
+    # Construct URL
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/providers/Microsoft.StorageCache/locations/{location}/usages')
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "location": _SERIALIZER.url("location", location, 'str'),
+    }
+
+    url = _format_url_section(url, **path_format_arguments)
+
+    # Construct parameters
+    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="GET",
+        url=url,
+        params=query_parameters,
+        headers=header_parameters,
+        **kwargs
+    )
+
+class AscUsagesOperations(object):
+    """AscUsagesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -40,7 +74,7 @@ class UsageModelsOperations:
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer) -> None:
+    def __init__(self, client, config, serializer, deserializer):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
@@ -49,17 +83,21 @@ class UsageModelsOperations:
     @distributed_trace
     def list(
         self,
+        location: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.UsageModelsResult"]:
-        """Get the list of Cache Usage Models available to this subscription.
+    ) -> Iterable["_models.ResourceUsagesListResult"]:
+        """Gets the quantity used and quota limit for resources.
 
+        :param location: The name of the region to query for usage information.
+        :type location: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either UsageModelsResult or the result of cls(response)
+        :return: An iterator like instance of either ResourceUsagesListResult or the result of
+         cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~storage_cache_management_client.models.UsageModelsResult]
+         ~azure.core.paging.ItemPaged[~storage_cache_management_client.models.ResourceUsagesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.UsageModelsResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceUsagesListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -69,6 +107,7 @@ class UsageModelsOperations:
                 
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
+                    location=location,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -78,6 +117,7 @@ class UsageModelsOperations:
                 
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
+                    location=location,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -85,17 +125,17 @@ class UsageModelsOperations:
                 request.method = "GET"
             return request
 
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("UsageModelsResult", pipeline_response)
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize("ResourceUsagesListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -105,7 +145,7 @@ class UsageModelsOperations:
             return pipeline_response
 
 
-        return AsyncItemPaged(
+        return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.StorageCache/usageModels'}  # type: ignore
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.StorageCache/locations/{location}/usages'}  # type: ignore

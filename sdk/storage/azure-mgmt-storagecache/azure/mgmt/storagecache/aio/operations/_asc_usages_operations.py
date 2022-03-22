@@ -20,12 +20,12 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._usage_models_operations import build_list_request
+from ...operations._asc_usages_operations import build_list_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-class UsageModelsOperations:
-    """UsageModelsOperations async operations.
+class AscUsagesOperations:
+    """AscUsagesOperations async operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -49,17 +49,21 @@ class UsageModelsOperations:
     @distributed_trace
     def list(
         self,
+        location: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.UsageModelsResult"]:
-        """Get the list of Cache Usage Models available to this subscription.
+    ) -> AsyncIterable["_models.ResourceUsagesListResult"]:
+        """Gets the quantity used and quota limit for resources.
 
+        :param location: The name of the region to query for usage information.
+        :type location: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either UsageModelsResult or the result of cls(response)
+        :return: An iterator like instance of either ResourceUsagesListResult or the result of
+         cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~storage_cache_management_client.models.UsageModelsResult]
+         ~azure.core.async_paging.AsyncItemPaged[~storage_cache_management_client.models.ResourceUsagesListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.UsageModelsResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ResourceUsagesListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -69,6 +73,7 @@ class UsageModelsOperations:
                 
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
+                    location=location,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -78,6 +83,7 @@ class UsageModelsOperations:
                 
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
+                    location=location,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -86,7 +92,7 @@ class UsageModelsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("UsageModelsResult", pipeline_response)
+            deserialized = self._deserialize("ResourceUsagesListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -108,4 +114,4 @@ class UsageModelsOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.StorageCache/usageModels'}  # type: ignore
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.StorageCache/locations/{location}/usages'}  # type: ignore
