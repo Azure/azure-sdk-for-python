@@ -374,7 +374,7 @@ class ConfidentialLedgerClient(AsyncConfidentialLedgerClientBase):
             "After {} attempts, the query still had state {}, not {}".format(
                 max_tries, state, ConfidentialLedgerQueryState.READY
             )
-        )        
+        )
 
     @distributed_trace_async
     async def get_transaction_status(
