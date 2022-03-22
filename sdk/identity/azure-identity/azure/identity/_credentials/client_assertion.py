@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class ClientAssertionCredential(GetTokenMixin):
-    def __init__(self, tenant_id, client_id, get_assertion, **kwargs):
+    def __init__(self, tenant_id, client_id, func, **kwargs):
         # type: (str, str, Callable[[], str], **Any) -> None
         """Authenticates a service principal with a JWT assertion.
 
@@ -22,15 +22,15 @@ class ClientAssertionCredential(GetTokenMixin):
 
         :param str tenant_id: ID of the principal's tenant. Also called its "directory" ID.
         :param str client_id: the principal's client ID
-        :param get_assertion: a callable that returns a string assertion. The credential will call this every time it
+        :param func: a callable that returns a string assertion. The credential will call this every time it
             acquires a new token.
-        :paramtype get_assertion: Callable[[], str]
+        :paramtype func: Callable[[], str]
 
         :keyword str authority: authority of an Azure Active Directory endpoint, for example
             "login.microsoftonline.com", the authority for Azure Public Cloud (which is the default).
             :class:`~azure.identity.AzureAuthorityHosts` defines authorities for other clouds.
         """
-        self._get_assertion = get_assertion
+        self._func = func
         self._client = AadClient(tenant_id, client_id, **kwargs)
         super(ClientAssertionCredential, self).__init__(**kwargs)
 
@@ -51,6 +51,6 @@ class ClientAssertionCredential(GetTokenMixin):
 
     def _request_token(self, *scopes, **kwargs):
         # type: (*str, **Any) -> AccessToken
-        assertion = self._get_assertion()
+        assertion = self._func()
         token = self._client.obtain_token_by_jwt_assertion(scopes, assertion, **kwargs)
         return token
