@@ -203,23 +203,23 @@ def _add_entity_properties(source):
 
         if isinstance(value, Enum):
             try:
-                conversation = _PYTHON_TO_ENTITY_CONVERSIONS.get(unicode)  # type: ignore
+                conversion = _PYTHON_TO_ENTITY_CONVERSIONS.get(unicode)  # type: ignore
             except NameError:
-                conversation = _PYTHON_TO_ENTITY_CONVERSIONS.get(str)
-            mtype, value = conversation(value)
+                conversion = _PYTHON_TO_ENTITY_CONVERSIONS.get(str)
+            mtype, value = conversion(value)
         elif isinstance(value, datetime):
             mtype, value = _to_entity_datetime(value)
         elif isinstance(value, tuple):
-            conversation = _EDM_TO_ENTITY_CONVERSIONS.get(value[1])
-            mtype, value = conversation(value[0])
+            conversion = _EDM_TO_ENTITY_CONVERSIONS.get(value[1])
+            mtype, value = conversion(value[0])
         else:
-            conversation = _PYTHON_TO_ENTITY_CONVERSIONS.get(type(value))
-            if conversation is None and value is not None:
+            conversion = _PYTHON_TO_ENTITY_CONVERSIONS.get(type(value))
+            if conversion is None and value is not None:
                 raise TypeError(_ERROR_TYPE_NOT_SUPPORTED.format(type(value)))
             if value is None:
-                conversation = _to_entity_none
+                conversion = _to_entity_none
 
-            mtype, value = conversation(value)
+            mtype, value = conversion(value)
 
         # form the property node
         if value is not None:

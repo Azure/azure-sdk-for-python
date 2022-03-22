@@ -199,9 +199,9 @@ def _convert_to_entity(entry_element):
         elif mtype in [EdmType.STRING, EdmType.INT32]:
             entity[name] = value
         else:  # need an object to hold the property
-            conversation = _ENTITY_TO_PYTHON_CONVERSIONS.get(mtype)
-            if conversation is not None:
-                new_property = conversation(value)
+            conversion = _ENTITY_TO_PYTHON_CONVERSIONS.get(mtype)
+            if conversion is not None:
+                new_property = conversion(value)
             else:
                 new_property = EntityProperty(mtype, value)
             entity[name] = new_property
