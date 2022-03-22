@@ -5,6 +5,8 @@
 ### Features Added
 - Implement log exporter using experimental OT logging sdk
     ([#23486](https://github.com/Azure/azure-sdk-for-python/pull/23486))
+- Implement sending of exception telemetry via log exporter
+    ([#23486](https://github.com/Azure/azure-sdk-for-python/pull/23486))
 
 ### Breaking Changes
 

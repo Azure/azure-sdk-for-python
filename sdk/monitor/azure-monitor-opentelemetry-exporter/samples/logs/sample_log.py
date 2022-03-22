@@ -26,10 +26,11 @@ exporter = AzureMonitorLogExporter.from_connection_string(
 log_emitter_provider.add_log_processor(BatchLogProcessor(exporter))
 handler = OTLPHandler()
 
-# Attach OTel handler to root logger
-logging.getLogger().addHandler(handler)
-logging.getLogger().setLevel(logging.NOTSET)
-
+# Attach OTel handler to namespaced logger
 logger = logging.getLogger(__name__)
+logger.addHandler(handler)
+logger.setLevel(logging.NOTSET)
 
 logger.warning("Hello World!")
+
+input(...)

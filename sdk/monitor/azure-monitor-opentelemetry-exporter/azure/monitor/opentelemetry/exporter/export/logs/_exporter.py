@@ -3,6 +3,7 @@
 import logging
 from typing import Sequence, Any
 
+from opentelemetry.semconv.trace import SpanAttributes
 from opentelemetry.sdk._logs import LogData
 from opentelemetry.sdk._logs.severity import SeverityNumber
 from opentelemetry.sdk._logs.export import LogExporter, LogExportResult
@@ -12,6 +13,8 @@ from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.models import (
     MessageData,
     MonitorBase,
+    TelemetryExceptionData,
+    TelemetryExceptionDetails,
     TelemetryItem
 )
 from azure.monitor.opentelemetry.exporter.export._base import (
@@ -96,27 +99,42 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
         log_record.span_id or _DEFAULT_SPAN_ID
     )
 
-    # TODO: Pre-defined Properties
-    properties = {}
-    properties.update(log_record.attributes)
-    # properties = {
-    #     'process': record.processName,
-    #     'module': record.module,
-    #     'fileName': record.pathname,
-    #     'lineNumber': record.lineno,
-    #     'level': record.levelname,
-    # }
-    # TODO: Exceptions
-
-    envelope.name = 'Microsoft.ApplicationInsights.Message'
+    properties =  {
+        k: v for k, v in log_record.attributes.items() if k not in _EXCEPTION_ATTRS  # pylint: disable=line-too-long
+    }
+    exc_type = log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)
+    exc_message = log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)
     # pylint: disable=line-too-long
-    # Severity number: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-severitynumber
-    data = MessageData(
-        message=log_record.body,
-        severity_level=_get_severity_level(log_record.severity_number),
-        properties=properties,
-    )
-    envelope.data = MonitorBase(base_data=data, base_type='MessageData')
+    stack_trace = log_record.attributes.get(SpanAttributes.EXCEPTION_STACKTRACE)
+    severity_level = _get_severity_level(log_record.severity_number)
+
+    # Exception telemetry
+    if exc_type is not None or exc_message is not None:
+        envelope.name = 'Microsoft.ApplicationInsights.Exception'
+        has_full_stack = stack_trace is not None
+        exc_details = TelemetryExceptionDetails(
+            type_name=exc_type,
+            message=exc_message,
+            has_full_stack=has_full_stack,
+            stack=stack_trace,
+        )
+        data = TelemetryExceptionData(
+            severity_level=severity_level,
+            properties=properties,
+            exceptions=[exc_details]
+        )
+        # pylint: disable=line-too-long
+        envelope.data = MonitorBase(base_data=data, base_type='TelemetryExceptionData')
+    else:  # Message telemetry
+        envelope.name = 'Microsoft.ApplicationInsights.Message'
+        # pylint: disable=line-too-long
+        # Severity number: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-severitynumber
+        data = MessageData(
+            message=log_record.body,
+            severity_level=severity_level,
+            properties=properties,
+        )
+        envelope.data = MonitorBase(base_data=data, base_type='MessageData')
 
     return envelope
 
@@ -137,3 +155,11 @@ def _get_severity_level(severity_number: SeverityNumber):
     if severity_number.value < 9:
         return 0
     return int((severity_number.value-1)/4 - 1)
+
+_EXCEPTION_ATTRS = frozenset(
+    (
+        SpanAttributes.EXCEPTION_TYPE,
+        SpanAttributes.EXCEPTION_MESSAGE,
+        SpanAttributes.EXCEPTION_STACKTRACE,
+    )
+)
