@@ -1764,8 +1764,10 @@ class CheckEnum(BaseChecker):
             # Else if it does not have a metaclass, but it is an enum class
             # Check both capitalization and throw pylint error for metaclass
             elif enum_class:
-                self._does_not_inherit_case_insensitive(node)
-                self._enum_uppercase(node)   
+                self.add_message(
+                    "enum-must-inherit-case-insensitive-enum-meta", node=node, confidence=None
+                )
+                self._enum_uppercase(node)  
 
         except Exception:
             logger.debug("Pylint custom checker failed to check enum.")
@@ -1808,18 +1810,6 @@ class CheckEnum(BaseChecker):
                     self.add_message(
                         "enum-must-be-uppercase", node=nod.targets[0], confidence=None
                     )
-
-    def _does_not_inherit_case_insensitive(self, node):
-        """Adds a pylint error message for enum class not 
-        inheriting from the CaseInsensitiveEnumMeta class.
-        
-        :param node: ast.ClassDef
-        :return: None
-        """
-
-        self.add_message(
-                    "enum-must-inherit-case-insensitive-enum-meta", node=node, confidence=None
-                )
                     
 
 class CheckNamingMismatchGeneratedCode(BaseChecker):
