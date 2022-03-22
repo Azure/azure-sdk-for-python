@@ -1756,10 +1756,10 @@ class CheckEnum(BaseChecker):
         """
         try:
 
-            inherits_meta_class, enum_class = self._check_is_enum_class(node)
+            inherits_metaclass, enum_class = self._check_is_enum_class(node)
             
             # If it has a metaclass, and is an enum class, check the capitalization
-            if inherits_meta_class and enum_class:
+            if inherits_metaclass and enum_class:
                 self._enum_uppercase(node)   
             # Else if it does not have a metaclass, but it is an enum class
             # Check both capitalization and throw pylint error for metaclass
@@ -1772,20 +1772,43 @@ class CheckEnum(BaseChecker):
             pass
 
     def _check_is_enum_class(self,node):
+        """Checks if a class is an enum class.
+        If it is, returns booleans for the two enum guidelines.
+
+        :param node: ast.ClassDef
+        :return: inherits_metaclass, enum_class
+        :rtype: bool, bool
+            
+        """
+
+        inherits_metaclass = False
+        enum_class = False
 
         if node._metaclass:
             if node._metaclass.name == "CaseInsensitiveEnumMeta":
-                return True, True
+                inherits_metclass = True
+                enum_class = True
+                return inherits_metaclass, enum_class
         for base in node.bases:
             if isinstance(base, astroid.Call) and base.args[0].name == "CaseInsensitiveEnumMeta":
-                return True, True
+                inherits_metclass = True
+                enum_class = True
+                return inherits_metaclass, enum_class
             elif base.name == "Enum":
-                return False, True
+                enum_class = True
+                return inherits_metaclass, enum_class
                     
                     
-        return False
+        return False, False
     
     def _enum_uppercase(self, node):
+        """Visits every enum within the class.
+        Checks if the enum is uppercase, if it isn't it
+        adds a pylint error message.
+
+        :param node: ast.ClassDef
+        :return: None
+        """
 
         # Check capitalization of enums assigned in the class
         for nod in node.body:
@@ -1796,7 +1819,13 @@ class CheckEnum(BaseChecker):
                     )
 
     def _does_not_inherit_case_insensitive(self, node):
+        """Adds a pylint error message for enum class not 
+        inheriting from the CaseInsensitiveEnumMeta class.
         
+        :param node: ast.ClassDef
+        :return: None
+        """
+
         self.add_message(
                     "enum-must-inherit-case-insensitive-enum-meta", node=node, confidence=None
                 )
