@@ -1778,8 +1778,9 @@ class CheckEnum(BaseChecker):
         Returns booleans for the two enum guidelines.
 
         :param node: ast.ClassDef
-        :return: inherits_metaclass, enum_class
-        :rtype: bool, bool
+        :return: A tuple of booleans. The first boolean will be True if the class inherits CaseInsensitiveEnumMeta.
+        The second boolean will be True if the node is an enum class.
+        :rtype: tuple[bool,bool]
             
         """
         if node._metaclass:
