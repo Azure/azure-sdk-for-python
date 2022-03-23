@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"ttl": 172800}'
+    body: '{"ttl": 100}'
     headers:
       Accept:
       - application/json
@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '15'
+      - '12'
       Content-Type:
       - application/json
       User-Agent:
@@ -25,8 +25,8 @@ interactions:
       string: '{"iceServers": [{"routeType": "any", "urls": ["turn.skype.com", "turn:turn.azure.com:3478"],
         "username": "sanitized", "credential": "sanitized"}, {"routeType": "nearest",
         "urls": ["stun:13.107.17.41:3478", "turn:13.107.17.41:3478"], "username":
-        "BQAANhFm7iQB2EB1kwt1JIiIwKXLTNYH+0riR38hzzkAAAAMARCsgNlqhd5IsZldo6P6NifIAVJrSNaKalTsUbhfL5hPqsF1raU=",
-        "credential": "hNHSEpuvBYmEskwuS9IYu3Vta4M="}], "expiresOn": "2022-03-25T18:20:55.4778735+00:00"}'
+        "BQAANuA+Pw0B2D7iM6JUKfyPKl8NlSowP2iOPBcBxtYAAAAMARCsgNlqhd5IsZldo6P6NifIMTpzA2YMw5en9xK6CIPtDq/fjfE=",
+        "credential": "iJIAIA8pN850+Ny6u+tbMSEDC+8="}], "expiresOn": "2022-03-23T18:22:35.3308519+00:00"}'
     headers:
       api-supported-versions:
       - 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview, 2022-03-01-preview
@@ -37,7 +37,7 @@ interactions:
       date:
       - Wed, 23 Mar 2022 18:20:54 GMT
       ms-cv:
-      - c/OLU9LuvUiK7ieUNkc71w.0
+      - oL54Lq98jE6ejCMVMO+ETA.0
       request-context:
       - appId=
       strict-transport-security:
@@ -45,7 +45,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 43ms
+      - 21ms
     status:
       code: 200
       message: OK
