@@ -1,5 +1,6 @@
 # Test file for enum checker
-
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 class EnumPython2(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ONE = "one"
