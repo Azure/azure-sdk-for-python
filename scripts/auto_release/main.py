@@ -126,15 +126,8 @@ def start_test_proxy():
 
 def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
     try:
-        process = subprocess.check_call(
-            cmd_line,
-            stderr=subprocess.STDOUT,
-            stdout=subprocess.PIPE,
-            universal_newlines=True,
-            cwd=cwd,
-            shell=shell,
-            env=env,
-            encoding="utf-8",
+        process = subprocess.getoutput(
+            cmd_line
         )
         output_buffer = []
         process.wait()
