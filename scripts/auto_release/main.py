@@ -126,7 +126,7 @@ def start_test_proxy():
 
 def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
     try:
-        process = subprocess.Popen(
+        process = subprocess.check_call(
             cmd_line,
             stderr=subprocess.STDOUT,
             stdout=subprocess.PIPE,
@@ -140,13 +140,13 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
         process.wait()
         for line in process.stdout:
             output_buffer.append(line.rstrip())
-            _LOG.info(f"==[autorest22]" + output_buffer[-1])
+            _LOG.info(f"==[autorest33]" + output_buffer[-1])
         # process.wait()
         output = "\n".join(output_buffer)
         if process.returncode:
             # print necessary error info
             for i in range(len(output_buffer)):
-                _LOG.error(f"[Autorest11] {output_buffer[i]}")
+                _LOG.error(f"[Autorest44] {output_buffer[i]}")
                 # print(f"[Autorest22] {output_buffer[i]}")
             raise subprocess.CalledProcessError(process.returncode, cmd_line, output)
         return output
