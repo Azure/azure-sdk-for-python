@@ -1,10 +1,12 @@
 # Release History
 
-## 1.9.0b2 (Unreleased)
+## 1.9.0 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
+
+- `validate_authority` support is not available in 1.9.0.
 
 ### Bugs Fixed
 
