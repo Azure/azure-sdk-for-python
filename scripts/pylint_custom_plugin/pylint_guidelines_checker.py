@@ -1783,13 +1783,12 @@ class CheckEnum(BaseChecker):
         :rtype: tuple[bool,bool]
             
         """
-        if node._metaclass:
-            if node._metaclass.name == "CaseInsensitiveEnumMeta":
+       
+        if node.declared_metaclass():
+            if node.declared_metaclass().name == "CaseInsensitiveEnumMeta":
                 return True, True
         for base in node.bases:
-            if isinstance(base, astroid.Call) and base.args[0].name == "CaseInsensitiveEnumMeta":
-                return True, True
-            elif base.name == "Enum":
+            if base.name == "Enum":
                 return False, True
                     
                     
