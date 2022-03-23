@@ -132,7 +132,7 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
         output_buffer = []
         for line in process:
             output_buffer.append(line.rstrip())
-            _LOG.info(f"==[autorest33]" + output_buffer[-1])
+            _LOG.info(f"==[autorest33]" + output_buffer)
         # process.wait()
         output = "\n".join(output_buffer)
         if process.returncode:
