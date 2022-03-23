@@ -9,19 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
-from azure.mgmt.core import AsyncARMPipelineClient
+from azure.mgmt.core import ARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 from msrest import Deserializer, Serializer
 
-from ._configuration import PolicyClientConfiguration
+from ._configuration import ResourcePrivateLinkClientConfiguration
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
+    from typing import Any, Optional
+
     from azure.core.credentials import TokenCredential
-    from azure.core.credentials_async import AsyncTokenCredential
 
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
@@ -30,8 +31,8 @@ class _SDKClient(object):
         """
         pass
 
-class PolicyClient(MultiApiClientMixin, _SDKClient):
-    """To manage and control access to your resources, you can define customized policies and assign them at a scope.
+class ResourcePrivateLinkClient(MultiApiClientMixin, _SDKClient):
+    """Provides operations for managing private link resources.
 
     This ready contains multiple API versions, to help you deal with all of the Azure clouds
     (Azure Stack, Azure Government, Azure China, etc.).
@@ -42,7 +43,7 @@ class PolicyClient(MultiApiClientMixin, _SDKClient):
     group is not described in the profile.
 
     :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
     :param api_version: API version to use if no profile is provided, or if missing in profile.
@@ -54,7 +55,7 @@ class PolicyClient(MultiApiClientMixin, _SDKClient):
     """
 
     DEFAULT_API_VERSION = '2020-05-01'
-    _PROFILE_TAG = "azure.mgmt.resource.privatelinks.PolicyClient"
+    _PROFILE_TAG = "azure.mgmt.resource.privatelinks.ResourcePrivateLinkClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
@@ -64,16 +65,16 @@ class PolicyClient(MultiApiClientMixin, _SDKClient):
 
     def __init__(
         self,
-        credential: "AsyncTokenCredential",
-        subscription_id: str,
-        api_version: Optional[str] = None,
-        base_url: str = "https://management.azure.com",
-        profile: KnownProfiles = KnownProfiles.default,
+        credential,  # type: "TokenCredential"
+        subscription_id,  # type: str
+        api_version=None, # type: Optional[str]
+        base_url="https://management.azure.com",  # type: str
+        profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
-    ) -> None:
-        self._config = PolicyClientConfiguration(credential, subscription_id, **kwargs)
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
-        super(PolicyClient, self).__init__(
+    ):
+        self._config = ResourcePrivateLinkClientConfiguration(credential, subscription_id, **kwargs)
+        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        super(ResourcePrivateLinkClient, self).__init__(
             api_version=api_version,
             profile=profile
         )
@@ -89,7 +90,7 @@ class PolicyClient(MultiApiClientMixin, _SDKClient):
            * 2020-05-01: :mod:`v2020_05_01.models<azure.mgmt.resource.privatelinks.v2020_05_01.models>`
         """
         if api_version == '2020-05-01':
-            from ..v2020_05_01 import models
+            from .v2020_05_01 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -97,11 +98,11 @@ class PolicyClient(MultiApiClientMixin, _SDKClient):
     def private_link_association(self):
         """Instance depends on the API version:
 
-           * 2020-05-01: :class:`PrivateLinkAssociationOperations<azure.mgmt.resource.privatelinks.v2020_05_01.aio.operations.PrivateLinkAssociationOperations>`
+           * 2020-05-01: :class:`PrivateLinkAssociationOperations<azure.mgmt.resource.privatelinks.v2020_05_01.operations.PrivateLinkAssociationOperations>`
         """
         api_version = self._get_api_version('private_link_association')
         if api_version == '2020-05-01':
-            from ..v2020_05_01.aio.operations import PrivateLinkAssociationOperations as OperationClass
+            from .v2020_05_01.operations import PrivateLinkAssociationOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_link_association'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -110,19 +111,19 @@ class PolicyClient(MultiApiClientMixin, _SDKClient):
     def resource_management_private_link(self):
         """Instance depends on the API version:
 
-           * 2020-05-01: :class:`ResourceManagementPrivateLinkOperations<azure.mgmt.resource.privatelinks.v2020_05_01.aio.operations.ResourceManagementPrivateLinkOperations>`
+           * 2020-05-01: :class:`ResourceManagementPrivateLinkOperations<azure.mgmt.resource.privatelinks.v2020_05_01.operations.ResourceManagementPrivateLinkOperations>`
         """
         api_version = self._get_api_version('resource_management_private_link')
         if api_version == '2020-05-01':
-            from ..v2020_05_01.aio.operations import ResourceManagementPrivateLinkOperations as OperationClass
+            from .v2020_05_01.operations import ResourceManagementPrivateLinkOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'resource_management_private_link'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
-    async def close(self):
-        await self._client.close()
-    async def __aenter__(self):
-        await self._client.__aenter__()
+    def close(self):
+        self._client.close()
+    def __enter__(self):
+        self._client.__enter__()
         return self
-    async def __aexit__(self, *exc_details):
-        await self._client.__aexit__(*exc_details)
+    def __exit__(self, *exc_details):
+        self._client.__exit__(*exc_details)
