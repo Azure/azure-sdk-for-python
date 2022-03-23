@@ -99,7 +99,7 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
         log_record.span_id or _DEFAULT_SPAN_ID
     )
 
-    properties =  {
+    properties = {
         k: v for k, v in log_record.attributes.items() if k not in _EXCEPTION_ATTRS  # pylint: disable=line-too-long
     }
     exc_type = log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)
