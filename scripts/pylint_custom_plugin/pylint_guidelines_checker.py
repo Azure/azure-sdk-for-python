@@ -1787,8 +1787,7 @@ class CheckEnum(BaseChecker):
         if node.declared_metaclass():
             if node.declared_metaclass().name == "CaseInsensitiveEnumMeta":
                 return True, True
-        for base in node.bases:
-            if base.name == "Enum":
+        if node.bases[1].name == "Enum":
                 return False, True
                     
                     
