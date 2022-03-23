@@ -208,6 +208,7 @@ foreach ($service in $serviceNameList) {
   }
 
   $serviceReadmeBaseName = $service.ToLower().Replace(' ', '-')
+
   $serviceTocEntry = [PSCustomObject]@{
     name            = $service;
     href            = "~/docs-ref-services/{moniker}/$serviceReadmeBaseName.md"
