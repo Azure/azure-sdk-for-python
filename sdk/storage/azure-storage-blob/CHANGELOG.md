@@ -3,12 +3,7 @@
 ## 12.11.0b1 (Unreleased)
 
 ### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added support for `create_if_not_exists()` for `BlobContainerClient`
 
 ## 12.10.0 (2022-03-08)
 

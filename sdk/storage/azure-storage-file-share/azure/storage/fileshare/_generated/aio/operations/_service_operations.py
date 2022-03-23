@@ -81,7 +81,6 @@ class ServiceOperations:
         _content = self._serialize.body(storage_service_properties, 'StorageServiceProperties', is_xml=True)
 
         request = build_set_properties_request(
-            url=self._config.url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -113,7 +112,7 @@ class ServiceOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_properties.metadata = {'url': "{url}/"}  # type: ignore
+    set_properties.metadata = {'url': "/"}  # type: ignore
 
 
     @distributed_trace_async
@@ -152,7 +151,6 @@ class ServiceOperations:
 
         
         request = build_get_properties_request(
-            url=self._config.url,
             restype=restype,
             comp=comp,
             version=self._config.version,
@@ -185,7 +183,7 @@ class ServiceOperations:
 
         return deserialized
 
-    get_properties.metadata = {'url': "{url}/"}  # type: ignore
+    get_properties.metadata = {'url': "/"}  # type: ignore
 
 
     @distributed_trace_async
@@ -239,7 +237,6 @@ class ServiceOperations:
 
         
         request = build_list_shares_segment_request(
-            url=self._config.url,
             comp=comp,
             version=self._config.version,
             prefix=prefix,
@@ -275,5 +272,5 @@ class ServiceOperations:
 
         return deserialized
 
-    list_shares_segment.metadata = {'url': "{url}/"}  # type: ignore
+    list_shares_segment.metadata = {'url': "/"}  # type: ignore
 

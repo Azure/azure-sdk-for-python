@@ -127,11 +127,14 @@ directive:
   transform: >
     for (const property in $)
     {
-        $[property]["parameters"].push({"$ref": "#/parameters/Url"});
-
-        var oldName = property;
-        var newName = '{url}' + property;
-        $[newName] = $[oldName];
-        delete $[oldName];
+        // Don't apply to service operations (where path is just '/')
+        if (property !== '/' && !property.startsWith('/?')) {
+            $[property]["parameters"].push({"$ref": "#/parameters/Url"});
+    
+            var oldName = property;
+            var newName = '{url}' + property;
+            $[newName] = $[oldName];
+            delete $[oldName];
+        }
     }
 ```

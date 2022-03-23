@@ -9,20 +9,58 @@
         "Connection": "keep-alive",
         "Content-Length": "664",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b3 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "b205669e-5d10-11ec-a514-b831b58100e8"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b4 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "a7146a87-a4a0-11ec-add6-b831b58100e8"
       },
-      "RequestBody": "{\u0022documents\u0022: [{\u0022id\u0022: \u00220\u0022, \u0022text\u0022: \u0022The food was unacceptable\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00221\u0022, \u0022text\u0022: \u0022The rooms were beautiful. The AC was good and quiet.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00222\u0022, \u0022text\u0022: \u0022The breakfast was good, but the toilet was smelly.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00223\u0022, \u0022text\u0022: \u0022Loved this hotel - good breakfast - nice shuttle service - clean rooms.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00224\u0022, \u0022text\u0022: \u0022I had a great unobstructed view of the Microsoft campus.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00225\u0022, \u0022text\u0022: \u0022Nice rooms but bathrooms were old and the toilet was dirty when we arrived.\u0022, \u0022language\u0022: \u0022en\u0022}, {\u0022id\u0022: \u00226\u0022, \u0022text\u0022: \u0022The toilet smelled.\u0022, \u0022language\u0022: \u0022en\u0022}]}",
+      "RequestBody": {
+        "documents": [
+          {
+            "id": "0",
+            "text": "The food was unacceptable",
+            "language": "en"
+          },
+          {
+            "id": "1",
+            "text": "The rooms were beautiful. The AC was good and quiet.",
+            "language": "en"
+          },
+          {
+            "id": "2",
+            "text": "The breakfast was good, but the toilet was smelly.",
+            "language": "en"
+          },
+          {
+            "id": "3",
+            "text": "Loved this hotel - good breakfast - nice shuttle service - clean rooms.",
+            "language": "en"
+          },
+          {
+            "id": "4",
+            "text": "I had a great unobstructed view of the Microsoft campus.",
+            "language": "en"
+          },
+          {
+            "id": "5",
+            "text": "Nice rooms but bathrooms were old and the toilet was dirty when we arrived.",
+            "language": "en"
+          },
+          {
+            "id": "6",
+            "text": "The toilet smelled.",
+            "language": "en"
+          }
+        ]
+      },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "39e54988-9310-4e34-b792-f3118b4a887e",
+        "apim-request-id": "e58bd87e-8a41-4199-abc4-54a356a1b89c",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=7,CognitiveServices.TextAnalytics.TextRecords=7",
-        "Date": "Tue, 14 Dec 2021 19:04:42 GMT",
+        "Date": "Tue, 15 Mar 2022 20:43:38 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "158"
+        "x-envoy-upstream-service-time": "36"
       },
       "ResponseBody": {
         "documents": [
@@ -32,7 +70,7 @@
             "confidenceScores": {
               "positive": 0.0,
               "neutral": 0.0,
-              "negative": 1.0
+              "negative": 0.99
             },
             "sentences": [
               {
@@ -40,7 +78,7 @@
                 "confidenceScores": {
                   "positive": 0.0,
                   "neutral": 0.0,
-                  "negative": 1.0
+                  "negative": 0.99
                 },
                 "offset": 0,
                 "length": 25,
@@ -84,7 +122,7 @@
             "id": "1",
             "sentiment": "positive",
             "confidenceScores": {
-              "positive": 1.0,
+              "positive": 0.99,
               "neutral": 0.0,
               "negative": 0.0
             },
@@ -92,13 +130,13 @@
               {
                 "sentiment": "positive",
                 "confidenceScores": {
-                  "positive": 1.0,
+                  "positive": 0.99,
                   "neutral": 0.0,
                   "negative": 0.0
                 },
                 "offset": 0,
-                "length": 25,
-                "text": "The rooms were beautiful.",
+                "length": 26,
+                "text": "The rooms were beautiful. ",
                 "targets": [
                   {
                     "sentiment": "positive",
@@ -134,7 +172,7 @@
               {
                 "sentiment": "positive",
                 "confidenceScores": {
-                  "positive": 1.0,
+                  "positive": 0.99,
                   "neutral": 0.0,
                   "negative": 0.0
                 },
@@ -195,17 +233,17 @@
             "id": "2",
             "sentiment": "negative",
             "confidenceScores": {
-              "positive": 0.01,
+              "positive": 0.03,
               "neutral": 0.0,
-              "negative": 0.99
+              "negative": 0.97
             },
             "sentences": [
               {
                 "sentiment": "negative",
                 "confidenceScores": {
-                  "positive": 0.01,
+                  "positive": 0.03,
                   "neutral": 0.0,
-                  "negative": 0.99
+                  "negative": 0.97
                 },
                 "offset": 0,
                 "length": 50,
@@ -337,6 +375,10 @@
                       {
                         "relationType": "assessment",
                         "ref": "#/documents/3/sentences/0/assessments/2"
+                      },
+                      {
+                        "relationType": "assessment",
+                        "ref": "#/documents/3/sentences/0/assessments/3"
                       }
                     ]
                   },
@@ -352,24 +394,23 @@
                     "relations": [
                       {
                         "relationType": "assessment",
-                        "ref": "#/documents/3/sentences/0/assessments/0"
-                      },
-                      {
-                        "relationType": "assessment",
-                        "ref": "#/documents/3/sentences/0/assessments/1"
-                      },
-                      {
-                        "relationType": "assessment",
                         "ref": "#/documents/3/sentences/0/assessments/3"
-                      },
-                      {
-                        "relationType": "assessment",
-                        "ref": "#/documents/3/sentences/0/assessments/2"
                       }
                     ]
                   }
                 ],
                 "assessments": [
+                  {
+                    "sentiment": "positive",
+                    "confidenceScores": {
+                      "positive": 1.0,
+                      "negative": 0.0
+                    },
+                    "offset": 0,
+                    "length": 5,
+                    "text": "Loved",
+                    "isNegated": false
+                  },
                   {
                     "sentiment": "positive",
                     "confidenceScores": {
@@ -390,17 +431,6 @@
                     "offset": 36,
                     "length": 4,
                     "text": "nice",
-                    "isNegated": false
-                  },
-                  {
-                    "sentiment": "positive",
-                    "confidenceScores": {
-                      "positive": 1.0,
-                      "negative": 0.0
-                    },
-                    "offset": 0,
-                    "length": 5,
-                    "text": "loved",
                     "isNegated": false
                   },
                   {
@@ -442,8 +472,8 @@
                   {
                     "sentiment": "positive",
                     "confidenceScores": {
-                      "positive": 0.97,
-                      "negative": 0.03
+                      "positive": 1.0,
+                      "negative": 0.0
                     },
                     "offset": 27,
                     "length": 4,
@@ -475,8 +505,8 @@
                   {
                     "sentiment": "positive",
                     "confidenceScores": {
-                      "positive": 0.93,
-                      "negative": 0.07
+                      "positive": 0.99,
+                      "negative": 0.01
                     },
                     "offset": 14,
                     "length": 12,
@@ -492,17 +522,17 @@
             "id": "5",
             "sentiment": "negative",
             "confidenceScores": {
-              "positive": 0.0,
+              "positive": 0.09,
               "neutral": 0.0,
-              "negative": 1.0
+              "negative": 0.91
             },
             "sentences": [
               {
                 "sentiment": "negative",
                 "confidenceScores": {
-                  "positive": 0.0,
+                  "positive": 0.09,
                   "neutral": 0.0,
-                  "negative": 1.0
+                  "negative": 0.91
                 },
                 "offset": 0,
                 "length": 75,
@@ -566,7 +596,7 @@
                     },
                     "offset": 0,
                     "length": 4,
-                    "text": "nice",
+                    "text": "Nice",
                     "isNegated": false
                   },
                   {
@@ -598,19 +628,19 @@
           },
           {
             "id": "6",
-            "sentiment": "neutral",
+            "sentiment": "negative",
             "confidenceScores": {
-              "positive": 0.03,
-              "neutral": 0.63,
-              "negative": 0.34
+              "positive": 0.02,
+              "neutral": 0.09,
+              "negative": 0.88
             },
             "sentences": [
               {
-                "sentiment": "neutral",
+                "sentiment": "negative",
                 "confidenceScores": {
-                  "positive": 0.03,
-                  "neutral": 0.63,
-                  "negative": 0.34
+                  "positive": 0.02,
+                  "neutral": 0.09,
+                  "negative": 0.88
                 },
                 "offset": 0,
                 "length": 19,
@@ -619,8 +649,8 @@
                   {
                     "sentiment": "negative",
                     "confidenceScores": {
-                      "positive": 0.01,
-                      "negative": 0.99
+                      "positive": 0.0,
+                      "negative": 1.0
                     },
                     "offset": 4,
                     "length": 6,
@@ -637,8 +667,8 @@
                   {
                     "sentiment": "negative",
                     "confidenceScores": {
-                      "positive": 0.01,
-                      "negative": 0.99
+                      "positive": 0.0,
+                      "negative": 1.0
                     },
                     "offset": 11,
                     "length": 7,
@@ -652,7 +682,7 @@
           }
         ],
         "errors": [],
-        "modelVersion": "2020-04-01"
+        "modelVersion": "2021-10-01"
       }
     }
   ],

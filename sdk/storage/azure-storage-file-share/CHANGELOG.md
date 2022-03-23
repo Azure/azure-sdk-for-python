@@ -11,6 +11,10 @@
 `rename_directory()`, `create_file()`, `set_http_headers()` (file) and `rename_file()`.
 - Added support for setting `file_last_written_mode` on `upload_range()` and `upload_range_from_url()`
 with possible values of `Now` or `Preserve`.
+- Added support for `create_if_not_exists()` for `FileShareClient`
+
+### Bugs Fixed
+- Updated `create_share()` docstring to have the correct return-type of `None`
 
 ## 12.7.0 (2022-03-08)
 
