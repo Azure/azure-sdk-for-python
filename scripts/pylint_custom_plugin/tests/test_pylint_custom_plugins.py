@@ -2696,6 +2696,7 @@ class TestCheckEnum(pylint.testutils.CheckerTestCase):
         class_node = astroid.extract_node(
             """
             from enum import Enum
+            from six import with_metaclass
             from azure.core import CaseInsensitiveEnumMeta
 
             class MyBadEnum(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)): 
@@ -2764,9 +2765,9 @@ class TestCheckEnum(pylint.testutils.CheckerTestCase):
         file = open("./test_files/enum_checker_acceptable.py")
         node = astroid.parse(file.read())
         file.close()
-
+        
         with self.assertNoMessages():
-            self.checker.visit_classdef(node.body[2])        
+            self.checker.visit_classdef(node.body[3])        
     
     def test_enum_file_both_violation(self):
         file = open("./test_files/enum_checker_violation.py")
