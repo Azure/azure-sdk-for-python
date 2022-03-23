@@ -128,35 +128,32 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
     try:
         process = subprocess.Popen(
             cmd_line,
-            stderr=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
             stdout=subprocess.PIPE,
             universal_newlines=True,
             cwd=cwd,
             shell=shell,
             env=env,
-            encoding="utf-8",
+            encoding='utf-8'
         )
         output_buffer = []
-        stdout, stderr = process.communicate()
-        print(f'== {stdout=}')
-        print(f'== {stderr=}')
-        # process.wait()
+        time.sleep(20)
         for line in process.stdout:
             output_buffer.append(line.rstrip())
-            _LOG.info(f"==[autorest33]" + output_buffer[-1])
-        for line in process.stderr:
-            print(f"==[autorest333]" + line)
-
+            _LOGGER.info(f"==[autorest222]" + output_buffer[-1])
+        process.wait()
         output = "\n".join(output_buffer)
+
         if process.returncode:
+            print(f'++++ {process.returncode}')
             # print necessary error info
             for i in range(len(output_buffer)):
-                _LOG.error(f"[Autorest44] {output_buffer[i]}")
+                _LOGGER.error(f"[Autorest111] {output_buffer[i]}")
                 # print(f"[Autorest22] {output_buffer[i]}")
             raise subprocess.CalledProcessError(process.returncode, cmd_line, output)
         return output
     except Exception as err:
-        _LOG.error(err)
+        _LOGGER.error(err)
         raise
     else:
         _LOGGER.info("Return code: %s", process.returncode)
