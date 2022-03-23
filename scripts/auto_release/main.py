@@ -137,10 +137,13 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
             encoding='utf-8'
         )
         output_buffer = []
-        time.sleep(20)
+        time.sleep(30)
+        print("process.stdout")
+        print(list(process.stdout))
+        print("***************")
         for line in process.stdout:
             output_buffer.append(line.rstrip())
-            _LOG.info(f"==[autorest222]" + output_buffer[-1])
+            _LOG.info(f"==[autorest22]" + output_buffer[-1])
         process.wait()
         output = "\n".join(output_buffer)
 
@@ -148,12 +151,12 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
             print(f'++++ {process.returncode}')
             # print necessary error info
             for i in range(len(output_buffer)):
-                _LOG.error(f"[Autorest111] {output_buffer[i]}")
+                _LOG.error(f"[Autorest11] {output_buffer[i]}")
                 # print(f"[Autorest22] {output_buffer[i]}")
             raise subprocess.CalledProcessError(process.returncode, cmd_line, output)
         return output
     except Exception as err:
-        _LOGGER.error(err)
+        _LOG.error(err)
         raise
     else:
         _LOGGER.info("Return code: %s", process.returncode)
