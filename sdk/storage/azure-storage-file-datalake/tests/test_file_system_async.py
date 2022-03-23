@@ -5,34 +5,32 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import time
-import unittest
 import asyncio
+import pytest
+import unittest
 import uuid
 from datetime import datetime, timedelta
 
-import pytest
-
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
-
 from azure.core import MatchConditions
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.core.pipeline.transport import AioHttpTransport
-from multidict import CIMultiDict, CIMultiDictProxy
 
-from azure.storage.filedatalake import generate_account_sas, ResourceTypes, AccountSasPermissions
-from azure.storage.filedatalake import AccessPolicy, DirectorySasPermissions, generate_file_system_sas
 from azure.storage.filedatalake.aio import DataLakeServiceClient, DataLakeDirectoryClient, FileSystemClient
-from azure.storage.filedatalake import PublicAccess
-from azure.storage.filedatalake import FileSystemSasPermissions
+from azure.storage.filedatalake import(
+    AccessPolicy,
+    AccountSasPermissions,
+    FileSystemSasPermissions,
+    PublicAccess,
+    ResourceTypes,
+    generate_account_sas,
+    generate_file_system_sas)
+from multidict import CIMultiDict, CIMultiDictProxy
 
 from devtools_testutils.storage.aio import AsyncStorageTestCase as StorageTestCase
 from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
-
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'
-
-
 # ------------------------------------------------------------------------------
 
 class AiohttpTestTransport(AioHttpTransport):
@@ -462,6 +460,44 @@ class FileSystemTest(StorageTestCase):
             paths.append(path)
 
         self.assertEqual(len(paths), 6)
+
+    @DataLakePreparer()
+    async def test_list_paths_create_expiry(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_system = await self._create_file_system()
+        file_client = await file_system.create_file('file1')
+
+        expires_on = datetime.utcnow() + timedelta(days=1)
+        await file_client.set_file_expiry("Absolute", expires_on=expires_on)
+
+        # Act
+        paths = []
+        async for path in file_system.get_paths(upn=True):
+            paths.append(path)
+
+        # Assert
+        self.assertEqual(1, len(paths))
+        props = await file_client.get_file_properties()
+        # Properties do not include microseconds so let them vary by 1 second
+        self.assertAlmostEqual(props.creation_time, paths[0].creation_time, delta=timedelta(seconds=1))
+        self.assertAlmostEqual(props.expiry_time, paths[0].expiry_time, delta=timedelta(seconds=1))
+
+    @DataLakePreparer()
+    async def test_list_paths_no_expiry(self, datalake_storage_account_name, datalake_storage_account_key):
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_system = await self._create_file_system()
+        await file_system.create_file('file1')
+
+        # Act
+        paths = []
+        async for path in file_system.get_paths(upn=True):
+            paths.append(path)
+
+        # Assert
+        self.assertEqual(1, len(paths))
+        self.assertIsNone(paths[0].expiry_time)
 
     @DataLakePreparer()
     async def test_list_paths_which_are_all_files_async(
