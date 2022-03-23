@@ -161,5 +161,6 @@ _EXCEPTION_ATTRS = frozenset(
         SpanAttributes.EXCEPTION_TYPE,
         SpanAttributes.EXCEPTION_MESSAGE,
         SpanAttributes.EXCEPTION_STACKTRACE,
+        SpanAttributes.EXCEPTION_ESCAPED,
     )
 )
