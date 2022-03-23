@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.2.0 Python/3.7.4 (Windows-10-10.0.22523-SP0)
       x-ms-date:
-      - Mon, 21 Mar 2022 21:06:47 GMT
+      - Wed, 23 Mar 2022 18:20:54 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -32,9 +32,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 21 Mar 2022 21:06:47 GMT
+      - Wed, 23 Mar 2022 18:20:53 GMT
       ms-cv:
-      - HBrs7J/UKUiQ6XymobWCew.0
+      - dbyUn5R4r0Wyle7c1NOhig.0
       request-context:
       - appId=
       strict-transport-security:
@@ -42,7 +42,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 24ms
+      - 44ms
     status:
       code: 201
       message: Created
@@ -62,7 +62,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-networktraversal/1.1.0b1 Python/3.7.4 (Windows-10-10.0.22523-SP0)
       x-ms-date:
-      - Mon, 21 Mar 2022 21:06:47 GMT
+      - Wed, 23 Mar 2022 18:20:54 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -72,19 +72,19 @@ interactions:
       string: '{"iceServers": [{"routeType": "any", "urls": ["turn.skype.com", "turn:turn.azure.com:3478"],
         "username": "sanitized", "credential": "sanitized"}, {"routeType": "nearest",
         "urls": ["stun:13.107.17.41:3478", "turn:13.107.17.41:3478"], "username":
-        "BQAASOhuMegB2D75AMUekfqVGHCyhOFnKxSM0EuhtBwAAAAMARCsgNlqhd5IsZldo6P6NifIAhAAAAAQTi9rtJnGWToNAGlz7HlZuusvigyK0EF9uAPPrMDqLvM=",
-        "credential": "mcH1G4tf7gCP6h3t8sTwp5cBdK8="}], "expiresOn": "2022-03-23T21:06:47.4763009+00:00"}'
+        "BQAANhDktpIB2EB11ZxFTZIG5szkLXHDpmiFHK7M3PsAAAAMARCsgNlqhd5IsZldo6P6NifIZJi9WflTq7gHG7d2R6llKpIC3A8=",
+        "credential": "mYPGKaMAz8sf3v95VI6Jl7kLjA4="}], "expiresOn": "2022-03-25T18:20:54.6291636+00:00"}'
     headers:
       api-supported-versions:
       - 2021-02-22-preview1, 2021-06-21-preview, 2021-10-08-preview, 2022-03-01-preview
       content-length:
-      - '594'
+      - '546'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 21 Mar 2022 21:06:47 GMT
+      - Wed, 23 Mar 2022 18:20:54 GMT
       ms-cv:
-      - Qd9nAtpY20GK7x8a4AuD9w.0
+      - 5rcsfrTwHUqUqmfbcem48Q.0
       request-context:
       - appId=
       strict-transport-security:
@@ -92,7 +92,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 23ms
+      - 39ms
     status:
       code: 200
       message: OK

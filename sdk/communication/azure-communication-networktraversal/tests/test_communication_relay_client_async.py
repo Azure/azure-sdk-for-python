@@ -186,7 +186,9 @@ class CommunicationRelayClientTestAsync(AsyncCommunicationTestCase):
 
         print('Requested time:' + request_time.strftime("%m/%d/%Y, %H:%M:%S"))
         print('Expires on:' + config.expires_on.strftime("%m/%d/%Y, %H:%M:%S"))
-        assert request_time <= config.expires_on
+
+        if self.is_live:
+            assert request_time <= config.expires_on
 
         print('Ice Servers Async:\n')
         for iceServer in config.ice_servers:

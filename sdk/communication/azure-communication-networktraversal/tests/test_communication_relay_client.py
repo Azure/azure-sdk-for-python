@@ -180,7 +180,9 @@ class CommunicationRelayClientTest(CommunicationTestCase):
 
         print('Requested time:' + datetime.strftime(request_time, "%m/%d/%Y, %H:%M:%S"))
         print('Expires on:' + datetime.strftime(config.expires_on, "%m/%d/%Y, %H:%M:%S"))
-        assert request_time <= config.expires_on
+
+        if self.is_live:
+            assert request_time <= config.expires_on
 
         print('Ice Servers:\n')
         for iceServer in config.ice_servers:
@@ -197,5 +199,3 @@ class CommunicationRelayClientTest(CommunicationTestCase):
             
             print(iceServer.route_type)
             assert iceServer.route_type is not None
-
-        
