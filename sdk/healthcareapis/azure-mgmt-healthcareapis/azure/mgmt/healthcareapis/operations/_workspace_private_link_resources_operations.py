@@ -6,10 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import functools
-from typing import Any, Callable, Dict, Generic, Optional, TypeVar
+from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
 import warnings
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
@@ -25,20 +26,20 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dic
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
-def build_list_by_service_request(
+def build_list_by_workspace_request(
     subscription_id: str,
     resource_group_name: str,
-    resource_name: str,
+    workspace_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = "2021-11-01"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HealthcareApis/services/{resourceName}/privateLinkResources')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HealthcareApis/workspaces/{workspaceName}/privateLinkResources')
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, 'str', max_length=24, min_length=3),
+        "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str', max_length=24, min_length=3),
     }
 
     url = _format_url_section(url, **path_format_arguments)
@@ -63,18 +64,18 @@ def build_list_by_service_request(
 def build_get_request(
     subscription_id: str,
     resource_group_name: str,
-    resource_name: str,
+    workspace_name: str,
     group_name: str,
     **kwargs: Any
 ) -> HttpRequest:
     api_version = "2021-11-01"
     accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HealthcareApis/services/{resourceName}/privateLinkResources/{groupName}')
+    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HealthcareApis/workspaces/{workspaceName}/privateLinkResources/{groupName}')
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, 'str', max_length=24, min_length=3),
+        "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str', max_length=24, min_length=3),
         "groupName": _SERIALIZER.url("group_name", group_name, 'str'),
     }
 
@@ -96,8 +97,8 @@ def build_get_request(
         **kwargs
     )
 
-class PrivateLinkResourcesOperations(object):
-    """PrivateLinkResourcesOperations operations.
+class WorkspacePrivateLinkResourcesOperations(object):
+    """WorkspacePrivateLinkResourcesOperations operations.
 
     You should not instantiate this class directly. Instead, you should create a Client instance that
     instantiates it for you and attaches it as an attribute.
@@ -119,21 +120,23 @@ class PrivateLinkResourcesOperations(object):
         self._config = config
 
     @distributed_trace
-    def list_by_service(
+    def list_by_workspace(
         self,
         resource_group_name: str,
-        resource_name: str,
+        workspace_name: str,
         **kwargs: Any
-    ) -> "_models.PrivateLinkResourceListResultDescription":
-        """Gets the private link resources that need to be created for a service.
+    ) -> Iterable["_models.PrivateLinkResourceListResultDescription"]:
+        """Gets the private link resources that need to be created for a workspace.
 
         :param resource_group_name: The name of the resource group that contains the service instance.
         :type resource_group_name: str
-        :param resource_name: The name of the service instance.
-        :type resource_name: str
+        :param workspace_name: The name of workspace resource.
+        :type workspace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PrivateLinkResourceListResultDescription, or the result of cls(response)
-        :rtype: ~azure.mgmt.healthcareapis.models.PrivateLinkResourceListResultDescription
+        :return: An iterator like instance of either PrivateLinkResourceListResultDescription or the
+         result of cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.healthcareapis.models.PrivateLinkResourceListResultDescription]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PrivateLinkResourceListResultDescription"]
@@ -141,49 +144,71 @@ class PrivateLinkResourcesOperations(object):
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
+        def prepare_request(next_link=None):
+            if not next_link:
+                
+                request = build_list_by_workspace_request(
+                    subscription_id=self._config.subscription_id,
+                    resource_group_name=resource_group_name,
+                    workspace_name=workspace_name,
+                    template_url=self.list_by_workspace.metadata['url'],
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
 
-        
-        request = build_list_by_service_request(
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            resource_name=resource_name,
-            template_url=self.list_by_service.metadata['url'],
+            else:
+                
+                request = build_list_by_workspace_request(
+                    subscription_id=self._config.subscription_id,
+                    resource_group_name=resource_group_name,
+                    workspace_name=workspace_name,
+                    template_url=next_link,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize("PrivateLinkResourceListResultDescription", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, pipeline_response)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+
+        return ItemPaged(
+            get_next, extract_data
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorDetails, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('PrivateLinkResourceListResultDescription', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    list_by_service.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HealthcareApis/services/{resourceName}/privateLinkResources'}  # type: ignore
-
+    list_by_workspace.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HealthcareApis/workspaces/{workspaceName}/privateLinkResources'}  # type: ignore
 
     @distributed_trace
     def get(
         self,
         resource_group_name: str,
-        resource_name: str,
+        workspace_name: str,
         group_name: str,
         **kwargs: Any
     ) -> "_models.PrivateLinkResourceDescription":
-        """Gets a private link resource that need to be created for a service.
+        """Gets a private link resource that need to be created for a workspace.
 
         :param resource_group_name: The name of the resource group that contains the service instance.
         :type resource_group_name: str
-        :param resource_name: The name of the service instance.
-        :type resource_name: str
+        :param workspace_name: The name of workspace resource.
+        :type workspace_name: str
         :param group_name: The name of the private link resource group.
         :type group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -201,7 +226,7 @@ class PrivateLinkResourcesOperations(object):
         request = build_get_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
-            resource_name=resource_name,
+            workspace_name=workspace_name,
             group_name=group_name,
             template_url=self.get.metadata['url'],
         )
@@ -223,5 +248,5 @@ class PrivateLinkResourcesOperations(object):
 
         return deserialized
 
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HealthcareApis/services/{resourceName}/privateLinkResources/{groupName}'}  # type: ignore
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HealthcareApis/workspaces/{workspaceName}/privateLinkResources/{groupName}'}  # type: ignore
 
