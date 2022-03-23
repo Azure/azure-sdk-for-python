@@ -81,6 +81,7 @@ The `credential` parameter may be provided in a number of different forms, depen
         account_key="<account-access-key>",
         resource_types=ResourceTypes(service=True),
         permission=AccountSasPermissions(read=True),
+        start=datetime.utcnow(),
         expiry=datetime.utcnow() + timedelta(hours=1)
     )
 
