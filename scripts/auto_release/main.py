@@ -137,10 +137,13 @@ def execute_simple_command(cmd_line, cwd=None, shell=False, env=None):
             encoding="utf-8",
         )
         output_buffer = []
+        process.wait()
         for line in process.stdout:
             output_buffer.append(line.rstrip())
-            _LOG.info(f"==[autorest333]" + output_buffer[-1])
-        process.wait()
+            _LOG.info(f"==[autorest33]" + output_buffer[-1])
+        for line in process.stderr:
+            print(f"==[autorest333]" + line)
+
         output = "\n".join(output_buffer)
         if process.returncode:
             # print necessary error info
