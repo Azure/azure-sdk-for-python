@@ -1748,7 +1748,7 @@ class CheckAPIVersion(BaseChecker):
             
             if node.name.endswith("Client") and node.name not in self.ignore_clients:
                 if node.doc:
-                    if ":keyword api_version" in node.doc or ":keyword str api_version" in node.doc:
+                    if ":keyword api_version:" in node.doc or ":keyword str api_version:" in node.doc:
                         api_version = True
                 if not api_version:    
                     for func in node.body:
