@@ -1755,7 +1755,7 @@ class CheckAPIVersion(BaseChecker):
                         if isinstance(func, astroid.FunctionDef):
                             if func.name == '__init__':
                                 if func.doc: 
-                                    if ":keyword api_version" in func.doc or ":keyword str api_version" in func.doc:
+                                    if ":keyword api_version:" in func.doc or ":keyword str api_version:" in func.doc:
                                         api_version = True
                                 if not api_version:
                                     self.add_message(
