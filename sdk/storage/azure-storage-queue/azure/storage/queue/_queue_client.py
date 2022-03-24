@@ -566,7 +566,9 @@ class QueueClient(StorageAccountHostsMixin):
         content and a pop_receipt value, which is required to delete the message.
         The message is not automatically deleted from the queue, but after it has
         been retrieved, it is not visible to other clients for the time interval
-        specified by the visibility_timeout parameter.
+        specified by the visibility_timeout parameter. The iterator will continuously
+        fetch messages until the queue is empty or max_messages is reached (if max_messages
+        is set).
 
         If the key-encryption-key or resolver field is set on the local service object, the messages will be
         decrypted before being returned.
@@ -596,6 +598,8 @@ class QueueClient(StorageAccountHostsMixin):
             should be set to a value smaller than the time-to-live value.
         :keyword int timeout:
             The server timeout, expressed in seconds.
+        :keyword int max_messages: 
+            An integer that specifies the maximum number of messages to retrieve from the queue.
         :return:
             Returns a message iterator of dict-like Message objects.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.queue.QueueMessage]
@@ -612,6 +616,7 @@ class QueueClient(StorageAccountHostsMixin):
         messages_per_page = kwargs.pop('messages_per_page', None)
         visibility_timeout = kwargs.pop('visibility_timeout', None)
         timeout = kwargs.pop('timeout', None)
+        max_messages = kwargs.pop('max_messages', None)
         self._config.message_decode_policy.configure(
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
@@ -624,7 +629,7 @@ class QueueClient(StorageAccountHostsMixin):
                 cls=self._config.message_decode_policy,
                 **kwargs
             )
-            return ItemPaged(command, results_per_page=messages_per_page, page_iterator_class=MessagesPaged)
+            return ItemPaged(command, results_per_page=messages_per_page, page_iterator_class=MessagesPaged, messages_to_retrieve=max_messages)
         except HttpResponseError as error:
             process_storage_error(error)
 

@@ -124,6 +124,40 @@ class StorageQueueTestAsync(AsyncStorageTestCase):
 
     @QueuePreparer()
     @AsyncStorageTestCase.await_prepared_test
+    async def test_get_messages_with_max_messages(self, storage_account_name, storage_account_key):
+        # Action
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
+        queue_client = self._get_queue_reference(qsc)
+        await queue_client.create_queue()
+        await queue_client.send_message(u'message1')
+        await queue_client.send_message(u'message2')
+        await queue_client.send_message(u'message3')
+        await queue_client.send_message(u'message4')
+        await queue_client.send_message(u'message5')
+        await queue_client.send_message(u'message6')
+        await queue_client.send_message(u'message7')
+        await queue_client.send_message(u'message8')
+        await queue_client.send_message(u'message9')
+        await queue_client.send_message(u'message10')
+        pager = await queue_client.receive_messages(max_messages=5)
+        result = list(pager)
+
+        # Asserts
+        self.assertIsNotNone(result)
+        self.assertEqual(5, len(result))
+
+        for message in result:
+            self.assertIsNotNone(message)
+            self.assertNotEqual('', message.id)
+            self.assertNotEqual('', message.content)
+            self.assertNotEqual('', message.pop_receipt)
+            self.assertEqual(1, message.dequeue_count)
+            self.assertNotEqual('', message.inserted_on)
+            self.assertNotEqual('', message.expires_on)
+            self.assertNotEqual('', message.next_visible_on)
+
+    @QueuePreparer()
+    @AsyncStorageTestCase.await_prepared_test
     async def test_delete_non_existing_queue(self, storage_account_name, storage_account_key):
         # Action
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
