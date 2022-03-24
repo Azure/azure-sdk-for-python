@@ -31,7 +31,7 @@ from typing import Any, Dict, Optional, ClassVar
 from azure.core.exceptions import ServiceRequestError
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import PipelineRequest, PipelineResponse
-from azure.core.pipeline.policies import HTTPPolicy, BearerTokenCredentialPolicy, AsyncBearerTokenCredentialPolicy
+from azure.core.pipeline.policies import HTTPPolicy
 from . import http_constants
 
 TokenCredential = ClassVar
