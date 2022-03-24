@@ -20,8 +20,10 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_ANALYTICS_ENDPOINT - the endpoint to your Cognitive Services resource.
     2) AZURE_TEXT_ANALYTICS_KEY - your Text Analytics subscription key
-    3) CUSTOM_ENTITIES_PROJECT_NAME - your Text Analytics Language Studio project name
-    4) CUSTOM_ENTITIES_DEPLOYMENT_NAME - your Text Analytics deployed model name
+    3) CUSTOM_ENTITIES_PROJECT_NAME - your Text Analytics Language Studio project name.
+        This is the project name given for your custom entities project.
+    4) CUSTOM_ENTITIES_DEPLOYMENT_NAME - your Text Analytics Language Studio deployed model name.
+        This is the name given for the deployment which contains your chosen trained model.
 """
 
 
@@ -38,7 +40,7 @@ def sample_recognize_custom_entities():
     endpoint = os.environ["AZURE_TEXT_ANALYTICS_ENDPOINT"]
     key = os.environ["AZURE_TEXT_ANALYTICS_KEY"]
     project_name = os.environ["CUSTOM_ENTITIES_PROJECT_NAME"]
-    deployed_model_name = os.environ["CUSTOM_ENTITIES_DEPLOYMENT_NAME"]
+    deployment_name = os.environ["CUSTOM_ENTITIES_DEPLOYMENT_NAME"]
     path_to_sample_document = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
@@ -59,7 +61,7 @@ def sample_recognize_custom_entities():
         document,
         actions=[
             RecognizeCustomEntitiesAction(
-                project_name=project_name, deployment_name=deployed_model_name
+                project_name=project_name, deployment_name=deployment_name
             ),
         ],
     )

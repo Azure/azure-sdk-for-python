@@ -18,6 +18,9 @@ You can authenticate your client with a Cognitive Services/Text Analytics API ke
 
 These sample programs show common scenarios for the Text Analytics client's offerings.
 
+**Text analysis - prebuilt models**
+
+
 |**File Name**|**Description**|
 |----------------|-------------|
 |[sample_detect_language.py][detect_language] and [sample_detect_language_async.py][detect_language_async]|Detect language in documents|
@@ -30,10 +33,16 @@ These sample programs show common scenarios for the Text Analytics client's offe
 |[sample_analyze_healthcare_entities.py][analyze_healthcare_entities_sample] and [sample_analyze_healthcare_entities_async.py][analyze_healthcare_entities_sample_async]|Analyze healthcare entities|
 |[sample_analyze_actions.py][analyze_sample] and [sample_analyze_actions_async.py][analyze_sample_async]|Run multiple analyses together in a single request|
 |[sample_extract_summary.py][extract_summary_sample] and [sample_extract_summary_async.py][extract_summary_sample_async]|As part of the analyze API, run extractive text summarization on documents|
+|[sample_model_version.py][sample_model_version] and [sample_model_version_async.py][sample_model_version_async]|Set the model version for pre-built Text Analytics models|
+
+**Custom text analysis - custom named entity recognition and custom single / multi classification**
+
+|**File Name**|**Description**|
+|----------------|-------------|
 |[sample_recognize_custom_entities.py][recognize_custom_entities_sample] and [sample_recognize_custom_entities_async.py][recognize_custom_entities_sample_async]|Use a custom model to recognize custom entities in documents|
 |[sample_single_category_classify.py][single_category_classify_sample] and [sample_single_category_classify_async.py][single_category_classify_sample_async]|Use a custom model to classify documents into a single category|
 |[sample_multi_category_classify.py][multi_category_classify_sample] and [sample_multi_category_classify_async.py][multi_category_classify_sample_async]|Use a custom model to classify documents into multiple categories|
-|[sample_model_version.py][sample_model_version] and [sample_model_version_async.py][sample_model_version_async]|Set the model version for pre-built Text Analytics models|
+
 
 ## Prerequisites
 * Python 3.6 or later is required to use this package
@@ -54,7 +63,10 @@ For more information about how the versioning story of the SDK corresponds to th
   pip install azure-identity
   ```
 
-2. Clone the repo or download the sample file
+2. Clone the repo or download the sample file. You can also copy the file contents by clicking the `Copy` button on Github: 
+![image](https://user-images.githubusercontent.com/31998003/159976940-aea55a34-05a8-4687-a309-8d44e020346c.png)
+
+
 3. Open the sample file in Visual Studio Code or your IDE of choice.
 
 ## Running the samples
