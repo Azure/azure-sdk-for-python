@@ -1,0 +1,280 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 24 Mar 2022 23:42:59 GMT
+      x-ms-version:
+      - '2021-06-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainercb7f1314?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 24 Mar 2022 23:42:58 GMT
+      etag: '"0x8DA0DF0078CDDE5"'
+      last-modified: Thu, 24 Mar 2022 23:42:59 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2021-06-08'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainercb7f1314?restype=container
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 24 Mar 2022 23:42:59 GMT
+      x-ms-version:
+      - '2021-06-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainersourcecb7f1314?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 24 Mar 2022 23:42:59 GMT
+      etag: '"0x8DA0DF00795B644"'
+      last-modified: Thu, 24 Mar 2022 23:42:59 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2021-06-08'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainersourcecb7f1314?restype=container
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      x-ms-blob-content-length:
+      - '2048'
+      x-ms-blob-type:
+      - PageBlob
+      x-ms-date:
+      - Thu, 24 Mar 2022 23:42:59 GMT
+      x-ms-version:
+      - '2021-06-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainercb7f1314/blobcb7f1314
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 24 Mar 2022 23:42:59 GMT
+      etag: '"0x8DA0DF0079F416D"'
+      last-modified: Thu, 24 Mar 2022 23:42:59 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2021-06-08'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainercb7f1314/blobcb7f1314
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 24 Mar 2022 23:42:59 GMT
+      x-ms-version:
+      - '2021-06-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainercb7f1314/blobcb7f1314?comp=snapshot
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 24 Mar 2022 23:42:59 GMT
+      etag: '"0x8DA0DF0079F416D"'
+      last-modified: Thu, 24 Mar 2022 23:42:59 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-server-encrypted: 'false'
+      x-ms-snapshot: '2022-03-24T23:42:59.8125772Z'
+      x-ms-version: '2021-06-08'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainercb7f1314/blobcb7f1314?comp=snapshot
+- request:
+    body: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '1536'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 24 Mar 2022 23:42:59 GMT
+      x-ms-page-write:
+      - update
+      x-ms-range:
+      - bytes=0-1535
+      x-ms-version:
+      - '2021-06-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainercb7f1314/blobcb7f1314?comp=page
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 24 Mar 2022 23:42:59 GMT
+      etag: '"0x8DA0DF007B007DF"'
+      last-modified: Thu, 24 Mar 2022 23:42:59 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-sequence-number: '0'
+      x-ms-content-crc64: h0C9OBmisio=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2021-06-08'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainercb7f1314/blobcb7f1314?comp=page
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 24 Mar 2022 23:42:59 GMT
+      x-ms-version:
+      - '2021-06-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainercb7f1314/blobcb7f1314?comp=snapshot
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 24 Mar 2022 23:42:59 GMT
+      etag: '"0x8DA0DF007B007DF"'
+      last-modified: Thu, 24 Mar 2022 23:42:59 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-server-encrypted: 'false'
+      x-ms-snapshot: '2022-03-24T23:42:59.9195162Z'
+      x-ms-version: '2021-06-08'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainercb7f1314/blobcb7f1314?comp=snapshot
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 24 Mar 2022 23:42:59 GMT
+      x-ms-page-write:
+      - clear
+      x-ms-range:
+      - bytes=512-1023
+      x-ms-version:
+      - '2021-06-08'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainercb7f1314/blobcb7f1314?comp=page
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 24 Mar 2022 23:42:59 GMT
+      etag: '"0x8DA0DF007C0CE50"'
+      last-modified: Thu, 24 Mar 2022 23:42:59 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-sequence-number: '0'
+      x-ms-version: '2021-06-08'
+    status:
+      code: 201
+      message: Created
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainercb7f1314/blobcb7f1314?comp=page
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 24 Mar 2022 23:43:00 GMT
+      x-ms-version:
+      - '2021-06-08'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/utcontainercb7f1314/blobcb7f1314?comp=pagelist&prevsnapshot=2022-03-24T23:42:59.8125772Z
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<PageList><PageRange><Start>0</Start><End>511</End></PageRange><ClearRange><Start>512</Start><End>1023</End></ClearRange><PageRange><Start>1024</Start><End>1535</End></PageRange></PageList>"
+    headers:
+      content-type: application/xml
+      date: Thu, 24 Mar 2022 23:42:59 GMT
+      etag: '"0x8DA0DF007C0CE50"'
+      last-modified: Thu, 24 Mar 2022 23:42:59 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      vary: Origin
+      x-ms-blob-content-length: '2048'
+      x-ms-version: '2021-06-08'
+    status:
+      code: 200
+      message: OK
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainercb7f1314/blobcb7f1314?comp=pagelist&prevsnapshot=2022-03-24T23:42:59.8125772Z
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-blob/12.11.0b1 Python/3.10.1 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 24 Mar 2022 23:43:00 GMT
+      x-ms-version:
+      - '2021-06-08'
+    method: GET
+    uri: https://storagename.blob.core.windows.net/utcontainercb7f1314/blobcb7f1314?comp=pagelist&prevsnapshot=2022-03-24T23:42:59.9195162Z
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<PageList><ClearRange><Start>512</Start><End>1023</End></ClearRange></PageList>"
+    headers:
+      content-type: application/xml
+      date: Thu, 24 Mar 2022 23:42:59 GMT
+      etag: '"0x8DA0DF007C0CE50"'
+      last-modified: Thu, 24 Mar 2022 23:42:59 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      vary: Origin
+      x-ms-blob-content-length: '2048'
+      x-ms-version: '2021-06-08'
+    status:
+      code: 200
+      message: OK
+    url: https://jalauzoncanary.blob.core.windows.net/utcontainercb7f1314/blobcb7f1314?comp=pagelist&prevsnapshot=2022-03-24T23:42:59.9195162Z
+version: 1

@@ -10,7 +10,7 @@ from azure.core.async_paging import AsyncPageIterator
 from azure.core.exceptions import HttpResponseError
 from .._deserialize import parse_tags
 
-from .._models import ContainerProperties, FilteredBlob
+from .._models import ContainerProperties, FilteredBlob, PageRange
 from .._shared.response_handlers import return_context_and_deserialized, process_storage_error
 
 from .._generated.models import FilterBlobItem
@@ -141,3 +141,61 @@ class FilteredBlobPaged(AsyncPageIterator):
             blob = FilteredBlob(name=item.name, container_name=item.container_name, tags=tags)
             return blob
         return item
+
+
+class PageRangePaged(AsyncPageIterator):
+    def __init__(self, command, results_per_page=None, continuation_token=None):
+        super(PageRangePaged, self).__init__(
+            get_next=self._get_next_cb,
+            extract_data=self._extract_data_cb,
+            continuation_token=continuation_token or ""
+        )
+        self._command = command
+        self.results_per_page = results_per_page
+        self.location_mode = None
+        self.current_page = []
+
+    async def _get_next_cb(self, continuation_token):
+        try:
+            return await self._command(
+                marker=continuation_token or None,
+                maxresults=self.results_per_page,
+                cls=return_context_and_deserialized,
+                use_location=self.location_mode)
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    async def _extract_data_cb(self, get_next_return):
+        self.location_mode, self._response = get_next_return
+        self.current_page = self._build_page(self._response)
+
+        return self._response.next_marker or None, self.current_page
+
+    @staticmethod
+    def _build_page(response):
+        page_ranges = response.page_range
+        clear_ranges = response.clear_range
+
+        ranges = []
+        p_i, c_i = 0, 0
+
+        # Combine page ranges and clear ranges into single list, sorted by start
+        while p_i < len(page_ranges) and c_i < len(clear_ranges):
+            p, c = page_ranges[p_i], clear_ranges[c_i]
+
+            if p.start < c.start:
+                ranges.append(
+                    PageRange(p.start, p.end, cleared=False)
+                )
+                p_i += 1
+            else:
+                ranges.append(
+                    PageRange(c.start, c.end, cleared=True)
+                )
+                c_i += 1
+
+        # Grab remaining elements in either list
+        ranges += [PageRange(r.start, r.end, cleared=False) for r in page_ranges[p_i:]]
+        ranges += [PageRange(r.start, r.end, cleared=True) for r in clear_ranges[c_i:]]
+
+        return ranges
