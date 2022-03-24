@@ -103,7 +103,6 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
     envelope.tags["ai.operation.parentId"] = "{:016x}".format(
         log_record.span_id or _DEFAULT_SPAN_ID
     )
-
     properties = {
         k: v
         for k, v in log_record.attributes.items()
