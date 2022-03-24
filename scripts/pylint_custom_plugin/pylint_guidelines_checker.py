@@ -1798,7 +1798,7 @@ class CheckAPIVersion(BaseChecker):
     priority = -1
     msgs = {
         "C4748": (
-            "The client constructor needs to take in an optional keyword-only api_version argument"
+            "The client constructor needs to take in an optional keyword-only api_version argument. "
             "https://azure.github.io/azure-sdk/python_design.html#specifying-the-service-version",
             "client-accepts-api-version-keyword",
             "Accept a keyword argument called api_version.",
